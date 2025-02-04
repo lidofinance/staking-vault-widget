@@ -1,0 +1,81 @@
+import { config } from 'config';
+import {
+  Manifest,
+  ManifestConfig,
+  ManifestConfigPage,
+  ManifestConfigPageEnum,
+  ManifestEntry,
+} from 'config/external-config';
+
+export const isFeatureFlagsValid = (config: object) => {
+  // allow empty config
+  if (!('featureFlags' in config) || !config.featureFlags) return true;
+
+  // only objects
+  return !(typeof config.featureFlags !== 'object');
+};
+
+export const isPagesValid = (config: object) => {
+  if (!('pages' in config)) {
+    return true;
+  }
+
+  const pages = config.pages as ManifestConfig['pages'];
+  if (pages && typeof pages === 'object') {
+    // INFO: exclude possible issue when main page can be deactivated
+    return !pages[ManifestConfigPageEnum.main]?.shouldDisable;
+  }
+
+  return false;
+};
+
+export const isManifestEntryValid = (
+  entry?: unknown,
+): entry is ManifestEntry => {
+  if (
+    // entry = {}
+    entry &&
+    typeof entry === 'object' &&
+    // entry.config = {}
+    'config' in entry &&
+    typeof entry.config === 'object' &&
+    entry.config
+  ) {
+    const config = entry.config;
+
+    return [isFeatureFlagsValid, isPagesValid]
+      .map((validator) => validator(config))
+      .every((isValid) => isValid);
+  }
+  return false;
+};
+
+export const isManifestValid = (
+  manifest: unknown,
+  chain: number,
+): manifest is Manifest => {
+  const stringChain = chain.toString();
+  if (manifest && typeof manifest === 'object' && stringChain in manifest)
+    return isManifestEntryValid(
+      (manifest as Record<string, unknown>)[stringChain],
+    );
+  return false;
+};
+
+// Use in Next backend side
+export const shouldRedirectToRoot = (
+  currentPath: string,
+  manifest: Manifest | null,
+): boolean => {
+  const { defaultChain } = config;
+  const chainSettings = manifest?.[`${defaultChain}`];
+  const pages = chainSettings?.config?.pages;
+  const isDeactivate =
+    !!pages?.[currentPath as ManifestConfigPage]?.shouldDisable;
+  // https://nextjs.org/docs/messages/gsp-redirect-during-prerender
+  const isBuild = process.env.npm_lifecycle_event === 'build';
+
+  return (
+    currentPath !== ManifestConfigPageEnum.main && isDeactivate && !isBuild
+  );
+};
