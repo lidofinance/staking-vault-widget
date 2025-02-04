@@ -1,14 +1,7 @@
 import { FC, memo, useMemo } from 'react';
-import { Wallet, Stake, Wrap, Withdraw } from '@lidofinance/lido-ui';
+import { Stake } from '@lidofinance/lido-ui';
 
-import {
-  HOME_PATH,
-  WRAP_PATH,
-  WITHDRAWALS_REQUEST_PATH,
-  WITHDRAWALS_CLAIM_PATH,
-  REWARDS_PATH,
-  getPathWithoutFirstSlash,
-} from 'consts/urls';
+import { HOME_PATH, getPathWithoutFirstSlash } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
 import { LocalLink } from 'shared/components/local-link';
@@ -27,27 +20,10 @@ type PageRoute = {
 
 const routes: PageRoute[] = [
   {
-    name: 'Stake',
+    name: 'Home',
     path: HOME_PATH,
     icon: <Stake data-testid="navStake" />,
     exact: true,
-  },
-  {
-    name: 'Wrap',
-    path: WRAP_PATH,
-    icon: <Wrap data-testid="navWrap" />,
-  },
-  {
-    name: 'Withdrawals',
-    path: WITHDRAWALS_REQUEST_PATH,
-    full_path: WITHDRAWALS_REQUEST_PATH,
-    subPaths: [WITHDRAWALS_CLAIM_PATH],
-    icon: <Withdraw data-testid="navWithdrawals" />,
-  },
-  {
-    name: 'Rewards',
-    path: REWARDS_PATH,
-    icon: <Wallet data-testid="navRewards" />,
   },
 ];
 
