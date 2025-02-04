@@ -1,6 +1,5 @@
 import { FC } from 'react';
 
-import { config } from 'config';
 import { Layout } from 'shared/components';
 import { SettingsForm } from 'features/settings/settings-form';
 import { getDefaultStaticProps } from 'utilsApi/get-default-static-props';
@@ -14,8 +13,6 @@ const Settings: FC = () => {
 };
 
 export const getStaticProps = getDefaultStaticProps('/settings', async () => {
-  if (!config.ipfsMode) return { notFound: true };
-
   return { props: {} };
 });
 

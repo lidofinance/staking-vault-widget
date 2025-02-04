@@ -52,7 +52,7 @@ const HeaderWallet: FC = () => {
       ) : (
         <Connect size="sm" />
       )}
-      {config.ipfsMode && <HeaderSettingsButton />}
+      <HeaderSettingsButton />
       {!queryTheme && <ThemeTogglerStyled data-testid="themeToggler" />}
       {config.ipfsMode && (
         <IPFSInfoBoxOnlyDesktopWrapper>
