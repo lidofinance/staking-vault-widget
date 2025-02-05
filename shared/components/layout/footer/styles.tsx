@@ -7,6 +7,7 @@ import { ReactComponent as ExternalLinkIcon } from 'assets/icons/external-link-i
 import { devicesHeaderMedia } from 'styles/global';
 
 export const FooterStyle = styled(Container)`
+  grid-area: footer;
   position: relative;
   box-sizing: border-box;
   color: var(--lido-color-text);

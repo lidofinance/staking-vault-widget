@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { devicesHeaderMedia } from 'styles/global';
 
 export const HeaderStyle = styled((props) => <Container {...props} />)`
+  grid-area: header;
   position: relative;
   padding-top: var(--header-padding-y);
   padding-bottom: var(--header-padding-y);
@@ -58,4 +59,11 @@ export const IPFSInfoBoxOnlyDesktopWrapper = styled.div`
   @media ${devicesHeaderMedia.mobile} {
     display: none;
   }
+`;
+
+export const Divider = styled.div`
+  width: 2px;
+  height: 28px;
+  margin: 0 12px;
+  background: ${({ theme }) => theme.colors.textDark};
 `;

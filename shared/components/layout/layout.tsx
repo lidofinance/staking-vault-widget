@@ -7,10 +7,12 @@ import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 import { Main } from './main/main';
+import { Navigation } from './navigation';
 import {
   LayoutTitleStyle,
   LayoutSubTitleStyle,
   IPFSInfoBoxOnlyMobileAndPortableWrapper,
+  LayoutStyles,
 } from './styles';
 
 type Props = {
@@ -24,8 +26,9 @@ export const Layout: FC<PropsWithChildren<Props>> = (props) => {
   const { children } = props;
 
   return (
-    <>
+    <LayoutStyles>
       <Header />
+      <Navigation />
       <Main size={containerSize}>
         {config.ipfsMode && (
           <IPFSInfoBoxOnlyMobileAndPortableWrapper>
@@ -37,6 +40,6 @@ export const Layout: FC<PropsWithChildren<Props>> = (props) => {
         {children}
       </Main>
       <Footer />
-    </>
+    </LayoutStyles>
   );
 };

@@ -25,6 +25,11 @@ const GlobalStyle = createGlobalStyle`
     --footer-mobile-margin-bottom: 60px;
     
     --custom-background-secondary: ${({ theme }) => (theme.name === ThemeName.light ? '#F6F8FA' : '#2D2D35')} ;
+
+    --nav-size: 160px;
+
+    --nav-transition-duration: 0.15s;
+    --nav-transition-timing-function: ease-out;
   }
   * {
     margin: 0;

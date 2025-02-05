@@ -1,6 +1,20 @@
-import { H1 } from '@lidofinance/lido-ui';
+import { H1, Container } from '@lidofinance/lido-ui';
 import styled from 'styled-components';
 import { devicesHeaderMedia } from 'styles/global';
+
+export const LayoutStyles = styled(Container)`
+  position: relative;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  grid-template-columns: 166px 1fr 166px;
+  grid-template-areas:
+    'header header header'
+    'nav content empty'
+    'footer footer footer';
+  grid-column-gap: 0;
+  grid-row-gap: 24px;
+  height: 100vh;
+`;
 
 export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`
   font-weight: 800;

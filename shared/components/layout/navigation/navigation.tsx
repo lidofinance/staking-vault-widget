@@ -1,13 +1,14 @@
 import { FC, memo, useMemo } from 'react';
 import { Stake } from '@lidofinance/lido-ui';
 
+import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { HOME_PATH, getPathWithoutFirstSlash } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
-import { LocalLink } from 'shared/components/local-link';
 import { useRouterPath } from 'shared/hooks/use-router-path';
+import { LocalLink } from 'shared/components/local-link';
 
-import { Nav, NavLink } from './styles';
+import { ListItem, NavLink, Nav } from './styles';
 
 type PageRoute = {
   name: string;
@@ -17,12 +18,17 @@ type PageRoute = {
   full_path?: string;
   subPaths?: string[];
 };
-
 const routes: PageRoute[] = [
   {
     name: 'Home',
     path: HOME_PATH,
     icon: <Stake data-testid="navStake" />,
+    exact: true,
+  },
+  {
+    name: 'Settings',
+    path: '/settings',
+    icon: <GearIcon data-testid="navSettings" />,
     exact: true,
   },
 ];
@@ -60,12 +66,14 @@ export const Navigation: FC = memo(() => {
             subPaths?.indexOf(pathnameWithoutQuery) > -1);
 
         return (
-          <LocalLink key={path} href={path}>
-            <NavLink active={isActive}>
-              {icon}
-              <span>{name}</span>
-            </NavLink>
-          </LocalLink>
+          <ListItem key={path}>
+            <LocalLink href={path}>
+              <NavLink active={isActive}>
+                {icon}
+                <span>{name}</span>
+              </NavLink>
+            </LocalLink>
+          </ListItem>
         );
       })}
     </Nav>
