@@ -10,9 +10,7 @@ export { ManifestConfigPageList, ManifestConfigPageEnum } from './types';
 export {
   isManifestValid,
   isManifestEntryValid,
-  isEnabledDexesValid,
   isFeatureFlagsValid,
-  isMultiChainBannerValid,
   isPagesValid,
   shouldRedirectToRoot,
 } from './utils';

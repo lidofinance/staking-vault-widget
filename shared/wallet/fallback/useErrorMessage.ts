@@ -3,7 +3,7 @@ import { useConnectorInfo } from 'reef-knot/core-react';
 // TODO: to remove the 'reef-knot/web3-react' after it will be deprecated
 import { helpers } from 'reef-knot/web3-react';
 import { joinWithOr } from 'utils/join-with-or';
-import { useConnect } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 export const useErrorMessage = (): string | undefined => {
   const { isLedger } = useConnectorInfo();
@@ -11,15 +11,15 @@ export const useErrorMessage = (): string | undefined => {
     isSupportedChain,
     isChainTypeMatched,
     isAccountActive,
-    chainType,
     supportedChainLabels,
   } = useDappStatus();
   const { error } = useConnect();
+  const { chainId } = useAccount();
 
   // Errors from chain state
 
   if (isAccountActive && !isChainTypeMatched) {
-    return `Wrong network. Please switch to ${supportedChainLabels[chainType]} in your wallet to wrap/unwrap.`;
+    return `Wrong network. Please switch to ${supportedChainLabels[chainId || 1]} in your wallet to wrap/unwrap.`;
   }
 
   if (!isSupportedChain) {

@@ -9,7 +9,7 @@ import {
   useAccount,
 } from 'wagmi';
 
-import { useDappStatus, useLidoSDK, useLidoSDKL2 } from 'modules/web3';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { config } from 'config';
 
 import type { Address, WatchContractEventOnLogsFn } from 'viem';
@@ -235,17 +235,16 @@ export const useStethBalance = ({
 }: UseBalanceProps = {}) => {
   const { chainId } = useDappStatus();
   const { stETH } = useLidoSDK();
-  const { l2, isL2 } = useLidoSDKL2();
   const { isSupportedChain, address } = useDappStatus();
 
   const mergedAccount = account ?? address;
 
   const { data: contract, isLoading } = useQuery({
-    queryKey: ['steth-contract', chainId, isL2],
+    queryKey: ['steth-contract', chainId],
     enabled: !!mergedAccount && isSupportedChain,
 
     staleTime: Infinity,
-    queryFn: async () => (isL2 ? l2.steth.getContract() : stETH.getContract()),
+    queryFn: async () => stETH.getContract(),
   });
 
   const balanceData = useTokenBalance(
@@ -269,13 +268,12 @@ export const useWstethBalance = ({
   const mergedAccount = account ?? address;
   const { chainId } = useDappStatus();
   const { wstETH } = useLidoSDK();
-  const { l2, isL2 } = useLidoSDKL2();
 
   const { data: contract, isLoading } = useQuery({
-    queryKey: ['wsteth-contract', chainId, isL2],
+    queryKey: ['wsteth-contract', chainId],
     enabled: !!mergedAccount && isSupportedChain,
     staleTime: Infinity,
-    queryFn: () => (isL2 ? l2.wsteth.getContract() : wstETH.getContract()),
+    queryFn: () => wstETH.getContract(),
   });
 
   const balanceData = useTokenBalance(
