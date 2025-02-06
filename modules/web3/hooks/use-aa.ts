@@ -8,7 +8,7 @@ import {
 import { TransactionCallbackStage } from '@lidofinance/lido-ethereum-sdk';
 
 import { useDappStatus } from './use-dapp-status';
-import { useLidoSDK, useLidoSDKL2 } from '../web3-provider';
+import { useLidoSDK } from '../web3-provider';
 import { config } from 'config';
 
 import type { Address, Hash } from 'viem';
@@ -75,9 +75,7 @@ export type AACall = { to: Address; data?: Hash; value?: bigint };
 
 export const useSendAACalls = () => {
   const { sendCallsAsync } = useSendCalls();
-  const { core: l1core } = useLidoSDK();
-  const { core: l2core, isL2 } = useLidoSDKL2();
-  const core = isL2 ? l2core : l1core;
+  const { core } = useLidoSDK();
 
   return useCallback(
     async (

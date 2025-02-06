@@ -58,7 +58,7 @@ const GlobalStyle = createGlobalStyle`
     text-size-adjust: none;
   }
   main {
-    min-height: calc(100vh - 150px);
+    min-height: calc(100vh - 200px);
   }
   a {
     cursor: pointer;
