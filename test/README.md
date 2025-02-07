@@ -1,4 +1,4 @@
-# Staking widget tests
+# Staking Vault widget tests
 
 Both API and UI tests are written using Playwright.
 UI tests are run in a headless browser using Chrome, Firefox and Webkit.

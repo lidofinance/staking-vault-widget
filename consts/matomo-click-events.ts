@@ -13,18 +13,18 @@ export const MATOMO_CLICK_EVENTS: Record<
 > = {
   // Global
   [MATOMO_CLICK_EVENTS_TYPES.connectWallet]: [
-    'Ethereum_Staking_Widget',
+    'Staking_Vault_Widget',
     'Push "Connect wallet" button',
-    'eth_widget_connect_wallet',
+    'staking_vault_widget_connect_wallet',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickShowMoreWallets]: [
-    'Ethereum_Staking_Widget',
+    'Staking_Vault_Widget',
     'Push "More wallets" on wallet modal',
-    'eth_widget_more_wallets',
+    'staking_vault_widget_more_wallets',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickShowLessWallets]: [
-    'Ethereum_Staking_Widget',
+    'Staking_Vault_Widget',
     'Push "Less wallets" on wallet modal',
-    'eth_widget_less_wallets',
+    'staking_vault_widget_less_wallets',
   ],
 };

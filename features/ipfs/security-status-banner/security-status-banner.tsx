@@ -55,7 +55,8 @@ const warningContent = ({
       return {
         content: (
           <WarningText>
-            The Lido staking widget is currently down. A fix is in progress
+            The Lido staking vault widget is currently down. A fix is in
+            progress
           </WarningText>
         ),
         canClose: false,
@@ -65,8 +66,8 @@ const warningContent = ({
       return {
         content: (
           <WarningText>
-            This version of Lido staking widget has issues that could impact
-            your experience.
+            This version of Lido staking vault widget has issues that could
+            impact your experience.
           </WarningText>
         ),
         canClose: false,
