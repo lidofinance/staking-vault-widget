@@ -1,4 +1,4 @@
-export const METRICS_PREFIX = 'eth_stake_widget_ui_';
+export const METRICS_PREFIX = 'eth_vault_widget_ui_';
 
 export const enum METRIC_NAMES {
   REQUESTS_TOTAL = 'requests_total',

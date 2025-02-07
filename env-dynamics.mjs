@@ -19,7 +19,7 @@ const toBoolean = (val) => {
 export const ipfsMode = toBoolean(process.env.IPFS_MODE);
 
 /** @type string */
-export const selfOrigin = process.env.SELF_ORIGIN || 'https://stake.lido.fi';
+export const selfOrigin = process.env.SELF_ORIGIN || 'https://vaults.lido.fi';
 // Fix in the build time (build time don't have env vars)
 
 /** @type string */
