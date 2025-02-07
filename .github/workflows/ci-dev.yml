@@ -13,9 +13,6 @@ permissions:
   contents: read
 
 jobs:
-  # test:
-  #   ...
-
   deploy:
     runs-on: ubuntu-latest
     # needs: test
@@ -27,7 +24,7 @@ jobs:
           APP_ID: ${{ secrets.APP_ID }}
           APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           TARGET_REPO: 'lidofinance/infra-mainnet'
-          TARGET_WORKFLOW: 'deploy_testnet_staking_vault_widget.yaml'
+          TARGET_WORKFLOW: 'deploy_holesky_testnet_staking_vault_widget.yaml'
           TARGET: 'develop'
 
   tests:
@@ -36,4 +33,4 @@ jobs:
     uses: ./.github/workflows/tests.yml
     secrets: inherit
     with:
-      stand_url: https://staking-vault.testnet.fi
+      stand_url: https://vaults.testnet.fi
