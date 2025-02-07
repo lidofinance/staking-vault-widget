@@ -14,7 +14,7 @@ import { LinkToIpfs } from './link-to-ipfs';
 
 const getVersionInfo = () => {
   const { version, branch } = buildInfo;
-  const repoBaseUrl = 'https://github.com/lidofinance/ethereum-staking-widget';
+  const repoBaseUrl = 'https://github.com/lidofinance/staking-vault-widget';
   if (version === 'REPLACE_WITH_VERSION')
     return {
       label: 'dev',

@@ -22,7 +22,7 @@ const routes: PageRoute[] = [
   {
     name: 'Home',
     path: HOME_PATH,
-    icon: <Stake data-testid="navStake" />,
+    icon: <Stake data-testid="navHome" />,
     exact: true,
   },
   {
