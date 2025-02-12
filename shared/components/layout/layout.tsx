@@ -15,20 +15,21 @@ import {
   LayoutStyles,
 } from './styles';
 
-type Props = {
+type LayoutProps = {
   title?: ReactNode;
   subtitle?: ReactNode;
   containerSize?: ContainerProps['size'];
+  showNavigation?: boolean;
 };
 
-export const Layout: FC<PropsWithChildren<Props>> = (props) => {
-  const { title, subtitle, containerSize } = props;
+export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
+  const { title, subtitle, containerSize, showNavigation = true } = props;
   const { children } = props;
 
   return (
     <LayoutStyles>
       <Header />
-      <Navigation />
+      {showNavigation && <Navigation />}
       <Main size={containerSize}>
         {config.ipfsMode && (
           <IPFSInfoBoxOnlyMobileAndPortableWrapper>
