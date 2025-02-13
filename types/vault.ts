@@ -2,9 +2,9 @@ import { Address } from 'viem';
 
 export interface VaultInfo {
   address: Address | string;
-  valuation: string;
-  minted: string;
-  mintable: string;
+  valuation: bigint;
+  minted: bigint;
+  mintable: bigint;
   APR: null;
-  healthScore: string;
+  healthScore: number;
 }

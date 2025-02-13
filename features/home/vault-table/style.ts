@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Table, Thead, Tr, Th } from '@lidofinance/lido-ui';
+import { Table, Thead, Tr, Th, ArrowBottom } from '@lidofinance/lido-ui';
 
 export const TableTitle = styled.caption<{ counter: number }>`
   position: relative;
@@ -67,5 +67,26 @@ export const TableRow = styled(Tr)`
 
   &:has(td):nth-child(odd) {
     background-color: var(--custom-background-secondary);
+  }
+`;
+
+export const ArrowAnimated = styled(ArrowBottom)<{
+  isActive: boolean;
+  direction: 'asc' | 'desc';
+}>`
+  transition: transform 0.2s ease-in-out;
+  transform: ${({ isActive, direction }) =>
+    isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
+`;
+
+export const SortHeader = styled.div`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  user-select: none;
+
+  &:hover {
+    color: var(--lido-color-primary);
   }
 `;
