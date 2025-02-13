@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Table, Thead, Tr, Th, ArrowBottom } from '@lidofinance/lido-ui';
+import { Table, Thead, Tr, Th, ArrowBottom, Td } from '@lidofinance/lido-ui';
 
 export const TableTitle = styled.caption<{ counter: number }>`
   position: relative;
@@ -25,14 +25,14 @@ export const TableTitle = styled.caption<{ counter: number }>`
     font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
     font-weight: normal;
     line-height: 1.6em;
+    transform: translateY(-50%);
+    color: ${({ theme }) => theme.colors.textSecondary};
     background-color: rgba(
       39,
       39,
       46,
       0.1
     ); // TODO: get bg-color for dark/light theme;
-    color: ${({ theme }) => theme.colors.textSecondary};
-    transform: translateY(-50%);
   }
 `;
 
@@ -58,6 +58,9 @@ export const TableHeaderCell = styled(Th)`
 `;
 
 export const TableRow = styled(Tr)`
+  font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
+  font-weight: normal;
+  line-height: 1.7em;
   border: 0;
 
   &:before,
@@ -67,6 +70,20 @@ export const TableRow = styled(Tr)`
 
   &:has(td):nth-child(odd) {
     background-color: var(--custom-background-secondary);
+  }
+`;
+
+export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
+  border: 0;
+  font-size: ${({ theme, fontSize }) => fontSize ?? theme.fontSizesMap.xs}px;
+
+  &:before,
+  &:after {
+    border: 0;
+  }
+
+  &:last-of-type {
+    text-align: end;
   }
 `;
 

@@ -1,9 +1,7 @@
 import { FC, useMemo, useState } from 'react';
-import { Tbody, Td, Question } from '@lidofinance/lido-ui';
 
-import { AddressBadge } from 'shared/components';
-
-import { VaultInfo } from 'types';
+import { Tbody, Question } from '@lidofinance/lido-ui';
+import { TableCell } from 'features/home/vault-table/table-cell';
 
 import {
   TableTitle,
@@ -14,6 +12,8 @@ import {
   ArrowAnimated,
   SortHeader,
 } from './style';
+
+import { VaultInfo } from 'types';
 
 export interface VaultTableProps {
   vaults: VaultInfo[];
@@ -120,15 +120,20 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
             {sortedVaults.map((vault) => {
               return (
                 <TableRow key={vault.address}>
-                  <Td>
-                    <AddressBadge address={vault.address} />
-                  </Td>
-                  <Td>{vault.valuation.toString()}</Td>
-                  <Td>
-                    {vault.minted.toString()} / {vault.mintable.toString()}
-                  </Td>
-                  <Td>?</Td>
-                  <Td>{vault.healthScore}</Td>
+                  <TableCell
+                    columnConfig={{ type: 'address' }}
+                    value={vault.address}
+                  />
+                  <TableCell
+                    columnConfig={{ type: 'ether' }}
+                    value={vault.valuation}
+                  />
+                  <TableCell columnConfig={{ type: 'mint' }} value={vault} />
+                  <TableCell value="?" />
+                  <TableCell
+                    columnConfig={{ type: 'percent' }}
+                    value={vault.healthScore}
+                  />
                 </TableRow>
               );
             })}

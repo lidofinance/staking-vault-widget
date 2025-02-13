@@ -5,19 +5,19 @@ import { VaultInfo } from 'types';
 const allVaults: VaultInfo[] = [
   {
     address: '0x3725E8035D59277f4a44BCf75BeD11E8762c98d9',
-    valuation: 1231233123n,
-    minted: 231233123n,
-    mintable: 12312323n,
+    valuation: 12312331231231233123n,
+    minted: 4323123312231233123n,
+    mintable: 123123231231232312312n,
     APR: null,
-    healthScore: 150,
+    healthScore: 1500,
   },
   {
     address: 'ensname.eth',
-    valuation: 3233n,
-    minted: 12453n,
-    mintable: 12312453n,
+    valuation: 66231231223123123233n,
+    minted: 4323123312231233123n,
+    mintable: 123123231231232312312n,
     APR: null,
-    healthScore: 100,
+    healthScore: 1000,
   },
 ];
 
