@@ -10,7 +10,12 @@ export const ConnectWallet = () => {
   };
 
   return (
-    <Button variant="outlined" color="secondary" onClick={handleConnect}>
+    <Button
+      variant="outlined"
+      color="secondary"
+      size="lg"
+      onClick={handleConnect}
+    >
       Connect wallet to create a vault
     </Button>
   );
