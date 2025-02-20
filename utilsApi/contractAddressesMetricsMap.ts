@@ -16,9 +16,11 @@ import { AggregatorAbi } from 'abi/aggregator-abi';
 import { config } from 'config';
 import { getTokenAddress } from 'consts/token-addresses';
 import { AGGREGATOR_STETH_USD_PRICE_FEED_BY_NETWORK } from 'consts/aggregator';
+import { VaultHubAbi } from '../abi/vault-hub';
 
 export const CONTRACT_NAMES = {
   aggregator: 'aggregator',
+  vaultHub: 'vaultHub',
   aggregatorStEthUsdPriceFeed: 'aggregatorStEthUsdPriceFeed',
   lidoLocator: 'lidoLocator',
   wsteth: 'wsteth',
@@ -28,6 +30,7 @@ export type CONTRACT_NAMES = keyof typeof CONTRACT_NAMES;
 
 export const METRIC_CONTRACT_ABIS = {
   [CONTRACT_NAMES.aggregator]: AggregatorAbi,
+  [CONTRACT_NAMES.vaultHub]: VaultHubAbi,
   [CONTRACT_NAMES.aggregatorStEthUsdPriceFeed]: AggregatorAbi,
   [CONTRACT_NAMES.lidoLocator]: LidoLocatorAbi,
   [CONTRACT_NAMES.lido]: StethAbi,

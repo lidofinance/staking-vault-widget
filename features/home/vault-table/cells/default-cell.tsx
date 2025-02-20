@@ -1,6 +1,8 @@
-import { BaseCellProps } from './types';
+import { FC } from 'react';
 
-export const DefaultCell = ({ value }: BaseCellProps) => {
+import { BaseCellProps } from '../types';
+
+export const DefaultCell: FC<BaseCellProps> = ({ value }) => {
   if (typeof value === 'object' && value !== null) {
     return <>{JSON.stringify(value)}</>;
   }

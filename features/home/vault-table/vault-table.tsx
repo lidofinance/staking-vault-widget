@@ -2,6 +2,13 @@ import { FC, useMemo, useState } from 'react';
 
 import { Tbody, Question } from '@lidofinance/lido-ui';
 import { TableCell } from 'features/home/vault-table/table-cell';
+import {
+  DefaultCell,
+  EtherCell,
+  AddressCell,
+  PercentCell,
+  MintCell,
+} from 'features/home/vault-table/cells';
 
 import {
   TableTitle,
@@ -11,7 +18,7 @@ import {
   TableHeaderCell,
   ArrowAnimated,
   SortHeader,
-} from './style';
+} from './styles';
 
 import { VaultInfo } from 'types';
 
@@ -95,11 +102,11 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
                 </SortHeader>
               </TableHeaderCell>
               <TableHeaderCell>
-                <SortHeader onClick={() => handleSort('APR')}>
-                  APR
+                <SortHeader onClick={() => handleSort('apr')}>
+                  apr
                   <Question />
                   <ArrowAnimated
-                    isActive={sortConfig.key === 'APR'}
+                    isActive={sortConfig.key === 'apr'}
                     direction={sortConfig.direction}
                   />
                 </SortHeader>
@@ -120,20 +127,21 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
             {sortedVaults.map((vault) => {
               return (
                 <TableRow key={vault.address}>
-                  <TableCell
-                    columnConfig={{ type: 'address' }}
-                    value={vault.address}
-                  />
-                  <TableCell
-                    columnConfig={{ type: 'ether' }}
-                    value={vault.valuation}
-                  />
-                  <TableCell columnConfig={{ type: 'mint' }} value={vault} />
-                  <TableCell value="?" />
-                  <TableCell
-                    columnConfig={{ type: 'percent' }}
-                    value={vault.healthScore}
-                  />
+                  <TableCell>
+                    <AddressCell value={vault.address} />
+                  </TableCell>
+                  <TableCell>
+                    <EtherCell value={vault.valuation} />
+                  </TableCell>
+                  <TableCell>
+                    <MintCell value={vault} />
+                  </TableCell>
+                  <TableCell>
+                    <DefaultCell value="?" />
+                  </TableCell>
+                  <TableCell>
+                    <PercentCell value={vault.healthScore} />
+                  </TableCell>
                 </TableRow>
               );
             })}

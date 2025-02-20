@@ -12,7 +12,7 @@ export const LayoutStyles = styled(Container)`
     'nav content empty'
     'footer footer footer';
   grid-column-gap: 0;
-  grid-row-gap: 24px;
+  grid-row-gap: 16px;
   height: 100vh;
 `;
 

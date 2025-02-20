@@ -1,22 +1,22 @@
-import { BaseCellProps } from './types';
-import { VaultInfo } from 'types';
+import { FC } from 'react';
 import { formatEther } from 'viem';
 
-export const MintCell = ({ value }: BaseCellProps) => {
+import { Mintable } from './styles';
+
+import { BaseCellProps } from '../types';
+import { VaultInfo } from 'types';
+
+export const MintCell: FC<BaseCellProps<VaultInfo>> = ({ value }) => {
   if (typeof value !== 'object') {
     return null;
   }
 
-  const minted = Number(
-    formatEther(BigInt((value as VaultInfo)?.minted)),
-  ).toFixed(5);
-  const mintable = Number(
-    formatEther(BigInt((value as VaultInfo)?.mintable)),
-  ).toFixed(5);
+  const minted = Number(formatEther(BigInt(value?.minted))).toFixed(5);
+  const mintable = Number(formatEther(BigInt(value?.mintable))).toFixed(5);
 
   return (
     <>
-      {minted} / {mintable}
+      {minted} <Mintable>/ {mintable}</Mintable>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 
-import { ButtonIcon, Plus } from '@lidofinance/lido-ui';
+import { Plus } from '@lidofinance/lido-ui';
+import { AddVaultButton } from 'features/home/styles';
 
 export const AddVault = () => {
   const router = useRouter();
@@ -10,7 +11,7 @@ export const AddVault = () => {
   };
 
   return (
-    <ButtonIcon
+    <AddVaultButton
       variant="outlined"
       color="secondary"
       size="lg"
@@ -18,6 +19,6 @@ export const AddVault = () => {
       onClick={handleNavigate}
     >
       Create new Vault
-    </ButtonIcon>
+    </AddVaultButton>
   );
 };

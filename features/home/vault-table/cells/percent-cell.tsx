@@ -1,11 +1,13 @@
+import { FC } from 'react';
+
+import { Percent } from './styles';
+
 import { formatPercent } from 'utils/format-number';
+import { BaseCellProps } from '../types';
 
-import { BaseCellProps } from './types';
+export const PercentCell: FC<BaseCellProps<number>> = (props) => {
+  const { value } = props;
+  const percent = formatPercent.format(value);
 
-export const PercentCell = (props: BaseCellProps): JSX.Element => {
-  const { value, children } = props;
-  const content = children ?? value;
-  const percent = formatPercent.format(content as number);
-
-  return <>{percent}</>;
+  return <Percent value={value}>{percent}</Percent>;
 };

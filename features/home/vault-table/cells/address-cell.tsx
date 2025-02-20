@@ -1,10 +1,26 @@
+import { FC } from 'react';
+import { useRouter } from 'next/router';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
+
 import { AddressBadge } from 'shared/components/address-badge';
-import { BaseCellProps } from './types';
+import { AddressWrapper } from './styles';
 
-export const AddressCell = ({ value }: BaseCellProps) => {
-  if (typeof value !== 'string') {
-    return null;
-  }
+import { BaseCellProps } from '../types';
 
-  return <AddressBadge address={value} />;
+export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
+  const router = useRouter();
+  const { data } = useEnsName({
+    address: value,
+  });
+
+  const handleClick = () => {
+    void router.push(`/overview/${value}`);
+  };
+
+  return (
+    <AddressWrapper role="link" onClick={handleClick}>
+      <AddressBadge address={data ?? value} />
+    </AddressWrapper>
+  );
 };

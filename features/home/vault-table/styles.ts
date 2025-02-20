@@ -76,6 +76,7 @@ export const TableRow = styled(Tr)`
 export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
   border: 0;
   font-size: ${({ theme, fontSize }) => fontSize ?? theme.fontSizesMap.xs}px;
+  padding: 12px;
 
   &:before,
   &:after {

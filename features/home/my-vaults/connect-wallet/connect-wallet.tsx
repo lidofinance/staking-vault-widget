@@ -1,6 +1,6 @@
 import { useConnect } from 'reef-knot/core-react';
 
-import { Button } from '@lidofinance/lido-ui';
+import { ConnectWalletButton } from 'features/home/styles';
 
 export const ConnectWallet = () => {
   const { connect } = useConnect();
@@ -10,13 +10,13 @@ export const ConnectWallet = () => {
   };
 
   return (
-    <Button
+    <ConnectWalletButton
       variant="outlined"
       color="secondary"
       size="lg"
       onClick={handleConnect}
     >
       Connect wallet to create a vault
-    </Button>
+    </ConnectWalletButton>
   );
 };

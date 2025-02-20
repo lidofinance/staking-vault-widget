@@ -9,24 +9,8 @@ const myVaults: VaultInfo[] = [
     valuation: 66231231223123123233n,
     minted: 4323123312231233123n,
     mintable: 123123231231232312312n,
-    APR: null,
-    healthScore: 150,
-  },
-  {
-    address: 'ensname.eth',
-    valuation: 66231231223123123233n,
-    minted: 4323123312231233123n,
-    mintable: 123123231231232312312n,
-    APR: null,
-    healthScore: 100,
-  },
-  {
-    address: '0xddddE8035D59277f4a44BCf75BeD11E8762c98f4',
-    valuation: 66231231223123123233n,
-    minted: 4323123312231233123n,
-    mintable: 123123231231232312312n,
-    APR: null,
-    healthScore: 150,
+    apr: null,
+    healthScore: 1.2,
   },
 ];
 

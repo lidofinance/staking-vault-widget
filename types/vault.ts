@@ -1,10 +1,20 @@
 import { Address } from 'viem';
 
 export interface VaultInfo {
-  address: Address | string;
+  address: Address;
   valuation: bigint;
   minted: bigint;
   mintable: bigint;
-  APR: null;
+  apr: null;
   healthScore: number;
+}
+
+export interface HubVault {
+  isDisconnected: boolean;
+  reserveRatioBP: number;
+  reserveRatioThresholdBP: number;
+  shareLimit: bigint;
+  sharesMinted: bigint;
+  treasuryFeeBP: number;
+  vault: Address;
 }
