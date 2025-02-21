@@ -97,12 +97,13 @@ export const ArrowAnimated = styled(ArrowBottom)<{
     isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
 `;
 
-export const SortHeader = styled.div`
+export const SortHeader = styled.div<{ align: 'left' | 'right' | 'center' }>`
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
   user-select: none;
+  text-align: ${({ align }) => align};
 
   &:hover {
     color: var(--lido-color-primary);

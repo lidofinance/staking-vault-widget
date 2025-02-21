@@ -18,7 +18,7 @@ export const AddressText = styled(Address)`
   color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: 700;
-  line-height: 1.7em;
+  line-height: 24px;
 `;
 
 export const CloseButton = styled(Button)`

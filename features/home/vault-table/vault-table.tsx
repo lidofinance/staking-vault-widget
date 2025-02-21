@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 
-import { Tbody, Question } from '@lidofinance/lido-ui';
+import { Tbody } from '@lidofinance/lido-ui';
 import { TableCell } from 'features/home/vault-table/table-cell';
 import {
   DefaultCell,
@@ -16,11 +16,11 @@ import {
   TableHead,
   TableRow,
   TableHeaderCell,
-  ArrowAnimated,
-  SortHeader,
 } from './styles';
 
 import { VaultInfo } from 'types';
+import { SortConfig } from './types';
+import { SortableHeader } from './sort-header';
 
 export interface VaultTableProps {
   vaults: VaultInfo[];
@@ -30,10 +30,10 @@ export interface VaultTableProps {
 
 export const VaultTable: FC<VaultTableProps> = (props) => {
   const { vaults, title, showTitle = false } = props;
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof VaultInfo | null;
-    direction: 'asc' | 'desc';
-  }>({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: 'valuation',
+    direction: 'asc',
+  });
   const showTableContent = !!vaults?.length;
   const showTitleWhenNoContent = showTitle || showTableContent;
 
@@ -82,44 +82,36 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
             <TableRow>
               <TableHeaderCell>Vault Address / ENS</TableHeaderCell>
               <TableHeaderCell>
-                <SortHeader onClick={() => handleSort('valuation')}>
-                  Valuation, ETH
-                  <Question />
-                  <ArrowAnimated
-                    isActive={sortConfig.key === 'valuation'}
-                    direction={sortConfig.direction}
-                  />
-                </SortHeader>
+                <SortableHeader
+                  label="Valuation, ETH"
+                  sortKey="valuation"
+                  sortConfig={sortConfig}
+                  onClick={handleSort}
+                />
               </TableHeaderCell>
               <TableHeaderCell>
-                <SortHeader onClick={() => handleSort('minted')}>
-                  stETH Minted/ Mintable
-                  <Question />
-                  <ArrowAnimated
-                    isActive={sortConfig.key === 'minted'}
-                    direction={sortConfig.direction}
-                  />
-                </SortHeader>
+                <SortableHeader
+                  label="stETH Minted/ Mintable"
+                  sortKey="minted"
+                  sortConfig={sortConfig}
+                  onClick={handleSort}
+                />
               </TableHeaderCell>
               <TableHeaderCell>
-                <SortHeader onClick={() => handleSort('apr')}>
-                  apr
-                  <Question />
-                  <ArrowAnimated
-                    isActive={sortConfig.key === 'apr'}
-                    direction={sortConfig.direction}
-                  />
-                </SortHeader>
+                <SortableHeader
+                  label="APR"
+                  sortKey="apr"
+                  sortConfig={sortConfig}
+                  onClick={handleSort}
+                />
               </TableHeaderCell>
               <TableHeaderCell>
-                <SortHeader onClick={() => handleSort('healthScore')}>
-                  Health score
-                  <Question />
-                  <ArrowAnimated
-                    isActive={sortConfig.key === 'healthScore'}
-                    direction={sortConfig.direction}
-                  />
-                </SortHeader>
+                <SortableHeader
+                  label="Health score"
+                  sortKey="healthScore"
+                  sortConfig={sortConfig}
+                  onClick={handleSort}
+                />
               </TableHeaderCell>
             </TableRow>
           </TableHead>
