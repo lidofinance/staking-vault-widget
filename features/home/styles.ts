@@ -31,7 +31,7 @@ export const dashboardButton = css`
 
   & > span {
     font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
-    line-height: 1.7em;
+    line-height: 24px;
     color: ${({ theme }) => theme.colors.textSecondary};
   }
 `;

@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { VaultHubAbi } from 'abi/vault-hub';
 import { DelegationAbi } from 'abi/delegation';
 import { StakingVaultAbi } from 'abi/vault';
-import { VAULt_HUB_BY_NETWORK } from 'consts/vault-hub';
+import { VAULT_HUB_BY_NETWORK } from 'consts/vault-hub';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { HubVault, VaultInfo } from 'types';
 
@@ -40,7 +40,7 @@ export const useVaultData = () => {
       );
 
       const vaultHabContract = getContract({
-        address: VAULt_HUB_BY_NETWORK[CHAINS.Holesky] as Address,
+        address: VAULT_HUB_BY_NETWORK[CHAINS.Holesky] as Address,
         abi: VaultHubAbi,
         client: {
           public: publicClientMainnet,

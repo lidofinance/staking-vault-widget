@@ -8,7 +8,7 @@ export const TableTitle = styled.caption<{ counter: number }>`
   text-align: left;
   font-weight: 700;
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
-  line-height: 1.4em;
+  line-height: 38px;
   user-select: none;
 
   &::after {
@@ -24,7 +24,7 @@ export const TableTitle = styled.caption<{ counter: number }>`
     border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
     font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
     font-weight: normal;
-    line-height: 1.6em;
+    line-height: 20px;
     transform: translateY(-50%);
     color: ${({ theme }) => theme.colors.textSecondary};
     background-color: rgba(
@@ -60,7 +60,7 @@ export const TableHeaderCell = styled(Th)`
 export const TableRow = styled(Tr)`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: normal;
-  line-height: 1.7em;
+  line-height: 24px;
   border: 0;
 
   &:before,
