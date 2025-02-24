@@ -5,11 +5,14 @@ import { Loader, Pagination } from '@lidofinance/lido-ui';
 import { AllVaultsWrapper } from './styles';
 
 import { useVaultData } from 'shared/hooks/use-vault-data';
+import { useVaultsConnected } from 'modules/web3/hooks/use-vaults-connected';
 
 import { VaultInfo } from 'types';
 
 export const AllVaults = () => {
-  const { vaultsData, isLoading } = useVaultData();
+  const { data: connectedVaults, isLoading: isLoadingConnected } =
+    useVaultsConnected();
+  const { vaultsData, isLoading } = useVaultData(connectedVaults);
   const vaults = vaultsData?.vaults ?? [];
   const [paginationIndex, setPaginationIndex] = useState<number>(1);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -38,7 +41,7 @@ export const AllVaults = () => {
       <VaultTable
         title="All Vaults"
         vaults={vaultForRender}
-        showTitle={!isLoading}
+        showTitle={!(isLoadingConnected || isLoading)}
       />
       {vaults.length > 4 && (
         <Pagination

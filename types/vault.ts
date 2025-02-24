@@ -9,7 +9,7 @@ export interface VaultInfo {
   healthScore: number;
 }
 
-export interface HubVault {
+export interface VaultSocket {
   isDisconnected: boolean;
   reserveRatioBP: number;
   reserveRatioThresholdBP: number;

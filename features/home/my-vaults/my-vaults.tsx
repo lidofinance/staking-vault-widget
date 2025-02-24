@@ -7,5 +7,9 @@ import { Wrapper } from './styles';
 export const MyVaults = () => {
   const { address } = useDappStatus();
 
-  return <Wrapper>{!address ? <ConnectWallet /> : <AuthContent />}</Wrapper>;
+  return (
+    <Wrapper>
+      {!address ? <ConnectWallet /> : <AuthContent address={address} />}
+    </Wrapper>
+  );
 };

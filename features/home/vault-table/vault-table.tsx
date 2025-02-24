@@ -23,18 +23,18 @@ import { SortConfig } from './types';
 import { SortableHeader } from './sort-header';
 
 export interface VaultTableProps {
-  vaults: VaultInfo[];
+  vaults?: VaultInfo[];
   title: string;
   showTitle?: boolean;
 }
 
 export const VaultTable: FC<VaultTableProps> = (props) => {
-  const { vaults, title, showTitle = false } = props;
+  const { vaults = [], title, showTitle = false } = props;
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: 'valuation',
     direction: 'asc',
   });
-  const showTableContent = !!vaults?.length;
+  const showTableContent = vaults.length > 0;
   const showTitleWhenNoContent = showTitle || showTableContent;
 
   const handleSort = (key: keyof VaultInfo) => {
