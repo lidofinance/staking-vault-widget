@@ -20,6 +20,7 @@ export const AllVaults = () => {
     vaults.slice(currentIndex, 4),
   );
   const pagesCount = Math.ceil(vaults.length / 4);
+  const showTableTitle = !(isLoadingConnected || isLoading);
 
   useEffect(() => {
     if (vaultsData?.vaults) {
@@ -41,7 +42,7 @@ export const AllVaults = () => {
       <VaultTable
         title="All Vaults"
         vaults={vaultForRender}
-        showTitle={!(isLoadingConnected || isLoading)}
+        showTitle={showTableTitle}
       />
       {vaults.length > 4 && (
         <Pagination
