@@ -11,7 +11,9 @@ export interface TableCellProps extends TdProps {
   children: ReactNode;
 }
 
-export interface SortConfig {
+export type SortDirection = 'asc' | 'desc';
+
+export type SortConfig = {
   key: keyof VaultInfo;
-  direction: 'asc' | 'desc';
-}
+  direction: SortDirection;
+};

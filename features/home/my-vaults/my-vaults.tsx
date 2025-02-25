@@ -1,7 +1,7 @@
 import { useDappStatus } from 'modules/web3';
 
 import { ConnectWallet } from 'features/home/my-vaults/connect-wallet';
-import { AuthContent } from 'features/home/my-vaults/auth-content';
+import { ConnectedWalletContent } from 'features/home/my-vaults/auth-content';
 import { Wrapper } from './styles';
 
 export const MyVaults = () => {
@@ -9,7 +9,11 @@ export const MyVaults = () => {
 
   return (
     <Wrapper>
-      {!address ? <ConnectWallet /> : <AuthContent address={address} />}
+      {!address ? (
+        <ConnectWallet />
+      ) : (
+        <ConnectedWalletContent address={address} />
+      )}
     </Wrapper>
   );
 };

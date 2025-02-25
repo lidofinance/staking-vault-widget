@@ -17,6 +17,7 @@ import {
 import { LidoSDKWrap } from '@lidofinance/lido-ethereum-sdk/wrap';
 import { LidoSDKWithdraw } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { LidoSDKStatistics } from '@lidofinance/lido-ethereum-sdk/statistics';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 
 import { config } from 'config';
 import { useTokenTransferSubscription } from 'modules/web3/hooks/use-balance';
@@ -27,6 +28,7 @@ type LidoSDKContextValue = {
   core: LidoSDKCore;
   stake: LidoSDKStake;
   stETH: LidoSDKstETH;
+  shares: LidoSDKShares;
   wstETH: LidoSDKwstETH;
   wrap: LidoSDKWrap;
   withdraw: LidoSDKWithdraw;
@@ -80,6 +82,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
 
     const stake = new LidoSDKStake({ core });
     const stETH = new LidoSDKstETH({ core });
+    const shares = new LidoSDKShares({ core });
     const wstETH = new LidoSDKwstETH({ core });
     const wrap = new LidoSDKWrap({ core });
     const withdraw = new LidoSDKWithdraw({ core });
@@ -90,6 +93,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       core,
       stake,
       stETH,
+      shares,
       wstETH,
       wrap,
       withdraw,

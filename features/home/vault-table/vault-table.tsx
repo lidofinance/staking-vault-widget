@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC } from 'react';
 
 import { Tbody } from '@lidofinance/lido-ui';
 import { TableCell } from 'features/home/vault-table/table-cell';
@@ -9,7 +9,7 @@ import {
   PercentCell,
   MintCell,
 } from 'features/home/vault-table/cells';
-
+import { SortableHeader } from 'features/home/vault-table/sort-header';
 import {
   TableTitle,
   TableStyled,
@@ -18,9 +18,9 @@ import {
   TableHeaderCell,
 } from './styles';
 
+import { useTableSort } from 'features/home/vault-table/hooks';
+
 import { VaultInfo } from 'types';
-import { SortConfig } from './types';
-import { SortableHeader } from './sort-header';
 
 export interface VaultTableProps {
   vaults?: VaultInfo[];
@@ -30,45 +30,12 @@ export interface VaultTableProps {
 
 export const VaultTable: FC<VaultTableProps> = (props) => {
   const { vaults = [], title, showTitle = false } = props;
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
+  const { sortedItems, sortConfig, handleSort } = useTableSort(vaults, {
     key: 'valuation',
     direction: 'asc',
   });
   const showTableContent = vaults.length > 0;
   const showTitleWhenNoContent = showTitle || showTableContent;
-
-  const handleSort = (key: keyof VaultInfo) => {
-    setSortConfig((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
-  const sortedVaults = useMemo(() => {
-    if (!sortConfig.key) {
-      return vaults;
-    }
-
-    const { key } = sortConfig;
-    return [...vaults].sort((a, b) => {
-      let aValue = a[key] ?? 0;
-      let bValue = b[key] ?? 0;
-
-      if (sortConfig.direction !== 'asc') {
-        const temp = aValue;
-        aValue = bValue;
-        bValue = temp;
-      }
-
-      if (aValue > bValue) {
-        return 1;
-      } else if (bValue > aValue) {
-        return -1;
-      }
-
-      return 0;
-    });
-  }, [vaults, sortConfig]);
 
   return (
     <TableStyled>
@@ -116,7 +83,7 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
             </TableRow>
           </TableHead>
           <Tbody>
-            {sortedVaults.map((vault) => {
+            {sortedItems.map((vault) => {
               return (
                 <TableRow key={vault.address}>
                   <TableCell>

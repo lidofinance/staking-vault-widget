@@ -10,3 +10,5 @@ export const VAULT_HUB_BY_NETWORK: {
 
 export const getVaultHubAddress = (chainId: CHAINS): Address | undefined =>
   VAULT_HUB_BY_NETWORK?.[chainId];
+
+export const VAULT_TOTAL_BASIS_POINTS = 100_00;

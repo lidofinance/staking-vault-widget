@@ -4,29 +4,22 @@ import { VaultTable } from 'features/home/vault-table';
 import { Loader, Pagination } from '@lidofinance/lido-ui';
 import { AllVaultsWrapper } from './styles';
 
-import { useVaultData } from 'shared/hooks/use-vault-data';
-import { useVaultsConnected } from 'modules/web3/hooks/use-vaults-connected';
+import { useVaultsDataAll } from 'modules/web3/hooks/use-vaults-data-all';
 
 import { VaultInfo } from 'types';
 
 export const AllVaults = () => {
-  const { data: connectedVaults, isLoading: isLoadingConnected } =
-    useVaultsConnected();
-  const { vaultsData, isLoading } = useVaultData(connectedVaults);
-  const vaults = vaultsData?.vaults ?? [];
+  const { vaults = [], isLoading } = useVaultsDataAll();
   const [paginationIndex, setPaginationIndex] = useState<number>(1);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [vaultForRender, setVaultForRender] = useState<VaultInfo[]>(() =>
-    vaults.slice(currentIndex, 4),
-  );
+  const [vaultForRender, setVaultForRender] = useState<VaultInfo[]>(vaults);
   const pagesCount = Math.ceil(vaults.length / 4);
-  const showTableTitle = !(isLoadingConnected || isLoading);
 
   useEffect(() => {
-    if (vaultsData?.vaults) {
-      setVaultForRender(vaultsData?.vaults.slice(0, 4));
+    if (vaults?.length) {
+      setVaultForRender(vaults.slice(0, 4));
     }
-  }, [vaultsData?.vaults]);
+  }, [vaults]);
 
   const handleItemClick = (index: number) => {
     const newCurrentIndex =
@@ -42,7 +35,7 @@ export const AllVaults = () => {
       <VaultTable
         title="All Vaults"
         vaults={vaultForRender}
-        showTitle={showTableTitle}
+        showTitle={!isLoading}
       />
       {vaults.length > 4 && (
         <Pagination

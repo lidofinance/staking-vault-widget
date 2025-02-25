@@ -1,18 +1,17 @@
 import { Address } from 'viem';
-import { useQuery } from '@tanstack/react-query';
+import { useReadContract, useChainId } from 'wagmi';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 
-import { getVaultHubViewerContract } from 'modules/web3/contracts/vault-hub-viewer';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { VaultHubViewerAbi } from 'abi/vault-hub-viewer';
+import { VAULT_HUB_VIEWER_BY_NETWORK } from 'consts/vault-hub-viewer';
 
 export const useVaultsConnected = () => {
-  const vaultHubViewer = getVaultHubViewerContract();
+  const chainId = useChainId();
 
-  return useQuery({
-    queryKey: ['use-vaults-connected'],
-    enabled: !!vaultHubViewer,
-    ...STRATEGY_LAZY,
-    queryFn: async () => {
-      return (await vaultHubViewer.read.vaultsConnected()) as Address[];
-    },
+  return useReadContract({
+    abi: VaultHubViewerAbi,
+    address: VAULT_HUB_VIEWER_BY_NETWORK[chainId as CHAINS] as Address,
+    functionName: 'vaultsConnected',
+    chainId,
   });
 };

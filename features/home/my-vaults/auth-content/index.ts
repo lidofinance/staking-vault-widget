@@ -1,1 +1,1 @@
-export * from './auth-content';
+export * from './connected-wallet-content';
