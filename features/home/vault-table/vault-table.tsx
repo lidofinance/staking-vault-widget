@@ -8,8 +8,8 @@ import {
   AddressCell,
   PercentCell,
   MintCell,
+  HeaderCell,
 } from 'features/home/vault-table/cells';
-import { SortableHeader } from 'features/home/vault-table/sort-header';
 import {
   TableTitle,
   TableStyled,
@@ -17,8 +17,6 @@ import {
   TableRow,
   TableHeaderCell,
 } from './styles';
-
-import { useTableSort } from 'features/home/vault-table/hooks';
 
 import { VaultInfo } from 'types';
 
@@ -28,12 +26,31 @@ export interface VaultTableProps {
   showTitle?: boolean;
 }
 
+const tableHeaders = [
+  {
+    title: 'Vault Address / ENS',
+    showQuestion: false,
+  },
+  {
+    title: 'Valuation, ETH',
+    showQuestion: true,
+  },
+  {
+    title: 'stETH Minted/ Mintable',
+    showQuestion: true,
+  },
+  {
+    title: 'APR',
+    showQuestion: true,
+  },
+  {
+    title: 'Health score',
+    showQuestion: true,
+  },
+];
+
 export const VaultTable: FC<VaultTableProps> = (props) => {
   const { vaults = [], title, showTitle = false } = props;
-  const { sortedItems, sortConfig, handleSort } = useTableSort(vaults, {
-    key: 'valuation',
-    direction: 'asc',
-  });
   const showTableContent = vaults.length > 0;
   const showTitleWhenNoContent = showTitle || showTableContent;
 
@@ -47,43 +64,15 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
         <>
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Vault Address / ENS</TableHeaderCell>
-              <TableHeaderCell>
-                <SortableHeader
-                  label="Valuation, ETH"
-                  sortKey="valuation"
-                  sortConfig={sortConfig}
-                  onClick={handleSort}
-                />
-              </TableHeaderCell>
-              <TableHeaderCell>
-                <SortableHeader
-                  label="stETH Minted/ Mintable"
-                  sortKey="minted"
-                  sortConfig={sortConfig}
-                  onClick={handleSort}
-                />
-              </TableHeaderCell>
-              <TableHeaderCell>
-                <SortableHeader
-                  label="APR"
-                  sortKey="apr"
-                  sortConfig={sortConfig}
-                  onClick={handleSort}
-                />
-              </TableHeaderCell>
-              <TableHeaderCell>
-                <SortableHeader
-                  label="Health score"
-                  sortKey="healthScore"
-                  sortConfig={sortConfig}
-                  onClick={handleSort}
-                />
-              </TableHeaderCell>
+              {tableHeaders.map(({ title, showQuestion }) => (
+                <TableHeaderCell key={title}>
+                  <HeaderCell title={title} showQuestion={showQuestion} />
+                </TableHeaderCell>
+              ))}
             </TableRow>
           </TableHead>
           <Tbody>
-            {sortedItems.map((vault) => {
+            {vaults?.map((vault) => {
               return (
                 <TableRow key={vault.address}>
                   <TableCell>

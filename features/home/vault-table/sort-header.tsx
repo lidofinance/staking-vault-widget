@@ -1,5 +1,6 @@
-import { Question } from '@lidofinance/lido-ui';
+import { FC } from 'react';
 
+import { Question } from '@lidofinance/lido-ui';
 import { ArrowAnimated, SortHeader } from './styles';
 
 import { VaultInfo } from 'types';
@@ -10,24 +11,20 @@ export type SortableHeaderProps = {
   sortKey: keyof VaultInfo;
   label: string;
   onClick: (sortKey: keyof VaultInfo) => void;
-  align?: 'left' | 'right' | 'center';
+  showQuestion?: boolean;
 };
 
-export const SortableHeader = ({
+export const SortableHeader: FC<SortableHeaderProps> = ({
   onClick,
   sortConfig,
   sortKey,
   label,
-  align = 'center',
-}: SortableHeaderProps) => {
+  showQuestion = true,
+}) => {
   return (
-    <SortHeader
-      onClick={() => onClick(sortKey)}
-      role="columnheader"
-      align={align}
-    >
+    <SortHeader onClick={() => onClick(sortKey)} role="columnheader">
       {label}
-      <Question />
+      {showQuestion && <Question />}
       <ArrowAnimated
         isActive={sortConfig.key === 'valuation'}
         direction={sortConfig.direction}

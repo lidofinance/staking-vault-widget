@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Table, Thead, Tr, Th, ArrowBottom, Td } from '@lidofinance/lido-ui';
 
 export const TableTitle = styled.caption<{ counter: number }>`
@@ -49,11 +49,20 @@ export const TableHead = styled(Thead)`
 
 export const TableHeaderCell = styled(Th)`
   padding: 24px 0 16px;
+  text-align: center;
 
   & > div {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
+  }
+
+  &:first-child {
+    text-align: left;
+  }
+
+  &:last-child {
+    text-align: right;
   }
 `;
 
@@ -77,10 +86,15 @@ export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
   border: 0;
   font-size: ${({ theme, fontSize }) => fontSize ?? theme.fontSizesMap.xs}px;
   padding: 12px;
+  text-align: center;
 
   &:before,
   &:after {
     border: 0;
+  }
+
+  &:first-of-type {
+    text-align: start;
   }
 
   &:last-of-type {
@@ -97,13 +111,22 @@ export const ArrowAnimated = styled(ArrowBottom)<{
     isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
 `;
 
-export const SortHeader = styled.div<{ align: 'left' | 'right' | 'center' }>`
-  cursor: pointer;
-  display: flex;
+const headerCell = css`
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spaceMap.xs}px;
+  text-align: center;
   user-select: none;
-  text-align: ${({ align }) => align};
+`;
+
+export const CommonHeader = styled.div`
+  ${headerCell};
+`;
+
+export const SortHeader = styled.div`
+  ${headerCell};
+  cursor: pointer;
 
   &:hover {
     color: var(--lido-color-primary);
