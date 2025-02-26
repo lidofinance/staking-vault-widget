@@ -6,11 +6,7 @@ import { useVaultsByOwner } from 'modules/web3/hooks/use-vaults-by-owner';
 export const useVaultsDataByOwner = (address: Address) => {
   const { data: ownerVaults, isLoading: isLoadingVaultsByOwner } =
     useVaultsByOwner(address);
-  const {
-    data: vaults,
-    isLoading,
-    ...rest
-  } = useVaultData(ownerVaults as Address[] | undefined);
+  const { data: vaults, isLoading, ...rest } = useVaultData(ownerVaults);
 
   return {
     vaults,

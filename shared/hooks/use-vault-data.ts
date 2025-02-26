@@ -9,7 +9,10 @@ import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { getHealthScore } from 'utils/get-health-score';
 import { VaultSocket, VaultInfo } from 'types';
 
-export const useVaultData = (vaultsAddressesList: Address[] = []) => {
+// TODO: find way to remove readonly
+export const useVaultData = (
+  vaultsAddressesList: readonly Address[] | undefined = [],
+) => {
   const { shares } = useLidoSDK();
 
   return useQuery({

@@ -1,4 +1,3 @@
-import { Address } from 'viem';
 import { useReadContract, useChainId } from 'wagmi';
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 
@@ -10,7 +9,7 @@ export const useVaultsConnected = () => {
 
   return useReadContract({
     abi: VaultHubViewerAbi,
-    address: VAULT_HUB_VIEWER_BY_NETWORK[chainId as CHAINS] as Address,
+    address: VAULT_HUB_VIEWER_BY_NETWORK[chainId as CHAINS],
     functionName: 'vaultsConnected',
     chainId,
   });
