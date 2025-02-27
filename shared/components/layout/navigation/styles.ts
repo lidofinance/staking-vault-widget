@@ -1,13 +1,14 @@
-import { Container } from '@lidofinance/lido-ui';
 import styled from 'styled-components';
+import Link from 'next/link';
+import { ArrowBack } from '@lidofinance/lido-ui';
 import { devicesHeaderMedia } from 'styles/global';
 
-export const Nav = styled(Container)`
+export const Nav = styled.nav<{ showNavigation: boolean }>`
+  --nav-size: 154px;
   grid-area: nav;
   z-index: 6;
-  display: flex;
+  display: ${({ showNavigation }) => (showNavigation ? 'flex' : 'none')};
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.lg}px;
   overflow: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
@@ -18,6 +19,15 @@ export const Nav = styled(Container)`
   svg {
     margin-right: 8px;
   }
+`;
+
+export const NavList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spaceMap.lg}px;
+  list-style-type: none;
 `;
 
 export const ListItem = styled.div`
@@ -56,4 +66,37 @@ export const NavLink = styled.span<{ active: boolean }>`
   @media ${devicesHeaderMedia.mobile} {
     // TODO
   }
+`;
+
+export const AllVaults = styled(Link)`
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  line-height: 20px;
+  color: var(--lido-color-secondary);
+  opacity: 0.8;
+
+  svg {
+    opacity: 0.9;
+  }
+
+  &:visited,
+  &:hover {
+    color: var(--lido-color-secondary);
+  }
+
+  &:hover {
+    opacity: 1;
+
+    svg {
+      opacity: 1;
+    }
+  }
+`;
+
+export const ArrowBackStyled = styled(ArrowBack)`
+  width: 14px;
+  height: 14px;
+  margin-right: ${({ theme }) => theme.spaceMap.sm}px;
 `;

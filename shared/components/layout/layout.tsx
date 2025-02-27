@@ -19,17 +19,16 @@ type LayoutProps = {
   title?: ReactNode;
   subtitle?: ReactNode;
   containerSize?: ContainerProps['size'];
-  showNavigation?: boolean;
 };
 
 export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
-  const { title, subtitle, containerSize, showNavigation = true } = props;
+  const { title, subtitle, containerSize } = props;
   const { children } = props;
 
   return (
     <LayoutStyles>
       <Header />
-      {showNavigation && <Navigation />}
+      <Navigation />
       <Main size={containerSize}>
         {config.ipfsMode && (
           <IPFSInfoBoxOnlyMobileAndPortableWrapper>

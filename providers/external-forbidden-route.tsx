@@ -7,7 +7,7 @@ import {
   ManifestConfigPage,
   ManifestConfigPageEnum,
 } from 'config/external-config';
-import { HOME_PATH } from 'consts/urls';
+import { AppPaths } from 'consts/urls';
 
 import { LayoutEffectSsrDelayed } from 'shared/components/layout-effect-ssr-delayed';
 
@@ -34,7 +34,7 @@ export const ExternalForbiddenRouteProvider = ({
         pages[forbiddenPath]?.shouldDisable
       ) {
         setShowContent(false);
-        void router.push(HOME_PATH).finally(() => setShowContent(true));
+        void router.push(AppPaths.HOME).finally(() => setShowContent(true));
       }
     }
   }, [pages, path, router]);

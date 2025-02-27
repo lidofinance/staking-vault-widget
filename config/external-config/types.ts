@@ -22,6 +22,7 @@ export type ManifestConfig = {
 export enum ManifestConfigPageEnum {
   main = '/',
   settings = '/settings',
+  createVault = '/settings/create-vault',
 }
 
 export type ManifestConfigPage = `${ManifestConfigPageEnum}`;

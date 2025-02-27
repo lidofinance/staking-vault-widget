@@ -9,7 +9,7 @@ import { PageWrapper } from './styles';
 
 export const HomePage: FC = () => {
   return (
-    <Layout containerSize="content" showNavigation={false}>
+    <Layout containerSize="content">
       <Head>
         <title>Vault | Lido</title>
       </Head>

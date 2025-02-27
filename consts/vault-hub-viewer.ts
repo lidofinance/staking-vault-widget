@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 
-// TODO: discuss move to lido-locator
+// TODO: get address from lido-locator
 export const VAULT_HUB_VIEWER_BY_NETWORK: {
   [key in CHAINS]?: Address;
 } = {

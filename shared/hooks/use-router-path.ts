@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router';
 
 import { config } from 'config';
-import { HOME_PATH } from 'consts/urls';
+import { AppPaths } from 'consts/urls';
 
 export const useRouterPath = () => {
   const router = useRouter();
 
   if (config.ipfsMode) {
-    if (!config.isClientSide) return HOME_PATH;
-    return location.hash.replace('#', '') || HOME_PATH;
+    if (!config.isClientSide) return AppPaths.HOME;
+    return location.hash.replace('#', '') || AppPaths.HOME;
   }
 
   // TODO: fix description

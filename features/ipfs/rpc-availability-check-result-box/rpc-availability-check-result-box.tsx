@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Check, Close } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
-import { SETTINGS_PATH } from 'consts/urls';
+import { AppPaths } from 'consts/urls';
 import { useIPFSInfoBoxStatuses } from 'providers/ipfs-info-box-statuses';
 import { usePrefixedPush } from 'shared/hooks/use-prefixed-history';
 import { LinkArrow } from 'shared/components/link-arrow/link-arrow';
@@ -17,7 +17,7 @@ export const RPCAvailabilityCheckResultBox = () => {
   const push = usePrefixedPush();
 
   const handleClickSettings = useCallback(() => {
-    void push(SETTINGS_PATH);
+    void push(AppPaths.SETTINGS);
     handleClickDismiss();
   }, [push, handleClickDismiss]);
 
