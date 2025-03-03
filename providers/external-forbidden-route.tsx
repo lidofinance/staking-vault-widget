@@ -34,7 +34,7 @@ export const ExternalForbiddenRouteProvider = ({
         pages[forbiddenPath]?.shouldDisable
       ) {
         setShowContent(false);
-        void router.push(AppPaths.HOME).finally(() => setShowContent(true));
+        void router.push(AppPaths.main).finally(() => setShowContent(true));
       }
     }
   }, [pages, path, router]);

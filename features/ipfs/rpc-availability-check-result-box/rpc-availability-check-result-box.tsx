@@ -17,7 +17,7 @@ export const RPCAvailabilityCheckResultBox = () => {
   const push = usePrefixedPush();
 
   const handleClickSettings = useCallback(() => {
-    void push(AppPaths.SETTINGS);
+    void push(AppPaths.settings);
     handleClickDismiss();
   }, [push, handleClickDismiss]);
 

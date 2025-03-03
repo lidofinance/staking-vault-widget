@@ -9,7 +9,7 @@ export const AddVault = () => {
   const router = useRouter();
 
   const handleNavigate = () => {
-    void router.push(AppPaths.CREATE_VAULT);
+    void router.push(AppPaths.createVault);
   };
 
   return (

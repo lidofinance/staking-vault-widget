@@ -19,7 +19,7 @@ export class WidgetPage {
   }
 
   async goto() {
-    await this.page.goto(AppPaths.HOME);
+    await this.page.goto(AppPaths.main);
     await expect(this.title).toBeVisible();
   }
 }

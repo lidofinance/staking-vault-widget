@@ -6,7 +6,8 @@ import { useEnsName } from 'wagmi';
 import { AddressBadge } from 'shared/components/address-badge';
 import { AddressWrapper } from './styles';
 
-import { BaseCellProps } from '../types';
+import { AppPaths } from 'consts/urls';
+import { BaseCellProps } from 'features/home/vault-table/types';
 
 export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   const router = useRouter();
@@ -15,7 +16,7 @@ export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   });
 
   const handleClick = () => {
-    void router.push(`/overview/${value}`);
+    void router.push(`${AppPaths.overview}/${value}`);
   };
 
   return (

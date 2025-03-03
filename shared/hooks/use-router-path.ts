@@ -7,8 +7,8 @@ export const useRouterPath = () => {
   const router = useRouter();
 
   if (config.ipfsMode) {
-    if (!config.isClientSide) return AppPaths.HOME;
-    return location.hash.replace('#', '') || AppPaths.HOME;
+    if (!config.isClientSide) return AppPaths.main;
+    return location.hash.replace('#', '') || AppPaths.main;
   }
 
   // TODO: fix description

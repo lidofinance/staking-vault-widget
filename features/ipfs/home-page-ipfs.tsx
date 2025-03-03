@@ -16,8 +16,8 @@ import SettingsPage from 'pages/settings';
  */
 
 const IPFS_ROUTABLE_PAGES = [
-  // AppPaths.HOME not need here
-  getPathWithoutFirstSlash(AppPaths.SETTINGS),
+  // AppPaths.main not need here
+  getPathWithoutFirstSlash(AppPaths.settings),
 ];
 
 export const HomePageIpfs: FC = () => {
@@ -34,7 +34,7 @@ export const HomePageIpfs: FC = () => {
 
   useEffect(() => {
     if (parsedPath[0] && !IPFS_ROUTABLE_PAGES.includes(parsedPath[0])) {
-      void replace(AppPaths.HOME, router.query as Record<string, string>);
+      void replace(AppPaths.main, router.query as Record<string, string>);
     }
   }, [replace, parsedPath, router.query]);
 
@@ -47,7 +47,7 @@ export const HomePageIpfs: FC = () => {
   let spaPage;
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (parsedPath[0]) {
-    case getPathWithoutFirstSlash(AppPaths.SETTINGS): {
+    case getPathWithoutFirstSlash(AppPaths.settings): {
       spaPage = <SettingsPage />;
       break;
     }

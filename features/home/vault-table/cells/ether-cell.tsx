@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { formatEther } from 'viem';
 
-import { BaseCellProps } from '../types';
+import { formatBalance } from 'utils';
+import { BaseCellProps } from 'features/home/vault-table/types';
 
 export const EtherCell: FC<BaseCellProps<bigint>> = ({ value }) => {
-  return <>{Number(formatEther(BigInt(value))).toFixed(5)}</>;
+  return <>{formatBalance(value, { maxDecimalDigits: 5 })}</>;
 };

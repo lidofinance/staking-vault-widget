@@ -10,11 +10,11 @@ import { HeaderControlButton } from './header-control-button';
 export const HeaderSettingsButton = () => {
   const push = usePrefixedPush();
   const route = useRouterPath();
-  const handleClick = useCallback(() => push(AppPaths.SETTINGS), [push]);
+  const handleClick = useCallback(() => push(AppPaths.settings), [push]);
 
   return (
     <HeaderControlButton
-      isActive={route === AppPaths.SETTINGS}
+      isActive={route === AppPaths.settings}
       onClick={handleClick}
     >
       <GearIcon />

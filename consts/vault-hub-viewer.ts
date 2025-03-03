@@ -12,3 +12,5 @@ export const VAULT_HUB_VIEWER_BY_NETWORK: {
 export const getVaultHubViewerAddress = (
   chainId: CHAINS,
 ): Address | undefined => VAULT_HUB_VIEWER_BY_NETWORK?.[chainId];
+
+export const VAULTS_PER_PAGE = 4;

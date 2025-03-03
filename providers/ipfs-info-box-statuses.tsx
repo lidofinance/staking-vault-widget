@@ -70,7 +70,7 @@ export const IPFSInfoBoxStatusesProvider: FC<PropsWithChildren> = ({
   const isRPCAvailable = isRPCAvailableRaw === true;
 
   const pathname = useRouterPath();
-  const isSettingsPage = pathname === AppPaths.SETTINGS;
+  const isSettingsPage = pathname === AppPaths.settings;
 
   const isShownTheRPCNotAvailableBox =
     (!isDismissed || !isRPCAvailable) &&

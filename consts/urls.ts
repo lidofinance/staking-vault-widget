@@ -1,9 +1,5 @@
 // TODO: path + basePath
-export enum AppPaths {
-  HOME = '/',
-  SETTINGS = '/settings',
-  CREATE_VAULT = '/settings/create',
-}
+export { ManifestConfigPageEnum as AppPaths } from 'config/external-config';
 
 export const getPathWithoutFirstSlash = (path: string): string => {
   if (path.length === 0 || path[0] !== '/') return path;

@@ -30,13 +30,13 @@ type PageRoute = {
 const routes: PageRoute[] = [
   {
     name: 'Home',
-    path: AppPaths.HOME,
+    path: AppPaths.main,
     icon: <Stake data-testid="navHome" />,
     exact: true,
   },
   {
     name: 'Settings',
-    path: AppPaths.SETTINGS,
+    path: AppPaths.settings,
     icon: <GearIcon data-testid="navSettings" />,
     exact: true,
   },
@@ -45,7 +45,7 @@ const routes: PageRoute[] = [
 export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
-  const showNavigation = pathname !== AppPaths.HOME && isWalletConnected;
+  const showNavigation = pathname !== AppPaths.main && isWalletConnected;
 
   const {
     externalConfig: { pages },
@@ -70,7 +70,7 @@ export const Navigation: FC = memo(() => {
 
   return (
     <Nav showNavigation={showNavigation}>
-      <AllVaults href={AppPaths.HOME}>
+      <AllVaults href={AppPaths.main}>
         <ArrowBackStyled />
         &nbsp;
         <span>All vaults</span>
