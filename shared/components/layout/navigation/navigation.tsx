@@ -1,19 +1,28 @@
-import { FC, memo, useMemo } from 'react';
+import { FC, memo, useMemo, ReactNode } from 'react';
 import { Stake } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
-import { HOME_PATH, getPathWithoutFirstSlash } from 'consts/urls';
+import { getPathWithoutFirstSlash, AppPaths } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
 import { useRouterPath } from 'shared/hooks/use-router-path';
-import { LocalLink } from 'shared/components/local-link';
+import { useDappStatus } from 'modules/web3';
 
-import { ListItem, NavLink, Nav } from './styles';
+import { LocalLink } from 'shared/components/local-link';
+import { SelectAddress } from 'shared/components/layout/navigation/select-address';
+import {
+  ListItem,
+  NavLink,
+  Nav,
+  AllVaults,
+  ArrowBackStyled,
+  NavList,
+} from './styles';
 
 type PageRoute = {
   name: string;
   path: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   exact?: boolean;
   full_path?: string;
   subPaths?: string[];
@@ -21,13 +30,13 @@ type PageRoute = {
 const routes: PageRoute[] = [
   {
     name: 'Home',
-    path: HOME_PATH,
+    path: AppPaths.main,
     icon: <Stake data-testid="navHome" />,
     exact: true,
   },
   {
     name: 'Settings',
-    path: '/settings',
+    path: AppPaths.settings,
     icon: <GearIcon data-testid="navSettings" />,
     exact: true,
   },
@@ -35,6 +44,9 @@ const routes: PageRoute[] = [
 
 export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
+  const { isWalletConnected } = useDappStatus();
+  const showNavigation = pathname !== AppPaths.main && isWalletConnected;
+
   const {
     externalConfig: { pages },
   } = useConfig();
@@ -51,31 +63,39 @@ export const Navigation: FC = memo(() => {
   }, [pages]);
 
   let pathnameWithoutQuery = pathname.split('?')[0];
-  if (pathnameWithoutQuery[pathnameWithoutQuery.length - 1] === '/') {
+  if (pathnameWithoutQuery.endsWith('/')) {
     // Remove last '/'
     pathnameWithoutQuery = pathnameWithoutQuery.slice(0, -1);
   }
 
   return (
-    <Nav>
-      {availableRoutes.map(({ name, path, subPaths, icon }) => {
-        const isActive =
-          pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
-          (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
-          (Array.isArray(subPaths) &&
-            subPaths?.indexOf(pathnameWithoutQuery) > -1);
+    <Nav showNavigation={showNavigation}>
+      <AllVaults href={AppPaths.main}>
+        <ArrowBackStyled />
+        &nbsp;
+        <span>All vaults</span>
+      </AllVaults>
+      <SelectAddress />
+      <NavList>
+        {availableRoutes.map(({ name, path, subPaths, icon }) => {
+          const isActive =
+            pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
+            (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
+            (Array.isArray(subPaths) &&
+              subPaths?.indexOf(pathnameWithoutQuery) > -1);
 
-        return (
-          <ListItem key={path}>
-            <LocalLink href={path}>
-              <NavLink active={isActive}>
-                {icon}
-                <span>{name}</span>
-              </NavLink>
-            </LocalLink>
-          </ListItem>
-        );
-      })}
+          return (
+            <ListItem key={path}>
+              <LocalLink href={path}>
+                <NavLink active={isActive}>
+                  {icon}
+                  <span>{name}</span>
+                </NavLink>
+              </LocalLink>
+            </ListItem>
+          );
+        })}
+      </NavList>
     </Nav>
   );
 });

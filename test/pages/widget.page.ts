@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { HOME_PATH } from 'consts/urls';
+import { AppPaths } from 'consts/urls';
 
 export class WidgetPage {
   readonly page: Page;
@@ -19,7 +19,7 @@ export class WidgetPage {
   }
 
   async goto() {
-    await this.page.goto(HOME_PATH);
+    await this.page.goto(AppPaths.main);
     await expect(this.title).toBeVisible();
   }
 }

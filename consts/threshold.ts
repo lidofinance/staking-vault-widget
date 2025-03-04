@@ -1,0 +1,3 @@
+export const VAULT_GREEN_HEATH_PERCENT = 100;
+export const VAULT_YELLOW_HEATH_PERCENT = 91;
+export const VAULT_RED_HEATH_PERCENT = 90;

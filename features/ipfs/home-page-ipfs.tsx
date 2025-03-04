@@ -1,11 +1,7 @@
 import { FC, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import {
-  getPathWithoutFirstSlash,
-  HOME_PATH,
-  SETTINGS_PATH,
-} from 'consts/urls';
+import { getPathWithoutFirstSlash, AppPaths } from 'consts/urls';
 import NoSSRWrapper from 'shared/components/no-ssr-wrapper';
 import { usePrefixedReplace } from 'shared/hooks/use-prefixed-history';
 
@@ -20,8 +16,8 @@ import SettingsPage from 'pages/settings';
  */
 
 const IPFS_ROUTABLE_PAGES = [
-  // HOME_PATH not need here
-  getPathWithoutFirstSlash(SETTINGS_PATH),
+  // AppPaths.main not need here
+  getPathWithoutFirstSlash(AppPaths.settings),
 ];
 
 export const HomePageIpfs: FC = () => {
@@ -38,7 +34,7 @@ export const HomePageIpfs: FC = () => {
 
   useEffect(() => {
     if (parsedPath[0] && !IPFS_ROUTABLE_PAGES.includes(parsedPath[0])) {
-      void replace(HOME_PATH, router.query as Record<string, string>);
+      void replace(AppPaths.main, router.query as Record<string, string>);
     }
   }, [replace, parsedPath, router.query]);
 
@@ -51,7 +47,7 @@ export const HomePageIpfs: FC = () => {
   let spaPage;
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (parsedPath[0]) {
-    case getPathWithoutFirstSlash(SETTINGS_PATH): {
+    case getPathWithoutFirstSlash(AppPaths.settings): {
       spaPage = <SettingsPage />;
       break;
     }

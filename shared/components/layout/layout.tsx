@@ -15,13 +15,13 @@ import {
   LayoutStyles,
 } from './styles';
 
-type Props = {
+type LayoutProps = {
   title?: ReactNode;
   subtitle?: ReactNode;
   containerSize?: ContainerProps['size'];
 };
 
-export const Layout: FC<PropsWithChildren<Props>> = (props) => {
+export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
   const { title, subtitle, containerSize } = props;
   const { children } = props;
 
