@@ -11,15 +11,23 @@ export const useVaultsDataAll = () => {
     page: 1,
   });
 
-  const { data: addressesWithBound, isLoading: isLoadingConnected } =
-    useVaultsConnectedBound(from, to);
+  const {
+    data: addressesWithBound,
+    isLoading: isLoadingConnected,
+    isError: isErrorConnected,
+  } = useVaultsConnectedBound(from, to);
   const [connectedVaults, pages] = addressesWithBound ?? [];
-  const { data: vaults, isLoading, ...rest } = useVaultData(connectedVaults);
+  const {
+    data: vaults,
+    isLoading,
+    isError: isVaultsDataError,
+    ...rest
+  } = useVaultData(connectedVaults);
 
   const handlePagination = useCallback((page: number) => {
     const toCursor = page * VAULTS_PER_PAGE - 1;
     const fromCursor = toCursor - VAULTS_PER_PAGE;
-    // TODO: refactor. Waiting for Holesky
+    // TODO: refactor. Waiting for devnet
     setPaginationData({ from: toCursor, to: fromCursor, page });
   }, []);
 
@@ -28,6 +36,7 @@ export const useVaultsDataAll = () => {
     pagesCount: Number(pages),
     isLoading: isLoadingConnected || isLoading,
     handlePagination,
+    isError: isErrorConnected || isVaultsDataError,
     ...rest,
   };
 };
