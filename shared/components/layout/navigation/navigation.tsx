@@ -46,6 +46,7 @@ export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
+  const showNavList = pathname !== AppPaths.createVault;
 
   const {
     externalConfig: { pages },
@@ -75,27 +76,31 @@ export const Navigation: FC = memo(() => {
         &nbsp;
         <span>All vaults</span>
       </AllVaults>
-      <SelectAddress />
-      <NavList>
-        {availableRoutes.map(({ name, path, subPaths, icon }) => {
-          const isActive =
-            pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
-            (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
-            (Array.isArray(subPaths) &&
-              subPaths?.indexOf(pathnameWithoutQuery) > -1);
+      {showNavList && (
+        <>
+          <SelectAddress />
+          <NavList>
+            {availableRoutes.map(({ name, path, subPaths, icon }) => {
+              const isActive =
+                pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
+                (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
+                (Array.isArray(subPaths) &&
+                  subPaths?.indexOf(pathnameWithoutQuery) > -1);
 
-          return (
-            <ListItem key={path}>
-              <LocalLink href={path}>
-                <NavLink active={isActive}>
-                  {icon}
-                  <span>{name}</span>
-                </NavLink>
-              </LocalLink>
-            </ListItem>
-          );
-        })}
-      </NavList>
+              return (
+                <ListItem key={path}>
+                  <LocalLink href={path}>
+                    <NavLink active={isActive}>
+                      {icon}
+                      <span>{name}</span>
+                    </NavLink>
+                  </LocalLink>
+                </ListItem>
+              );
+            })}
+          </NavList>
+        </>
+      )}
     </Nav>
   );
 });

@@ -22,7 +22,7 @@ export type validateStakeEthParams = {
 );
 
 // Runs validation pipeline common between stake and wrapEth
-export const validateStakeEth = (params: validateStakeEthParams) => {
+export const validateCreateVaultEth = (params: validateStakeEthParams) => {
   validateStakeLimit('amount', params.stakingLimitLevel);
 
   if (params.isWalletActive) {

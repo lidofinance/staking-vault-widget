@@ -22,7 +22,7 @@ export const useDappStatus = () => {
   const isDappActive = isAccountActive && isChainTypeMatched;
 
   // no useMemo because memoisation is more expensive than boolean flags
-  // hook is used in many places and every usage would create separate memoisation
+  // hook is used in many places and every usage would create-vault separate memoisation
   return {
     ...dappChain,
     isAccountActive,

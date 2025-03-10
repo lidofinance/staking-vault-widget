@@ -5,7 +5,6 @@ import { config } from 'config';
 
 import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
 import { Header } from './header/header';
-import { Footer } from './footer/footer';
 import { Main } from './main/main';
 import { Navigation } from './navigation';
 import {
@@ -39,7 +38,6 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
         <LayoutSubTitleStyle>{subtitle}</LayoutSubTitleStyle>
         {children}
       </Main>
-      <Footer />
     </LayoutStyles>
   );
 };
