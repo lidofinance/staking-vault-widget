@@ -1,12 +1,13 @@
+import { InputProps } from '@lidofinance/lido-ui';
+
 import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form-context';
 
 import { GeneralInput } from 'features/create-vault/create-vault-form/form-controllers';
 import { Confirmation } from 'features/create-vault/create-vault-form/main-settings/confirmation';
 import { MainSettingsAction } from 'features/create-vault/create-vault-form/main-settings/main-settings-action';
-import { Container } from './styles';
+import { SectionContainer } from 'features/create-vault/styles';
 
 import { GeneralDataInputType } from 'types/form';
-import { InputProps } from '@lidofinance/lido-ui';
 
 const fieldsList = [
   {
@@ -53,12 +54,12 @@ export const MainSettings = () => {
   const { step } = useCreateVaultFormData();
 
   return (
-    <Container step={step}>
+    <SectionContainer step={step} currentStep={1}>
       {fieldsList.map((field) => (
         <GeneralInput key={field.name} {...field} />
       ))}
       <Confirmation />
       <MainSettingsAction />
-    </Container>
+    </SectionContainer>
   );
 };

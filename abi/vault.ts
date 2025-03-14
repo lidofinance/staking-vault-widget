@@ -8,6 +8,11 @@ export const StakingVaultAbi = [
       },
       {
         internalType: 'address',
+        name: '_depositor',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
         name: '_beaconChainDepositContract',
         type: 'address',
       },
@@ -53,8 +58,50 @@ export const StakingVaultAbi = [
     type: 'error',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_passed',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_required',
+        type: 'uint256',
+      },
+    ],
+    name: 'InsufficientValidatorWithdrawalFee',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'feePerRequest',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'minFeePerRequest',
+        type: 'uint256',
+      },
+    ],
+    name: 'InsufficientWithdrawalFee',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'InvalidAmountsLength',
+    type: 'error',
+  },
+  {
     inputs: [],
     name: 'InvalidInitialization',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'InvalidPubkeysLength',
     type: 'error',
   },
   {
@@ -71,6 +118,32 @@ export const StakingVaultAbi = [
       },
     ],
     name: 'LockedCannotDecreaseOutsideOfReport',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MalformedPubkeysArray',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'keysCount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amountsCount',
+        type: 'uint256',
+      },
+    ],
+    name: 'MismatchedArrayLengths',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NoWithdrawalRequests',
     type: 'error',
   },
   {
@@ -117,6 +190,11 @@ export const StakingVaultAbi = [
     type: 'error',
   },
   {
+    inputs: [],
+    name: 'PartialWithdrawalNotAllowed',
+    type: 'error',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -151,6 +229,22 @@ export const StakingVaultAbi = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: 'balance',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalWithdrawalFee',
+        type: 'uint256',
+      },
+    ],
+    name: 'TotalWithdrawalFeeExceededBalance',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: 'recipient',
         type: 'address',
@@ -166,12 +260,49 @@ export const StakingVaultAbi = [
   },
   {
     inputs: [],
-    name: 'Unbalanced',
+    name: 'UnrecoverableError',
     type: 'error',
   },
   {
     inputs: [],
-    name: 'UnrecoverableError',
+    name: 'ValuationBelowLockedAmount',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'WithdrawalFeeInvalidData',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'WithdrawalFeeReadFailed',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_sender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'WithdrawalFeeRefundFailed',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes',
+        name: 'callData',
+        type: 'bytes',
+      },
+    ],
+    name: 'WithdrawalRequestAdditionFailed',
     type: 'error',
   },
   {
@@ -203,19 +334,19 @@ export const StakingVaultAbi = [
       {
         indexed: true,
         internalType: 'address',
-        name: 'sender',
+        name: '_sender',
         type: 'address',
       },
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'deposits',
+        name: '_deposits',
         type: 'uint256',
       },
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'totalAmount',
+        name: '_totalAmount',
         type: 'uint256',
       },
     ],
@@ -328,19 +459,62 @@ export const StakingVaultAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'address',
+        name: '_sender',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'bytes',
+        name: '_pubkey',
+        type: 'bytes',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: '_pubkeyRaw',
+        type: 'bytes',
+      },
+    ],
+    name: 'ValidatorExitRequested',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
-        name: 'sender',
+        name: '_sender',
         type: 'address',
       },
       {
         indexed: false,
         internalType: 'bytes',
-        name: 'pubkey',
+        name: '_pubkeys',
         type: 'bytes',
       },
+      {
+        indexed: false,
+        internalType: 'uint64[]',
+        name: '_amounts',
+        type: 'uint64[]',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: '_refundRecipient',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_excess',
+        type: 'uint256',
+      },
     ],
-    name: 'ValidatorsExitRequest',
+    name: 'ValidatorWithdrawalTriggered',
     type: 'event',
   },
   {
@@ -370,6 +544,32 @@ export const StakingVaultAbi = [
   },
   {
     inputs: [],
+    name: 'DEPOSIT_CONTRACT',
+    outputs: [
+      {
+        internalType: 'contract IDepositContract',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'PUBLIC_KEY_LENGTH',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'beaconChainDepositsPaused',
     outputs: [
       {
@@ -384,45 +584,17 @@ export const StakingVaultAbi = [
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: '_pubkey',
-        type: 'bytes',
-      },
-      {
-        internalType: 'bytes',
-        name: '_withdrawalCredentials',
-        type: 'bytes',
-      },
-      {
-        internalType: 'bytes',
-        name: '_signature',
-        type: 'bytes',
-      },
-      {
         internalType: 'uint256',
-        name: '_amount',
+        name: '_numberOfKeys',
         type: 'uint256',
       },
     ],
-    name: 'computeDepositDataRoot',
+    name: 'calculateValidatorWithdrawalFee',
     outputs: [
       {
-        internalType: 'bytes32',
+        internalType: 'uint256',
         name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'depositContract',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -461,6 +633,19 @@ export const StakingVaultAbi = [
     name: 'depositToBeaconChain',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'depositor',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -517,19 +702,6 @@ export const StakingVaultAbi = [
     name: 'initialize',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'isBalanced',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -690,6 +862,29 @@ export const StakingVaultAbi = [
     name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes',
+        name: '_pubkeys',
+        type: 'bytes',
+      },
+      {
+        internalType: 'uint64[]',
+        name: '_amounts',
+        type: 'uint64[]',
+      },
+      {
+        internalType: 'address',
+        name: '_refundRecipient',
+        type: 'address',
+      },
+    ],
+    name: 'triggerValidatorWithdrawal',
+    outputs: [],
+    stateMutability: 'payable',
     type: 'function',
   },
   {

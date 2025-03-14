@@ -12,12 +12,15 @@ export interface AddressListProps {
 
 export const AddressList: FC<AddressListProps> = ({ permission }) => {
   const { control } = useFormContext();
-  const { append } = useFieldArray({ name: permission, control });
+  const { append, fields, remove } = useFieldArray({
+    name: permission,
+    control,
+  });
 
   return (
     <AddressListWrapper>
-      <AddressBlock permission={permission} />
-      <InputBlock permission={permission} />
+      <AddressBlock permission={permission} fields={fields} remove={remove} />
+      <InputBlock permission={permission} fields={fields} remove={remove} />
       <AddAddress
         color="primary"
         icon={<Plus />}

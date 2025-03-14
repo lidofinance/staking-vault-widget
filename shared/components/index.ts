@@ -7,3 +7,4 @@ export { MatomoLink } from './matomo-link/matomo-link';
 export { InfoBox } from './info-box/info-box';
 export { Switch } from './switch/switch';
 export { AddressBadge } from './address-badge';
+export { ButtonClose } from './button-close';

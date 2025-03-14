@@ -1,5 +1,6 @@
-import styled, { css } from 'styled-components';
-import { Address, Button } from '@lidofinance/lido-ui';
+import styled from 'styled-components';
+
+import { Address } from '@lidofinance/lido-ui';
 
 export const PillContainer = styled.div`
   display: flex;
@@ -19,16 +20,4 @@ export const AddressText = styled(Address)`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: 700;
   line-height: 24px;
-`;
-
-export const CloseButton = styled(Button)`
-  margin-left: 8px;
-  flex-shrink: 0;
-
-  ${({ theme }) => css`
-    color: ${theme.colors.text || '#fff'};
-    &:hover {
-      color: ${theme.colors.accent || '#ccc'};
-    }
-  `}
 `;

@@ -1,37 +1,37 @@
-import { FC, useMemo } from 'react';
-import { Address } from 'viem';
-import { useFormContext } from 'react-hook-form';
+import { FC, useCallback } from 'react';
 
-import { AddressBadge } from 'shared/components/address-badge';
+import { AddressItem } from 'features/create-vault/create-vault-form/permissions/address-item';
 import { Wrapper } from './styles';
 
 export interface AddressBlockProps {
   permission: string;
+  fields: Record<'id', string>[];
+  remove: (index?: number | number[]) => void;
 }
 
-export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
-  const { watch, getFieldState } = useFormContext();
-  const addresses = watch(permission) as { value: Address }[];
-
-  const addressesForRender: { initialIndex: number; value: Address }[] =
-    useMemo(() => {
-      return addresses
-        .map((item, index) => ({ ...item, initialIndex: index }))
-        .filter((item, index) => {
-          const { invalid } = getFieldState(`${permission}.${index}.value`);
-          if (!item.value) return false;
-          return !invalid;
-        });
-    }, [addresses, permission, getFieldState]);
-
-  if (addressesForRender.length === 0) {
-    return null;
-  }
+export const AddressBlock: FC<AddressBlockProps> = ({
+  permission,
+  fields,
+  remove,
+}) => {
+  const handleRemove = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove],
+  );
 
   return (
     <Wrapper>
-      {addressesForRender.map(({ value }) => {
-        return <AddressBadge key={value} address={value} />;
+      {fields.map(({ id }, index) => {
+        return (
+          <AddressItem
+            key={id}
+            permission={permission}
+            index={index}
+            remove={handleRemove}
+          />
+        );
       })}
     </Wrapper>
   );

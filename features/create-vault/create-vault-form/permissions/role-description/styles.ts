@@ -6,7 +6,7 @@ export const RoleDescriptionWrapper = styled.div`
   width: 50%;
   padding-right: ${({ theme }) => theme.spaceMap.md}px;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
-  text-wrap: balance;
+  text-wrap: auto;
 
   & > span {
     line-height: 24px;
@@ -16,7 +16,6 @@ export const RoleDescriptionWrapper = styled.div`
 
 export const WarningIcon = styled(Question)`
   display: inline-block;
-  margin-bottom: 0.4px;
   vertical-align: middle;
   cursor: pointer;
   color: ${({ theme }) => theme.colors.textSecondary};

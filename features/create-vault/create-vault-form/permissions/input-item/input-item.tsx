@@ -1,33 +1,37 @@
 import { FC } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
-import { Input, Close } from '@lidofinance/lido-ui';
-import { Button, InputWrapper } from './styles';
+import { Input } from '@lidofinance/lido-ui';
+import { ButtonClose } from 'shared/components';
+import { InputWrapper } from './styles';
 
 export interface InputItemProps {
   permission: string;
   index: number;
+  remove: (index?: number | number[]) => void;
 }
 
-export const InputItem: FC<InputItemProps> = ({ permission, index }) => {
+export const InputItem: FC<InputItemProps> = ({
+  permission,
+  index,
+  remove,
+}) => {
   const { register, trigger } = useFormContext();
-  const { remove } = useFieldArray({ name: permission });
+  const inputKey = `${permission}.${index}.value`;
 
   return (
     <InputWrapper>
       <Input
-        {...register(`${permission}.${index}.value`)}
+        {...register(inputKey)}
         placeholder="Ethereum address"
         onKeyUp={(e) => {
           if (e.key === 'Enter' || e.keyCode === 13) {
-            void trigger(`${permission}.${index}.value`);
+            void trigger(inputKey);
           }
         }}
       />
 
-      <Button onClick={() => remove(index)} type="button">
-        <Close />
-      </Button>
+      <ButtonClose onClick={() => remove(index)} />
     </InputWrapper>
   );
 };

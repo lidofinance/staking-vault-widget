@@ -1,13 +1,5 @@
 import styled from 'styled-components';
 
-export const PermissionWrapper = styled.section<{ step: number }>`
-  display: ${({ step }) => (step === 1 ? 'flex' : 'none')};
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
-  width: 100%;
-  margin-top: ${({ theme }) => theme.spaceMap.xl}px;
-`;
-
 export const PermissionContainer = styled.article`
   display: flex;
   flex-direction: column;

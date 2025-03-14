@@ -1,25 +1,24 @@
 import { FC, MouseEvent } from 'react';
-import { Close, Identicon } from '@lidofinance/lido-ui';
-import { PillContainer, AddressText, CloseButton } from './styles';
+
+import { Identicon } from '@lidofinance/lido-ui';
+import { ButtonClose } from 'shared/components';
+import { PillContainer, AddressText } from './styles';
 
 export interface AddressBadgeProps {
   address: string;
   symbols?: number;
-  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onRemove?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const AddressBadge: FC<AddressBadgeProps> = (props) => {
-  const { address, symbols = 6, onClick } = props;
+  const { address, symbols = 6, onRemove } = props;
+
   return (
     <PillContainer>
       <Identicon address={address} />
       <AddressText symbols={symbols} address={address} />
 
-      {onClick && (
-        <CloseButton size="xs" onClick={onClick}>
-          <Close />
-        </CloseButton>
-      )}
+      {onRemove && <ButtonClose onClick={onRemove} />}
     </PillContainer>
   );
 };

@@ -5,7 +5,7 @@ export const AddressListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
 
 export const AddAddress = styled(ButtonIcon)`
