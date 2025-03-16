@@ -1,5 +1,7 @@
-import { Address, isAddress } from 'viem';
+import { Address, createPublicClient, http, isAddress } from 'viem';
+import { normalize } from 'viem/ens';
 import { z } from 'zod';
+import { holesky } from 'viem/chains';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
@@ -44,5 +46,25 @@ export const createVaultSchema = z.object({
   curatorFeeClaimers: z.array(addressSchema).optional(),
   nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
 });
+
+// TODO: move to constants (rpc)
+// TODO: replace http address
+const publicClient = createPublicClient({
+  chain: holesky,
+  transport: http('https://1rpc.io/holesky'),
+});
+
+// TODO: move to shared validators
+export const validateEnsDomain = async (value: string) => {
+  try {
+    const ensAddress = await publicClient.getEnsAddress({
+      name: normalize(value),
+    });
+
+    return !!ensAddress;
+  } catch (e) {
+    return false;
+  }
+};
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;

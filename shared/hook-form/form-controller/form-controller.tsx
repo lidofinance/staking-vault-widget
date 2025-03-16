@@ -32,7 +32,13 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   // useWagmiConnectionChangedCallback(resetDefault);
 
   return (
-    <form autoComplete="off" onSubmit={handleSubmit(() => {})} {...props}>
+    <form
+      autoComplete="off"
+      onSubmit={handleSubmit((data, event) => {
+        event?.preventDefault();
+      })}
+      {...props}
+    >
       {children}
     </form>
   );

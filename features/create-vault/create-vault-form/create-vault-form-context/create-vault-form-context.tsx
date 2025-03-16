@@ -26,9 +26,6 @@ import { createVaultSchema, CreateVaultSchema } from './validation';
 
 import { CREATE_VAULT_STEPS } from 'consts/vault-factory';
 
-//
-// Data context
-//
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
 CreateVaultDataContext.displayName = 'CreateVaultDataContext';
@@ -80,10 +77,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       curatorFeeClaimers: [],
       nodeOperatorFeeClaimers: [],
     },
-    // TODO: fix types
     // context: validationContextPromise,
     resolver: zodResolver(createVaultSchema),
-    mode: 'onBlur',
   });
   // const { setValue } = formObject;
 
