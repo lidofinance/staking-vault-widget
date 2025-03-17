@@ -3,9 +3,9 @@ import { isAddress } from 'viem';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 
 import { Plus } from '@lidofinance/lido-ui';
-import { InputItem } from '../input-item';
-import { AddAddress } from '../address-list/styles';
-import { validateEnsDomain } from '../../create-vault-form-context/validation';
+import { InputItem } from './input-item';
+import { AddAddress } from '../styles';
+import { validateEnsDomain } from '../../../create-vault-form-context/validation';
 import { InputBlockWrapper } from './styles';
 
 export interface InputBlockProps {
@@ -70,8 +70,8 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
     mode: 'onBlur',
   });
 
-  // @ts-expect-error empty initial array of fields to hide empty inputs on permission form section
   const { append, fields, remove } = useFieldArray({
+    // @ts-expect-error empty initial array of fields to hide empty inputs on permission form section
     name: permission,
     control,
   });

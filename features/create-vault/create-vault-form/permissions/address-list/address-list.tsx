@@ -1,7 +1,7 @@
 import { FC, memo } from 'react';
 
 import { AddressBlock } from 'features/create-vault/create-vault-form/permissions/address-list/address-block';
-import { InputBlock } from 'features/create-vault/create-vault-form/permissions/input-block';
+import { InputBlock } from 'features/create-vault/create-vault-form/permissions/address-list/input-block';
 import { AddressListWrapper } from './styles';
 
 export interface AddressListProps {

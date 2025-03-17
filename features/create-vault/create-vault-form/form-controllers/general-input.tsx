@@ -26,8 +26,8 @@ export const GeneralInput: FC<InputAddressProps> = (props) => {
     dataType = 'address',
     type = 'text',
   } = props;
-  const { field } = useController({ name });
-  const { getFieldState, register } = useFormContext();
+  const { control, getFieldState, register } = useFormContext();
+  const { field } = useController({ name, control });
   const { error } = getFieldState(name);
 
   let inputProps = register(name);

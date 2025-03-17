@@ -33,7 +33,7 @@ export const ListItem = styled.li`
   }
 `;
 
-export const PermissionTitle = styled.li`
+export const PermissionTitle = styled.span`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};

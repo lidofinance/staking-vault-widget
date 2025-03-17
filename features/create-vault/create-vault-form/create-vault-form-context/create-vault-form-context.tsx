@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import invariant from 'tiny-invariant';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
   FormController,
@@ -18,11 +17,8 @@ import {
 } from 'shared/hook-form/form-controller';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 
-import {
-  type CreateVaultDataContextValue,
-  // type CreateVaultFormInput,
-} from './types';
-import { createVaultSchema, CreateVaultSchema } from './validation';
+import { type CreateVaultDataContextValue } from './types';
+import { createVaultFormValidator, CreateVaultSchema } from './validation';
 
 import { CREATE_VAULT_STEPS } from 'consts/vault-factory';
 
@@ -57,11 +53,12 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const formObject = useForm<CreateVaultSchema>({
     defaultValues: {
-      nodeOperatorManager: '0x',
+      nodeOperator: '',
+      nodeOperatorManager: '',
       nodeOperatorFeeBP: 5,
       curatorFeeBP: 5,
       confirmExpiry: 36,
-      defaultAdmin: '0x',
+      defaultAdmin: '',
       confirmMainSettings: false,
       funders: [],
       withdrawers: [],
@@ -78,9 +75,9 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       nodeOperatorFeeClaimers: [],
     },
     // context: validationContextPromise,
-    resolver: zodResolver(createVaultSchema),
+    resolver: createVaultFormValidator,
+    mode: 'all',
   });
-  // const { setValue } = formObject;
 
   // consumes amount query param
   // SSG safe
@@ -105,11 +102,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   // }, [isReady, pathname, query, replace, setValue]);
 
   const { retryEvent } = useFormControllerRetry();
-
-  // const stake = useStake({
-  //   onConfirm: networkData.revalidate,
-  //   onRetry: retryFire,
-  // });
 
   // TODO: check controls values
   const formControllerValue: FormControllerContextValueType<CreateVaultSchema> =

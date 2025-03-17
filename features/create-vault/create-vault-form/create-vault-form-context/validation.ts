@@ -1,7 +1,8 @@
-import { Address, createPublicClient, http, isAddress } from 'viem';
+import { createPublicClient, http, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { holesky } from 'viem/chains';
+import { appendErrors, FieldError } from 'react-hook-form';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
@@ -12,8 +13,7 @@ const validateAddress = (value: string) => isAddress(value);
 
 const addressSchema = z
   .string()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value as Address);
+  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE });
 
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
@@ -47,6 +47,86 @@ export const createVaultSchema = z.object({
   nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
 });
 
+export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
+
+export const isZodError = (error: unknown): error is ZodError => {
+  if (error instanceof ZodError) {
+    return Array.isArray(error?.errors);
+  }
+
+  return false;
+};
+
+export const parseZodErrorSchema = (
+  zodErrors: z.ZodIssue[],
+  validateAllFieldCriteria: boolean,
+) => {
+  const errors: Record<string, FieldError> = {};
+  for (const error of zodErrors) {
+    const { code, message, path } = error;
+    const _path = path.join('.');
+
+    if (!errors[_path]) {
+      if ('unionErrors' in error) {
+        const unionError = error.unionErrors[0].errors[0];
+
+        errors[_path] = {
+          message: unionError.message,
+          type: unionError.code,
+        };
+      } else {
+        errors[_path] = { message, type: code };
+      }
+    }
+
+    if ('unionErrors' in error) {
+      error.unionErrors.forEach((unionError) =>
+        unionError.errors.forEach((e) => zodErrors.push(e)),
+      );
+    }
+
+    if (validateAllFieldCriteria) {
+      const types = errors[_path].types;
+      const messages = types && types[error.code];
+
+      errors[_path] = appendErrors(
+        _path,
+        validateAllFieldCriteria,
+        errors,
+        code,
+        messages
+          ? ([] as string[]).concat(messages as string[], error.message)
+          : error.message,
+      ) as FieldError;
+    }
+  }
+
+  return errors;
+};
+
+export const createVaultFormValidator = async (values: CreateVaultSchema) => {
+  try {
+    const output = await createVaultSchema.parseAsync(values);
+    return {
+      values: output,
+      errors: {},
+    };
+  } catch (err: unknown) {
+    if (isZodError(err)) {
+      const errors = err.errors;
+      return {
+        values,
+        errors: parseZodErrorSchema(errors, true),
+      };
+    }
+
+    return {
+      values: values,
+      errors: {},
+    };
+  }
+};
+
 // TODO: move to constants (rpc)
 // TODO: replace http address
 const publicClient = createPublicClient({
@@ -66,5 +146,3 @@ export const validateEnsDomain = async (value: string) => {
     return false;
   }
 };
-
-export type CreateVaultSchema = z.infer<typeof createVaultSchema>;

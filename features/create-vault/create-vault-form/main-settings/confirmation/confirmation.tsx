@@ -1,15 +1,16 @@
 import { FC } from 'react';
 
+import { useFormContext } from 'react-hook-form';
+
 import { Checkbox } from '@lidofinance/lido-ui';
 import { InfoList, Wrapper } from './styles';
-import { useController } from 'react-hook-form';
 
 export const Confirmation: FC = () => {
-  const { field } = useController({ name: 'confirmMainSettings' });
+  const { register } = useFormContext();
 
   return (
     <Wrapper>
-      <Checkbox {...field} />
+      <Checkbox {...register('confirmMainSettings')} />
       <div>
         <p>I confirm that I&apos;ve read and agree:</p>
         <InfoList>
