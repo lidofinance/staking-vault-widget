@@ -1,20 +1,14 @@
-import { Address, createPublicClient, getContract, http } from 'viem';
-import { holesky } from 'viem/chains';
+import { Address, getContract, PublicClient } from 'viem';
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 
-import { VaultHubViewerAbi } from 'abi/vault-hub-viewer';
-import { VAULT_HUB_VIEWER_BY_NETWORK } from 'consts/vault-hub-viewer';
+import { VaultDataViewerAbi } from 'abi/vault-data-viewer';
+import { VAULT_DATA_VIEWER_BY_NETWORK } from 'consts/vault-data-viewer';
 
 // TODO: move to lido-sdk
-export const getVaultHubViewerContract = () => {
+export const getVaultDataViewerContract = (publicClient: PublicClient) => {
   return getContract({
-    address: VAULT_HUB_VIEWER_BY_NETWORK[CHAINS.Holesky] as Address,
-    abi: VaultHubViewerAbi,
-    client: {
-      public: createPublicClient({
-        chain: holesky,
-        transport: http('https://1rpc.io/holesky'),
-      }),
-    },
+    address: VAULT_DATA_VIEWER_BY_NETWORK[CHAINS.Sepolia] as Address,
+    abi: VaultDataViewerAbi,
+    client: { public: publicClient },
   });
 };

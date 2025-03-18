@@ -5,27 +5,14 @@ import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/
 import { Title, Wrapper, TitleBlock, TitleContainer } from './styles';
 import { ToggleSwitch } from 'shared/components/toggle';
 
-import { CREATE_VAULT_STEPS } from 'consts/vault-factory';
-
-const steps: Record<number, string> = {
-  '1': 'Main settings',
-  '2': 'Permissions',
-  '3': 'Confirmation',
-};
-
-const PermissionsToggleList = [
-  {
-    value: 'by_permission',
-    label: 'by Permission',
-  },
-  {
-    value: 'by_address',
-    label: 'by address',
-  },
-];
+import {
+  getSectionNameByStep,
+  permissionsToggleList,
+  CREATE_VAULT_STEPS,
+} from 'features/create-vault/consts';
 
 export const FormContainer: FC<PropsWithChildren> = ({ children }) => {
-  const { step } = useCreateVaultFormData();
+  const { step, handleSetPermissionsView } = useCreateVaultFormData();
 
   return (
     <Wrapper>
@@ -34,13 +21,13 @@ export const FormContainer: FC<PropsWithChildren> = ({ children }) => {
           <span>
             Step {step} of {CREATE_VAULT_STEPS}
           </span>
-          <Title>{steps[step]}</Title>
+          <Title>{getSectionNameByStep(step)}</Title>
         </TitleBlock>
         {step === 2 && (
           <ToggleSwitch
-            options={PermissionsToggleList}
+            options={permissionsToggleList}
             defaultActive="by_permission"
-            onToggleCb={() => {}}
+            onToggleCb={({ value }) => handleSetPermissionsView(value)}
           />
         )}
       </TitleContainer>

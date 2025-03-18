@@ -6,8 +6,10 @@ import {
   useCallback,
   createContext,
   useContext,
+  useRef,
 } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 
 import {
@@ -15,12 +17,17 @@ import {
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import { SubmitModal } from 'features/create-vault/create-vault-form/submit-modal';
 
+import { SubmitStep } from 'features/create-vault/types';
 import { type CreateVaultDataContextValue } from './types';
 import { createVaultFormValidator, CreateVaultSchema } from './validation';
 
-import { CREATE_VAULT_STEPS } from 'consts/vault-factory';
+import { sleep } from 'utils';
+
+import { ToggleValue, CREATE_VAULT_STEPS } from 'features/create-vault/consts';
+import { SubmitStepEnum } from 'features/create-vault/types';
+import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
@@ -36,20 +43,40 @@ export const useCreateVaultFormData = () => {
   return value;
 };
 
-// TODO: update onSubmit fn
-const onSubmit = async (): Promise<boolean> => {
-  return true;
-};
-
 export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
-  // const validationContextPromise = useCreateVaultValidationContext({});
-
   const [step, setStep] = useState(1);
+  const [permissionsView, setPermissionsView] =
+    useState<ToggleValue>('by_permission');
+  const [submitStep, setSubmitStep] = useState<SubmitStep>();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const callVaultFactoryContract = useCreateVaultWithDelegation();
+
   const handleSetStep = useCallback((step: number) => {
     if (step >= 1 && step <= CREATE_VAULT_STEPS) {
       setStep(step);
     }
   }, []);
+
+  const handleSetPermissionsView = useCallback((value: ToggleValue) => {
+    setPermissionsView(value);
+  }, []);
+
+  const handleCancelSubmit = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    setSubmitStep(void 0);
+  }, []);
+
+  const createVaultData = {
+    step,
+    permissionsView,
+    submitStep,
+    handleSetStep,
+    handleSetPermissionsView,
+    handleCancelSubmit,
+  };
 
   const formObject = useForm<CreateVaultSchema>({
     defaultValues: {
@@ -74,13 +101,35 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       curatorFeeClaimers: [],
       nodeOperatorFeeClaimers: [],
     },
-    // context: validationContextPromise,
     resolver: createVaultFormValidator,
     mode: 'all',
   });
 
-  // consumes amount query param
-  // SSG safe
+  const onSubmit = useCallback(
+    async (data: any): Promise<boolean> => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      setSubmitStep(SubmitStepEnum.initiate);
+      await sleep(5000);
+      setSubmitStep(SubmitStepEnum.confirming);
+      // sendTransaction
+      await sleep(5000);
+      // regect or proceed
+      setSubmitStep(SubmitStepEnum.submitting);
+      await callVaultFactoryContract(data);
+      await sleep(5000);
+      setSubmitStep(SubmitStepEnum.success);
+
+      return true;
+    },
+    [callVaultFactoryContract],
+  );
+
   // const { isReady, query, pathname, replace } = useRouter();
 
   // useEffect(() => {
@@ -109,15 +158,17 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       () => ({
         onSubmit,
         retryEvent,
+        onReset: formObject.reset,
       }),
-      [retryEvent],
+      [retryEvent, onSubmit, formObject.reset],
     );
 
   return (
     <FormProvider {...formObject}>
-      <CreateVaultDataContext.Provider value={{ step, handleSetStep }}>
+      <CreateVaultDataContext.Provider value={createVaultData}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
+          <SubmitModal />
         </FormControllerContext.Provider>
       </CreateVaultDataContext.Provider>
     </FormProvider>

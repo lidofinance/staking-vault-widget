@@ -1,3 +1,3 @@
 export interface ConfirmDataItemProps {
-  payload: string;
+  payload: string | string[];
 }

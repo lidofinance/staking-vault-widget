@@ -6,3 +6,4 @@ export * from './getErrorMessage';
 export * from './extractErrorMessage';
 export * from './shortenTokenValue';
 export * from './format-number';
+export * from './sleep';

@@ -1,7 +1,7 @@
 import { type Address } from 'viem';
 import { useQuery } from '@tanstack/react-query';
-
 import { useLidoSDK } from 'modules/web3';
+
 import { getVaultHubContract } from 'modules/web3/contracts/vault-hub';
 import { getStakingVaultContract } from 'modules/web3/contracts/staking-vault';
 import { getDelegationContract } from 'modules/web3/contracts/delegation';
@@ -13,14 +13,14 @@ import { VaultSocket, VaultInfo } from 'types';
 export const useVaultData = (
   vaultsAddressesList: readonly Address[] | undefined = [],
 ) => {
-  const { shares } = useLidoSDK();
+  const { shares, core } = useLidoSDK();
 
   return useQuery({
     queryKey: ['vault-data', { data: vaultsAddressesList }],
     enabled: !!vaultsAddressesList?.length,
     ...STRATEGY_LAZY,
     queryFn: async (): Promise<VaultInfo[]> => {
-      const vaultHabContract = getVaultHubContract();
+      const vaultHabContract = getVaultHubContract(core.rpcProvider);
       const vaults: VaultInfo[] = [];
 
       if (vaultsAddressesList?.length < 1) {

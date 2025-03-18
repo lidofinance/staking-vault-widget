@@ -7,6 +7,7 @@ import { Container } from './styled';
 
 import { AppPaths } from 'consts/urls';
 import { useFormContext } from 'react-hook-form';
+import { validateFormValue } from '../../../../../utils/validate-form-value';
 
 const nextStepFields = [
   'nodeOperator',
@@ -27,20 +28,19 @@ export const MainSettingsAction: FC = () => {
     getValues,
   } = useFormContext();
 
-  const isNextStepDisabled =
-    !isValidating &&
-    (nextStepFields.some((fieldName) => {
-      const { invalid, isTouched } = getFieldState(fieldName);
-      const currentValue = getValues(fieldName);
-      const hasDefault = defaultValues?.[fieldName] !== undefined;
+  const stepByFields = nextStepFields.some((fieldName) => {
+    const { invalid, isTouched } = getFieldState(fieldName);
+    const currentValue = getValues(fieldName);
+    const hasDefault = validateFormValue(defaultValues?.[fieldName]);
 
-      return (
-        invalid ||
-        (!hasDefault && !isTouched) ||
-        (hasDefault && !invalid && currentValue === undefined)
-      );
-    }) ||
-      !getValues('confirmMainSettings'));
+    return (
+      invalid ||
+      (!hasDefault && !isTouched) ||
+      (hasDefault && !invalid && currentValue === undefined)
+    );
+  });
+  const stepByConfirm = getValues('confirmMainSettings');
+  const isNextStepDisabled = isValidating || stepByFields || !stepByConfirm;
 
   const handleNavigateToRoot = () => {
     void router.push(AppPaths.main);

@@ -1,9 +1,14 @@
-import { LIMIT_LEVEL } from 'types';
 import { Address } from 'viem';
+import { ToggleValue } from 'features/create-vault/consts';
+import { SubmitStep } from 'features/create-vault/types';
 
 export type CreateVaultDataContextValue = {
   step: number;
+  permissionsView: ToggleValue;
+  submitStep: SubmitStep;
   handleSetStep: (step: number) => void;
+  handleSetPermissionsView: (value: ToggleValue) => void;
+  handleCancelSubmit: () => void;
 };
 
 export type CreateVaultFormInput = {
@@ -28,14 +33,4 @@ export type CreateVaultFormInput = {
   curatorFeeSetters: Address[] | string[];
   curatorFeeClaimers: Address[] | string[];
   nodeOperatorFeeClaimers: Address[] | string[];
-};
-
-export type CreateVaultFormValidationContext = {
-  isWalletActive: boolean;
-  stakingLimitLevel: LIMIT_LEVEL;
-  currentCreateVaultLimit: bigint;
-  gasCost: bigint;
-  etherBalance: bigint;
-  isSmartAccount: boolean;
-  shouldValidateEtherBalance: boolean;
 };

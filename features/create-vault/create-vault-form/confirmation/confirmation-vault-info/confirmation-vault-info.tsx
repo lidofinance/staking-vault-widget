@@ -78,7 +78,7 @@ const confirmationVaultManagerPermissions: ConfirmationDataStruct = {
     type: 'address',
   },
   depositResumers: {
-    title: 'Resume Deposits to beacon chain (all amount)3',
+    title: 'Resume Deposits to beacon chain (all amount)',
     type: 'address',
   },
   validatorExitRequesters: {

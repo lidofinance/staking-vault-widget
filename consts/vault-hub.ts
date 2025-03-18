@@ -5,7 +5,7 @@ export const VAULT_HUB_BY_NETWORK: {
   [key in CHAINS]?: Address;
 } = {
   [CHAINS.Mainnet]: '0x',
-  [CHAINS.Holesky]: '0x0B1dbaa8Ab31Fe48bCC13beFcF3D0b319Fa9a525',
+  [CHAINS.Sepolia]: '0x699009AFFE51215eF7EA1Cd1e51f2750177d6055',
 };
 
 export const getVaultHubAddress = (chainId: CHAINS): Address | undefined =>

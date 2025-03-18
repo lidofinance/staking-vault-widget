@@ -15,3 +15,9 @@ export const TextBold = styled.span`
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
 `;
+
+export const AddressList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;

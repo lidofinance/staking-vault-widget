@@ -19,12 +19,12 @@ export const MATOMO_CLICK_EVENTS: Record<
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickShowMoreWallets]: [
     'Staking_Vault_Widget',
-    'Push "More wallets" on wallet modal',
+    'Push "More wallets" on wallet submit-modal',
     'staking_vault_widget_more_wallets',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickShowLessWallets]: [
     'Staking_Vault_Widget',
-    'Push "Less wallets" on wallet modal',
+    'Push "Less wallets" on wallet submit-modal',
     'staking_vault_widget_less_wallets',
   ],
 };
