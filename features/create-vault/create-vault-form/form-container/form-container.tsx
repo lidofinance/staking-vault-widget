@@ -9,6 +9,8 @@ import {
   getSectionNameByStep,
   permissionsToggleList,
   CREATE_VAULT_STEPS,
+  ToggleValue,
+  PermissionToggleEnum,
 } from 'features/create-vault/consts';
 
 export const FormContainer: FC<PropsWithChildren> = ({ children }) => {
@@ -26,8 +28,10 @@ export const FormContainer: FC<PropsWithChildren> = ({ children }) => {
         {step === 2 && (
           <ToggleSwitch
             options={permissionsToggleList}
-            defaultActive="by_permission"
-            onToggleCb={({ value }) => handleSetPermissionsView(value)}
+            defaultActive={PermissionToggleEnum.byPermission}
+            onToggleCb={({ value }) =>
+              handleSetPermissionsView(value as ToggleValue)
+            }
           />
         )}
       </TitleContainer>

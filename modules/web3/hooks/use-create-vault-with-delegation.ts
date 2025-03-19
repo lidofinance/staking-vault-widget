@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import {
   useConfig,
-  // useConnections,
+  useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
 import { Address } from 'viem';
@@ -10,36 +10,31 @@ import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import { VAULT_FACTORY_BY_NETWORK } from 'consts/vault-factory';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-// import { useLidoSDK } from 'modules/web3/web3-provider';
 
 import { VaultFactoryArgs } from 'types';
 
-export const useCreateVaultWithDelegation = () => {
+export interface CreateWithDelegationProps {
+  onMutate: () => void;
+}
+
+export const useCreateVaultWithDelegation = ({
+  onMutate = () => {},
+}: CreateWithDelegationProps) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
-  // const connections = useConnections({ config: wagmiConfig });
 
-  const { writeContractAsync } = useWriteContract({
+  const { data: createVaultTx, writeContractAsync } = useWriteContract({
     config: wagmiConfig,
-    // mutation: {
-    //   onError: (err) => {
-    //     console.log('onError::err', err);
-    //   },
-    //   onSuccess: (data) => {
-    //     console.log('onSuccess::data', data)
-    //   },
-    //   onMutate: (data) => {
-    //     console.log('onMutate::data', data)
-    //   },
-    // }
+    mutation: {
+      onMutate,
+    },
   });
 
-  // const { core } = useLidoSDK();
-  // const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-  //   hash,
-  // })
+  const { data: createVaultReceipt } = useWaitForTransactionReceipt({
+    hash: createVaultTx,
+  });
 
-  return useCallback(
+  const callCreateVault = useCallback(
     async (args: VaultFactoryArgs) => {
       return await writeContractAsync({
         abi: VaultFactoryAbi,
@@ -51,4 +46,10 @@ export const useCreateVaultWithDelegation = () => {
     },
     [chainId, writeContractAsync],
   );
+
+  return {
+    callCreateVault,
+    createVaultTx,
+    createVaultReceipt,
+  };
 };

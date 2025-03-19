@@ -1,11 +1,11 @@
 import { Address } from 'viem';
 import { ToggleValue } from 'features/create-vault/consts';
-import { SubmitStep } from 'features/create-vault/types';
+import { SubmittingInfo } from 'features/create-vault/types';
 
 export type CreateVaultDataContextValue = {
   step: number;
   permissionsView: ToggleValue;
-  submitStep: SubmitStep;
+  submitStep: SubmittingInfo | undefined;
   handleSetStep: (step: number) => void;
   handleSetPermissionsView: (value: ToggleValue) => void;
   handleCancelSubmit: () => void;

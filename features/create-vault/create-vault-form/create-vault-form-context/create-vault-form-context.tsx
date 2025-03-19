@@ -6,7 +6,6 @@ import {
   useCallback,
   createContext,
   useContext,
-  useRef,
 } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
@@ -19,7 +18,7 @@ import {
 } from 'shared/hook-form/form-controller';
 import { SubmitModal } from 'features/create-vault/create-vault-form/submit-modal';
 
-import { SubmitStep } from 'features/create-vault/types';
+import { SubmittingInfo } from 'features/create-vault/types';
 import { type CreateVaultDataContextValue } from './types';
 import {
   createVaultFormValidator,
@@ -27,7 +26,11 @@ import {
   formatCreateVaultData,
 } from './validation';
 
-import { ToggleValue, CREATE_VAULT_STEPS } from 'features/create-vault/consts';
+import {
+  ToggleValue,
+  CREATE_VAULT_STEPS,
+  PermissionToggleEnum,
+} from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
 
@@ -47,11 +50,13 @@ export const useCreateVaultFormData = () => {
 
 export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const [step, setStep] = useState(1);
-  const [permissionsView, setPermissionsView] =
-    useState<ToggleValue>('by_permission');
-  const [submitStep, setSubmitStep] = useState<SubmitStep>();
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const callVaultFactoryContract = useCreateVaultWithDelegation();
+  const [permissionsView, setPermissionsView] = useState<ToggleValue>(
+    PermissionToggleEnum.byPermission,
+  );
+  const [submitStep, setSubmitStep] = useState<SubmittingInfo>();
+  const { callCreateVault } = useCreateVaultWithDelegation({
+    onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
+  });
 
   const handleSetStep = useCallback((step: number) => {
     if (step >= 1 && step <= CREATE_VAULT_STEPS) {
@@ -64,10 +69,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   const handleCancelSubmit = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
     setSubmitStep(void 0);
   }, []);
 
@@ -109,60 +110,35 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: CreateVaultSchema): Promise<boolean> => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
-      setSubmitStep(SubmitStepEnum.initiate);
-      setSubmitStep(SubmitStepEnum.confirming);
-      // sendTransaction
-      // regect or proceed
-      setSubmitStep(SubmitStepEnum.submitting);
-
+      setSubmitStep({ step: SubmitStepEnum.initiate });
       const payload = formatCreateVaultData(data);
-      await callVaultFactoryContract(payload);
 
-      setSubmitStep(SubmitStepEnum.success);
+      setSubmitStep({ step: SubmitStepEnum.confirming });
+      try {
+        const response = await callCreateVault(payload);
+        setSubmitStep({ step: SubmitStepEnum.success, tx: response });
+      } catch (err) {
+        // TODO: handle more type of errors
+        setSubmitStep({ step: SubmitStepEnum.reject });
+
+        return false;
+      }
 
       return true;
     },
-    [callVaultFactoryContract],
+    [callCreateVault],
   );
 
-  // const { isReady, query, pathname, replace } = useRouter();
-
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   try {
-  //     const { amount, ref, ...rest } = query;
-  //
-  //     if (typeof ref === 'string') {
-  //       setValue('referral', ref);
-  //     }
-  //     if (typeof amount === 'string') {
-  //       void replace({ pathname, query: rest });
-  //       const amountBigInt = parseEther(amount);
-  //       setValue('amount', amountBigInt);
-  //     }
-  //   } catch {
-  //     //noop
-  //   }
-  // }, [isReady, pathname, query, replace, setValue]);
-
-  const { retryEvent } = useFormControllerRetry();
-
-  // TODO: check controls values
+  const { retryEvent, retryFire } = useFormControllerRetry();
   const formControllerValue: FormControllerContextValueType<CreateVaultSchema> =
     useMemo(
       () => ({
         onSubmit,
         retryEvent,
+        retryFire,
         onReset: formObject.reset,
       }),
-      [retryEvent, onSubmit, formObject.reset],
+      [retryFire, retryEvent, onSubmit, formObject.reset],
     );
 
   return (

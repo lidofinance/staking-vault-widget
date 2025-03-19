@@ -1,17 +1,23 @@
 export const CREATE_VAULT_STEPS = 3;
 
+export enum PermissionToggleEnum {
+  byPermission = 'by_permission',
+  byAddress = 'by_address',
+}
+
 export const permissionsToggleList = [
   {
-    value: 'by_permission',
+    value: PermissionToggleEnum.byPermission,
     label: 'by Permission',
   },
   {
-    value: 'by_address',
+    value: PermissionToggleEnum.byAddress,
     label: 'by address',
   },
 ];
 
-export type ToggleValue = (typeof permissionsToggleList)[number]['value'];
+export type ToggleValue =
+  (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
 
 export const steps: Record<number, string> = {
   '1': 'Main settings',

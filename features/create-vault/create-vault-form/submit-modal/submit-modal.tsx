@@ -16,11 +16,14 @@ import {
 
 import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
 import { Content } from './styles';
+import { TxLinkEtherscan } from '../../../../shared/components/tx-link-etherscan';
+import { useFormControllerContext } from '../../../../shared/hook-form/form-controller';
 
 const getIconComponent = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success) return Success;
-  if (step === SubmitStepEnum.reject) return Error;
-  return Loader;
+  if (step === SubmitStepEnum.success)
+    return <Success fill="var(--lido-color-success)" />;
+  if (step === SubmitStepEnum.reject) return <Error />;
+  return <Loader size="large" />;
 };
 
 const getModalTitle = (step: SubmitStep) => {
@@ -31,7 +34,8 @@ const getModalTitle = (step: SubmitStep) => {
 
 const getModalSubTitle = (step: SubmitStep) => {
   if (step === SubmitStepEnum.submitting) return 'Awaiting block confirmation';
-  if (step === SubmitStepEnum.reject) return 'User denied transaction sinature';
+  if (step === SubmitStepEnum.reject)
+    return 'User denied transaction signature';
   return '';
 };
 
@@ -41,49 +45,49 @@ export const SubmitModal: FC<ModalProps> = () => {
     formState: { isSubmitting },
   } = useFormContext();
   const { submitStep, handleCancelSubmit } = useCreateVaultFormData();
-  const IconComponent = useMemo(
-    () => getIconComponent(submitStep),
-    [submitStep],
-  );
-  const title = getModalTitle(submitStep);
-  const subtitle = getModalSubTitle(submitStep);
+  const { retryFire } = useFormControllerContext();
+  const { step, address, tx } = submitStep ?? {};
+
+  const iconComponent = useMemo(() => getIconComponent(step), [step]);
+  const title = getModalTitle(step);
+  const subtitle = getModalSubTitle(step);
 
   const handleNavigateToVault = () => {
-    // TODO: get vault address
-    void router.push('/overview:id');
+    void router.push(`/overview/${address}`);
   };
 
   return (
     <Modal
       center
-      open={isSubmitting}
+      open={isSubmitting || !!step}
       onClose={handleCancelSubmit}
       title={title}
       subtitle={subtitle}
-      titleIcon={<IconComponent size="large" />}
+      titleIcon={iconComponent}
     >
       <Content>
-        {submitStep === SubmitStepEnum.confirming && (
+        {(step === SubmitStepEnum.initiate ||
+          step === SubmitStepEnum.confirming) && (
           <Text color="secondary" size="xxs">
             Confirm this transaction in your wallet
           </Text>
         )}
 
-        {submitStep === SubmitStepEnum.success && (
+        {step === SubmitStepEnum.success && address && (
           <Button onClick={handleNavigateToVault} fullwidth>
             Go to vault
           </Button>
         )}
 
-        {/* TODO: replace condition by tx when got it*/}
-        {submitStep === SubmitStepEnum.success ||
-          (submitStep === SubmitStepEnum.submitting && (
-            <Link target="_blank" href={'https://etherscan.io/'}>
-              View on Etherscan
-            </Link>
-          ))}
+        {(SubmitStepEnum.success === step ||
+          SubmitStepEnum.submitting === step) &&
+          tx && <TxLinkEtherscan txHash={tx} />}
 
-        {submitStep === SubmitStepEnum.reject && <Link href="#">retry</Link>}
+        {step === SubmitStepEnum.reject && (
+          <Link target="_self" onClick={retryFire} href="#">
+            retry
+          </Link>
+        )}
       </Content>
     </Modal>
   );

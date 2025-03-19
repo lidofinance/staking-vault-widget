@@ -4,7 +4,7 @@ import { ToggleContainer, ToggleOption } from './styles';
 
 export interface ToggleSwitchProps<T = string> {
   options: { value: T; label: string }[];
-  defaultActive: string;
+  defaultActive: T;
   onToggleCb: (payload: ToggleCbPayload<T>) => void;
 }
 
