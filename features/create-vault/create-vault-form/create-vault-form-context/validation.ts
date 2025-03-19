@@ -1,8 +1,8 @@
-import { createPublicClient, http, isAddress } from 'viem';
+import { isAddress, PublicClient } from 'viem';
 import { normalize } from 'viem/ens';
 import { z, ZodError } from 'zod';
-import { holesky } from 'viem/chains';
 import { appendErrors, FieldError } from 'react-hook-form';
+import { VaultFactoryArgs } from '../../../../types';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
@@ -18,6 +18,7 @@ const addressSchema = z
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
   nodeOperatorManager: addressSchema,
+  assetRecoverer: addressSchema,
   nodeOperatorFeeBP: z
     .number(INVALID_NUMBER_DATA_MESSAGE)
     .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
@@ -127,15 +128,11 @@ export const createVaultFormValidator = async (values: CreateVaultSchema) => {
   }
 };
 
-// TODO: move to constants (rpc)
-// TODO: replace http address
-const publicClient = createPublicClient({
-  chain: holesky,
-  transport: http('https://1rpc.io/holesky'),
-});
-
 // TODO: move to shared validators
-export const validateEnsDomain = async (value: string) => {
+export const validateEnsDomain = async (
+  value: string,
+  publicClient: PublicClient,
+) => {
   try {
     const ensAddress = await publicClient.getEnsAddress({
       name: normalize(value),
@@ -145,4 +142,12 @@ export const validateEnsDomain = async (value: string) => {
   } catch (e) {
     return false;
   }
+};
+
+export const formatCreateVaultData = (
+  values: CreateVaultSchema,
+): VaultFactoryArgs => {
+  const { confirmMainSettings, ...payload } = values;
+
+  return payload as unknown as VaultFactoryArgs;
 };

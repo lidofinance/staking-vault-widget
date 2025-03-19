@@ -21,7 +21,11 @@ import { SubmitModal } from 'features/create-vault/create-vault-form/submit-moda
 
 import { SubmitStep } from 'features/create-vault/types';
 import { type CreateVaultDataContextValue } from './types';
-import { createVaultFormValidator, CreateVaultSchema } from './validation';
+import {
+  createVaultFormValidator,
+  CreateVaultSchema,
+  formatCreateVaultData,
+} from './validation';
 
 import { ToggleValue, CREATE_VAULT_STEPS } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
@@ -104,7 +108,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   });
 
   const onSubmit = useCallback(
-    async (data: any): Promise<boolean> => {
+    async (data: CreateVaultSchema): Promise<boolean> => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -117,7 +121,10 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       // sendTransaction
       // regect or proceed
       setSubmitStep(SubmitStepEnum.submitting);
-      await callVaultFactoryContract(data);
+
+      const payload = formatCreateVaultData(data);
+      await callVaultFactoryContract(payload);
+
       setSubmitStep(SubmitStepEnum.success);
 
       return true;

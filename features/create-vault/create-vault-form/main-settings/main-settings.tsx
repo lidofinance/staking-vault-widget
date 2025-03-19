@@ -17,6 +17,11 @@ const fieldsList = [
     notes: 'Node Operator address cannot be changed after the vault is created',
   },
   {
+    name: 'assetRecoverer',
+    title: 'Asset Recoverer',
+    label: 'Asset Recoverer address',
+  },
+  {
     name: 'nodeOperatorFeeBP',
     title: 'Node Operator fee',
     label: 'Node Operator fee, %',

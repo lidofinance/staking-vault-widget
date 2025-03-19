@@ -41,10 +41,6 @@ export const useCreateVaultWithDelegation = () => {
 
   return useCallback(
     async (args: VaultFactoryArgs) => {
-      // console.log('useCreateVaultWithDelegation::wagmiConfig', wagmiConfig);
-      // console.log('useCreateVaultWithDelegation::core.web3Provider', core.web3Provider);
-      // console.log('useCreateVaultWithDelegation::connections', connections);
-
       return await writeContractAsync({
         abi: VaultFactoryAbi,
         address: VAULT_FACTORY_BY_NETWORK[chainId as CHAINS] as Address,

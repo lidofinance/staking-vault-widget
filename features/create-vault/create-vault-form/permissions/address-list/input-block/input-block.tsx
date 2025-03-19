@@ -1,12 +1,14 @@
 import { FC } from 'react';
 import { isAddress } from 'viem';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import { useLidoSDK } from 'modules/web3';
 
 import { Plus } from '@lidofinance/lido-ui';
 import { InputItem } from './input-item';
 import { AddAddress } from '../styles';
-import { validateEnsDomain } from '../../../create-vault-form-context/validation';
 import { InputBlockWrapper } from './styles';
+
+import { validateEnsDomain } from 'features/create-vault/create-vault-form/create-vault-form-context/validation';
 
 export interface InputBlockProps {
   permission: string;
@@ -14,6 +16,8 @@ export interface InputBlockProps {
 
 export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
   const { getValues } = useFormContext();
+  const { core } = useLidoSDK();
+
   const {
     control,
     register,
@@ -40,7 +44,10 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
             payload.map(async (field, index) => {
               const currentValue = field.value;
               if (!isAddress(currentValue)) {
-                const isValid = await validateEnsDomain(currentValue);
+                const isValid = await validateEnsDomain(
+                  currentValue,
+                  core.rpcProvider,
+                );
                 if (!isValid) {
                   errors[key][index] = {
                     value: 'Invalid ethereum address',

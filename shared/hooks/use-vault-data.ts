@@ -28,10 +28,16 @@ export const useVaultData = (
       }
 
       for (const vaultAddress of vaultsAddressesList) {
-        const vaultContract = getStakingVaultContract(vaultAddress);
+        const vaultContract = getStakingVaultContract(
+          vaultAddress,
+          core.rpcProvider,
+        );
         const owner = await vaultContract.read.owner();
 
-        const delegationContract = getDelegationContract(owner);
+        const delegationContract = getDelegationContract(
+          owner,
+          core.rpcProvider,
+        );
         const vaultHubSocket: VaultSocket =
           await vaultHabContract.read.vaultSocket([vaultAddress]);
 

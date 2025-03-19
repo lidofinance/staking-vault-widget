@@ -19,14 +19,12 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   } = useFormControllerContext();
 
   // Bind submit action
-  const doSubmit = useMemo(
-    () =>
-      handleSubmit(async (args) => {
-        const success = await onSubmit(args);
-        if (success) resetContext ? resetContext(args) : resetDefault();
-      }),
-    [handleSubmit, onSubmit, resetDefault, resetContext],
-  );
+  const doSubmit = useMemo(() => {
+    return handleSubmit(async (args) => {
+      const success = await onSubmit(args);
+      if (success) resetContext ? resetContext(args) : resetDefault();
+    });
+  }, [handleSubmit, onSubmit, resetDefault, resetContext]);
 
   // Bind retry callback
   useEffect(() => {

@@ -24,6 +24,10 @@ const confirmationList: { title: string; list: ConfirmationList }[] = [
 export const Confirmation = () => {
   const { step } = useCreateVaultFormData();
 
+  if (step !== 3) {
+    return null;
+  }
+
   return (
     <SectionContainer step={step} currentStep={3}>
       {confirmationList.map(({ title, list }) => (
