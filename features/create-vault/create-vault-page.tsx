@@ -6,7 +6,6 @@ import { CreateFormProvider } from 'features/create-vault/create-vault-form/crea
 import { MainSettings } from 'features/create-vault/create-vault-form/main-settings';
 import { Permissions } from 'features/create-vault/create-vault-form/permissions';
 import { Confirmation } from 'features/create-vault/create-vault-form/confirmation';
-import { CreateVaultFaq } from 'features/create-vault/create-vault-faq';
 import { FormContainer } from 'features/create-vault/create-vault-form/form-container';
 import { PageWrapper } from './styles';
 
@@ -24,7 +23,6 @@ export const CreateVaultPage: FC = () => {
             <Confirmation />
           </FormContainer>
         </CreateFormProvider>
-        <CreateVaultFaq />
       </PageWrapper>
     </Layout>
   );

@@ -23,8 +23,6 @@ import { SubmitStep } from 'features/create-vault/types';
 import { type CreateVaultDataContextValue } from './types';
 import { createVaultFormValidator, CreateVaultSchema } from './validation';
 
-import { sleep } from 'utils';
-
 import { ToggleValue, CREATE_VAULT_STEPS } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
@@ -115,14 +113,11 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       abortControllerRef.current = controller;
 
       setSubmitStep(SubmitStepEnum.initiate);
-      await sleep(5000);
       setSubmitStep(SubmitStepEnum.confirming);
       // sendTransaction
-      await sleep(5000);
       // regect or proceed
       setSubmitStep(SubmitStepEnum.submitting);
       await callVaultFactoryContract(data);
-      await sleep(5000);
       setSubmitStep(SubmitStepEnum.success);
 
       return true;

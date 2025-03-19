@@ -15,6 +15,7 @@ import {
   usePublicClient,
   fallback,
   type Config,
+  injected,
 } from 'wagmi';
 import * as wagmiChains from 'wagmi/chains';
 
@@ -115,7 +116,7 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
     return createConfig({
       chains: [wagmiChains.mainnet],
       ssr: true,
-      connectors: [],
+      connectors: [injected()],
       batch: {
         multicall: false,
       },
