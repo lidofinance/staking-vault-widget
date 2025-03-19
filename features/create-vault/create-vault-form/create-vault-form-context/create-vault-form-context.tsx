@@ -10,6 +10,8 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
 
 import {
   FormController,
@@ -32,7 +34,7 @@ import {
   PermissionToggleEnum,
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
-import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
+import { simulateCreateVault } from 'modules/web3/contracts/vault-factory';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
@@ -49,6 +51,8 @@ export const useCreateVaultFormData = () => {
 };
 
 export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { core } = useLidoSDK();
+  const { address } = useDappStatus();
   const [step, setStep] = useState(1);
   const [permissionsView, setPermissionsView] = useState<ToggleValue>(
     PermissionToggleEnum.byPermission,
@@ -113,6 +117,13 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       setSubmitStep({ step: SubmitStepEnum.initiate });
       const payload = formatCreateVaultData(data);
 
+      try {
+        await simulateCreateVault(core.rpcProvider, address, payload);
+      } catch (err) {
+        setSubmitStep({ step: SubmitStepEnum.error });
+        return false;
+      }
+
       setSubmitStep({ step: SubmitStepEnum.confirming });
       try {
         const response = await callCreateVault(payload);
@@ -126,7 +137,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
       return true;
     },
-    [callCreateVault],
+    [callCreateVault, address, core.rpcProvider],
   );
 
   const { retryEvent, retryFire } = useFormControllerRetry();

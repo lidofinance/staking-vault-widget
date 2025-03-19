@@ -6,6 +6,7 @@ export enum SubmitStepEnum {
   initiate = 'initiate',
   confirming = 'confirming',
   reject = 'reject',
+  error = 'error',
   submitting = 'submitting',
   success = 'success',
 }

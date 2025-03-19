@@ -147,7 +147,9 @@ export const validateEnsDomain = async (
 export const formatCreateVaultData = (
   values: CreateVaultSchema,
 ): VaultFactoryArgs => {
-  const { confirmMainSettings, ...payload } = values;
-
+  const { confirmMainSettings, nodeOperator, ...payload } = values;
+  (payload as unknown as VaultFactoryArgs).confirmExpiry = BigInt(
+    values.confirmExpiry,
+  );
   return payload as unknown as VaultFactoryArgs;
 };
