@@ -151,5 +151,6 @@ export const formatCreateVaultData = (
   (payload as unknown as VaultFactoryArgs).confirmExpiry = BigInt(
     values.confirmExpiry,
   );
+
   return payload as unknown as VaultFactoryArgs;
 };

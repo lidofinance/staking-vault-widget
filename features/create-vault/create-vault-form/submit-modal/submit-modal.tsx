@@ -10,25 +10,27 @@ import {
   Success,
   Error,
   type ModalProps,
-  Link,
   Button,
 } from '@lidofinance/lido-ui';
 
-import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
+import { useFormControllerContext } from 'shared/hook-form/form-controller';
+import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
-import { TxLinkEtherscan } from '../../../../shared/components/tx-link-etherscan';
-import { useFormControllerContext } from '../../../../shared/hook-form/form-controller';
+
+import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
 
 const getIconComponent = (step: SubmitStep) => {
   if (step === SubmitStepEnum.success)
     return <Success fill="var(--lido-color-success)" />;
   if (step === SubmitStepEnum.reject) return <Error />;
+  if (step === SubmitStepEnum.error) return <Error />;
   return <Loader size="large" />;
 };
 
 const getModalTitle = (step: SubmitStep) => {
   if (step === SubmitStepEnum.success) return 'New vault has been created';
   if (step === SubmitStepEnum.reject) return 'Wallet tx signature';
+  if (step === SubmitStepEnum.error) return 'Simulation error';
   return 'You are creating a new vault';
 };
 
@@ -36,6 +38,8 @@ const getModalSubTitle = (step: SubmitStep) => {
   if (step === SubmitStepEnum.submitting) return 'Awaiting block confirmation';
   if (step === SubmitStepEnum.reject)
     return 'User denied transaction signature';
+  if (step === SubmitStepEnum.error)
+    return 'Got error when called contract simulation';
   return '';
 };
 
@@ -84,9 +88,11 @@ export const SubmitModal: FC<ModalProps> = () => {
           tx && <TxLinkEtherscan txHash={tx} />}
 
         {step === SubmitStepEnum.reject && (
-          <Link target="_self" onClick={retryFire} href="#">
-            retry
-          </Link>
+          <ButtonLink onClick={retryFire}>retry</ButtonLink>
+        )}
+
+        {step === SubmitStepEnum.error && (
+          <ButtonLink onClick={handleCancelSubmit}>close</ButtonLink>
         )}
       </Content>
     </Modal>
