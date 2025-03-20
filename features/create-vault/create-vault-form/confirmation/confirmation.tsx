@@ -4,20 +4,20 @@ import { ConfirmationAction } from 'features/create-vault/create-vault-form/conf
 import { ConfirmationVaultInfo } from 'features/create-vault/create-vault-form/confirmation/confirmation-vault-info';
 import { SectionContainer } from 'features/create-vault/styles';
 
-import { ConfirmationList } from './types';
+import { ConfirmationList } from 'features/create-vault/types';
 
 const confirmationList: { title: string; list: ConfirmationList }[] = [
   {
     title: 'Main settings',
-    list: 'confirmationMainSettings',
+    list: 'mainSettings',
   },
   {
     title: 'Vault Manager Permissions',
-    list: 'confirmationVaultManagerPermissions',
+    list: 'vaultManagerPermissions',
   },
   {
     title: 'Vault Manager Permissions',
-    list: 'confirmationNodeOperatorManagerPermissions',
+    list: 'nodeOperatorManagerPermissions',
   },
 ];
 

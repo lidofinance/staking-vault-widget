@@ -2,7 +2,7 @@ import { isAddress, PublicClient } from 'viem';
 import { normalize } from 'viem/ens';
 import { z, ZodError } from 'zod';
 import { appendErrors, FieldError } from 'react-hook-form';
-import { VaultFactoryArgs } from '../../../../types';
+import { VaultFactoryArgs } from 'types';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';

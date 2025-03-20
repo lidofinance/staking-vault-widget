@@ -1,5 +1,3 @@
-import { InputProps } from '@lidofinance/lido-ui';
-
 import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form-context';
 
 import { GeneralInput } from 'features/create-vault/create-vault-form/form-controllers';
@@ -7,60 +5,24 @@ import { Confirmation } from 'features/create-vault/create-vault-form/main-setti
 import { MainSettingsAction } from 'features/create-vault/create-vault-form/main-settings/main-settings-action';
 import { SectionContainer } from 'features/create-vault/styles';
 
-import { GeneralDataInputType } from 'types/form';
+import { getCreateVaultFields } from 'features/create-vault/consts';
 
-const fieldsList = [
-  {
-    name: 'nodeOperator',
-    title: 'Node Operator',
-    label: 'Node Operator address',
-    notes: 'Node Operator address cannot be changed after the vault is created',
-  },
-  {
-    name: 'assetRecoverer',
-    title: 'Asset Recoverer',
-    label: 'Asset Recoverer address',
-  },
-  {
-    name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    label: 'Node Operator fee, %',
-    dataType: 'number' as GeneralDataInputType,
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'curatorFeeBP',
-    title: 'Curator fee',
-    label: 'Curator fee, %',
-    dataType: 'number' as GeneralDataInputType,
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    label: 'Confirmation Lifetime, hours',
-    afterText: 'hours',
-    dataType: 'number' as GeneralDataInputType,
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'defaultAdmin',
-    title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
-  },
-  {
-    name: 'nodeOperatorManager', // TODO: remove
-    title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
-  },
-];
+const fieldsForRender = getCreateVaultFields([
+  'nodeOperator',
+  'assetRecoverer',
+  'nodeOperatorFeeBP',
+  'curatorFeeBP',
+  'confirmExpiry',
+  'defaultAdmin',
+  'nodeOperatorManager',
+]);
 
 export const MainSettings = () => {
   const { step } = useCreateVaultFormData();
 
   return (
     <SectionContainer step={step} currentStep={1}>
-      {fieldsList.map((field) => (
+      {fieldsForRender.map((field) => (
         <GeneralInput key={field.name} {...field} />
       ))}
       <Confirmation />

@@ -2,18 +2,18 @@ import { FC, useMemo } from 'react';
 import { isAddress } from 'viem';
 import { useController, useFormContext } from 'react-hook-form';
 
-import { Identicon, Input, InputProps } from '@lidofinance/lido-ui';
+import { Identicon, Input } from '@lidofinance/lido-ui';
 import { InputNotes, InputTitle } from './styles';
 
-import { GeneralDataInputType } from 'types/form';
+import { InputDataType } from 'features/create-vault/types';
 
 export interface InputAddressProps {
   name: string;
-  label: string;
-  type?: InputProps['type'];
+  label?: string;
+  type?: string;
   title: string;
   notes?: string;
-  dataType?: GeneralDataInputType;
+  dataType?: InputDataType;
   afterText?: string; // TODO: add option for text like 'hours' (confirmExpiry field)
 }
 

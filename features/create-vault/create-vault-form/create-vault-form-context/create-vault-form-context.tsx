@@ -20,8 +20,10 @@ import {
 } from 'shared/hook-form/form-controller';
 import { SubmitModal } from 'features/create-vault/create-vault-form/submit-modal';
 
-import { SubmittingInfo } from 'features/create-vault/types';
-import { type CreateVaultDataContextValue } from './types';
+import {
+  type CreateVaultDataContextValue,
+  SubmittingInfo,
+} from 'features/create-vault/types';
 import {
   createVaultFormValidator,
   CreateVaultSchema,

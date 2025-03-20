@@ -6,6 +6,7 @@ import {
   ConfirmAddress,
   ConfirmTime,
   ConfirmDefault,
+  ConfirmNumber,
   ConfirmDataItemProps,
 } from './confirmation-data-item';
 
@@ -14,18 +15,19 @@ import { InputDataType } from 'features/create-vault/types';
 
 export interface ConfirmationDataProps {
   permission: string;
-  type: InputDataType;
+  dataType: InputDataType;
 }
 
 const ComponentByType: Record<InputDataType, FC<ConfirmDataItemProps>> = {
   address: ConfirmAddress,
   percent: ConfirmPercent,
   time: ConfirmTime,
+  number: ConfirmNumber,
   default: ConfirmDefault,
 };
 
-const getComponentByType = (type: InputDataType) => {
-  const Component = ComponentByType[type];
+const getComponentByType = (dataType: InputDataType) => {
+  const Component = ComponentByType[dataType];
   if (!Component) {
     return ConfirmDefault;
   }
@@ -35,16 +37,16 @@ const getComponentByType = (type: InputDataType) => {
 
 export const ConfirmationData: FC<ConfirmationDataProps> = ({
   permission,
-  type,
+  dataType,
 }) => {
   const { getValues } = useFormContext();
 
   const value = getValues(permission);
   if (!validateFormValue(value)) {
-    type = 'default';
+    dataType = 'default';
   }
 
-  const DataComponent = getComponentByType(type);
+  const DataComponent = getComponentByType(dataType);
 
   return <DataComponent payload={value} />;
 };
