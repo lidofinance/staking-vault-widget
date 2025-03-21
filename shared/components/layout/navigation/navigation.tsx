@@ -46,7 +46,7 @@ export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
-  const showNavList = pathname !== AppPaths.createVault;
+  const showNavList = !pathname.includes(AppPaths.createVault);
 
   const {
     externalConfig: { pages },
