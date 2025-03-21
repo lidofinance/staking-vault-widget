@@ -1,8 +1,17 @@
 import { isAddress, PublicClient } from 'viem';
 import { normalize } from 'viem/ens';
 import { z, ZodError } from 'zod';
-import { appendErrors, FieldError } from 'react-hook-form';
+import {
+  appendErrors,
+  FieldError,
+  Resolver,
+  UseFormGetValues,
+} from 'react-hook-form';
 import { VaultFactoryArgs } from 'types';
+import {
+  PermissionKeys,
+  VaultPermissionsType,
+} from 'features/create-vault/types';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
@@ -153,4 +162,59 @@ export const formatCreateVaultData = (
   );
 
   return payload as unknown as VaultFactoryArgs;
+};
+
+export const validatePermissions = (
+  publicClient: PublicClient,
+  getValues: UseFormGetValues<Record<string, any>>,
+): Resolver<VaultPermissionsType, any> => {
+  return async (values: VaultPermissionsType) => {
+    const errors = {} as Record<
+      PermissionKeys,
+      Record<number, { value: string }>
+    >;
+    const keysList = Object.keys(values) as PermissionKeys[];
+
+    await Promise.all(
+      keysList.map(async (key: PermissionKeys) => {
+        const payload = values[key];
+        errors[key] = {};
+
+        await Promise.all(
+          payload.map(async (field, index) => {
+            const { value: currentValue } = field;
+
+            if (!isAddress(currentValue)) {
+              const isValid = await validateEnsDomain(
+                currentValue,
+                publicClient,
+              );
+
+              if (!isValid) {
+                errors[key][`${index}`] = {
+                  value: 'Invalid ethereum address',
+                };
+              }
+            }
+
+            const mainFormValues = getValues(key) as string[];
+            const filtered = mainFormValues.filter(
+              (value) => value === currentValue,
+            );
+
+            if (filtered.length > 0) {
+              errors[key][index] = {
+                value: 'Address already added',
+              };
+            }
+          }),
+        );
+      }),
+    );
+
+    return {
+      values,
+      errors,
+    };
+  };
 };

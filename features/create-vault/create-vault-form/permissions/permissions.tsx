@@ -10,43 +10,13 @@ import {
   PermissionRoleWrapper,
 } from './styles';
 import { SectionContainer } from 'features/create-vault/styles';
+import { PermissionKeys } from 'features/create-vault/types';
 
 interface PermissionsRoles {
-  role: string;
+  role: PermissionKeys;
   title: string;
   tooltip: string;
 }
-
-// const rolesList: PermissionsRoles[] = [
-//   {
-//     role: 'defaultAdmin',
-//     title: 'Vault Manager',
-//     tooltip: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters. Vault Manager role can be considered as Vault Owner for the User. Multiple addresses supported.',
-//   },
-//   {
-//     role: 'nodeOperatorManager',
-//     title: 'Node Operator Manager',
-//     tooltip: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters from the Node Operator perspective. Multiple addresses supported.',
-//   },
-// ];
-//
-// const vaultSettingList: PermissionsRoles[] = [
-//   {
-//     role: 'confirmExpiry',
-//     title: 'Confirmation LifeTime',
-//     tooltip: 'The main parameter of “Multi-role confirmation” mechanism. This mechanism is used for editing some of Vault’s parameters via finding consensus between two representatives of stVault: Vault Manager and Node Operator Manager. Mandatory parameter, hours [24h .. ‘no limit’]. In this mechanism, first representative initiates changing the parameter and another representative confirms the changing within “Confirmation LifeTime” period of time. Used for:\n- Node Operator Fee\n- Confirmation LifeTime',
-//   },
-//   {
-//     role: 'curatorFeeBP',
-//     title: 'Curator fee',
-//     tooltip: 'Curator fee',
-//   },
-//   {
-//     role: 'nodeOperatorFeeBP',
-//     title: 'Node Operator fee',
-//     tooltip: 'Node Operator fee',
-//   },
-// ];
 
 const adminPermissionsList: PermissionsRoles[] = [
   {

@@ -146,6 +146,8 @@ export const createVaultFieldsList: FieldConfig[] = [
   },
 ];
 
+export type Permission = (typeof createVaultFieldsList)[number]['name'];
+
 export const getCreateVaultFields = (fieldsList: string[]) => {
   return createVaultFieldsList.filter((field) =>
     fieldsList.includes(field.name),

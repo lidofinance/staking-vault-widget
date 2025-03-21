@@ -1,23 +1,30 @@
 import { FC, KeyboardEvent, useEffect, useState } from 'react';
 import {
-  UseFormRegisterReturn,
-  RegisterOptions,
   useFormContext,
   FieldError,
   FieldErrorsImpl,
   Merge,
+  UseFormTrigger,
+  UseFormRegister,
 } from 'react-hook-form';
 
 import { Input } from '@lidofinance/lido-ui';
 import { ButtonClose } from 'shared/components';
 import { InputWrapper } from './styles';
 
+import {
+  PermissionKeys,
+  VaultPermissionsType,
+} from 'features/create-vault/types';
+
+type ArrayFormKey = `${PermissionKeys}.${number}.value`;
+
 export interface InputItemProps {
   permission: string;
   index: number;
   remove: (index?: number | number[]) => void;
-  register: (name: string, options?: RegisterOptions) => UseFormRegisterReturn;
-  trigger: (name?: string | string[]) => Promise<boolean>;
+  register: UseFormRegister<VaultPermissionsType>;
+  trigger: UseFormTrigger<VaultPermissionsType>;
   error: Merge<FieldError, FieldErrorsImpl<{ value: string }>> | undefined;
 }
 
@@ -30,8 +37,8 @@ export const InputItem: FC<InputItemProps> = ({
   error,
 }) => {
   const { setValue, getValues } = useFormContext();
-  const [fieldError, setError] = useState<string>('');
-  const inputKey = `${permission}.${index}.value`;
+  const [fieldError, setError] = useState<string>();
+  const inputKey = `${permission}.${index}.value` as ArrayFormKey;
 
   useEffect(() => {
     if (error?.value && (error.value as unknown as string) !== fieldError) {

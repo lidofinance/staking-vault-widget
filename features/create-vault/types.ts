@@ -31,8 +31,81 @@ export type ConfirmationList =
   | 'vaultManagerPermissions'
   | 'nodeOperatorManagerPermissions';
 
+export type FieldName =
+  | 'nodeOperator'
+  | 'assetRecoverer'
+  | 'nodeOperatorManager'
+  | 'nodeOperatorFeeBP'
+  | 'curatorFeeBP'
+  | 'confirmExpiry'
+  | 'defaultAdmin'
+  | 'confirmMainSettings'
+  | 'funders'
+  | 'withdrawers'
+  | 'minters'
+  | 'burners'
+  | 'rebalancers'
+  | 'depositPausers'
+  | 'depositResumers'
+  | 'validatorExitRequesters'
+  | 'validatorWithdrawalTriggerers'
+  | 'disconnecters'
+  | 'curatorFeeSetters'
+  | 'curatorFeeClaimers'
+  | 'nodeOperatorFeeClaimers';
+
+type EnsureKeys<T extends Record<FieldName, any>> = T;
+
+export type CreateVaultType = EnsureKeys<{
+  nodeOperator: string;
+  assetRecoverer: string;
+  nodeOperatorManager: string;
+  nodeOperatorFeeBP: number;
+  curatorFeeBP: number;
+  confirmExpiry: number;
+  defaultAdmin: string;
+  confirmMainSettings: boolean;
+  funders: string[];
+  withdrawers: string[];
+  minters: string[];
+  burners: string[];
+  rebalancers: string[];
+  depositPausers: string[];
+  depositResumers: string[];
+  validatorExitRequesters: string[];
+  validatorWithdrawalTriggerers: string[];
+  disconnecters: string[];
+  curatorFeeSetters: string[];
+  curatorFeeClaimers: string[];
+  nodeOperatorFeeClaimers: string[];
+}>;
+
+type FilterArrayKeys<T> = {
+  [K in keyof T]: T[K] extends any[] ? never : K;
+}[keyof T];
+
+type NotArrayKeys = FilterArrayKeys<CreateVaultType>;
+export type PermissionKeys = keyof Omit<CreateVaultType, NotArrayKeys>;
+
+type VaultPermissionInput = { value: string };
+export type VaultPermissionsType = {
+  funders: VaultPermissionInput[];
+  withdrawers: VaultPermissionInput[];
+  minters: VaultPermissionInput[];
+  burners: VaultPermissionInput[];
+  rebalancers: VaultPermissionInput[];
+  depositPausers: VaultPermissionInput[];
+  depositResumers: VaultPermissionInput[];
+  validatorExitRequesters: VaultPermissionInput[];
+  validatorWithdrawalTriggerers: VaultPermissionInput[];
+  disconnecters: VaultPermissionInput[];
+  curatorFeeSetters: VaultPermissionInput[];
+  curatorFeeClaimers: VaultPermissionInput[];
+  nodeOperatorFeeClaimers: VaultPermissionInput[];
+};
+
 export type FieldConfig = {
-  name: string;
+  name: FieldName;
   title: string;
   label?: string;
   notes?: string;
