@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from 'react';
+import { MouseEvent, forwardRef, ForwardedRef } from 'react';
 
 import { Identicon } from '@lidofinance/lido-ui';
 import { ButtonClose } from 'shared/components';
@@ -8,17 +8,20 @@ export interface AddressBadgeProps {
   address: string;
   symbols?: number;
   onRemove?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
-export const AddressBadge: FC<AddressBadgeProps> = (props) => {
-  const { address, symbols = 6, onRemove } = props;
+export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
+  (props, ref?: ForwardedRef<HTMLDivElement>) => {
+    const { address, symbols = 6, onRemove, onClick } = props;
 
-  return (
-    <PillContainer>
-      <Identicon address={address} />
-      <AddressText symbols={symbols} address={address} />
+    return (
+      <PillContainer onClick={onClick} ref={ref}>
+        <Identicon address={address} />
+        <AddressText symbols={symbols} address={address} />
 
-      {onRemove && <ButtonClose onClick={onRemove} />}
-    </PillContainer>
-  );
-};
+        {onRemove && <ButtonClose onClick={onRemove} />}
+      </PillContainer>
+    );
+  },
+);

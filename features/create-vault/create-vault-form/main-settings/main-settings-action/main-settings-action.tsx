@@ -6,29 +6,26 @@ import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
 import { AppPaths } from 'consts/urls';
-import { useFormContext } from 'react-hook-form';
-import { validateFormValue } from '../../../../../utils/validate-form-value';
+import { useFormContext, UseFormReturn } from 'react-hook-form';
+import { validateFormValue } from 'utils/validate-form-value';
+import { VaultMainSettingsType } from 'features/create-vault/types';
+import { mainSettingsFields } from 'features/create-vault/consts';
 
-const nextStepFields = [
-  'nodeOperator',
-  'nodeOperatorManager',
-  'nodeOperatorFeeBP',
-  'curatorFeeBP',
-  'confirmExpiry',
-  'defaultAdmin',
-  'confirmMainSettings',
-];
+export interface MainSettingsActionProps {
+  form: UseFormReturn<VaultMainSettingsType>;
+}
 
-export const MainSettingsAction: FC = () => {
+export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
   const router = useRouter();
   const { step, handleSetStep } = useCreateVaultFormData();
+  const { setValue } = useFormContext();
   const {
     getFieldState,
-    formState: { defaultValues, isValidating },
     getValues,
-  } = useFormContext();
+    formState: { isValidating, defaultValues, isValid },
+  } = form;
 
-  const stepByFields = nextStepFields.some((fieldName) => {
+  const stepByFields = mainSettingsFields.some((fieldName) => {
     const { invalid, isTouched } = getFieldState(fieldName);
     const currentValue = getValues(fieldName);
     const hasDefault = validateFormValue(defaultValues?.[fieldName]);
@@ -40,13 +37,19 @@ export const MainSettingsAction: FC = () => {
     );
   });
   const stepByConfirm = getValues('confirmMainSettings');
-  const isNextStepDisabled = isValidating || stepByFields || !stepByConfirm;
+  const isNextStepDisabled =
+    isValidating || stepByFields || !stepByConfirm || !isValid;
 
   const handleNavigateToRoot = () => {
     void router.push(AppPaths.main);
   };
 
   const handleSetNextStep = () => {
+    mainSettingsFields
+      // @ts-expect-error form typings
+      .filter((field) => field !== 'confirmMainSettings')
+      .map((field) => setValue(field, getValues(field)));
+
     const nextStep = step + 1;
     handleSetStep(nextStep);
   };

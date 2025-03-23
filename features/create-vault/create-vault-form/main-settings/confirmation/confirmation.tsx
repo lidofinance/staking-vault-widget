@@ -1,13 +1,17 @@
 import { FC } from 'react';
 
-import { useFormContext } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 
 import { Checkbox } from '@lidofinance/lido-ui';
 import { InfoList, Wrapper } from './styles';
 
-export const Confirmation: FC = () => {
-  const { register } = useFormContext();
+import { VaultMainSettingsType } from 'features/create-vault/types';
 
+export interface ConfirmationProps {
+  register: UseFormRegister<VaultMainSettingsType>;
+}
+
+export const Confirmation: FC<ConfirmationProps> = ({ register }) => {
   return (
     <Wrapper>
       <Checkbox {...register('confirmMainSettings')} />

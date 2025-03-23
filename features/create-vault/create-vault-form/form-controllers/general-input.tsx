@@ -1,14 +1,18 @@
-import { FC, useMemo } from 'react';
-import { isAddress } from 'viem';
-import { useController, useFormContext } from 'react-hook-form';
+import { FC } from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
-import { Identicon, Input } from '@lidofinance/lido-ui';
-import { InputNotes, InputTitle } from './styles';
+import { Input } from '@lidofinance/lido-ui';
+import { InputTitle } from './styles';
 
-import { InputDataType } from 'features/create-vault/types';
+import {
+  InputDataType,
+  VaultMainSettingsType,
+  MainSettingsKeys,
+} from 'features/create-vault/types';
 
-export interface InputAddressProps {
-  name: string;
+export interface GeneralInputProps {
+  form: UseFormReturn<VaultMainSettingsType>;
+  name: MainSettingsKeys;
   label?: string;
   type?: string;
   title: string;
@@ -17,17 +21,9 @@ export interface InputAddressProps {
   afterText?: string; // TODO: add option for text like 'hours' (confirmExpiry field)
 }
 
-export const GeneralInput: FC<InputAddressProps> = (props) => {
-  const {
-    name,
-    label,
-    title,
-    notes,
-    dataType = 'address',
-    type = 'text',
-  } = props;
-  const { control, getFieldState, register } = useFormContext();
-  const { field } = useController({ name, control });
+export const GeneralInput: FC<GeneralInputProps> = (props) => {
+  const { form, name, label, title, type } = props;
+  const { getFieldState, register } = form;
   const { error } = getFieldState(name);
 
   let inputProps = register(name);
@@ -37,29 +33,16 @@ export const GeneralInput: FC<InputAddressProps> = (props) => {
     });
   }
 
-  const decorator = useMemo(() => {
-    return isAddress(field.value) && dataType === 'address' ? (
-      <Identicon address={field.value} />
-    ) : null;
-  }, [field.value, dataType]);
-
   return (
     <div>
       <InputTitle>{title}</InputTitle>
       <Input
         label={label}
-        leftDecorator={decorator}
         type="text"
         error={error?.message}
         fullwidth
         {...inputProps}
       />
-      {!!notes && (
-        <InputNotes>
-          <b>Note: </b>
-          {notes}
-        </InputNotes>
-      )}
     </div>
   );
 };

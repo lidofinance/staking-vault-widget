@@ -39,7 +39,6 @@ export type FieldName =
   | 'curatorFeeBP'
   | 'confirmExpiry'
   | 'defaultAdmin'
-  | 'confirmMainSettings'
   | 'funders'
   | 'withdrawers'
   | 'minters'
@@ -64,7 +63,6 @@ export type CreateVaultType = EnsureKeys<{
   curatorFeeBP: number;
   confirmExpiry: number;
   defaultAdmin: string;
-  confirmMainSettings: boolean;
   funders: string[];
   withdrawers: string[];
   minters: string[];
@@ -84,8 +82,22 @@ type FilterArrayKeys<T> = {
   [K in keyof T]: T[K] extends any[] ? never : K;
 }[keyof T];
 
-type NotArrayKeys = FilterArrayKeys<CreateVaultType>;
-export type PermissionKeys = keyof Omit<CreateVaultType, NotArrayKeys>;
+export type MainSettingsKeys =
+  | FilterArrayKeys<CreateVaultType>
+  | 'confirmMainSettings';
+
+export type VaultMainSettingsType = {
+  nodeOperator: string;
+  assetRecoverer: string;
+  nodeOperatorManager: string;
+  nodeOperatorFeeBP: number;
+  curatorFeeBP: number;
+  confirmExpiry: number;
+  defaultAdmin: string;
+  confirmMainSettings: boolean;
+};
+
+export type PermissionKeys = keyof Omit<CreateVaultType, MainSettingsKeys>;
 
 type VaultPermissionInput = { value: string };
 export type VaultPermissionsType = {
@@ -104,8 +116,8 @@ export type VaultPermissionsType = {
   nodeOperatorFeeClaimers: VaultPermissionInput[];
 };
 
-export type FieldConfig = {
-  name: FieldName;
+export type FieldConfig<T extends FieldName> = {
+  name: T;
   title: string;
   label?: string;
   notes?: string;

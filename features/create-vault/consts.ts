@@ -1,5 +1,5 @@
 import { InputProps } from '@lidofinance/lido-ui';
-import { FieldConfig } from 'features/create-vault/types';
+import { FieldConfig, FieldName } from 'features/create-vault/types';
 
 export const CREATE_VAULT_STEPS = 3;
 
@@ -30,7 +30,7 @@ export const steps: Record<number, string> = {
 
 export const getSectionNameByStep = (step: number) => steps[step];
 
-export const createVaultFieldsList: FieldConfig[] = [
+export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   {
     name: 'nodeOperator',
     title: 'Node Operator',
@@ -146,10 +146,20 @@ export const createVaultFieldsList: FieldConfig[] = [
   },
 ];
 
-export type Permission = (typeof createVaultFieldsList)[number]['name'];
+export const mainSettingsFields = [
+  'nodeOperator',
+  'assetRecoverer',
+  'nodeOperatorFeeBP',
+  'curatorFeeBP',
+  'confirmExpiry',
+  'defaultAdmin',
+  'nodeOperatorManager',
+] as const;
 
-export const getCreateVaultFields = (fieldsList: string[]) => {
-  return createVaultFieldsList.filter((field) =>
-    fieldsList.includes(field.name),
+export const getCreateVaultFields = <T extends FieldName>(
+  fieldsList: readonly T[],
+): FieldConfig<T>[] => {
+  return createVaultFieldsList.filter((field): field is FieldConfig<T> =>
+    fieldsList.includes(field.name as T),
   );
 };

@@ -1,6 +1,5 @@
-import { isAddress, PublicClient } from 'viem';
-import { normalize } from 'viem/ens';
-import { z, ZodError } from 'zod';
+import { isAddress } from 'viem';
+import { z, ZodError, ZodSchema } from 'zod';
 import {
   appendErrors,
   FieldError,
@@ -9,16 +8,24 @@ import {
 } from 'react-hook-form';
 import { VaultFactoryArgs } from 'types';
 import {
+  MainSettingsKeys,
   PermissionKeys,
+  VaultMainSettingsType,
   VaultPermissionsType,
 } from 'features/create-vault/types';
+import { isValidAnyAddress } from 'utils/address-validation';
+import { isValidEns } from '../../../../utils/ens';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
 const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
-const INVALID_NUMBER_DATA_MESSAGE = { message: 'Only number is valid' };
+const INVALID_NUMBER_SUM_MESSAGE =
+  "Sum of Curator's and Node Operator's fees can't be more than 100";
+const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 800 or less';
+const INVALID_NUMBER_DATA_MESSAGE = 'Only number is valid';
+const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
-const validateAddress = (value: string) => isAddress(value);
+const validateAddress = (value: string) => isValidAnyAddress(value);
 
 const addressSchema = z
   .string()
@@ -29,19 +36,18 @@ export const createVaultSchema = z.object({
   nodeOperatorManager: addressSchema,
   assetRecoverer: addressSchema,
   nodeOperatorFeeBP: z
-    .number(INVALID_NUMBER_DATA_MESSAGE)
+    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
   curatorFeeBP: z.coerce
-    .number(INVALID_NUMBER_DATA_MESSAGE)
+    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
   confirmExpiry: z.coerce
-    .number(INVALID_NUMBER_DATA_MESSAGE)
+    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(1, INVALID_NUMBER_MIN_MESSAGE)
-    .max(800, 'Must be 800 or less'),
+    .max(800, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   defaultAdmin: addressSchema,
-  confirmMainSettings: z.boolean(),
   funders: z.array(addressSchema).optional(),
   withdrawers: z.array(addressSchema).optional(),
   minters: z.array(addressSchema).optional(),
@@ -114,49 +120,37 @@ export const parseZodErrorSchema = (
   return errors;
 };
 
-export const createVaultFormValidator = async (values: CreateVaultSchema) => {
-  try {
-    const output = await createVaultSchema.parseAsync(values);
-    return {
-      values: output,
-      errors: {},
-    };
-  } catch (err: unknown) {
-    if (isZodError(err)) {
-      const errors = err.errors;
+export const createVaultFormValidator = <T extends ZodSchema>(
+  schema: T,
+): Resolver<z.infer<T>> => {
+  return async (values: z.infer<T>) => {
+    try {
+      const output = schema.parse(values);
       return {
-        values,
-        errors: parseZodErrorSchema(errors, true),
+        values: output,
+        errors: {},
+      };
+    } catch (err: unknown) {
+      if (isZodError(err)) {
+        const errors = err.errors;
+        return {
+          values,
+          errors: parseZodErrorSchema(errors, true),
+        };
+      }
+
+      return {
+        values: values,
+        errors: {},
       };
     }
-
-    return {
-      values: values,
-      errors: {},
-    };
-  }
-};
-
-// TODO: move to shared validators
-export const validateEnsDomain = async (
-  value: string,
-  publicClient: PublicClient,
-) => {
-  try {
-    const ensAddress = await publicClient.getEnsAddress({
-      name: normalize(value),
-    });
-
-    return !!ensAddress;
-  } catch (e) {
-    return false;
-  }
+  };
 };
 
 export const formatCreateVaultData = (
   values: CreateVaultSchema,
 ): VaultFactoryArgs => {
-  const { confirmMainSettings, nodeOperator, ...payload } = values;
+  const { nodeOperator, ...payload } = values;
   (payload as unknown as VaultFactoryArgs).confirmExpiry = BigInt(
     values.confirmExpiry,
   );
@@ -165,9 +159,8 @@ export const formatCreateVaultData = (
 };
 
 export const validatePermissions = (
-  publicClient: PublicClient,
   getValues: UseFormGetValues<Record<string, any>>,
-): Resolver<VaultPermissionsType, any> => {
+): Resolver<VaultPermissionsType> => {
   return async (values: VaultPermissionsType) => {
     const errors = {} as Record<
       PermissionKeys,
@@ -185,10 +178,7 @@ export const validatePermissions = (
             const { value: currentValue } = field;
 
             if (!isAddress(currentValue)) {
-              const isValid = await validateEnsDomain(
-                currentValue,
-                publicClient,
-              );
+              const isValid = isValidEns(currentValue);
 
               if (!isValid) {
                 errors[key][`${index}`] = {
@@ -216,5 +206,90 @@ export const validatePermissions = (
       values,
       errors,
     };
+  };
+};
+
+export const validateMainSettings: Resolver<VaultMainSettingsType> = (
+  values: VaultMainSettingsType,
+) => {
+  const errors = {} as Record<MainSettingsKeys, { message: string }>;
+  const keysList = Object.keys(values) as MainSettingsKeys[];
+
+  keysList.map((key: MainSettingsKeys) => {
+    const payload = values[key];
+    if (typeof payload === 'string') {
+      const isValid = validateAddress(payload);
+      if (!isValid) {
+        errors[key] = {
+          message: INVALID_ADDRESS_MESSAGE,
+        };
+      }
+    }
+
+    if (
+      ['nodeOperatorFeeBP', 'confirmExpiry', 'curatorFeeBP'].includes(key) &&
+      typeof payload !== 'number'
+    ) {
+      errors[key] = {
+        message: INVALID_NUMBER_DATA_MESSAGE,
+      };
+    }
+
+    if (typeof payload === 'number') {
+      if (key === 'nodeOperatorFeeBP') {
+        if (payload < 0.001) {
+          errors[key] = {
+            message: INVALID_NUMBER_DATA_MESSAGE,
+          };
+        } else if (payload > 99) {
+          errors[key] = {
+            message: INVALID_NUMBER_MAX_MESSAGE,
+          };
+        } else if (values.curatorFeeBP + payload > 100) {
+          errors[key] = {
+            message: INVALID_NUMBER_SUM_MESSAGE,
+          };
+        }
+      }
+
+      if (key === 'confirmExpiry') {
+        if (payload < 1) {
+          errors[key] = {
+            message: INVALID_NUMBER_DATA_MESSAGE,
+          };
+        }
+
+        if (payload > 800) {
+          errors[key] = {
+            message: INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
+          };
+        }
+      }
+
+      if (key === 'curatorFeeBP') {
+        if (payload < 0.001) {
+          errors[key] = {
+            message: INVALID_NUMBER_DATA_MESSAGE,
+          };
+        }
+
+        if (payload > 99) {
+          errors[key] = {
+            message: INVALID_NUMBER_MAX_MESSAGE,
+          };
+        }
+
+        if (values.nodeOperatorFeeBP + payload > 100) {
+          errors[key] = {
+            message: INVALID_NUMBER_SUM_MESSAGE,
+          };
+        }
+      }
+    }
+  });
+
+  return {
+    values,
+    errors,
   };
 };

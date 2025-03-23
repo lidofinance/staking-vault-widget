@@ -26,6 +26,7 @@ import {
 } from 'features/create-vault/types';
 import {
   createVaultFormValidator,
+  createVaultSchema,
   CreateVaultSchema,
   formatCreateVaultData,
 } from './validation';
@@ -96,7 +97,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       curatorFeeBP: 5,
       confirmExpiry: 36,
       defaultAdmin: '',
-      confirmMainSettings: false,
       funders: [],
       withdrawers: [],
       minters: [],
@@ -111,7 +111,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       curatorFeeClaimers: [],
       nodeOperatorFeeClaimers: [],
     },
-    resolver: createVaultFormValidator,
+    resolver: createVaultFormValidator(createVaultSchema),
     mode: 'all',
   });
 

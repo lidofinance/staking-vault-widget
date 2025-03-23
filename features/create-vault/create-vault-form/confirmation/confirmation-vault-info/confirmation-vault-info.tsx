@@ -12,6 +12,7 @@ import {
   InputDataType,
   ConfirmationList,
   FieldConfig,
+  FieldName,
 } from 'features/create-vault/types';
 import { getCreateVaultFields } from 'features/create-vault/consts';
 
@@ -23,7 +24,7 @@ const mainSettingsList = [
   'assetRecoverer',
   'defaultAdmin',
   'nodeOperatorManager',
-];
+] as const;
 
 const managerPermissionsList = [
   'curatorFeeSetters',
@@ -38,9 +39,9 @@ const managerPermissionsList = [
   'validatorExitRequesters',
   'validatorWithdrawalTriggerers',
   'disconnecters',
-];
+] as const;
 
-const nodeOperatorPermissionList = ['nodeOperatorFeeClaimers'];
+const nodeOperatorPermissionList = ['nodeOperatorFeeClaimers'] as const;
 
 const mainSettings = getCreateVaultFields(mainSettingsList);
 const vaultManagerPermissions = getCreateVaultFields(managerPermissionsList);
@@ -48,7 +49,7 @@ const nodeOperatorManagerPermissions = getCreateVaultFields(
   nodeOperatorPermissionList,
 );
 
-const lists: Record<ConfirmationList, FieldConfig[]> = {
+const lists: Record<ConfirmationList, FieldConfig<FieldName>[]> = {
   mainSettings,
   vaultManagerPermissions,
   nodeOperatorManagerPermissions,

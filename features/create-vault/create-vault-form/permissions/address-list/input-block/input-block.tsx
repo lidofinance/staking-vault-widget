@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
-import { useLidoSDK } from 'modules/web3';
 
 import { Plus } from '@lidofinance/lido-ui';
 import { InputItem } from './input-item';
@@ -20,7 +19,6 @@ export interface InputBlockProps {
 
 export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
   const { getValues } = useFormContext();
-  const { core } = useLidoSDK();
 
   const {
     control,
@@ -31,7 +29,7 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
     defaultValues: {
       [permission]: [],
     },
-    resolver: validatePermissions(core.rpcProvider, getValues),
+    resolver: validatePermissions(getValues),
     mode: 'onBlur',
   });
 
