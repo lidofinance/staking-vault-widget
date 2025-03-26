@@ -43,7 +43,12 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   useWagmiConnectionChangedCallback(resetDefault);
 
   return (
-    <form autoComplete="off" onSubmit={doSubmit} {...props}>
+    <form
+      autoComplete="off"
+      onSubmit={doSubmit}
+      style={{ width: '100%' }}
+      {...props}
+    >
       {children}
     </form>
   );

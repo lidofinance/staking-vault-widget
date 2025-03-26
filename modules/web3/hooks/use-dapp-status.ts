@@ -10,7 +10,7 @@ export const useDappStatus = () => {
     isConnected: isWalletConnected,
   } = useAccount();
 
-  // this can change between pages based on their dapp-chain context(or lack of)
+  // this can change between pages based on their dapp-chain contexts(or lack of)
   const dappChain = useDappChain();
 
   const { isSupportedChain, isChainTypeMatched } = dappChain;

@@ -131,7 +131,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   {
     name: 'validatorWithdrawalTriggerers',
     title:
-      'Force NodeOperator to withdraw funds from validator(s) (public key, sum)',
+      'Force NodeOperator to repay funds from validator(s) (public key, sum)',
     dataType: 'address',
   },
   {

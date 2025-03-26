@@ -52,7 +52,6 @@ export const TokenSelectHookForm = ({
       disabled={disabled}
       warning={warning}
       icon={iconsMap[field.value]}
-      data-testid="drop-down"
       error={isValidationErrorTypeValidate(errors[errorField]?.type)}
       onChange={(value: OptionValue) => {
         setValue(fieldName, value, {

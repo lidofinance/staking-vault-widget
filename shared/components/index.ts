@@ -11,3 +11,7 @@ export { ButtonClose } from './button-close';
 export { ButtonLink } from './button-link';
 export { TxLinkEtherscan } from './tx-link-etherscan';
 export { AddressLinkEtherscan } from './address-link-etherscan';
+export { VaultImpactDashboard } from './vault-impact-dashboard';
+export { VaultImpactValuation } from './vault-impact-valuation';
+export { InputAmount } from './input-amount';
+export { Chip } from './chip';

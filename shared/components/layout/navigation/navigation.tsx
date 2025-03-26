@@ -1,7 +1,8 @@
 import { FC, memo, useMemo, ReactNode } from 'react';
-import { Stake } from '@lidofinance/lido-ui';
+import { Stake, Withdraw, Wrap } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
+import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { getPathWithoutFirstSlash, AppPaths } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
@@ -29,15 +30,39 @@ type PageRoute = {
 };
 const routes: PageRoute[] = [
   {
-    name: 'Home',
-    path: AppPaths.main,
-    icon: <Stake data-testid="navHome" />,
+    name: 'Overview',
+    path: AppPaths.overview,
+    icon: <MosaicIcon />,
+    exact: true,
+  },
+  {
+    name: 'Supply/Withdraw',
+    path: AppPaths.supply,
+    icon: <Stake />,
+    exact: true,
+  },
+  {
+    name: 'Mint/Repay stETH',
+    path: AppPaths.adjustment,
+    icon: <Withdraw />,
+    exact: true,
+  },
+  {
+    name: 'Validators',
+    path: AppPaths.validators,
+    icon: <Wrap />,
+    exact: true,
+  },
+  {
+    name: 'Claim Fees',
+    path: AppPaths.claim,
+    icon: <Withdraw />,
     exact: true,
   },
   {
     name: 'Settings',
     path: AppPaths.settings,
-    icon: <GearIcon data-testid="navSettings" />,
+    icon: <GearIcon />,
     exact: true,
   },
 ];

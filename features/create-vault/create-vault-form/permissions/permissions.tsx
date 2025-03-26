@@ -33,12 +33,12 @@ const adminPermissionsList: PermissionsRoles[] = [
   },
   {
     role: 'funders',
-    title: 'Fund ETH',
+    title: 'Mint ETH',
     tooltip: 'Allows Funding ETH',
   },
   {
     role: 'withdrawers',
-    title: 'Withdraw ETH',
+    title: 'Repay ETH',
     tooltip: 'Allows Withdrawing unlocked ETH from stVault',
   },
   {
