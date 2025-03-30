@@ -10,7 +10,7 @@ import { useRouterPath } from 'shared/hooks/use-router-path';
 import { useDappStatus } from 'modules/web3';
 
 import { LocalLink } from 'shared/components/local-link';
-import { SelectAddress } from 'shared/components/layout/navigation/select-address';
+import { SelectVault } from 'shared/components/layout/navigation/select-vault';
 import {
   ListItem,
   NavLink,
@@ -103,7 +103,7 @@ export const Navigation: FC = memo(() => {
       </AllVaults>
       {showNavList && (
         <>
-          <SelectAddress />
+          <SelectVault />
           <NavList>
             {availableRoutes.map(({ name, path, subPaths, icon }) => {
               const isActive =

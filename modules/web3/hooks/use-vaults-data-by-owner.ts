@@ -15,7 +15,7 @@ export const useVaultsDataByOwner = (address: Address) => {
     isLoading,
     isError: isVaultsError,
     ...rest
-  } = useVaultData(ownerVaults);
+  } = useVaultData(ownerVaults as Address[] | undefined);
 
   return {
     vaults,

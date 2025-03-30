@@ -16,7 +16,7 @@ import {
 import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from '../../../../utils/ens';
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address-field';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
 const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
 const INVALID_NUMBER_SUM_MESSAGE =
@@ -182,7 +182,7 @@ export const validatePermissions = (
 
               if (!isValid) {
                 errors[key][`${index}`] = {
-                  value: 'Invalid ethereum address',
+                  value: 'Invalid ethereum address-field',
                 };
               }
             }

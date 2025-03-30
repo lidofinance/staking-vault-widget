@@ -11,11 +11,11 @@ export interface AdjustmentContextProps {
   mode: 'mint' | 'repay';
 }
 
-export type SupplyContextValue = {
+export type AdjustmentContextValue = {
   isMintTab: boolean;
 };
 
-const AdjustmentContext = createContext<SupplyContextValue | null>(null);
+const AdjustmentContext = createContext<AdjustmentContextValue | null>(null);
 AdjustmentContext.displayName = 'AdjustmentProvider';
 
 export const useAdjustment = () => {

@@ -1,16 +1,16 @@
 import { Balance } from './balance';
-import { FormInput } from './form-input';
-import { MintStETH } from './mint-steth';
+import { AmountField } from './amount-field';
 import { SubmitButton } from './submit-button';
 import { FeatureTxInfo } from './feature-tx-info';
 import { FormContainer } from './styles';
+import { AddressField } from './address-field/address-field';
 
 export const Form = () => {
   return (
     <FormContainer>
       <Balance />
-      <FormInput />
-      <MintStETH />
+      <AmountField />
+      <AddressField />
       <SubmitButton />
       <FeatureTxInfo />
     </FormContainer>

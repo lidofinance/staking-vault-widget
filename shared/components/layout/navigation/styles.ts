@@ -27,6 +27,7 @@ export const NavList = styled.ul`
   align-items: start;
   justify-content: center;
   gap: ${({ theme }) => theme.spaceMap.lg}px;
+  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
   list-style-type: none;
 `;
 

@@ -1,4 +1,4 @@
-export const VaultDataViewerAbi = [
+export const VaultViewerAbi = [
   {
     inputs: [
       {

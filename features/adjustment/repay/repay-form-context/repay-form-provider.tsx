@@ -2,7 +2,7 @@ import { ReactNode, useMemo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useWithdrawWithDelegation } from 'modules/web3/hooks/use-withdraw-with-delegation';
+import { useBurnWithDelegation } from 'modules/web3/hooks/use-burn-with-delegation';
 
 import {
   FormController,
@@ -11,32 +11,31 @@ import {
 } from 'shared/hook-form/form-controller';
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
-import { isAddress } from 'viem';
 
 export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
   const formObject = useForm<RepayFormSchema>({
     defaultValues: {
       amount: null,
-      recipient: null,
+      token: 'steth',
     },
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callWithdraw } = useWithdrawWithDelegation({});
+  const { callBurn } = useBurnWithDelegation();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
 
   const onSubmit = useCallback(
-    async ({ amount, recipient }: RepayFormSchema) => {
-      if (amount && recipient && isAddress(recipient)) {
+    async ({ amount, token }: RepayFormSchema) => {
+      if (amount) {
         // TODO: resolve recipient if ens domain
-        await callWithdraw('0xff', { amount, recipient });
+        await callBurn('0xff', { amount, token });
         return true;
       }
 
       return false;
     },
-    [callWithdraw],
+    [callBurn],
   );
 
   const formControllerValue: FormControllerContextValueType<RepayFormSchema> =

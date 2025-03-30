@@ -1,9 +1,20 @@
-import { VaultImpactDashboard } from 'shared/components';
+import { useState } from 'react';
+
+import { VaultImpactDashboard, VaultImpactValuation } from 'shared/components';
+import { GaugeQuestion, ImpactWrapper, InfoBlock } from './styles';
 
 export const Impact = () => {
+  const [step] = useState(150);
+
   return (
-    <>
-      <VaultImpactDashboard percentage={100} />
-    </>
+    <ImpactWrapper>
+      <InfoBlock>
+        <GaugeQuestion />
+        <VaultImpactDashboard percentage={step} />
+      </InfoBlock>
+      <InfoBlock>
+        <VaultImpactValuation />
+      </InfoBlock>
+    </ImpactWrapper>
   );
 };

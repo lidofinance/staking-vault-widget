@@ -5,13 +5,19 @@ export const getHealthScore = (
   valuation: bigint,
   vaultHubSocket: VaultSocket,
 ): number => {
-  const { sharesMinted, reserveRatioThresholdBP } = vaultHubSocket;
+  const { sharesMinted, rebalanceThresholdBP } = vaultHubSocket;
   if (sharesMinted === 0n) {
     return Infinity;
   }
 
-  return Number(
-    (valuation * BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioThresholdBP)) /
+  const healthScore = Number(
+    (valuation * BigInt(VAULT_TOTAL_BASIS_POINTS - rebalanceThresholdBP)) /
       sharesMinted,
   );
+
+  if (healthScore > 100000) {
+    return Infinity;
+  }
+
+  return healthScore;
 };

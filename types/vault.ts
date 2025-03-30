@@ -12,7 +12,7 @@ export interface VaultInfo {
 export interface VaultSocket {
   isDisconnected: boolean;
   reserveRatioBP: number;
-  reserveRatioThresholdBP: number;
+  rebalanceThresholdBP: number;
   shareLimit: bigint;
   sharesMinted: bigint;
   treasuryFeeBP: number;

@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   display: flex;
   justify-content: end;
   align-items: center;
-  margin: 16px 0 32px;
+  margin: ${({ theme }) => theme.spaceMap.md}px 0 0;
   height: 32px;
   border-radius: 40px;
   border: 1px solid var(--lido-color-accentBorderHover);

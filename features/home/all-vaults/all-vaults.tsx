@@ -1,21 +1,21 @@
-import { VaultTable } from 'features/home/vault-table';
+import { useVaults } from 'providers/vaults';
+
 import { Loader, Pagination } from '@lidofinance/lido-ui';
+import { VaultTable } from 'features/home/vault-table';
 import { AllVaultsWrapper } from './styles';
 
-import { useVaultsDataAll } from 'modules/web3/hooks/use-vaults-data-all';
-
 export const AllVaults = () => {
-  const {
-    vaults = [],
-    isLoading,
-    pagesCount,
-    handlePagination,
-  } = useVaultsDataAll();
+  const { vaults, isLoadingAllVaults, pagesCount, handlePagination } =
+    useVaults();
   const showPagination = !!pagesCount;
 
   return (
     <AllVaultsWrapper>
-      <VaultTable title="All Vaults" vaults={vaults} showTitle={!isLoading} />
+      <VaultTable
+        title="All Vaults"
+        vaults={vaults}
+        showTitle={!isLoadingAllVaults}
+      />
       {showPagination && (
         <Pagination
           onItemClick={handlePagination}
@@ -23,7 +23,7 @@ export const AllVaults = () => {
           siblingCount={1}
         />
       )}
-      {isLoading && <Loader color="primary" size="large" />}
+      {isLoadingAllVaults && <Loader color="primary" size="large" />}
     </AllVaultsWrapper>
   );
 };
