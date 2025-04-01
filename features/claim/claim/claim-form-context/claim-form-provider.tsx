@@ -1,9 +1,18 @@
-import { FC, ReactNode, useMemo, useCallback } from 'react';
+import {
+  FC,
+  ReactNode,
+  useMemo,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react';
 import { Address, isAddress } from 'viem';
+import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useClaimWithDelegation } from 'modules/web3/hooks/use-claim-with-delegation';
+import { useVaultInfo } from 'features/overview/contexts';
 
 import {
   FormController,
@@ -11,14 +20,58 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 
+import { DelegationAbi } from 'abi/delegation';
 import { ClaimFormSchema } from 'features/claim/claim/types';
+import invariant from 'tiny-invariant';
+
+type ClaimDataContextValue = {
+  availableToClaim: bigint | undefined;
+  isLoadingClaimInfo: boolean;
+  isErrorClaimInfo: boolean;
+};
+
+const ClaimDataContext = createContext<ClaimDataContextValue | null>(null);
+ClaimDataContext.displayName = 'ClaimDataContext';
+
+export const useClaimFormData = () => {
+  const value = useContext(ClaimDataContext);
+  invariant(
+    value,
+    'useClaimFormData was used outside the ClaimDataContext provider',
+  );
+
+  return value;
+};
 
 export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { activeVault } = useVaultInfo();
+  const {
+    data: availableToClaim,
+    isFetching: isLoadingClaimInfo,
+    isError: isErrorClaimInfo,
+  } = useReadContract({
+    abi: DelegationAbi,
+    address: activeVault?.owner,
+    functionName: 'nodeOperatorUnclaimedFee',
+    query: {
+      enabled: !!activeVault?.owner,
+    },
+  });
+
+  const claimInfo = useMemo(
+    () => ({
+      availableToClaim,
+      isLoadingClaimInfo,
+      isErrorClaimInfo,
+    }),
+    [availableToClaim, isLoadingClaimInfo, isErrorClaimInfo],
+  );
+
   const formObject = useForm<ClaimFormSchema>({
     defaultValues: {
-      recipient: null,
+      recipient: '',
     },
     mode: 'all',
     reValidateMode: 'onChange',
@@ -31,7 +84,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     async ({ recipient }: ClaimFormSchema) => {
       if (isAddress(recipient as string)) {
         // TODO: resolve recipient if ens domain
-        await callClaim('0x01', recipient as Address);
+        await callClaim(recipient as Address);
         return true;
       }
 
@@ -52,10 +105,12 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     );
 
   return (
-    <FormProvider {...formObject}>
-      <FormControllerContext.Provider value={formControllerValue}>
-        <FormController>{children}</FormController>
-      </FormControllerContext.Provider>
-    </FormProvider>
+    <ClaimDataContext.Provider value={claimInfo}>
+      <FormProvider {...formObject}>
+        <FormControllerContext.Provider value={formControllerValue}>
+          <FormController>{children}</FormController>
+        </FormControllerContext.Provider>
+      </FormProvider>
+    </ClaimDataContext.Provider>
   );
 };

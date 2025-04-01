@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useAdjustment } from 'features/adjustment/contexts/adjustment-provider';
+import { useVaultInfo } from 'features/overview/contexts';
 
 import { ToggleSwitch } from 'shared/components/toggle';
 import { Mint } from './mint';
@@ -13,9 +14,12 @@ export const AdjustmentTabs = () => {
   const router = useRouter();
   const initialPath = router.query.mode as AdjustmentPaths;
   const { isMintTab } = useAdjustment();
+  const { activeVault } = useVaultInfo();
 
   const handleToggleCb = (value: AdjustmentPaths) => {
-    void router.push(`${ManifestConfigPageEnum.adjustment}/${value}`);
+    void router.push(
+      `/${activeVault?.address}/${ManifestConfigPageEnum.adjustment}/${value}`,
+    );
   };
 
   return (

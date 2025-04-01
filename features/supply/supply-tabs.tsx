@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useSupply } from 'features/supply/contexts/supply-provider';
+import { useVaultInfo } from 'features/overview/contexts';
 
 import { ToggleSwitch } from 'shared/components/toggle';
 import { FormBlock, PageWrapper } from './styles';
@@ -13,9 +14,12 @@ export const SupplyTabs = () => {
   const router = useRouter();
   const initialPath = router.query.mode as SupplyPaths;
   const { isFundTab } = useSupply();
+  const { activeVault } = useVaultInfo();
 
   const handleToggleCb = (value: SupplyPaths) => {
-    void router.push(`${ManifestConfigPageEnum.supply}/${value}`);
+    void router.push(
+      `/${activeVault?.address}/${ManifestConfigPageEnum.supply}/${value}`,
+    );
   };
 
   return (

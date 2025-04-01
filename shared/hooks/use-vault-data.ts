@@ -59,6 +59,7 @@ export const useVaultData = (
           apr: null,
           healthScore,
           address: vaultAddress,
+          owner,
         });
       }
 

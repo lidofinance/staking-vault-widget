@@ -57,7 +57,7 @@ export const SubmitModal: FC<ModalProps> = () => {
   const subtitle = getModalSubTitle(step);
 
   const handleNavigateToVault = () => {
-    void router.push(`/overview/${address}`);
+    void router.push(`/${address}`);
   };
 
   return (

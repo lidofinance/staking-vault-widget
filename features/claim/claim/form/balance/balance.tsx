@@ -1,16 +1,26 @@
-import { Text } from '@lidofinance/lido-ui';
+import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
-import React from 'react';
+
+import { useClaimFormData } from 'features/claim/claim/claim-form-context';
+import { formatBalance } from 'utils';
 
 export const Balance = () => {
-  // todo use wallet account
+  const { isLoadingClaimInfo, availableToClaim, isErrorClaimInfo } =
+    useClaimFormData();
+
+  const isLoading =
+    (!isErrorClaimInfo && !availableToClaim) || isLoadingClaimInfo;
+
   return (
     <Wrapper>
       <InfoRow>
         <Text size="xxs" color="secondary">
           Available to claim
         </Text>
-        <AmountInfo>{'4.3415 ETH'}</AmountInfo>
+        {isLoading && <Loader size="small" />}
+        {!!availableToClaim && (
+          <AmountInfo>{formatBalance(availableToClaim).trimmed} ETH</AmountInfo>
+        )}
       </InfoRow>
     </Wrapper>
   );

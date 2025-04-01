@@ -2,6 +2,7 @@ import { Address } from 'viem';
 
 export interface VaultInfo {
   address: Address;
+  owner: Address;
   valuation: bigint;
   minted: bigint;
   mintable: bigint;

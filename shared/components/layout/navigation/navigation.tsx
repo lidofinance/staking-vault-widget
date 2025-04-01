@@ -1,4 +1,5 @@
 import { FC, memo, useMemo, ReactNode } from 'react';
+import { Address } from 'viem';
 import { Stake, Withdraw, Wrap } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
@@ -67,7 +68,28 @@ const routes: PageRoute[] = [
   },
 ];
 
-export const Navigation: FC = memo(() => {
+type NavigationProps = {
+  address?: Address;
+};
+
+// TODO: find more clearable way to map routes
+const saturatePathsByAddress = (
+  routes: PageRoute[],
+  address: Address | undefined,
+) => {
+  return routes.map((route) => {
+    const { path, ...rest } = route;
+    if (path === AppPaths.overview) {
+      const newPath = address ? `/${address}` : path;
+      return { path: newPath, ...rest };
+    }
+
+    const newPath = address ? `/${address}${path}` : path;
+    return { path: newPath, ...rest };
+  });
+};
+
+export const Navigation: FC<NavigationProps> = memo(({ address }) => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
@@ -78,15 +100,17 @@ export const Navigation: FC = memo(() => {
   } = useConfig();
 
   const availableRoutes = useMemo(() => {
-    if (!pages) return routes;
+    if (!pages) return saturatePathsByAddress(routes, address);
 
     const paths = Object.keys(pages) as ManifestConfigPage[];
-    return routes.filter((route) => {
+    const filteredRoutes = routes.filter((route) => {
       const path = paths.find((path) => route.path.includes(path));
       if (!path) return true;
       return !pages[path]?.shouldDisable;
     });
-  }, [pages]);
+
+    return saturatePathsByAddress(filteredRoutes, address);
+  }, [pages, address]);
 
   let pathnameWithoutQuery = pathname.split('?')[0];
   if (pathnameWithoutQuery.endsWith('/')) {

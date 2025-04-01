@@ -1,5 +1,6 @@
 import { ReactNode, FC, PropsWithChildren } from 'react';
 import { ContainerProps } from '@lidofinance/lido-ui';
+import { Address } from 'viem';
 
 import { config } from 'config';
 
@@ -18,17 +19,17 @@ import {
 type LayoutProps = {
   title?: ReactNode;
   subtitle?: ReactNode;
+  address?: Address;
   containerSize?: ContainerProps['size'];
 };
 
 export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
-  const { title, subtitle, containerSize } = props;
-  const { children } = props;
+  const { title, subtitle, containerSize, address, children } = props;
 
   return (
     <LayoutStyles>
       <Header />
-      <Navigation />
+      <Navigation address={address} />
       <Main size={containerSize}>
         {config.ipfsMode && (
           <IPFSInfoBoxOnlyMobileAndPortableWrapper>

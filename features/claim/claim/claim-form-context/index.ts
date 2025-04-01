@@ -1,1 +1,1 @@
-export { ClaimFormProvider } from './claim-form-provider';
+export { ClaimFormProvider, useClaimFormData } from './claim-form-provider';
