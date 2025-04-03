@@ -8,10 +8,12 @@ import { Address } from 'viem';
 
 import { DelegationAbi } from 'abi/delegation';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
+import { useVaultInfo } from 'features/overview/contexts';
 
 export const useBurnWithDelegation = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
+  const { activeVault } = useVaultInfo();
 
   const { data: burnTx, writeContractAsync } = useWriteContract({
     config: wagmiConfig,
@@ -25,19 +27,16 @@ export const useBurnWithDelegation = (onMutate = () => {}) => {
   });
 
   const callBurn = useCallback(
-    async (
-      address: Address,
-      { token, amount }: { token: string; amount: number },
-    ) => {
+    async ({ token, amount }: { token: string; amount: number }) => {
       return await writeContractAsync({
         abi: DelegationAbi,
-        address: address,
-        functionName: token === 'steth' ? 'burnStETH' : 'burnWstETH',
+        address: activeVault?.owner as Address,
+        functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
         args: [BigInt(amount)],
         chainId,
       });
     },
-    [chainId, writeContractAsync],
+    [chainId, activeVault?.owner, writeContractAsync],
   );
 
   return {

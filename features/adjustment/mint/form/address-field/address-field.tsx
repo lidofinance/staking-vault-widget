@@ -4,7 +4,7 @@ import { useController, useFormContext } from 'react-hook-form';
 import { useDappStatus } from 'modules/web3';
 
 export const AddressField = () => {
-  const { field } = useController({ name: 'address' });
+  const { field } = useController({ name: 'recipient' });
   const { setValue } = useFormContext();
   const { address } = useDappStatus();
 
@@ -14,6 +14,7 @@ export const AddressField = () => {
     });
   };
 
+  // TODO: add error
   return (
     <Input
       {...field}
@@ -21,7 +22,7 @@ export const AddressField = () => {
       rightDecorator={
         <CurrentAddressButton
           onClick={handleSetCurrentAddress}
-          disabled={!address}
+          disabled={!address || field.value === address}
         />
       }
     />

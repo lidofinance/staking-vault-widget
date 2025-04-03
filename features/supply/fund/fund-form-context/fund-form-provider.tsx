@@ -1,37 +1,37 @@
 import { FC, ReactNode, useMemo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import { useFundWithDelegation } from 'features/supply/fund/hooks/use-fund-with-delegation';
 import {
   FormController,
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { FundFormSchema } from 'features/supply/fund/types';
-import { useFundWithDelegation } from 'modules/web3/hooks/use-fund-with-delegation';
 
 export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const formObject = useForm<FundFormSchema>({
     defaultValues: {
-      amount: null,
+      amount: undefined,
       token: 'ETH',
     },
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callFund } = useFundWithDelegation({});
+  const { callVaultFund } = useFundWithDelegation();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
 
   const onSubmit = useCallback(
-    async ({ amount }: FundFormSchema) => {
+    async ({ amount, token }: FundFormSchema) => {
       if (amount) {
-        await callFund('0xff', amount);
+        await callVaultFund(token, amount);
         return true;
       }
 
       return false;
     },
-    [callFund],
+    [callVaultFund],
   );
 
   const formControllerValue: FormControllerContextValueType<FundFormSchema> =

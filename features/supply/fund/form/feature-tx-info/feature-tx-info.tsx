@@ -1,6 +1,6 @@
 import { Text, Loader } from '@lidofinance/lido-ui';
 import { useFormContext } from 'react-hook-form';
-import { useSimulationFundWithDelegation } from 'modules/web3/hooks/use-fund-with-delegation';
+import { useSimulationFundWithDelegation } from 'features/supply/fund/hooks';
 import { useVaults } from 'providers/vaults';
 
 import { AmountInfo, InfoRow, StEthQuestion, Wrapper } from './styles';

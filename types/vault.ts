@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 
-export interface VaultInfo {
+export interface VaultInfo extends VaultSocket {
   address: Address;
   owner: Address;
   valuation: bigint;

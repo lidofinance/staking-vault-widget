@@ -1,4 +1,7 @@
+import { Address } from 'viem';
+
 export type MintFormSchema = {
-  amount: number | null;
-  token: string | null;
+  amount: number | undefined;
+  token: string;
+  recipient: Address | undefined;
 };

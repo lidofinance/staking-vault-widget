@@ -10,16 +10,12 @@ import { Address } from 'viem';
 
 import { DelegationAbi } from 'abi/delegation';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
+import { useVaultInfo } from 'features/overview/contexts';
 
-export interface FundWithDelegationProps {
-  onMutate?: () => void;
-}
-
-export const useFundWithDelegation = ({
-  onMutate = () => {},
-}: FundWithDelegationProps) => {
+export const useFundWithDelegation = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
+  const { activeVault } = useVaultInfo();
 
   const { data: fundTx, writeContractAsync } = useWriteContract({
     config: wagmiConfig,
@@ -32,35 +28,38 @@ export const useFundWithDelegation = ({
     hash: fundTx,
   });
 
-  const callFund = useCallback(
-    async (address: Address, amount: number) => {
-      return await writeContractAsync({
-        abi: DelegationAbi,
-        address: address,
-        functionName: 'fund',
-        value: BigInt(amount),
-        chainId,
-      });
-    },
-    [chainId, writeContractAsync],
-  );
+  const callVaultFund = useCallback(
+    async (token: string, amount: number) => {
+      const payload = BigInt(amount);
+      const functionName = token === 'ETH' ? 'fund' : 'fundWeth';
+      const isFund = functionName === 'fund';
+      const owner = activeVault?.owner;
 
-  const callFundWeth = useCallback(
-    async (address: Address, amount: number) => {
-      return await writeContractAsync({
+      const contractPayload = {
         abi: DelegationAbi,
-        address: address,
-        functionName: 'fundWeth',
-        args: [BigInt(amount)],
+        address: owner,
+        functionName,
+        query: {
+          enabled: owner,
+        },
         chainId,
-      });
+      };
+
+      if (isFund) {
+        // @ts-expect-error ts-types
+        contractPayload.value = payload;
+      } else {
+        // @ts-expect-error ts-types
+        contractPayload.args = [payload];
+      }
+      // @ts-expect-error ts-types
+      return await writeContractAsync(contractPayload);
     },
-    [chainId, writeContractAsync],
+    [chainId, writeContractAsync, activeVault?.owner],
   );
 
   return {
-    callFund,
-    callFundWeth,
+    callVaultFund,
     fundTx,
     fundReceipt,
   };

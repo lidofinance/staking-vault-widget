@@ -1,4 +1,4 @@
 export type FundFormSchema = {
-  amount: number | null;
-  token: string | null;
+  amount: number | undefined;
+  token: string;
 };

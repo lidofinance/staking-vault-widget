@@ -1,1 +1,1 @@
-export { MintFormProvider } from './mint-form-provider';
+export { MintFormProvider, useMintFormData } from './mint-form-provider';

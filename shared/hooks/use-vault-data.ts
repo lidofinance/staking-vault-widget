@@ -60,6 +60,7 @@ export const useVaultData = (
           healthScore,
           address: vaultAddress,
           owner,
+          ...vaultHubSocket,
         });
       }
 

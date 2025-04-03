@@ -1,8 +1,16 @@
-import { ReactNode, useMemo, useCallback } from 'react';
+import {
+  ReactNode,
+  useMemo,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useBurnWithDelegation } from 'modules/web3/hooks/use-burn-with-delegation';
+import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
 
 import {
   FormController,
@@ -12,16 +20,76 @@ import {
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
 
+type RepayDataContextValue = {
+  stEthBalance: bigint | undefined;
+  isStEthLoading: boolean;
+  isStEthSuccess: boolean;
+  isStEthError: boolean;
+  wstEthBalance: bigint | undefined;
+  isWstEthLoading: boolean;
+  isWstEthSuccess: boolean;
+  isWstEthError: boolean;
+};
+
+const RepayDataContext = createContext<RepayDataContextValue | null>(null);
+RepayDataContext.displayName = 'RepayDataContext';
+
+export const useRepayFormData = () => {
+  const value = useContext(RepayDataContext);
+  invariant(
+    value,
+    'useRepayFormData was used outside the RepayDataContext provider',
+  );
+
+  return value;
+};
+
 export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
   const formObject = useForm<RepayFormSchema>({
     defaultValues: {
-      amount: null,
-      token: 'steth',
+      amount: undefined,
+      token: 'stETH',
     },
     mode: 'all',
     reValidateMode: 'onChange',
   });
   const { callBurn } = useBurnWithDelegation();
+  const { address } = useDappStatus();
+  const {
+    data: stEthBalance,
+    isLoading: isStEthLoading,
+    isSuccess: isStEthSuccess,
+    isError: isStEthError,
+  } = useStethBalance({ account: address });
+  const {
+    data: wstEthBalance,
+    isLoading: isWstEthLoading,
+    isSuccess: isWstEthSuccess,
+    isError: isWstEthError,
+  } = useWstethBalance({ account: address });
+
+  const repayData = useMemo(
+    () => ({
+      stEthBalance,
+      isStEthLoading,
+      isStEthSuccess,
+      isStEthError,
+      wstEthBalance,
+      isWstEthLoading,
+      isWstEthSuccess,
+      isWstEthError,
+    }),
+    [
+      stEthBalance,
+      isStEthLoading,
+      isStEthSuccess,
+      isStEthError,
+      wstEthBalance,
+      isWstEthLoading,
+      isWstEthSuccess,
+      isWstEthError,
+    ],
+  );
 
   const { retryEvent, retryFire } = useFormControllerRetry();
 
@@ -29,7 +97,7 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
     async ({ amount, token }: RepayFormSchema) => {
       if (amount) {
         // TODO: resolve recipient if ens domain
-        await callBurn('0xff', { amount, token });
+        await callBurn({ amount, token });
         return true;
       }
 
@@ -50,10 +118,12 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
     );
 
   return (
-    <FormProvider {...formObject}>
-      <FormControllerContext.Provider value={formControllerValue}>
-        <FormController>{children}</FormController>
-      </FormControllerContext.Provider>
-    </FormProvider>
+    <RepayDataContext.Provider value={repayData}>
+      <FormProvider {...formObject}>
+        <FormControllerContext.Provider value={formControllerValue}>
+          <FormController>{children}</FormController>
+        </FormControllerContext.Provider>
+      </FormProvider>
+    </RepayDataContext.Provider>
   );
 };
