@@ -5,7 +5,7 @@ import { FeatureTxInfo } from './feature-tx-info';
 import { AddressField } from './address-field';
 import { FormContainer } from './styles';
 
-export const Form = () => {
+export const WithdrawForm = () => {
   return (
     <FormContainer>
       <Balance />

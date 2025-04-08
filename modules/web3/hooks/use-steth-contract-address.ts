@@ -5,7 +5,7 @@ export const useStETHContractAddress = () => {
   const { stETH } = useLidoSDK();
 
   return useQuery({
-    queryKey: ['use-steth-contract-address-field', stETH],
+    queryKey: ['use-steth-contract-address', stETH],
     enabled: !!stETH,
     staleTime: Infinity,
     queryFn: () => stETH.contractAddress(),

@@ -39,7 +39,7 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDappActive]);
 
-  // Reset the form when chain id or wallet address-field changed
+  // Reset the form when chain id or wallet address changed
   useWagmiConnectionChangedCallback(resetDefault);
 
   return (

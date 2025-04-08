@@ -5,7 +5,7 @@ import { SubmitButton } from './submit-button';
 import { FeatureTxInfo } from './feature-tx-info';
 import { FormContainer } from './styles';
 
-export const Form = () => {
+export const MintForm = () => {
   return (
     <FormContainer>
       <Balance />

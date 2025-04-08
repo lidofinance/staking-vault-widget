@@ -15,7 +15,7 @@ export const permissionsToggleList = [
   },
   {
     value: PermissionToggleEnum.byAddress,
-    label: 'by address-field',
+    label: 'by address',
   },
 ];
 
@@ -34,15 +34,14 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   {
     name: 'nodeOperator',
     title: 'Node Operator',
-    label: 'Node Operator address-field',
-    notes:
-      'Node Operator address-field cannot be changed after the vault is created',
+    label: 'Node Operator address',
+    notes: 'Node Operator address cannot be changed after the vault is created',
     dataType: 'address',
   },
   {
     name: 'assetRecoverer',
     title: 'Asset Recoverer',
-    label: 'Asset Recoverer address-field',
+    label: 'Asset Recoverer address',
     dataType: 'address',
   },
   {
@@ -70,13 +69,13 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   {
     name: 'defaultAdmin',
     title: 'Vault Manager',
-    label: 'Vault Manager address-field or ENS',
+    label: 'Vault Manager address or ENS',
     dataType: 'address',
   },
   {
     name: 'nodeOperatorManager', // TODO: remove
     title: 'Node Operator Manager',
-    label: 'Node Operator Manager address-field or ENS',
+    label: 'Node Operator Manager address or ENS',
     dataType: 'address',
   },
   {
@@ -86,7 +85,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   },
   {
     name: 'curatorFeeClaimers',
-    title: 'ClaimPage Vault Curator’s fee (address-field)',
+    title: 'ClaimPage Vault Curator’s fee (address)',
     dataType: 'address',
   },
   {
@@ -126,7 +125,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   },
   {
     name: 'validatorExitRequesters',
-    title: 'Initiate validator exit procedure (address-field)',
+    title: 'Initiate validator exit procedure (address)',
     dataType: 'address',
   },
   {
@@ -142,7 +141,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   },
   {
     name: 'nodeOperatorFeeClaimers',
-    title: 'ClaimPage NOs fees from the vault (ETH) (address-field)',
+    title: 'ClaimPage NOs fees from the vault (ETH) (address)',
     dataType: 'address',
   },
 ];

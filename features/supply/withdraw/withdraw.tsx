@@ -1,12 +1,10 @@
-import { Impact } from './impact';
-import { WithdrawFormProvider } from './withdraw-form-context/withdraw-form-provider';
-import { Form } from './form';
+import { WithdrawFormProvider } from './withdraw-form-context';
+import { WithdrawForm } from './form';
 
 export const Withdraw = () => {
   return (
     <WithdrawFormProvider>
-      <Form />
-      <Impact />
+      <WithdrawForm />
     </WithdrawFormProvider>
   );
 };

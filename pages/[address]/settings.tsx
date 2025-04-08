@@ -1,20 +1,13 @@
 import { FC } from 'react';
-import { Address } from 'viem';
 
 import { Layout } from 'shared/components';
 import { VaultProvider } from 'features/overview/contexts';
 import { SettingsForm } from 'features/settings/settings-form';
 
-import { getDefaultServerSideProps } from 'utilsApi/get-default-server-side-props';
-
-type SettingsProps = {
-  address: Address;
-};
-
-const Settings: FC<SettingsProps> = ({ address }) => {
+const Settings: FC = () => {
   return (
-    <Layout title="Settings" address={address}>
-      <VaultProvider address={address}>
+    <Layout title="Settings">
+      <VaultProvider>
         <SettingsForm />
       </VaultProvider>
     </Layout>
@@ -22,5 +15,3 @@ const Settings: FC<SettingsProps> = ({ address }) => {
 };
 
 export default Settings;
-
-export const getServerSideProps = getDefaultServerSideProps;

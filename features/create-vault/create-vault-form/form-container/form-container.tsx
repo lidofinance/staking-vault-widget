@@ -29,7 +29,7 @@ export const FormContainer: FC<PropsWithChildren> = ({ children }) => {
           <ToggleSwitch
             options={permissionsToggleList}
             defaultActive={PermissionToggleEnum.byPermission}
-            onToggleCb={({ value }) =>
+            onToggle={({ value }) =>
               handleSetPermissionsView(value as ToggleValue)
             }
           />

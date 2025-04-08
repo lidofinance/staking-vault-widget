@@ -8,6 +8,7 @@ import { AddressWrapper } from './styles';
 
 import { BaseCellProps } from 'features/home/vault-table/types';
 import { useVaults } from 'providers/vaults';
+import { AppPaths } from 'consts/urls';
 
 export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   const router = useRouter();
@@ -18,7 +19,7 @@ export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
 
   const handleClick = () => {
     setActiveVault(value);
-    void router.push(`/${value}`);
+    void router.push(`/${value}${AppPaths.overview}`);
   };
 
   return (

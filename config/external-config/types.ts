@@ -28,6 +28,7 @@ export enum ManifestConfigPageEnum {
   adjustment = '/adjustment',
   validators = '/validators',
   claim = '/claim',
+  notFound = '/404',
 }
 
 export type ManifestConfigPage = `${ManifestConfigPageEnum}`;

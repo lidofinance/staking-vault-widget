@@ -2,9 +2,9 @@ import { Balance } from './balance';
 import { SubmitButton } from './submit-button';
 import { FeatureTxInfo } from './feature-tx-info';
 import { FormContainer } from './styles';
-import { AddressField } from './address-field/address-field';
+import { AddressField } from './address-field';
 
-export const Form = () => {
+export const ClaimForm = () => {
   return (
     <FormContainer>
       <Balance />

@@ -29,7 +29,7 @@ const adminPermissionsList: PermissionsRoles[] = [
     role: 'curatorFeeClaimers',
     title: 'ClaimPage Curator’s Accumulated Fee',
     tooltip:
-      'Allows claiming accumulated Curator’s fee. Claimer provides an address-field to receive fees every time.',
+      'Allows claiming accumulated Curator’s fee. Claimer provides an address to receive fees every time.',
   },
   {
     role: 'funders',
@@ -92,7 +92,7 @@ const noPermissionsList: PermissionsRoles[] = [
     role: 'nodeOperatorFeeClaimers',
     title: 'ClaimPage Node Operator’s Accumulated Fees',
     tooltip:
-      'Allows claiming accumulated Node Operator’s fee. Claimer provides an address-field to receive fees.',
+      'Allows claiming accumulated Node Operator’s fee. Claimer provides an address to receive fees.',
   },
 ];
 

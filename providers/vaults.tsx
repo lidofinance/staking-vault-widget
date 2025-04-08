@@ -16,7 +16,7 @@ import { useVaultsDataAll } from 'modules/web3/hooks/use-vaults-data-all';
 import { VaultInfo } from 'types';
 
 interface VaultsContextType {
-  vaults: VaultInfo[];
+  vaults: VaultInfo[] | undefined;
   activeVault: VaultInfo | null;
   setActiveVault: (address: Address) => void;
   isLoadingAllVaults: boolean;
@@ -32,62 +32,54 @@ interface VaultProviderProps {
   children: ReactNode;
 }
 
-const getUniqueVaultsByAddress = (
-  prev: VaultInfo[],
-  current: VaultInfo[],
-): VaultInfo[] => {
-  const vaultMap = new Map<Address, VaultInfo>();
-
-  for (const vault of prev) {
-    vaultMap.set(vault.address, vault);
-  }
-
-  for (const vault of current) {
-    vaultMap.set(vault.address, vault);
-  }
-
-  return Array.from(vaultMap.values());
-};
-
 export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
-  const [vaults, setVaults] = useState<VaultInfo[]>([]);
   const [activeVault, setCurrentVault] = useState<VaultInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const {
-    vaults: allVaults,
+    vaults,
     isLoading: isLoadingAllVaults,
+    isFetching,
     pagesCount,
     handlePagination,
   } = useVaultsDataAll();
 
-  useEffect(() => {
-    if (allVaults && allVaults?.length > 0 && !isLoadingAllVaults) {
-      setVaults((prevState) => {
-        return getUniqueVaultsByAddress(prevState, allVaults);
-      });
-    }
-  }, [allVaults, isLoadingAllVaults]);
-
   const setActiveVault = useCallback(
     (address: Address) => {
       if (!isAddress(address)) {
-        setError(`Invalid Ethereum address: ${address}`);
-        return;
+        void router.push(AppPaths.notFound);
       }
 
-      const vault = vaults.find((vault) => vault.address === address);
+      // TODO: add fetch info about particular vault by address
+      const vault = vaults?.find((vault) => vault.address === address);
 
       if (vault) {
         setCurrentVault(vault);
       } else {
-        setError(`Vault with address ${address} not found`);
-        void router.push(AppPaths.main);
+        void router.push(AppPaths.notFound);
       }
     },
     [vaults, router],
   );
+
+  useEffect(() => {
+    const queryAddress = router.query?.address;
+    if (
+      queryAddress &&
+      queryAddress !== activeVault?.address &&
+      vaults?.length &&
+      !isFetching
+    ) {
+      setActiveVault(queryAddress as Address);
+    }
+  }, [
+    vaults,
+    router.query?.address,
+    isFetching,
+    activeVault?.address,
+    setActiveVault,
+  ]);
 
   const clearError = useCallback(() => {
     setError(null);

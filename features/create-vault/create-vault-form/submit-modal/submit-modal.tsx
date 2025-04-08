@@ -57,6 +57,7 @@ export const SubmitModal: FC<ModalProps> = () => {
   const subtitle = getModalSubTitle(step);
 
   const handleNavigateToVault = () => {
+    // TODO: add for responsive buttons onClick = () => Promise and handle promise there
     void router.push(`/${address}`);
   };
 

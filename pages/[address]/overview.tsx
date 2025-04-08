@@ -1,21 +1,21 @@
 import type { FC } from 'react';
 import Head from 'next/head';
 
-import { ClaimPage } from 'features/claim';
 import { Layout } from 'shared/components';
 import { VaultProvider } from 'features/overview/contexts';
+import { OverviewPage } from 'features/overview';
 
-const Claim: FC = () => {
+const Overview: FC = () => {
   return (
-    <Layout title="Claim" containerSize="content">
+    <Layout title="Overview" containerSize="content">
       <Head>
-        <title>ClaimPage | Lido</title>
+        <title>Vault Overview | Lido</title>
       </Head>
       <VaultProvider>
-        <ClaimPage />
+        <OverviewPage />
       </VaultProvider>
     </Layout>
   );
 };
 
-export default Claim;
+export default Overview;

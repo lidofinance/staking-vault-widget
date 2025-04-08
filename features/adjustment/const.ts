@@ -12,8 +12,7 @@ export enum ADJUSTMENT_PATHS {
   repay = 'repay',
 }
 
-export type AdjustmentPaths =
-  (typeof ADJUSTMENT_PATHS)[keyof typeof ADJUSTMENT_PATHS];
+export type AdjustmentPaths = 'mint' | 'repay';
 
 export const adjustmentToggleList: { value: AdjustmentPaths; label: string }[] =
   [

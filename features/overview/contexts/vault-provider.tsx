@@ -16,7 +16,7 @@ import { useVaultData } from 'shared/hooks/use-vault-data';
 import { VaultInfo } from 'types';
 
 interface VaultContextType {
-  vaults: Map<Address, VaultInfo>;
+  vaults: VaultInfo[];
   activeVault: VaultInfo | null;
   setActiveVault: (address: Address) => void;
   isLoadingVault: boolean;
@@ -25,17 +25,11 @@ interface VaultContextType {
 
 const VaultContext = createContext<VaultContextType | null>(null);
 
-interface VaultProviderProps {
-  address: Address;
-}
-
-export const VaultProvider: FC<PropsWithChildren<VaultProviderProps>> = ({
-  address,
-  children,
-}) => {
-  const [vaults, setVaults] = useState<Map<Address, VaultInfo>>(new Map([]));
+export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [vaults, setVaults] = useState<VaultInfo[]>([]);
   const [activeVault, setCurrentVault] = useState<VaultInfo | null>(null);
   const router = useRouter();
+  const { address } = router.query as { address: Address };
   const addressPayload = useMemo(() => [address], [address]);
 
   const {
@@ -50,28 +44,26 @@ export const VaultProvider: FC<PropsWithChildren<VaultProviderProps>> = ({
         return;
       }
 
-      const vault = vaults.get(address);
+      const vault = vaults.find((vault) => vault.address === address);
       if (vault) {
         setCurrentVault(vault);
       } else {
-        void router.push(AppPaths.main);
+        void router.push(AppPaths.notFound);
       }
     },
     [vaults, router],
   );
 
   useEffect(() => {
-    if (!activeVault && vaults.size > 0) {
-      const vaultAddresses = Array.from(vaults.keys());
-      setActiveVault(vaultAddresses[0]);
+    if (!activeVault && vaults.length > 0) {
+      setActiveVault(vaults[0].address);
     }
   }, [activeVault, vaults, setActiveVault]);
 
   useEffect(() => {
     if (vaultInfo && vaultInfo.length > 0 && !isFetching) {
       setVaults((prevState) => {
-        const [vault] = vaultInfo;
-        return new Map([...prevState.entries(), [vault.address, vault]]);
+        return [...prevState, ...vaultInfo];
       });
     }
   }, [vaultInfo, isFetching]);
