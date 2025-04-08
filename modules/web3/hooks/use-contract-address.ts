@@ -9,7 +9,7 @@ export const useContractAddress = (contractName: LIDO_CONTRACT_NAMES) => {
   const { core } = useLidoSDK();
 
   return useQuery<Address | null>({
-    queryKey: ['use-contract-address-field', core.chainId, contractName],
+    queryKey: ['use-contract-address', core.chainId, contractName],
     enabled: !!core && !!core.chainId,
     ...STRATEGY_CONSTANT,
     queryFn: () => {

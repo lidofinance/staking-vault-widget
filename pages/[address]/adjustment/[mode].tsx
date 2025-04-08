@@ -14,15 +14,15 @@ type AdjustmentModePageParams = {
 };
 
 const Adjustment: FC = () => {
-  const { address, mode } = useRouter().query as AdjustmentModePageParams;
+  const { mode } = useRouter().query as AdjustmentModePageParams;
   const title = mode === 'mint' ? 'Mint' : 'Repay';
 
   return (
-    <Layout title={title} address={address} containerSize="content">
+    <Layout title={title} containerSize="content">
       <Head>
         <title>{title} | Lido</title>
       </Head>
-      <VaultProvider address={address}>
+      <VaultProvider>
         <AdjustmentProvider mode={mode}>
           <AdjustmentTabs />
         </AdjustmentProvider>

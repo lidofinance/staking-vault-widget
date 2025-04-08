@@ -11,7 +11,7 @@ import { useRouterPath } from 'shared/hooks/use-router-path';
 import { useDappStatus } from 'modules/web3';
 
 import { LocalLink } from 'shared/components/local-link';
-import { SelectVault } from 'shared/components/layout/navigation/select-vault';
+import { SelectedVault } from 'shared/components/layout/navigation/selected-vault';
 import {
   ListItem,
   NavLink,
@@ -20,6 +20,7 @@ import {
   ArrowBackStyled,
   NavList,
 } from './styles';
+import { useRouter } from 'next/router';
 
 type PageRoute = {
   name: string;
@@ -68,30 +69,23 @@ const routes: PageRoute[] = [
   },
 ];
 
-type NavigationProps = {
-  address?: Address;
-};
-
 // TODO: find more clearable way to map routes
 const saturatePathsByAddress = (
   routes: PageRoute[],
-  address: Address | undefined,
+  vaultAddress: Address | undefined,
 ) => {
   return routes.map((route) => {
     const { path, ...rest } = route;
-    if (path === AppPaths.overview) {
-      const newPath = address ? `/${address}` : path;
-      return { path: newPath, ...rest };
-    }
-
-    const newPath = address ? `/${address}${path}` : path;
+    const newPath = vaultAddress ? `/${vaultAddress}${path}` : path;
     return { path: newPath, ...rest };
   });
 };
 
-export const Navigation: FC<NavigationProps> = memo(({ address }) => {
+export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
+  const router = useRouter();
+  const { address: vaultAddress } = router.query as { address: Address };
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
   const showNavList = !pathname.includes(AppPaths.createVault);
 
@@ -100,7 +94,7 @@ export const Navigation: FC<NavigationProps> = memo(({ address }) => {
   } = useConfig();
 
   const availableRoutes = useMemo(() => {
-    if (!pages) return saturatePathsByAddress(routes, address);
+    if (!pages) return saturatePathsByAddress(routes, vaultAddress);
 
     const paths = Object.keys(pages) as ManifestConfigPage[];
     const filteredRoutes = routes.filter((route) => {
@@ -109,8 +103,8 @@ export const Navigation: FC<NavigationProps> = memo(({ address }) => {
       return !pages[path]?.shouldDisable;
     });
 
-    return saturatePathsByAddress(filteredRoutes, address);
-  }, [pages, address]);
+    return saturatePathsByAddress(filteredRoutes, vaultAddress);
+  }, [pages, vaultAddress]);
 
   let pathnameWithoutQuery = pathname.split('?')[0];
   if (pathnameWithoutQuery.endsWith('/')) {
@@ -127,7 +121,7 @@ export const Navigation: FC<NavigationProps> = memo(({ address }) => {
       </AllVaults>
       {showNavList && (
         <>
-          <SelectVault />
+          <SelectedVault />
           <NavList>
             {availableRoutes.map(({ name, path, subPaths, icon }) => {
               const isActive =

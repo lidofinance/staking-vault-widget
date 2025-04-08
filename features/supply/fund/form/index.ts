@@ -1,1 +1,1 @@
-export { Form } from './form';
+export { FundForm } from './form';

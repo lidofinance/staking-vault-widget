@@ -5,7 +5,7 @@ import { ToggleContainer, ToggleOption } from './styles';
 export interface ToggleSwitchProps<T = string> {
   options: { value: T; label: string }[];
   defaultActive: T;
-  onToggleCb: (payload: ToggleCbPayload<T>) => void;
+  onToggle: (payload: ToggleCbPayload<T>) => void;
 }
 
 export type ToggleCbPayload<T> = {
@@ -18,7 +18,7 @@ export type ToggleCbPayload<T> = {
 export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   options,
   defaultActive,
-  onToggleCb,
+  onToggle,
 }) => {
   const containerRef = useRef<HTMLUListElement>(null);
   const [activeOption, setActive] = useState<string>(() => defaultActive);
@@ -42,7 +42,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     setPrevActiveIndex(activeIndex);
     setActive(value);
     const currentIndex = options.findIndex((option) => option.value === value);
-    onToggleCb({ value, currentIndex, prevIndex: activeIndex });
+    onToggle({ value, currentIndex, prevIndex: activeIndex });
   };
 
   const activeIndex = options.findIndex(

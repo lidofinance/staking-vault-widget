@@ -6,7 +6,7 @@ import {
 } from 'shared/hook-form/controls/token-select-hook-form/token-select-hook-form';
 import { TOKENS_TO_MINT } from 'features/supply/const';
 import { useController, useFormContext } from 'react-hook-form';
-import { useDappStatus, useWstethBalance } from '../../../../../modules/web3';
+import { useDappStatus, useWstethBalance } from 'modules/web3';
 import { useBalance } from 'wagmi';
 
 const OPTIONS: TokenOption[] = [

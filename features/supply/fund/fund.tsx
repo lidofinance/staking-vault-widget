@@ -1,12 +1,10 @@
-import { Form } from './form';
-import { Impact } from './impact';
-import { FundFormProvider } from './fund-form-context/fund-form-provider';
+import { FundForm } from './form';
+import { FundFormProvider } from './fund-form-context';
 
 export const Fund = () => {
   return (
     <FundFormProvider>
-      <Form />
-      <Impact />
+      <FundForm />
     </FundFormProvider>
   );
 };

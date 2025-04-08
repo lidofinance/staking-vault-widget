@@ -19,7 +19,7 @@ export const SettingsTabs = () => {
       <ToggleSwitch
         options={settingsToggleList}
         defaultActive={SETTINGS_PATHS.main}
-        onToggleCb={({ value }) => handleToggleCb(value as SettingsPaths)}
+        onToggle={({ value }) => handleToggleCb(value as SettingsPaths)}
       />
       <FormBlock>
         {isMainTab ? <EditMainSettings /> : <PermissionsSettings />}

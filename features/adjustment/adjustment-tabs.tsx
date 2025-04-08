@@ -27,7 +27,7 @@ export const AdjustmentTabs = () => {
       <ToggleSwitch
         options={adjustmentToggleList}
         defaultActive={initialPath}
-        onToggleCb={({ value }) => handleToggleCb(value as AdjustmentPaths)}
+        onToggle={({ value }) => handleToggleCb(value as AdjustmentPaths)}
       />
       <FormBlock>{isMintTab ? <Mint /> : <Repay />}</FormBlock>
     </PageWrapper>

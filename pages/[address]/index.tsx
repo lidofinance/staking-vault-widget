@@ -1,33 +1,22 @@
-import type { FC } from 'react';
-import Head from 'next/head';
+import type { GetServerSideProps } from 'next';
 import { Address } from 'viem';
+import { AppPaths } from 'consts/urls';
 
-import { Layout } from 'shared/components';
-import { VaultProvider } from 'features/overview/contexts';
-import { OverviewPage } from 'features/overview';
-import { getDefaultServerSideProps } from 'utilsApi/get-default-server-side-props';
-
-type OverviewParams = {
+type VaultAddressIndexPageParams = {
   address: Address;
 };
 
-const Overview: FC<OverviewParams> = ({ address }) => {
-  return (
-    <Layout title="Overview" containerSize="content" address={address}>
-      <Head>
-        <title>Vault Overview | Lido</title>
-      </Head>
-      <VaultProvider address={address}>
-        <OverviewPage />
-      </VaultProvider>
-    </Layout>
-  );
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { address } = context.params as VaultAddressIndexPageParams;
+
+  return {
+    redirect: {
+      destination: `/${address}${AppPaths.overview}`,
+      permanent: true,
+    },
+  };
 };
 
-export default Overview;
+const VaultAddressIndexPage = () => null;
 
-// TODO: app structure
-// return fetching data by hooks on main page
-// make provider as wrapper for [address] pages
-
-export const getServerSideProps = getDefaultServerSideProps;
+export default VaultAddressIndexPage;

@@ -4,7 +4,7 @@ import { SubmitButton } from './submit-button';
 import { FeatureTxInfo } from './feature-tx-info';
 import { FormContainer } from './styles';
 
-export const Form = () => {
+export const RepayForm = () => {
   return (
     <FormContainer>
       <Balance />

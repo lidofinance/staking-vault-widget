@@ -180,9 +180,7 @@ export const AggregatorAbi = [
   {
     inputs: [],
     name: 'owner',
-    outputs: [
-      { internalType: 'address-field payable', name: '', type: 'address' },
-    ],
+    outputs: [{ internalType: 'address payable', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },

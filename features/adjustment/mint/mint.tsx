@@ -1,12 +1,10 @@
-import { Form } from './form';
-import { Impact } from './impact';
-import { MintFormProvider } from './mint-form-context/mint-form-provider';
+import { MintForm } from './form';
+import { MintFormProvider } from './mint-form-context';
 
 export const Mint = () => {
   return (
     <MintFormProvider>
-      <Form />
-      <Impact />
+      <MintForm />
     </MintFormProvider>
   );
 };

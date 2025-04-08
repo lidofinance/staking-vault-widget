@@ -1078,9 +1078,9 @@ export const DelegationAbi = [
     name: 'getRoleMembers',
     outputs: [
       {
-        internalType: 'address-field[]',
+        internalType: 'address[]',
         name: '',
-        type: 'address-field[]',
+        type: 'address[]',
       },
     ],
     stateMutability: 'view',
