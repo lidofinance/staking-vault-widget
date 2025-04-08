@@ -47,7 +47,7 @@ export const useCreateVaultFormData = () => {
   const value = useContext(CreateVaultDataContext);
   invariant(
     value,
-    'useCreateVaultData was used outside the CreateVaultDataContext provider',
+    'useCreateVaultFormData was used outside the CreateVaultDataContext provider',
   );
 
   return value;

@@ -3,19 +3,22 @@ import { Address } from 'viem';
 
 import { Layout } from 'shared/components';
 import { VaultProvider } from 'features/overview/contexts';
-import { SettingsForm } from 'features/settings/settings-form';
+import { SettingsProvider } from 'features/settings/contexts';
+import { SettingsTabs } from 'features/settings';
 
 import { getDefaultServerSideProps } from 'utilsApi/get-default-server-side-props';
 
-type SettingsProps = {
+type SettingsParams = {
   address: Address;
 };
 
-const Settings: FC<SettingsProps> = ({ address }) => {
+const Settings: FC<SettingsParams> = ({ address }) => {
   return (
-    <Layout title="Settings" address={address}>
+    <Layout title="Settings">
       <VaultProvider address={address}>
-        <SettingsForm />
+        <SettingsProvider>
+          <SettingsTabs />
+        </SettingsProvider>
       </VaultProvider>
     </Layout>
   );

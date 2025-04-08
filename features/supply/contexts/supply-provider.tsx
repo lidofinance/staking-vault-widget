@@ -20,7 +20,7 @@ SupplyContext.displayName = 'SupplyProvider';
 
 export const useSupply = () => {
   const value = useContext(SupplyContext);
-  invariant(value, 'useSupply was used outside AdjustmentProvider');
+  invariant(value, 'useSupply was used outside SupplyContext');
   return value;
 };
 

@@ -6,7 +6,7 @@ import NoSSRWrapper from 'shared/components/no-ssr-wrapper';
 import { usePrefixedReplace } from 'shared/hooks/use-prefixed-history';
 
 import { HomePage } from 'features/home';
-import SettingsPage from 'pages/settings';
+import SettingsPage from 'pages/[address]/settings';
 
 /**
  * We are using single index.html endpoint
@@ -48,7 +48,8 @@ export const HomePageIpfs: FC = () => {
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (parsedPath[0]) {
     case getPathWithoutFirstSlash(AppPaths.settings): {
-      spaPage = <SettingsPage />;
+      // TODO: fix and get address in IPFS mode
+      spaPage = <SettingsPage address="0x" />;
       break;
     }
 

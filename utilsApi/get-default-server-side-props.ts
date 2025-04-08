@@ -1,7 +1,6 @@
-import { createPublicClient, http, isAddress } from 'viem';
-import { sepolia } from 'viem/chains';
-import { StakingVaultAbi } from '../abi/vault';
-import { getVaultHubAddress } from '../consts/vault-hub';
+import { isAddress } from 'viem';
+// import { StakingVaultAbi } from '../abi/vault';
+// import { getVaultHubAddress } from '../consts/vault-hub';
 import { GetServerSideProps } from 'next';
 
 interface ServerSideProps {
@@ -21,27 +20,27 @@ export const getDefaultServerSideProps: GetServerSideProps<
       throw new Error('Address is not valid ethereum address');
     }
 
-    // TODO: get current chain
-    const client = createPublicClient({
-      chain: sepolia,
-      transport: http(),
-    });
-
-    const bytecode = await client.getBytecode({ address });
-    if (!bytecode || bytecode === '0x') {
-      throw new Error('Contract is not deployed');
-    }
-
-    const vaultHubAddress = await client.readContract({
-      address,
-      abi: StakingVaultAbi,
-      functionName: 'vaultHub',
-    });
-
-    const currentHubAddress = getVaultHubAddress(11155111);
-    if (vaultHubAddress !== currentHubAddress) {
-      throw new Error('VaultHub address is is not correct');
-    }
+    // TODO: get current chain and add address check
+    // const client = createPublicClient({
+    //   chain: sepolia,
+    //   transport: http(),
+    // });
+    //
+    // const bytecode = await client.getBytecode({ address });
+    // if (!bytecode || bytecode === '0x') {
+    //   throw new Error('Contract is not deployed');
+    // }
+    //
+    // const vaultHubAddress = await client.readContract({
+    //   address,
+    //   abi: StakingVaultAbi,
+    //   functionName: 'vaultHub',
+    // });
+    //
+    // const currentHubAddress = getVaultHubAddress(11155111);
+    // if (vaultHubAddress !== currentHubAddress) {
+    //   throw new Error('VaultHub address is is not correct');
+    // }
 
     return {
       props: { address },
