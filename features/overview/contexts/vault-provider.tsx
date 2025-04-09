@@ -48,7 +48,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       if (vault) {
         setCurrentVault(vault);
       } else {
-        void router.push(AppPaths.notFound);
+        void router.replace(AppPaths.notFound);
       }
     },
     [vaults, router],
