@@ -1,11 +1,11 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { ToggleContainer, ToggleOption } from './styles';
 
 export interface ToggleSwitchProps<T = string> {
   options: { value: T; label: string }[];
   defaultActive: T;
-  onToggleCb: (payload: ToggleCbPayload<T>) => void;
+  onToggle: (payload: ToggleCbPayload<T>) => void;
 }
 
 export type ToggleCbPayload<T> = {
@@ -18,10 +18,10 @@ export type ToggleCbPayload<T> = {
 export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   options,
   defaultActive,
-  onToggleCb,
+  onToggle,
 }) => {
   const containerRef = useRef<HTMLUListElement>(null);
-  const [activeOption, setActive] = useState<string>(defaultActive);
+  const [activeOption, setActive] = useState<string>(() => defaultActive);
   const [[prevElementWidth, activeIndexWidth], setWidth] = useState<
     [number, number]
   >([0, 0]);
@@ -32,11 +32,17 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
     options.findIndex((option) => option.value === defaultActive),
   );
 
+  useEffect(() => {
+    if (activeOption !== defaultActive) {
+      setActive(defaultActive);
+    }
+  }, [activeOption, defaultActive]);
+
   const handleClick = (value: string) => {
     setPrevActiveIndex(activeIndex);
     setActive(value);
     const currentIndex = options.findIndex((option) => option.value === value);
-    onToggleCb({ value, currentIndex, prevIndex: activeIndex });
+    onToggle({ value, currentIndex, prevIndex: activeIndex });
   };
 
   const activeIndex = options.findIndex(
@@ -79,19 +85,23 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       positionDiff={positionDiff}
       prevPositionX={prevPositionX}
     >
-      {options.map((option) => (
-        <ToggleOption
-          key={option.value}
-          id={`to_${option.value}`}
-          role="radio"
-          aria-checked={activeOption === option.value}
-          aria-label={option.label}
-          isActive={activeOption === option.value}
-          onClick={() => handleClick(option.value)}
-        >
-          {option.label}
-        </ToggleOption>
-      ))}
+      {options.map((option) => {
+        const isActive = activeOption === option.value;
+
+        return (
+          <ToggleOption
+            key={option.value}
+            id={`to_${option.value}`}
+            role="radio"
+            aria-checked={isActive}
+            aria-label={option.label}
+            isActive={isActive}
+            onClick={() => handleClick(option.value)}
+          >
+            {option.label}
+          </ToggleOption>
+        );
+      })}
     </ToggleContainer>
   );
 };

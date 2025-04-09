@@ -15,7 +15,7 @@ export const useRouterPath = () => {
   // We can't' use `router.pathname` and `router.route` 'cause it's a mapping with file structure
   // example:
   // - /wrap                  --->  /wrap/[[...mode]]
-  // - /withdrawals/request/  --->  /withdrawals/[mode]
+  // - /supply/mint/  --->  /supply/[mode]
   // also we need to remove last character because `router.asPath` contain `/` as last character
   // example:
   // - /wrap                  ---> - /wrap/

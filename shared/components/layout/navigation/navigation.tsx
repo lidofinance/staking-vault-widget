@@ -1,7 +1,9 @@
 import { FC, memo, useMemo, ReactNode } from 'react';
-import { Stake } from '@lidofinance/lido-ui';
+import { Address } from 'viem';
+import { Stake, Withdraw, Wrap, Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
+import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { getPathWithoutFirstSlash, AppPaths } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
@@ -9,7 +11,7 @@ import { useRouterPath } from 'shared/hooks/use-router-path';
 import { useDappStatus } from 'modules/web3';
 
 import { LocalLink } from 'shared/components/local-link';
-import { SelectAddress } from 'shared/components/layout/navigation/select-address';
+import { SelectedVault } from 'shared/components/layout/navigation/selected-vault';
 import {
   ListItem,
   NavLink,
@@ -18,6 +20,7 @@ import {
   ArrowBackStyled,
   NavList,
 } from './styles';
+import { useRouter } from 'next/router';
 
 type PageRoute = {
   name: string;
@@ -29,22 +32,62 @@ type PageRoute = {
 };
 const routes: PageRoute[] = [
   {
-    name: 'Home',
-    path: AppPaths.main,
-    icon: <Stake data-testid="navHome" />,
+    name: 'Overview',
+    path: AppPaths.overview,
+    icon: <MosaicIcon />,
+    exact: true,
+  },
+  {
+    name: 'Supply/Withdraw',
+    path: AppPaths.supply,
+    icon: <Stake />,
+    exact: true,
+  },
+  {
+    name: 'Mint/Repay stETH',
+    path: AppPaths.adjustment,
+    icon: <Withdraw />,
+    exact: true,
+  },
+  {
+    name: 'Validators',
+    path: AppPaths.validators,
+    icon: <Wrap />,
+    exact: true,
+  },
+  {
+    name: 'Claim Fees',
+    path: AppPaths.claim,
+    icon: <Withdraw />,
     exact: true,
   },
   {
     name: 'Settings',
     path: AppPaths.settings,
-    icon: <GearIcon data-testid="navSettings" />,
+    icon: <GearIcon />,
     exact: true,
   },
 ];
 
+// TODO: find more clearable way to map routes
+const saturatePathsByAddress = (
+  routes: PageRoute[],
+  vaultAddress: Address | undefined,
+) => {
+  return routes.map((route) => {
+    const { path, ...rest } = route;
+    const newPath = vaultAddress ? `/${vaultAddress}${path}` : path;
+    return { path: newPath, ...rest };
+  });
+};
+
 export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
+  const router = useRouter();
+  const { vaultAddress } = router.query as {
+    vaultAddress: Address | undefined;
+  };
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
   const showNavList = !pathname.includes(AppPaths.createVault);
 
@@ -53,15 +96,17 @@ export const Navigation: FC = memo(() => {
   } = useConfig();
 
   const availableRoutes = useMemo(() => {
-    if (!pages) return routes;
+    if (!pages) return saturatePathsByAddress(routes, vaultAddress);
 
     const paths = Object.keys(pages) as ManifestConfigPage[];
-    return routes.filter((route) => {
+    const filteredRoutes = routes.filter((route) => {
       const path = paths.find((path) => route.path.includes(path));
       if (!path) return true;
       return !pages[path]?.shouldDisable;
     });
-  }, [pages]);
+
+    return saturatePathsByAddress(filteredRoutes, vaultAddress);
+  }, [pages, vaultAddress]);
 
   let pathnameWithoutQuery = pathname.split('?')[0];
   if (pathnameWithoutQuery.endsWith('/')) {
@@ -74,11 +119,13 @@ export const Navigation: FC = memo(() => {
       <AllVaults href={AppPaths.main}>
         <ArrowBackStyled />
         &nbsp;
-        <span>All vaults</span>
+        <Text size="xxs" strong>
+          All vaults
+        </Text>
       </AllVaults>
       {showNavList && (
         <>
-          <SelectAddress />
+          <SelectedVault />
           <NavList>
             {availableRoutes.map(({ name, path, subPaths, icon }) => {
               const isActive =

@@ -1,7 +1,8 @@
 import { Address } from 'viem';
 
-export interface VaultInfo {
+export interface VaultInfo extends VaultSocket {
   address: Address;
+  owner: Address;
   valuation: bigint;
   minted: bigint;
   mintable: bigint;
@@ -12,7 +13,7 @@ export interface VaultInfo {
 export interface VaultSocket {
   isDisconnected: boolean;
   reserveRatioBP: number;
-  reserveRatioThresholdBP: number;
+  rebalanceThresholdBP: number;
   shareLimit: bigint;
   sharesMinted: bigint;
   treasuryFeeBP: number;

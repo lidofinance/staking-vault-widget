@@ -22,8 +22,7 @@ type LayoutProps = {
 };
 
 export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
-  const { title, subtitle, containerSize } = props;
-  const { children } = props;
+  const { title, subtitle, containerSize, children } = props;
 
   return (
     <LayoutStyles>

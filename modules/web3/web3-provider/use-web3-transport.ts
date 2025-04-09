@@ -101,7 +101,7 @@ const runtimeMutableTransport = (
           // this is fallbackTransport specific field, used by WC connectors to extract rpc Urls
           // we can use defaultTransport because no injected transport
           transports: defaultTransport.value?.transports,
-          // create-vault-form-context that use this transport, use this to set onResponse callback for transport,
+          // create-vault-form-contexts that use this transport, use this to set onResponse callback for transport,
           onResponse: (fn: OnResponseFn) => (externalOnResponse = fn),
         },
       );

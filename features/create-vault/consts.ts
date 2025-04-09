@@ -85,7 +85,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   },
   {
     name: 'curatorFeeClaimers',
-    title: 'Claim Vault Curator’s fee (address)',
+    title: 'ClaimPage Vault Curator’s fee (address)',
     dataType: 'address',
   },
   {
@@ -131,7 +131,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   {
     name: 'validatorWithdrawalTriggerers',
     title:
-      'Force NodeOperator to withdraw funds from validator(s) (public key, sum)',
+      'Force NodeOperator to repay funds from validator(s) (public key, sum)',
     dataType: 'address',
   },
   {
@@ -141,7 +141,7 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
   },
   {
     name: 'nodeOperatorFeeClaimers',
-    title: 'Claim NOs fees from the vault (ETH) (address)',
+    title: 'ClaimPage NOs fees from the vault (ETH) (address)',
     dataType: 'address',
   },
 ];

@@ -11,36 +11,36 @@ import { VaultSocket, VaultInfo } from 'types';
 
 // TODO: find way to remove readonly
 export const useVaultData = (
-  vaultsAddressesList: readonly Address[] | undefined = [],
+  vaultsAddressesList: readonly Address[] | undefined,
 ) => {
-  const { shares, core } = useLidoSDK();
+  const {
+    shares,
+    core: { rpcProvider },
+  } = useLidoSDK();
 
   return useQuery({
     queryKey: ['vault-data', { data: vaultsAddressesList }],
     enabled: !!vaultsAddressesList?.length,
     ...STRATEGY_LAZY,
     queryFn: async (): Promise<VaultInfo[]> => {
-      const vaultHabContract = getVaultHubContract(core.rpcProvider);
+      const vaultHabContract = getVaultHubContract(rpcProvider);
       const vaults: VaultInfo[] = [];
 
-      if (vaultsAddressesList?.length < 1) {
+      if (vaultsAddressesList?.length && vaultsAddressesList.length === 0) {
         return vaults;
       }
 
-      for (const vaultAddress of vaultsAddressesList) {
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+      for (const vaultAddress of vaultsAddressesList!) {
         const vaultContract = getStakingVaultContract(
           vaultAddress,
-          core.rpcProvider,
+          rpcProvider,
         );
         const owner = await vaultContract.read.owner();
+        const delegationContract = getDelegationContract(owner, rpcProvider);
 
-        const delegationContract = getDelegationContract(
-          owner,
-          core.rpcProvider,
-        );
         const vaultHubSocket: VaultSocket =
           await vaultHabContract.read.vaultSocket([vaultAddress]);
-
         const valuation = await delegationContract.read.valuation();
         const healthScore = getHealthScore(valuation, vaultHubSocket);
         const totalMintableShares =
@@ -59,6 +59,8 @@ export const useVaultData = (
           apr: null,
           healthScore,
           address: vaultAddress,
+          owner,
+          ...vaultHubSocket,
         });
       }
 

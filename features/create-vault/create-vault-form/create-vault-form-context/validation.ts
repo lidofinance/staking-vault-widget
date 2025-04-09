@@ -14,7 +14,7 @@ import {
   VaultPermissionsType,
 } from 'features/create-vault/types';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { isValidEns } from '../../../../utils/ens';
+import { isValidEns } from 'utils/ens';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
