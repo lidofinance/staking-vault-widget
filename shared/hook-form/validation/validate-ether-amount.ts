@@ -3,10 +3,12 @@ import { getTokenDisplayName } from 'utils/getTokenDisplayName';
 import { ValidationError } from './validation-error';
 import { LIDO_TOKENS } from '@lidofinance/lido-ethereum-sdk/common';
 
+// TODO: discuss add to LIDO_TOKENS or similar structure or not
 export const TOKENS = {
   [LIDO_TOKENS.eth]: LIDO_TOKENS.eth,
   [LIDO_TOKENS.steth]: LIDO_TOKENS.steth,
   [LIDO_TOKENS.wsteth]: LIDO_TOKENS.wsteth,
+  wETH: 'wETH',
 } as const;
 
 export type TOKENS = keyof typeof TOKENS;

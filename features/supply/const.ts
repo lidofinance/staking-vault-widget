@@ -4,6 +4,7 @@ export const TOKENS_TO_MINT = {
   [LIDO_TOKENS.eth]: LIDO_TOKENS.eth,
   [LIDO_TOKENS.wsteth]: LIDO_TOKENS.wsteth,
   [LIDO_TOKENS.steth]: LIDO_TOKENS.steth,
+  wETH: 'wETH',
 } as const;
 
 export type TOKENS_TO_MINT = keyof typeof TOKENS_TO_MINT;
