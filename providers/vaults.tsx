@@ -64,7 +64,7 @@ export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
   );
 
   useEffect(() => {
-    const queryAddress = router.query?.address;
+    const queryAddress = router.query?.vaultAddress;
     if (
       queryAddress &&
       queryAddress !== activeVault?.address &&
@@ -75,7 +75,7 @@ export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
     }
   }, [
     vaults,
-    router.query?.address,
+    router.query?.vaultAddress,
     isFetching,
     activeVault?.address,
     setActiveVault,

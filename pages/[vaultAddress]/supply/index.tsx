@@ -2,15 +2,15 @@ import type { GetServerSideProps } from 'next';
 import { Address } from 'viem';
 
 type SupplyIndexPageParams = {
-  address: Address;
+  vaultAddress: Address;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { address } = context.params as SupplyIndexPageParams;
+  const { vaultAddress } = context.params as SupplyIndexPageParams;
 
   return {
     redirect: {
-      destination: `/${address}/supply/fund`,
+      destination: `/${vaultAddress}/supply/fund`,
       permanent: true,
     },
   };
