@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
-import { useSimulationClaimWithDelegation } from 'modules/web3/hooks/use-claim-with-delegation';
+import { useSimulationClaimWithDelegation } from 'features/claim/claim-form/hooks';
 
 export const FeatureTxInfo = () => {
   const { getValues } = useFormContext();

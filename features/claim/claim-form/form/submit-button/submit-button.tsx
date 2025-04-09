@@ -1,6 +1,6 @@
 import { Button } from '@lidofinance/lido-ui';
 import { useFormContext } from 'react-hook-form';
-import { useClaimFormData } from 'features/claim/claim/claim-form-context';
+import { useClaimFormData } from 'features/claim/claim-form/claim-form-context';
 import { formatBalance } from 'utils';
 
 export const SubmitButton = () => {

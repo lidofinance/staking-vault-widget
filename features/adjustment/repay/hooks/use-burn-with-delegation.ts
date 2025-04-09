@@ -27,12 +27,12 @@ export const useBurnWithDelegation = (onMutate = () => {}) => {
   });
 
   const callBurn = useCallback(
-    async ({ token, amount }: { token: string; amount: number }) => {
+    async ({ token, amount }: { token: string; amount: bigint }) => {
       return await writeContractAsync({
         abi: DelegationAbi,
         address: activeVault?.owner as Address,
         functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
-        args: [BigInt(amount)],
+        args: [amount],
         chainId,
       });
     },

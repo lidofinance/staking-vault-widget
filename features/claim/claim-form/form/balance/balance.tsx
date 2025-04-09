@@ -1,7 +1,7 @@
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 
-import { useClaimFormData } from 'features/claim/claim/claim-form-context';
+import { useClaimFormData } from 'features/claim/claim-form/claim-form-context';
 import { formatBalance } from 'utils';
 
 export const Balance = () => {

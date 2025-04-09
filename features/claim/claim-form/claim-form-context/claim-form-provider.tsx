@@ -11,7 +11,7 @@ import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useClaimWithDelegation } from 'modules/web3/hooks/use-claim-with-delegation';
+import { useClaimWithDelegation } from 'features/claim/claim-form/hooks';
 import { useVaultInfo } from 'features/overview/contexts';
 
 import {
@@ -21,7 +21,7 @@ import {
 } from 'shared/hook-form/form-controller';
 
 import { DelegationAbi } from 'abi/delegation';
-import { ClaimFormSchema } from 'features/claim/claim/types';
+import { ClaimFormSchema } from 'features/claim/claim-form/types';
 import invariant from 'tiny-invariant';
 
 type ClaimDataContextValue = {

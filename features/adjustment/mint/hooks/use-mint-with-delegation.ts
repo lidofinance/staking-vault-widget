@@ -29,12 +29,12 @@ export const useMintWithDelegation = (onMutate = () => {}) => {
   });
 
   const callMint = useCallback(
-    async (recipient: Address, amount: number, token: string) => {
+    async (recipient: Address, amount: bigint, token: string) => {
       return await writeContractAsync({
         abi: DelegationAbi,
         address: activeVault?.owner as Address,
         functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
-        args: [recipient, BigInt(amount)],
+        args: [recipient, amount],
         chainId,
       });
     },

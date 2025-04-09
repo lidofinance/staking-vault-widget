@@ -12,7 +12,6 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
 export const useWithdrawWithDelegation = (onMutate = () => {}) => {
-  const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
 
@@ -33,7 +32,7 @@ export const useWithdrawWithDelegation = (onMutate = () => {}) => {
       recipient,
       token,
     }: {
-      amount: number;
+      amount: bigint;
       recipient: Address;
       token: string;
     }) => {
@@ -41,11 +40,10 @@ export const useWithdrawWithDelegation = (onMutate = () => {}) => {
         abi: DelegationAbi,
         address: activeVault?.owner as Address,
         functionName: token === 'ETH' ? 'withdraw' : 'withdrawWETH',
-        args: [recipient, BigInt(amount)],
-        chainId,
+        args: [recipient, amount],
       });
     },
-    [chainId, writeContractAsync, activeVault?.owner],
+    [writeContractAsync, activeVault?.owner],
   );
 
   return {
@@ -58,13 +56,13 @@ export const useWithdrawWithDelegation = (onMutate = () => {}) => {
 type SimulateWithDelegationArgs = {
   token: string;
   recipient: Address;
-  amount?: number;
+  amount?: bigint;
 };
 
 export const useSimulateWithDelegation = ({
   token,
   recipient,
-  amount = 0,
+  amount = 0n,
 }: SimulateWithDelegationArgs) => {
   const { activeVault } = useVaultInfo();
   const { chainId } = useDappStatus();
@@ -74,7 +72,7 @@ export const useSimulateWithDelegation = ({
     abi: DelegationAbi,
     address: owner as Address,
     functionName: token === 'ETH' ? 'withdraw' : 'withdrawWETH',
-    args: [recipient, BigInt(amount)],
+    args: [recipient, amount],
     query: {
       enabled: !!owner && !!recipient,
     },

@@ -1,5 +1,5 @@
 import { FormBlock, PageWrapper } from './styles';
-import { Claim } from './claim';
+import { Claim } from './claim-form';
 
 export const ClaimPage = () => {
   return (

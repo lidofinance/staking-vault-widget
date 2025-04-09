@@ -9,7 +9,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useBurnWithDelegation } from 'modules/web3/hooks/use-burn-with-delegation';
+import { useBurnWithDelegation } from 'features/adjustment/repay/hooks';
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
 
 import {
@@ -96,7 +96,6 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
   const onSubmit = useCallback(
     async ({ amount, token }: RepayFormSchema) => {
       if (amount) {
-        // TODO: resolve recipient if ens domain
         await callBurn({ amount, token });
         return true;
       }

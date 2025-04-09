@@ -29,8 +29,7 @@ export const useFundWithDelegation = (onMutate = () => {}) => {
   });
 
   const callVaultFund = useCallback(
-    async (token: string, amount: number) => {
-      const payload = BigInt(amount);
+    async (token: string, amount: bigint) => {
       const functionName = token === 'ETH' ? 'fund' : 'fundWeth';
       const isFund = functionName === 'fund';
       const owner = activeVault?.owner;
@@ -47,10 +46,10 @@ export const useFundWithDelegation = (onMutate = () => {}) => {
 
       if (isFund) {
         // @ts-expect-error ts-types
-        contractPayload.value = payload;
+        contractPayload.value = amount;
       } else {
         // @ts-expect-error ts-types
-        contractPayload.args = [payload];
+        contractPayload.args = [amount];
       }
       // @ts-expect-error ts-types
       return await writeContractAsync(contractPayload);
@@ -68,7 +67,7 @@ export const useFundWithDelegation = (onMutate = () => {}) => {
 export interface SimulationFundWithDelegationProps {
   address: Address | undefined;
   token: string;
-  amount: number;
+  amount: bigint;
 }
 
 export const useSimulationFundWithDelegation = ({
@@ -76,7 +75,6 @@ export const useSimulationFundWithDelegation = ({
   token,
   amount,
 }: SimulationFundWithDelegationProps) => {
-  const payload = BigInt(amount);
   const functionName = token === 'ETH' ? 'fund' : 'fundWeth';
   const isFund = functionName === 'fund';
 
@@ -90,9 +88,9 @@ export const useSimulationFundWithDelegation = ({
   };
 
   if (isFund) {
-    simulationContractPayload.value = payload;
+    simulationContractPayload.value = amount;
   } else {
-    simulationContractPayload.args = [payload];
+    simulationContractPayload.args = [amount];
   }
 
   return useSimulateContract(simulationContractPayload);
