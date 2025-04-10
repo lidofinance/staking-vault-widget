@@ -5,7 +5,7 @@ import { ButtonClose } from 'shared/components';
 import { PillContainer, AddressText } from './styles';
 
 export interface AddressBadgeProps {
-  address: string;
+  address: string | undefined;
   symbols?: number;
   onRemove?: (event: MouseEvent<HTMLButtonElement>) => void;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -14,6 +14,10 @@ export interface AddressBadgeProps {
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (props, ref?: ForwardedRef<HTMLDivElement>) => {
     const { address, symbols = 6, onRemove, onClick } = props;
+
+    if (!address) {
+      return null;
+    }
 
     return (
       <PillContainer onClick={onClick} ref={ref}>
