@@ -1,5 +1,5 @@
 import { useBalance } from 'wagmi';
-import { useDappStatus, useWstethBalance } from 'modules/web3';
+import { useDappStatus, useWethBalance } from 'modules/web3';
 
 import { Text, Loader } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
@@ -17,17 +17,17 @@ export const Balance = () => {
     isError: isEthError,
   } = useBalance({ address });
   const {
-    data: wstethBalance,
-    isLoading: isWstethLoading,
-    isSuccess: isWstethSuccess,
-    isError: isWstethError,
-  } = useWstethBalance({ account: address });
+    data: wethBalance,
+    isLoading: isWethLoading,
+    isSuccess: isWethSuccess,
+    isError: isWethError,
+  } = useWethBalance({ account: address });
   const token = watch('token');
 
-  const isLoading = isEthLoading || isWstethLoading;
-  const isSuccess = isEthSuccess || isWstethSuccess;
-  const isError = isEthError || isWstethError;
-  const balance = token === 'ETH' ? ethBalance?.value : wstethBalance;
+  const isLoading = isEthLoading || isWethLoading;
+  const isSuccess = isEthSuccess || isWethSuccess;
+  const isError = isEthError || isWethError;
+  const balance = token === 'ETH' ? ethBalance?.value : wethBalance;
 
   return (
     <Wrapper>

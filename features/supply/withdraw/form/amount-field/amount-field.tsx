@@ -10,7 +10,7 @@ import { useWithdrawFormData } from 'features/supply/withdraw/withdraw-form-cont
 
 const OPTIONS: TokenOption[] = [
   { token: TOKENS_TO_MINT.ETH },
-  { token: TOKENS_TO_MINT.wstETH },
+  { token: TOKENS_TO_MINT.wETH },
 ];
 
 export const AmountField = () => {

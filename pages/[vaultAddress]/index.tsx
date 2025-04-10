@@ -3,15 +3,15 @@ import { Address } from 'viem';
 import { AppPaths } from 'consts/urls';
 
 type VaultAddressIndexPageParams = {
-  address: Address;
+  vaultAddress: Address;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { address } = context.params as VaultAddressIndexPageParams;
+  const { vaultAddress } = context.params as VaultAddressIndexPageParams;
 
   return {
     redirect: {
-      destination: `/${address}${AppPaths.overview}`,
+      destination: `/${vaultAddress}${AppPaths.overview}`,
       permanent: true,
     },
   };

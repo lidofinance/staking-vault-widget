@@ -1,4 +1,4 @@
 export type RepayFormSchema = {
-  amount: number | null;
+  amount: bigint | undefined;
   token: string;
 };

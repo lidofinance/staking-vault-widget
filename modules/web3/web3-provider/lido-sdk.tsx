@@ -22,6 +22,7 @@ import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 import { config } from 'config';
 import { useTokenTransferSubscription } from 'modules/web3/hooks/use-balance';
 import { useDappChain } from './dapp-chain';
+import { LidoSDKwETH } from 'consts/weth';
 
 type LidoSDKContextValue = {
   chainId: CHAINS;
@@ -30,6 +31,7 @@ type LidoSDKContextValue = {
   stETH: LidoSDKstETH;
   shares: LidoSDKShares;
   wstETH: LidoSDKwstETH;
+  wETH: LidoSDKwETH;
   wrap: LidoSDKWrap;
   withdraw: LidoSDKWithdraw;
   statistics: LidoSDKStatistics;
@@ -85,6 +87,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
     const stETH = new LidoSDKstETH({ core });
     const shares = new LidoSDKShares({ core });
     const wstETH = new LidoSDKwstETH({ core });
+    const wETH = new LidoSDKwETH({ core });
     const wrap = new LidoSDKWrap({ core });
     const withdraw = new LidoSDKWithdraw({ core });
     const statistics = new LidoSDKStatistics({ core });
@@ -96,6 +99,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       stETH,
       shares,
       wstETH,
+      wETH,
       wrap,
       withdraw,
       statistics,

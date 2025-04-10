@@ -1,4 +1,4 @@
 export type FundFormSchema = {
-  amount: number | undefined;
+  amount: bigint | undefined;
   token: string;
 };

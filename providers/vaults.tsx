@@ -48,7 +48,7 @@ export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
   const setActiveVault = useCallback(
     (address: Address) => {
       if (!isAddress(address)) {
-        void router.push(AppPaths.notFound);
+        void router.replace(AppPaths.notFound);
       }
 
       // TODO: add fetch info about particular vault by address
@@ -57,14 +57,14 @@ export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
       if (vault) {
         setCurrentVault(vault);
       } else {
-        void router.push(AppPaths.notFound);
+        void router.replace(AppPaths.notFound);
       }
     },
     [vaults, router],
   );
 
   useEffect(() => {
-    const queryAddress = router.query?.address;
+    const queryAddress = router.query?.vaultAddress;
     if (
       queryAddress &&
       queryAddress !== activeVault?.address &&
@@ -75,7 +75,7 @@ export const VaultProvider: FC<VaultProviderProps> = ({ children }) => {
     }
   }, [
     vaults,
-    router.query?.address,
+    router.query?.vaultAddress,
     isFetching,
     activeVault?.address,
     setActiveVault,

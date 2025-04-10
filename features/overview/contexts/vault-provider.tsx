@@ -29,8 +29,8 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const [vaults, setVaults] = useState<VaultInfo[]>([]);
   const [activeVault, setCurrentVault] = useState<VaultInfo | null>(null);
   const router = useRouter();
-  const { address } = router.query as { address: Address };
-  const addressPayload = useMemo(() => [address], [address]);
+  const { vaultAddress } = router.query as { vaultAddress: Address };
+  const addressPayload = useMemo(() => [vaultAddress], [vaultAddress]);
 
   const {
     data: vaultInfo,
@@ -48,7 +48,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       if (vault) {
         setCurrentVault(vault);
       } else {
-        void router.push(AppPaths.notFound);
+        void router.replace(AppPaths.notFound);
       }
     },
     [vaults, router],

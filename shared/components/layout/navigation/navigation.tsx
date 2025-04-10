@@ -1,6 +1,6 @@
 import { FC, memo, useMemo, ReactNode } from 'react';
 import { Address } from 'viem';
-import { Stake, Withdraw, Wrap } from '@lidofinance/lido-ui';
+import { Stake, Withdraw, Wrap, Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
@@ -85,7 +85,9 @@ export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
   const { isWalletConnected } = useDappStatus();
   const router = useRouter();
-  const { address: vaultAddress } = router.query as { address: Address };
+  const { vaultAddress } = router.query as {
+    vaultAddress: Address | undefined;
+  };
   const showNavigation = pathname !== AppPaths.main && isWalletConnected;
   const showNavList = !pathname.includes(AppPaths.createVault);
 
@@ -117,7 +119,9 @@ export const Navigation: FC = memo(() => {
       <AllVaults href={AppPaths.main}>
         <ArrowBackStyled />
         &nbsp;
-        <span>All vaults</span>
+        <Text size="xxs" strong>
+          All vaults
+        </Text>
       </AllVaults>
       {showNavList && (
         <>

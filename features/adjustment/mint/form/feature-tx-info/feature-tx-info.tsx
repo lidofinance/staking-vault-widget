@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useSimulationMintWithDelegation } from 'features/adjustment/mint/hooks/use-mint-with-delegation';
+import { useSimulationMintWithDelegation } from 'features/adjustment/mint/hooks';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';

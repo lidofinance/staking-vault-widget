@@ -11,7 +11,7 @@ import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useVaultInfo } from 'features/overview/contexts';
-import { useMintWithDelegation } from 'features/adjustment/mint/hooks/use-mint-with-delegation';
+import { useMintWithDelegation } from 'features/adjustment/mint/hooks';
 
 import {
   FormController,
