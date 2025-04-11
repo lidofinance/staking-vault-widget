@@ -152,7 +152,7 @@ export const formatCreateVaultData = (
 ): VaultFactoryArgs => {
   const { nodeOperator, ...payload } = values;
   (payload as unknown as VaultFactoryArgs).confirmExpiry = BigInt(
-    values.confirmExpiry,
+    values.confirmExpiry * 60 * 60,
   );
 
   return payload as unknown as VaultFactoryArgs;

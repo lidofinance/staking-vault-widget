@@ -12,6 +12,5 @@ export const useVaultsConnectedBound = (from: number, to: number) => {
     address: VAULT_VIEWER_BY_NETWORK[chainId as CHAINS],
     functionName: 'vaultsConnectedBound',
     args: [BigInt(from), BigInt(to)],
-    chainId,
   });
 };
