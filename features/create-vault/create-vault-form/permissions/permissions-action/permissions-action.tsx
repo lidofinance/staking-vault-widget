@@ -4,18 +4,17 @@ import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/
 
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
+import { CREATE_VAULT_FORM_STEPS } from '../../../consts';
 
 export const PermissionsAction: FC = () => {
-  const { step, handleSetStep } = useCreateVaultFormData();
+  const { handleSetStep } = useCreateVaultFormData();
 
   const handleSetPrevStep = () => {
-    const prevStep = step - 1;
-    handleSetStep(prevStep);
+    handleSetStep(CREATE_VAULT_FORM_STEPS.main);
   };
 
   const handleSetNextStep = () => {
-    const nextStep = step + 1;
-    handleSetStep(nextStep);
+    handleSetStep(CREATE_VAULT_FORM_STEPS.confirm);
   };
 
   return (

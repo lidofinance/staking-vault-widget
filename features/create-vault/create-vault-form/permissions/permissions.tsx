@@ -11,6 +11,7 @@ import {
 } from './styles';
 import { SectionContainer } from 'features/create-vault/styles';
 import { PermissionKeys } from 'features/create-vault/types';
+import { CREATE_VAULT_FORM_STEPS } from '../../consts';
 
 interface PermissionsRoles {
   role: PermissionKeys;
@@ -19,12 +20,14 @@ interface PermissionsRoles {
 }
 
 const adminPermissionsList: PermissionsRoles[] = [
+  // TODO: Will be removed
   {
     role: 'curatorFeeSetters',
     title: 'Set Curator’s Fee',
     tooltip:
-      'Allows changing the Curator’s fee. Curator’s fee is optional. Curator’s fee are deducted from the rewards alongside Node Operator’s fee.',
+      'Allows changing the Curator’s fee. Curator’s fee is optional. Curator’s fee is deducted from the rewards alongside Node Operator’s fee.',
   },
+  // TODO: Will be removed
   {
     role: 'curatorFeeClaimers',
     title: 'ClaimPage Curator’s Accumulated Fee',
@@ -116,7 +119,10 @@ export const Permissions = () => {
   const { step } = useCreateVaultFormData();
 
   return (
-    <SectionContainer step={step} currentStep={2}>
+    <SectionContainer
+      step={step}
+      currentStep={CREATE_VAULT_FORM_STEPS.permissions}
+    >
       {renderPermissionsList.map(({ permissionsTitle, payload }) => (
         <PermissionContainer key={permissionsTitle}>
           <PermissionGroupTitle>{permissionsTitle}</PermissionGroupTitle>

@@ -58,8 +58,8 @@ export const createVaultSchema = z.object({
   validatorExitRequesters: z.array(addressSchema).optional(),
   validatorWithdrawalTriggerers: z.array(addressSchema).optional(),
   disconnecters: z.array(addressSchema).optional(),
-  curatorFeeSetters: z.array(addressSchema).optional(),
-  curatorFeeClaimers: z.array(addressSchema).optional(),
+  curatorFeeSetters: z.array(addressSchema).optional(), // TODO: Will be removed
+  curatorFeeClaimers: z.array(addressSchema).optional(), // TODO: Will be removed
   nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
 });
 

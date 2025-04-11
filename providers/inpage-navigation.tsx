@@ -24,7 +24,7 @@ const InpageNavigationContext =
   createContext<InpageNavigationContextValue | null>(null);
 InpageNavigationContext.displayName = 'InpageNavigationContext';
 
-// IPFS-compatible hash-based in-page permissions-action
+// IPFS-compatible hash-based in-page navigation
 export const InpageNavigationProvider: FC<PropsWithChildren> = ({
   children,
 }) => {

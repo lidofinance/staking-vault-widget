@@ -4,10 +4,10 @@ import { ContainerProps } from '@lidofinance/lido-ui';
 import { config } from 'config';
 
 import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
-import { Header } from './header/header';
-import { Main } from './main/main';
+import { Header } from './header';
+import { Main } from './main';
 import { Navigation } from './navigation';
-import { Footer } from './footer/footer';
+import { Footer } from './footer';
 import {
   LayoutTitleStyle,
   LayoutSubTitleStyle,

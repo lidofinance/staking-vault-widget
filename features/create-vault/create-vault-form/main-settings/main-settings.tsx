@@ -7,6 +7,7 @@ import { MainSettingsAction } from 'features/create-vault/create-vault-form/main
 import { SectionContainer } from 'features/create-vault/styles';
 
 import {
+  CREATE_VAULT_FORM_STEPS,
   getCreateVaultFields,
   mainSettingsFields,
 } from 'features/create-vault/consts';
@@ -34,7 +35,7 @@ export const MainSettings = () => {
   });
 
   return (
-    <SectionContainer step={step} currentStep={1}>
+    <SectionContainer step={step} currentStep={CREATE_VAULT_FORM_STEPS.main}>
       {fieldsForRender.map((field) => (
         <InputResolver form={mainSettingsForm} key={field.name} {...field} />
       ))}
