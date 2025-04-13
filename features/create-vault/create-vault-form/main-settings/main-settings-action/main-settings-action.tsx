@@ -9,7 +9,10 @@ import { AppPaths } from 'consts/urls';
 import { useFormContext, UseFormReturn } from 'react-hook-form';
 import { validateFormValue } from 'utils/validate-form-value';
 import { VaultMainSettingsType } from 'features/create-vault/types';
-import { mainSettingsFields } from 'features/create-vault/consts';
+import {
+  CREATE_VAULT_FORM_STEPS,
+  mainSettingsFields,
+} from 'features/create-vault/consts';
 
 export interface MainSettingsActionProps {
   form: UseFormReturn<VaultMainSettingsType>;
@@ -17,7 +20,7 @@ export interface MainSettingsActionProps {
 
 export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
   const router = useRouter();
-  const { step, handleSetStep } = useCreateVaultFormData();
+  const { handleSetStep } = useCreateVaultFormData();
   const { setValue } = useFormContext();
   const {
     getFieldState,
@@ -50,8 +53,7 @@ export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
       .filter((field) => field !== 'confirmMainSettings')
       .map((field) => setValue(field, getValues(field)));
 
-    const nextStep = step + 1;
-    handleSetStep(nextStep);
+    handleSetStep(CREATE_VAULT_FORM_STEPS.permissions);
   };
 
   return (

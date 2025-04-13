@@ -22,6 +22,7 @@ import { SubmitModal } from 'features/create-vault/create-vault-form/submit-moda
 
 import {
   type CreateVaultDataContextValue,
+  CreateVaultStep,
   SubmittingInfo,
 } from 'features/create-vault/types';
 import {
@@ -33,8 +34,8 @@ import {
 
 import {
   ToggleValue,
-  CREATE_VAULT_STEPS,
   PermissionToggleEnum,
+  CREATE_VAULT_FORM_STEPS,
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { simulateCreateVault } from 'modules/web3/contracts/vault-factory';
@@ -56,7 +57,7 @@ export const useCreateVaultFormData = () => {
 export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { core } = useLidoSDK();
   const { address } = useDappStatus();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(() => CREATE_VAULT_FORM_STEPS.main);
   const [permissionsView, setPermissionsView] = useState<ToggleValue>(
     PermissionToggleEnum.byPermission,
   );
@@ -65,10 +66,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
   });
 
-  const handleSetStep = useCallback((step: number) => {
-    if (step >= 1 && step <= CREATE_VAULT_STEPS) {
-      setStep(step);
-    }
+  const handleSetStep = useCallback((step: CreateVaultStep) => {
+    setStep(step);
   }, []);
 
   const handleSetPermissionsView = useCallback((value: ToggleValue) => {
@@ -107,8 +106,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       validatorExitRequesters: [],
       validatorWithdrawalTriggerers: [],
       disconnecters: [],
-      curatorFeeSetters: [],
-      curatorFeeClaimers: [],
+      curatorFeeSetters: [], // TODO: Will be removed
+      curatorFeeClaimers: [], // TODO: Will be removed
       nodeOperatorFeeClaimers: [],
     },
     resolver: createVaultFormValidator(createVaultSchema),

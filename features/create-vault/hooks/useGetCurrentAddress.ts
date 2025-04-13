@@ -26,7 +26,7 @@ export const useGetCurrentAddress: UseGetCurrentAddress = () => {
 
   const { isReady, query } = useRouter();
   const { address: account, chainId, isSupportedChain } = useDappStatus();
-  // it works, but typing issue
+
   const publicClient = usePublicClient({ chainId: chainId }) as PublicClient;
 
   const getEnsAddress = useCallback(

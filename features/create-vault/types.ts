@@ -1,6 +1,6 @@
 import { Address, Hash } from 'viem';
 import { InputProps } from '@lidofinance/lido-ui';
-import { ToggleValue } from './consts';
+import { CREATE_VAULT_FORM_STEPS, ToggleValue } from './consts';
 
 export type InputDataType =
   | 'address'
@@ -49,8 +49,8 @@ export type FieldName =
   | 'validatorExitRequesters'
   | 'validatorWithdrawalTriggerers'
   | 'disconnecters'
-  | 'curatorFeeSetters'
-  | 'curatorFeeClaimers'
+  | 'curatorFeeSetters' // TODO: Will be removed
+  | 'curatorFeeClaimers' // TODO: Will be removed
   | 'nodeOperatorFeeClaimers';
 
 type EnsureKeys<T extends Record<FieldName, any>> = T;
@@ -73,8 +73,8 @@ export type CreateVaultType = EnsureKeys<{
   validatorExitRequesters: string[];
   validatorWithdrawalTriggerers: string[];
   disconnecters: string[];
-  curatorFeeSetters: string[];
-  curatorFeeClaimers: string[];
+  curatorFeeSetters: string[]; // TODO: Will be removed
+  curatorFeeClaimers: string[]; // TODO: Will be removed
   nodeOperatorFeeClaimers: string[];
 }>;
 
@@ -111,8 +111,8 @@ export type VaultPermissionsType = {
   validatorExitRequesters: VaultPermissionInput[];
   validatorWithdrawalTriggerers: VaultPermissionInput[];
   disconnecters: VaultPermissionInput[];
-  curatorFeeSetters: VaultPermissionInput[];
-  curatorFeeClaimers: VaultPermissionInput[];
+  curatorFeeSetters: VaultPermissionInput[]; // TODO: Will be removed
+  curatorFeeClaimers: VaultPermissionInput[]; // TODO: Will be removed
   nodeOperatorFeeClaimers: VaultPermissionInput[];
 };
 
@@ -127,10 +127,13 @@ export type FieldConfig<T extends FieldName> = {
 };
 
 export type CreateVaultDataContextValue = {
-  step: number;
+  step: CreateVaultStep;
   permissionsView: ToggleValue;
   submitStep: SubmittingInfo | undefined;
-  handleSetStep: (step: number) => void;
+  handleSetStep: (step: CreateVaultStep) => void;
   handleSetPermissionsView: (value: ToggleValue) => void;
   handleCancelSubmit: () => void;
 };
+
+export type CreateVaultStep =
+  (typeof CREATE_VAULT_FORM_STEPS)[keyof typeof CREATE_VAULT_FORM_STEPS];

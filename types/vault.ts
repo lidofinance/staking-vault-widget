@@ -37,7 +37,7 @@ export type VaultFactoryArgs = {
   validatorExitRequesters: Address[];
   validatorWithdrawalTriggerers: Address[];
   disconnecters: Address[];
-  curatorFeeSetters: Address[];
-  curatorFeeClaimers: Address[];
+  curatorFeeSetters: Address[]; // TODO: Will be removed
+  curatorFeeClaimers: Address[]; // TODO: Will be removed
   nodeOperatorFeeClaimers: Address[];
 };

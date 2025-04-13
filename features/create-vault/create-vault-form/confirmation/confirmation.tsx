@@ -5,6 +5,7 @@ import { ConfirmationVaultInfo } from 'features/create-vault/create-vault-form/c
 import { SectionContainer } from 'features/create-vault/styles';
 
 import { ConfirmationList } from 'features/create-vault/types';
+import { CREATE_VAULT_FORM_STEPS } from '../../consts';
 
 const confirmationList: { title: string; list: ConfirmationList }[] = [
   {
@@ -24,12 +25,12 @@ const confirmationList: { title: string; list: ConfirmationList }[] = [
 export const Confirmation = () => {
   const { step } = useCreateVaultFormData();
 
-  if (step !== 3) {
+  if (step !== CREATE_VAULT_FORM_STEPS.confirm) {
     return null;
   }
 
   return (
-    <SectionContainer step={step} currentStep={3}>
+    <SectionContainer step={step} currentStep={CREATE_VAULT_FORM_STEPS.confirm}>
       {confirmationList.map(({ title, list }) => (
         <ConfirmationVaultInfo key={list} title={title} list={list} />
       ))}

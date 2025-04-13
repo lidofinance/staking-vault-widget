@@ -17,9 +17,6 @@ export const AddressLinkEtherscan = (props: AddressLinkEtherscanProps) => {
 
   if (!address) return null;
 
-  // This component is used in TransactionModal, which is wrapped by SupportL1Chains,
-  // but not wrapped by SupportL2Chains (the chainId will never be a L2 network).
-  // This is currently the fastest solution.
   return (
     <Link
       onClick={onClick}

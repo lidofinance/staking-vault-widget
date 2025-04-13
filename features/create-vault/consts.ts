@@ -73,16 +73,18 @@ export const createVaultFieldsList: FieldConfig<FieldName>[] = [
     dataType: 'address',
   },
   {
-    name: 'nodeOperatorManager', // TODO: remove
+    name: 'nodeOperatorManager',
     title: 'Node Operator Manager',
     label: 'Node Operator Manager address or ENS',
     dataType: 'address',
   },
+  // TODO: Will be removed
   {
     name: 'curatorFeeSetters',
     title: 'Set Vault Curator’s fee',
     dataType: 'address',
   },
+  // TODO: Will be removed
   {
     name: 'curatorFeeClaimers',
     title: 'ClaimPage Vault Curator’s fee (address)',
@@ -163,3 +165,9 @@ export const getCreateVaultFields = <T extends FieldName>(
     fieldsList.includes(field.name as T),
   );
 };
+
+export enum CREATE_VAULT_FORM_STEPS {
+  main,
+  permissions,
+  confirm,
+}

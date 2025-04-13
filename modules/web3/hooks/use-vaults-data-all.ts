@@ -8,7 +8,7 @@ import { Address } from 'viem';
 export const useVaultsDataAll = () => {
   const [{ from, to }, setPaginationData] = useState({
     from: 0,
-    to: 4,
+    to: 10,
     page: 1,
   });
 
@@ -17,6 +17,7 @@ export const useVaultsDataAll = () => {
     isLoading: isLoadingConnected,
     isError: isErrorConnected,
   } = useVaultsConnectedBound(from, to);
+
   const [connectedVaults, pages] = addressesWithBound ?? [];
   const {
     data: vaults,
