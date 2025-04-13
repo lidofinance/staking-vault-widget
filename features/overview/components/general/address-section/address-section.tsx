@@ -1,15 +1,17 @@
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultOverview } from 'features/overview/contexts';
 
 import { AddressBadge } from 'shared/components';
 import { Text, Tooltip, Question } from '@lidofinance/lido-ui';
 import { NodeOperator, Title, Wrapper } from './styles';
 
 export const AddressSection = () => {
-  const { activeVault } = useVaultInfo();
+  const {
+    values: { address, nodeOperator },
+  } = useVaultOverview();
 
   return (
     <Wrapper>
-      <AddressBadge address={activeVault?.address} />
+      <AddressBadge size="lg" address={address} />
       <NodeOperator>
         <Title>
           <Text color="secondary" size="xxs">
@@ -19,7 +21,7 @@ export const AddressSection = () => {
             <Question />
           </Tooltip>
         </Title>
-        <AddressBadge address={activeVault?.address} />
+        <AddressBadge weight={400} address={nodeOperator} />
       </NodeOperator>
     </Wrapper>
   );

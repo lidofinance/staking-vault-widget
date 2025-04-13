@@ -5,7 +5,7 @@ import { ItemWrapper, Title } from './styles';
 
 export interface ItemProps {
   title: string;
-  content: string;
+  content: string | number | undefined;
   isSuccess?: boolean;
 }
 
@@ -24,7 +24,7 @@ export const OverviewItem: FC<ItemProps> = (props) => {
         </Tooltip>
       </Title>
       <Text size="lg" color={contentColor} strong>
-        {content}
+        {content ?? '-'}
       </Text>
     </ItemWrapper>
   );

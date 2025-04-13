@@ -13,6 +13,7 @@ export const ContentWrapper = styled.div`
 
 export const Content = styled.section`
   display: flex;
+  align-items: start;
   flex-wrap: wrap;
   column-gap: 52px;
   row-gap: ${({ theme }) => theme.spaceMap.xxl}px;
