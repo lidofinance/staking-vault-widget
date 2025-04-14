@@ -9,11 +9,7 @@ export const MyVaults = () => {
 
   return (
     <Wrapper>
-      {!address ? (
-        <ConnectWallet />
-      ) : (
-        <ConnectedWalletContent address={address} />
-      )}
+      {!address ? <ConnectWallet /> : <ConnectedWalletContent />}
     </Wrapper>
   );
 };

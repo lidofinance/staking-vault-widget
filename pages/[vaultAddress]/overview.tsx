@@ -7,7 +7,7 @@ import { OverviewPage } from 'features/overview';
 
 const Overview: FC = () => {
   return (
-    <Layout title="Overview" containerSize="content">
+    <Layout containerSize="content">
       <Head>
         <title>Vault Overview | Lido</title>
       </Head>

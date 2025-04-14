@@ -200,6 +200,7 @@ export const VaultFactoryAbi = [
             name: 'disconnecters',
             type: 'address[]',
           },
+          // TODO: Will be removed
           {
             internalType: 'address[]',
             name: 'curatorFeeSetters',

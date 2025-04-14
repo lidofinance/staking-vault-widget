@@ -17,6 +17,7 @@ export const useVaultsDataAll = () => {
     isLoading: isLoadingConnected,
     isError: isErrorConnected,
   } = useVaultsConnectedBound(from, to);
+
   const [connectedVaults, pages] = addressesWithBound ?? [];
   const {
     data: vaults,

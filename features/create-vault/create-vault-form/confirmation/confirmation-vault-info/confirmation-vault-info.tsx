@@ -27,8 +27,8 @@ const mainSettingsList = [
 ] as const;
 
 const managerPermissionsList = [
-  'curatorFeeSetters',
-  'curatorFeeClaimers',
+  'curatorFeeSetters', // TODO: Will be removed
+  'curatorFeeClaimers', // TODO: Will be removed
   'withdrawers',
   'funders',
   'minters',
