@@ -3,11 +3,20 @@ import { Address } from 'viem';
 export interface VaultInfo extends VaultSocket {
   address: Address;
   owner: Address;
+  nodeOperator: Address;
   valuation: bigint;
   minted: bigint;
   mintable: bigint;
+  ethLimit: bigint;
   apr: null;
   healthScore: number;
+  totalMintableShares: bigint;
+  inOutDelta: bigint;
+  locked: bigint;
+  nodeOperatorUnclaimedFee: bigint;
+  withdrawableEther: bigint;
+  balance: bigint;
+  nodeOperatorFeeBP: bigint;
 }
 
 export interface VaultSocket {
