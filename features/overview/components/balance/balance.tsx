@@ -23,12 +23,12 @@ const sectionPayloadList: SectionPayload[] = [
     key: 'accumulatedFee',
   },
   {
-    title: 'Collateral', // TODO: discuss
-    key: 'accumulatedFee',
+    title: 'Collateral',
+    key: 'collateral',
   },
   {
-    title: 'Pending unlock', // TODO: discuss
-    key: 'accumulatedFee',
+    title: 'Pending unlock',
+    key: 'pendingUnlockEth',
   },
 ];
 

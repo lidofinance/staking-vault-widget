@@ -6,12 +6,12 @@ import {
   useMemo,
   useCallback,
 } from 'react';
-import { Address } from 'viem';
+import { Address, parseEther } from 'viem';
 import invariant from 'tiny-invariant';
 import { useVaultInfo } from './vault-provider';
 import { VAULT_TOTAL_BASIS_POINTS } from 'consts/vault-hub';
 import { formatBalance, formatPercent } from 'utils';
-import { bigIntMin } from 'utils/bigint-math';
+import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 
 export interface VaultOverviewContextType {
   values: {
@@ -30,6 +30,8 @@ export interface VaultOverviewContextType {
     depositedToValidators: string;
     accumulatedFee: string;
     nodeOperatorFee: string;
+    collateral: string;
+    pendingUnlockEth: string;
   };
   getVaultDataToRender: (
     payload: SectionPayload[],
@@ -67,7 +69,9 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       } = activeVault;
 
       const totalValue = toEthValue(valuation);
-      const totalLocked = toEthValue(locked);
+      const totalLocked = toEthValue(
+        locked + parseEther('1') + nodeOperatorUnclaimedFee,
+      );
       const mintedEth = toEthValue(minted);
       const withdrawableEth = toEthValue(withdrawableEther);
       const balanceEth = toEthValue(balance);
@@ -84,17 +88,27 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
           : minted /
             (minted * BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP));
       const utilizationRatio = formatPercent.format(utilization);
-      const totalMintingCapacity = toEthValue(
-        bigIntMin(
-          (valuation - nodeOperatorUnclaimedFee) *
-            BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP),
-          ethLimit,
-        ),
+      const totalMintable = bigIntMin(
+        (valuation - nodeOperatorUnclaimedFee) *
+          BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP),
+        ethLimit,
       );
+      const totalMintingCapacity = toEthValue(totalMintable);
       const depositedToValidators = toEthValue(valuation - balance);
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+      );
+
+      const reservable = valuation * BigInt(reserveRatioBP);
+      const reserved = bigIntMax(
+        valuation - minted,
+        (minted * reservable) / totalMintable,
+      );
+      const collateral = toEthValue(minted + reserved + parseEther('1'));
+      const pendingUnlock = locked - minted - reserved;
+      const pendingUnlockEth = toEthValue(
+        pendingUnlock > 0n ? pendingUnlock : 0n,
       );
 
       return {
@@ -113,6 +127,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         depositedToValidators,
         accumulatedFee,
         nodeOperatorFee,
+        collateral,
+        pendingUnlockEth,
       };
     }
 
