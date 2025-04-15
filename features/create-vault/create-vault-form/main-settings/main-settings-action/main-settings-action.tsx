@@ -48,10 +48,7 @@ export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
   };
 
   const handleSetNextStep = () => {
-    mainSettingsFields
-      // @ts-expect-error form typings
-      .filter((field) => field !== 'confirmMainSettings')
-      .map((field) => setValue(field, getValues(field)));
+    mainSettingsFields.map((field) => setValue(field, getValues(field)));
 
     handleSetStep(CREATE_VAULT_FORM_STEPS.permissions);
   };
