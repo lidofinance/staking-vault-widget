@@ -1,18 +1,17 @@
-import { type Address, createPublicClient, getContract, http } from 'viem';
-import { holesky } from 'viem/chains';
+import { type Address, getContract, PublicClient } from 'viem';
 
 import { StakingVaultAbi } from 'abi/vault';
 
 // TODO: move to lido-sdk
-export const getStakingVaultContract = (address: Address) => {
+export const getStakingVaultContract = (
+  address: Address,
+  publicClient: PublicClient,
+) => {
   return getContract({
     address,
     abi: StakingVaultAbi,
     client: {
-      public: createPublicClient({
-        chain: holesky,
-        transport: http('https://1rpc.io/holesky'),
-      }),
+      public: publicClient,
     },
   });
 };

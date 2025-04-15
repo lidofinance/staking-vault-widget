@@ -49,14 +49,14 @@ export const WalletModal: ModalComponentType = ({ onClose, ...props }) => {
   }, [address, walletChainId]);
 
   useEffect(() => {
-    // Close the modal if a wallet was somehow disconnected while the modal was open
+    // Close the submit-modal if a wallet was somehow disconnected while the submit-modal was open
     if (address == null || address.length === 0) {
       onClose?.();
     }
   }, [address, onClose]);
 
   useEffect(() => {
-    // Close the modal if a wallet was somehow disconnected while the modal was open
+    // Close the submit-modal if a wallet was somehow disconnected while the submit-modal was open
     if (address == null || address.length === 0) {
       onClose?.();
     }

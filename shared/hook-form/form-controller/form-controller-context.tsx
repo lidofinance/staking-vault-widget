@@ -8,6 +8,7 @@ export type FormControllerContextValueType<F extends FieldValues = any> = {
   onSubmit: (args: F) => Promise<boolean>;
   onReset?: (args: F) => void;
   retryEvent: EventSubsciption;
+  retryFire: () => void;
 };
 
 export const FormControllerContext =

@@ -21,7 +21,7 @@ export const getDefaultStaticProps = <
   custom?: GetStaticProps<P, Q, D>,
 ): GetStaticProps<P & { ___prefetch_manifest___?: object }, Q, D> => {
   return async (context) => {
-    /// common props
+    /// general props
     const { ___prefetch_manifest___ } = await fetchExternalManifest();
     const props = ___prefetch_manifest___ ? { ___prefetch_manifest___ } : {};
     const base: GetStaticPropsResult<typeof props> = {

@@ -24,7 +24,6 @@ export const openKeys = [
 
 export const secretKeys = [
   'EL_RPC_URLS_1',
-  'EL_RPC_URLS_17000',
   'EL_RPC_URLS_11155111',
 ];
 

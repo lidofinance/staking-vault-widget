@@ -4,10 +4,10 @@ import { ContainerProps } from '@lidofinance/lido-ui';
 import { config } from 'config';
 
 import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
-import { Header } from './header/header';
-import { Footer } from './footer/footer';
-import { Main } from './main/main';
+import { Header } from './header';
+import { Main } from './main';
 import { Navigation } from './navigation';
+import { Footer } from './footer';
 import {
   LayoutTitleStyle,
   LayoutSubTitleStyle,
@@ -22,8 +22,7 @@ type LayoutProps = {
 };
 
 export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
-  const { title, subtitle, containerSize } = props;
-  const { children } = props;
+  const { title, subtitle, containerSize, children } = props;
 
   return (
     <LayoutStyles>

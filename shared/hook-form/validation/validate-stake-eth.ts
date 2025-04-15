@@ -21,8 +21,8 @@ export type validateStakeEthParams = {
   | { isWalletActive: false }
 );
 
-// Runs validation pipeline common between stake and wrapEth
-export const validateStakeEth = (params: validateStakeEthParams) => {
+// Runs validation pipeline general between stake and wrapEth
+export const validateCreateVaultEth = (params: validateStakeEthParams) => {
   validateStakeLimit('amount', params.stakingLimitLevel);
 
   if (params.isWalletActive) {

@@ -1,10 +1,8 @@
 import { FC, PropsWithChildren, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-
-import { useDappStatus } from 'modules/web3';
-
-import { useFormControllerContext } from './form-controller-context';
+import { useFormControllerContext } from 'shared/hook-form/form-controller/form-controller-context';
 import { useWagmiConnectionChangedCallback } from 'shared/hooks/use-wagmi-connection-changed-callback';
+import { useDappStatus } from 'modules/web3';
 
 type FormControllerProps = React.ComponentProps<'form'>;
 
@@ -21,14 +19,12 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   } = useFormControllerContext();
 
   // Bind submit action
-  const doSubmit = useMemo(
-    () =>
-      handleSubmit(async (args) => {
-        const success = await onSubmit(args);
-        if (success) resetContext ? resetContext(args) : resetDefault();
-      }),
-    [handleSubmit, onSubmit, resetDefault, resetContext],
-  );
+  const doSubmit = useMemo(() => {
+    return handleSubmit(async (args) => {
+      const success = await onSubmit(args);
+      if (success) resetContext ? resetContext(args) : resetDefault();
+    });
+  }, [handleSubmit, onSubmit, resetDefault, resetContext]);
 
   // Bind retry callback
   useEffect(() => {
@@ -47,7 +43,12 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   useWagmiConnectionChangedCallback(resetDefault);
 
   return (
-    <form autoComplete="off" onSubmit={doSubmit} {...props}>
+    <form
+      autoComplete="off"
+      onSubmit={doSubmit}
+      style={{ width: '100%' }}
+      {...props}
+    >
       {children}
     </form>
   );

@@ -4,8 +4,7 @@ import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 export const VAULT_HUB_BY_NETWORK: {
   [key in CHAINS]?: Address;
 } = {
-  [CHAINS.Mainnet]: '0x',
-  [CHAINS.Holesky]: '0x0B1dbaa8Ab31Fe48bCC13beFcF3D0b319Fa9a525',
+  [CHAINS.Sepolia]: '0x33532749B2e74CE7e4e222a70Df89b7a1523AF67',
 };
 
 export const getVaultHubAddress = (chainId: CHAINS): Address | undefined =>

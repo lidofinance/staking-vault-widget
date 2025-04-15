@@ -2,7 +2,9 @@ import styled, { css } from 'styled-components';
 import { Input } from '@lidofinance/lido-ui';
 
 export const InputStyle = styled(Input)`
-  // fix for '/wrap' and '/wrap/unwrap' page when 'InputGroupHookForm' contains only one element
+  width: 100%;
+
+  // fix case when 'InputGroup' contains only one element
   &:only-child {
     & > span {
       border-radius: 10px !important;

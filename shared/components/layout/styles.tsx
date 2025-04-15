@@ -13,7 +13,8 @@ export const LayoutStyles = styled(Container)`
     'footer footer footer';
   grid-column-gap: 0;
   grid-row-gap: 16px;
-  height: 100vh;
+  min-height: 100vh;
+  height: auto;
 `;
 
 export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`

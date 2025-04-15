@@ -1,0 +1,34 @@
+import { OverviewItem, OverviewSection } from 'features/overview/shared';
+import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+
+const sectionPayloadList: SectionPayload[] = [
+  {
+    title: 'Utilization ratio',
+    key: 'utilizationRatio',
+  },
+  {
+    title: 'stETH liability',
+    key: 'mintedEth',
+  },
+  {
+    title: 'Total minting capacity',
+    key: 'totalMintingCapacity',
+  },
+];
+
+export const Capacity = () => {
+  const { getVaultDataToRender } = useVaultOverview();
+  const renderData = getVaultDataToRender(sectionPayloadList);
+
+  return (
+    <OverviewSection title="stETH capacity utilization">
+      {renderData.map((item) => (
+        <OverviewItem
+          key={item.title}
+          title={item.title}
+          content={item.payload}
+        />
+      ))}
+    </OverviewSection>
+  );
+};

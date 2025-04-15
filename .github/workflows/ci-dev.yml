@@ -1,4 +1,4 @@
-name: CI Dev Holesky
+name: CI Dev Sepolia
 
 on:
   workflow_dispatch:
@@ -18,13 +18,13 @@ jobs:
     # needs: test
     name: Build and deploy
     steps:
-      - name: Holesky testnet deploy
+      - name: Sepolia testnet deploy
         uses: lidofinance/dispatch-workflow@v1
         env:
           APP_ID: ${{ secrets.APP_ID }}
           APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           TARGET_REPO: 'lidofinance/infra-mainnet'
-          TARGET_WORKFLOW: 'deploy_holesky_testnet_staking_vault_widget.yaml'
+          TARGET_WORKFLOW: 'deploy_sepolia_testnet_staking_vault_widget.yaml'
           TARGET: 'develop'
 
   tests:

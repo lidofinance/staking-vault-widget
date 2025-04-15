@@ -1,6 +1,13 @@
 import { useController, useFormState, useFormContext } from 'react-hook-form';
 
-import { Option, Eth, Steth, Wsteth, OptionValue } from '@lidofinance/lido-ui';
+import {
+  Option,
+  Eth,
+  Steth,
+  Wsteth,
+  Weth,
+  OptionValue,
+} from '@lidofinance/lido-ui';
 
 import { getTokenDisplayName } from 'utils/getTokenDisplayName';
 import { isValidationErrorTypeValidate } from 'shared/hook-form/validation/validation-error';
@@ -16,6 +23,7 @@ const iconsMap = {
   [TOKENS.ETH]: <Eth />,
   [TOKENS.stETH]: <Steth />,
   [TOKENS.wstETH]: <Wsteth />,
+  [TOKENS.wETH]: <Weth />,
 } as const;
 
 type TokenSelectHookFormProps = {
@@ -52,7 +60,6 @@ export const TokenSelectHookForm = ({
       disabled={disabled}
       warning={warning}
       icon={iconsMap[field.value]}
-      data-testid="drop-down"
       error={isValidationErrorTypeValidate(errors[errorField]?.type)}
       onChange={(value: OptionValue) => {
         setValue(fieldName, value, {

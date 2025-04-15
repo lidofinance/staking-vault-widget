@@ -12,6 +12,7 @@ import { IPFSInfoBoxStatusesProvider } from './ipfs-info-box-statuses';
 import { InpageNavigationProvider } from './inpage-navigation';
 import { ModalProvider } from './modal-provider';
 import { ExternalForbiddenRouteProvider } from './external-forbidden-route';
+import { VaultProvider } from './vaults';
 
 type ProvidersProps = {
   prefetchedManifest?: unknown;
@@ -39,7 +40,7 @@ export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
               <InpageNavigationProvider>
                 <ModalProvider>
                   <ExternalForbiddenRouteProvider>
-                    {children}
+                    <VaultProvider>{children}</VaultProvider>
                   </ExternalForbiddenRouteProvider>
                 </ModalProvider>
               </InpageNavigationProvider>
