@@ -1,14 +1,19 @@
 import { FC, useState, useRef } from 'react';
 import { Address } from 'viem';
 
-import { Popover, Copy, External, ToastSuccess } from '@lidofinance/lido-ui';
+import { Copy, External, ToastSuccess } from '@lidofinance/lido-ui';
 import {
   AddressBadge,
   AddressLinkEtherscan,
   ButtonLink,
 } from 'shared/components';
 
-import { ActionGroup, ActionWrapper, PopoverContent } from './styles';
+import {
+  ActionGroup,
+  ActionWrapper,
+  PopoverContent,
+  PopoverWrapper,
+} from './styles';
 
 import { truncateAddress } from 'utils/truncate-address';
 
@@ -52,7 +57,7 @@ export const AddressItem: FC<AddressItemProps> = ({
         onClick={handleShowPopover}
       />
       {!!badgeRef?.current && (
-        <Popover
+        <PopoverWrapper
           anchorRef={{
             current: badgeRef.current,
           }}
@@ -75,7 +80,7 @@ export const AddressItem: FC<AddressItemProps> = ({
               </ActionWrapper>
             </ActionGroup>
           </PopoverContent>
-        </Popover>
+        </PopoverWrapper>
       )}
     </>
   );

@@ -1,6 +1,7 @@
 import { Address, Hash } from 'viem';
 import { editMainSettingsSchema, SubmittingMainFormStepsEnum } from './consts';
 import { z } from 'zod';
+import { VaultInfo } from 'types';
 
 export type SubmittingMainFormStep =
   | keyof typeof SubmittingMainFormStepsEnum
@@ -25,3 +26,13 @@ export type InputDataType =
   | 'time'
   | 'default'
   | 'number';
+
+export type MainSettingsOverview = {
+  name: string;
+  title: string;
+  label: string;
+  editLabel: string;
+  dataType: InputDataType;
+  actionText?: string;
+  vaultKey: keyof VaultInfo;
+};

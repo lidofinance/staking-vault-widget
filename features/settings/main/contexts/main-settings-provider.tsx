@@ -33,7 +33,7 @@ import { useEditMainSettingsWithDelegation } from 'features/settings/main/hooks'
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
 );
-MainSettingsContext.displayName = ' MainSettingsContext';
+MainSettingsContext.displayName = 'MainSettingsContext';
 
 export const useMainSettingsData = () => {
   const value = useContext(MainSettingsContext);
@@ -51,6 +51,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       step: SubmittingMainFormStepsEnum.edit,
     }),
   );
+
   const { callEditMainSettings } = useEditMainSettingsWithDelegation(() =>
     setSubmitStep({ step: SubmittingMainFormStepsEnum.submitting }),
   );
@@ -66,11 +67,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const formObject = useForm<EditMainSettingsSchema>({
     defaultValues: {
-      nodeOperator: '',
-      nodeOperatorManager: '',
-      nodeOperatorFeeBP: 5,
-      confirmExpiry: 36,
-      defaultAdmin: '',
+      nodeOperatorManager: [],
+      nodeOperatorFeeBP: [],
+      confirmExpiry: [],
+      defaultAdmin: [],
     },
     resolver: editMainSettingsValidator(editMainSettingsSchema),
     mode: 'all',
@@ -79,13 +79,6 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       setSubmitStep({ step: SubmittingMainFormStepsEnum.initiate });
-      try {
-        // await simulateCreateVault(core.rpcProvider, address, data);
-      } catch (err) {
-        setSubmitStep({ step: SubmittingMainFormStepsEnum.error });
-        return false;
-      }
-
       setSubmitStep({ step: SubmittingMainFormStepsEnum.confirming });
       try {
         await callEditMainSettings(data);

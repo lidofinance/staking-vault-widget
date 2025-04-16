@@ -5,5 +5,4 @@ export const SectionContainer = styled.section`
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.xl}px;
   width: 100%;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
 `;

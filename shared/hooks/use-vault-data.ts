@@ -10,6 +10,7 @@ import { getHealthScore } from 'utils/get-health-score';
 import { VaultSocket, VaultInfo } from 'types';
 import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
+import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 
 // TODO: find way to remove readonly
 export const useVaultData = (
@@ -60,12 +61,18 @@ export const useVaultData = (
           withdrawableEther,
           nodeOperatorFeeBP,
           totalMintableShares,
+          confirmExpiry,
+          defaultAdmins,
+          nodeOperatorManagers,
         ] = await Promise.all([
           delegationContract.read.valuation(),
           delegationContract.read.nodeOperatorUnclaimedFee(),
           delegationContract.read.withdrawableEther(),
           delegationContract.read.nodeOperatorFeeBP(),
           delegationContract.read.totalMintableShares(),
+          delegationContract.read.getConfirmExpiry(),
+          delegationContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
+          delegationContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
         ]);
 
         const [mintedEth, mintableEth, ethLimit] = await Promise.all([
@@ -95,6 +102,9 @@ export const useVaultData = (
           owner,
           balance,
           nodeOperatorFeeBP,
+          confirmExpiry,
+          defaultAdmins,
+          nodeOperatorManagers,
           ...vaultHubSocket,
         });
       }

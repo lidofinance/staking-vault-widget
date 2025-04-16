@@ -26,14 +26,14 @@ export const permissionsToggleList = [
   },
   {
     value: PermissionToggleEnum.byAddress,
-    label: 'by address-field',
+    label: 'by address',
   },
 ];
 
 export type ToggleValue =
   (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address-field';
+const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const validateAddress = (value: string) => isValidAnyAddress(value);
 const addressSchema = z
   .string()
@@ -137,6 +137,6 @@ export const noPermissionsList: PermissionsRoles[] = [
     role: 'NODE_OPERATOR_FEE_CLAIM_ROLE',
     title: 'ClaimPage Node Operator’s Accumulated Fees',
     tooltip:
-      'Allows claiming accumulated Node Operator’s fee. Claimer provides an address-field to receive fees.',
+      'Allows claiming accumulated Node Operator’s fee. Claimer provides an address to receive fees.',
   },
 ];

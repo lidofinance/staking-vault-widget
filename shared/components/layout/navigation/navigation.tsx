@@ -8,7 +8,6 @@ import { getPathWithoutFirstSlash, AppPaths } from 'consts/urls';
 import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
 import { useRouterPath } from 'shared/hooks/use-router-path';
-import { useDappStatus } from 'modules/web3';
 
 import { LocalLink } from 'shared/components/local-link';
 import { SelectedVault } from 'shared/components/layout/navigation/selected-vault';
@@ -83,12 +82,11 @@ const saturatePathsByAddress = (
 
 export const Navigation: FC = memo(() => {
   const pathname = useRouterPath();
-  const { isWalletConnected } = useDappStatus();
   const router = useRouter();
   const { vaultAddress } = router.query as {
     vaultAddress: Address | undefined;
   };
-  const showNavigation = pathname !== AppPaths.main && isWalletConnected;
+  const showNavigation = pathname !== AppPaths.main;
   const showNavList = !pathname.includes(AppPaths.createVault);
 
   const {

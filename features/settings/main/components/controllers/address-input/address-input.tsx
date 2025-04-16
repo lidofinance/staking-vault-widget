@@ -1,16 +1,11 @@
 import { FC, useMemo } from 'react';
 import { Address, isAddress } from 'viem';
-import { UseFormReturn } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 
-import { Identicon, Input, Loader } from '@lidofinance/lido-ui';
+import { Identicon, Input, Loader, Text } from '@lidofinance/lido-ui';
 import { AddressLinkEtherscan } from 'shared/components';
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
-import {
-  AddressInputWrapper,
-  EtherScanLink,
-  InputNotes,
-  InputTitle,
-} from './styles';
+import { AddressInputWrapper, EtherScanLink } from './styles';
 
 import {
   InputDataType,
@@ -18,19 +13,22 @@ import {
 } from 'features/settings/main/types';
 
 export interface AddressInputProps {
-  form: UseFormReturn<EditMainSettingsSchema>;
   name: keyof EditMainSettingsSchema;
   label?: string;
   type?: string;
   title: string;
-  notes?: string;
   dataType?: InputDataType;
-  afterText?: string;
+  disabled?: boolean;
 }
 
-export const AddressInput: FC<AddressInputProps> = (props) => {
-  const { form, name, label, title, notes, dataType } = props;
-  const { getValues, getFieldState, register } = form;
+export const AddressInput: FC<AddressInputProps> = ({
+  name,
+  label,
+  title,
+  dataType,
+}) => {
+  const { getValues, getFieldState } = useFormContext();
+  const { field } = useController({ name });
   const { error, invalid, isValidating, isDirty } = getFieldState(name);
   const value = getValues(name) as string;
 
@@ -48,7 +46,9 @@ export const AddressInput: FC<AddressInputProps> = (props) => {
 
   return (
     <div>
-      <InputTitle>{title}</InputTitle>
+      <Text size="xs" strong>
+        {title}
+      </Text>
       <AddressInputWrapper>
         <Input
           label={label}
@@ -56,7 +56,7 @@ export const AddressInput: FC<AddressInputProps> = (props) => {
           type="text"
           error={error?.message}
           fullwidth
-          {...register(name)}
+          {...field}
         />
         {!invalid && value && (
           <EtherScanLink>
@@ -64,12 +64,6 @@ export const AddressInput: FC<AddressInputProps> = (props) => {
           </EtherScanLink>
         )}
       </AddressInputWrapper>
-      {!!notes && (
-        <InputNotes>
-          <b>Note: </b>
-          {notes}
-        </InputNotes>
-      )}
     </div>
   );
 };

@@ -1,95 +1,82 @@
-import { keccak256 } from 'viem/utils';
+import { keccak256, toHex } from 'viem/utils';
 
 /**
  * @notice Permission for funding the StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const FUND_ROLE = keccak256('vaults.Permissions.Fund');
+export const FUND_ROLE = keccak256(toHex('vaults.Permissions.Fund'));
 
 /**
  * @notice Permission for withdrawing funds from the StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const WITHDRAW_ROLE = keccak256('vaults.Permissions.Withdraw');
+export const WITHDRAW_ROLE = keccak256(toHex('vaults.Permissions.Withdraw'));
 
 /**
  * @notice Permission for locking ether on StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const LOCK_ROLE = keccak256('vaults.Permissions.Lock');
+export const LOCK_ROLE = keccak256(toHex('vaults.Permissions.Lock'));
 
 /**
  * @notice Permission for minting stETH shares backed by the StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const MINT_ROLE = keccak256('vaults.Permissions.Mint');
+export const MINT_ROLE = keccak256(toHex('vaults.Permissions.Mint'));
 
 /**
  * @notice Permission for burning stETH shares backed by the StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const BURN_ROLE = keccak256('vaults.Permissions.Burn');
+export const BURN_ROLE = keccak256(toHex('vaults.Permissions.Burn'));
 
 /**
  * @notice Permission for rebalancing the StakingVault.
  */
-// @ts-expect-error keccak256 types
-export const REBALANCE_ROLE = keccak256('vaults.Permissions.Rebalance');
+export const REBALANCE_ROLE = keccak256(toHex('vaults.Permissions.Rebalance'));
 
 /**
  * @notice Permission for pausing beacon chain deposits on the StakingVault.
  */
-// @ts-expect-error keccak256 types
 export const PAUSE_BEACON_CHAIN_DEPOSITS_ROLE = keccak256(
-  'vaults.Permissions.PauseDeposits',
+  toHex('vaults.Permissions.PauseDeposits'),
 );
 
 /**
  * @notice Permission for resuming beacon chain deposits on the StakingVault.
  */
-// @ts-expect-error keccak256 types
 export const RESUME_BEACON_CHAIN_DEPOSITS_ROLE = keccak256(
-  'vaults.Permissions.ResumeDeposits',
+  toHex('vaults.Permissions.ResumeDeposits'),
 );
 
 /**
  * @notice Permission for requesting validator exit from the StakingVault.
  */
-// @ts-expect-error keccak256 types
 export const REQUEST_VALIDATOR_EXIT_ROLE = keccak256(
-  'vaults.Permissions.RequestValidatorExit',
+  toHex('vaults.Permissions.RequestValidatorExit'),
 );
 
 /**
  * @notice Permission for triggering validator withdrawal from the StakingVault using EIP-7002 triggerable exit.
  */
-// @ts-expect-error keccak256 types
 export const TRIGGER_VALIDATOR_WITHDRAWAL_ROLE = keccak256(
-  'vaults.Permissions.TriggerValidatorWithdrawal',
+  toHex('vaults.Permissions.TriggerValidatorWithdrawal'),
 );
 
 /**
  * @notice Permission for voluntary disconnecting the StakingVault.
  */
-// @ts-expect-error keccak256 types
 export const VOLUNTARY_DISCONNECT_ROLE = keccak256(
-  'vaults.Permissions.VoluntaryDisconnect',
+  toHex('vaults.Permissions.VoluntaryDisconnect'),
 );
 
 /**
  * @notice Permission for withdrawing disproven validator predeposit from PDG
  */
-// @ts-expect-error keccak256 types
 export const PDG_WITHDRAWAL_ROLE = keccak256(
-  'vaults.Permissions.PDGWithdrawal',
+  toHex('vaults.Permissions.PDGWithdrawal'),
 );
 
 /**
  * @notice Permission for assets recovery
  */
-// @ts-expect-error keccak256 types
 export const ASSET_RECOVERY_ROLE = keccak256(
-  'vaults.Permissions.AssetRecovery',
+  toHex('vaults.Permissions.AssetRecovery'),
 );
 
 /**
@@ -99,18 +86,22 @@ export const ASSET_RECOVERY_ROLE = keccak256(
  * - assigns NODE_OPERATOR_FEE_CONFIRM_ROLE;
  * - assigns NODE_OPERATOR_FEE_CLAIM_ROLE.
  */
-// @ts-expect-error keccak256 types
 export const NODE_OPERATOR_MANAGER_ROLE = keccak256(
-  'vaults.Delegation.NodeOperatorManagerRole',
+  toHex('vaults.Delegation.NodeOperatorManagerRole'),
 );
 
 /**
  * @notice Claims node operator fee.
  */
-// @ts-expect-error keccak256 types
 export const NODE_OPERATOR_FEE_CLAIM_ROLE = keccak256(
-  'vaults.Delegation.NodeOperatorFeeClaimRole',
+  toHex('vaults.Delegation.NodeOperatorFeeClaimRole'),
 );
+
+/**
+ * @notice default vault admin role.
+ */
+export const DEFAULT_ADMIN_ROLE =
+  '0x0000000000000000000000000000000000000000000000000000000000000000' as `0x${string}`;
 
 export const permissions = {
   FUND_ROLE,

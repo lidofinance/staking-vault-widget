@@ -116,7 +116,7 @@ export const validatePermissions = (
 
               if (!isValid) {
                 errors[key][`${index}`] = {
-                  value: 'Invalid ethereum address-field',
+                  value: 'Invalid ethereum address',
                 };
               }
             }

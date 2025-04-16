@@ -10,7 +10,11 @@ export const SelectedVault = () => {
 
   return (
     <Wrapper>
-      <AddressBadge address={activeVault.address} symbols={5} />
+      <AddressBadge
+        bgColor="transparent"
+        address={activeVault.address}
+        symbols={5}
+      />
     </Wrapper>
   );
 };
