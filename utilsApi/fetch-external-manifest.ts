@@ -23,7 +23,7 @@ export const fetchExternalManifest = async () => {
 
   // for IPFS build we use local manifest
   // this allows local CID verification
-  if (config.ipfsMode) {
+  if (config.ipfsMode || !IPFS_MANIFEST_URL) {
     return {
       ___prefetch_manifest___: FallbackLocalManifest,
     };
