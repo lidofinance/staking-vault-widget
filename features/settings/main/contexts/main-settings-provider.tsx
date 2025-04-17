@@ -29,6 +29,7 @@ import {
 } from 'features/settings/main/types';
 import { editMainSettingsValidator } from 'features/settings/main/validation';
 import { useEditMainSettingsWithDelegation } from 'features/settings/main/hooks';
+import { useVaultInfo } from '../../../overview/contexts';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
@@ -51,6 +52,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       step: SubmittingMainFormStepsEnum.edit,
     }),
   );
+  const { refetch } = useVaultInfo();
 
   const { callEditMainSettings } = useEditMainSettingsWithDelegation(() =>
     setSubmitStep({ step: SubmittingMainFormStepsEnum.submitting }),
@@ -80,21 +82,23 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       setSubmitStep({ step: SubmittingMainFormStepsEnum.initiate });
       setSubmitStep({ step: SubmittingMainFormStepsEnum.confirming });
+
       try {
-        await callEditMainSettings(data);
-        setSubmitStep({ step: SubmittingMainFormStepsEnum.success });
+        const response = await callEditMainSettings(data);
+        setSubmitStep({ step: SubmittingMainFormStepsEnum.success, response });
+        refetch();
       } catch (err) {
         // TODO: handle more type of errors
         setSubmitStep({ step: SubmittingMainFormStepsEnum.reject });
-
         return false;
       }
 
       return true;
     },
-    [callEditMainSettings],
+    [callEditMainSettings, refetch],
   );
 
+  const { reset } = formObject;
   const { retryEvent, retryFire } = useFormControllerRetry();
   const formControllerValue: FormControllerContextValueType<EditMainSettingsSchema> =
     useMemo(
@@ -102,9 +106,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         onSubmit,
         retryEvent,
         retryFire,
-        onReset: formObject.reset,
+        onReset: reset,
       }),
-      [retryFire, retryEvent, onSubmit, formObject.reset],
+      [retryFire, retryEvent, onSubmit, reset],
     );
 
   return (

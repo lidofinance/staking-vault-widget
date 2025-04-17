@@ -1,10 +1,7 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { MainSettingsOverview } from './types';
-import {
-  MAX_CONFIRM_EXPIRY,
-  MIN_CONFIRM_EXPIRY,
-} from '../../../consts/delegation';
+import { MainSettingsOverview, TxData } from './types';
+import { MAX_CONFIRM_EXPIRY, MIN_CONFIRM_EXPIRY } from 'consts/delegation';
 
 export enum SubmittingMainFormStepsEnum {
   edit = 'edit',
@@ -84,3 +81,12 @@ export const fieldsForRender: MainSettingsOverview[] = [
     vaultKey: 'nodeOperatorManagers',
   },
 ];
+
+export const fnNamesMap: Record<
+  keyof TxData,
+  'grantRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
+> = {
+  roles: 'grantRoles',
+  confirmExpiry: 'setConfirmExpiry',
+  nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
+};

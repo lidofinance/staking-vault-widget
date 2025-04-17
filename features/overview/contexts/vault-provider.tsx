@@ -21,6 +21,7 @@ interface VaultContextType {
   setActiveVault: (address: Address) => void;
   isLoadingVault: boolean;
   isFetching: boolean;
+  refetch: () => void;
 }
 
 const VaultContext = createContext<VaultContextType | null>(null);
@@ -36,6 +37,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
     data: vaultInfo,
     isFetching,
     isLoading: isLoadingVault,
+    refetch,
   } = useVaultData(addressPayload);
 
   const setActiveVault = useCallback(
@@ -75,8 +77,9 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       setActiveVault,
       isLoadingVault,
       isFetching,
+      refetch,
     }),
-    [vaults, activeVault, setActiveVault, isLoadingVault, isFetching],
+    [vaults, activeVault, setActiveVault, isLoadingVault, isFetching, refetch],
   );
 
   return (

@@ -1,47 +1,65 @@
-import { Address } from 'viem';
 import { useCallback } from 'react';
-import { useConfig } from 'wagmi';
-import { useWriteContracts } from 'wagmi/experimental';
 import { useVaultInfo } from 'features/overview/contexts';
-import { DelegationAbi } from 'abi/delegation';
+import { useAA, useDappStatus, useLidoSDK, useSendAACalls } from 'modules/web3';
+import {
+  generateMainAATxData,
+  prepareMainTxData,
+  sendTransactions,
+} from '../utils';
+import { EditMainSettingsSchema } from '../types';
+import invariant from 'tiny-invariant';
 
 export const useEditMainSettingsWithDelegation = (onMutate = () => {}) => {
-  const wagmiConfig = useConfig();
+  const {
+    core: { web3Provider: walletClient, rpcProvider: publicClient },
+  } = useLidoSDK();
+  const { address } = useDappStatus();
   const { activeVault } = useVaultInfo();
-  // TODO: discuss
-  // https://github.com/ethereum/EIPs/blob/815028dc634463e1716fc5ce44c019a6040f0bef/EIPS/eip-5792.md#wallet_sendcalls
-  const { data: editMainSettingsTx, writeContractsAsync } = useWriteContracts({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
+  const sendAACalls = useSendAACalls();
+  const { isAA } = useAA();
 
   // TODO: add opportunity to get receipts
   const callEditMainSettings = useCallback(
-    // TODO: fix type
-    async (paylad: any) => {
-      // getRoleMembers(NODE_OPERATOR_MANAGER_ROLE) -> NODE_OPERATOR_MANAGER_ROLE -> (grantRole)
-      // confirmingRoles -> DEFAULT_ADMIN_ROLE -> (transferStakingVaultOwnership)
-      // nodeOperatorFeeBP -> nodeOperatorFeeBP -> (setNodeOperatorFeeBP)
-      // getConfirmExpiry -> confirmExpiry -> (setConfirmExpiry)
-      // TODO: replace example below by real contacts calls
-      return await writeContractsAsync({
-        contracts: [
-          {
-            abi: DelegationAbi,
-            address: activeVault?.owner as Address,
-            functionName: 'setConfirmExpiry',
-            args: [BigInt(paylad.confirmExpiry)],
-          },
-        ],
-      });
+    async (payload: EditMainSettingsSchema) => {
+      onMutate();
+      // TODO: replace by useWriteContracts in future
+      const txData = prepareMainTxData(payload);
+      const contractAddress = activeVault?.owner;
+      invariant(contractAddress);
+      invariant(publicClient);
+      invariant(walletClient);
+      invariant(address);
+
+      if (isAA) {
+        const data = await generateMainAATxData({
+          txData,
+          publicClient,
+          address: contractAddress,
+          account: address,
+        });
+
+        await sendAACalls(data, async () => {});
+      } else {
+        return await sendTransactions({
+          txData,
+          publicClient,
+          walletClient,
+          contractAddress,
+        });
+      }
     },
-    [writeContractsAsync, activeVault?.owner],
+    [
+      activeVault?.owner,
+      address,
+      publicClient,
+      walletClient,
+      isAA,
+      sendAACalls,
+      onMutate,
+    ],
   );
 
   return {
     callEditMainSettings,
-    editMainSettingsTx,
   };
 };

@@ -1,4 +1,4 @@
-import { Address, Hash } from 'viem';
+import { Address, Hash, Hex } from 'viem';
 import { editMainSettingsSchema, SubmittingMainFormStepsEnum } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
@@ -14,8 +14,7 @@ export type MainSettingsContextValue = {
 
 export type MainSettingsSubmittingInfo = {
   step: SubmittingMainFormStep;
-  address?: Address;
-  tx?: Hash;
+  response?: { tx: Hash; key: keyof TxData }[];
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
@@ -35,4 +34,10 @@ export type MainSettingsOverview = {
   dataType: InputDataType;
   actionText?: string;
   vaultKey: keyof VaultInfo;
+};
+
+export type TxData = {
+  roles?: { account: Address; role: Hex }[];
+  confirmExpiry?: bigint;
+  nodeOperatorFeeBP?: bigint;
 };

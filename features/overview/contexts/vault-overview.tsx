@@ -101,10 +101,10 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       );
 
       const reservable = valuation * BigInt(reserveRatioBP);
-      const reserved = bigIntMax(
-        valuation - minted,
-        (minted * reservable) / totalMintable,
-      );
+      const reserved = minted
+        ? bigIntMax(valuation - minted, (minted * reservable) / totalMintable)
+        : valuation;
+
       const collateral = toEthValue(minted + reserved + parseEther('1'));
       const pendingUnlock = locked - minted - reserved;
       const pendingUnlockEth = toEthValue(

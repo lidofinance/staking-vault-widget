@@ -1,5 +1,4 @@
 import { FC, useMemo } from 'react';
-import { useRouter } from 'next/router';
 import { useFormContext } from 'react-hook-form';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 
@@ -10,14 +9,13 @@ import {
   Success,
   Error,
   type ModalProps,
-  Button,
 } from '@lidofinance/lido-ui';
 
 import { useFormControllerContext } from 'shared/hook-form/form-controller';
 import { ButtonLink, TxLinkEtherscan } from 'shared/components';
-import { Content } from './styles';
+import { Content, TxListWrapper } from './styles';
 
-import { SubmittingMainFormStep } from 'features/settings/main/types';
+import { SubmittingMainFormStep, TxData } from 'features/settings/main/types';
 import { SubmittingMainFormStepsEnum } from 'features/settings/main/consts';
 
 const getIconComponent = (step: SubmittingMainFormStep) => {
@@ -30,10 +28,10 @@ const getIconComponent = (step: SubmittingMainFormStep) => {
 
 const getModalTitle = (step: SubmittingMainFormStep) => {
   if (step === SubmittingMainFormStepsEnum.success)
-    return 'New vault has been created';
+    return 'Vault has been updated successfully!';
   if (step === SubmittingMainFormStepsEnum.reject) return 'Wallet tx signature';
   if (step === SubmittingMainFormStepsEnum.error) return 'Simulation error';
-  return 'You are creating a new vault';
+  return 'You are updating the vault';
 };
 
 const getModalSubTitle = (step: SubmittingMainFormStep) => {
@@ -46,24 +44,25 @@ const getModalSubTitle = (step: SubmittingMainFormStep) => {
   return '';
 };
 
+const keyTitleMap: Record<keyof TxData, string> = {
+  confirmExpiry: 'View confirmation lifetime tx on Etherscan',
+  nodeOperatorFeeBP: 'View node operator fee tx on Etherscan',
+  roles: 'View roles updates tx on Etherscan',
+};
+
 export const SubmitMainModal: FC<ModalProps> = () => {
-  const router = useRouter();
   const {
     formState: { isSubmitting },
   } = useFormContext();
   const { submitStep, handleCancelSubmit } = useMainSettingsData();
   const { retryFire } = useFormControllerContext();
-  const { step, address, tx } = submitStep ?? {};
+  const { step, response } = submitStep ?? {};
 
   const iconComponent = useMemo(() => getIconComponent(step), [step]);
   const title = getModalTitle(step);
   const subtitle = getModalSubTitle(step);
   const isModalOpen =
     isSubmitting || (!!step && step !== SubmittingMainFormStepsEnum.edit);
-
-  const handleNavigateToVault = () => {
-    void router.push(`/${address}`);
-  };
 
   return (
     <Modal
@@ -82,15 +81,13 @@ export const SubmitMainModal: FC<ModalProps> = () => {
           </Text>
         )}
 
-        {step === SubmittingMainFormStepsEnum.success && address && (
-          <Button onClick={handleNavigateToVault} fullwidth>
-            Go to vault
-          </Button>
+        {SubmittingMainFormStepsEnum.success === step && response && (
+          <TxListWrapper>
+            {response.map(({ tx, key }) => (
+              <TxLinkEtherscan key={tx} txHash={tx} text={keyTitleMap[key]} />
+            ))}
+          </TxListWrapper>
         )}
-
-        {(SubmittingMainFormStepsEnum.success === step ||
-          SubmittingMainFormStepsEnum.submitting === step) &&
-          tx && <TxLinkEtherscan txHash={tx} />}
 
         {step === SubmittingMainFormStepsEnum.reject && (
           <ButtonLink onClick={retryFire}>retry</ButtonLink>

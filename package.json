@@ -58,8 +58,8 @@
     "styled-components": "^5.3.5",
     "tiny-invariant": "^1.1.0",
     "uuid": "^8.3.2",
-    "viem": "2.22.16",
-    "wagmi": "2.14.9",
+    "viem": "2.26.5",
+    "wagmi": "2.14.16",
     "zod": "^3.24.2"
   },
   "devDependencies": {

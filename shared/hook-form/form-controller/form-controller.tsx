@@ -12,19 +12,15 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
 }) => {
   const { isDappActive } = useDappStatus();
   const { handleSubmit, reset: resetDefault } = useFormContext();
-  const {
-    onSubmit,
-    onReset: resetContext,
-    retryEvent,
-  } = useFormControllerContext();
+  const { onSubmit, retryEvent } = useFormControllerContext();
 
   // Bind submit action
   const doSubmit = useMemo(() => {
     return handleSubmit(async (args) => {
       const success = await onSubmit(args);
-      if (success) resetContext ? resetContext(args) : resetDefault();
+      if (success) resetDefault();
     });
-  }, [handleSubmit, onSubmit, resetDefault, resetContext]);
+  }, [handleSubmit, onSubmit, resetDefault]);
 
   // Bind retry callback
   useEffect(() => {

@@ -29,7 +29,6 @@ import {
   createVaultFormValidator,
   createVaultSchema,
   CreateVaultSchema,
-  formatCreateVaultData,
 } from './validation';
 
 import {
@@ -39,6 +38,7 @@ import {
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { simulateCreateVault } from 'modules/web3/contracts/vault-factory';
+import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);

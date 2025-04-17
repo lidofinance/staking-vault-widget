@@ -13,29 +13,32 @@ export const MainSettingsAction: FC = () => {
   const isClearDisabled = !isDirty;
   const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
   const formFields = watch();
+
   const buttonText = useMemo(() => {
     let counter = 0;
-    if (
-      formFields.defaultAdmin.length > 0 ||
-      formFields.nodeOperatorManager.length > 0
-    ) {
-      counter++;
-    }
+    if (!isSubmitDisabled) {
+      if (
+        formFields.defaultAdmin.length > 0 ||
+        formFields.nodeOperatorManager.length > 0
+      ) {
+        counter++;
+      }
 
-    if (formFields.nodeOperatorFeeBP.length > 0) {
-      counter++;
-    }
+      if (formFields.nodeOperatorFeeBP.length > 0) {
+        counter++;
+      }
 
-    if (formFields.confirmExpiry.length > 0) {
-      counter++;
-    }
+      if (formFields.confirmExpiry.length > 0) {
+        counter++;
+      }
 
-    if (counter) {
-      return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
+      if (counter) {
+        return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
+      }
     }
 
     return 'No changes';
-  }, [formFields]);
+  }, [formFields, isSubmitDisabled]);
 
   return (
     <Container>
