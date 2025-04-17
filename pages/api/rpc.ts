@@ -4,7 +4,7 @@ import { rpcFactory } from '@lidofinance/next-pages';
 
 import { config, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
-import { CHAINS } from 'consts/chains';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
   rateLimit,
