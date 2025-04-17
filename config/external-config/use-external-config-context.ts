@@ -25,7 +25,7 @@ export const useExternalConfigContext = (
   const queryResult = useQuery<ManifestEntry>({
     queryKey: ['external-config', defaultChain],
     ...STRATEGY_LAZY,
-    enabled: !!defaultChain,
+    enabled: !!defaultChain && !!IPFS_MANIFEST_URL,
     queryFn: async () => {
       try {
         const result = await standardFetcher<Record<string, any>>(

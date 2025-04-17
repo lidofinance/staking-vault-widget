@@ -51,12 +51,12 @@ export const supportedChains = process.env?.SUPPORTED_CHAINS?.split(',').map(
   (chainId) => parseInt(chainId, 10),
 ) ?? [11155111];
 
-/** @type string[] */
-export const prefillUnsafeElRpcUrls1 =
-  process.env.PREFILL_UNSAFE_EL_RPC_URLS_1?.split(',') ?? [];
-/** @type string[] */
-export const prefillUnsafeElRpcUrls11155111 =
-  process.env.PREFILL_UNSAFE_EL_RPC_URLS_11155111?.split(',') ?? [];
+/** @type Record<string,string[]> */
+export const prefillUnsafeElRpcUrls = supportedChains.reduce((acc, chain) => {
+  acc[`${chain}`] =
+    process.env[`PREFILL_UNSAFE_EL_RPC_URLS_${chain}`]?.split(',') ?? [];
+  return acc;
+}, {});
 
 /** @type boolean */
 export const enableQaHelpers = toBoolean(process.env.ENABLE_QA_HELPERS);
@@ -65,7 +65,3 @@ export const walletconnectProjectId = process.env.WALLETCONNECT_PROJECT_ID;
 
 /** @type string */
 export const matomoHost = process.env.MATOMO_URL;
-
-/** @type string */
-export const widgetApiBasePathForIpfs =
-  process.env.WIDGET_API_BASE_PATH_FOR_IPFS;

@@ -74,5 +74,6 @@ export const collectStartupMetrics = async (
     branch: buildInfoJson.branch,
   });
 
-  await collectStartupChecksRPCMetrics(registry);
+  secretConfig.runStartupChecks &&
+    (await collectStartupChecksRPCMetrics(registry));
 };

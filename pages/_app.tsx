@@ -4,12 +4,7 @@ import { AppProps } from 'next/app';
 import 'nprogress/nprogress.css';
 import Head from 'next/head';
 
-import {
-  ToastContainer,
-  CookiesTooltip,
-  migrationAllowCookieToCrossDomainCookieClientSide,
-  migrationThemeCookiesToCrossDomainCookiesClientSide,
-} from '@lidofinance/lido-ui';
+import { ToastContainer, CookiesTooltip } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 import { withCsp } from 'config/csp';
@@ -18,13 +13,7 @@ import { Providers } from 'providers';
 import { BackgroundGradient } from 'shared/components/background-gradient/background-gradient';
 import { ErrorBoundaryFallback } from 'shared/components/error-boundary';
 import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
-import { nprogress, COOKIES_ALLOWED_FULL_KEY } from 'utils';
-
-// Migrations old theme cookies to new cross domain cookies
-migrationThemeCookiesToCrossDomainCookiesClientSide();
-
-// Migrations old allow cookies to new cross domain cookies
-migrationAllowCookieToCrossDomainCookieClientSide(COOKIES_ALLOWED_FULL_KEY);
+import { nprogress } from 'utils';
 
 // Visualize route changes
 nprogress();

@@ -3,9 +3,6 @@ import { CHAINS } from 'consts/chains';
 export type UserConfigDefaultType = {
   defaultChain: number;
   supportedChainIds: number[];
-  prefillUnsafeElRpcUrls: {
-    [CHAINS.Mainnet]: string[];
-    [CHAINS.Sepolia]: string[];
-  };
+  prefillUnsafeElRpcUrls: Record<CHAINS, string[]>;
   walletconnectProjectId: string | undefined;
 };
