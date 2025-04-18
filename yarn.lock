@@ -38,6 +38,15 @@
     "@babel/highlight" "^7.23.4"
     chalk "^2.4.2"
 
+"@babel/code-frame@^7.26.2":
+  version "7.26.2"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.26.2.tgz#4b5fab97d33338eff916235055f0ebc21e573a85"
+  integrity sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==
+  dependencies:
+    "@babel/helper-validator-identifier" "^7.25.9"
+    js-tokens "^4.0.0"
+    picocolors "^1.0.0"
+
 "@babel/compat-data@^7.22.6", "@babel/compat-data@^7.23.3", "@babel/compat-data@^7.23.5":
   version "7.23.5"
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.23.5.tgz#ffb878728bb6bdcb6f4510aa51b1be9afb8cfd98"
@@ -235,10 +244,20 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.23.4.tgz#9478c707febcbbe1ddb38a3d91a2e054ae622d83"
   integrity sha512-803gmbQdqwdf4olxrX4AJyFBV/RTr3rSmOj0rKwesmzlfhYNDEs+/iOcznzpNWlJlIlTJC2QfPFcHB6DlzdVLQ==
 
+"@babel/helper-string-parser@^7.25.9":
+  version "7.25.9"
+  resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.25.9.tgz#1aabb72ee72ed35789b4bbcad3ca2862ce614e8c"
+  integrity sha512-4A/SCr/2KLd5jrtOMFzaKjVtAei3+2r/NChoBNoZ3EyP/+GlhoaEGoWOZUmFmoITP7zOJyHIMm+DYRd8o3PvHA==
+
 "@babel/helper-validator-identifier@^7.22.20", "@babel/helper-validator-identifier@^7.22.5":
   version "7.22.20"
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.22.20.tgz#c4ae002c61d2879e724581d96665583dbc1dc0e0"
   integrity sha512-Y4OZ+ytlatR8AI+8KZfKuL5urKp7qey08ha31L8b3BwewJAoJamTzyvxPR/5D+KkdJCGPq/+8TukHBlY10FX9A==
+
+"@babel/helper-validator-identifier@^7.25.9":
+  version "7.25.9"
+  resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.25.9.tgz#24b64e2c3ec7cd3b3c547729b8d16871f22cbdc7"
+  integrity sha512-Ed61U6XJc3CVRfkERJWDz4dJwKe7iLmmJsbOGu9wSloNSFttHV0I8g6UAgb7qnK5ly5bGLPd4oXZlxCdANBOWQ==
 
 "@babel/helper-validator-option@^7.22.15", "@babel/helper-validator-option@^7.23.5":
   version "7.23.5"
@@ -255,13 +274,12 @@
     "@babel/types" "^7.22.19"
 
 "@babel/helpers@^7.23.9":
-  version "7.23.9"
-  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.23.9.tgz#c3e20bbe7f7a7e10cb9b178384b4affdf5995c7d"
-  integrity sha512-87ICKgU5t5SzOT7sBMfCOZQ2rHjRU+Pcb9BoILMYz600W6DkVRLFBPwQ18gwUVvggqXivaUakpnxWQGbpywbBQ==
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-7.27.0.tgz#53d156098defa8243eab0f32fa17589075a1b808"
+  integrity sha512-U5eyP/CTFPuNE3qk+WZMxFkp/4zUzdceQlfzf7DdGdhp+Fezd7HD+i8Y24ZuTMKX3wQBld449jijbGq6OdGNQg==
   dependencies:
-    "@babel/template" "^7.23.9"
-    "@babel/traverse" "^7.23.9"
-    "@babel/types" "^7.23.9"
+    "@babel/template" "^7.27.0"
+    "@babel/types" "^7.27.0"
 
 "@babel/highlight@^7.23.4":
   version "7.23.4"
@@ -276,6 +294,13 @@
   version "7.23.9"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.23.9.tgz#7b903b6149b0f8fa7ad564af646c4c38a77fc44b"
   integrity sha512-9tcKgqKbs3xGJ+NtKF2ndOBBLVwPjl1SHxPQkd36r3Dlirw3xWUeGaTbqr7uGZcTaxkVNwc+03SVP7aCdWrTlA==
+
+"@babel/parser@^7.27.0":
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.27.0.tgz#3d7d6ee268e41d2600091cbd4e145ffee85a44ec"
+  integrity sha512-iaepho73/2Pz7w2eMS0Q5f83+0RKI7i4xmiYeBmDzfRVbQtTOG7Ts0S4HzJVsTMGI9keU8rNfuZr8DKfSt7Yyg==
+  dependencies:
+    "@babel/types" "^7.27.0"
 
 "@babel/plugin-bugfix-safari-id-destructuring-collision-in-function-expression@^7.23.3":
   version "7.23.3"
@@ -1015,31 +1040,10 @@
   resolved "https://registry.yarnpkg.com/@babel/regjsgen/-/regjsgen-0.8.0.tgz#f0ba69b075e1f05fb2825b7fad991e7adbb18310"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@^7.12.5":
-  version "7.25.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.25.0.tgz#3af9a91c1b739c569d5d80cc917280919c544ecb"
-  integrity sha512-7dRy4DwXwtzBrPbZflqxnvfxLF8kdZXPkhymtDeFoFqE6ldzjQFgYTtYIFARcLEYDrqfBfYcZt1WqFxRoyC9Rw==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.21.0":
-  version "7.24.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.24.7.tgz#f4f0d5530e8dbdf59b3451b9b3e594b6ba082e12"
-  integrity sha512-UwgBRMjJP+xv857DCngvqXI3Iq6J4v0wXmwc6sapg+zyhbwmQX67LUEFrkK5tbyJ30jGuG3ZvWpBiB9LCy1kWw==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.23.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
-  version "7.23.9"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.9.tgz#47791a15e4603bb5f905bc0753801cf21d6345f7"
-  integrity sha512-0CX6F+BI2s9dkUqr08KFrAIZgNFj75rdBU/DjCyYLIaV/quFjkk6T+EJ2LkZHyZTbEV4L5p97mNkUsHl2wLFAw==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.26.0":
-  version "7.26.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.26.0.tgz#8600c2f595f277c60815256418b85356a65173c1"
-  integrity sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.21.0", "@babel/runtime@^7.23.2", "@babel/runtime@^7.26.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.27.0.tgz#fbee7cf97c709518ecc1f590984481d5460d4762"
+  integrity sha512-VtPOkrdPHZsKc/clNqyi9WUA8TINkZ4cGk63UUE3u4pmB2k+ZMQRDuIOagv8UVd6j7k0T3+RRIb7beKTebNbcw==
   dependencies:
     regenerator-runtime "^0.14.0"
 
@@ -1051,6 +1055,15 @@
     "@babel/code-frame" "^7.23.5"
     "@babel/parser" "^7.23.9"
     "@babel/types" "^7.23.9"
+
+"@babel/template@^7.27.0":
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.27.0.tgz#b253e5406cc1df1c57dcd18f11760c2dbf40c0b4"
+  integrity sha512-2ncevenBqXI6qRMukPlXwHKHchC7RyMuu4xv5JBXRfOGVcTy1mXCD12qrp7Jsoxll1EV3+9sE4GugBVRjT2jFA==
+  dependencies:
+    "@babel/code-frame" "^7.26.2"
+    "@babel/parser" "^7.27.0"
+    "@babel/types" "^7.27.0"
 
 "@babel/traverse@^7.23.9", "@babel/traverse@^7.4.5":
   version "7.23.9"
@@ -1076,6 +1089,14 @@
     "@babel/helper-string-parser" "^7.23.4"
     "@babel/helper-validator-identifier" "^7.22.20"
     to-fast-properties "^2.0.0"
+
+"@babel/types@^7.27.0":
+  version "7.27.0"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.27.0.tgz#ef9acb6b06c3173f6632d993ecb6d4ae470b4559"
+  integrity sha512-H45s8fVLYjbhFH62dIJ3WtmJ6RSPt/3DRO0ZcT2SUiYiQyz3BLVb9ADEnLl91m74aQPS3AzzeajZHYOalWe3bg==
+  dependencies:
+    "@babel/helper-string-parser" "^7.25.9"
+    "@babel/helper-validator-identifier" "^7.25.9"
 
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
@@ -1385,6 +1406,11 @@
     colorspace "1.1.x"
     enabled "2.0.x"
     kuler "^2.0.0"
+
+"@discoveryjs/json-ext@0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
+  integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
 "@ecies/ciphers@^0.2.1":
   version "0.2.2"
@@ -2287,20 +2313,20 @@
     bignumber.js "^9.1.2"
     rxjs "^7.8.1"
 
-"@lidofinance/analytics-matomo@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/analytics-matomo/-/analytics-matomo-0.48.0.tgz#0a4ad9dd4af1d49cdf5f9206b1dde9c08216fff0"
-  integrity sha512-HJBmnXFeQp2PuE8/rghhXy6PbykdSd7g5qqDKuPg5l97rbqbtdFJU2lZuwmPs+PMNquhcdn+yUyEXC4gRSC2Hw==
+"@lidofinance/analytics-matomo@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/analytics-matomo/-/analytics-matomo-0.51.0.tgz#6685daffc28c83d21762840d6149f76e738f44af"
+  integrity sha512-bdMjD6wnuu6WO3tUqFDP/D1/07VTBkoKFiJm9lxjGkJEPRUZDiT9PQjeu1HXkpaL3eWUbiCWbNG2TeEAbH2ZCw==
 
-"@lidofinance/api-metrics@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/api-metrics/-/api-metrics-0.48.0.tgz#48ee6bfaafa4ba0ec4da2daa460bc3b7b5e76419"
-  integrity sha512-iHOh+BuvKO7f+L8bpPg+R3bXRcHGeKMPZpSp6WitQ8/1QZ19adAeWQryJaM+h1faoIYVUONs6IMxUoquM3OoRg==
+"@lidofinance/api-metrics@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/api-metrics/-/api-metrics-0.51.0.tgz#879675eb41711c0da41bd87519a79847e74b4ece"
+  integrity sha512-yeKUeUNQYXTLn2M2nT3+S9TbPQBQFbay0ANUQMIgvIsOVHXsAeNc0ga8+x5osst8rPAxyOnlT/dOBuAupV8aBQ==
 
-"@lidofinance/api-rpc@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/api-rpc/-/api-rpc-0.48.0.tgz#f97e99cdffaacae64f994b928d568e14f7b6e2d6"
-  integrity sha512-+DVlDKNAKLkYdwn3KHb8TCeM2jRyhy2RIEn9AvTMWfS6csicSfi8dTn4J1F8FHlz6LXoiE1eJ7l3nb29NtbGgg==
+"@lidofinance/api-rpc@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/api-rpc/-/api-rpc-0.51.0.tgz#51ac71e4921ab654d691ce4facd5f46d114c6157"
+  integrity sha512-HFYaWj5jaSpcextd8gDKXCxfx0Q3H0fBtSv+u5F5IrYbAiRr5oaJk06jsM/3tdNTg13nhrfddf0G1y2mkY9OKQ==
 
 "@lidofinance/eslint-config@^0.34.0":
   version "0.34.0"
@@ -2309,10 +2335,10 @@
   dependencies:
     typescript "^4.7"
 
-"@lidofinance/lido-ethereum-sdk@4.2.0-alpha.1":
-  version "4.2.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.2.0-alpha.1.tgz#4f3b43fa483edfb2193b4e3cb45e736f6d247c41"
-  integrity sha512-5NDpWIBa4daDsHNK3Uoj6iILfHySx2rIfZVi1MV6B6ly7CNzwCD/5WBU1Qfko4BvJicRIuD37tE6yw6hk4oquA==
+"@lidofinance/lido-ethereum-sdk@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.4.0.tgz#7b015dad29610c03d191ebe9631ad6ee9497b96c"
+  integrity sha512-Kw4Yr+UWUlkQVrJCyUvAyXP77A4puwdgMgQ3/LkiOYkhZEl+Zzx29rjBGKGc3AcnRz3MbnNIqatBSm9PFSKkRg==
   dependencies:
     "@ethersproject/bytes" "^5.7.0"
     graphql "^16.8.1"
@@ -2332,10 +2358,10 @@
     ua-parser-js "^1.0.35"
     use-callback-ref "1.2.5"
 
-"@lidofinance/lido-ui@^3.26.0":
-  version "3.26.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ui/-/lido-ui-3.26.0.tgz#44c65abbbc3aaa84f805ca8e99dcddd4010c975e"
-  integrity sha512-W990IJAZBuaJfxh8RxZRPUFwT/+xQ93uYAr/0/8an3IIGoX+lUKmyHn22r1FCZLK19xYR8Ikm6zLr3lvCM0t2w==
+"@lidofinance/lido-ui@^3.28.1":
+  version "3.28.1"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ui/-/lido-ui-3.28.1.tgz#9de11afa6f1b3a070781e9f055b56c0d959ef316"
+  integrity sha512-nQmJPLKhdSzfqeq+9kmVTjK0FFPuBcFN1XN26a5wURlcLDsDryjgxTyNM4uZgyaR/bqKl3XfgF6JNsUNvktVKQ==
   dependencies:
     "@styled-system/should-forward-prop" "5.1.5"
     react-collapsed "3.0.2"
@@ -2346,36 +2372,36 @@
     ua-parser-js "^1.0.35"
     use-callback-ref "1.2.5"
 
-"@lidofinance/next-api-wrapper@^0.48.0", "@lidofinance/next-api-wrapper@~0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/next-api-wrapper/-/next-api-wrapper-0.48.0.tgz#0da8d18e05110d241303b06055239c6f2f874a93"
-  integrity sha512-zj1goZYUi58DiCTmvjhnc42SmPjOkaHeGdCXQXYExAyM7HstIDrz/Eh2KODowXI2w0vRZiBFEHWSa8ahDDmHGw==
+"@lidofinance/next-api-wrapper@^0.51.0", "@lidofinance/next-api-wrapper@~0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/next-api-wrapper/-/next-api-wrapper-0.51.0.tgz#cb720e38e4184433220cb3362f13086935e15eef"
+  integrity sha512-FMNcWDBFtv7asGnQ7bhnhOw67VmwCk1OwIUDnRHlTwoYlmZB0e+zpWBd9+WEeFSVLJkfUaHoSJ2R4xyWJvMakw==
 
-"@lidofinance/next-ip-rate-limit@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/next-ip-rate-limit/-/next-ip-rate-limit-0.48.0.tgz#c94a0bfe8b7976d899bac8461faeb6bf40617bda"
-  integrity sha512-JIEJY7TL5swzwL9LOhtM9Sk1WjiLCgx9y0EtItcphiR2AQF7MCaf9XMQujgX2sQVOy747VrfFZY6AA7ZMKLdUg==
+"@lidofinance/next-ip-rate-limit@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/next-ip-rate-limit/-/next-ip-rate-limit-0.51.0.tgz#ef91a4970b7acd08e41e248e296f1b2973c5507d"
+  integrity sha512-XwabtpSfYSTgyzwGG4F9BSutK9Pg+n4wCHLypT/OvdGiWLHgph9KNkjjjX+Rdpe+BLEj4Lg9ABk6Z1OrILu6gg==
   dependencies:
-    "@lidofinance/next-api-wrapper" "~0.48.0"
+    "@lidofinance/next-api-wrapper" "~0.51.0"
 
-"@lidofinance/next-pages@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/next-pages/-/next-pages-0.48.0.tgz#94f6da226e28dff2595b916a4ed1e93ee72be316"
-  integrity sha512-JbTB4m6O5MdLvCOC/MW9ttGngQ9A1FKyIY7mMiPHUeBhhZB8A1dCGX8qrcjPrCB8qqsmSphjniX5fFWk1AR5Kg==
+"@lidofinance/next-pages@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/next-pages/-/next-pages-0.51.0.tgz#e646ea95a989f0e2d2afe845e21a8fef761cd37e"
+  integrity sha512-GR+rE+aAQqfqoKCkapAwQBEYp+cOeM0QielI2XL4hLtzN6J1uHXQYUBhB7TkAsIVQWZBBnlfObsDwxHH0Mm/DA==
   dependencies:
     memory-cache "^0.2.0"
 
-"@lidofinance/rpc@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/rpc/-/rpc-0.48.0.tgz#436615fc88ff545f8ed4254a11a56313780dfc4f"
-  integrity sha512-wv+KRYYIUbLx3kh8t1/W5D5c2mVn5uabB9cZ1s5V0BiWrofjdXddcZd+dw5WzHZAQSe72zx8iChv1zieiVJKWQ==
+"@lidofinance/rpc@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/rpc/-/rpc-0.51.0.tgz#821cd74fd2b10c25eab4766ac536419a9b5ad79d"
+  integrity sha512-pfgEjCcTJY6wLjt6v3x3M4JVa0OFbXIbZ56masTXK64VAzyhFTcaxT4PXkHKt0iUpd//R5YdNdz5kgovVBZS+w==
   dependencies:
     isomorphic-fetch "^3.0.0"
 
-"@lidofinance/satanizer@^0.48.0":
-  version "0.48.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/satanizer/-/satanizer-0.48.0.tgz#518d1f6574a6a2f38dc80b6dbc3636829eaa95aa"
-  integrity sha512-wQ36dV9/C/aliykg1cOeJoCl7yc72bJ8+zekzsIrIu3VExI2eV8rk79HWYNHoGcnhJPPRCGonnJh+0Zx3OF5Gw==
+"@lidofinance/satanizer@^0.51.0":
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/satanizer/-/satanizer-0.51.0.tgz#d0b76a1c0f2a3b625bb6ef67b300de12950e4e2c"
+  integrity sha512-RC+ZQFWpD2hKy52eKnu7g9jvRG3HV2pqclabx5uvsvru3HaE7NI0SN6BQFfUTvF3Jh+JQJgz+qwpt4sU9Hq6DA==
 
 "@lit-labs/ssr-dom-shim@^1.0.0", "@lit-labs/ssr-dom-shim@^1.1.0":
   version "1.1.2"
@@ -2620,12 +2646,12 @@
     "@motionone/dom" "^10.16.4"
     tslib "^2.3.1"
 
-"@next/bundle-analyzer@^13.2.4":
-  version "13.5.6"
-  resolved "https://registry.yarnpkg.com/@next/bundle-analyzer/-/bundle-analyzer-13.5.6.tgz#3c73f2e15ff5507317b37b87ce984bac5a5d7ad0"
-  integrity sha512-4P5YVpR3N/B5+p0TQ/rPAr+9fsjkdfCVTGzJhKwE7XHqS+QME4gYxAYeGKkfkHEkP2A3GKXs8QSp0LjIvWLI3g==
+"@next/bundle-analyzer@^15.2.4":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@next/bundle-analyzer/-/bundle-analyzer-15.3.0.tgz#b4769a490b420d3d281c512ea80d7e471bf6b7d1"
+  integrity sha512-t1dn32bTBJTfksh2xLfpaw6hNNNrw1rsr1GlVSkRbJ5626YgEMFBjuos5tHr6l9/b+jKz1HFYFlWNgrIHqCslw==
   dependencies:
-    webpack-bundle-analyzer "4.7.0"
+    webpack-bundle-analyzer "4.10.1"
 
 "@next/env@12.3.4":
   version "12.3.4"
@@ -2909,33 +2935,33 @@
   dependencies:
     playwright "1.49.1"
 
-"@polka/url@^1.0.0-next.20":
-  version "1.0.0-next.24"
-  resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.24.tgz#58601079e11784d20f82d0585865bb42305c4df3"
-  integrity sha512-2LuNTFBIO0m7kKIQvvPHN6UE63VjpmL9rnEEaOOaiSPbZK+zUOYIzBAWcED+3XYzhYsd/0mD57VdxAEqqV52CQ==
+"@polka/url@^1.0.0-next.24":
+  version "1.0.0-next.29"
+  resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.29.tgz#5a40109a1ab5f84d6fd8fc928b19f367cbe7e7b1"
+  integrity sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==
 
-"@reef-knot/connect-wallet-modal@7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/connect-wallet-modal/-/connect-wallet-modal-7.1.0.tgz#c99ac665fffbb126aeee75bac3803f2be3e27f5a"
-  integrity sha512-jYguoBtvYLOLvN2jJuwUzk0k0xTwzfrVV2mBoqYpx13tiRW7+hIuL6IGLT94cx10rwRTTWY6vwGFTGGIhHQhPQ==
+"@reef-knot/connect-wallet-modal@7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/connect-wallet-modal/-/connect-wallet-modal-7.2.0.tgz#1172427105c9aef6fc87208fa478669b5d02ce7d"
+  integrity sha512-MrH31mZBosJevXs6HGwU3Kwv9ZZenUhnRsQ4Qny3a6jo6eFBAZNtxOsH/7N7APnvq1V/S+LRsR/SBF6MngEp4w==
   dependencies:
     "@ledgerhq/hw-app-eth" "^6.37.1"
     "@ledgerhq/hw-transport" "^6.31.0"
     "@ledgerhq/hw-transport-webhid" "^6.29.0"
     "@lidofinance/lido-ui" "^3.18.0"
-    "@reef-knot/wallets-list" "^4.1.0"
+    "@reef-knot/wallets-list" "^4.1.2"
     "@types/react" "18.2.45"
     "@types/react-dom" "18.2.17"
 
-"@reef-knot/core-react@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/core-react/-/core-react-6.0.0.tgz#06ca7b94e533dd3db1b95e58eba775de9dcca96a"
-  integrity sha512-QhK3V9X6gOPkdDYpOuJvBD6GqFXunRblJH+SHczMOpDdxL7IvNxITkCHAPxnr0nXD6VEGRsDPXOdhlIvmfONcA==
+"@reef-knot/core-react@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/core-react/-/core-react-6.1.0.tgz#ce5db00e9ff940f9bb548d2f5dbcb36f2fd07c83"
+  integrity sha512-3qkY9U+tSB/KoH9HTzAzSXqDgpozKXNTlOb7yGmySjy/fT9nVDW/3QGF8ZCKILOc8DxA7sBhvc+eHpxoH5epaA==
 
-"@reef-knot/ledger-connector@4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/ledger-connector/-/ledger-connector-4.2.0.tgz#864c205c805f1e1e893300c013113c5800d80214"
-  integrity sha512-Av8iQHPr7aiz4UK/Koh6CMaN5UUg80vJNnQ4Y4HUuUwv6D5TRCjWNITRQM57PO2Qt4BMAqcPgfjlB4dxMOdOcg==
+"@reef-knot/ledger-connector@4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/ledger-connector/-/ledger-connector-4.3.0.tgz#4a9586d3f18a193b11967650dba1828165bea079"
+  integrity sha512-7aApyGh98v04YBsPXg2S4/i188tLe4OCkVL8nXVPNMnnA5D79zwO0anN0KOM5mq3S0X5yh1ltjM/zpuGXFWoRA==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/address" "^5.7.0"
@@ -2954,184 +2980,154 @@
     "@web3-react/types" "^6.0.7"
     tiny-invariant "^1.2.0"
 
-"@reef-knot/types@4.0.0", "@reef-knot/types@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/types/-/types-4.0.0.tgz#2ee46debfb5a795bb478ad17d0c238c3f69a7844"
-  integrity sha512-ZNlI/2XZGz4UQwOIpMFN3ADr+oQCQo8Niy6ky8lnOMKn5w95zONAzq5IGu6m4/cA8eucYhVP4OBhmrQGJW7OKQ==
+"@reef-knot/types@4.1.0", "@reef-knot/types@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/types/-/types-4.1.0.tgz#c8d20138297d16ae9c04c06a007c968bb3eaeed7"
+  integrity sha512-kiJKoMDoopdUHrAxGVCiJMaCSMAD9FV+yb7FuS12rXah3k5i7m6w823MFmROTSEz2LPaGawuTbmpD+YKV6VJ1g==
 
-"@reef-knot/ui-react@2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@reef-knot/ui-react/-/ui-react-2.1.5.tgz#2145e7f49ce5e8652967a4246dbb65e9023e2ce1"
-  integrity sha512-3Z7ngBUBaYYOG7nX1HzNmZAcxNbefLsKBoKi28+OQVA2JKQ+5Tn8lsoXkh4ZZOVeazCqBtDclIyRhbygmcuJUw==
+"@reef-knot/ui-react@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/ui-react/-/ui-react-2.2.0.tgz#457647d3a7c4678ea4a71d6304d3647c8e8d491e"
+  integrity sha512-3d9Q2OzSAZmc3h0AWia2akxTAbZJLAIUmBqY00vyqO/3tPAq1bODkUuQQxd+6LpTk0d1jBREkAJ7ml20qBE43g==
   dependencies:
     react-transition-group "4"
     use-callback-ref "1.2.5"
 
-"@reef-knot/wallet-adapter-ambire@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ambire/-/wallet-adapter-ambire-4.0.0.tgz#4e9a3ce763132c088233d5f6725bd96f6e3005b8"
-  integrity sha512-jaJodTqh8bw0w17vcyjAFlagb/Xpu/VOj7MNeyjKmByvIIPFfNFrmskq8OexvjjSNMw2CP5dVwgL7VWIc+DxAA==
+"@reef-knot/wallet-adapter-ambire@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ambire/-/wallet-adapter-ambire-5.1.0.tgz#7f4133da3941fae353fc3b19635fc160496b808f"
+  integrity sha512-KWTlRmL9pcZdpJ7FqgNchSANsLDa+Z2xOm5DP/hiM1ODzR8kGR4DcgsLpGkHDDG8l4D9V0mHicb2EVRnEaS5hw==
 
-"@reef-knot/wallet-adapter-ambire@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ambire/-/wallet-adapter-ambire-5.0.0.tgz#4dec9dd53db8d23fb727ae3a955985982289e1a5"
-  integrity sha512-WPXm6EqGvIJ0rY9ul4UDBRbzcoRObz1Jfls9R3lWG0srFzciVNiiWDhqaJjGSGQTb49BU73YXPNoOqfvDoGfuQ==
-
-"@reef-knot/wallet-adapter-binance-wallet@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-binance-wallet/-/wallet-adapter-binance-wallet-3.0.0.tgz#30117b6c3f4885c5982f16a0eb314fa7d8daa609"
-  integrity sha512-biVDQSXwkpo/z4U0K54JF5soSRhtS4OIA54My4zGvlRkDBWRBxOv6uU+YwkRTxGNit16quND04j7kDtJdUrhfA==
+"@reef-knot/wallet-adapter-binance-wallet@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-binance-wallet/-/wallet-adapter-binance-wallet-3.1.0.tgz#1af26148c0b4d72aa3bc19993a66891671587086"
+  integrity sha512-Hq6ZwIC4+Za780RXkBa2yonaqHmEYGwjMbUgMwcdTl3LaFmGRuLTSX6PeaHn8xXMtAIkg6HRcS7uG2gFCwoxKw==
   dependencies:
     "@binance/w3w-utils" "^1.1.6"
     "@binance/w3w-wagmi-connector-v2" "^1.2.3"
 
-"@reef-knot/wallet-adapter-bitkeep@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-bitkeep/-/wallet-adapter-bitkeep-4.0.0.tgz#de1c3ab73408935c3495369ea9d90506c346b78b"
-  integrity sha512-CqRGSb6gnKYSwK+gOxsX4K5T31N42HCPVFbDkGUAECNHZEl/vS9gIwY04D7U7L8sI10rgJqYp8vLlflwnMod5Q==
+"@reef-knot/wallet-adapter-bitkeep@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-bitkeep/-/wallet-adapter-bitkeep-4.1.0.tgz#dea869bb76b5ac497510b454f3af09136081bd92"
+  integrity sha512-9VFckdirPXUtfUfw5h4LWkk2sWbMNR5fymyoZvV/FrLEE9KHlV2AV9341s3Vqbkd0R/GRSfEbut9WYpw5BAo/g==
 
-"@reef-knot/wallet-adapter-brave@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-brave/-/wallet-adapter-brave-4.0.0.tgz#3816be28bcbde295d1ceed9fb8fe56c3a4d52d5b"
-  integrity sha512-H1xGjCIbkeQhWUoh7rH9ea+S39G9QdUqyaIBjKEbG7pUIpUOiWMVVk2oprTGmwqfjDL1KnsB0oG6PmGwGRuiFg==
+"@reef-knot/wallet-adapter-brave@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-brave/-/wallet-adapter-brave-4.1.0.tgz#bf801fec079ab5497818d24370f96a68848e01cb"
+  integrity sha512-AUAyH7LRbBvA2MFpUQQ5y3wVt1x6febFaNeT4oU/+ZOu6j9BgIRozaBc3E1IdMiIUbcPGTL1I6+1R5+m460I3g==
 
-"@reef-knot/wallet-adapter-browser-extension@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-browser-extension/-/wallet-adapter-browser-extension-4.0.0.tgz#6f4bf073d3a414d12003a7a68f98b66ce2a3085c"
-  integrity sha512-+YTVsvhFhtwYfOl/ehWUpFTWzqbgNrzP1JeDac6GMsZlAnCUwUty++G0uTlJZ7taYKnWUOEcILWmFq39ND0dbg==
+"@reef-knot/wallet-adapter-browser-extension@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-browser-extension/-/wallet-adapter-browser-extension-4.1.0.tgz#309cc2086482c5c1952b9ffd15a104ee4c2d3ef3"
+  integrity sha512-40JMKAm1bplXjpUA89kgTuPWt5QvhX+3xXnr+ixDzgCAJftuWLdMhMQPsWa9byjU8i8Y7nlv7tvhtbAG62wELA==
 
-"@reef-knot/wallet-adapter-coin98@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coin98/-/wallet-adapter-coin98-4.0.0.tgz#a544d39760c39d42a8fe739bb13555bd9ac2a633"
-  integrity sha512-f0xgdWffZG6SKArzUVYxafjANvzzjyq3gWngM6mw6huqTHdsWtESxbLdlx/UncQeoQm4H5+s7TIEihOsjZf4cQ==
+"@reef-knot/wallet-adapter-coin98@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coin98/-/wallet-adapter-coin98-4.1.0.tgz#0e05a5028edfd52a3ecd3b7811f2d507eac26de8"
+  integrity sha512-gOv8p0sd7YwrtxDKtcTIQNwd1K9w4xljHmEsq5FsiX8IKduezS822TcJQdj557WRVs0RbPzGSueZQEhcNVac0w==
 
-"@reef-knot/wallet-adapter-coinbase-smart-wallet@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coinbase-smart-wallet/-/wallet-adapter-coinbase-smart-wallet-3.0.0.tgz#1c0ec550d55a2a05ae85feff93b44e1cc1335ef0"
-  integrity sha512-S6cogxq2Tmageuu08ALrTLta0hj6hX4lwrefHC9nwnUIHWAA9/x9R6rCpV2kvcb0tEodmGIlsqmfj8BLTu3+ow==
+"@reef-knot/wallet-adapter-coinbase-smart-wallet@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coinbase-smart-wallet/-/wallet-adapter-coinbase-smart-wallet-3.1.0.tgz#af4c6d0ba6dbd65b257d358129859d673218650d"
+  integrity sha512-LURSNtQit83cCvPveYzUA6+hLKLp2Nt3YsPWHsF4kReHtGMPomrLbhOnVjPTpafE1j1so76C8od7ugnGlokzpQ==
 
-"@reef-knot/wallet-adapter-coinbase@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coinbase/-/wallet-adapter-coinbase-4.0.0.tgz#f60c2670810cdc6bee8ebfb1e869917d719ca60f"
-  integrity sha512-UqJqTr6qBVhpQCWNckZaKaT3MZWJ/JQnbIJbg95+UODnq5U+TrwfE4M77WLQjTXCI0iL3GgqhL9/v4uvum2xHQ==
+"@reef-knot/wallet-adapter-coinbase@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-coinbase/-/wallet-adapter-coinbase-4.1.0.tgz#36fa9471aa4919fb7d981dcc419c75b39c8fb212"
+  integrity sha512-lOlqCIHqY+kmnfYZxCtKLsW82KbrE+uksRWvaVP2dF8nU3GhFZ5ICojzW5G3+JukV/ZzMXJbfaL36H7rMRCa+g==
 
-"@reef-knot/wallet-adapter-ctrl@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ctrl/-/wallet-adapter-ctrl-1.0.0.tgz#be2ab7996d5fcdf6546e719ff28c54e2615b0b7f"
-  integrity sha512-dhEh5AEOhBIaCYOyqGeKGFg85TcLJiUBi3Unn1YeMO0hxk1AVH2urzAlyEhH1Ve+chxJpfLVJIuW7n36RF0Nug==
+"@reef-knot/wallet-adapter-ctrl@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ctrl/-/wallet-adapter-ctrl-1.1.0.tgz#992affa963223d3a1b17ebb1981707e3a884847f"
+  integrity sha512-VJ6CRmFA+NdXCsBmBvqCQTKs2ix2jsKXDuxrG0OAKWMoelQHxPz9c0syuvUa03O+GbfvG5GrNQcyMBKFZMxzvQ==
 
-"@reef-knot/wallet-adapter-dapp-browser-injected@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-dapp-browser-injected/-/wallet-adapter-dapp-browser-injected-4.0.0.tgz#fe5d9f483b13a9becb871ca325792787739e2181"
-  integrity sha512-4zLtkzvTT64pz9e5r3F/+DHSSG3aP7Gd58H9XoPM+7zbDhpjXlxY9zQrFbuQxhFKjxdD9cMfQMpXbS3xKo8neg==
+"@reef-knot/wallet-adapter-dapp-browser-injected@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-dapp-browser-injected/-/wallet-adapter-dapp-browser-injected-4.1.0.tgz#862329990ee5a0dfb690cca4f4fb1ab9d19e47b8"
+  integrity sha512-xT1UrlTVQNNMsNTMgyBc2zm4XeMo0DZR/ksIOlWJMDM61toa1KD0UXsGthJHEVTMW2tWZ0adY6LA6d6TTIeT9g==
 
-"@reef-knot/wallet-adapter-exodus@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-exodus/-/wallet-adapter-exodus-4.0.0.tgz#396d11d62305387746951c3a9ef140ed54376352"
-  integrity sha512-Qpg06wgFOoR67LgbOUO0NqbV+FhLk/THzHbjMcZ0a3kxt1S/1aPGfIL1+OJEQU+HUDv1Hxcx+TS9oQf+KrK2Zg==
+"@reef-knot/wallet-adapter-exodus@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-exodus/-/wallet-adapter-exodus-4.1.0.tgz#60cf7256d6d189258e98ae9bb13c34c3ebdb6070"
+  integrity sha512-m/y8rJ1qwnzdzpUleDjsXwlM9zE5ku+L7Xr79IzbGYk5rQm47TtqXNrecERvWQR0jpTCqBmTRsu2Ws5WGZKCcA==
 
-"@reef-knot/wallet-adapter-imtoken@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-imtoken/-/wallet-adapter-imtoken-4.0.0.tgz#eb2a65a5d0d6e8b6a89e536235a1ef7e0f532b17"
-  integrity sha512-mcR5bz5K2RCEuJl5aQeUe3ioiEcNZjA7wU7A38jIQhswMtX58P5kCUkU10RvkzMDzZ6a4ZZS0hRQ+aVJjsNz3w==
+"@reef-knot/wallet-adapter-imtoken@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-imtoken/-/wallet-adapter-imtoken-4.1.0.tgz#3e835339fbca85a1590c86c5c50f09eeb6cee9a1"
+  integrity sha512-7jy8rzgfTTfWUPjqYDEjE8pmp38qAb2F8hWV2WU6jfVdedeaMAkn2GQtZNS2UuMBnH0cJwTZS/FgXFK+6voJCQ==
 
-"@reef-knot/wallet-adapter-ledger-hid@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ledger-hid/-/wallet-adapter-ledger-hid-5.0.0.tgz#437e287dddad277a26a54c8e1be644a7da7cedcc"
-  integrity sha512-m0A7C1ww95HoWUMELF4GZN6/Ql3hwowr6E+xmSq4f0hvxOSgOZni6MnJFEutlu7UY5EuKz2ikDniVquNEhG5hQ==
+"@reef-knot/wallet-adapter-ledger-hid@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ledger-hid/-/wallet-adapter-ledger-hid-5.1.0.tgz#faf8b77c2c829e6c33c3059b0a1df6287c15516a"
+  integrity sha512-2L6MlsuB+Cs3PfOvg2p8g3xQlfE91xHJ2MHTeSO30A1qiX2iUbfHIF25jo3oog9I9FtSW1uRUnRstHq/gtUiVw==
 
-"@reef-knot/wallet-adapter-ledger-live@5.0.0":
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ledger-live/-/wallet-adapter-ledger-live-5.0.0.tgz#122897b1791d03aef6cb52bb37301ba1ab7c7f5a"
-  integrity sha512-8Ibx8h8Wjx/7ayAPiZQwuOJEZGenhxq6AQNzQkUA5DidfbsDM2JHyGj0H1MW1gHLv0adhpAAV1aMZtxidKOYyg==
+"@reef-knot/wallet-adapter-ledger-live@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-ledger-live/-/wallet-adapter-ledger-live-5.1.0.tgz#fa234e016e50b57c5b9cb5e40c7178535271a2be"
+  integrity sha512-RthkKJmhCP9mEHTCfMeWIx7b8Elg0Xy7rwxawxjwUraIF74/xfo2vRK4GzJYsnRNyyvm3u5UHLsN9rnQ38gTyw==
 
-"@reef-knot/wallet-adapter-metamask@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-metamask/-/wallet-adapter-metamask-4.0.0.tgz#fee331d1c095676c61057f1d89406a56e70e128c"
-  integrity sha512-2y1156wM1jBlK5mAxtfWUk4UhaJgtrJ3u/4HW9abH5d1P5mIohn4lwqdS67EJ8HWLtOn9g+9ByPlGM9sOdcvaA==
+"@reef-knot/wallet-adapter-metamask@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-metamask/-/wallet-adapter-metamask-4.1.0.tgz#a61ff1ef451df92a3d7c1499930d47850b9e8969"
+  integrity sha512-EdkrxUYuBz1X0nt00iFpaChwa0paXs/xEj0SMOrBGuaPDhved+IillSIOQqLpDH/TptujAB1UUTKbuQMEJPmjw==
 
-"@reef-knot/wallet-adapter-okx@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-okx/-/wallet-adapter-okx-4.0.0.tgz#be556adf7c9ce3e8b43d28f09fcf827b6f3add3d"
-  integrity sha512-5J227Qe27rdyTATlgQ5QLY20iK20m7HHXzE6hol+tZ2ZYDS2JDrwDdtf7LdY8Kaacyi9QevmIvNJ1z1Qzy2xeA==
+"@reef-knot/wallet-adapter-okx@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-okx/-/wallet-adapter-okx-4.1.0.tgz#8cfbedb6dd97c9918c260a71a1e8ba194a050d3e"
+  integrity sha512-WivWztGOEyJz5QJ6qzraO88QDFVDKrZU5bTNnrKsWC+ST5Vy1GPNbkAeSWvbNAc1R65Q+t/9aSCKhquMQpAPgw==
 
-"@reef-knot/wallet-adapter-safe@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-safe/-/wallet-adapter-safe-4.0.0.tgz#83ecce8891bcbcf81f8d7d6d703c75af05a5ba78"
-  integrity sha512-XCBDJG5BxYYZCxMieumZiPdNKyMa6WJ5E4h5tVlhGjLLhunQJLHo5wImYlvzS1CyT7DYTplaMrc8r60ycvPdhQ==
+"@reef-knot/wallet-adapter-safe@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-safe/-/wallet-adapter-safe-4.1.0.tgz#d7f765245445be3a9540c9fa315e57099f2b3894"
+  integrity sha512-N7Iacz0sZbsMJEb2vKKgIZvUoyZa2kPrKzuDrWj2cc4QxABnTZkuwzmhrDEFpyIBkQlJ8AxHtqjHOhqrYzF5ag==
 
-"@reef-knot/wallet-adapter-trust@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-trust/-/wallet-adapter-trust-4.0.0.tgz#e551b0f4f1490543ad89bb474789a7f39108d712"
-  integrity sha512-4VNsdW+botVbeyZI/vAL3kqcFLJefYHCl4vDpTlSvcjSCJfuyxqU2VZGo7GkLBW6ONN2Lnitf15MydgkPBj0Ag==
+"@reef-knot/wallet-adapter-trust@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-trust/-/wallet-adapter-trust-4.1.0.tgz#b013ba261cae727a679663f14f8955f53423e3bf"
+  integrity sha512-Sf5ilW7sQnjoJPGDYsY5x4uywYcREyHC024FdCid92OLYpgeRN4TMb5G78vdEtoj4H/051vA7iNVRGQOPiexMg==
 
-"@reef-knot/wallet-adapter-walletconnect@4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-walletconnect/-/wallet-adapter-walletconnect-4.0.0.tgz#7aa49b8148c789a69af16655da9d486c3dceb4e2"
-  integrity sha512-Vcxqw6l/gEeW1arxMQQVeJo0nmRFVCzfUy2/gBYSF/fFLr/z4/980ghGCpMWnH3xjG5dObZB330dSfClLVDo7w==
+"@reef-knot/wallet-adapter-walletconnect@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallet-adapter-walletconnect/-/wallet-adapter-walletconnect-4.1.0.tgz#17de561af5804f289fa6e281ee9f16c0c81c8a9d"
+  integrity sha512-DS1ZCSVTMMgAocbYwLbpzGx3n5SK2ZaEhkFEYAw5zAK0Xbc86MN3LJKFMyUHw9IEWjcLqwwyho3zNUAa4azVRQ==
 
-"@reef-knot/wallets-helpers@2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallets-helpers/-/wallets-helpers-2.1.1.tgz#1a493f37a23aa6a2a0a405fa36d60b4897ffe0b7"
-  integrity sha512-04H67ZEJiCM9ITXlC9titGnFF7DvosMQbkRv8CRg1PXtei9ru/5zp8fcqtcGfe3b6eppHpPD30GDrUiQdZDuJw==
+"@reef-knot/wallets-helpers@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallets-helpers/-/wallets-helpers-2.2.0.tgz#a134e35187f1c93b022f91236d2b4c13df756ea1"
+  integrity sha512-7NIOzNklYBW2ZYDaLeisuagEA+Atmh4U88UBZPwtFw/+Ru3cLKyd6A/DevmjkE8q8vaHAKpqbidUtjSHcm4Qpw==
   dependencies:
     "@types/ua-parser-js" "0.7.39"
     ua-parser-js "1.0.37"
 
-"@reef-knot/wallets-list@4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallets-list/-/wallets-list-4.1.1.tgz#cb8fbd902b3b3c64f725cd4a3aa25dd4e7f9e106"
-  integrity sha512-Yfyji32FnvUcjsr0y/aprKuifkjZyNOHYhTs1BqNZJ9e0Rt9Y8onR/M7/KqXgtfNZpTT/10ryyxG3IITUhjSFg==
+"@reef-knot/wallets-list@4.1.2", "@reef-knot/wallets-list@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@reef-knot/wallets-list/-/wallets-list-4.1.2.tgz#ccd66e8d7f9cb094b9da2852effb063d013dd74e"
+  integrity sha512-M2ySWjwR7trMmJETQi2tfKVHkquUVi3FEDiUOsVDo7d7oga7xCp5a6X8ELfkk/IINpq29kjGSeNdyEl9GnGb+A==
   dependencies:
-    "@reef-knot/wallet-adapter-ambire" "5.0.0"
-    "@reef-knot/wallet-adapter-binance-wallet" "3.0.0"
-    "@reef-knot/wallet-adapter-bitkeep" "4.0.0"
-    "@reef-knot/wallet-adapter-brave" "4.0.0"
-    "@reef-knot/wallet-adapter-browser-extension" "4.0.0"
-    "@reef-knot/wallet-adapter-coin98" "4.0.0"
-    "@reef-knot/wallet-adapter-coinbase" "4.0.0"
-    "@reef-knot/wallet-adapter-coinbase-smart-wallet" "3.0.0"
-    "@reef-knot/wallet-adapter-ctrl" "1.0.0"
-    "@reef-knot/wallet-adapter-dapp-browser-injected" "4.0.0"
-    "@reef-knot/wallet-adapter-exodus" "4.0.0"
-    "@reef-knot/wallet-adapter-imtoken" "4.0.0"
-    "@reef-knot/wallet-adapter-ledger-hid" "5.0.0"
-    "@reef-knot/wallet-adapter-ledger-live" "5.0.0"
-    "@reef-knot/wallet-adapter-metamask" "4.0.0"
-    "@reef-knot/wallet-adapter-okx" "4.0.0"
-    "@reef-knot/wallet-adapter-safe" "4.0.0"
-    "@reef-knot/wallet-adapter-trust" "4.0.0"
-    "@reef-knot/wallet-adapter-walletconnect" "4.0.0"
+    "@reef-knot/wallet-adapter-ambire" "5.1.0"
+    "@reef-knot/wallet-adapter-binance-wallet" "3.1.0"
+    "@reef-knot/wallet-adapter-bitkeep" "4.1.0"
+    "@reef-knot/wallet-adapter-brave" "4.1.0"
+    "@reef-knot/wallet-adapter-browser-extension" "4.1.0"
+    "@reef-knot/wallet-adapter-coin98" "4.1.0"
+    "@reef-knot/wallet-adapter-coinbase" "4.1.0"
+    "@reef-knot/wallet-adapter-coinbase-smart-wallet" "3.1.0"
+    "@reef-knot/wallet-adapter-ctrl" "1.1.0"
+    "@reef-knot/wallet-adapter-dapp-browser-injected" "4.1.0"
+    "@reef-knot/wallet-adapter-exodus" "4.1.0"
+    "@reef-knot/wallet-adapter-imtoken" "4.1.0"
+    "@reef-knot/wallet-adapter-ledger-hid" "5.1.0"
+    "@reef-knot/wallet-adapter-ledger-live" "5.1.0"
+    "@reef-knot/wallet-adapter-metamask" "4.1.0"
+    "@reef-knot/wallet-adapter-okx" "4.1.0"
+    "@reef-knot/wallet-adapter-safe" "4.1.0"
+    "@reef-knot/wallet-adapter-trust" "4.1.0"
+    "@reef-knot/wallet-adapter-walletconnect" "4.1.0"
 
-"@reef-knot/wallets-list@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/wallets-list/-/wallets-list-4.1.0.tgz#109dec1fe7be8d3485af48ed5ea0a2fe9394b28b"
-  integrity sha512-NrjwY0JAlGpFbNubjfEME/Y4GKU0aC77OytsZWyX5C291Zbesm5VEZO5zoV35TQQUeaCOdMO91x9CHqMnpNIfg==
-  dependencies:
-    "@reef-knot/wallet-adapter-ambire" "4.0.0"
-    "@reef-knot/wallet-adapter-binance-wallet" "3.0.0"
-    "@reef-knot/wallet-adapter-bitkeep" "4.0.0"
-    "@reef-knot/wallet-adapter-brave" "4.0.0"
-    "@reef-knot/wallet-adapter-browser-extension" "4.0.0"
-    "@reef-knot/wallet-adapter-coin98" "4.0.0"
-    "@reef-knot/wallet-adapter-coinbase" "4.0.0"
-    "@reef-knot/wallet-adapter-coinbase-smart-wallet" "3.0.0"
-    "@reef-knot/wallet-adapter-ctrl" "1.0.0"
-    "@reef-knot/wallet-adapter-dapp-browser-injected" "4.0.0"
-    "@reef-knot/wallet-adapter-exodus" "4.0.0"
-    "@reef-knot/wallet-adapter-imtoken" "4.0.0"
-    "@reef-knot/wallet-adapter-ledger-hid" "5.0.0"
-    "@reef-knot/wallet-adapter-ledger-live" "5.0.0"
-    "@reef-knot/wallet-adapter-metamask" "4.0.0"
-    "@reef-knot/wallet-adapter-okx" "4.0.0"
-    "@reef-knot/wallet-adapter-safe" "4.0.0"
-    "@reef-knot/wallet-adapter-trust" "4.0.0"
-    "@reef-knot/wallet-adapter-walletconnect" "4.0.0"
-
-"@reef-knot/web3-react@6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-knot/web3-react/-/web3-react-6.0.0.tgz#4b13261efef4baea4bf485f645e3d51bd8e3dda1"
-  integrity sha512-/XOQvpHDCz3XpkQNWgexhDcJWSY7/47yRkT+U6avWP2D528HKnebzh1DnnYefD/+5PncIk+2I6uYH64JXxWJOw==
+"@reef-knot/web3-react@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@reef-knot/web3-react/-/web3-react-6.1.0.tgz#73bae50e89d82eb55d316d8c20a79307ec7b9f09"
+  integrity sha512-S1NMP6Pj6A6O0JrNWYCi7i+e0DQC9aIDsjXN2L0TcPv1wxGI5m3P+rd6TeZhL/hdk0TCUkeJQ5ctZhTX7bjcow==
   dependencies:
     tiny-invariant "^1.1.0"
 
@@ -4864,9 +4860,9 @@ camelize@^1.0.0:
   integrity sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001580:
-  version "1.0.30001651"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001651.tgz"
-  integrity sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg==
+  version "1.0.30001714"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001714.tgz"
+  integrity sha512-mtgapdwDLSSBnCI3JokHM7oEQBLxiJKVRtg10AxM1AyeiKcM96f0Mkbqeq+1AbiCtvMcHRulAAEMu693JrSWqg==
 
 "cbw-sdk@npm:@coinbase/wallet-sdk@3.9.3":
   version "3.9.3"
@@ -5356,6 +5352,11 @@ date-fns@^2.29.3:
   integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
   dependencies:
     "@babel/runtime" "^7.21.0"
+
+debounce@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.2.1.tgz#38881d8f4166a5c5848020c11827b834bcb3e0a5"
+  integrity sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==
 
 debug@4.3.4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4:
   version "4.3.4"
@@ -6774,7 +6775,7 @@ hosted-git-info@^4.0.1:
   dependencies:
     lru-cache "^6.0.0"
 
-html-escaper@^2.0.0:
+html-escaper@^2.0.0, html-escaper@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/html-escaper/-/html-escaper-2.0.2.tgz#dfd60027da36a36dfcbe236262c00a5822681453"
   integrity sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==
@@ -7101,6 +7102,11 @@ is-plain-obj@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
   integrity sha512-yvkRyxmFKEOQ4pNXCmJG5AEQNlXJS5LaONXo5/cLdTZdWvsZ1ioJEonLGAosKlMWE8lwUy/bJzMjcw8az73+Fg==
+
+is-plain-object@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/is-plain-object/-/is-plain-object-5.0.0.tgz#4427f50ab3429e9025ea7d52e9043a9ef4159344"
+  integrity sha512-VRSzKkbMm5jMDoKLbltAkFQ5Qr7VDiTFGXxYFXXowVj387GeGNOCsOH6Msy00SGZ3Fp84b1Naa1psqgcCIEP5Q==
 
 is-regex@^1.1.4:
   version "1.1.4"
@@ -8068,7 +8074,7 @@ lodash.upperfirst@^4.3.1:
   resolved "https://registry.yarnpkg.com/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz#1365edf431480481ef0d1c68957a5ed99d49f7ce"
   integrity sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==
 
-lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21:
+lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -8351,10 +8357,10 @@ mri@^1.2.0:
   resolved "https://registry.yarnpkg.com/mri/-/mri-1.2.0.tgz#6721480fec2a11a4889861115a48b6cbe7cc8f0b"
   integrity sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==
 
-mrmime@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mrmime/-/mrmime-1.0.1.tgz#5f90c825fad4bdd41dc914eff5d1a8cfdaf24f27"
-  integrity sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==
+mrmime@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/mrmime/-/mrmime-2.0.1.tgz#bc3e87f7987853a54c9850eeb1f1078cd44adddc"
+  integrity sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==
 
 ms@2.1.2:
   version "2.1.2"
@@ -9379,19 +9385,19 @@ redis-parser@^3.0.0:
   dependencies:
     redis-errors "^1.0.0"
 
-reef-knot@7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/reef-knot/-/reef-knot-7.1.1.tgz#cb573881e3da2397f55b1e71041db61f811e64fe"
-  integrity sha512-pgmV4jGZOvzOrHQ6+PZq07mWMTIF8Rbo4hgwzsEkQws/v8pfSdz/vaoYHazFodxKQMf8n1+ixqslashoEaqNWw==
+reef-knot@7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/reef-knot/-/reef-knot-7.2.0.tgz#e5034e98ed8a2a47f37d2d134f48510ad268fcbd"
+  integrity sha512-kFt2cod7AAWwZZpIweIX7bX+N4SaEG/EJEPfJtD02yQsj+fjhsYAWGSFFHKTkwLj1nUt61KX67nncGTM6ihyZQ==
   dependencies:
-    "@reef-knot/connect-wallet-modal" "7.1.0"
-    "@reef-knot/core-react" "6.0.0"
-    "@reef-knot/ledger-connector" "4.2.0"
-    "@reef-knot/types" "4.0.0"
-    "@reef-knot/ui-react" "2.1.5"
-    "@reef-knot/wallets-helpers" "2.1.1"
-    "@reef-knot/wallets-list" "4.1.1"
-    "@reef-knot/web3-react" "6.0.0"
+    "@reef-knot/connect-wallet-modal" "7.2.0"
+    "@reef-knot/core-react" "6.1.0"
+    "@reef-knot/ledger-connector" "4.3.0"
+    "@reef-knot/types" "4.1.0"
+    "@reef-knot/ui-react" "2.2.0"
+    "@reef-knot/wallets-helpers" "2.2.0"
+    "@reef-knot/wallets-list" "4.1.2"
+    "@reef-knot/web3-react" "6.1.0"
 
 reflect.getprototypeof@^1.0.4:
   version "1.0.4"
@@ -9761,14 +9767,14 @@ simple-swizzle@^0.2.2:
   dependencies:
     is-arrayish "^0.3.1"
 
-sirv@^1.0.7:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/sirv/-/sirv-1.0.19.tgz#1d73979b38c7fe91fcba49c85280daa9c2363b49"
-  integrity sha512-JuLThK3TnZG1TAKDwNIqNq6QA2afLOCcm+iE8D1Kj3GA40pSPsxQjjJl0J8X3tsR7T+CP1GavpzLwYkgVLWrZQ==
+sirv@^2.0.3:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/sirv/-/sirv-2.0.4.tgz#5dd9a725c578e34e449f332703eb2a74e46a29b0"
+  integrity sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==
   dependencies:
-    "@polka/url" "^1.0.0-next.20"
-    mrmime "^1.0.0"
-    totalist "^1.0.0"
+    "@polka/url" "^1.0.0-next.24"
+    mrmime "^2.0.0"
+    totalist "^3.0.0"
 
 sisteransi@^1.0.5:
   version "1.0.5"
@@ -9939,7 +9945,7 @@ string-length@^4.0.1:
     char-regex "^1.0.2"
     strip-ansi "^6.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+"string-width-cjs@npm:string-width@^4.2.0":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -9955,6 +9961,15 @@ string-width@^2.1.0:
   dependencies:
     is-fullwidth-code-point "^2.0.0"
     strip-ansi "^4.0.0"
+
+string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
 
 string-width@^5.0.0, string-width@^5.1.2:
   version "5.1.2"
@@ -10021,7 +10036,7 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -10041,6 +10056,13 @@ strip-ansi@^5.1.0:
   integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
     ansi-regex "^4.1.0"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1:
   version "7.1.0"
@@ -10331,10 +10353,10 @@ toggle-selection@^1.0.6:
   resolved "https://registry.yarnpkg.com/toggle-selection/-/toggle-selection-1.0.6.tgz#6e45b1263f2017fa0acc7d89d78b15b8bf77da32"
   integrity sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==
 
-totalist@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/totalist/-/totalist-1.1.0.tgz#a4d65a3e546517701e3e5c37a47a70ac97fe56df"
-  integrity sha512-gduQwd1rOdDMGxFG1gEvhV88Oirdo2p+KjoYFU7k2g+i7n6AFFbDQ5kMPUsW0pNbfQsB/cwXvT1i4Bue0s9g5g==
+totalist@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/totalist/-/totalist-3.0.1.tgz#ba3a3d600c915b1a97872348f79c127475f6acf8"
+  integrity sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==
 
 tr46@~0.0.3:
   version "0.0.3"
@@ -10767,10 +10789,10 @@ viem@2.23.2:
     ox "0.6.7"
     ws "8.18.0"
 
-viem@2.26.5:
-  version "2.26.5"
-  resolved "https://registry.yarnpkg.com/viem/-/viem-2.26.5.tgz#65fd40f04d6dd0844242c87bfd369db0b3aadf86"
-  integrity sha512-padHks2XVeYF9B4m2ieEbzARrcGcQHMuwYrvda4jwqt93qYqPNaV3J0/nZqV8+fGRYh/HqBD+kVO5j83/IdVZg==
+viem@2.27.0:
+  version "2.27.0"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.27.0.tgz#edfca8e107d96eecff70d6c4f049c5e43422f902"
+  integrity sha512-pKw2dcwDi6TaWlTzLHYazOgjO1GgbUpE1zdLsLNSiCjHNrMTpL/teL0wVHnJDLiB2tR5CL19LBqefYNtRUkH5Q==
   dependencies:
     "@noble/curves" "1.8.1"
     "@noble/hashes" "1.7.1"
@@ -10826,19 +10848,23 @@ webidl-conversions@^3.0.0:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz#24534275e2a7bc6be7bc86611cc16ae0a5654871"
   integrity sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==
 
-webpack-bundle-analyzer@4.7.0:
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-4.7.0.tgz#33c1c485a7fcae8627c547b5c3328b46de733c66"
-  integrity sha512-j9b8ynpJS4K+zfO5GGwsAcQX4ZHpWV+yRiHDiL+bE0XHJ8NiPYLTNVQdlFYWxtpg9lfAQNlwJg16J9AJtFSXRg==
+webpack-bundle-analyzer@4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-4.10.1.tgz#84b7473b630a7b8c21c741f81d8fe4593208b454"
+  integrity sha512-s3P7pgexgT/HTUSYgxJyn28A+99mmLq4HsJepMPzu0R8ImJc52QNqaFYW1Z2z2uIb1/J3eYgaAWVpaC+v/1aAQ==
   dependencies:
+    "@discoveryjs/json-ext" "0.5.7"
     acorn "^8.0.4"
     acorn-walk "^8.0.0"
-    chalk "^4.1.0"
     commander "^7.2.0"
+    debounce "^1.2.1"
+    escape-string-regexp "^4.0.0"
     gzip-size "^6.0.0"
-    lodash "^4.17.20"
+    html-escaper "^2.0.2"
+    is-plain-object "^5.0.0"
     opener "^1.5.2"
-    sirv "^1.0.7"
+    picocolors "^1.0.0"
+    sirv "^2.0.3"
     ws "^7.3.1"
 
 webpack-preprocessor-loader@^1.3.0:
@@ -10947,7 +10973,16 @@ winston@*:
     triple-beam "^1.3.0"
     winston-transport "^4.5.0"
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@7.0.0, wrap-ansi@^6.2.0, wrap-ansi@^7.0.0, wrap-ansi@^8.0.1, wrap-ansi@^8.1.0:
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
+  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
+wrap-ansi@7.0.0, wrap-ansi@^6.2.0, wrap-ansi@^7.0.0, wrap-ansi@^8.0.1, wrap-ansi@^8.1.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 export const openKeys = [
   'SELF_ORIGIN',
   'ROOT_ORIGIN',
@@ -22,10 +23,9 @@ export const openKeys = [
   'WALLETCONNECT_PROJECT_ID',
 ];
 
-export const secretKeys = [
-  'EL_RPC_URLS_1',
-  'EL_RPC_URLS_11155111',
-];
+export const secretKeys = [`1`, ...process.env.SUPPORTED_CHAINS.split(',')]
+  .filter((chain, index, arr) => arr.indexOf(chain) == index)
+  .map((chain) => `EL_RPC_URLS_${chain}`);
 
 export const logOpenEnvironmentVariables = () => {
   console.log('---------------------------------------------');
@@ -33,7 +33,7 @@ export const logOpenEnvironmentVariables = () => {
   console.log('---------------------------------------------');
 
   for (const key of openKeys) {
-    if (!process.env.hasOwnProperty(key)) {
+    if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
       console.error(`${key} - ERROR (not exist in process.env)`);
       continue;
     }
@@ -52,7 +52,7 @@ export const logSecretEnvironmentVariables = () => {
 
   // console.log('process.env:', process.env)
   for (const key of secretKeys) {
-    if (!process.env.hasOwnProperty(key)) {
+    if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
       console.error(`Secret ${key} - ERROR (not exist in process.env)`);
       continue;
     }
