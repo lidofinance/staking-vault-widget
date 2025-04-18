@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
 import { AppPaths } from 'consts/urls';
-import { useVaultsDataAll } from 'modules/web3/hooks/use-vaults-data-all';
+import { useVaultsDataAll } from 'modules/vaults/hooks/use-vaults-data-all';
 import { VaultInfo } from 'types';
 
 interface VaultsContextType {

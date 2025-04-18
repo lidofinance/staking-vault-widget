@@ -18,7 +18,7 @@ import Metrics from 'utilsApi/metrics';
 import {
   METRIC_CONTRACT_ADDRESSES,
   METRIC_CONTRACT_EVENT_ADDRESSES,
-} from 'utilsApi/contractAddressesMetricsMap';
+} from 'utilsApi/contract-addresses-metrics';
 
 const allowedCallAddresses: Record<string, string[]> = Object.entries(
   METRIC_CONTRACT_ADDRESSES,

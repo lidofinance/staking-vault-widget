@@ -19,10 +19,10 @@ import { LidoSDKWithdraw } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { LidoSDKStatistics } from '@lidofinance/lido-ethereum-sdk/statistics';
 import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 
-import { config } from 'config';
+import { config, getContractAddress } from 'config';
 import { useTokenTransferSubscription } from 'modules/web3/hooks/use-balance';
 import { useDappChain } from './dapp-chain';
-import { LidoSDKwETH } from 'consts/weth';
+import { LidoSDKwETH } from 'modules/vaults/contracts/weth';
 
 type LidoSDKContextValue = {
   chainId: CHAINS;
@@ -75,12 +75,19 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
   }, [isConnected]);
 
   const contextValue = useMemo(() => {
+    const customLidoLocatorAddress = getContractAddress(chainId, 'lidoLocator');
+    invariant(
+      customLidoLocatorAddress,
+      '[LidoSDKProvider] lidoLocator is not defined',
+    );
+
     // @ts-expect-error: typing (viem + LidoSDK)
     const core = new LidoSDKCore({
       chainId,
       logMode: 'none',
       rpcProvider: publicClient,
       web3Provider: walletClient,
+      customLidoLocatorAddress,
     });
 
     const stake = new LidoSDKStake({ core });

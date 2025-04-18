@@ -1,4 +1,4 @@
-import { VAULT_TOTAL_BASIS_POINTS } from 'consts/vault-hub';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults/consts';
 import { VaultSocket } from 'types';
 
 export const getHealthScore = (
@@ -11,7 +11,7 @@ export const getHealthScore = (
   }
 
   const healthScore = Number(
-    (valuation * BigInt(VAULT_TOTAL_BASIS_POINTS - rebalanceThresholdBP)) /
+    (valuation * (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(rebalanceThresholdBP))) /
       sharesMinted,
   );
 

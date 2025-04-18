@@ -17,7 +17,7 @@ import { config, secretConfig } from 'config';
 import {
   METRIC_CONTRACT_ADDRESSES,
   getMetricContractAbi,
-} from './contractAddressesMetricsMap';
+} from './contract-addresses-metrics';
 
 export enum HttpMethod {
   GET = 'GET',

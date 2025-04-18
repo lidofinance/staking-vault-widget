@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
 
-import { useVaultData } from 'shared/hooks/use-vault-data';
-import { useVaultsConnectedBound } from 'modules/web3/hooks/use-vaults-connected-bound';
-import { VAULTS_PER_PAGE } from 'consts/vault-viewer';
-import { Address } from 'viem';
+import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
+import { useVaultsConnectedBound } from 'modules/vaults/hooks/use-vaults-connected-bound';
+
+import { VAULTS_PER_PAGE } from '../consts';
+
+import type { Address } from 'viem';
 
 export const useVaultsDataAll = () => {
   const [{ from, to }, setPaginationData] = useState({
