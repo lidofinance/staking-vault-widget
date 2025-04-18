@@ -15,7 +15,7 @@ const CONTRACT_LIST = [
   'predepositGuarantee',
   'vaultHub',
   'vaultFactory',
-  'vaultDataViewer',
+  'vaultViewer',
   'weth',
 ] as const;
 

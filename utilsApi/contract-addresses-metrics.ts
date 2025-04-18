@@ -13,8 +13,10 @@ import { WstethABI } from '@lidofinance/lido-ethereum-sdk/wrap';
 import { AggregatorAbi } from 'abi/aggregator-abi';
 import { ENSResolverAbi } from 'abi/ens-resolver-abi';
 import { ENSRegistryAbi } from 'abi/ens-registry-abi';
+import { VaultViewerAbi } from 'abi/vault-viewer';
 import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
 import { VaultHubAbi } from 'abi/vault-hub';
+import { VaultFactoryAbi } from 'abi/vault-factory';
 
 export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.lido]: StethAbi,
@@ -26,8 +28,8 @@ export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.ensRegistry]: ENSRegistryAbi,
   [CONTRACTS.predepositGuarantee]: PredepositGuaranteeAbi,
   [CONTRACTS.vaultHub]: VaultHubAbi,
-  [CONTRACTS.vaultFactory]: undefined,
-  [CONTRACTS.vaultDataViewer]: undefined,
+  [CONTRACTS.vaultFactory]: VaultFactoryAbi,
+  [CONTRACTS.vaultViewer]: VaultViewerAbi,
 } as const;
 
 export type MetricContractName = CONTRACT_NAMES;

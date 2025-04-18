@@ -5,18 +5,15 @@ import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
 
 // TODO: move to lido-sdk
-export const getVaultDataViewerContract = (publicClient: PublicClient) => {
+export const getVaultViewerContract = (publicClient: PublicClient) => {
   invariant(
     publicClient.chain?.id,
-    '[getVaultDataViewerContract] chainId is not defined',
+    '[getVaultViewerContract] chainId is not defined',
   );
 
-  const address = getContractAddress(publicClient.chain.id, 'vaultDataViewer');
+  const address = getContractAddress(publicClient.chain.id, 'vaultViewer');
 
-  invariant(
-    address,
-    '[getVaultDataViewerContract] vaultDataViewer is not defined',
-  );
+  invariant(address, '[getVaultViewerContract] vaultViewer is not defined');
 
   return getContract({
     address,

@@ -8,7 +8,8 @@
     "weth": "0x7b79995e5f793a07bc00c21412e50ecae098e7f9",
     "predepositGuarantee": "0xa8581547476D8822f455889785C861a8ED8d56c7",
     "vaultHub": "0x33532749B2e74CE7e4e222a70Df89b7a1523AF67",
-    "vaultFactory": "0xcD42e7505060b9931DD1B5B56C923b55f2D17561"
+    "vaultFactory": "0xcD42e7505060b9931DD1B5B56C923b55f2D17561",
+    "vaultViewer": "0xF124672D263BB6e7A5B5cbcF8e6F39b4F6cbe582"
   },
   "api": {}
 }

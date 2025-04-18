@@ -8,7 +8,8 @@
     "weth": "0x2387fd72c1da19f6486b843f5da562679fbb4057",
     "predepositGuarantee": "",
     "vaultFactory": "",
-    "vaultHub": ""
+    "vaultHub": "",
+    "vaultViewer": ""
   },
   "api": {}
 }

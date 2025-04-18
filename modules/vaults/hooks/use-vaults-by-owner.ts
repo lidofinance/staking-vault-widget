@@ -9,7 +9,7 @@ export const useVaultsByOwner = (address: Address | undefined) => {
 
   return useReadContract({
     abi: VaultViewerAbi,
-    address: getContractAddress(chainId, 'vaultDataViewer'),
+    address: getContractAddress(chainId, 'vaultViewer'),
     functionName: 'vaultsByOwner',
     args: [address as Address],
     query: {

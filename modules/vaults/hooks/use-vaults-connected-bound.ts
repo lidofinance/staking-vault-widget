@@ -8,7 +8,7 @@ export const useVaultsConnectedBound = (from: number, to: number) => {
 
   return useReadContract({
     abi: VaultViewerAbi,
-    address: getContractAddress(chainId, 'vaultDataViewer'),
+    address: getContractAddress(chainId, 'vaultViewer'),
     functionName: 'vaultsConnectedBound',
     args: [BigInt(from), BigInt(to)],
   });

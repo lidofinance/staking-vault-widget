@@ -8,7 +8,7 @@ export const useVaultsConnected = () => {
 
   return useReadContract({
     abi: VaultViewerAbi,
-    address: getContractAddress(chainId, 'vaultDataViewer'),
+    address: getContractAddress(chainId, 'vaultViewer'),
     functionName: 'vaultsConnected',
     chainId,
   });
