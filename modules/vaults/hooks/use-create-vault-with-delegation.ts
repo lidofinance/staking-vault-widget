@@ -4,14 +4,12 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
-import { Address } from 'viem';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
-
 import { VaultFactoryAbi } from 'abi/vault-factory';
-import { VAULT_FACTORY_BY_NETWORK } from 'consts/vault-factory';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 
 import { VaultFactoryArgs } from 'types';
+import { getContractAddress } from 'config';
+import invariant from 'tiny-invariant';
 
 export interface CreateWithDelegationProps {
   onMutate: () => void;
@@ -36,9 +34,14 @@ export const useCreateVaultWithDelegation = ({
 
   const callCreateVault = useCallback(
     async (args: VaultFactoryArgs) => {
+      const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
+      invariant(
+        vaultFactoryAddress,
+        '[useCreateVaultWithDelegation] vaultFactoryAddress is not defined',
+      );
       return await writeContractAsync({
         abi: VaultFactoryAbi,
-        address: VAULT_FACTORY_BY_NETWORK[chainId as CHAINS] as Address,
+        address: vaultFactoryAddress,
         functionName: 'createVaultWithDelegation',
         args: [args, '0x'],
         chainId,

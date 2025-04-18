@@ -65,3 +65,6 @@ export const walletconnectProjectId = process.env.WALLETCONNECT_PROJECT_ID;
 
 /** @type string */
 export const matomoHost = process.env.MATOMO_URL;
+
+/** @type string */
+export const devnetOverrides = process.env.DEVNET_OVERRIDES;

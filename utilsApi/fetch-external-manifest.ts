@@ -1,6 +1,6 @@
 import { Cache } from 'memory-cache';
 import { IPFS_MANIFEST_URL } from 'consts/external-links';
-import { responseTimeExternalMetricWrapper } from './fetchApiWrapper';
+import { responseTimeExternalMetricWrapper } from './fetch-api-wrapper';
 import { standardFetcher } from 'utils/standardFetcher';
 
 import { config } from 'config';

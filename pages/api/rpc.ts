@@ -4,7 +4,7 @@ import { rpcFactory } from '@lidofinance/next-pages';
 
 import { config, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
-import { CHAINS } from 'consts/chains';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
   rateLimit,
@@ -18,7 +18,7 @@ import Metrics from 'utilsApi/metrics';
 import {
   METRIC_CONTRACT_ADDRESSES,
   METRIC_CONTRACT_EVENT_ADDRESSES,
-} from 'utilsApi/contractAddressesMetricsMap';
+} from 'utilsApi/contract-addresses-metrics';
 
 const allowedCallAddresses: Record<string, string[]> = Object.entries(
   METRIC_CONTRACT_ADDRESSES,

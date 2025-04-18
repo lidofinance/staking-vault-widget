@@ -11,7 +11,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
+import { useCreateVaultWithDelegation } from 'modules/vaults/hooks/use-create-vault-with-delegation';
 
 import {
   FormController,
@@ -38,7 +38,7 @@ import {
   CREATE_VAULT_FORM_STEPS,
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
-import { simulateCreateVault } from 'modules/web3/contracts/vault-factory';
+import { simulateCreateVault } from 'modules/vaults/contracts/vault-factory';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);

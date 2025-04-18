@@ -5,7 +5,7 @@ import { LIDO_CONTRACT_NAMES } from '@lidofinance/lido-ethereum-sdk/common';
 import { Button, ToastSuccess, Block, Input } from '@lidofinance/lido-ui';
 
 import { useUserConfig } from 'config/user-config';
-import { CHAINS } from 'consts/chains';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { LinkArrow } from 'shared/components/link-arrow/link-arrow';
 import { useContractAddress } from 'modules/web3';
 import { RPCErrorType, checkRpcUrl } from 'utils/check-rpc-url';

@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
 import { AppPaths } from 'consts/urls';
-import { useVaultData } from 'shared/hooks/use-vault-data';
+import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
 import { VaultInfo } from 'types';
 
 interface VaultContextType {

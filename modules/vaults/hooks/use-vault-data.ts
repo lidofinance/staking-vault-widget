@@ -2,9 +2,9 @@ import { type Address } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 import { useLidoSDK } from 'modules/web3';
 
-import { getVaultHubContract } from 'modules/web3/contracts/vault-hub';
-import { getStakingVaultContract } from 'modules/web3/contracts/staking-vault';
-import { getDelegationContract } from 'modules/web3/contracts/delegation';
+import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
+import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
+import { getDelegationContract } from 'modules/vaults/contracts/delegation';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { getHealthScore } from 'utils/get-health-score';
 import { VaultSocket, VaultInfo } from 'types';
