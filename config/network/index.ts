@@ -13,7 +13,7 @@ import sepoliaSet from 'networks/sepolia.json' assert { type: 'json' };
 
 // Devnet deployments
 import hoodiDevnet0Set from 'networks/hoodi-devnet-0.json' assert { type: 'json' };
-import sepoliaDevnet5Set from 'networks/sepolia-devnet-5.json' assert { type: 'json' };
+import sepoliaDevnet4Set from 'networks/sepolia-devnet-4.json' assert { type: 'json' };
 
 // reexport types and const
 export type { CONTRACT_NAMES, NetworkConfig } from './const';
@@ -37,7 +37,7 @@ const DEVNET_OVERRIDES: Record<number, string> = // Merge client&server values
 
 // Devnet deployments
 const DEVNETS_MAP = {
-  'sepolia-devnet-5': sepoliaDevnet5Set as NetworkConfig,
+  'sepolia-devnet-4': sepoliaDevnet4Set as NetworkConfig,
   'hoodi-devnet-0': hoodiDevnet0Set as NetworkConfig,
 } as Record<string, NetworkConfig>;
 
