@@ -1,15 +1,9 @@
-import {
-  Address,
-  encodeFunctionData,
-  PublicClient,
-  getContract,
-  WalletClient,
-} from 'viem';
+import { Address, encodeFunctionData, PublicClient, getContract } from 'viem';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 import { VAULT_TOTAL_BASIS_POINTS } from 'consts/vault-hub';
 import { EditMainSettingsSchema, TxData } from './types';
 import { DelegationAbi } from 'abi/delegation';
-import { fnNamesMap } from './consts';
+import { dashboardFunctionsNamesMap } from 'utils/send-dashboard-tx';
 
 export const prepareMainTxData = (data: EditMainSettingsSchema) => {
   const {
@@ -73,7 +67,7 @@ export const generateMainAATxData = async ({
   const keys = Object.keys(txData) as (keyof TxData)[];
 
   const aaPayload = keys.map(async (key) => {
-    const functionName = fnNamesMap[key];
+    const functionName = dashboardFunctionsNamesMap[key];
     const data = encodeFunctionData({
       abi: DelegationAbi,
       functionName,
@@ -101,41 +95,4 @@ export const generateMainAATxData = async ({
   });
 
   return await Promise.all(aaPayload);
-};
-
-export const sendMainSettingsTransactions = async ({
-  txData,
-  contractAddress,
-  publicClient,
-  walletClient,
-}: {
-  txData: TxData;
-  contractAddress: Address;
-  publicClient: PublicClient;
-  walletClient: WalletClient;
-}) => {
-  const keys = Object.keys(txData) as (keyof TxData)[];
-  const contract = getContract({
-    address: contractAddress,
-    abi: DelegationAbi,
-    client: {
-      public: publicClient,
-      wallet: walletClient,
-    },
-  });
-
-  const data = keys.map(async (key) => {
-    const functionName = fnNamesMap[key];
-
-    // @ts-expect-error find out how to setup right types
-    const tx = await contract.write[functionName]({
-      address: contractAddress,
-      abi: DelegationAbi,
-      args: [txData[key]],
-    });
-
-    return { tx, key };
-  });
-
-  return await Promise.all(data);
 };

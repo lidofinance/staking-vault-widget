@@ -54,7 +54,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   );
   const { refetch } = useVaultInfo();
 
-  const { callEditMainSettings } = useEditMainSettingsWithDelegation(() =>
+  const { callEditMainSettings } = useEditMainSettingsWithDelegation(async () =>
     setSubmitStep({ step: SubmittingMainFormStepsEnum.submitting }),
   );
 

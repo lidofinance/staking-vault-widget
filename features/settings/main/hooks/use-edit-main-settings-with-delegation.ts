@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
+import invariant from 'tiny-invariant';
 import { useVaultInfo } from 'features/overview/contexts';
 import { useAA, useDappStatus, useLidoSDK, useSendAACalls } from 'modules/web3';
-import {
-  generateMainAATxData,
-  prepareMainTxData,
-  sendMainSettingsTransactions,
-} from '../utils';
+import { generateMainAATxData, prepareMainTxData } from '../utils';
 import { EditMainSettingsSchema } from '../types';
-import invariant from 'tiny-invariant';
+import { sendDashboardTx } from 'utils/send-dashboard-tx';
 
-export const useEditMainSettingsWithDelegation = (onMutate = () => {}) => {
+export const useEditMainSettingsWithDelegation = (
+  onMutate = async () => {},
+) => {
   const {
     core: { web3Provider: walletClient, rpcProvider: publicClient },
   } = useLidoSDK();
@@ -21,7 +20,6 @@ export const useEditMainSettingsWithDelegation = (onMutate = () => {}) => {
   // TODO: add opportunity to get receipts
   const callEditMainSettings = useCallback(
     async (payload: EditMainSettingsSchema) => {
-      onMutate();
       // TODO: replace by useWriteContracts in future
       const txData = prepareMainTxData(payload);
       const contractAddress = activeVault?.owner;
@@ -38,9 +36,9 @@ export const useEditMainSettingsWithDelegation = (onMutate = () => {}) => {
           account: address,
         });
 
-        await sendAACalls(data, async () => {});
+        await sendAACalls(data, onMutate);
       } else {
-        return await sendMainSettingsTransactions({
+        return await sendDashboardTx({
           txData,
           publicClient,
           walletClient,
