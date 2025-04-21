@@ -1,8 +1,8 @@
 import { Address } from 'viem';
 
-import { useVaultData } from 'shared/hooks/use-vault-data';
-import { useVaultsByOwner } from 'modules/web3/hooks/use-vaults-by-owner';
-import { useDappStatus } from './use-dapp-status';
+import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
+import { useVaultsByOwner } from 'modules/vaults/hooks/use-vaults-by-owner';
+import { useDappStatus } from '../../web3/hooks/use-dapp-status';
 
 export const useVaultsDataByOwner = () => {
   const { address } = useDappStatus();

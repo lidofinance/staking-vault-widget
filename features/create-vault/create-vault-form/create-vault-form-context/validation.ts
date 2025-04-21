@@ -33,12 +33,7 @@ const addressSchema = z
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
   nodeOperatorManager: addressSchema,
-  assetRecoverer: addressSchema,
   nodeOperatorFeeBP: z
-    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
-    .max(99, INVALID_NUMBER_MAX_MESSAGE),
-  curatorFeeBP: z.coerce
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
@@ -57,8 +52,6 @@ export const createVaultSchema = z.object({
   validatorExitRequesters: z.array(addressSchema).optional(),
   validatorWithdrawalTriggerers: z.array(addressSchema).optional(),
   disconnecters: z.array(addressSchema).optional(),
-  curatorFeeSetters: z.array(addressSchema).optional(), // TODO: Will be removed
-  curatorFeeClaimers: z.array(addressSchema).optional(), // TODO: Will be removed
   nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
 });
 
@@ -215,7 +208,7 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
     }
 
     if (
-      ['nodeOperatorFeeBP', 'confirmExpiry', 'curatorFeeBP'].includes(key) &&
+      ['nodeOperatorFeeBP', 'confirmExpiry'].includes(key) &&
       typeof payload !== 'number'
     ) {
       errors[key] = {
@@ -250,26 +243,6 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
         if (payload > 800) {
           errors[key] = {
             message: INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
-          };
-        }
-      }
-
-      if (key === 'curatorFeeBP') {
-        if (payload < 0.001) {
-          errors[key] = {
-            message: INVALID_NUMBER_DATA_MESSAGE,
-          };
-        }
-
-        if (payload > 99) {
-          errors[key] = {
-            message: INVALID_NUMBER_MAX_MESSAGE,
-          };
-        }
-
-        if (values.nodeOperatorFeeBP + payload > 100) {
-          errors[key] = {
-            message: INVALID_NUMBER_SUM_MESSAGE,
           };
         }
       }

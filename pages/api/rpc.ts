@@ -4,7 +4,6 @@ import { rpcFactory } from '@lidofinance/next-pages';
 
 import { config, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
-import { CHAINS } from 'consts/chains';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
   rateLimit,
@@ -15,20 +14,7 @@ import {
   HttpMethod,
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
-import {
-  METRIC_CONTRACT_ADDRESSES,
-  METRIC_CONTRACT_EVENT_ADDRESSES,
-} from 'utilsApi/contractAddressesMetricsMap';
-
-const allowedCallAddresses: Record<string, string[]> = Object.entries(
-  METRIC_CONTRACT_ADDRESSES,
-).reduce(
-  (acc, [chainId, addresses]) => {
-    acc[chainId] = Object.keys(addresses);
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
+import { METRIC_CONTRACT_EVENT_ADDRESSES } from 'utilsApi/contract-addresses-metrics';
 
 const allowedLogsAddresses: Record<string, string[]> = Object.entries(
   METRIC_CONTRACT_EVENT_ADDRESSES,
@@ -71,12 +57,16 @@ const rpc = rpcFactory({
   },
   defaultChain: `${config.defaultChain}`,
   providers: {
-    [CHAINS.Mainnet]: secretConfig.rpcUrls_1,
-    [CHAINS.Sepolia]: secretConfig.rpcUrls_11155111,
+    ...config.supportedChains.reduce(
+      (acc, chain) => {
+        acc[chain] = secretConfig[`rpcUrls_${chain}`];
+        return acc;
+      },
+      {} as Record<string, [string, ...string[]]>,
+    ),
   },
   validation: {
     allowedRPCMethods,
-    allowedCallAddresses,
     allowedLogsAddresses,
     maxBatchCount: config.PROVIDER_MAX_BATCH,
     blockEmptyAddressGetLogs: true,

@@ -9,9 +9,12 @@ import {
 import { Address, parseEther } from 'viem';
 import invariant from 'tiny-invariant';
 import { useVaultInfo } from './vault-provider';
-import { VAULT_TOTAL_BASIS_POINTS } from 'consts/vault-hub';
 import { formatBalance, formatPercent } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
+import {
+  VAULT_TOTAL_BASIS_POINTS,
+  VAULT_TOTAL_BASIS_POINTS_BN,
+} from 'modules/vaults';
 
 export interface VaultOverviewContextType {
   values: {
@@ -58,7 +61,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         minted,
         healthScore,
         reserveRatioBP,
-        rebalanceThresholdBP,
+        forcedRebalanceThresholdBP,
         locked,
         nodeOperatorUnclaimedFee,
         ethLimit,
@@ -79,14 +82,14 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const rebalanceThreshold = formatPercent.format(
-        rebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
+        forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore);
       const utilization =
         minted === 0n
           ? Infinity
           : minted /
-            (minted * BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP));
+            (minted * (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(reserveRatioBP)));
       const utilizationRatio = formatPercent.format(utilization);
       const totalMintable = bigIntMin(
         (valuation - nodeOperatorUnclaimedFee) *

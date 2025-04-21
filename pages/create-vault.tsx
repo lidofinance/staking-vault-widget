@@ -7,9 +7,6 @@ const CreateVault: FC = () => {
   return <CreateVaultPage />;
 };
 
-export const getStaticProps = getDefaultStaticProps(
-  '/create-vault',
-  async () => ({ props: {} }),
-);
+export const getStaticProps = getDefaultStaticProps('/create-vault');
 
 export default CreateVault;

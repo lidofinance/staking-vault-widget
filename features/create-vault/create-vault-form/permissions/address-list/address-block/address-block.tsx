@@ -21,7 +21,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
     [remove],
   );
 
-  if (fieldsWatch.length === 0) {
+  if (!fieldsWatch?.length) {
     return null;
   }
 

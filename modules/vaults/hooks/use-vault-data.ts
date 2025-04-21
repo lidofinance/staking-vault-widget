@@ -1,15 +1,17 @@
 import { type Address } from 'viem';
-import { useQuery } from '@tanstack/react-query';
-import { useLidoSDK } from 'modules/web3';
-
-import { getVaultHubContract } from 'modules/web3/contracts/vault-hub';
-import { getStakingVaultContract } from 'modules/web3/contracts/staking-vault';
-import { getDelegationContract } from 'modules/web3/contracts/delegation';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { getHealthScore } from 'utils/get-health-score';
-import { VaultSocket, VaultInfo } from 'types';
 import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
+import { useQuery } from '@tanstack/react-query';
+
+import { useLidoSDK } from 'modules/web3';
+
+import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
+import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
+import { getDelegationContract } from 'modules/vaults/contracts/delegation';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { getHealthScore } from 'utils/get-health-score';
+
+import type { VaultInfo } from 'types';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 
 // TODO: find way to remove readonly
@@ -51,8 +53,10 @@ export const useVaultData = (
           address: vaultContract.address,
         });
 
-        const vaultHubSocket: VaultSocket =
-          await vaultHubContract.read.vaultSocket([vaultAddress]);
+        const vaultHubSocket = await vaultHubContract.read.vaultSocket([
+          vaultAddress,
+        ]);
+
         const delegationContract = getDelegationContract(owner, publicClient);
 
         const [
@@ -65,20 +69,20 @@ export const useVaultData = (
           defaultAdmins,
           nodeOperatorManagers,
         ] = await Promise.all([
-          delegationContract.read.valuation(),
+          delegationContract.read.totalValue(),
           delegationContract.read.nodeOperatorUnclaimedFee(),
           delegationContract.read.withdrawableEther(),
           delegationContract.read.nodeOperatorFeeBP(),
-          delegationContract.read.totalMintableShares(),
+          delegationContract.read.totalMintingCapacity(),
           delegationContract.read.getConfirmExpiry(),
           delegationContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
           delegationContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
         ]);
 
         const [mintedEth, mintableEth, ethLimit] = await Promise.all([
-          shares.convertToSteth(vaultHubSocket.sharesMinted),
+          shares.convertToSteth(vaultHubSocket.liabilityShares),
           shares.convertToSteth(
-            totalMintableShares - vaultHubSocket.sharesMinted,
+            totalMintableShares - vaultHubSocket.liabilityShares,
           ),
           shares.convertToSteth(vaultHubSocket.shareLimit),
         ]);

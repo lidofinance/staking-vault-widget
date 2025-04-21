@@ -1,14 +1,20 @@
+//TODO: rename to Dashboard
 export const DelegationAbi = [
   {
     inputs: [
       {
         internalType: 'address',
-        name: '_weth',
+        name: '_stETH',
         type: 'address',
       },
       {
         internalType: 'address',
-        name: '_lidoLocator',
+        name: '_wstETH',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_vaultHub',
         type: 'address',
       },
     ],
@@ -43,17 +49,7 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'CombinedFeesExceed100Percent',
-    type: 'error',
-  },
-  {
-    inputs: [],
     name: 'ConfirmExpiryOutOfBounds',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'CuratorFeeUnclaimed',
     type: 'error',
   },
   {
@@ -73,14 +69,50 @@ export const DelegationAbi = [
     type: 'error',
   },
   {
+    inputs: [],
+    name: 'FeeValueExceed100Percent',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'IncreasedOverLimit',
+    type: 'error',
+  },
+  {
     inputs: [
       {
-        internalType: 'address',
-        name: 'token',
-        type: 'address',
+        internalType: 'uint256',
+        name: 'currentAdjustment',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'currentAtPropositionAdjustment',
+        type: 'uint256',
       },
     ],
-    name: 'InvalidPermit',
+    name: 'InvalidatedAdjustmentVote',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'locked',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'mintableValue',
+        type: 'uint256',
+      },
+    ],
+    name: 'MintingCapacityExceeded',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NoUnclaimedFee',
     type: 'error',
   },
   {
@@ -91,11 +123,6 @@ export const DelegationAbi = [
   {
     inputs: [],
     name: 'NonProxyCallsForbidden',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'RequestedAmountExceedsUnreserved',
     type: 'error',
   },
   {
@@ -111,7 +138,28 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
+    name: 'SameAdjustment',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'SenderNotMember',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'unreserved',
+        type: 'uint256',
+      },
+    ],
+    name: 'WithdrawalAmountExceedsUnreserved',
     type: 'error',
   },
   {
@@ -129,6 +177,25 @@ export const DelegationAbi = [
     inputs: [],
     name: 'ZeroConfirmingRoles',
     type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newAdjustment',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldAdjustment',
+        type: 'uint256',
+      },
+    ],
+    name: 'AccruedRewardsAdjustmentSet',
+    type: 'event',
   },
   {
     anonymous: false,
@@ -153,31 +220,6 @@ export const DelegationAbi = [
       },
     ],
     name: 'ConfirmExpirySet',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'sender',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'oldCuratorFeeBP',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'newCuratorFeeBP',
-        type: 'uint256',
-      },
-    ],
-    name: 'CuratorFeeBPSet',
     type: 'event',
   },
   {
@@ -232,14 +274,7 @@ export const DelegationAbi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'address',
-        name: '_defaultAdmin',
-        type: 'address',
-      },
-    ],
+    inputs: [],
     name: 'Initialized',
     type: 'event',
   },
@@ -375,47 +410,33 @@ export const DelegationAbi = [
     type: 'event',
   },
   {
-    inputs: [],
-    name: 'ASSET_RECOVERY_ROLE',
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        indexed: true,
+        internalType: 'address',
+        name: 'stakingVault',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'bytes',
+        name: 'pubkey',
+        type: 'bytes',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    name: 'UnguaranteedDeposit',
+    type: 'event',
   },
   {
     inputs: [],
     name: 'BURN_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'CURATOR_FEE_CLAIM_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'CURATOR_FEE_SET_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -460,6 +481,58 @@ export const DelegationAbi = [
         internalType: 'bytes32',
         name: '',
         type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'LIDO_VAULTHUB_AUTHORIZATION_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'LIDO_VAULTHUB_DEAUTHORIZATION_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'LOCK_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'MANUAL_ACCRUED_REWARDS_ADJUSTMENT_LIMIT',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -532,6 +605,32 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
+    name: 'NODE_OPERATOR_REWARDS_ADJUST_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'OSSIFY_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'PAUSE_BEACON_CHAIN_DEPOSITS_ROLE',
     outputs: [
       {
@@ -545,7 +644,20 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'PDG_WITHDRAWAL_ROLE',
+    name: 'PDG_COMPENSATE_PREDEPOSIT_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'PDG_PROVE_VALIDATOR_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -571,6 +683,32 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
+    name: 'RECOVER_ASSETS_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'REQUEST_TIER_CHANGE_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'REQUEST_VALIDATOR_EXIT_ROLE',
     outputs: [
       {
@@ -584,7 +722,33 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
+    name: 'RESET_LOCKED_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'RESUME_BEACON_CHAIN_DEPOSITS_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'SET_DEPOSITOR_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -623,7 +787,7 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'VOLUNTARY_DISCONNECT_ROLE',
+    name: 'UNGUARANTEED_BEACON_CHAIN_DEPOSIT_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -636,12 +800,25 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'WETH',
+    name: 'VAULT_HUB',
     outputs: [
       {
-        internalType: 'contract IWETH9',
+        internalType: 'contract VaultHub',
         name: '',
         type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'VOLUNTARY_DISCONNECT_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -674,14 +851,21 @@ export const DelegationAbi = [
     type: 'function',
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'accruedRewardsAdjustment',
+    outputs: [
       {
         internalType: 'uint256',
-        name: '_amountOfShares',
+        name: '',
         type: 'uint256',
       },
     ],
-    name: 'burnShares',
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'authorizeLidoVaultHub',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -693,40 +877,8 @@ export const DelegationAbi = [
         name: '_amountOfShares',
         type: 'uint256',
       },
-      {
-        components: [
-          {
-            internalType: 'uint256',
-            name: 'value',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'deadline',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint8',
-            name: 'v',
-            type: 'uint8',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'r',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 's',
-            type: 'bytes32',
-          },
-        ],
-        internalType: 'struct Dashboard.PermitInput',
-        name: '_permit',
-        type: 'tuple',
-      },
     ],
-    name: 'burnSharesWithPermit',
+    name: 'burnShares',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -748,114 +900,11 @@ export const DelegationAbi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_amountOfStETH',
-        type: 'uint256',
-      },
-      {
-        components: [
-          {
-            internalType: 'uint256',
-            name: 'value',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'deadline',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint8',
-            name: 'v',
-            type: 'uint8',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'r',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 's',
-            type: 'bytes32',
-          },
-        ],
-        internalType: 'struct Dashboard.PermitInput',
-        name: '_permit',
-        type: 'tuple',
-      },
-    ],
-    name: 'burnStETHWithPermit',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
         name: '_amountOfWstETH',
         type: 'uint256',
       },
     ],
     name: 'burnWstETH',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amountOfWstETH',
-        type: 'uint256',
-      },
-      {
-        components: [
-          {
-            internalType: 'uint256',
-            name: 'value',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
-            name: 'deadline',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint8',
-            name: 'v',
-            type: 'uint8',
-          },
-          {
-            internalType: 'bytes32',
-            name: 'r',
-            type: 'bytes32',
-          },
-          {
-            internalType: 'bytes32',
-            name: 's',
-            type: 'bytes32',
-          },
-        ],
-        internalType: 'struct Dashboard.PermitInput',
-        name: '_permit',
-        type: 'tuple',
-      },
-    ],
-    name: 'burnWstETHWithPermit',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_recipient',
-        type: 'address',
-      },
-    ],
-    name: 'claimCuratorFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -921,7 +970,7 @@ export const DelegationAbi = [
     outputs: [
       {
         internalType: 'bytes32[]',
-        name: '',
+        name: 'roles',
         type: 'bytes32[]',
       },
     ],
@@ -930,43 +979,19 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'curatorFeeBP',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
+    name: 'deauthorizeLidoVaultHub',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [],
-    name: 'curatorFeeClaimedReport',
+    name: 'forcedRebalanceThresholdBP',
     outputs: [
       {
-        internalType: 'uint128',
-        name: 'valuation',
-        type: 'uint128',
-      },
-      {
-        internalType: 'int128',
-        name: 'inOutDelta',
-        type: 'int128',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'curatorUnclaimedFee',
-    outputs: [
-      {
-        internalType: 'uint256',
+        internalType: 'uint16',
         name: '',
-        type: 'uint256',
+        type: 'uint16',
       },
     ],
     stateMutability: 'view',
@@ -977,19 +1002,6 @@ export const DelegationAbi = [
     name: 'fund',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amountOfWETH',
-        type: 'uint256',
-      },
-    ],
-    name: 'fundWeth',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1156,9 +1168,32 @@ export const DelegationAbi = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: '_adjustmentIncrease',
+        type: 'uint256',
+      },
+    ],
+    name: 'increaseAccruedRewardsAdjustment',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: '_defaultAdmin',
         type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_nodeOperatorManager',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_nodeOperatorFeeBP',
+        type: 'uint256',
       },
       {
         internalType: 'uint256',
@@ -1182,6 +1217,32 @@ export const DelegationAbi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'liabilityShares',
+    outputs: [
+      {
+        internalType: 'uint96',
+        name: '',
+        type: 'uint96',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'lock',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1257,13 +1318,18 @@ export const DelegationAbi = [
     outputs: [
       {
         internalType: 'uint128',
-        name: 'valuation',
+        name: 'totalValue',
         type: 'uint128',
       },
       {
         internalType: 'int128',
         name: 'inOutDelta',
         type: 'int128',
+      },
+      {
+        internalType: 'uint64',
+        name: 'timestamp',
+        type: 'uint64',
       },
     ],
     stateMutability: 'view',
@@ -1284,6 +1350,13 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
+    name: 'ossifyStakingVault',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'pauseBeaconChainDeposits',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -1292,33 +1365,36 @@ export const DelegationAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_etherToFund',
-        type: 'uint256',
+        components: [
+          {
+            internalType: 'bytes32[]',
+            name: 'proof',
+            type: 'bytes32[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'pubkey',
+            type: 'bytes',
+          },
+          {
+            internalType: 'uint256',
+            name: 'validatorIndex',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint64',
+            name: 'childBlockTimestamp',
+            type: 'uint64',
+          },
+        ],
+        internalType: 'struct IPredepositGuarantee.ValidatorWitness[]',
+        name: '_witnesses',
+        type: 'tuple[]',
       },
     ],
-    name: 'projectedNewMintableShares',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'rebalanceThresholdBP',
-    outputs: [
-      {
-        internalType: 'uint16',
-        name: '',
-        type: 'uint16',
-      },
-    ],
-    stateMutability: 'view',
+    name: 'proveUnknownValidatorsToPDG',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1383,6 +1459,25 @@ export const DelegationAbi = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: '_etherToFund',
+        type: 'uint256',
+      },
+    ],
+    name: 'remainingMintingCapacity',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bytes32',
         name: 'role',
         type: 'bytes32',
@@ -1394,6 +1489,19 @@ export const DelegationAbi = [
       },
     ],
     name: 'renounceRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tierId',
+        type: 'uint256',
+      },
+    ],
+    name: 'requestTierChange',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -1422,6 +1530,13 @@ export const DelegationAbi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'resetLocked',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1478,6 +1593,24 @@ export const DelegationAbi = [
     inputs: [
       {
         internalType: 'uint256',
+        name: '_newAdjustment',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_currentAdjustment',
+        type: 'uint256',
+      },
+    ],
+    name: 'setAccruedRewardsAdjustment',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
         name: '_newConfirmExpiry',
         type: 'uint256',
       },
@@ -1490,12 +1623,12 @@ export const DelegationAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_newCuratorFeeBP',
-        type: 'uint256',
+        internalType: 'address',
+        name: '_depositor',
+        type: 'address',
       },
     ],
-    name: 'setCuratorFeeBP',
+    name: 'setDepositor',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -1516,19 +1649,6 @@ export const DelegationAbi = [
   {
     inputs: [],
     name: 'shareLimit',
-    outputs: [
-      {
-        internalType: 'uint96',
-        name: '',
-        type: 'uint96',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'sharesMinted',
     outputs: [
       {
         internalType: 'uint96',
@@ -1573,7 +1693,20 @@ export const DelegationAbi = [
   },
   {
     inputs: [],
-    name: 'totalMintableShares',
+    name: 'totalMintingCapacity',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'totalValue',
     outputs: [
       {
         internalType: 'uint256',
@@ -1634,6 +1767,47 @@ export const DelegationAbi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'bytes',
+            name: 'pubkey',
+            type: 'bytes',
+          },
+          {
+            internalType: 'bytes',
+            name: 'signature',
+            type: 'bytes',
+          },
+          {
+            internalType: 'uint256',
+            name: 'amount',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bytes32',
+            name: 'depositDataRoot',
+            type: 'bytes32',
+          },
+        ],
+        internalType: 'struct StakingVaultDeposit[]',
+        name: '_deposits',
+        type: 'tuple[]',
+      },
+    ],
+    name: 'unguaranteedDepositToBeaconChain',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'totalAmount',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'unreserved',
     outputs: [
@@ -1641,32 +1815,6 @@ export const DelegationAbi = [
         internalType: 'uint256',
         name: '',
         type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'valuation',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'vaultHub',
-    outputs: [
-      {
-        internalType: 'contract VaultHub',
-        name: '',
-        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -1685,7 +1833,7 @@ export const DelegationAbi = [
           },
           {
             internalType: 'uint96',
-            name: 'sharesMinted',
+            name: 'liabilityShares',
             type: 'uint96',
           },
           {
@@ -1700,7 +1848,7 @@ export const DelegationAbi = [
           },
           {
             internalType: 'uint16',
-            name: 'rebalanceThresholdBP',
+            name: 'forcedRebalanceThresholdBP',
             type: 'uint16',
           },
           {
@@ -1712,6 +1860,11 @@ export const DelegationAbi = [
             internalType: 'bool',
             name: 'pendingDisconnect',
             type: 'bool',
+          },
+          {
+            internalType: 'uint96',
+            name: 'feeSharesCharged',
+            type: 'uint96',
           },
         ],
         internalType: 'struct VaultHub.VaultSocket',
@@ -1726,7 +1879,7 @@ export const DelegationAbi = [
     inputs: [],
     name: 'voluntaryDisconnect',
     outputs: [],
-    stateMutability: 'payable',
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1743,24 +1896,6 @@ export const DelegationAbi = [
       },
     ],
     name: 'withdraw',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_recipient',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_amountOfWETH',
-        type: 'uint256',
-      },
-    ],
-    name: 'withdrawWETH',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

@@ -37,8 +37,7 @@ declare module 'next/config' {
 
       runStartupChecks: string | undefined;
 
-      ethAPIBasePath: string;
-      rewardsBackendAPI: string | undefined;
+      devnetOverrides: string | undefined;
     };
     publicRuntimeConfig: {
       basePath: string | undefined;

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
 
-import { CHAINS } from 'consts/chains';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 
 // Don't use absolute import here!
 // code'''

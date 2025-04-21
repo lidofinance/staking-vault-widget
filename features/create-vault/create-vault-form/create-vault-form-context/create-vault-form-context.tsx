@@ -11,7 +11,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { useCreateVaultWithDelegation } from 'modules/web3/hooks/use-create-vault-with-delegation';
+import { useCreateVaultWihDashboard } from 'modules/vaults/hooks/use-create-vault-with-dashboard';
 
 import {
   FormController,
@@ -37,8 +37,8 @@ import {
   CREATE_VAULT_FORM_STEPS,
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
-import { simulateCreateVault } from 'modules/web3/contracts/vault-factory';
 import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
+import { simulateCreateVault } from 'modules/vaults/contracts/vault-factory';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
@@ -62,7 +62,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     PermissionToggleEnum.byPermission,
   );
   const [submitStep, setSubmitStep] = useState<SubmittingInfo>();
-  const { callCreateVault } = useCreateVaultWithDelegation({
+  const { callCreateVault } = useCreateVaultWihDashboard({
     onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
   });
 
@@ -106,8 +106,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       validatorExitRequesters: [],
       validatorWithdrawalTriggerers: [],
       disconnecters: [],
-      curatorFeeSetters: [], // TODO: Will be removed
-      curatorFeeClaimers: [], // TODO: Will be removed
       nodeOperatorFeeClaimers: [],
     },
     resolver: createVaultFormValidator(createVaultSchema),
@@ -122,6 +120,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       try {
         await simulateCreateVault(core.rpcProvider, address, payload);
       } catch (err) {
+        console.error('[CreateFormProvider]Error simulating create vault', err);
         setSubmitStep({ step: SubmitStepEnum.error });
         return false;
       }
@@ -131,7 +130,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
         const response = await callCreateVault(payload);
         setSubmitStep({ step: SubmitStepEnum.success, tx: response });
       } catch (err) {
-        // TODO: handle more type of errors
+        console.error('[CreateFormProvider] Error sending create vault', err);
+
         setSubmitStep({ step: SubmitStepEnum.reject });
 
         return false;
