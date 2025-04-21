@@ -16,6 +16,7 @@ const CONTRACT_LIST = [
   'vaultHub',
   'vaultFactory',
   'vaultViewer',
+  'operatorGrid',
   'weth',
 ] as const;
 
