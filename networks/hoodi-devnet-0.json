@@ -9,7 +9,7 @@
     "predepositGuarantee": "0x4C003D5586B32359Df5f37B42A2E717E24817Ec2",
     "vaultFactory": "0xBf18618d1Ba07cCcA63d3D74f6a9056762Eac3cA",
     "vaultHub": "0xDfA0B34F28b1b6735d2df150a99048139302a80E",
-    "vaultViewer": "",
+    "vaultViewer": "0x9E90338495FfD691bDDC680e47D94b60cF66dDad",
     "operatorGrid": "0xccb86588b776743CCCB6572D2a6eAFd466012191"
   },
   "api": {}
