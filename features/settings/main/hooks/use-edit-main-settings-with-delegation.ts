@@ -4,7 +4,7 @@ import { useAA, useDappStatus, useLidoSDK, useSendAACalls } from 'modules/web3';
 import {
   generateMainAATxData,
   prepareMainTxData,
-  sendTransactions,
+  sendMainSettingsTransactions,
 } from '../utils';
 import { EditMainSettingsSchema } from '../types';
 import invariant from 'tiny-invariant';
@@ -40,7 +40,7 @@ export const useEditMainSettingsWithDelegation = (onMutate = () => {}) => {
 
         await sendAACalls(data, async () => {});
       } else {
-        return await sendTransactions({
+        return await sendMainSettingsTransactions({
           txData,
           publicClient,
           walletClient,

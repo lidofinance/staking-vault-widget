@@ -1,4 +1,5 @@
 import { keccak256, toHex } from 'viem/utils';
+import { Hex } from 'viem';
 
 /**
  * @notice Permission for funding the StakingVault.
@@ -101,7 +102,7 @@ export const NODE_OPERATOR_FEE_CLAIM_ROLE = keccak256(
  * @notice default vault admin role.
  */
 export const DEFAULT_ADMIN_ROLE =
-  '0x0000000000000000000000000000000000000000000000000000000000000000' as `0x${string}`;
+  '0x0000000000000000000000000000000000000000000000000000000000000000' as Hex;
 
 export const permissions = {
   FUND_ROLE,

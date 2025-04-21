@@ -16,11 +16,11 @@ import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from 'utils/ens';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
-const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
+const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';
 const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
 const INVALID_NUMBER_SUM_MESSAGE =
   "Sum of Curator's and Node Operator's fees can't be more than 100";
-const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 800 or less';
+const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 720 or less';
 const INVALID_NUMBER_DATA_MESSAGE = 'Only number is valid';
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
@@ -36,16 +36,16 @@ export const createVaultSchema = z.object({
   assetRecoverer: addressSchema,
   nodeOperatorFeeBP: z
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
+    .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
   curatorFeeBP: z.coerce
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
+    .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
   confirmExpiry: z.coerce
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(1, INVALID_NUMBER_MIN_MESSAGE)
-    .max(800, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+    .max(720, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   defaultAdmin: addressSchema,
   funders: z.array(addressSchema).optional(),
   withdrawers: z.array(addressSchema).optional(),

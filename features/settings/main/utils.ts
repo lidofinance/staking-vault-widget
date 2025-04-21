@@ -81,14 +81,16 @@ export const generateMainAATxData = async ({
       args: [txData[key]],
     });
 
-    const gas = await publicClient.estimateContractGas({
+    const contract = getContract({
       address,
       abi: DelegationAbi,
-      functionName,
-      account,
-      // @ts-expect-error find out how to setup right types
-      args: [txData[key]],
+      client: {
+        public: publicClient,
+      },
     });
+
+    // @ts-expect-error types
+    const gas = await contract.estimateGas[functionName]([txData[key]]);
 
     return {
       to: address,
@@ -101,7 +103,7 @@ export const generateMainAATxData = async ({
   return await Promise.all(aaPayload);
 };
 
-export const sendTransactions = async ({
+export const sendMainSettingsTransactions = async ({
   txData,
   contractAddress,
   publicClient,
