@@ -10,6 +10,7 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { VaultFactoryArgs } from 'types';
 import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
+import { VAULTS_CONNECT_DEPOSIT } from '../consts';
 
 export interface CreateWithDelegationProps {
   onMutate: () => void;
@@ -44,6 +45,7 @@ export const useCreateVaultWihDashboard = ({
         abi: VaultFactoryAbi,
         address: vaultFactoryAddress,
         functionName: 'createVaultWithDashboard',
+        value: VAULTS_CONNECT_DEPOSIT,
         args: [
           args.defaultAdmin,
           args.nodeOperator,

@@ -150,12 +150,11 @@ export const createVaultFormValidator = <T extends ZodSchema>(
 export const formatCreateVaultData = (
   values: CreateVaultSchema,
 ): VaultFactoryArgs => {
-  const { nodeOperator, ...payload } = values;
-  (payload as unknown as VaultFactoryArgs).confirmExpiry = BigInt(
-    values.confirmExpiry * 60 * 60,
-  );
-
-  return payload as unknown as VaultFactoryArgs;
+  return {
+    ...values,
+    nodeOperatorFeeBP: BigInt(values.nodeOperatorFeeBP),
+    confirmExpiry: BigInt(values.confirmExpiry * 60 * 60),
+  } as VaultFactoryArgs;
 };
 
 export const validatePermissions = (

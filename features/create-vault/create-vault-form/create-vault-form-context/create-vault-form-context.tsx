@@ -120,6 +120,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       try {
         await simulateCreateVault(core.rpcProvider, address, payload);
       } catch (err) {
+        console.error('[CreateFormProvider]Error simulating create vault', err);
         setSubmitStep({ step: SubmitStepEnum.error });
         return false;
       }
@@ -129,7 +130,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
         const response = await callCreateVault(payload);
         setSubmitStep({ step: SubmitStepEnum.success, tx: response });
       } catch (err) {
-        // TODO: handle more type of errors
+        console.error('[CreateFormProvider] Error sending create vault', err);
+
         setSubmitStep({ step: SubmitStepEnum.reject });
 
         return false;
