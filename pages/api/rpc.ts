@@ -4,7 +4,6 @@ import { rpcFactory } from '@lidofinance/next-pages';
 
 import { config, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
   rateLimit,
@@ -71,8 +70,13 @@ const rpc = rpcFactory({
   },
   defaultChain: `${config.defaultChain}`,
   providers: {
-    [CHAINS.Mainnet]: secretConfig.rpcUrls_1,
-    [CHAINS.Sepolia]: secretConfig.rpcUrls_11155111,
+    ...config.supportedChains.reduce(
+      (acc, chain) => {
+        acc[chain] = secretConfig[`rpcUrls_${chain}`];
+        return acc;
+      },
+      {} as Record<string, [string, ...string[]]>,
+    ),
   },
   validation: {
     allowedRPCMethods,
