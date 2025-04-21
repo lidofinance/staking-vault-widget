@@ -106,8 +106,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       validatorExitRequesters: [],
       validatorWithdrawalTriggerers: [],
       disconnecters: [],
-      curatorFeeSetters: [], // TODO: Will be removed
-      curatorFeeClaimers: [], // TODO: Will be removed
       nodeOperatorFeeClaimers: [],
     },
     resolver: createVaultFormValidator(createVaultSchema),

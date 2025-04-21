@@ -61,7 +61,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         minted,
         healthScore,
         reserveRatioBP,
-        rebalanceThresholdBP,
+        forcedRebalanceThresholdBP,
         locked,
         nodeOperatorUnclaimedFee,
         ethLimit,
@@ -82,7 +82,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const rebalanceThreshold = formatPercent.format(
-        rebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
+        forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore);
       const utilization =
