@@ -15,7 +15,7 @@ export interface CreateWithDelegationProps {
   onMutate: () => void;
 }
 
-export const useCreateVaultWithDelegation = ({
+export const useCreateVaultWihDashboard = ({
   onMutate = () => {},
 }: CreateWithDelegationProps) => {
   const { chainId } = useDappStatus();
@@ -37,13 +37,23 @@ export const useCreateVaultWithDelegation = ({
       const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
       invariant(
         vaultFactoryAddress,
-        '[useCreateVaultWithDelegation] vaultFactoryAddress is not defined',
+        '[useCreateVaultWihDashboard] vaultFactoryAddress is not defined',
       );
+
       return await writeContractAsync({
         abi: VaultFactoryAbi,
         address: vaultFactoryAddress,
-        functionName: 'createVaultWithDelegation',
-        args: [args, '0x'],
+        functionName: 'createVaultWithDashboard',
+        args: [
+          args.defaultAdmin,
+          args.nodeOperator,
+          args.nodeOperatorManager,
+          args.nodeOperatorFeeBP,
+          args.confirmExpiry,
+          // TODO role assigment
+          [],
+          '0x',
+        ],
         chainId,
       });
     },

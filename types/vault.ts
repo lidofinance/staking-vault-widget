@@ -1,4 +1,5 @@
-import { Address } from 'viem';
+import { VaultHubAbi } from 'abi/vault-hub';
+import { Address, ReadContractReturnType } from 'viem';
 
 export interface VaultInfo extends VaultSocket {
   address: Address;
@@ -19,23 +20,20 @@ export interface VaultInfo extends VaultSocket {
   nodeOperatorFeeBP: bigint;
 }
 
-export interface VaultSocket {
-  isDisconnected: boolean;
-  reserveRatioBP: number;
-  rebalanceThresholdBP: number;
-  shareLimit: bigint;
-  sharesMinted: bigint;
-  treasuryFeeBP: number;
-  vault: Address;
-}
+export type VaultSocket = ReadContractReturnType<
+  typeof VaultHubAbi,
+  'vaultSocket',
+  [Address]
+>;
 
 export type VaultFactoryArgs = {
   defaultAdmin: Address;
+  nodeOperator: Address;
   nodeOperatorManager: Address;
   assetRecoverer: Address;
   confirmExpiry: bigint;
   curatorFeeBP: number;
-  nodeOperatorFeeBP: number;
+  nodeOperatorFeeBP: bigint;
   funders: Address[];
   withdrawers: Address[];
   minters: Address[];

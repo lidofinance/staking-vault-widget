@@ -5,7 +5,9 @@ import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
 
 // TODO: move to lido-sdk
-export const getVaultHubContract = (publicClient: PublicClient) => {
+export const getVaultHubContract = <TClient extends PublicClient>(
+  publicClient: TClient,
+) => {
   invariant(
     publicClient.chain?.id,
     '[getVaultHubContract] chainId is not defined',

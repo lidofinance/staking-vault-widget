@@ -11,7 +11,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { useCreateVaultWithDelegation } from 'modules/vaults/hooks/use-create-vault-with-delegation';
+import { useCreateVaultWihDashboard } from 'modules/vaults/hooks/use-create-vault-with-dashboard';
 
 import {
   FormController,
@@ -62,7 +62,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     PermissionToggleEnum.byPermission,
   );
   const [submitStep, setSubmitStep] = useState<SubmittingInfo>();
-  const { callCreateVault } = useCreateVaultWithDelegation({
+  const { callCreateVault } = useCreateVaultWihDashboard({
     onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
   });
 

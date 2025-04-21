@@ -44,8 +44,17 @@ export const simulateCreateVault = async (
   return await publicClient.simulateContract({
     address: address,
     abi: VaultFactoryAbi,
-    functionName: 'createVaultWithDelegation',
-    args: [args, '0x'],
+    functionName: 'createVaultWithDashboard',
+    args: [
+      args.defaultAdmin,
+      args.nodeOperator,
+      args.nodeOperatorManager,
+      args.nodeOperatorFeeBP,
+      args.confirmExpiry,
+      // TODO role assigment
+      [],
+      '0x',
+    ],
     account,
   });
 };

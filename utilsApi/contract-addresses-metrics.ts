@@ -44,7 +44,7 @@ const supportedChainsWithMainnet: CHAINS[] = config.supportedChains.includes(
   CHAINS.Mainnet,
 )
   ? config.supportedChains
-  : [...config.supportedChains, CHAINS.Mainnet];
+  : [...config.supportedChains];
 
 const CONTRACTS_WITH_EVENTS = [CONTRACTS.lido, CONTRACTS.wsteth];
 
