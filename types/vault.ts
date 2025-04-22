@@ -1,4 +1,6 @@
-import { Address } from 'viem';
+import type { VaultHubAbi } from 'abi/vault-hub';
+import type { VaultFactoryAbi } from 'abi/vault-factory';
+import { Address, ReadContractReturnType, WriteContractParameters } from 'viem';
 
 export interface VaultInfo extends VaultSocket {
   address: Address;
@@ -19,34 +21,22 @@ export interface VaultInfo extends VaultSocket {
   nodeOperatorFeeBP: bigint;
 }
 
-export interface VaultSocket {
-  isDisconnected: boolean;
-  reserveRatioBP: number;
-  rebalanceThresholdBP: number;
-  shareLimit: bigint;
-  sharesMinted: bigint;
-  treasuryFeeBP: number;
-  vault: Address;
-}
+export type VaultSocket = ReadContractReturnType<
+  typeof VaultHubAbi,
+  'vaultSocket',
+  [Address]
+>;
+
+type FactoryParams = WriteContractParameters<
+  typeof VaultFactoryAbi,
+  'createVaultWithDashboard'
+>['args'];
 
 export type VaultFactoryArgs = {
-  defaultAdmin: Address;
-  nodeOperatorManager: Address;
-  assetRecoverer: Address;
-  confirmExpiry: bigint;
-  curatorFeeBP: number;
-  nodeOperatorFeeBP: number;
-  funders: Address[];
-  withdrawers: Address[];
-  minters: Address[];
-  burners: Address[];
-  rebalancers: Address[];
-  depositPausers: Address[];
-  depositResumers: Address[];
-  validatorExitRequesters: Address[];
-  validatorWithdrawalTriggerers: Address[];
-  disconnecters: Address[];
-  curatorFeeSetters: Address[]; // TODO: Will be removed
-  curatorFeeClaimers: Address[]; // TODO: Will be removed
-  nodeOperatorFeeClaimers: Address[];
+  defaultAdmin: FactoryParams[0];
+  nodeOperator: FactoryParams[1];
+  nodeOperatorManager: FactoryParams[2];
+  nodeOperatorFeeBP: FactoryParams[3];
+  confirmExpiry: FactoryParams[4];
+  roles: FactoryParams[5];
 };

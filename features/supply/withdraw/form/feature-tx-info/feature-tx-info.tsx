@@ -6,9 +6,8 @@ import { AmountInfo, InfoRow, Wrapper } from './styles';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
-  const [token, recipient, amount] = watch(['token', 'recipient', 'amount']);
+  const [recipient, amount] = watch(['recipient', 'amount']);
   const { isLoading, isError, data } = useSimulateWithDelegation({
-    token,
     recipient,
     amount,
   });

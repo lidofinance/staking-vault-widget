@@ -1,4 +1,4 @@
-export { useCreateVaultWithDelegation } from './use-create-vault-with-delegation';
+export { useCreateVaultWihDashboard } from './use-create-vault-with-dashboard';
 export { useVaultData } from './use-vault-data';
 export { useVaultsByOwner } from './use-vaults-by-owner';
 export { useVaultsConnected } from './use-vaults-connected';

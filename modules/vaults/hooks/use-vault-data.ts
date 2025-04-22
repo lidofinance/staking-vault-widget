@@ -1,5 +1,8 @@
 import { type Address } from 'viem';
+import { usePublicClient } from 'wagmi';
+import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+
 import { useLidoSDK } from 'modules/web3';
 
 import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
@@ -7,9 +10,8 @@ import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault'
 import { getDelegationContract } from 'modules/vaults/contracts/delegation';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { getHealthScore } from 'utils/get-health-score';
-import { VaultSocket, VaultInfo } from 'types';
-import { usePublicClient } from 'wagmi';
-import invariant from 'tiny-invariant';
+
+import type { VaultInfo } from 'types';
 
 // TODO: find way to remove readonly
 export const useVaultData = (
@@ -50,8 +52,10 @@ export const useVaultData = (
           address: vaultContract.address,
         });
 
-        const vaultHubSocket: VaultSocket =
-          await vaultHubContract.read.vaultSocket([vaultAddress]);
+        const vaultHubSocket = await vaultHubContract.read.vaultSocket([
+          vaultAddress,
+        ]);
+
         const delegationContract = getDelegationContract(owner, publicClient);
 
         const [
@@ -61,17 +65,17 @@ export const useVaultData = (
           nodeOperatorFeeBP,
           totalMintableShares,
         ] = await Promise.all([
-          delegationContract.read.valuation(),
+          delegationContract.read.totalValue(),
           delegationContract.read.nodeOperatorUnclaimedFee(),
           delegationContract.read.withdrawableEther(),
           delegationContract.read.nodeOperatorFeeBP(),
-          delegationContract.read.totalMintableShares(),
+          delegationContract.read.totalMintingCapacity(),
         ]);
 
         const [mintedEth, mintableEth, ethLimit] = await Promise.all([
-          shares.convertToSteth(vaultHubSocket.sharesMinted),
+          shares.convertToSteth(vaultHubSocket.liabilityShares),
           shares.convertToSteth(
-            totalMintableShares - vaultHubSocket.sharesMinted,
+            totalMintableShares - vaultHubSocket.liabilityShares,
           ),
           shares.convertToSteth(vaultHubSocket.shareLimit),
         ]);

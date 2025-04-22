@@ -1554,67 +1554,6 @@ export const VaultHubAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_index',
-        type: 'uint256',
-      },
-    ],
-    name: 'vaultSocket',
-    outputs: [
-      {
-        components: [
-          {
-            internalType: 'address',
-            name: 'vault',
-            type: 'address',
-          },
-          {
-            internalType: 'uint96',
-            name: 'liabilityShares',
-            type: 'uint96',
-          },
-          {
-            internalType: 'uint96',
-            name: 'shareLimit',
-            type: 'uint96',
-          },
-          {
-            internalType: 'uint16',
-            name: 'reserveRatioBP',
-            type: 'uint16',
-          },
-          {
-            internalType: 'uint16',
-            name: 'forcedRebalanceThresholdBP',
-            type: 'uint16',
-          },
-          {
-            internalType: 'uint16',
-            name: 'treasuryFeeBP',
-            type: 'uint16',
-          },
-          {
-            internalType: 'bool',
-            name: 'pendingDisconnect',
-            type: 'bool',
-          },
-          {
-            internalType: 'uint96',
-            name: 'feeSharesCharged',
-            type: 'uint96',
-          },
-        ],
-        internalType: 'struct VaultHub.VaultSocket',
-        name: '',
-        type: 'tuple',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: '_vault',
         type: 'address',

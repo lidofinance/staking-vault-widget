@@ -4,6 +4,7 @@ import { VaultFactoryAbi } from 'abi/vault-factory';
 import { VaultFactoryArgs } from 'types';
 import invariant from 'tiny-invariant';
 import { getContractAddress } from 'config';
+import { VAULTS_CONNECT_DEPOSIT } from '../consts';
 
 // TODO: move to lido-sdk
 export const getVaultFactoryContract = (publicClient: PublicClient) => {
@@ -44,8 +45,17 @@ export const simulateCreateVault = async (
   return await publicClient.simulateContract({
     address: address,
     abi: VaultFactoryAbi,
-    functionName: 'createVaultWithDelegation',
-    args: [args, '0x'],
+    value: VAULTS_CONNECT_DEPOSIT,
+    functionName: 'createVaultWithDashboard',
+    args: [
+      args.defaultAdmin,
+      args.nodeOperator,
+      args.nodeOperatorManager,
+      args.nodeOperatorFeeBP,
+      args.confirmExpiry,
+      args.roles,
+      '0x',
+    ],
     account,
   });
 };

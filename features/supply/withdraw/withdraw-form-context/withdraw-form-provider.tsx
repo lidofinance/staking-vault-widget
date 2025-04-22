@@ -53,7 +53,6 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     defaultValues: {
       amount: undefined,
       recipient: '' as Address,
-      token: 'ETH',
     },
     mode: 'all',
     reValidateMode: 'onChange',
@@ -84,10 +83,10 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   );
 
   const onSubmit = useCallback(
-    async ({ amount, recipient, token }: WithdrawFormSchema) => {
+    async ({ amount, recipient }: WithdrawFormSchema) => {
       try {
         if (amount && recipient && isAddress(recipient)) {
-          await callWithdraw({ amount, recipient, token });
+          await callWithdraw({ amount, recipient });
           return true;
         }
       } catch (e) {

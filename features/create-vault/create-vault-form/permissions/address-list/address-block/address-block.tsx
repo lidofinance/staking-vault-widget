@@ -3,16 +3,16 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 
 import { AddressItem } from 'features/create-vault/create-vault-form/permissions/address-list/address-item';
 import { Wrapper } from './styles';
-import { FieldName } from 'features/create-vault/types';
+import { FieldName, PermissionKeys } from 'features/create-vault/types';
 
 export interface AddressBlockProps {
-  permission: FieldName;
+  permission: PermissionKeys;
 }
 
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
   const { control, watch } = useFormContext();
   const { remove } = useFieldArray({ control, name: permission });
-  const fieldsWatch = watch(permission) as FieldName[];
+  const fieldsWatch = watch(`roles.${permission}`) as FieldName[];
 
   const handleRemove = useCallback(
     (index: number) => {
@@ -21,7 +21,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
     [remove],
   );
 
-  if (fieldsWatch.length === 0) {
+  if (!fieldsWatch?.length) {
     return null;
   }
 
