@@ -33,7 +33,6 @@ export const mainSettingsFields = [
   'defaultAdmin',
   'nodeOperator',
   'nodeOperatorFeeBP',
-  'curatorFeeBP',
   'confirmExpiry',
   'nodeOperatorManager',
 ] as const;
@@ -50,13 +49,6 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     name: 'nodeOperatorFeeBP',
     title: 'Node Operator fee',
     label: 'Node Operator fee, %',
-    dataType: 'percent',
-    type: 'number',
-  },
-  {
-    name: 'curatorFeeBP',
-    title: 'Curator fee',
-    label: 'Curator fee, %',
     dataType: 'percent',
     type: 'number',
   },

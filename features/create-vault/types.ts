@@ -34,7 +34,6 @@ export type CreateVaultType = {
   nodeOperator: string;
   nodeOperatorManager: string;
   nodeOperatorFeeBP: number;
-  curatorFeeBP: number;
   confirmExpiry: number;
   roles: {
     [K in PermissionKeys]: string[];

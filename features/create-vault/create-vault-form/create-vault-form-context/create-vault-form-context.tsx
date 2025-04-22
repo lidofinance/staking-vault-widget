@@ -92,7 +92,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       nodeOperator: '',
       nodeOperatorManager: '',
       nodeOperatorFeeBP: 5,
-      curatorFeeBP: 5,
       confirmExpiry: 36,
       defaultAdmin: '',
       roles: {},

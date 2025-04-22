@@ -21,7 +21,6 @@ export const MainSettings = () => {
       nodeOperator: '',
       nodeOperatorManager: '',
       nodeOperatorFeeBP: 5,
-      curatorFeeBP: 5,
       confirmExpiry: 36,
       defaultAdmin: '',
       confirmMainSettings: false,

@@ -21,8 +21,6 @@ import invariant from 'tiny-invariant';
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
 const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
-const INVALID_NUMBER_SUM_MESSAGE =
-  "Sum of Curator's and Node Operator's fees can't be more than 100";
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 800 or less';
 const INVALID_NUMBER_DATA_MESSAGE = 'Only number is valid';
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
@@ -42,10 +40,6 @@ export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
   nodeOperatorManager: addressSchema,
   nodeOperatorFeeBP: z
-    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
-    .max(99, INVALID_NUMBER_MAX_MESSAGE),
-  curatorFeeBP: z.coerce
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(0.001, INVALID_NUMBER_MIN_MESSAGE)
     .max(99, INVALID_NUMBER_MAX_MESSAGE),
@@ -241,7 +235,7 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
     }
 
     if (
-      ['nodeOperatorFeeBP', 'confirmExpiry', 'curatorFeeBP'].includes(key) &&
+      ['nodeOperatorFeeBP', 'confirmExpiry'].includes(key) &&
       typeof payload !== 'number'
     ) {
       errors[key] = {
@@ -259,10 +253,6 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
           errors[key] = {
             message: INVALID_NUMBER_MAX_MESSAGE,
           };
-        } else if (values.curatorFeeBP + payload > 100) {
-          errors[key] = {
-            message: INVALID_NUMBER_SUM_MESSAGE,
-          };
         }
       }
 
@@ -276,26 +266,6 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
         if (payload > 800) {
           errors[key] = {
             message: INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
-          };
-        }
-      }
-
-      if (key === 'curatorFeeBP') {
-        if (payload < 0.001) {
-          errors[key] = {
-            message: INVALID_NUMBER_DATA_MESSAGE,
-          };
-        }
-
-        if (payload > 99) {
-          errors[key] = {
-            message: INVALID_NUMBER_MAX_MESSAGE,
-          };
-        }
-
-        if (values.nodeOperatorFeeBP + payload > 100) {
-          errors[key] = {
-            message: INVALID_NUMBER_SUM_MESSAGE,
           };
         }
       }
