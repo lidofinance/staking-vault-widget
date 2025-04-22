@@ -12,7 +12,7 @@ import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
 import { VAULTS_CONNECT_DEPOSIT } from '../consts';
 
-export interface CreateWithDelegationProps {
+interface CreateWithDelegationProps {
   onMutate: () => void;
 }
 
@@ -52,8 +52,7 @@ export const useCreateVaultWihDashboard = ({
           args.nodeOperatorManager,
           args.nodeOperatorFeeBP,
           args.confirmExpiry,
-          // TODO role assigment
-          [],
+          args.roles,
           '0x',
         ],
         chainId,

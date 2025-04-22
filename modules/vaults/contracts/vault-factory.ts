@@ -53,8 +53,7 @@ export const simulateCreateVault = async (
       args.nodeOperatorManager,
       args.nodeOperatorFeeBP,
       args.confirmExpiry,
-      // TODO role assigment
-      [],
+      args.roles,
       '0x',
     ],
     account,

@@ -18,14 +18,14 @@ import {
 } from 'features/create-vault/types';
 import { Address } from 'viem';
 
-type ArrayFormKey = `${PermissionKeys}.${number}.value`;
+type ArrayFormKey = `roles.${PermissionKeys}.${number}.value`;
 
 export interface InputItemProps {
   permission: string;
   index: number;
   remove: (index?: number | number[]) => void;
-  register: UseFormRegister<VaultPermissionsType>;
-  trigger: UseFormTrigger<VaultPermissionsType>;
+  register: UseFormRegister<{ roles: VaultPermissionsType }>;
+  trigger: UseFormTrigger<{ roles: VaultPermissionsType }>;
   error: Merge<FieldError, FieldErrorsImpl<{ value: string }>> | undefined;
 }
 
@@ -39,7 +39,7 @@ export const InputItem: FC<InputItemProps> = ({
 }) => {
   const { setValue, getValues } = useFormContext();
   const [fieldError, setError] = useState<string>();
-  const inputKey = `${permission}.${index}.value` as ArrayFormKey;
+  const inputKey = `roles.${permission}.${index}.value` as ArrayFormKey;
 
   useEffect(() => {
     if (error?.value && (error.value as unknown as string) !== fieldError) {
@@ -53,12 +53,11 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleSaveValue = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const values: Address[] = getValues(permission) ?? [];
+      const values: { value: Address }[] = getValues(`roles.${permission}`);
       const output = await trigger(inputKey);
-
       if (output) {
         const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
-        setValue(`${permission}.${values.length}`, value);
+        setValue(`roles.${permission}.${values?.length ?? 0}`, value);
         remove(index);
       }
     }

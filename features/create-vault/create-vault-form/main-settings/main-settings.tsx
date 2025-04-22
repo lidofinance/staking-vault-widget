@@ -8,13 +8,10 @@ import { SectionContainer } from 'features/create-vault/styles';
 
 import {
   CREATE_VAULT_FORM_STEPS,
-  getCreateVaultFields,
-  mainSettingsFields,
+  MAIN_SETTINGS,
 } from 'features/create-vault/consts';
 import { VaultMainSettingsType } from 'features/create-vault/types';
 import { validateMainSettings } from '../create-vault-form-context/validation';
-
-const fieldsForRender = getCreateVaultFields(mainSettingsFields);
 
 export const MainSettings = () => {
   const { step } = useCreateVaultFormData();
@@ -22,10 +19,8 @@ export const MainSettings = () => {
   const mainSettingsForm = useForm<VaultMainSettingsType>({
     defaultValues: {
       nodeOperator: '',
-      assetRecoverer: '',
       nodeOperatorManager: '',
       nodeOperatorFeeBP: 5,
-      curatorFeeBP: 5,
       confirmExpiry: 36,
       defaultAdmin: '',
       confirmMainSettings: false,
@@ -36,7 +31,7 @@ export const MainSettings = () => {
 
   return (
     <SectionContainer step={step} currentStep={CREATE_VAULT_FORM_STEPS.main}>
-      {fieldsForRender.map((field) => (
+      {MAIN_SETTINGS.map((field) => (
         <InputResolver form={mainSettingsForm} key={field.name} {...field} />
       ))}
       <Confirmation register={mainSettingsForm.register} />
