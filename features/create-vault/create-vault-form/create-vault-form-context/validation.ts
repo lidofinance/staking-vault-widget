@@ -1,4 +1,4 @@
-import { isAddress } from 'viem';
+import { Address, isAddress } from 'viem';
 import { z, ZodError, ZodSchema } from 'zod';
 import {
   appendErrors,
@@ -15,6 +15,8 @@ import {
 } from 'features/create-vault/types';
 import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from 'utils/ens';
+import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
+import invariant from 'tiny-invariant';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.001 or above';
@@ -30,6 +32,11 @@ const validateAddress = (value: string) => isValidAnyAddress(value);
 const addressSchema = z
   .string()
   .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE });
+
+const roleKeys = [
+  ...Object.keys(VAULTS_OWNER_ROLES_MAP),
+  ...Object.keys(VAULTS_NO_ROLES_MAP),
+];
 
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
@@ -48,19 +55,13 @@ export const createVaultSchema = z.object({
     .min(1, INVALID_NUMBER_MIN_MESSAGE)
     .max(800, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   defaultAdmin: addressSchema,
-  funders: z.array(addressSchema).optional(),
-  withdrawers: z.array(addressSchema).optional(),
-  minters: z.array(addressSchema).optional(),
-  burners: z.array(addressSchema).optional(),
-  rebalancers: z.array(addressSchema).optional(),
-  depositPausers: z.array(addressSchema).optional(),
-  depositResumers: z.array(addressSchema).optional(),
-  validatorExitRequesters: z.array(addressSchema).optional(),
-  validatorWithdrawalTriggerers: z.array(addressSchema).optional(),
-  disconnecters: z.array(addressSchema).optional(),
-  curatorFeeSetters: z.array(addressSchema).optional(), // TODO: Will be removed
-  curatorFeeClaimers: z.array(addressSchema).optional(), // TODO: Will be removed
-  nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
+  roles: z.object(
+    Object.fromEntries(
+      roleKeys.map((key) => [key, z.array(addressSchema).optional()]),
+    ) as unknown as {
+      [key in PermissionKeys]: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    },
+  ),
 });
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
@@ -147,59 +148,74 @@ export const createVaultFormValidator = <T extends ZodSchema>(
   };
 };
 
+const JOINT_ROLE_MAP = { ...VAULTS_OWNER_ROLES_MAP, ...VAULTS_NO_ROLES_MAP };
+
 export const formatCreateVaultData = (
   values: CreateVaultSchema,
 ): VaultFactoryArgs => {
   return {
-    ...values,
+    defaultAdmin: values.defaultAdmin as Address,
+    nodeOperator: values.nodeOperator as Address,
+    nodeOperatorManager: values.nodeOperatorManager as Address,
     nodeOperatorFeeBP: BigInt(values.nodeOperatorFeeBP),
     confirmExpiry: BigInt(values.confirmExpiry * 60 * 60),
-  } as VaultFactoryArgs;
+
+    roles: Object.entries(values.roles).flatMap(([roleName, roleAddresses]) => {
+      const roleHash = JOINT_ROLE_MAP[roleName as PermissionKeys];
+      invariant(
+        roleHash,
+        `[formatCreateVaultData] no role hash found for ${roleName}`,
+      );
+      if (!roleAddresses) return [];
+      return roleAddresses.map((address) => ({
+        role: roleHash,
+        account: address as Address,
+      }));
+    }),
+  };
 };
 
 export const validatePermissions = (
   getValues: UseFormGetValues<Record<string, any>>,
-): Resolver<VaultPermissionsType> => {
-  return async (values: VaultPermissionsType) => {
-    const errors = {} as Record<
-      PermissionKeys,
-      Record<number, { value: string }>
-    >;
+): Resolver<{ roles: VaultPermissionsType }> => {
+  return async (values) => {
+    const roles = values.roles;
+    const errors = { roles: {} } as {
+      roles: Record<PermissionKeys, Record<number, { value: string }>>;
+    };
+
     const keysList = Object.keys(values) as PermissionKeys[];
 
-    await Promise.all(
-      keysList.map(async (key: PermissionKeys) => {
-        const payload = values[key];
-        errors[key] = {};
+    keysList.forEach((key: PermissionKeys) => {
+      const formKey = `roles.${key}`;
+      const payload = roles[key] ?? [];
+      errors.roles[key] = {};
 
-        await Promise.all(
-          payload.map(async (field, index) => {
-            const { value: currentValue } = field;
+      payload.forEach((field, index) => {
+        const { value: currentValue } = field;
 
-            if (!isAddress(currentValue)) {
-              const isValid = isValidEns(currentValue);
+        if (!isAddress(currentValue)) {
+          const isValid = isValidEns(currentValue);
 
-              if (!isValid) {
-                errors[key][`${index}`] = {
-                  value: 'Invalid ethereum address',
-                };
-              }
-            }
+          if (!isValid) {
+            errors.roles[key][index] = {
+              value: 'Invalid ethereum address',
+            };
+          }
+        }
 
-            const mainFormValues = getValues(key) as string[];
-            const filtered = mainFormValues.filter(
-              (value) => value === currentValue,
-            );
-
-            if (filtered.length > 0) {
-              errors[key][index] = {
-                value: 'Address already added',
-              };
-            }
-          }),
+        const mainFormValues = getValues(formKey) as string[];
+        const filtered = mainFormValues.filter(
+          (value) => value === currentValue,
         );
-      }),
-    );
+
+        if (filtered.length > 0) {
+          errors.roles[key][index] = {
+            value: 'Address already added',
+          };
+        }
+      });
+    });
 
     return {
       values,

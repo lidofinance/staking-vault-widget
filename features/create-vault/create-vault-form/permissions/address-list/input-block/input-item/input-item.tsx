@@ -17,14 +17,14 @@ import {
   VaultPermissionsType,
 } from 'features/create-vault/types';
 
-type ArrayFormKey = `${PermissionKeys}.${number}.value`;
+type ArrayFormKey = `roles.${PermissionKeys}.${number}.value`;
 
 export interface InputItemProps {
   permission: string;
   index: number;
   remove: (index?: number | number[]) => void;
-  register: UseFormRegister<VaultPermissionsType>;
-  trigger: UseFormTrigger<VaultPermissionsType>;
+  register: UseFormRegister<{ roles: VaultPermissionsType }>;
+  trigger: UseFormTrigger<{ roles: VaultPermissionsType }>;
   error: Merge<FieldError, FieldErrorsImpl<{ value: string }>> | undefined;
 }
 
@@ -38,7 +38,7 @@ export const InputItem: FC<InputItemProps> = ({
 }) => {
   const { setValue, getValues } = useFormContext();
   const [fieldError, setError] = useState<string>();
-  const inputKey = `${permission}.${index}.value` as ArrayFormKey;
+  const inputKey = `roles.${permission}.${index}.value` as ArrayFormKey;
 
   useEffect(() => {
     if (error?.value && (error.value as unknown as string) !== fieldError) {

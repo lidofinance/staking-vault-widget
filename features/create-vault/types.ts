@@ -1,6 +1,7 @@
 import { Address, Hash } from 'viem';
 import { InputProps } from '@lidofinance/lido-ui';
 import { CREATE_VAULT_FORM_STEPS, ToggleValue } from './consts';
+import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
 
 export type InputDataType =
   | 'address'
@@ -26,94 +27,32 @@ export type SubmittingInfo = {
   tx?: Hash;
 };
 
-export type ConfirmationList =
-  | 'mainSettings'
-  | 'vaultManagerPermissions'
-  | 'nodeOperatorManagerPermissions';
+export type FieldName = MainSettingsKeys & keyof typeof VAULTS_OWNER_ROLES_MAP;
 
-export type FieldName =
-  | 'nodeOperator'
-  | 'assetRecoverer'
-  | 'nodeOperatorManager'
-  | 'nodeOperatorFeeBP'
-  | 'curatorFeeBP'
-  | 'confirmExpiry'
-  | 'defaultAdmin'
-  | 'funders'
-  | 'withdrawers'
-  | 'minters'
-  | 'burners'
-  | 'rebalancers'
-  | 'depositPausers'
-  | 'depositResumers'
-  | 'validatorExitRequesters'
-  | 'validatorWithdrawalTriggerers'
-  | 'disconnecters'
-  | 'curatorFeeSetters' // TODO: Will be removed
-  | 'curatorFeeClaimers' // TODO: Will be removed
-  | 'nodeOperatorFeeClaimers';
-
-type EnsureKeys<T extends Record<FieldName, any>> = T;
-
-export type CreateVaultType = EnsureKeys<{
+export type CreateVaultType = {
+  defaultAdmin: string;
   nodeOperator: string;
-  assetRecoverer: string;
   nodeOperatorManager: string;
   nodeOperatorFeeBP: number;
   curatorFeeBP: number;
   confirmExpiry: number;
-  defaultAdmin: string;
-  funders: string[];
-  withdrawers: string[];
-  minters: string[];
-  burners: string[];
-  rebalancers: string[];
-  depositPausers: string[];
-  depositResumers: string[];
-  validatorExitRequesters: string[];
-  validatorWithdrawalTriggerers: string[];
-  disconnecters: string[];
-  curatorFeeSetters: string[]; // TODO: Will be removed
-  curatorFeeClaimers: string[]; // TODO: Will be removed
-  nodeOperatorFeeClaimers: string[];
-}>;
+  roles: {
+    [K in PermissionKeys]: string[];
+  };
+};
 
-type FilterArrayKeys<T> = {
-  [K in keyof T]: T[K] extends any[] ? never : K;
-}[keyof T];
-
-export type MainSettingsKeys =
-  | FilterArrayKeys<CreateVaultType>
-  | 'confirmMainSettings';
-
-export type VaultMainSettingsType = {
-  nodeOperator: string;
-  assetRecoverer: string;
-  nodeOperatorManager: string;
-  nodeOperatorFeeBP: number;
-  curatorFeeBP: number;
-  confirmExpiry: number;
-  defaultAdmin: string;
+export type VaultMainSettingsType = Omit<CreateVaultType, 'roles'> & {
   confirmMainSettings: boolean;
 };
 
-export type PermissionKeys = keyof Omit<CreateVaultType, MainSettingsKeys>;
+export type MainSettingsKeys = keyof VaultMainSettingsType;
 
-type VaultPermissionInput = { value: string };
+export type PermissionKeys =
+  | keyof typeof VAULTS_OWNER_ROLES_MAP
+  | keyof typeof VAULTS_NO_ROLES_MAP;
+
 export type VaultPermissionsType = {
-  funders: VaultPermissionInput[];
-  withdrawers: VaultPermissionInput[];
-  minters: VaultPermissionInput[];
-  burners: VaultPermissionInput[];
-  rebalancers: VaultPermissionInput[];
-  depositPausers: VaultPermissionInput[];
-  depositResumers: VaultPermissionInput[];
-  validatorExitRequesters: VaultPermissionInput[];
-  validatorWithdrawalTriggerers: VaultPermissionInput[];
-  disconnecters: VaultPermissionInput[];
-  curatorFeeSetters: VaultPermissionInput[]; // TODO: Will be removed
-  curatorFeeClaimers: VaultPermissionInput[]; // TODO: Will be removed
-  nodeOperatorFeeClaimers: VaultPermissionInput[];
+  [K in PermissionKeys]: { value: string }[];
 };
 
 export type FieldConfig<T extends FieldName> = {

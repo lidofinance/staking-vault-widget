@@ -4,21 +4,35 @@ import { ConfirmationAction } from 'features/create-vault/create-vault-form/conf
 import { ConfirmationVaultInfo } from 'features/create-vault/create-vault-form/confirmation/confirmation-vault-info';
 import { SectionContainer } from 'features/create-vault/styles';
 
-import { ConfirmationList } from 'features/create-vault/types';
 import { CREATE_VAULT_FORM_STEPS } from '../../consts';
 
-const confirmationList: { title: string; list: ConfirmationList }[] = [
+import { MAIN_SETTINGS } from '../main-settings/main-settings';
+import {
+  NO_MANAGER_PERMISSION_LIST,
+  VAULT_MANAGER_PERMISSIONS_LIST,
+} from '../permissions/permissions';
+import { ConfirmationVaultInfoProps } from './confirmation-vault-info/confirmation-vault-info';
+
+const confirmationList: ConfirmationVaultInfoProps[] = [
   {
     title: 'Main settings',
-    list: 'mainSettings',
+    list: MAIN_SETTINGS,
   },
   {
     title: 'Vault Manager Permissions',
-    list: 'vaultManagerPermissions',
+    list: VAULT_MANAGER_PERMISSIONS_LIST.map((p) => ({
+      title: p.title,
+      name: `roles.${p.role}`,
+      dataType: 'address',
+    })),
   },
   {
     title: 'Vault Manager Permissions',
-    list: 'nodeOperatorManagerPermissions',
+    list: NO_MANAGER_PERMISSION_LIST.map((p) => ({
+      title: p.title,
+      name: `roles.${p.role}`,
+      dataType: 'address',
+    })),
   },
 ];
 
@@ -32,7 +46,7 @@ export const Confirmation = () => {
   return (
     <SectionContainer step={step} currentStep={CREATE_VAULT_FORM_STEPS.confirm}>
       {confirmationList.map(({ title, list }) => (
-        <ConfirmationVaultInfo key={list} title={title} list={list} />
+        <ConfirmationVaultInfo key={title} title={title} list={list} />
       ))}
       <ConfirmationAction />
     </SectionContainer>

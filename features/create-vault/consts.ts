@@ -1,6 +1,3 @@
-import { InputProps } from '@lidofinance/lido-ui';
-import { FieldConfig, FieldName } from 'features/create-vault/types';
-
 export const CREATE_VAULT_STEPS = 3;
 
 export enum PermissionToggleEnum {
@@ -30,141 +27,14 @@ export const steps: Record<number, string> = {
 
 export const getSectionNameByStep = (step: number) => steps[step];
 
-export const createVaultFieldsList: FieldConfig<FieldName>[] = [
-  {
-    name: 'nodeOperator',
-    title: 'Node Operator',
-    label: 'Node Operator address',
-    notes: 'Node Operator address cannot be changed after the vault is created',
-    dataType: 'address',
-  },
-  {
-    name: 'assetRecoverer',
-    title: 'Asset Recoverer',
-    label: 'Asset Recoverer address',
-    dataType: 'address',
-  },
-  {
-    name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    label: 'Node Operator fee, %',
-    dataType: 'percent',
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'curatorFeeBP',
-    title: 'Curator fee',
-    label: 'Curator fee, %',
-    dataType: 'percent',
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    label: 'Confirmation Lifetime, hours',
-    afterText: 'hours',
-    dataType: 'time',
-    type: 'number' as InputProps['type'],
-  },
-  {
-    name: 'defaultAdmin',
-    title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
-    dataType: 'address',
-  },
-  {
-    name: 'nodeOperatorManager',
-    title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
-    dataType: 'address',
-  },
-  // TODO: Will be removed
-  {
-    name: 'curatorFeeSetters',
-    title: 'Set Vault Curator’s fee',
-    dataType: 'address',
-  },
-  // TODO: Will be removed
-  {
-    name: 'curatorFeeClaimers',
-    title: 'ClaimPage Vault Curator’s fee (address)',
-    dataType: 'address',
-  },
-  {
-    name: 'withdrawers',
-    title: 'Withdrawers',
-    dataType: 'address',
-  },
-  {
-    name: 'funders',
-    title: 'Funders',
-    dataType: 'address',
-  },
-  {
-    name: 'minters',
-    title: 'Minters',
-    dataType: 'address',
-  },
-  {
-    name: 'burners',
-    title: 'Burners',
-    dataType: 'address',
-  },
-  {
-    name: 'rebalancers',
-    title: 'Rebalancers',
-    dataType: 'address',
-  },
-  {
-    name: 'depositPausers',
-    title: 'Pause Deposits to beacon chain (all amount)',
-    dataType: 'address',
-  },
-  {
-    name: 'depositResumers',
-    title: 'Resume Deposits to beacon chain (all amount)',
-    dataType: 'address',
-  },
-  {
-    name: 'validatorExitRequesters',
-    title: 'Initiate validator exit procedure (address)',
-    dataType: 'address',
-  },
-  {
-    name: 'validatorWithdrawalTriggerers',
-    title:
-      'Force NodeOperator to repay funds from validator(s) (public key, sum)',
-    dataType: 'address',
-  },
-  {
-    name: 'disconnecters',
-    title: 'Disconnecters',
-    dataType: 'address',
-  },
-  {
-    name: 'nodeOperatorFeeClaimers',
-    title: 'ClaimPage NOs fees from the vault (ETH) (address)',
-    dataType: 'address',
-  },
-];
-
 export const mainSettingsFields = [
+  'defaultAdmin',
   'nodeOperator',
-  'assetRecoverer',
   'nodeOperatorFeeBP',
   'curatorFeeBP',
   'confirmExpiry',
-  'defaultAdmin',
   'nodeOperatorManager',
 ] as const;
-
-export const getCreateVaultFields = <T extends FieldName>(
-  fieldsList: readonly T[],
-): FieldConfig<T>[] => {
-  return createVaultFieldsList.filter((field): field is FieldConfig<T> =>
-    fieldsList.includes(field.name as T),
-  );
-};
 
 export enum CREATE_VAULT_FORM_STEPS {
   main,
