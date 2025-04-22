@@ -11,7 +11,7 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import { GrantRole } from 'features/settings/permissions/types';
 
-export const useEditPermissionsWithDelegation = (onMutate = () => {}) => {
+export const useEditPermissionsWithDashboard = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -54,7 +54,7 @@ type SimulateEditPermissions = {
   permissions: GrantRole[];
 };
 
-export const simulateEditPermissionsWithDelegation = async ({
+export const simulateEditPermissionsWithDashboard = async ({
   publicClient,
   delegationAddress,
   account,

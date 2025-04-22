@@ -1,28 +1,29 @@
 import { FC } from 'react';
-
-import { usePermissionsSettingsData } from 'features/settings/permissions/contexts';
+import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
 export const PermissionsAction: FC = () => {
-  const { handleCancelSubmit } = usePermissionsSettingsData();
-
-  const handleSetPrevStep = () => {
-    handleCancelSubmit();
-  };
-
-  const handleSetNextStep = () => {
-    handleCancelSubmit();
-  };
+  const {
+    reset,
+    formState: { isValid, isSubmitting, isSubmitted, isDirty },
+  } = useFormContext();
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
+  const isClearDisabled = !isDirty;
 
   return (
     <Container>
-      <Button onClick={handleSetPrevStep} variant="outlined" fullwidth>
+      <Button
+        onClick={() => reset()}
+        disabled={isClearDisabled}
+        variant="outlined"
+        fullwidth
+      >
         Clear changes
       </Button>
-      <Button onClick={handleSetNextStep} fullwidth>
-        Submit transactions
+      <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+        {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
       </Button>
     </Container>
   );

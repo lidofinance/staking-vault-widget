@@ -1,13 +1,6 @@
-import { z, ZodError, ZodSchema } from 'zod';
+import { z, ZodSchema } from 'zod';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
-
-export const isZodError = (error: unknown): error is ZodError => {
-  if (error instanceof ZodError) {
-    return Array.isArray(error?.errors);
-  }
-
-  return false;
-};
+import { isZodError } from 'utils/errors';
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],

@@ -1,4 +1,5 @@
 export {
-  PermissionsSettingsProvider,
-  usePermissionsSettingsData,
-} from './permission-provider';
+  PermissionsDataProvider,
+  usePermissionsData,
+} from './permissions-data-provider';
+export { PermissionsFormProvider } from './permissions-form-provider';

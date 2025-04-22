@@ -67,20 +67,6 @@ export const VOLUNTARY_DISCONNECT_ROLE = keccak256(
 );
 
 /**
- * @notice Permission for withdrawing disproven validator predeposit from PDG
- */
-export const PDG_WITHDRAWAL_ROLE = keccak256(
-  toHex('vaults.Permissions.PDGWithdrawal'),
-);
-
-/**
- * @notice Permission for assets recovery
- */
-export const ASSET_RECOVERY_ROLE = keccak256(
-  toHex('vaults.Permissions.AssetRecovery'),
-);
-
-/**
  * @notice Node operator manager role:
  * - confirms confirm expiry;
  * - confirms ownership transfer;
@@ -96,6 +82,78 @@ export const NODE_OPERATOR_MANAGER_ROLE = keccak256(
  */
 export const NODE_OPERATOR_FEE_CLAIM_ROLE = keccak256(
   toHex('vaults.Delegation.NodeOperatorFeeClaimRole'),
+);
+
+export const RECOVER_ASSETS_ROLE = keccak256(
+  toHex('vaults.Dashboard.RecoverAssets'),
+);
+
+/**
+ * @notice Adjusts rewards to allow fee correction during side deposits or consolidations
+ */
+export const NODE_OPERATOR_REWARDS_ADJUST_ROLE = keccak256(
+  toHex('vaults.NodeOperatorFee.RewardsAdjustRole'),
+);
+
+/**
+ * @notice Permission for getting compensation for disproven validator predeposit from PDG
+ */
+export const PDG_COMPENSATE_PREDEPOSIT_ROLE = keccak256(
+  toHex('vaults.Permissions.PDGCompensatePredeposit'),
+);
+
+/**
+ * @notice Permission for proving valid vault validators unknown to the PDG
+ */
+export const PDG_PROVE_VALIDATOR_ROLE = keccak256(
+  toHex('vaults.Permissions.PDGProveValidator'),
+);
+
+/**
+ * @notice Permission for unguarnateed deposit to trusted validators
+ */
+export const UNGUARANTEED_BEACON_CHAIN_DEPOSIT_ROLE = keccak256(
+  toHex('vaults.Permissions.UnguaranteedBeaconChainDeposit'),
+);
+
+/**
+ * @dev Permission for deauthorizing Lido VaultHub from the StakingVault.
+ */
+export const LIDO_VAULTHUB_DEAUTHORIZATION_ROLE = keccak256(
+  toHex('vaults.Permissions.LidoVaultHubDeauthorization'),
+);
+
+/**
+ * @dev Permission for granting authorization to Lido VaultHub on the StakingVault.
+ */
+export const LIDO_VAULTHUB_AUTHORIZATION_ROLE = keccak256(
+  toHex('vaults.Permissions.LidoVaultHubAuthorization'),
+);
+
+/**
+ * @dev Permission for ossifying the StakingVault.
+ */
+export const OSSIFY_ROLE = keccak256(toHex('vaults.Permissions.Ossify'));
+
+/**
+ * @dev Permission for setting depositor on the StakingVault.
+ */
+export const SET_DEPOSITOR_ROLE = keccak256(
+  toHex('vaults.Permissions.SetDepositor'),
+);
+
+/**
+ * @dev Permission for resetting locked amount on the disconnected StakingVault.
+ */
+export const RESET_LOCKED_ROLE = keccak256(
+  toHex('vaults.Permissions.ResetLocked'),
+);
+
+/**
+ * @dev Permission for requesting change of tier on the OperatorGrid.
+ */
+export const REQUEST_TIER_CHANGE_ROLE = keccak256(
+  toHex('vaults.Permissions.RequestTierChange'),
 );
 
 /**
@@ -116,14 +174,20 @@ export const permissions = {
   REQUEST_VALIDATOR_EXIT_ROLE,
   TRIGGER_VALIDATOR_WITHDRAWAL_ROLE,
   VOLUNTARY_DISCONNECT_ROLE,
-  PDG_WITHDRAWAL_ROLE,
-  ASSET_RECOVERY_ROLE,
+  RECOVER_ASSETS_ROLE,
   NODE_OPERATOR_MANAGER_ROLE,
   NODE_OPERATOR_FEE_CLAIM_ROLE,
+  NODE_OPERATOR_REWARDS_ADJUST_ROLE,
+  PDG_COMPENSATE_PREDEPOSIT_ROLE,
+  PDG_PROVE_VALIDATOR_ROLE,
+  UNGUARANTEED_BEACON_CHAIN_DEPOSIT_ROLE,
+  LIDO_VAULTHUB_DEAUTHORIZATION_ROLE,
+  LIDO_VAULTHUB_AUTHORIZATION_ROLE,
+  OSSIFY_ROLE,
+  SET_DEPOSITOR_ROLE,
+  RESET_LOCKED_ROLE,
+  REQUEST_TIER_CHANGE_ROLE,
 };
 
-export type PERMISSION = keyof typeof permissions;
-export type EDITABLE_PERMISSIONS = keyof Omit<
-  typeof permissions,
-  'NODE_OPERATOR_MANAGER_ROLE' | 'ASSET_RECOVERY_ROLE' | 'PDG_WITHDRAWAL_ROLE'
->;
+export type EntirePermissionsType = typeof permissions;
+export type PERMISSION = keyof EntirePermissionsType;

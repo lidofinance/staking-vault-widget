@@ -1,5 +1,5 @@
 import { isAddress } from 'viem';
-import { z, ZodError, ZodSchema } from 'zod';
+import { z, ZodSchema } from 'zod';
 import {
   appendErrors,
   FieldError,
@@ -14,6 +14,7 @@ import {
 } from 'features/create-vault/types';
 import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from 'utils/ens';
+import { isZodError } from 'utils/errors';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';
@@ -56,14 +57,6 @@ export const createVaultSchema = z.object({
 });
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
-
-export const isZodError = (error: unknown): error is ZodError => {
-  if (error instanceof ZodError) {
-    return Array.isArray(error?.errors);
-  }
-
-  return false;
-};
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],

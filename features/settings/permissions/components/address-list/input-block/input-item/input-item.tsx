@@ -12,10 +12,12 @@ import { Input } from '@lidofinance/lido-ui';
 import { ButtonClose } from 'shared/components';
 import { InputWrapper } from './styles';
 
-import { VaultPermissions } from 'features/settings/permissions/types';
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
+import {
+  VaultPermissions,
+  PermissionsKeys,
+} from 'features/settings/permissions/types';
 
-type ArrayFormKey = `${EDITABLE_PERMISSIONS}.${number}.value`;
+type ArrayFormKey = `${PermissionsKeys}.${number}.value`;
 
 export interface InputItemProps {
   permission: string;

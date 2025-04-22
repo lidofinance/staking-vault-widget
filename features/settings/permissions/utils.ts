@@ -1,12 +1,13 @@
 import {
   EditPermissionsSchema,
   GrantRole,
+  PermissionsKeys,
 } from 'features/settings/permissions/types';
-import { EDITABLE_PERMISSIONS, permissions } from 'consts/roles';
+import { permissions } from 'consts/roles';
 import { Address } from 'viem';
 
 export const collectFormValuesToRpc = (formData: EditPermissionsSchema) => {
-  const keys = Object.keys(formData) as EDITABLE_PERMISSIONS[];
+  const keys = Object.keys(formData) as PermissionsKeys[];
 
   return keys.reduce((acc, key) => {
     const permissionHex = permissions[key];

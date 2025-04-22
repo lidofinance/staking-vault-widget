@@ -4,16 +4,16 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { AddressItem } from 'features/settings/permissions/components/address-list/address-item';
 import { Wrapper } from './styles';
 
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
+import { PermissionsKeys } from 'features/settings/permissions/types';
 
 export interface AddressBlockProps {
-  permission: EDITABLE_PERMISSIONS;
+  permission: PermissionsKeys;
 }
 
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
   const { control, watch } = useFormContext();
   const { remove } = useFieldArray({ control, name: permission });
-  const fieldsWatch = watch(permission) as EDITABLE_PERMISSIONS[];
+  const fieldsWatch = watch(permission) as PermissionsKeys[];
 
   const handleRemove = useCallback(
     (index: number) => {
@@ -22,7 +22,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
     [remove],
   );
 
-  if (fieldsWatch.length === 0) {
+  if (!fieldsWatch || fieldsWatch.length === 0) {
     return null;
   }
 

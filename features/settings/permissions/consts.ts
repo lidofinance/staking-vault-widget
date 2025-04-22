@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
-import { Address } from 'viem';
+
 import { PermissionsRoles } from './types';
 
 export enum PermissionToggleEnum {
@@ -42,6 +41,7 @@ const addressSchema = z
 export const editPermissionsSchema = z.object({
   FUND_ROLE: z.array(addressSchema).optional(),
   WITHDRAW_ROLE: z.array(addressSchema).optional(),
+  LOCK_ROLE: z.array(addressSchema).optional(),
   MINT_ROLE: z.array(addressSchema).optional(),
   BURN_ROLE: z.array(addressSchema).optional(),
   REBALANCE_ROLE: z.array(addressSchema).optional(),
@@ -50,25 +50,19 @@ export const editPermissionsSchema = z.object({
   REQUEST_VALIDATOR_EXIT_ROLE: z.array(addressSchema).optional(),
   TRIGGER_VALIDATOR_WITHDRAWAL_ROLE: z.array(addressSchema).optional(),
   VOLUNTARY_DISCONNECT_ROLE: z.array(addressSchema).optional(),
+  RECOVER_ASSETS_ROLE: z.array(addressSchema).optional(),
   NODE_OPERATOR_FEE_CLAIM_ROLE: z.array(addressSchema).optional(),
-  LOCK_ROLE: z.array(addressSchema).optional(),
+  NODE_OPERATOR_REWARDS_ADJUST_ROLE: z.array(addressSchema).optional(),
+  PDG_COMPENSATE_PREDEPOSIT_ROLE: z.array(addressSchema).optional(),
+  PDG_PROVE_VALIDATOR_ROLE: z.array(addressSchema).optional(),
+  UNGUARANTEED_BEACON_CHAIN_DEPOSIT_ROLE: z.array(addressSchema).optional(),
+  LIDO_VAULTHUB_DEAUTHORIZATION_ROLE: z.array(addressSchema).optional(),
+  LIDO_VAULTHUB_AUTHORIZATION_ROLE: z.array(addressSchema).optional(),
+  OSSIFY_ROLE: z.array(addressSchema).optional(),
+  SET_DEPOSITOR_ROLE: z.array(addressSchema).optional(),
+  RESET_LOCKED_ROLE: z.array(addressSchema).optional(),
+  REQUEST_TIER_CHANGE_ROLE: z.array(addressSchema).optional(),
 });
-
-export const defaultPermissionsValues: Record<EDITABLE_PERMISSIONS, Address[]> =
-  {
-    FUND_ROLE: [],
-    WITHDRAW_ROLE: [],
-    MINT_ROLE: [],
-    BURN_ROLE: [],
-    REBALANCE_ROLE: [],
-    PAUSE_BEACON_CHAIN_DEPOSITS_ROLE: [],
-    RESUME_BEACON_CHAIN_DEPOSITS_ROLE: [],
-    REQUEST_VALIDATOR_EXIT_ROLE: [],
-    TRIGGER_VALIDATOR_WITHDRAWAL_ROLE: [],
-    VOLUNTARY_DISCONNECT_ROLE: [],
-    NODE_OPERATOR_FEE_CLAIM_ROLE: [],
-    LOCK_ROLE: [],
-  };
 
 export const adminPermissionsList: PermissionsRoles[] = [
   {
@@ -130,6 +124,65 @@ export const adminPermissionsList: PermissionsRoles[] = [
     title: 'Lock eth on vault',
     tooltip: 'Allows to lock eth on vault',
   },
+  {
+    role: 'RECOVER_ASSETS_ROLE',
+    title: 'Withdraw tokens wrongly transferred to the Dashboard contract.',
+    tooltip:
+      'Transfer tokens away that were wrongly transferred to the Dashboard contract.',
+  },
+  {
+    role: 'PDG_COMPENSATE_PREDEPOSIT_ROLE',
+    title: 'Compensate 1 ETH for disproven validator.',
+    tooltip:
+      'In a case of disproven pre-deposit on validator, transfer unlocked 1 ETH from PDG bond to the specified address.',
+  },
+  {
+    role: 'PDG_PROVE_VALIDATOR_ROLE',
+    title: 'Prove the validator to PDG',
+    tooltip:
+      'If validator exists on the Beacon Chain, user can prove this validator to PDG.',
+  },
+  {
+    role: 'UNGUARANTEED_BEACON_CHAIN_DEPOSIT_ROLE',
+    title: 'Unguaranteed deposit to validators',
+    tooltip:
+      'Direct and unguaranteed deposit ETH from the vault balance to validators. This deposit is performed outside Pre-Deposit Guarantee contract so the operation is vulnerable.',
+  },
+  {
+    role: 'LIDO_VAULTHUB_DEAUTHORIZATION_ROLE',
+    title: 'De-authorize for connection to Lido Vault Hub.',
+    tooltip: 'De-authorize the stVault to be connected to the Lido Vault Hub.',
+  },
+  {
+    role: 'LIDO_VAULTHUB_AUTHORIZATION_ROLE',
+    title: 'Authorize for connection to Lido Vault Hub.',
+    tooltip: 'Authorize the stVault to be connected to the Lido Vault Hub.',
+  },
+  {
+    role: 'OSSIFY_ROLE',
+    title:
+      'Ossify the stVault: irreversible forbid connection to the Lido Vault Hub.',
+    tooltip:
+      'Permission for ossifying the stVault: irreversible forbid to be connected to the Lido Vault Hub.',
+  },
+  {
+    role: 'SET_DEPOSITOR_ROLE',
+    title:
+      'Set depositor for the stVault disconnected from the Lido Vault Hub.',
+    tooltip:
+      'Set depositor for the stVault disconnected from the Lido Vault Hub.',
+  },
+  {
+    role: 'RESET_LOCKED_ROLE',
+    title: 'Reset locked amount of ETH on the disconnected stVault',
+    tooltip:
+      'Permission for resetting locked amount on the disconnected stVault.',
+  },
+  {
+    role: 'REQUEST_TIER_CHANGE_ROLE',
+    title: 'Request to change the stVault tier',
+    tooltip: 'Allows requesting Node Operator to change the stVaults tier.',
+  },
 ];
 
 export const noPermissionsList: PermissionsRoles[] = [
@@ -138,5 +191,11 @@ export const noPermissionsList: PermissionsRoles[] = [
     title: 'ClaimPage Node Operator’s Accumulated Fees',
     tooltip:
       'Allows claiming accumulated Node Operator’s fee. Claimer provides an address to receive fees.',
+  },
+  {
+    role: 'NODE_OPERATOR_REWARDS_ADJUST_ROLE',
+    title: 'Adjust rewards on the validators',
+    tooltip:
+      'ETH added outside stVaults mechanisms is treated as rewards and subject to Node Operator Fee unless marked as deposit.',
   },
 ];

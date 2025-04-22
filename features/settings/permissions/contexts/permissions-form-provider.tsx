@@ -1,0 +1,86 @@
+import { FC, PropsWithChildren, useMemo, useCallback } from 'react';
+import { useForm, FormProvider } from 'react-hook-form';
+import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import { useDappStatus } from 'modules/web3';
+import { usePublicClient } from 'wagmi';
+
+import {
+  FormController,
+  FormControllerContext,
+  FormControllerContextValueType,
+} from 'shared/hook-form/form-controller';
+
+import { editVaultValidator } from 'features/settings/permissions/validation';
+import { editPermissionsSchema } from 'features/settings/permissions/consts';
+import { EditPermissionsSchema } from 'features/settings/permissions/types';
+import {
+  useEditPermissionsWithDashboard,
+  simulateEditPermissionsWithDashboard,
+} from 'features/settings/permissions/hooks';
+import { useVaultInfo } from 'features/overview/contexts';
+import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
+
+export const PermissionsFormProvider: FC<PropsWithChildren> = ({
+  children,
+}) => {
+  const publicClient = usePublicClient();
+  const { address } = useDappStatus();
+  const { activeVault } = useVaultInfo();
+  const { callEditPermissions } = useEditPermissionsWithDashboard();
+
+  const formObject = useForm<EditPermissionsSchema>({
+    resolver: editVaultValidator(editPermissionsSchema),
+    mode: 'all',
+  });
+
+  const onSubmit = useCallback(
+    async (data: EditPermissionsSchema): Promise<boolean> => {
+      // TODO: use modal from components/tx-modal
+      const payload = collectFormValuesToRpc(data);
+      if (activeVault?.owner && publicClient && address) {
+        try {
+          await simulateEditPermissionsWithDashboard({
+            permissions: payload,
+            publicClient: publicClient,
+            delegationAddress: activeVault?.owner,
+            account: address,
+          });
+        } catch (err) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+
+      try {
+        await callEditPermissions(payload);
+        return true;
+      } catch (err) {
+        return false;
+      }
+
+      return true;
+    },
+    [callEditPermissions, address, publicClient, activeVault?.owner],
+  );
+
+  const { retryEvent, retryFire } = useFormControllerRetry();
+  const formControllerValue: FormControllerContextValueType<EditPermissionsSchema> =
+    useMemo(
+      () => ({
+        onSubmit,
+        retryEvent,
+        retryFire,
+        onReset: formObject.reset,
+      }),
+      [retryFire, retryEvent, onSubmit, formObject.reset],
+    );
+
+  return (
+    <FormProvider {...formObject}>
+      <FormControllerContext.Provider value={formControllerValue}>
+        <FormController>{children}</FormController>
+      </FormControllerContext.Provider>
+    </FormProvider>
+  );
+};

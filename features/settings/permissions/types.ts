@@ -5,17 +5,16 @@ import {
   ToggleValue,
 } from './consts';
 import { z } from 'zod';
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
+import { EntirePermissionsType } from 'consts/roles';
 
 export type SubmitPermissionsStep =
   | keyof typeof SubmitPermissionsStepEnum
   | undefined;
 
 export type PermissionsSettingsContextValue = {
-  submitStep: PermissionsSubmittingInfo;
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
-  handleCancelSubmit: () => void;
+  rolesList: Address[][] | undefined;
 };
 
 export type PermissionsSubmittingInfo = {
@@ -32,13 +31,14 @@ export type GrantRole = {
 };
 
 export type PermissionsRoles = {
-  role: EDITABLE_PERMISSIONS;
+  role: PermissionsKeys;
   title: string;
   tooltip: string;
 };
 
 type VaultPermissionInput = { value: string };
-export type VaultPermissions = Record<
-  EDITABLE_PERMISSIONS,
-  VaultPermissionInput[]
+export type PermissionsKeys = keyof Omit<
+  EntirePermissionsType,
+  'NODE_OPERATOR_MANAGER_ROLE'
 >;
+export type VaultPermissions = Record<PermissionsKeys, VaultPermissionInput[]>;
