@@ -5,7 +5,7 @@ import {
   ToggleValue,
 } from './consts';
 import { z } from 'zod';
-import { EntirePermissionsType } from 'consts/roles';
+import { EntirePermissionsType, PERMISSION } from 'consts/roles';
 
 export type SubmitPermissionsStep =
   | keyof typeof SubmitPermissionsStepEnum
@@ -14,7 +14,12 @@ export type SubmitPermissionsStep =
 export type PermissionsSettingsContextValue = {
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
-  rolesList: Address[][] | undefined;
+  rolesList: PermissionAccounts[];
+};
+
+export type PermissionAccounts = {
+  permissionName: PERMISSION;
+  addressList: Address[];
 };
 
 export type PermissionsSubmittingInfo = {
@@ -42,3 +47,15 @@ export type PermissionsKeys = keyof Omit<
   'NODE_OPERATOR_MANAGER_ROLE'
 >;
 export type VaultPermissions = Record<PermissionsKeys, VaultPermissionInput[]>;
+
+export type FieldSchema =
+  | {
+      group: 'eventual';
+      state: 'restore' | 'grant';
+      account: Address;
+    }
+  | {
+      group: 'settled';
+      state: 'remove' | 'display';
+      account: Address;
+    };

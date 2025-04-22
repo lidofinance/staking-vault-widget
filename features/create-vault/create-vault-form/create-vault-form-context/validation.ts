@@ -17,6 +17,7 @@ import { isValidEns } from 'utils/ens';
 import { isZodError } from 'utils/errors';
 import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
 import invariant from 'tiny-invariant';
+import { VaultFactoryArgs } from 'types/vault';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';

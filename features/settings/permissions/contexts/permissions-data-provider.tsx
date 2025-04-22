@@ -7,7 +7,6 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { Address } from 'viem';
 
 import invariant from 'tiny-invariant';
 
@@ -50,7 +49,7 @@ export const PermissionsDataProvider: FC<PropsWithChildren> = ({
     () => ({
       permissionsView,
       handleSetPermissionsView,
-      rolesList: data?.map((item) => item.result as Address[]),
+      rolesList: data,
     }),
     [permissionsView, handleSetPermissionsView, data],
   );

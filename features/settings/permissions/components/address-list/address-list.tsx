@@ -1,7 +1,9 @@
 import { FC, memo } from 'react';
 
-import { AddressBlock } from 'features/settings/permissions/components/address-list/address-block';
-import { InputBlock } from 'features/settings/permissions/components/address-list/input-block';
+import {
+  AddressBlock,
+  InputBlock,
+} from 'features/settings/permissions/components';
 import { AddressListWrapper } from './styles';
 
 import { PermissionsKeys } from 'features/settings/permissions/types';

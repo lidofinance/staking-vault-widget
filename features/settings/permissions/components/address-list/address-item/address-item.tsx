@@ -1,5 +1,4 @@
-import { FC, useState, useRef } from 'react';
-import { Address } from 'viem';
+import { FC, useState, useRef, useMemo, MouseEvent } from 'react';
 
 import { Popover, Copy, External, ToastSuccess } from '@lidofinance/lido-ui';
 import {
@@ -11,28 +10,64 @@ import {
 import { ActionGroup, ActionWrapper, PopoverContent } from './styles';
 
 import { truncateAddress } from 'utils/truncate-address';
+import {
+  FieldSchema,
+  PermissionsKeys,
+} from 'features/settings/permissions/types';
+import { useFormContext } from 'react-hook-form';
 
 export interface AddressItemProps {
   index: number;
-  address: string;
-  remove: (index: number) => void;
+  field: FieldSchema;
+  permission: PermissionsKeys;
 }
 
 export const AddressItem: FC<AddressItemProps> = ({
   index,
-  address,
-  remove,
+  field,
+  permission,
 }) => {
+  const { setValue } = useFormContext();
+  const { account, state, group } = field;
   const [showPopover, showPopoverVisibility] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
+  const isTextCrossed = useMemo(
+    () => ['restore', 'remove'].includes(state),
+    [state],
+  );
+  const bgColor = useMemo(() => {
+    if (isTextCrossed) return 'error';
+    if (state === 'grant') return 'success';
+    return 'default';
+  }, [isTextCrossed, state]);
+
+  const handleUpdateFormItem = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    let newState;
+    if (group === 'settled') {
+      newState = state === 'display' ? 'remove' : 'display';
+    } else {
+      newState = state === 'grant' ? 'restore' : 'grant';
+    }
+
+    setValue(`${permission}.${index}`, {
+      account,
+      group,
+      state: newState,
+    });
+  };
 
   const handleShowPopover = () => {
     showPopoverVisibility(true);
   };
 
   const handleCopyLink = () => {
-    void navigator.clipboard.writeText(address);
-    ToastSuccess(`Address ${truncateAddress({ address })} have been copied`);
+    void navigator.clipboard.writeText(account);
+    ToastSuccess(
+      `Address ${truncateAddress({ address: account })} have been copied`,
+    );
   };
 
   const handleClosePopover = () => {
@@ -43,12 +78,11 @@ export const AddressItem: FC<AddressItemProps> = ({
     <>
       <AddressBadge
         ref={badgeRef}
-        address={address}
-        onRemove={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          remove(index);
-        }}
+        address={account}
+        crossedText={isTextCrossed}
+        bgColor={bgColor}
+        onRemove={handleUpdateFormItem}
+        onRestore={handleUpdateFormItem}
         onClick={handleShowPopover}
       />
       {!!badgeRef?.current && (
@@ -63,7 +97,7 @@ export const AddressItem: FC<AddressItemProps> = ({
           open={showPopover}
         >
           <PopoverContent>
-            <AddressBadge address={address} symbols={21} />
+            <AddressBadge address={account} symbols={21} />
             <ActionGroup>
               <ActionWrapper>
                 <Copy fill="var(--lido-color-primary)" />
@@ -71,7 +105,7 @@ export const AddressItem: FC<AddressItemProps> = ({
               </ActionWrapper>
               <ActionWrapper>
                 <External fill="var(--lido-color-primary)" />
-                <AddressLinkEtherscan address={address as Address} />
+                <AddressLinkEtherscan address={account} />
               </ActionWrapper>
             </ActionGroup>
           </PopoverContent>

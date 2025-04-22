@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
 
 import { PermissionsRoles } from './types';
+import { Address } from 'viem';
 
 export enum PermissionToggleEnum {
   byPermission = 'by_permission',
@@ -34,9 +35,23 @@ export type ToggleValue =
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const validateAddress = (value: string) => isValidAnyAddress(value);
-const addressSchema = z
+const accountSchema = z
   .string()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE });
+  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .transform((value) => value as Address);
+
+const addressSchema = z.discriminatedUnion('group', [
+  z.object({
+    group: z.literal('eventual'),
+    state: z.union([z.literal('restore'), z.literal('grant')]),
+    account: accountSchema,
+  }),
+  z.object({
+    group: z.literal('settled'),
+    state: z.union([z.literal('remove'), z.literal('display')]),
+    account: accountSchema,
+  }),
+]);
 
 export const editPermissionsSchema = z.object({
   FUND_ROLE: z.array(addressSchema).optional(),

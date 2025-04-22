@@ -175,7 +175,6 @@ export const permissions = {
   TRIGGER_VALIDATOR_WITHDRAWAL_ROLE,
   VOLUNTARY_DISCONNECT_ROLE,
   RECOVER_ASSETS_ROLE,
-  NODE_OPERATOR_MANAGER_ROLE,
   NODE_OPERATOR_FEE_CLAIM_ROLE,
   NODE_OPERATOR_REWARDS_ADJUST_ROLE,
   PDG_COMPENSATE_PREDEPOSIT_ROLE,
@@ -189,5 +188,6 @@ export const permissions = {
   REQUEST_TIER_CHANGE_ROLE,
 };
 
+export const permissionsKeys = Object.keys(permissions) as PERMISSION[];
 export type EntirePermissionsType = typeof permissions;
 export type PERMISSION = keyof EntirePermissionsType;

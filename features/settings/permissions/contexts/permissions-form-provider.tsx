@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useMemo, useCallback } from 'react';
+import { FC, PropsWithChildren, useMemo, useCallback, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useDappStatus } from 'modules/web3';
@@ -12,13 +12,17 @@ import {
 
 import { editVaultValidator } from 'features/settings/permissions/validation';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
-import { EditPermissionsSchema } from 'features/settings/permissions/types';
+import {
+  EditPermissionsSchema,
+  FieldSchema,
+} from 'features/settings/permissions/types';
 import {
   useEditPermissionsWithDashboard,
   simulateEditPermissionsWithDashboard,
 } from 'features/settings/permissions/hooks';
 import { useVaultInfo } from 'features/overview/contexts';
 import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
+import { usePermissionsData } from './permissions-data-provider';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
@@ -27,11 +31,28 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { address } = useDappStatus();
   const { activeVault } = useVaultInfo();
   const { callEditPermissions } = useEditPermissionsWithDashboard();
+  const { rolesList } = usePermissionsData();
 
   const formObject = useForm<EditPermissionsSchema>({
     resolver: editVaultValidator(editPermissionsSchema),
     mode: 'all',
   });
+
+  useEffect(() => {
+    if (rolesList.length > 0) {
+      rolesList.forEach((role) => {
+        const values = role.addressList.map(
+          (address) =>
+            ({
+              account: address,
+              group: 'settled',
+              state: 'display',
+            }) as FieldSchema,
+        );
+        formObject.setValue(`${role.permissionName}`, values);
+      });
+    }
+  }, [formObject, rolesList]);
 
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
