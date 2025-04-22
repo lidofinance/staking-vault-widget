@@ -41,7 +41,6 @@ const roleKeys = [
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
   nodeOperatorManager: addressSchema,
-  assetRecoverer: addressSchema,
   nodeOperatorFeeBP: z
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
     .min(0.001, INVALID_NUMBER_MIN_MESSAGE)

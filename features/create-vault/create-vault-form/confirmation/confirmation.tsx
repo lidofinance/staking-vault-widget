@@ -27,7 +27,7 @@ const confirmationList: ConfirmationVaultInfoProps[] = [
     })),
   },
   {
-    title: 'Vault Manager Permissions',
+    title: 'Node Operator Manager Permissions',
     list: NO_MANAGER_PERMISSION_LIST.map((p) => ({
       title: p.title,
       name: `roles.${p.role}`,

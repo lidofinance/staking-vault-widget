@@ -12,7 +12,7 @@ export interface AddressBlockProps {
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
   const { control, watch } = useFormContext();
   const { remove } = useFieldArray({ control, name: permission });
-  const fieldsWatch = watch(`permission`) as FieldName[];
+  const fieldsWatch = watch(`roles.${permission}`) as FieldName[];
 
   const handleRemove = useCallback(
     (index: number) => {

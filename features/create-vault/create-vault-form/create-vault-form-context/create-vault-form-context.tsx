@@ -90,7 +90,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const formObject = useForm<CreateVaultSchema>({
     defaultValues: {
       nodeOperator: '',
-      assetRecoverer: '',
       nodeOperatorManager: '',
       nodeOperatorFeeBP: 5,
       curatorFeeBP: 5,

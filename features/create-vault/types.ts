@@ -27,7 +27,7 @@ export type SubmittingInfo = {
   tx?: Hash;
 };
 
-export type FieldName = MainSettingsKeys & keyof typeof VAULTS_OWNER_ROLES_MAP;
+export type FieldName = MainSettingsKeys | keyof typeof VAULTS_OWNER_ROLES_MAP;
 
 export type CreateVaultType = {
   defaultAdmin: string;
