@@ -41,6 +41,16 @@ export type CreateVaultType = {
   };
 };
 
+export type MainSettingsEntryType = {
+  name: MainSettingsKeys;
+  dataType: InputDataType;
+  title: string;
+  label: string;
+  notes?: string;
+  type?: string;
+  afterText?: string;
+};
+
 export type VaultMainSettingsType = Omit<CreateVaultType, 'roles'> & {
   confirmMainSettings: boolean;
 };
@@ -53,6 +63,12 @@ export type PermissionKeys =
 
 export type VaultPermissionsType = {
   [K in PermissionKeys]: { value: string }[];
+};
+
+export type PermissionsRoles = {
+  role: PermissionKeys;
+  title: string;
+  tooltip: string;
 };
 
 export type FieldConfig<T extends FieldName> = {
