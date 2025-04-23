@@ -17,8 +17,4 @@ export const Button = styled.button`
   outline: none;
   box-shadow: none;
   appearance: none;
-
-  & svg {
-    fill: var(--lido-color-text);
-  }
 `;

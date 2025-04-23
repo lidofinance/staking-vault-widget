@@ -17,7 +17,6 @@ import {
   IPFSInfoBoxOnlyDesktopWrapper,
 } from '../styles';
 
-import { HeaderSettingsButton } from './header-settings-button';
 import { ThemeTogglerStyled } from './styles';
 
 const HeaderWallet: FC = () => {
@@ -52,7 +51,6 @@ const HeaderWallet: FC = () => {
       ) : (
         <Connect size="sm" />
       )}
-      <HeaderSettingsButton />
       {!queryTheme && <ThemeTogglerStyled data-testid="themeToggler" />}
       {config.ipfsMode && (
         <IPFSInfoBoxOnlyDesktopWrapper>

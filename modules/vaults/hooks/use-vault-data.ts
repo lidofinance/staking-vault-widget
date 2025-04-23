@@ -51,12 +51,18 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
         withdrawableEther,
         nodeOperatorFeeBP,
         totalMintableShares,
+        defaultAdmins,
+        nodeOperatorManagers,
+        confirmExpiry,
       ] = await Promise.all([
         delegationContract.read.totalValue(),
         delegationContract.read.nodeOperatorUnclaimedFee(),
         delegationContract.read.withdrawableEther(),
         delegationContract.read.nodeOperatorFeeBP(),
         delegationContract.read.totalMintingCapacity(),
+        delegationContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
+        delegationContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
+        delegationContract.read.getConfirmExpiry(),
       ]);
 
       const [mintedEth, mintableEth, ethLimit] = await Promise.all([
@@ -86,6 +92,9 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
         owner,
         balance,
         nodeOperatorFeeBP,
+        defaultAdmins,
+        nodeOperatorManagers,
+        confirmExpiry,
         ...vaultHubSocket,
       };
     },
