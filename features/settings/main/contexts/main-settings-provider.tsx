@@ -27,9 +27,9 @@ import {
   MainSettingsContextValue,
   MainSettingsSubmittingInfo,
 } from 'features/settings/main/types';
-import { editMainSettingsValidator } from 'features/settings/main/validation';
 import { useEditMainSettingsWithDelegation } from 'features/settings/main/hooks';
-import { useVaultInfo } from '../../../overview/contexts';
+import { useVaultInfo } from 'features/overview/contexts';
+import { validateFormWithZod } from 'utils/validate-form-value';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
@@ -74,7 +74,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       confirmExpiry: [],
       defaultAdmin: [],
     },
-    resolver: editMainSettingsValidator(editMainSettingsSchema),
+    resolver: validateFormWithZod(editMainSettingsSchema),
     mode: 'all',
   });
 

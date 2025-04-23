@@ -43,15 +43,16 @@ export const PermissionsDataProvider: FC<PropsWithChildren> = ({
   }, []);
 
   // TODO: check data after Hoodi migration
-  const { data } = useVaultPermissionsRoles();
+  const { data, refetch } = useVaultPermissionsRoles();
 
   const editPermissionsData = useMemo(
     () => ({
       permissionsView,
       handleSetPermissionsView,
       rolesList: data,
+      refetch,
     }),
-    [permissionsView, handleSetPermissionsView, data],
+    [permissionsView, handleSetPermissionsView, data, refetch],
   );
 
   return (

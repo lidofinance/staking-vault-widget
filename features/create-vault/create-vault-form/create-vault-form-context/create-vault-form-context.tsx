@@ -25,12 +25,8 @@ import {
   CreateVaultStep,
   SubmittingInfo,
 } from 'features/create-vault/types';
-import {
-  createVaultFormValidator,
-  createVaultSchema,
-  CreateVaultSchema,
-} from './validation';
-
+import { createVaultSchema, CreateVaultSchema } from './validation';
+import { validateFormWithZod } from 'utils/validate-form-value';
 import {
   ToggleValue,
   PermissionToggleEnum,
@@ -96,7 +92,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       defaultAdmin: '',
       roles: {},
     },
-    resolver: createVaultFormValidator(createVaultSchema),
+    resolver: validateFormWithZod(createVaultSchema),
     mode: 'all',
   });
 

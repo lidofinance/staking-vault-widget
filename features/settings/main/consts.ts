@@ -1,7 +1,12 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
 import { MainSettingsOverview } from './types';
-import { MAX_CONFIRM_EXPIRY, MIN_CONFIRM_EXPIRY } from 'consts/delegation';
+import {
+  MIN_FEE_VALUE,
+  MAX_FEE_VALUE,
+  MAX_CONFIRM_EXPIRY,
+  MIN_CONFIRM_EXPIRY,
+} from 'modules/vaults';
 
 export enum SubmittingMainFormStepsEnum {
   edit = 'edit',
@@ -14,10 +19,10 @@ export enum SubmittingMainFormStepsEnum {
 }
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
-const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';
-const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
-const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = 'Must be 24 or above';
-const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 720 or less';
+const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
+const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
+const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
+const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
 const addressSchema = z
@@ -30,8 +35,8 @@ export const editMainSettingsSchema = z.object({
     z.object({
       value: z.coerce
         .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-        .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
-        .max(99, INVALID_NUMBER_MAX_MESSAGE),
+        .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+        .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
     }),
   ),
   confirmExpiry: z.array(

@@ -1,11 +1,6 @@
 import { Address, isAddress } from 'viem';
-import { z, ZodSchema } from 'zod';
-import {
-  appendErrors,
-  FieldError,
-  Resolver,
-  UseFormGetValues,
-} from 'react-hook-form';
+import { z } from 'zod';
+import { Resolver, UseFormGetValues } from 'react-hook-form';
 import {
   MainSettingsKeys,
   PermissionKeys,
@@ -14,15 +9,22 @@ import {
 } from 'features/create-vault/types';
 import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from 'utils/ens';
-import { isZodError } from 'utils/errors';
-import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
+import {
+  MIN_FEE_VALUE,
+  MAX_FEE_VALUE,
+  VAULTS_NO_ROLES_MAP,
+  VAULTS_OWNER_ROLES_MAP,
+  MIN_CONFIRM_EXPIRY,
+  MAX_CONFIRM_EXPIRY,
+} from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { VaultFactoryArgs } from 'types/vault';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
-const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';
-const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
-const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 720 or less';
+const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
+const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
+const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
+const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_MESSAGE = 'Only number is valid';
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
@@ -42,12 +44,12 @@ export const createVaultSchema = z.object({
   nodeOperatorManager: addressSchema,
   nodeOperatorFeeBP: z
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(0.01, INVALID_NUMBER_MIN_MESSAGE)
-    .max(99, INVALID_NUMBER_MAX_MESSAGE),
+    .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+    .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
   confirmExpiry: z.coerce
     .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(1, INVALID_NUMBER_MIN_MESSAGE)
-    .max(720, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+    .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_MIN_MESSAGE)
+    .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   defaultAdmin: addressSchema,
   roles: z.object(
     Object.fromEntries(
@@ -59,80 +61,6 @@ export const createVaultSchema = z.object({
 });
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
-
-export const parseZodErrorSchema = (
-  zodErrors: z.ZodIssue[],
-  validateAllFieldCriteria: boolean,
-) => {
-  const errors: Record<string, FieldError> = {};
-  for (const error of zodErrors) {
-    const { code, message, path } = error;
-    const _path = path.join('.');
-
-    if (!errors[_path]) {
-      if ('unionErrors' in error) {
-        const unionError = error.unionErrors[0].errors[0];
-
-        errors[_path] = {
-          message: unionError.message,
-          type: unionError.code,
-        };
-      } else {
-        errors[_path] = { message, type: code };
-      }
-    }
-
-    if ('unionErrors' in error) {
-      error.unionErrors.forEach((unionError) =>
-        unionError.errors.forEach((e) => zodErrors.push(e)),
-      );
-    }
-
-    if (validateAllFieldCriteria) {
-      const types = errors[_path].types;
-      const messages = types && types[error.code];
-
-      errors[_path] = appendErrors(
-        _path,
-        validateAllFieldCriteria,
-        errors,
-        code,
-        messages
-          ? ([] as string[]).concat(messages as string[], error.message)
-          : error.message,
-      ) as FieldError;
-    }
-  }
-
-  return errors;
-};
-
-export const createVaultFormValidator = <T extends ZodSchema>(
-  schema: T,
-): Resolver<z.infer<T>> => {
-  return async (values: z.infer<T>) => {
-    try {
-      const output = schema.parse(values);
-      return {
-        values: output,
-        errors: {},
-      };
-    } catch (err: unknown) {
-      if (isZodError(err)) {
-        const errors = err.errors;
-        return {
-          values,
-          errors: parseZodErrorSchema(errors, true),
-        };
-      }
-
-      return {
-        values: values,
-        errors: {},
-      };
-    }
-  };
-};
 
 const JOINT_ROLE_MAP = { ...VAULTS_OWNER_ROLES_MAP, ...VAULTS_NO_ROLES_MAP };
 
@@ -238,11 +166,11 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
 
     if (typeof payload === 'number') {
       if (key === 'nodeOperatorFeeBP') {
-        if (payload < 0.01) {
+        if (payload < MIN_FEE_VALUE) {
           errors[key] = {
             message: INVALID_NUMBER_DATA_MESSAGE,
           };
-        } else if (payload > 99) {
+        } else if (payload > MAX_FEE_VALUE) {
           errors[key] = {
             message: INVALID_NUMBER_MAX_MESSAGE,
           };
@@ -250,13 +178,13 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
       }
 
       if (key === 'confirmExpiry') {
-        if (payload < 1) {
+        if (payload < MIN_CONFIRM_EXPIRY) {
           errors[key] = {
-            message: INVALID_NUMBER_DATA_MESSAGE,
+            message: INVALID_NUMBER_EXPIRY_MIN_MESSAGE,
           };
         }
 
-        if (payload > 720) {
+        if (payload > MAX_CONFIRM_EXPIRY) {
           errors[key] = {
             message: INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
           };

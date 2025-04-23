@@ -9,8 +9,7 @@ import {
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-
-import { editVaultValidator } from 'features/settings/permissions/validation';
+import { validateFormWithZod } from 'utils/validate-form-value';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
 import {
   EditPermissionsSchema,
@@ -31,10 +30,10 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { address } = useDappStatus();
   const { activeVault } = useVaultInfo();
   const { callEditPermissions } = useEditPermissionsWithDashboard();
-  const { rolesList } = usePermissionsData();
+  const { rolesList, refetch } = usePermissionsData();
 
   const formObject = useForm<EditPermissionsSchema>({
-    resolver: editVaultValidator(editPermissionsSchema),
+    resolver: validateFormWithZod(editPermissionsSchema),
     mode: 'all',
   });
 
@@ -75,6 +74,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
       try {
         await callEditPermissions(payload);
+        refetch();
         return true;
       } catch (err) {
         return false;
@@ -82,7 +82,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
       return true;
     },
-    [callEditPermissions, address, publicClient, activeVault?.owner],
+    [callEditPermissions, address, publicClient, activeVault?.owner, refetch],
   );
 
   const { retryEvent, retryFire } = useFormControllerRetry();

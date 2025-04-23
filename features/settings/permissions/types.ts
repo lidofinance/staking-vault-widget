@@ -15,6 +15,7 @@ export type PermissionsSettingsContextValue = {
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
   rolesList: PermissionAccounts[];
+  refetch: () => void;
 };
 
 export type PermissionAccounts = {
