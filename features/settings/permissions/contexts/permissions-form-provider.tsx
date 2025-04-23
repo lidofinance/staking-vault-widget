@@ -79,8 +79,6 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       } catch (err) {
         return false;
       }
-
-      return true;
     },
     [callEditPermissions, address, publicClient, activeVault?.owner, refetch],
   );
