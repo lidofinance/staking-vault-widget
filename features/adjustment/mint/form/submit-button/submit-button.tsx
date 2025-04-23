@@ -1,4 +1,4 @@
-import { Button } from '@lidofinance/lido-ui';
+import { PermissionedSubmitButton } from 'modules/vaults/components';
 import { useFormContext } from 'react-hook-form';
 
 export const SubmitButton = () => {
@@ -8,8 +8,12 @@ export const SubmitButton = () => {
   const disabled = isSubmitting && !isValid;
 
   return (
-    <Button type="submit" disabled={disabled}>
+    <PermissionedSubmitButton
+      dashboardRole="minter"
+      type="submit"
+      disabled={disabled}
+    >
       Mint
-    </Button>
+    </PermissionedSubmitButton>
   );
 };
