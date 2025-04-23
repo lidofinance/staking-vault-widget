@@ -1,12 +1,15 @@
-import { useVaults } from 'providers/vaults';
-
 import { Loader, Pagination } from '@lidofinance/lido-ui';
 import { VaultTable } from 'features/home/vault-table';
 import { AllVaultsWrapper } from './styles';
+import { useVaultsDataAll } from 'modules/vaults';
 
 export const AllVaults = () => {
-  const { vaults, isLoadingAllVaults, pagesCount, handlePagination } =
-    useVaults();
+  const {
+    vaults,
+    isLoading: isLoadingAllVaults,
+    pagesCount,
+    handlePagination,
+  } = useVaultsDataAll();
   const showPagination = !!pagesCount;
 
   return (

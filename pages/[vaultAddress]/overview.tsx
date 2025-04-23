@@ -2,7 +2,6 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { VaultProvider } from 'features/overview/contexts';
 import { OverviewPage } from 'features/overview';
 
 const Overview: FC = () => {
@@ -11,9 +10,7 @@ const Overview: FC = () => {
       <Head>
         <title>Vault Overview | Lido</title>
       </Head>
-      <VaultProvider>
-        <OverviewPage />
-      </VaultProvider>
+      <OverviewPage />
     </Layout>
   );
 };

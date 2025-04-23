@@ -1,16 +1,16 @@
 import { Text, Loader } from '@lidofinance/lido-ui';
 import { useFormContext } from 'react-hook-form';
 import { useSimulationFundWithDelegation } from 'features/supply/fund/hooks';
-import { useVaults } from 'providers/vaults';
 
 import { AmountInfo, InfoRow, StEthQuestion, Wrapper } from './styles';
+import { useVaultInfo } from 'features/overview/contexts';
 
 export const FeatureTxInfo = () => {
   // TODO: simulate tx, add tx price, convert ETH to stEth
   // TODO: add question info
   const { getValues } = useFormContext();
   const { token, amount } = getValues();
-  const { activeVault } = useVaults();
+  const { activeVault } = useVaultInfo();
   const { data, isLoading, isError } = useSimulationFundWithDelegation({
     token: token,
     address: activeVault?.address,
