@@ -47,6 +47,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { activeVault } = useVaultInfo();
+
   const {
     data: availableToClaim,
     isFetching: isLoadingClaimInfo,

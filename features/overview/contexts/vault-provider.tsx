@@ -2,88 +2,55 @@ import {
   FC,
   createContext,
   useContext,
-  useState,
-  useEffect,
-  useCallback,
   PropsWithChildren,
   useMemo,
 } from 'react';
 import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
-import { AppPaths } from 'consts/urls';
-import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
+import { useSingleVaultData } from 'modules/vaults/hooks/use-vault-data';
 import { VaultInfo } from 'types';
 
-interface VaultContextType {
-  vaults: VaultInfo[];
-  activeVault: VaultInfo | null;
-  setActiveVault: (address: Address) => void;
-  isLoadingVault: boolean;
-  isFetching: boolean;
+type VaultContextType = {
+  vaultAddress: Address | undefined;
+  activeVault?: VaultInfo;
+  isLoadingVault?: boolean;
+  error: Error | null;
   refetch: () => void;
-}
+};
 
 const VaultContext = createContext<VaultContextType | null>(null);
+VaultContext.displayName = 'VaultContext';
 
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [vaults, setVaults] = useState<VaultInfo[]>([]);
-  const [activeVault, setCurrentVault] = useState<VaultInfo | null>(null);
   const router = useRouter();
-  const { vaultAddress } = router.query as { vaultAddress: Address };
-  const addressPayload = useMemo(() => [vaultAddress], [vaultAddress]);
+  const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
+  const sanitizedVaultAddress = isAddress(vaultAddress)
+    ? vaultAddress
+    : undefined;
+  const query = useSingleVaultData(sanitizedVaultAddress);
 
-  const {
-    data: vaultInfo,
-    isFetching,
-    isLoading: isLoadingVault,
-    refetch,
-  } = useVaultData(addressPayload);
-
-  const setActiveVault = useCallback(
-    (address: Address) => {
-      if (!isAddress(address)) {
-        return;
-      }
-
-      const vault = vaults.find((vault) => vault.address === address);
-      if (vault) {
-        setCurrentVault(vault);
-      } else {
-        void router.replace(AppPaths.notFound);
-      }
-    },
-    [vaults, router],
-  );
-
-  useEffect(() => {
-    if (!activeVault && vaults.length > 0) {
-      setActiveVault(vaults[0].address);
-    }
-  }, [activeVault, vaults, setActiveVault]);
-
-  useEffect(() => {
-    if (vaultInfo && vaultInfo.length > 0 && !isFetching) {
-      setVaults((prevState) => {
-        return [...prevState, ...vaultInfo];
-      });
-    }
-  }, [vaultInfo, isFetching]);
-
-  const value = useMemo(
+  const contextValue = useMemo<VaultContextType>(
     () => ({
-      vaults,
-      activeVault,
-      setActiveVault,
-      isLoadingVault,
-      isFetching,
-      refetch,
+      vaultAddress: sanitizedVaultAddress,
+      activeVault: query.data,
+      isLoadingVault: query.isLoading,
+      error: query.error,
+      refetch: query.refetch,
     }),
-    [vaults, activeVault, setActiveVault, isLoadingVault, isFetching, refetch],
+    [
+      sanitizedVaultAddress,
+      query.data,
+      query.isLoading,
+      query.error,
+      query.refetch,
+    ],
   );
 
   return (
-    <VaultContext.Provider value={value}>{children}</VaultContext.Provider>
+    <VaultContext.Provider value={contextValue}>
+      {children}
+    </VaultContext.Provider>
   );
 };
 

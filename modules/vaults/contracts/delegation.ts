@@ -3,6 +3,7 @@ import { type Address, getContract, PublicClient, WalletClient } from 'viem';
 import { DelegationAbi } from 'abi/delegation';
 
 // TODO: move to lido-sdk
+// TOOD: rename to dashboard
 export const getDelegationContract = (
   address: Address,
   publicClient: PublicClient,

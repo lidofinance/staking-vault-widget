@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AppProps } from 'next/app';
 import 'nprogress/nprogress.css';
@@ -28,8 +27,6 @@ const App = (props: AppProps) => {
   );
 };
 
-const MemoApp = memo(App);
-
 const AppWrapper = (
   props: AppProps<{ ___prefetch_manifest___?: object }>,
 ): JSX.Element => {
@@ -50,7 +47,7 @@ const AppWrapper = (
         }}
       />
       <ToastContainer />
-      <MemoApp {...props} />
+      <App {...props} />
 
       <NoSsrWrapper>
         <CookiesTooltip privacyLink={`${config.rootOrigin}/privacy-notice`} />
