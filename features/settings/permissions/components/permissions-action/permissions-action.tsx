@@ -4,18 +4,38 @@ import { useFormContext } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
+import { PERMISSION } from 'consts/roles';
+import { FieldSchema } from 'features/settings/permissions/types';
+
 export const PermissionsAction: FC = () => {
   const {
-    reset,
+    getValues,
+    setValue,
     formState: { isValid, isSubmitting, isSubmitted, isDirty },
   } = useFormContext();
   const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
   const isClearDisabled = !isDirty;
 
+  const handleResetFields = () => {
+    const formValues = getValues();
+    const keys = Object.keys(formValues) as PERMISSION[];
+    keys.forEach((key) => {
+      const permissionList: FieldSchema[] = formValues[key];
+      const newList = permissionList
+        .filter((field) => field.group === 'settled')
+        .map((field) => {
+          field.state = 'display';
+          return field;
+        });
+
+      setValue(key, newList);
+    });
+  };
+
   return (
     <Container>
       <Button
-        onClick={() => reset()}
+        onClick={handleResetFields}
         disabled={isClearDisabled}
         variant="outlined"
         fullwidth

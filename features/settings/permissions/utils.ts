@@ -1,27 +1,31 @@
 import {
   EditPermissionsSchema,
   GrantRole,
-  PermissionsKeys,
 } from 'features/settings/permissions/types';
-import { permissions } from 'consts/roles';
-import { Address } from 'viem';
+import { PERMISSION, permissions } from 'consts/roles';
 
 export const collectFormValuesToRpc = (formData: EditPermissionsSchema) => {
-  const keys = Object.keys(formData) as PermissionsKeys[];
+  const keys = Object.keys(formData) as PERMISSION[];
 
-  return keys.reduce((acc, key) => {
-    const permissionHex = permissions[key];
-    const addresses = formData[key] as Address[] | undefined;
+  return keys.reduce(
+    (acc, key) => {
+      const fieldList = formData[key];
+      const { toRevoke, toGrant } = acc;
+      fieldList?.forEach((field) => {
+        if (field.state === 'grant') {
+          toGrant.push({ account: field.account, role: permissions[key] });
+        }
 
-    if (addresses && addresses.length > 0) {
-      const rolesList = addresses.map((address) => ({
-        account: address,
-        role: permissionHex,
-      }));
+        if (field.state === 'remove') {
+          toRevoke.push({ account: field.account, role: permissions[key] });
+        }
+      });
 
-      acc.push(...rolesList);
-    }
-
-    return acc;
-  }, [] as GrantRole[]);
+      return { toRevoke, toGrant };
+    },
+    { toRevoke: [], toGrant: [] } as {
+      toRevoke: GrantRole[];
+      toGrant: GrantRole[];
+    },
+  );
 };

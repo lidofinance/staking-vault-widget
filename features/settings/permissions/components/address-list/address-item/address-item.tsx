@@ -52,11 +52,15 @@ export const AddressItem: FC<AddressItemProps> = ({
       newState = state === 'grant' ? 'restore' : 'grant';
     }
 
-    setValue(`${permission}.${index}`, {
-      account,
-      group,
-      state: newState,
-    });
+    setValue(
+      `${permission}.${index}`,
+      {
+        account,
+        group,
+        state: newState,
+      },
+      { shouldDirty: true },
+    );
   };
 
   const handleShowPopover = () => {

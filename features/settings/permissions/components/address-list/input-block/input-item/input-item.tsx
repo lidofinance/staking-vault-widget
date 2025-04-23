@@ -36,7 +36,7 @@ export const InputItem: FC<InputItemProps> = ({
   trigger,
   error,
 }) => {
-  const { setValue, getValues, trigger: triggerMainForm } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const [fieldError, setError] = useState<string>();
   const inputKey = `${permission}.${index}.value` as ArrayFormKey;
 
@@ -51,18 +51,21 @@ export const InputItem: FC<InputItemProps> = ({
   }, [error?.value, fieldError]);
 
   const handleSaveValue = async (e: KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (e.key === 'Enter') {
       const values: { value: string }[] = getValues(permission) ?? [];
       const output = await trigger(inputKey);
       if (output) {
         const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
-        setValue(`${permission}.${values.length}`, {
-          account: value,
-          state: 'grant',
-          group: 'eventual',
-        });
+        const key = `${permission}.${values.length}`;
+        setValue(
+          key,
+          { account: value, state: 'grant', group: 'eventual' },
+          { shouldDirty: true, shouldValidate: true },
+        );
         remove(index);
-        void triggerMainForm(permission);
       }
     }
   };

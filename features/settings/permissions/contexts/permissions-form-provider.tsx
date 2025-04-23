@@ -61,7 +61,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       if (activeVault?.owner && publicClient && address) {
         try {
           await simulateEditPermissionsWithDashboard({
-            permissions: payload,
+            payload: payload,
             publicClient: publicClient,
             delegationAddress: activeVault?.owner,
             account: address,
