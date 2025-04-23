@@ -13,6 +13,85 @@ import { getHealthScore } from 'utils/get-health-score';
 
 import type { VaultInfo } from 'types';
 
+export const useSingleVaultData = (vaultAddress: Address | undefined) => {
+  const { shares } = useLidoSDK();
+  const publicClient = usePublicClient();
+
+  return useQuery({
+    queryKey: ['single-vault-data', publicClient?.chain.id, vaultAddress],
+    enabled: !!vaultAddress && !!publicClient,
+    queryFn: async (): Promise<VaultInfo> => {
+      invariant(publicClient, 'PublicClient is not defined');
+      invariant(vaultAddress, 'vaultAddress is not defined');
+
+      const vaultHubContract = getVaultHubContract(publicClient);
+      const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
+
+      const [owner, inOutDelta, nodeOperator, locked] = await Promise.all([
+        vaultContract.read.owner(),
+        vaultContract.read.inOutDelta(),
+        vaultContract.read.nodeOperator(),
+        vaultContract.read.locked(),
+      ]);
+
+      const balance = await publicClient.getBalance({
+        address: vaultContract.address,
+      });
+
+      const vaultHubSocket = await vaultHubContract.read.vaultSocket([
+        vaultAddress,
+      ]);
+
+      const delegationContract = getDelegationContract(owner, publicClient);
+
+      const [
+        valuation,
+        nodeOperatorUnclaimedFee,
+        withdrawableEther,
+        nodeOperatorFeeBP,
+        totalMintableShares,
+      ] = await Promise.all([
+        delegationContract.read.totalValue(),
+        delegationContract.read.nodeOperatorUnclaimedFee(),
+        delegationContract.read.withdrawableEther(),
+        delegationContract.read.nodeOperatorFeeBP(),
+        delegationContract.read.totalMintingCapacity(),
+      ]);
+
+      const [mintedEth, mintableEth, ethLimit] = await Promise.all([
+        shares.convertToSteth(vaultHubSocket.liabilityShares),
+        shares.convertToSteth(
+          totalMintableShares - vaultHubSocket.liabilityShares,
+        ),
+        shares.convertToSteth(vaultHubSocket.shareLimit),
+      ]);
+
+      const healthScore = getHealthScore(valuation, vaultHubSocket);
+
+      return {
+        mintable: mintableEth,
+        minted: mintedEth,
+        nodeOperator,
+        ethLimit,
+        valuation,
+        inOutDelta,
+        locked,
+        apr: null,
+        healthScore,
+        address: vaultAddress,
+        totalMintableShares,
+        nodeOperatorUnclaimedFee,
+        withdrawableEther,
+        owner,
+        balance,
+        nodeOperatorFeeBP,
+        ...vaultHubSocket,
+      };
+    },
+    ...STRATEGY_LAZY,
+  });
+};
+
 // TODO: find way to remove readonly
 export const useVaultData = (
   vaultsAddressesList: readonly Address[] | undefined,

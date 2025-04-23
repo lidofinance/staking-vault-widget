@@ -12,7 +12,8 @@ import { IPFSInfoBoxStatusesProvider } from './ipfs-info-box-statuses';
 import { InpageNavigationProvider } from './inpage-navigation';
 import { ModalProvider } from './modal-provider';
 import { ExternalForbiddenRouteProvider } from './external-forbidden-route';
-import { VaultProvider } from './vaults';
+
+import { VaultProvider } from 'features/overview/contexts';
 
 type ProvidersProps = {
   prefetchedManifest?: unknown;

@@ -4,7 +4,6 @@ import { Address } from 'viem';
 
 import { Layout } from 'shared/components';
 import { SupplyTabs } from 'features/supply';
-import { VaultProvider } from 'features/overview/contexts';
 import { useRouter } from 'next/router';
 
 type SupplyModePageParams = {
@@ -21,9 +20,8 @@ const Supply: FC = () => {
       <Head>
         <title>{title} | Lido</title>
       </Head>
-      <VaultProvider>
-        <SupplyTabs mode={mode} />
-      </VaultProvider>
+
+      <SupplyTabs mode={mode} />
     </Layout>
   );
 };

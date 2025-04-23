@@ -1,6 +1,5 @@
 import { v4 as uuid } from 'uuid';
 import {
-  memo,
   useMemo,
   useCallback,
   useContext,
@@ -141,4 +140,4 @@ const ModalProviderRaw = ({ children }: ModalProviderRaw) => {
   );
 };
 
-export const ModalProvider = memo(ModalProviderRaw);
+export const ModalProvider = ModalProviderRaw;
