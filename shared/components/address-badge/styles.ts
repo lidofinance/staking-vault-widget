@@ -32,12 +32,28 @@ type InjectedProps = {
   weight: TextWeight;
   color: TextColors;
   theme: Theme;
+  crossedText?: boolean;
+  bgColor?: BgColor;
 } & Omit<TextProps, 'color' | 'size' | 'strong' | 'weight'>;
 
-const getBgColor = (bgColor: 'transparent' | 'default') => {
+type PillProps = {
+  theme: Theme;
+  bgColor: BgColor;
+};
+
+type BgColor = 'transparent' | 'default' | 'error' | 'success';
+
+const getColorTransparency = (color: string, percent: string) => {
+  return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
+};
+
+const getBgColor = ({ theme: { colors }, bgColor }: PillProps) => {
+  bgColor ??= 'default';
   const bgColorMap = {
     default: 'var(--lido-color-shadowLight)',
     transparent: 'transparent',
+    error: getColorTransparency(colors.error, '20%'),
+    success: getColorTransparency(colors.success, '30%'),
   };
 
   return bgColorMap[bgColor];
@@ -56,7 +72,7 @@ const getTextColor = ({ theme: { colors }, color }: InjectedProps) => {
   return colorsMap[color];
 };
 
-export const PillContainer = styled.div<{ bgColor: 'transparent' | 'default' }>`
+export const PillContainer = styled.div<PillProps>`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
@@ -64,15 +80,17 @@ export const PillContainer = styled.div<{ bgColor: 'transparent' | 'default' }>`
   padding: ${({ theme }) => theme.spaceMap.sm}px;
   padding-right: ${({ theme }) => theme.spaceMap.md}px;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
-  background-color: ${({ bgColor }) => getBgColor(bgColor)};
+  background-color: ${getBgColor};
   white-space: nowrap;
   text-wrap: nowrap;
 `;
 
 export const AddressText = styled(Address)<InjectedProps>`
-  ${({ size, weight }) => css`
+  ${({ size, weight, crossedText }) => css`
     font-weight: ${weight};
     color: ${getTextColor};
+    text-decoration: ${crossedText ? 'line-through' : 'none'};
+    text-decoration-color: ${crossedText ? 'var(--lido-color-text)' : 'none'};
     ${sizes[size]}
   `}
 `;

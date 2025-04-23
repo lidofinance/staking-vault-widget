@@ -1,13 +1,15 @@
 import { FC, memo } from 'react';
 
-import { AddressBlock } from 'features/settings/permissions/components/address-list/address-block';
-import { InputBlock } from 'features/settings/permissions/components/address-list/input-block';
+import {
+  AddressBlock,
+  InputBlock,
+} from 'features/settings/permissions/components';
 import { AddressListWrapper } from './styles';
 
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
+import { PermissionsKeys } from 'features/settings/permissions/types';
 
 export interface AddressListProps {
-  permission: EDITABLE_PERMISSIONS;
+  permission: PermissionsKeys;
 }
 
 export const AddressList: FC<AddressListProps> = memo(({ permission }) => {

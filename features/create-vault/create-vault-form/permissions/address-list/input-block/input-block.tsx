@@ -25,20 +25,22 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
     register,
     trigger,
     formState: { errors },
-  } = useForm<VaultPermissionsType>({
+  } = useForm<{ roles: VaultPermissionsType }>({
     defaultValues: {
-      [permission]: [],
+      roles: {
+        [permission]: [],
+      },
     },
     resolver: validatePermissions(getValues),
     mode: 'onBlur',
   });
 
   const { append, fields, remove } = useFieldArray({
-    name: permission,
+    name: `roles.${permission}`,
     control,
   });
 
-  const inputError = errors[permission];
+  const inputError = errors.roles?.[permission];
 
   return (
     <InputBlockWrapper>

@@ -1,6 +1,6 @@
 import { Address, encodeFunctionData, PublicClient, getContract } from 'viem';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
-import { VAULT_TOTAL_BASIS_POINTS } from 'consts/vault-hub';
+import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults/consts';
 import { EditMainSettingsSchema, TxData } from './types';
 import { DelegationAbi } from 'abi/delegation';
 import { dashboardFunctionsNamesMap } from 'utils/send-dashboard-tx';

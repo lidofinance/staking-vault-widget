@@ -1,5 +1,5 @@
-import { isAddress } from 'viem';
-import { z, ZodError, ZodSchema } from 'zod';
+import { Address, isAddress } from 'viem';
+import { z, ZodSchema } from 'zod';
 import {
   appendErrors,
   FieldError,
@@ -14,12 +14,14 @@ import {
 } from 'features/create-vault/types';
 import { isValidAnyAddress } from 'utils/address-validation';
 import { isValidEns } from 'utils/ens';
+import { isZodError } from 'utils/errors';
+import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
+import invariant from 'tiny-invariant';
+import { VaultFactoryArgs } from 'types/vault';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = 'Must be 0.01 or above';
 const INVALID_NUMBER_MAX_MESSAGE = 'Must be 99 or less';
-const INVALID_NUMBER_SUM_MESSAGE =
-  "Sum of Curator's and Node Operator's fees can't be more than 100";
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = 'Must be 720 or less';
 const INVALID_NUMBER_DATA_MESSAGE = 'Only number is valid';
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
@@ -29,6 +31,11 @@ const validateAddress = (value: string) => isValidAnyAddress(value);
 const addressSchema = z
   .string()
   .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE });
+
+const roleKeys = [
+  ...Object.keys(VAULTS_OWNER_ROLES_MAP),
+  ...Object.keys(VAULTS_NO_ROLES_MAP),
+];
 
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
@@ -42,28 +49,16 @@ export const createVaultSchema = z.object({
     .min(1, INVALID_NUMBER_MIN_MESSAGE)
     .max(720, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   defaultAdmin: addressSchema,
-  funders: z.array(addressSchema).optional(),
-  withdrawers: z.array(addressSchema).optional(),
-  minters: z.array(addressSchema).optional(),
-  burners: z.array(addressSchema).optional(),
-  rebalancers: z.array(addressSchema).optional(),
-  depositPausers: z.array(addressSchema).optional(),
-  depositResumers: z.array(addressSchema).optional(),
-  validatorExitRequesters: z.array(addressSchema).optional(),
-  validatorWithdrawalTriggerers: z.array(addressSchema).optional(),
-  disconnecters: z.array(addressSchema).optional(),
-  nodeOperatorFeeClaimers: z.array(addressSchema).optional(),
+  roles: z.object(
+    Object.fromEntries(
+      roleKeys.map((key) => [key, z.array(addressSchema).optional()]),
+    ) as unknown as {
+      [key in PermissionKeys]: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    },
+  ),
 });
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
-
-export const isZodError = (error: unknown): error is ZodError => {
-  if (error instanceof ZodError) {
-    return Array.isArray(error?.errors);
-  }
-
-  return false;
-};
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
@@ -139,49 +134,74 @@ export const createVaultFormValidator = <T extends ZodSchema>(
   };
 };
 
+const JOINT_ROLE_MAP = { ...VAULTS_OWNER_ROLES_MAP, ...VAULTS_NO_ROLES_MAP };
+
+export const formatCreateVaultData = (
+  values: CreateVaultSchema,
+): VaultFactoryArgs => {
+  return {
+    defaultAdmin: values.defaultAdmin as Address,
+    nodeOperator: values.nodeOperator as Address,
+    nodeOperatorManager: values.nodeOperatorManager as Address,
+    nodeOperatorFeeBP: BigInt(values.nodeOperatorFeeBP),
+    confirmExpiry: BigInt(values.confirmExpiry * 60 * 60),
+
+    roles: Object.entries(values.roles).flatMap(([roleName, roleAddresses]) => {
+      const roleHash = JOINT_ROLE_MAP[roleName as PermissionKeys];
+      invariant(
+        roleHash,
+        `[formatCreateVaultData] no role hash found for ${roleName}`,
+      );
+      if (!roleAddresses) return [];
+      return roleAddresses.map((address) => ({
+        role: roleHash,
+        account: address as Address,
+      }));
+    }),
+  };
+};
+
 export const validatePermissions = (
   getValues: UseFormGetValues<Record<string, any>>,
-): Resolver<VaultPermissionsType> => {
-  return async (values: VaultPermissionsType) => {
-    const errors = {} as Record<
-      PermissionKeys,
-      Record<number, { value: string }>
-    >;
+): Resolver<{ roles: VaultPermissionsType }> => {
+  return async (values) => {
+    const roles = values.roles;
+    const errors = { roles: {} } as {
+      roles: Record<PermissionKeys, Record<number, { value: string }>>;
+    };
+
     const keysList = Object.keys(values) as PermissionKeys[];
 
-    await Promise.all(
-      keysList.map(async (key: PermissionKeys) => {
-        const payload = values[key];
-        errors[key] = {};
+    keysList.forEach((key: PermissionKeys) => {
+      const formKey = `roles.${key}`;
+      const payload = roles[key] ?? [];
+      errors.roles[key] = {};
 
-        await Promise.all(
-          payload.map(async (field, index) => {
-            const { value: currentValue } = field;
+      payload.forEach((field, index) => {
+        const { value: currentValue } = field;
 
-            if (!isAddress(currentValue)) {
-              const isValid = isValidEns(currentValue);
+        if (!isAddress(currentValue)) {
+          const isValid = isValidEns(currentValue);
 
-              if (!isValid) {
-                errors[key][`${index}`] = {
-                  value: 'Invalid ethereum address',
-                };
-              }
-            }
+          if (!isValid) {
+            errors.roles[key][index] = {
+              value: 'Invalid ethereum address',
+            };
+          }
+        }
 
-            const mainFormValues = getValues(key) as string[];
-            const filtered = mainFormValues.filter(
-              (value) => value === currentValue,
-            );
-
-            if (filtered.length > 0) {
-              errors[key][index] = {
-                value: 'Address already added',
-              };
-            }
-          }),
+        const mainFormValues = getValues(formKey) as string[];
+        const filtered = mainFormValues.filter(
+          (value) => value === currentValue,
         );
-      }),
-    );
+
+        if (filtered.length > 0) {
+          errors.roles[key][index] = {
+            value: 'Address already added',
+          };
+        }
+      });
+    });
 
     return {
       values,
@@ -218,17 +238,13 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
 
     if (typeof payload === 'number') {
       if (key === 'nodeOperatorFeeBP') {
-        if (payload < 0.001) {
+        if (payload < 0.01) {
           errors[key] = {
             message: INVALID_NUMBER_DATA_MESSAGE,
           };
         } else if (payload > 99) {
           errors[key] = {
             message: INVALID_NUMBER_MAX_MESSAGE,
-          };
-        } else if (values.curatorFeeBP + payload > 100) {
-          errors[key] = {
-            message: INVALID_NUMBER_SUM_MESSAGE,
           };
         }
       }
@@ -240,7 +256,7 @@ export const validateMainSettings: Resolver<VaultMainSettingsType> = (
           };
         }
 
-        if (payload > 800) {
+        if (payload > 720) {
           errors[key] = {
             message: INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
           };

@@ -1,43 +1,36 @@
-import { FC, useCallback } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
+import { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { AddressItem } from 'features/settings/permissions/components/address-list/address-item';
 import { Wrapper } from './styles';
 
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
+import {
+  FieldSchema,
+  PermissionsKeys,
+} from 'features/settings/permissions/types';
 
 export interface AddressBlockProps {
-  permission: EDITABLE_PERMISSIONS;
+  permission: PermissionsKeys;
 }
 
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
-  const { control, watch } = useFormContext();
-  const { remove } = useFieldArray({ control, name: permission });
-  const fieldsWatch = watch(permission) as EDITABLE_PERMISSIONS[];
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      remove(index);
-    },
-    [remove],
-  );
-
-  if (fieldsWatch.length === 0) {
-    return null;
-  }
+  const { watch } = useFormContext();
+  const fields = (watch(permission) ?? []) as FieldSchema[];
 
   return (
     <Wrapper>
-      {fieldsWatch.map((value, index) => {
+      {fields.map((field, index) => {
         return (
           <AddressItem
-            key={value}
-            address={value}
+            key={field.account}
+            field={field}
             index={index}
-            remove={handleRemove}
+            permission={permission}
           />
         );
       })}
     </Wrapper>
   );
 };
+
+// addresses => { account: address, group: 'settled' | 'eventual', state: 'restore' | 'grant' | 'remove' | 'display' }

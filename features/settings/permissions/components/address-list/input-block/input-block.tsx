@@ -8,11 +8,13 @@ import { InputBlockWrapper } from './styles';
 
 import { validatePermissions } from 'features/settings/permissions/validation';
 
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
-import { VaultPermissions } from 'features/settings/permissions/types';
+import type {
+  VaultPermissions,
+  PermissionsKeys,
+} from 'features/settings/permissions/types';
 
 export interface InputBlockProps {
-  permission: EDITABLE_PERMISSIONS;
+  permission: PermissionsKeys;
 }
 
 export const InputBlock: FC<InputBlockProps> = ({ permission }) => {

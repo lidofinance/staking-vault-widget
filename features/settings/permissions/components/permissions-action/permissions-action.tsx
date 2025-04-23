@@ -1,28 +1,49 @@
 import { FC } from 'react';
-
-import { usePermissionsSettingsData } from 'features/settings/permissions/contexts';
+import { useFormContext } from 'react-hook-form';
 
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
+import { PERMISSION } from 'consts/roles';
+import { FieldSchema } from 'features/settings/permissions/types';
+
 export const PermissionsAction: FC = () => {
-  const { handleCancelSubmit } = usePermissionsSettingsData();
+  const {
+    getValues,
+    setValue,
+    formState: { isValid, isSubmitting, isSubmitted, isDirty },
+  } = useFormContext();
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
+  const isClearDisabled = !isDirty;
 
-  const handleSetPrevStep = () => {
-    handleCancelSubmit();
-  };
+  const handleResetFields = () => {
+    const formValues = getValues();
+    const keys = Object.keys(formValues) as PERMISSION[];
+    keys.forEach((key) => {
+      const permissionList: FieldSchema[] = formValues[key];
+      const newList = permissionList
+        .filter((field) => field.group === 'settled')
+        .map((field) => {
+          field.state = 'display';
+          return field;
+        });
 
-  const handleSetNextStep = () => {
-    handleCancelSubmit();
+      setValue(key, newList);
+    });
   };
 
   return (
     <Container>
-      <Button onClick={handleSetPrevStep} variant="outlined" fullwidth>
+      <Button
+        onClick={handleResetFields}
+        disabled={isClearDisabled}
+        variant="outlined"
+        fullwidth
+      >
         Clear changes
       </Button>
-      <Button onClick={handleSetNextStep} fullwidth>
-        Submit transactions
+      <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+        {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
       </Button>
     </Container>
   );

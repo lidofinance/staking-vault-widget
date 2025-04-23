@@ -23,7 +23,10 @@ export const openKeys = [
   'WALLETCONNECT_PROJECT_ID',
 ];
 
-export const secretKeys = [`1`, ...process.env.SUPPORTED_CHAINS.split(',')]
+export const secretKeys = [
+  `1`,
+  ...(process.env.SUPPORTED_CHAINS?.split(',') ?? []),
+]
   .filter((chain, index, arr) => arr.indexOf(chain) == index)
   .map((chain) => `EL_RPC_URLS_${chain}`);
 

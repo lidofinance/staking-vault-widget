@@ -1,22 +1,17 @@
-import { isAddress } from 'viem';
-import { z, ZodError, ZodSchema } from 'zod';
+import { Address, isAddress } from 'viem';
+import { z, ZodSchema } from 'zod';
 import {
   appendErrors,
   FieldError,
   Resolver,
   UseFormGetValues,
 } from 'react-hook-form';
-import { VaultPermissions } from 'features/settings/permissions/types';
+import {
+  PermissionsKeys,
+  VaultPermissions,
+} from 'features/settings/permissions/types';
 import { isValidEns } from 'utils/ens';
-import { EDITABLE_PERMISSIONS } from 'consts/roles';
-
-export const isZodError = (error: unknown): error is ZodError => {
-  if (error instanceof ZodError) {
-    return Array.isArray(error?.errors);
-  }
-
-  return false;
-};
+import { isZodError } from 'utils/errors';
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
@@ -97,13 +92,13 @@ export const validatePermissions = (
 ): Resolver<VaultPermissions> => {
   return async (values: VaultPermissions) => {
     const errors = {} as Record<
-      EDITABLE_PERMISSIONS,
+      PermissionsKeys,
       Record<number, { value: string }>
     >;
-    const keysList = Object.keys(values) as EDITABLE_PERMISSIONS[];
+    const keysList = Object.keys(values) as PermissionsKeys[];
 
     await Promise.all(
-      keysList.map(async (key: EDITABLE_PERMISSIONS) => {
+      keysList.map(async (key: PermissionsKeys) => {
         const payload = values[key];
         errors[key] = {};
 
@@ -121,7 +116,7 @@ export const validatePermissions = (
               }
             }
 
-            const mainFormValues = getValues(key) as string[];
+            const mainFormValues = (getValues(key) ?? []) as Address[];
             const filtered = mainFormValues.filter(
               (value) => value === currentValue,
             );

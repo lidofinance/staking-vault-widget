@@ -35,7 +35,7 @@ const getModalTitle = (step: SubmitStep) => {
 };
 
 const getModalSubTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.submitting) return 'Awaiting block confirmation';
+  if (step === SubmitStepEnum.submitting) return 'Awaiting wallet signature';
   if (step === SubmitStepEnum.reject)
     return 'User denied transaction signature';
   if (step === SubmitStepEnum.error)
