@@ -51,10 +51,9 @@ export const InputItem: FC<InputItemProps> = ({
   }, [error?.value, fieldError]);
 
   const handleSaveValue = async (e: KeyboardEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-
     if (e.key === 'Enter') {
+      e.stopPropagation();
+      e.preventDefault();
       const values: { value: string }[] = getValues(permission) ?? [];
       const output = await trigger(inputKey);
       if (output) {
@@ -75,7 +74,7 @@ export const InputItem: FC<InputItemProps> = ({
       <Input
         {...register(inputKey)}
         placeholder="Ethereum address"
-        onKeyUp={handleSaveValue}
+        onKeyDown={handleSaveValue}
         error={fieldError}
       />
 
