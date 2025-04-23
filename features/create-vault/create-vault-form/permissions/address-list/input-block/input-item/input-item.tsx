@@ -16,6 +16,7 @@ import {
   PermissionKeys,
   VaultPermissionsType,
 } from 'features/create-vault/types';
+import { Address } from 'viem';
 
 type ArrayFormKey = `roles.${PermissionKeys}.${number}.value`;
 
@@ -52,7 +53,7 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleSaveValue = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const values: { value: string }[] = getValues(`roles.${permission}`);
+      const values: { value: Address }[] = getValues(`roles.${permission}`);
       const output = await trigger(inputKey);
       if (output) {
         const value = (e.currentTarget || (e.target as HTMLInputElement)).value;

@@ -6,6 +6,8 @@ export interface VaultInfo extends VaultSocket {
   address: Address;
   owner: Address;
   nodeOperator: Address;
+  defaultAdmins: readonly Address[];
+  nodeOperatorManagers: readonly Address[];
   valuation: bigint;
   minted: bigint;
   mintable: bigint;
@@ -19,6 +21,7 @@ export interface VaultInfo extends VaultSocket {
   withdrawableEther: bigint;
   balance: bigint;
   nodeOperatorFeeBP: bigint;
+  confirmExpiry: bigint;
 }
 
 export type VaultSocket = ReadContractReturnType<

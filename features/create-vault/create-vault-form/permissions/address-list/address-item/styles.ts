@@ -1,11 +1,15 @@
 import styled from 'styled-components';
-import { Block } from '@lidofinance/lido-ui';
+import { Block, Popover } from '@lidofinance/lido-ui';
+
+export const PopoverWrapper = styled(Popover)`
+  padding: ${({ theme }) => theme.spaceMap.md}px;
+`;
 
 export const PopoverContent = styled(Block)`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
-  padding: ${({ theme }) => theme.spaceMap.md}px;
+  padding: 0;
 `;
 
 export const ActionGroup = styled.div`

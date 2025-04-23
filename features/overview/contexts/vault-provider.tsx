@@ -16,6 +16,7 @@ type VaultContextType = {
   activeVault?: VaultInfo;
   isLoadingVault?: boolean;
   error: Error | null;
+  refetch: () => void;
 };
 
 const VaultContext = createContext<VaultContextType | null>(null);
@@ -35,8 +36,15 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       activeVault: query.data,
       isLoadingVault: query.isLoading,
       error: query.error,
+      refetch: query.refetch,
     }),
-    [sanitizedVaultAddress, query.data, query.isLoading, query.error],
+    [
+      sanitizedVaultAddress,
+      query.data,
+      query.isLoading,
+      query.error,
+      query.refetch,
+    ],
   );
 
   return (

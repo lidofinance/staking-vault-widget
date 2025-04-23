@@ -8,6 +8,7 @@ export { InfoBox } from './info-box/info-box';
 export { Switch } from './switch/switch';
 export { AddressBadge } from './address-badge';
 export { ButtonClose } from './button-close';
+export { ButtonRestore } from './button-restore';
 export { ButtonLink } from './button-link';
 export { TxLinkEtherscan } from './tx-link-etherscan';
 export { AddressLinkEtherscan } from './address-link-etherscan';

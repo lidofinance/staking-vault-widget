@@ -25,19 +25,15 @@ import {
   CreateVaultStep,
   SubmittingInfo,
 } from 'features/create-vault/types';
-import {
-  createVaultFormValidator,
-  createVaultSchema,
-  CreateVaultSchema,
-  formatCreateVaultData,
-} from './validation';
-
+import { createVaultSchema, CreateVaultSchema } from './validation';
+import { validateFormWithZod } from 'utils/validate-form-value';
 import {
   ToggleValue,
   PermissionToggleEnum,
   CREATE_VAULT_FORM_STEPS,
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
+import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
 import { simulateCreateVault } from 'modules/vaults/contracts/vault-factory';
 
 const CreateVaultDataContext =
@@ -48,7 +44,7 @@ export const useCreateVaultFormData = () => {
   const value = useContext(CreateVaultDataContext);
   invariant(
     value,
-    'useCreateVaultData was used outside the CreateVaultDataContext provider',
+    'useCreateVaultFormData was used outside the CreateVaultDataContext provider',
   );
 
   return value;
@@ -96,7 +92,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
       defaultAdmin: '',
       roles: {},
     },
-    resolver: createVaultFormValidator(createVaultSchema),
+    resolver: validateFormWithZod(createVaultSchema),
     mode: 'all',
   });
 

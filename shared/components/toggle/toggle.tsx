@@ -33,7 +33,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
   );
 
   useEffect(() => {
-    if (activeOption !== defaultActive) {
+    if (!activeOption && activeOption !== defaultActive) {
       setActive(defaultActive);
     }
   }, [activeOption, defaultActive]);
