@@ -30,7 +30,7 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
       [permission]: [],
     },
     resolver: validatePermissions(getValues),
-    mode: 'onBlur',
+    mode: 'all',
   });
 
   const { append, fields, remove } = useFieldArray({

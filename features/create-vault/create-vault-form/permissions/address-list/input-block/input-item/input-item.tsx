@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent, useEffect, useState } from 'react';
+import { FC, KeyboardEvent, FocusEvent, useEffect, useState } from 'react';
 import {
   useFormContext,
   FieldError,
@@ -16,7 +16,7 @@ import {
   PermissionKeys,
   VaultPermissionsType,
 } from 'features/create-vault/types';
-import { Address } from 'viem';
+import { Address, isAddress } from 'viem';
 
 type ArrayFormKey = `roles.${PermissionKeys}.${number}.value`;
 
@@ -40,6 +40,7 @@ export const InputItem: FC<InputItemProps> = ({
   const { setValue, getValues } = useFormContext();
   const [fieldError, setError] = useState<string>();
   const inputKey = `roles.${permission}.${index}.value` as ArrayFormKey;
+  const field = register(inputKey);
 
   useEffect(() => {
     if (error?.value && (error.value as unknown as string) !== fieldError) {
@@ -51,7 +52,7 @@ export const InputItem: FC<InputItemProps> = ({
     }
   }, [error?.value, fieldError]);
 
-  const handleSaveValue = async (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const values: { value: Address }[] = getValues(`roles.${permission}`);
       const output = await trigger(inputKey);
@@ -70,12 +71,36 @@ export const InputItem: FC<InputItemProps> = ({
     }
   };
 
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    const value = (e.currentTarget || e.target).value;
+
+    if (isAddress(value)) {
+      const values: { value: Address }[] = getValues(`roles.${permission}`);
+      const output = await trigger(inputKey);
+      if (output) {
+        setValue(
+          `roles.${permission}.${values?.length ?? 0}`,
+          {
+            account: value,
+            state: 'grant',
+          },
+          { shouldDirty: true },
+        );
+        remove(index);
+      }
+    } else {
+      void trigger(inputKey);
+      void field.onBlur(e);
+    }
+  };
+
   return (
     <InputWrapper>
       <Input
-        {...register(inputKey)}
+        {...field}
         placeholder="Ethereum address"
-        onKeyUp={handleSaveValue}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         error={fieldError}
       />
 

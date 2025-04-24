@@ -110,7 +110,7 @@ export const validatePermissions = (
       roles: Record<PermissionKeys, Record<number, { value: string }>>;
     };
 
-    const keysList = Object.keys(values) as PermissionKeys[];
+    const keysList = Object.keys(roles) as PermissionKeys[];
 
     keysList.forEach((key: PermissionKeys) => {
       const formKey = `roles.${key}`;
@@ -131,7 +131,7 @@ export const validatePermissions = (
         }
 
         const mainFormValues = getValues(formKey) as string[];
-        const filtered = mainFormValues.filter(
+        const filtered = (mainFormValues ?? []).filter(
           (value) => value === currentValue,
         );
 
