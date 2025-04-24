@@ -46,15 +46,15 @@ export const useFundWithDashboard = (onMutate = () => {}) => {
   };
 };
 
-export interface SimulationFundWithDelegationProps {
+export type SimulationFundWithDashboardProps = {
   address: Address | undefined;
   amount: bigint;
-}
+};
 
 export const useSimulationFundWithDashboard = ({
   address,
   amount,
-}: SimulationFundWithDelegationProps) => {
+}: SimulationFundWithDashboardProps) => {
   const { address: accountAddress } = useAccount();
   const { hasPermission } = useVaultPermissions('funder');
   const simulationContractPayload: UseSimulateContractParameters = {
