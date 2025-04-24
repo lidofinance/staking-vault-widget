@@ -95,10 +95,12 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
             (minted * (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(reserveRatioBP)));
       const utilizationRatio = formatPercent.format(utilization);
       const totalMintable = bigIntMin(
-        (valuation - nodeOperatorUnclaimedFee) *
-          BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP),
+        ((valuation - nodeOperatorUnclaimedFee) *
+          BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP)) /
+          VAULT_TOTAL_BASIS_POINTS_BN,
         ethLimit,
       );
+
       const totalMintingCapacity = toEthValue(totalMintable);
       const depositedToValidators = toEthValue(valuation - balance);
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);

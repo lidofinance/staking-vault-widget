@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
 import { useVaultsConnectedBound } from 'modules/vaults/hooks/use-vaults-connected-bound';
 
-import { VAULTS_PER_PAGE } from '../consts';
+import { VAULTS_PER_PAGE } from 'modules/vaults/consts';
 
 import type { Address } from 'viem';
 
@@ -29,10 +29,9 @@ export const useVaultsDataAll = () => {
   } = useVaultData(connectedVaults as Address[] | undefined);
 
   const handlePagination = useCallback((page: number) => {
-    const toCursor = page * VAULTS_PER_PAGE - 1;
-    const fromCursor = toCursor - VAULTS_PER_PAGE;
-    // TODO: refactor. Waiting for devnet
-    setPaginationData({ from: toCursor, to: fromCursor, page });
+    const fromCursor = (page - 1) * VAULTS_PER_PAGE;
+    const toCursor = page * VAULTS_PER_PAGE;
+    setPaginationData({ from: fromCursor, to: toCursor, page });
   }, []);
 
   return {

@@ -1,4 +1,4 @@
 export {
-  useClaimWithDelegation,
-  useSimulationClaimWithDelegation,
+  useClaimDashboard,
+  useSimulationClaimDashboard,
 } from './use-claim-with-delegation';

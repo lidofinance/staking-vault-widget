@@ -1,3 +1,3 @@
 export type ClaimFormSchema = {
-  recipient: string | null;
+  recipient: string;
 };

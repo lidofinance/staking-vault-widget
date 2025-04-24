@@ -10,8 +10,9 @@ import { Address } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
+import invariant from 'tiny-invariant';
 
-export const useClaimWithDelegation = (onMutate = () => {}) => {
+export const useClaimDashboard = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -30,9 +31,11 @@ export const useClaimWithDelegation = (onMutate = () => {}) => {
 
   const callClaim = useCallback(
     async (recipient: Address) => {
+      invariant(owner, '[useClaimDashboard] owner is not available');
+
       return await writeContractAsync({
         abi: dashboardAbi,
-        address: owner as Address,
+        address: owner,
         functionName: 'claimNodeOperatorFee',
         args: [recipient],
         chainId,
@@ -48,7 +51,7 @@ export const useClaimWithDelegation = (onMutate = () => {}) => {
   };
 };
 
-export const useSimulationClaimWithDelegation = (recipient: Address) => {
+export const useSimulationClaimDashboard = (recipient: Address) => {
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const isEnabled = !!owner && !!recipient;

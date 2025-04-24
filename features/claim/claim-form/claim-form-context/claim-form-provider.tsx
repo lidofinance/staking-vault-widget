@@ -6,12 +6,12 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { Address, isAddress } from 'viem';
+import { isAddress, ReadContractErrorType } from 'viem';
 import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useClaimWithDelegation } from 'features/claim/claim-form/hooks';
+import { useClaimDashboard } from 'features/claim/claim-form/hooks';
 import { useVaultInfo } from 'features/overview/contexts';
 
 import {
@@ -28,6 +28,7 @@ type ClaimDataContextValue = {
   availableToClaim: bigint | undefined;
   isLoadingClaimInfo: boolean;
   isErrorClaimInfo: boolean;
+  errorClaimInfo: ReadContractErrorType | null;
 };
 
 const ClaimDataContext = createContext<ClaimDataContextValue | null>(null);
@@ -52,6 +53,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     data: availableToClaim,
     isFetching: isLoadingClaimInfo,
     isError: isErrorClaimInfo,
+    error: errorClaimInfo,
   } = useReadContract({
     abi: dashboardAbi,
     address: activeVault?.owner,
@@ -66,8 +68,9 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
       availableToClaim,
       isLoadingClaimInfo,
       isErrorClaimInfo,
+      errorClaimInfo,
     }),
-    [availableToClaim, isLoadingClaimInfo, isErrorClaimInfo],
+    [availableToClaim, isLoadingClaimInfo, isErrorClaimInfo, errorClaimInfo],
   );
 
   const formObject = useForm<ClaimFormSchema>({
@@ -75,17 +78,17 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
       recipient: '',
     },
     mode: 'all',
-    reValidateMode: 'onChange',
+    reValidateMode: 'onBlur',
   });
-  const { callClaim } = useClaimWithDelegation();
 
+  const { callClaim } = useClaimDashboard();
   const { retryEvent, retryFire } = useFormControllerRetry();
 
   const onSubmit = useCallback(
     async ({ recipient }: ClaimFormSchema) => {
-      if (isAddress(recipient as string)) {
+      if (recipient && isAddress(recipient)) {
         // TODO: resolve recipient if ens domain
-        await callClaim(recipient as Address);
+        await callClaim(recipient);
         return true;
       }
 
