@@ -9,6 +9,8 @@ const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Accumulated',
     key: 'accumulatedFee',
+    actionLink: '/claim',
+    actionText: 'Claim',
   },
 ];
 
@@ -23,6 +25,8 @@ export const NodeOperator = () => {
           key={item.title}
           title={item.title}
           content={item.payload}
+          actionLink={item.actionLink}
+          actionText={item.actionText}
         />
       ))}
     </OverviewSection>

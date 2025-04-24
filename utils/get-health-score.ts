@@ -1,6 +1,7 @@
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults/consts';
 import { VaultSocket } from 'types';
 
+// TODO: get function from CLI package
 export const getHealthScore = (
   valuation: bigint,
   vaultHubSocket: VaultSocket,
@@ -20,5 +21,5 @@ export const getHealthScore = (
     return Infinity;
   }
 
-  return healthScore;
+  return healthScore / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 };

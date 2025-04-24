@@ -42,7 +42,12 @@ export interface VaultOverviewContextType {
 }
 
 export type VaultOverviewContextKeys = keyof VaultOverviewContextType['values'];
-export type SectionPayload = { title: string; key: VaultOverviewContextKeys };
+export type SectionPayload = {
+  title: string;
+  key: VaultOverviewContextKeys;
+  actionText?: string;
+  actionLink?: string;
+};
 
 const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
   null,
