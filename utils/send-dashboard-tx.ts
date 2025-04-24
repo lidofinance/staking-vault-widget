@@ -1,6 +1,6 @@
 import { TxData } from '../features/settings/main/types';
 import { Address, getContract, PublicClient, WalletClient } from 'viem';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 export const dashboardFunctionsNamesMap: Record<
   keyof TxData,
@@ -25,7 +25,7 @@ export const sendDashboardTx = async ({
   const keys = Object.keys(txData) as (keyof TxData)[];
   const contract = getContract({
     address: contractAddress,
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     client: {
       public: publicClient,
       wallet: walletClient,
@@ -38,7 +38,7 @@ export const sendDashboardTx = async ({
     // @ts-expect-error find out how to setup right types
     const tx = await contract.write[functionName]({
       address: contractAddress,
-      abi: DelegationAbi,
+      abi: dashboardAbi,
       args: [txData[key]],
     });
 

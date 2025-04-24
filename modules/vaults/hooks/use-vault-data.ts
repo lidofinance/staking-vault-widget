@@ -7,7 +7,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
-import { getDelegationContract } from 'modules/vaults/contracts/delegation';
+import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { getHealthScore } from 'utils/get-health-score';
 
@@ -43,7 +43,7 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
         vaultAddress,
       ]);
 
-      const delegationContract = getDelegationContract(owner, publicClient);
+      const dashboardContract = getDashboardContract(owner, publicClient);
 
       const [
         valuation,
@@ -55,14 +55,14 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
         nodeOperatorManagers,
         confirmExpiry,
       ] = await Promise.all([
-        delegationContract.read.totalValue(),
-        delegationContract.read.nodeOperatorUnclaimedFee(),
-        delegationContract.read.withdrawableEther(),
-        delegationContract.read.nodeOperatorFeeBP(),
-        delegationContract.read.totalMintingCapacity(),
-        delegationContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
-        delegationContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
-        delegationContract.read.getConfirmExpiry(),
+        dashboardContract.read.totalValue(),
+        dashboardContract.read.nodeOperatorUnclaimedFee(),
+        dashboardContract.read.withdrawableEther(),
+        dashboardContract.read.nodeOperatorFeeBP(),
+        dashboardContract.read.totalMintingCapacity(),
+        dashboardContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
+        dashboardContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
+        dashboardContract.read.getConfirmExpiry(),
       ]);
 
       const [mintedEth, mintableEth, ethLimit] = await Promise.all([
@@ -145,7 +145,7 @@ export const useVaultData = (
           vaultAddress,
         ]);
 
-        const delegationContract = getDelegationContract(owner, publicClient);
+        const dashboardContract = getDashboardContract(owner, publicClient);
 
         const [
           valuation,
@@ -157,14 +157,14 @@ export const useVaultData = (
           defaultAdmins,
           nodeOperatorManagers,
         ] = await Promise.all([
-          delegationContract.read.totalValue(),
-          delegationContract.read.nodeOperatorUnclaimedFee(),
-          delegationContract.read.withdrawableEther(),
-          delegationContract.read.nodeOperatorFeeBP(),
-          delegationContract.read.totalMintingCapacity(),
-          delegationContract.read.getConfirmExpiry(),
-          delegationContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
-          delegationContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
+          dashboardContract.read.totalValue(),
+          dashboardContract.read.nodeOperatorUnclaimedFee(),
+          dashboardContract.read.withdrawableEther(),
+          dashboardContract.read.nodeOperatorFeeBP(),
+          dashboardContract.read.totalMintingCapacity(),
+          dashboardContract.read.getConfirmExpiry(),
+          dashboardContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
+          dashboardContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
         ]);
 
         const [mintedEth, mintableEth, ethLimit] = await Promise.all([

@@ -74,14 +74,14 @@ export const VOLUNTARY_DISCONNECT_ROLE = keccak256(
  * - assigns NODE_OPERATOR_FEE_CLAIM_ROLE.
  */
 export const NODE_OPERATOR_MANAGER_ROLE = keccak256(
-  toHex('vaults.Delegation.NodeOperatorManagerRole'),
+  toHex('vaults.NodeOperatorFee.NodeOperatorManagerRole'),
 );
 
 /**
  * @notice Claims node operator fee.
  */
 export const NODE_OPERATOR_FEE_CLAIM_ROLE = keccak256(
-  toHex('vaults.Delegation.NodeOperatorFeeClaimRole'),
+  toHex('vaults.NodeOperatorFee.FeeClaimRole'),
 );
 
 export const RECOVER_ASSETS_ROLE = keccak256(

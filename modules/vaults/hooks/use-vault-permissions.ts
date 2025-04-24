@@ -1,7 +1,7 @@
 import { useAccount, useReadContract } from 'wagmi';
 import { useVaultInfo } from 'features/overview/contexts';
 import { VAULTS_ALL_ROLES_MAP } from '../consts';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 import type { Address, Hash } from 'viem';
 
@@ -14,7 +14,7 @@ export const useVaultPermissions = (role: DashboardRoles) => {
   const roleHash = VAULTS_ALL_ROLES_MAP[role];
 
   const query = useReadContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: activeVault?.owner as Address,
     functionName: 'hasRole',
     args: [roleHash, address] as [Hash, Address],

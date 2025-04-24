@@ -1,7 +1,7 @@
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { useSimulateContract } from 'wagmi';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'features/overview/contexts';
 import { useFormContext } from 'react-hook-form';
 
@@ -14,7 +14,7 @@ export const FeatureTxInfo = () => {
   const amountAsArg = amount ? BigInt(amount) : BigInt(0);
   const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
   const { isLoading, data, isError } = useSimulateContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: owner,
     functionName,
     args: [amountAsArg],

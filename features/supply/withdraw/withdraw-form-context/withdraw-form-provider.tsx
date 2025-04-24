@@ -21,7 +21,7 @@ import {
 import { WithdrawFormSchema } from 'features/supply/withdraw/types';
 import {
   useWithdrawable,
-  useWithdrawWithDelegation,
+  useWithdrawWithDashboard,
 } from 'features/supply/withdraw/hooks';
 
 type WithdrawDataContextValue = {
@@ -57,7 +57,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callWithdraw } = useWithdrawWithDelegation();
+  const { callWithdraw } = useWithdrawWithDashboard();
   const { retryEvent, retryFire } = useFormControllerRetry();
 
   const {

@@ -1,25 +1,24 @@
 import { Text, Loader } from '@lidofinance/lido-ui';
 import { useFormContext } from 'react-hook-form';
-import { useSimulationFundWithDelegation } from 'features/supply/fund/hooks';
+import { useSimulationFundWithDashboard } from 'features/supply/fund/hooks';
 
-import { AmountInfo, InfoRow, StEthQuestion, Wrapper } from './styles';
+import { AmountInfo, InfoRow, Wrapper } from './styles';
 import { useVaultInfo } from 'features/overview/contexts';
 
 export const FeatureTxInfo = () => {
   // TODO: simulate tx, add tx price, convert ETH to stEth
   // TODO: add question info
   const { getValues } = useFormContext();
-  const { token, amount } = getValues();
+  const { amount } = getValues();
   const { activeVault } = useVaultInfo();
-  const { data, isLoading, isError } = useSimulationFundWithDelegation({
-    token: token,
+  const { data, isLoading, isError } = useSimulationFundWithDashboard({
     address: activeVault?.address,
     amount: amount ?? 0,
   });
 
   return (
     <Wrapper>
-      <InfoRow>
+      {/* <InfoRow>
         <Text size="xxs" color="secondary">
           You will receive
         </Text>
@@ -27,7 +26,7 @@ export const FeatureTxInfo = () => {
           <span>{'50 stETH'}</span>
           <StEthQuestion />
         </AmountInfo>
-      </InfoRow>
+      </InfoRow> */}
       <InfoRow>
         <Text size="xxs" color="secondary">
           Transaction cost
@@ -39,7 +38,7 @@ export const FeatureTxInfo = () => {
           </Text>
         )}
         {data && <AmountInfo>{'$99.99'}</AmountInfo>}
-        {!data && !isError && !isLoading && <AmountInfo>${'0'}</AmountInfo>}
+        {!data && !isError && !isLoading && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

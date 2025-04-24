@@ -3,7 +3,7 @@ import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { permissions, permissionsKeys } from 'consts/roles';
 import { useVaultInfo } from 'features/overview/contexts';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { PermissionAccounts } from '../types';
 
 export const useVaultPermissionsRoles = () => {
@@ -15,7 +15,7 @@ export const useVaultPermissionsRoles = () => {
       enabled: !!owner,
     },
     contracts: permissionsKeys.map((key) => ({
-      abi: DelegationAbi,
+      abi: dashboardAbi,
       address: owner,
       functionName: 'getRoleMembers',
       args: [permissions[key]],

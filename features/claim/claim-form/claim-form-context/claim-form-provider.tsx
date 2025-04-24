@@ -20,7 +20,7 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
 import invariant from 'tiny-invariant';
 
@@ -53,7 +53,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     isFetching: isLoadingClaimInfo,
     isError: isErrorClaimInfo,
   } = useReadContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: activeVault?.owner,
     functionName: 'nodeOperatorUnclaimedFee',
     query: {
