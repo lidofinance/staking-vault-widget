@@ -5,10 +5,14 @@ const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Available to withdraw',
     key: 'withdrawableEth',
+    actionText: 'Withdraw ETH',
+    actionLink: '/supply/withdraw',
   },
   {
     title: 'Idle capital',
     key: 'balanceEth',
+    actionText: 'Deposit to validators',
+    actionLink: '/supply/fund',
   },
   {
     title: 'Deposited to validators',
@@ -43,6 +47,8 @@ export const Balance = () => {
           key={item.title}
           title={item.title}
           content={item.payload}
+          actionText={item.actionText}
+          actionLink={item.actionLink}
         />
       ))}
     </OverviewSection>
