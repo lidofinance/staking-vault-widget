@@ -13,6 +13,7 @@ import { getHealthScore } from 'utils/get-health-score';
 
 import type { VaultInfo } from 'types';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
+import { bigIntMax } from 'utils/bigint-math';
 
 export const useSingleVaultData = (vaultAddress: Address | undefined) => {
   const { shares } = useLidoSDK();
@@ -170,7 +171,7 @@ export const useVaultData = (
         const [mintedEth, mintableEth, ethLimit] = await Promise.all([
           shares.convertToSteth(vaultHubSocket.liabilityShares),
           shares.convertToSteth(
-            totalMintableShares - vaultHubSocket.liabilityShares,
+            bigIntMax(totalMintableShares - vaultHubSocket.liabilityShares, 0n),
           ),
           shares.convertToSteth(vaultHubSocket.shareLimit),
         ]);
