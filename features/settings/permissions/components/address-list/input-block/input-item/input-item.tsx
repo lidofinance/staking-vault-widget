@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent, useEffect, useState } from 'react';
+import { FC, FocusEvent, KeyboardEvent, useEffect, useState } from 'react';
 import {
   useFormContext,
   FieldError,
@@ -16,6 +16,7 @@ import {
   VaultPermissions,
   PermissionsKeys,
 } from 'features/settings/permissions/types';
+import { isAddress } from 'viem';
 
 type ArrayFormKey = `${PermissionsKeys}.${number}.value`;
 
@@ -69,12 +70,34 @@ export const InputItem: FC<InputItemProps> = ({
     }
   };
 
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    const value = (e.currentTarget || e.target).value;
+
+    if (isAddress(value)) {
+      const values: { value: string }[] = getValues(permission) ?? [];
+      const output = await trigger(inputKey);
+      if (output) {
+        const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
+        const key = `${permission}.${values.length}`;
+        setValue(
+          key,
+          { account: value, state: 'grant', group: 'eventual' },
+          { shouldDirty: true, shouldValidate: true },
+        );
+        remove(index);
+      }
+    } else {
+      void trigger(inputKey);
+    }
+  };
+
   return (
     <InputWrapper>
       <Input
         {...register(inputKey)}
         placeholder="Ethereum address"
         onKeyDown={handleSaveValue}
+        onBlur={handleBlur}
         error={fieldError}
       />
 
