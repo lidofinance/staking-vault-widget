@@ -1,5 +1,5 @@
 import { Loader, Pagination } from '@lidofinance/lido-ui';
-import { VaultTable } from 'features/home/vault-table';
+import { VaultTable } from 'features/home/components/vault-table';
 import { AllVaultsWrapper } from './styles';
 import { useVaultsDataAll } from 'modules/vaults';
 

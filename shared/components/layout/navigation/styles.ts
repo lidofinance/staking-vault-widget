@@ -3,11 +3,11 @@ import Link from 'next/link';
 import { ArrowBack } from '@lidofinance/lido-ui';
 import { devicesHeaderMedia } from 'styles/global';
 
-export const Nav = styled.nav<{ showNavigation: boolean }>`
+export const Nav = styled.nav`
   --nav-size: 154px;
   grid-area: nav;
   z-index: 6;
-  display: ${({ showNavigation }) => (showNavigation ? 'flex' : 'none')};
+  display: flex;
   flex-direction: column;
   overflow: auto;
   overflow-x: hidden;

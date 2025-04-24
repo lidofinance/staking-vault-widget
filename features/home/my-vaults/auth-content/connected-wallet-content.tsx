@@ -1,4 +1,4 @@
-import { VaultTable } from 'features/home/vault-table';
+import { VaultTable } from 'features/home/components/vault-table';
 import { AddVault } from 'features/home/my-vaults/add-vault';
 
 import { useVaultsDataByOwner } from 'modules/vaults/hooks/use-vaults-data-by-owner';

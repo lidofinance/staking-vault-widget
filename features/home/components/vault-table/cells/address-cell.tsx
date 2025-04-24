@@ -6,7 +6,7 @@ import { useEnsName } from 'wagmi';
 import { AddressBadge } from 'shared/components/address-badge';
 import { AddressWrapper } from './styles';
 
-import { BaseCellProps } from 'features/home/vault-table/types';
+import { BaseCellProps } from 'features/home/components/vault-table/types';
 import { AppPaths } from 'consts/urls';
 
 export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {

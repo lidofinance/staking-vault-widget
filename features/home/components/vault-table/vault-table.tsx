@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { Tbody } from '@lidofinance/lido-ui';
-import { TableCell } from 'features/home/vault-table/table-cell';
+import { TableCell } from 'features/home/components/vault-table/table-cell';
 import {
   DefaultCell,
   EtherCell,
@@ -9,7 +9,7 @@ import {
   PercentCell,
   MintCell,
   HeaderCell,
-} from 'features/home/vault-table/cells';
+} from 'features/home/components/vault-table/cells';
 import {
   TableTitle,
   TableStyled,
@@ -36,11 +36,15 @@ const tableHeaders = [
     showQuestion: true,
   },
   {
-    title: 'stETH Minted/ Mintable',
+    title: 'stETH Minted',
     showQuestion: true,
   },
   {
-    title: 'APR',
+    title: 'Net Staking APR',
+    showQuestion: true,
+  },
+  {
+    title: 'stVault APY',
     showQuestion: true,
   },
   {
@@ -82,7 +86,10 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
                     <EtherCell value={vault.valuation} />
                   </TableCell>
                   <TableCell>
-                    <MintCell value={vault} />
+                    <MintCell value={vault.minted} />
+                  </TableCell>
+                  <TableCell>
+                    <DefaultCell value="?" />
                   </TableCell>
                   <TableCell>
                     <DefaultCell value="?" />

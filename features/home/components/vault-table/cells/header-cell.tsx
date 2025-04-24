@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { Question } from '@lidofinance/lido-ui';
-import { CommonHeader } from 'features/home/vault-table/styles';
+import { CommonHeader } from 'features/home/components/vault-table/styles';
 
 export interface HeaderCellProps {
   title: string;

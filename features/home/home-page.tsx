@@ -2,8 +2,8 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { MyVaults } from 'features/home/my-vaults';
-import { AllVaults } from 'features/home/all-vaults';
+import { HomeContent } from 'features/home/home-content';
+import { HomeNavigationProvider } from 'features/home/providers';
 
 import { PageWrapper } from './styles';
 
@@ -13,10 +13,11 @@ export const HomePage: FC = () => {
       <Head>
         <title>Vault | Lido</title>
       </Head>
-      <PageWrapper>
-        <MyVaults />
-        <AllVaults />
-      </PageWrapper>
+      <HomeNavigationProvider>
+        <PageWrapper>
+          <HomeContent />
+        </PageWrapper>
+      </HomeNavigationProvider>
     </Layout>
   );
 };
