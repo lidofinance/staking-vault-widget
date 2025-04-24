@@ -1,6 +1,6 @@
-import { TableCellStyled } from 'features/home/vault-table/styles';
+import { TableCellStyled } from 'features/home/components/vault-table/styles';
 
-import { TableCellProps } from 'features/home/vault-table/types';
+import { TableCellProps } from 'features/home/components/vault-table/types';
 
 export const TableCell = (props: TableCellProps) => {
   const { children, ...rest } = props;

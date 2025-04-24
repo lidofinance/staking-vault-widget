@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 
-import { SortConfig } from 'features/home/vault-table/types';
+import { SortConfig } from 'features/home/components/vault-table/types';
 import { VaultInfo } from 'types';
 
 export const useTableSort = (

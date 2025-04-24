@@ -9,7 +9,8 @@ import { useConfig } from 'config';
 import { ManifestConfigPage } from 'config/external-config';
 import { useRouterPath } from 'shared/hooks/use-router-path';
 
-import { LocalLink } from 'shared/components/local-link';
+import Link from 'next/link';
+
 import { SelectedVault } from 'shared/components/layout/navigation/selected-vault';
 import {
   ListItem,
@@ -68,6 +69,21 @@ const routes: PageRoute[] = [
   },
 ];
 
+const homeRoutes: PageRoute[] = [
+  {
+    name: 'My vaults',
+    path: `${AppPaths.main}?mode=personal`,
+    icon: <MosaicIcon />,
+    exact: true,
+  },
+  {
+    name: 'All Vaults',
+    path: AppPaths.main,
+    icon: <Stake />,
+    exact: true,
+  },
+];
+
 // TODO: find more clearable way to map routes
 const saturatePathsByAddress = (
   routes: PageRoute[],
@@ -86,7 +102,8 @@ export const Navigation: FC = memo(() => {
   const { vaultAddress } = router.query as {
     vaultAddress: Address | undefined;
   };
-  const showNavigation = pathname !== AppPaths.main;
+
+  const isMainPage = router.pathname === AppPaths.main;
   const showNavList = !pathname.includes(AppPaths.createVault);
 
   const {
@@ -94,6 +111,7 @@ export const Navigation: FC = memo(() => {
   } = useConfig();
 
   const availableRoutes = useMemo(() => {
+    if (isMainPage) return homeRoutes;
     if (!pages) return saturatePathsByAddress(routes, vaultAddress);
 
     const paths = Object.keys(pages) as ManifestConfigPage[];
@@ -104,7 +122,7 @@ export const Navigation: FC = memo(() => {
     });
 
     return saturatePathsByAddress(filteredRoutes, vaultAddress);
-  }, [pages, vaultAddress]);
+  }, [pages, vaultAddress, isMainPage]);
 
   let pathnameWithoutQuery = pathname.split('?')[0];
   if (pathnameWithoutQuery.endsWith('/')) {
@@ -112,34 +130,55 @@ export const Navigation: FC = memo(() => {
     pathnameWithoutQuery = pathnameWithoutQuery.slice(0, -1);
   }
 
+  const checkIsActivePath = (path: string, subPaths: string[] | undefined) => {
+    if (isMainPage) {
+      const queryString = path.split('?')[1] || '';
+      const queryParams = new URLSearchParams(queryString);
+      const routeMode = queryParams.get('mode');
+
+      const currentMode = Array.isArray(router.query.mode)
+        ? router.query.mode[0]
+        : router.query.mode || '';
+
+      if (!routeMode && !currentMode) {
+        return true;
+      }
+
+      return currentMode === routeMode;
+    }
+
+    return (
+      pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
+      (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
+      (Array.isArray(subPaths) && subPaths.indexOf(pathnameWithoutQuery) > -1)
+    );
+  };
+
   return (
-    <Nav showNavigation={showNavigation}>
-      <AllVaults href={AppPaths.main}>
-        <ArrowBackStyled />
-        &nbsp;
-        <Text size="xxs" strong>
-          All vaults
-        </Text>
-      </AllVaults>
+    <Nav>
+      {!isMainPage && (
+        <AllVaults href={AppPaths.main}>
+          <ArrowBackStyled />
+          &nbsp;
+          <Text size="xxs" strong>
+            All vaults
+          </Text>
+        </AllVaults>
+      )}
       {showNavList && (
         <>
           <SelectedVault />
           <NavList>
             {availableRoutes.map(({ name, path, subPaths, icon }) => {
-              const isActive =
-                pathnameWithoutQuery === getPathWithoutFirstSlash(path) ||
-                (path.length > 1 && pathnameWithoutQuery.startsWith(path)) ||
-                (Array.isArray(subPaths) &&
-                  subPaths?.indexOf(pathnameWithoutQuery) > -1);
-
+              const isActive = checkIsActivePath(path, subPaths);
               return (
                 <ListItem key={path}>
-                  <LocalLink href={path}>
+                  <Link href={path}>
                     <NavLink active={isActive}>
                       {icon}
                       <span>{name}</span>
                     </NavLink>
-                  </LocalLink>
+                  </Link>
                 </ListItem>
               );
             })}

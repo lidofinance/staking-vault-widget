@@ -4,12 +4,13 @@ import { Button, ButtonIcon, Container } from '@lidofinance/lido-ui';
 
 export const PageWrapper = styled(Container)`
   display: flex;
-  flex-direction: column;
-  gap: 40px;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
   padding: 0;
 `;
 
 export const dashboardButton = css`
+  width: 100%;
   padding: 20px 64px;
   box-shadow: none;
 
