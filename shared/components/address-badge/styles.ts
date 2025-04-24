@@ -41,7 +41,7 @@ type PillProps = {
   bgColor: BgColor;
 };
 
-type BgColor = 'transparent' | 'default' | 'error' | 'success';
+type BgColor = 'transparent' | 'default' | 'error' | 'success' | 'active';
 
 const getColorTransparency = (color: string, percent: string) => {
   return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
@@ -54,6 +54,7 @@ const getBgColor = ({ theme: { colors }, bgColor }: PillProps) => {
     transparent: 'transparent',
     error: getColorTransparency(colors.error, '20%'),
     success: getColorTransparency(colors.success, '30%'),
+    active: getColorTransparency('var(--lido-color-textDark)', '12%'),
   };
 
   return bgColorMap[bgColor];

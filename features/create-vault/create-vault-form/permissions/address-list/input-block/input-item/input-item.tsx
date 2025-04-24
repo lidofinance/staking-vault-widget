@@ -57,7 +57,14 @@ export const InputItem: FC<InputItemProps> = ({
       const output = await trigger(inputKey);
       if (output) {
         const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
-        setValue(`roles.${permission}.${values?.length ?? 0}`, value);
+        setValue(
+          `roles.${permission}.${values?.length ?? 0}`,
+          {
+            account: value,
+            state: 'grant',
+          },
+          { shouldDirty: true },
+        );
         remove(index);
       }
     }

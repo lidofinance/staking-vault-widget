@@ -4,7 +4,6 @@ import {
   VAULTS_ALL_ROLES_MAP,
 } from 'modules/vaults/consts';
 import { CreateVaultSchema } from '../create-vault-form/create-vault-form-context/validation';
-import { Address } from 'viem';
 import { PermissionKeys } from '../types';
 import invariant from 'tiny-invariant';
 
@@ -17,23 +16,27 @@ export const formatCreateVaultData = (
     (nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100,
   );
   return {
-    defaultAdmin: values.defaultAdmin as Address,
-    nodeOperator: values.nodeOperator as Address,
-    nodeOperatorManager: values.nodeOperatorManager as Address,
+    defaultAdmin: values.defaultAdmin,
+    nodeOperator: values.nodeOperator,
+    nodeOperatorManager: values.nodeOperatorManager,
     nodeOperatorFeeBP: nodeOperatorFeeBPFormatted,
     confirmExpiry: confirmExpiryFormatted,
 
-    roles: Object.entries(values.roles).flatMap(([roleName, roleAddresses]) => {
-      const roleHash = VAULTS_ALL_ROLES_MAP[roleName as PermissionKeys];
-      invariant(
-        roleHash,
-        `[formatCreateVaultData] no role hash found for ${roleName}`,
-      );
-      if (!roleAddresses) return [];
-      return roleAddresses.map((address) => ({
-        role: roleHash,
-        account: address as Address,
-      }));
-    }),
+    roles: Object.entries(values.roles)
+      .filter(([_, roleData]) => {
+        return roleData.filter((item) => item.state === 'grant');
+      })
+      .flatMap(([roleName, roleData]) => {
+        const roleHash = VAULTS_ALL_ROLES_MAP[roleName as PermissionKeys];
+        invariant(
+          roleHash,
+          `[formatCreateVaultData] no role hash found for ${roleName}`,
+        );
+        if (!roleData) return [];
+        return roleData.map((item) => ({
+          role: roleHash,
+          account: item.account,
+        }));
+      }),
   };
 };

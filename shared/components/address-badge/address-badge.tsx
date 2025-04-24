@@ -8,12 +8,12 @@ export interface AddressBadgeProps {
   address: string | undefined;
   symbols?: number;
   crossedText?: boolean;
+  isActive?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: TextColors;
   weight?: TextWeight;
-  bgColor?: 'transparent' | 'default' | 'error' | 'success';
-  onRemove?: (event: MouseEvent<HTMLButtonElement>) => void;
-  onRestore?: (event: MouseEvent<HTMLButtonElement>) => void;
+  bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
+  onToggle?: (event: MouseEvent<HTMLButtonElement>) => void;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -23,12 +23,12 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       address,
       symbols = 6,
       crossedText = false,
+      isActive = false,
       size = 'xs',
       color = 'default',
       weight = 700,
       bgColor = 'default',
-      onRemove,
-      onRestore,
+      onToggle,
       onClick,
     },
     ref?: ForwardedRef<HTMLDivElement>,
@@ -37,8 +37,10 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       return null;
     }
 
+    const containerBgColor = isActive ? 'active' : bgColor;
+
     return (
-      <PillContainer bgColor={bgColor} onClick={onClick} ref={ref}>
+      <PillContainer bgColor={containerBgColor} onClick={onClick} ref={ref}>
         <Identicon address={address} />
         <AddressText
           size={size}
@@ -49,8 +51,8 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           crossedText={crossedText}
         />
 
-        {!crossedText && onRemove && <ButtonClose onClick={onRemove} />}
-        {crossedText && onRestore && <ButtonRestore onClick={onRestore} />}
+        {!crossedText && onToggle && <ButtonClose onClick={onToggle} />}
+        {crossedText && onToggle && <ButtonRestore onClick={onToggle} />}
       </PillContainer>
     );
   },

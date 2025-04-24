@@ -32,7 +32,13 @@ const validateAddress = (value: string) => isValidAnyAddress(value);
 
 const addressSchema = z
   .string()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE });
+  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .transform((value) => value as Address);
+
+const permissionSchema = z.object({
+  state: z.union([z.literal('restore'), z.literal('grant')]),
+  account: addressSchema,
+});
 
 const roleKeys = [
   ...Object.keys(VAULTS_OWNER_ROLES_MAP),
@@ -53,9 +59,11 @@ export const createVaultSchema = z.object({
   defaultAdmin: addressSchema,
   roles: z.object(
     Object.fromEntries(
-      roleKeys.map((key) => [key, z.array(addressSchema).optional()]),
+      roleKeys.map((key) => [key, z.array(permissionSchema).optional()]),
     ) as unknown as {
-      [key in PermissionKeys]: z.ZodOptional<z.ZodArray<z.ZodString>>;
+      [key in PermissionKeys]: z.ZodOptional<
+        z.ZodArray<typeof permissionSchema>
+      >;
     },
   ),
 });
@@ -68,24 +76,28 @@ export const formatCreateVaultData = (
   values: CreateVaultSchema,
 ): VaultFactoryArgs => {
   return {
-    defaultAdmin: values.defaultAdmin as Address,
-    nodeOperator: values.nodeOperator as Address,
-    nodeOperatorManager: values.nodeOperatorManager as Address,
+    defaultAdmin: values.defaultAdmin,
+    nodeOperator: values.nodeOperator,
+    nodeOperatorManager: values.nodeOperatorManager,
     nodeOperatorFeeBP: BigInt(values.nodeOperatorFeeBP),
     confirmExpiry: BigInt(values.confirmExpiry * 60 * 60),
 
-    roles: Object.entries(values.roles).flatMap(([roleName, roleAddresses]) => {
-      const roleHash = JOINT_ROLE_MAP[roleName as PermissionKeys];
-      invariant(
-        roleHash,
-        `[formatCreateVaultData] no role hash found for ${roleName}`,
-      );
-      if (!roleAddresses) return [];
-      return roleAddresses.map((address) => ({
-        role: roleHash,
-        account: address as Address,
-      }));
-    }),
+    roles: Object.entries(values.roles)
+      .filter(([_, roleData]) => {
+        return roleData.filter((item) => item.state === 'grant');
+      })
+      .flatMap(([roleName, roleData]) => {
+        const roleHash = JOINT_ROLE_MAP[roleName as PermissionKeys];
+        invariant(
+          roleHash,
+          `[formatCreateVaultData] no role hash found for ${roleName}`,
+        );
+        if (!roleData) return [];
+        return roleData.map((item) => ({
+          role: roleHash,
+          account: item.account,
+        }));
+      }),
   };
 };
 

@@ -35,6 +35,7 @@ import {
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
 import { simulateCreateVault } from 'modules/vaults/contracts/vault-factory';
+import { Address } from 'viem';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
@@ -85,11 +86,11 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const formObject = useForm<CreateVaultSchema>({
     defaultValues: {
-      nodeOperator: '',
-      nodeOperatorManager: '',
+      nodeOperator: '' as Address,
+      nodeOperatorManager: '' as Address,
       nodeOperatorFeeBP: 5,
       confirmExpiry: 36,
-      defaultAdmin: '',
+      defaultAdmin: '' as Address,
       roles: {},
     },
     resolver: validateFormWithZod(createVaultSchema),
@@ -111,8 +112,8 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
       setSubmitStep({ step: SubmitStepEnum.confirming });
       try {
-        const response = await callCreateVault(payload);
-        setSubmitStep({ step: SubmitStepEnum.success, tx: response });
+        const { address, tx } = await callCreateVault(payload);
+        setSubmitStep({ step: SubmitStepEnum.success, tx, address });
       } catch (err) {
         console.error('[CreateFormProvider] Error sending create vault', err);
 

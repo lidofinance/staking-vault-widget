@@ -6,7 +6,7 @@ import {
   useMemo,
   useCallback,
 } from 'react';
-import { Address, parseEther } from 'viem';
+import { Address } from 'viem';
 import invariant from 'tiny-invariant';
 import { useVaultInfo } from './vault-provider';
 import { formatBalance, formatPercent } from 'utils';
@@ -77,9 +77,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       } = activeVault;
 
       const totalValue = toEthValue(valuation);
-      const totalLocked = toEthValue(
-        locked + parseEther('1') + nodeOperatorUnclaimedFee,
-      );
+      const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
       const mintedEth = toEthValue(minted);
       const withdrawableEth = toEthValue(withdrawableEther);
       const balanceEth = toEthValue(balance);
@@ -113,7 +111,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         ? bigIntMax(valuation - minted, (minted * reservable) / totalMintable)
         : valuation;
 
-      const collateral = toEthValue(minted + reserved + parseEther('1'));
+      const collateral = toEthValue(bigIntMax(minted + reserved, locked));
       const pendingUnlock = locked - minted - reserved;
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
