@@ -9,13 +9,8 @@ export const HomeContent = () => {
     pathname,
     query: { mode },
   } = router;
-  const showAll = pathname === AppPaths.main && !mode;
-  const showMy = pathname === AppPaths.main && mode === 'personal';
 
-  return (
-    <>
-      {showAll && <AllVaults />}
-      {showMy && <MyVaults />}
-    </>
-  );
+  const showPersonal = pathname === AppPaths.main && mode === 'personal';
+
+  return <>{showPersonal ? <MyVaults /> : <AllVaults />}</>;
 };
