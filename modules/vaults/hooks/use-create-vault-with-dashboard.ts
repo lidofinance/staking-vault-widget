@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import {
   useConfig,
+  usePublicClient,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
+import { Address, parseEventLogs } from 'viem';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 
@@ -21,6 +23,7 @@ export const useCreateVaultWihDashboard = ({
 }: CreateWithDelegationProps) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
+  const publicClient = usePublicClient();
 
   const { data: createVaultTx, writeContractAsync } = useWriteContract({
     config: wagmiConfig,
@@ -40,8 +43,12 @@ export const useCreateVaultWihDashboard = ({
         vaultFactoryAddress,
         '[useCreateVaultWihDashboard] vaultFactoryAddress is not defined',
       );
+      invariant(
+        publicClient,
+        '[useCreateVaultWihDashboard] publicClient is not defined',
+      );
 
-      return await writeContractAsync({
+      const tx = await writeContractAsync({
         abi: VaultFactoryAbi,
         address: vaultFactoryAddress,
         functionName: 'createVaultWithDashboard',
@@ -57,8 +64,21 @@ export const useCreateVaultWihDashboard = ({
         ],
         chainId,
       });
+
+      const receipt = await publicClient.waitForTransactionReceipt({
+        hash: tx,
+      });
+
+      const logs = parseEventLogs({
+        abi: VaultFactoryAbi,
+        logs: receipt.logs,
+      });
+
+      const address = (logs[0].args as { vault: Address; owner: Address })
+        .vault;
+      return { address, tx };
     },
-    [chainId, writeContractAsync],
+    [chainId, writeContractAsync, publicClient],
   );
 
   return {

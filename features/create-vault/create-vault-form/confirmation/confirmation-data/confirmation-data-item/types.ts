@@ -1,3 +1,5 @@
+import { PermissionField } from 'features/create-vault/types';
+
 export interface ConfirmDataItemProps {
-  payload: string | string[];
+  payload: string | PermissionField[];
 }

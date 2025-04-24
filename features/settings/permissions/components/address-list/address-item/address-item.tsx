@@ -85,8 +85,7 @@ export const AddressItem: FC<AddressItemProps> = ({
         address={account}
         crossedText={isTextCrossed}
         bgColor={bgColor}
-        onRemove={handleUpdateFormItem}
-        onRestore={handleUpdateFormItem}
+        onToggle={handleUpdateFormItem}
         onClick={handleShowPopover}
       />
       {!!badgeRef?.current && (

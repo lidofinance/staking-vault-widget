@@ -91,3 +91,8 @@ export type CreateVaultDataContextValue = {
 
 export type CreateVaultStep =
   (typeof CREATE_VAULT_FORM_STEPS)[keyof typeof CREATE_VAULT_FORM_STEPS];
+
+export type PermissionField = {
+  account: Address;
+  state: 'grant' | 'restore';
+};

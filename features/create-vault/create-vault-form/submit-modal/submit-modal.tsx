@@ -18,6 +18,7 @@ import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
 
 import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
+import { AppPaths } from '../../../../consts/urls';
 
 const getIconComponent = (step: SubmitStep) => {
   if (step === SubmitStepEnum.success)
@@ -58,7 +59,7 @@ export const SubmitModal: FC<ModalProps> = () => {
 
   const handleNavigateToVault = () => {
     // TODO: add for responsive buttons onClick = () => Promise and handle promise there
-    void router.push(`/${address}`);
+    void router.push(`/${address}/${AppPaths.overview}`);
   };
 
   return (
