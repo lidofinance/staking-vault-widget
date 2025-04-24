@@ -12,7 +12,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 
-type WithdrawWithDelegationArgs = {
+type WithdrawWithDashboardArgs = {
   recipient: Address;
   amount: bigint;
 };
@@ -31,7 +31,7 @@ export const useWithdrawWithDashboard = (onMutate = () => {}) => {
   });
 
   const callWithdraw = useCallback(
-    async ({ amount, recipient }: WithdrawWithDelegationArgs) => {
+    async ({ amount, recipient }: WithdrawWithDashboardArgs) => {
       invariant(activeVault, 'activeVault is undefined');
       return await writeContractAsync({
         abi: dashboardAbi,
@@ -50,7 +50,7 @@ export const useWithdrawWithDashboard = (onMutate = () => {}) => {
   };
 };
 
-type SimulateWithDelegationArgs = {
+type SimulateWithdrawDashboardArgs = {
   recipient: Address;
   amount?: bigint;
 };
@@ -58,7 +58,7 @@ type SimulateWithDelegationArgs = {
 export const useSimulateWithdrawDashboard = ({
   recipient,
   amount = 0n,
-}: SimulateWithDelegationArgs) => {
+}: SimulateWithdrawDashboardArgs) => {
   const { activeVault } = useVaultInfo();
   const { chainId } = useDappStatus();
   const { hasPermission } = useVaultPermissions('withdrawer');
