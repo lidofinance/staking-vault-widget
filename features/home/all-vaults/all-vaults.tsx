@@ -9,6 +9,7 @@ export const AllVaults = () => {
     isLoading: isLoadingAllVaults,
     pagesCount,
     handlePagination,
+    page,
   } = useVaultsDataAll();
   const showPagination = !!pagesCount;
 
@@ -19,14 +20,15 @@ export const AllVaults = () => {
         vaults={vaults}
         showTitle={!isLoadingAllVaults}
       />
-      {showPagination && (
+      {isLoadingAllVaults && <Loader color="primary" size="large" />}
+      {showPagination && !isLoadingAllVaults && (
         <Pagination
           onItemClick={handlePagination}
           pagesCount={pagesCount}
           siblingCount={1}
+          activePage={page}
         />
       )}
-      {isLoadingAllVaults && <Loader color="primary" size="large" />}
     </AllVaultsWrapper>
   );
 };

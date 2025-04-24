@@ -8,13 +8,13 @@ export interface VaultInfo extends VaultSocket {
   nodeOperator: Address;
   defaultAdmins: readonly Address[];
   nodeOperatorManagers: readonly Address[];
-  valuation: bigint;
-  minted: bigint;
-  mintable: bigint;
-  ethLimit: bigint;
+  totalValue: bigint;
+  liabilityStETH: bigint;
+  mintableStETH: bigint;
+  stETHLimit: bigint;
   apr: null;
   healthScore: number;
-  totalMintableShares: bigint;
+  totalMintingCapacity: bigint;
   inOutDelta: bigint;
   locked: bigint;
   nodeOperatorUnclaimedFee: bigint;

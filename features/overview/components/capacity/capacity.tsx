@@ -8,7 +8,7 @@ const sectionPayloadList: SectionPayload[] = [
   },
   {
     title: 'stETH liability',
-    key: 'mintedEth',
+    key: 'liabilityStETH',
   },
   {
     title: 'Total minting capacity',
