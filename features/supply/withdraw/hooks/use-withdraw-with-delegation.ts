@@ -1,15 +1,16 @@
 import { useCallback } from 'react';
 import {
-  useConfig,
   useSimulateContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi';
 import { Address } from 'viem';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
+import invariant from 'tiny-invariant';
+import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 
 type WithdrawWithDelegationArgs = {
   recipient: Address;
@@ -17,11 +18,9 @@ type WithdrawWithDelegationArgs = {
 };
 
 export const useWithdrawWithDelegation = (onMutate = () => {}) => {
-  const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
 
   const { data: withdrawTx, writeContractAsync } = useWriteContract({
-    config: wagmiConfig,
     mutation: {
       onMutate,
     },
@@ -33,14 +32,15 @@ export const useWithdrawWithDelegation = (onMutate = () => {}) => {
 
   const callWithdraw = useCallback(
     async ({ amount, recipient }: WithdrawWithDelegationArgs) => {
+      invariant(activeVault, 'activeVault is undefined');
       return await writeContractAsync({
-        abi: DelegationAbi,
-        address: activeVault?.owner as Address,
+        abi: dashboardAbi,
+        address: activeVault.owner,
         functionName: 'withdraw',
         args: [recipient, amount],
       });
     },
-    [writeContractAsync, activeVault?.owner],
+    [activeVault, writeContractAsync],
   );
 
   return {
@@ -61,15 +61,16 @@ export const useSimulateWithDelegation = ({
 }: SimulateWithDelegationArgs) => {
   const { activeVault } = useVaultInfo();
   const { chainId } = useDappStatus();
+  const { hasPermission } = useVaultPermissions('withdrawer');
   const owner = activeVault?.owner;
 
   return useSimulateContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: owner as Address,
     functionName: 'withdraw',
     args: [recipient, amount],
     query: {
-      enabled: !!owner && !!recipient,
+      enabled: !!owner && !!recipient && hasPermission,
     },
     chainId,
   });

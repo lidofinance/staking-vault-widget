@@ -1,5 +1,4 @@
-//TODO: rename to Dashboard
-export const DelegationAbi = [
+export const dashboardAbi = [
   {
     inputs: [
       {

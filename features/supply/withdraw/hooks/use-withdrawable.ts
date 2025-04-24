@@ -1,13 +1,13 @@
 import { useVaultInfo } from 'features/overview/contexts';
 import { useReadContract } from 'wagmi';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 export const useWithdrawable = () => {
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
 
   return useReadContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: owner,
     functionName: 'withdrawableEther',
     query: {

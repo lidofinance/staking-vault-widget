@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useConfig, useWriteContract } from 'wagmi';
 import { Address, PublicClient } from 'viem';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import { GrantRole } from 'features/settings/permissions/types';
@@ -44,7 +44,7 @@ export const useEditPermissionsWithDashboard = (onMutate = () => {}) => {
       if (toRevoke.length > 0) {
         payload.push(
           writeRevokeContractAsync({
-            abi: DelegationAbi,
+            abi: dashboardAbi,
             address: activeVault?.owner as Address,
             functionName: 'revokeRoles',
             args: [toRevoke],
@@ -56,7 +56,7 @@ export const useEditPermissionsWithDashboard = (onMutate = () => {}) => {
       if (toGrant.length > 0) {
         payload.push(
           writeGrantContractAsync({
-            abi: DelegationAbi,
+            abi: dashboardAbi,
             address: activeVault?.owner as Address,
             functionName: 'grantRoles',
             args: [toGrant],
@@ -102,7 +102,7 @@ export const simulateEditPermissionsWithDashboard = async ({
     simulationList.push(
       publicClient.simulateContract({
         address: delegationAddress,
-        abi: DelegationAbi,
+        abi: dashboardAbi,
         functionName: 'revokeRoles',
         args: [toRevoke],
         account,
@@ -114,7 +114,7 @@ export const simulateEditPermissionsWithDashboard = async ({
     simulationList.push(
       publicClient.simulateContract({
         address: delegationAddress,
-        abi: DelegationAbi,
+        abi: dashboardAbi,
         functionName: 'grantRoles',
         args: [toGrant],
         account,

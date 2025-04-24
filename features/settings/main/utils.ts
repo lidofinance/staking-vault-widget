@@ -2,7 +2,7 @@ import { Address, encodeFunctionData, PublicClient, getContract } from 'viem';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults/consts';
 import { EditMainSettingsSchema, TxData } from './types';
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { dashboardFunctionsNamesMap } from 'utils/send-dashboard-tx';
 
 export const prepareMainTxData = (data: EditMainSettingsSchema) => {
@@ -69,7 +69,7 @@ export const generateMainAATxData = async ({
   const aaPayload = keys.map(async (key) => {
     const functionName = dashboardFunctionsNamesMap[key];
     const data = encodeFunctionData({
-      abi: DelegationAbi,
+      abi: dashboardAbi,
       functionName,
       // @ts-expect-error find out how to setup right types
       args: [txData[key]],
@@ -77,7 +77,7 @@ export const generateMainAATxData = async ({
 
     const contract = getContract({
       address,
-      abi: DelegationAbi,
+      abi: dashboardAbi,
       client: {
         public: publicClient,
       },

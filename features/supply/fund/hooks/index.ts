@@ -1,4 +1,4 @@
 export {
-  useFundWithDelegation,
+  useFundWithDashboard as useFundWithDelegation,
   useSimulationFundWithDelegation,
-} from './use-fund-with-delegation';
+} from './use-fund-with-dashboard';

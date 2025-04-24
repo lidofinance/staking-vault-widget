@@ -6,7 +6,7 @@ import {
 } from 'wagmi';
 import { Address } from 'viem';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
@@ -29,7 +29,7 @@ export const useBurnWithDelegation = (onMutate = () => {}) => {
   const callBurn = useCallback(
     async ({ token, amount }: { token: string; amount: bigint }) => {
       return await writeContractAsync({
-        abi: DelegationAbi,
+        abi: dashboardAbi,
         address: activeVault?.owner as Address,
         functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
         args: [amount],

@@ -16,7 +16,7 @@ export const AddressField = () => {
   return (
     <Input
       {...field}
-      label="Claim to address"
+      label="Withdraw to address"
       rightDecorator={
         <CurrentAddressButton
           onClick={handleSetAddress}

@@ -15,10 +15,10 @@ export const FeatureTxInfo = () => {
   return (
     <Wrapper>
       <InfoRow>
-        <Text size="xxs" color="secondary">
+        {/* <Text size="xxs" color="secondary">
           You will receive
         </Text>
-        <AmountInfo>{'50 ETH'}</AmountInfo>
+        <AmountInfo>{'50 ETH'}</AmountInfo> */}
       </InfoRow>
       <InfoRow>
         <Text size="xxs" color="secondary">
@@ -32,7 +32,7 @@ export const FeatureTxInfo = () => {
         )}
         {/*TODO: replace by real data*/}
         {data && <AmountInfo>{'$99.99'}</AmountInfo>}
-        {!data && !isError && !isLoading && <AmountInfo>${'0'}</AmountInfo>}
+        {!data && !isError && !isLoading && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

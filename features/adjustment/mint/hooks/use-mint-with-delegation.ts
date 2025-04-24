@@ -8,7 +8,7 @@ import {
 } from 'wagmi';
 import { Address } from 'viem';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
@@ -31,7 +31,7 @@ export const useMintWithDelegation = (onMutate = () => {}) => {
   const callMint = useCallback(
     async (recipient: Address, amount: bigint, token: string) => {
       return await writeContractAsync({
-        abi: DelegationAbi,
+        abi: dashboardAbi,
         address: activeVault?.owner as Address,
         functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
         args: [recipient, amount],
@@ -66,7 +66,7 @@ export const useSimulationMintWithDelegation = ({
   const isEnabled = !!(recipient && owner);
 
   const simulationContractPayload: UseSimulateContractParameters = {
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: owner,
     functionName,
     args: payload,

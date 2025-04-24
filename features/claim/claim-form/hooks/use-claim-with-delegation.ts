@@ -7,7 +7,7 @@ import {
 } from 'wagmi';
 import { Address } from 'viem';
 
-import { DelegationAbi } from 'abi/delegation';
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
@@ -31,7 +31,7 @@ export const useClaimWithDelegation = (onMutate = () => {}) => {
   const callClaim = useCallback(
     async (recipient: Address) => {
       return await writeContractAsync({
-        abi: DelegationAbi,
+        abi: dashboardAbi,
         address: owner as Address,
         functionName: 'claimNodeOperatorFee',
         args: [recipient],
@@ -54,7 +54,7 @@ export const useSimulationClaimWithDelegation = (recipient: Address) => {
   const isEnabled = !!owner && !!recipient;
 
   return useSimulateContract({
-    abi: DelegationAbi,
+    abi: dashboardAbi,
     address: owner,
     functionName: 'claimNodeOperatorFee',
     args: [recipient],
