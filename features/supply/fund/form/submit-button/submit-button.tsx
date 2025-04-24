@@ -5,6 +5,7 @@ export const SubmitButton = () => {
   const {
     formState: { isSubmitting, isValid, isDirty },
   } = useFormContext();
+
   return (
     <PermissionedSubmitButton
       dashboardRole="funder"
