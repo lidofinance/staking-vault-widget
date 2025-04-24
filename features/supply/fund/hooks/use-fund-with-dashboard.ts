@@ -13,7 +13,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 
-export const useFundWithDashboard = (onMutate = () => {}) => {
+export const useFund = (onMutate = () => {}) => {
   const { activeVault } = useVaultInfo();
 
   const { data: fundTx, writeContractAsync } = useWriteContract({
@@ -46,15 +46,12 @@ export const useFundWithDashboard = (onMutate = () => {}) => {
   };
 };
 
-export type SimulationFundWithDashboardProps = {
+export type SimulationFundProps = {
   address: Address | undefined;
   amount: bigint;
 };
 
-export const useSimulationFundWithDashboard = ({
-  address,
-  amount,
-}: SimulationFundWithDashboardProps) => {
+export const useSimulationFund = ({ address, amount }: SimulationFundProps) => {
   const { address: accountAddress } = useAccount();
   const { hasPermission } = useVaultPermissions('funder');
   const simulationContractPayload: UseSimulateContractParameters = {
