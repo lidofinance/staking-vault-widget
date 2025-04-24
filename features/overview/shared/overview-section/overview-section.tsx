@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, ReactNode } from 'react';
 
-import { Block, Text, Tooltip, Question } from '@lidofinance/lido-ui';
+import { Block, Text } from '@lidofinance/lido-ui';
 import { Content, ContentWrapper, Title } from './styles';
 
 export interface OverviewSectionProps {
@@ -12,7 +12,7 @@ export interface OverviewSectionProps {
 export const OverviewSection: FC<PropsWithChildren<OverviewSectionProps>> = (
   props,
 ) => {
-  const { title, titleTooltip, titleContent = null, children } = props;
+  const { title, titleContent = null, children } = props;
 
   return (
     <Block>
@@ -23,11 +23,6 @@ export const OverviewSection: FC<PropsWithChildren<OverviewSectionProps>> = (
               <Text size="lg" strong>
                 {title}
               </Text>
-              {!!titleTooltip && (
-                <Tooltip title={titleTooltip}>
-                  <Question />
-                </Tooltip>
-              )}
             </Title>
           )}
           {titleContent}

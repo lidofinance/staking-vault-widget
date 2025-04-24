@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { Button, Question, Text, Tooltip } from '@lidofinance/lido-ui';
+import { Text, Button } from '@lidofinance/lido-ui';
 import { ItemWrapper, Title } from './styles';
 import { useRouter } from 'next/router';
 import { useVaultInfo } from 'features/overview/contexts';
@@ -25,9 +25,6 @@ export const OverviewItem: FC<ItemProps> = (props) => {
         <Text color="secondary" size="xxs">
           {title}
         </Text>
-        <Tooltip title="Lorem ipsum">
-          <Question />
-        </Tooltip>
       </Title>
       <Text size="lg" color={contentColor} strong>
         {content ?? '-'}
