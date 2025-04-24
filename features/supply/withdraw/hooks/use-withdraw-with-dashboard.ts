@@ -17,7 +17,7 @@ type WithdrawWithDelegationArgs = {
   amount: bigint;
 };
 
-export const useWithdrawWithDelegation = (onMutate = () => {}) => {
+export const useWithdrawWithDashboard = (onMutate = () => {}) => {
   const { activeVault } = useVaultInfo();
 
   const { data: withdrawTx, writeContractAsync } = useWriteContract({
@@ -55,7 +55,7 @@ type SimulateWithDelegationArgs = {
   amount?: bigint;
 };
 
-export const useSimulateWithDelegation = ({
+export const useSimulateWithdrawDashboard = ({
   recipient,
   amount = 0n,
 }: SimulateWithDelegationArgs) => {

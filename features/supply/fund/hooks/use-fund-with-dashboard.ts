@@ -51,7 +51,7 @@ export interface SimulationFundWithDelegationProps {
   amount: bigint;
 }
 
-export const useSimulationFundWithDelegation = ({
+export const useSimulationFundWithDashboard = ({
   address,
   amount,
 }: SimulationFundWithDelegationProps) => {

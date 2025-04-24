@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useSimulateWithDelegation } from 'features/supply/withdraw/hooks';
+import { useSimulateWithdrawDashboard } from 'features/supply/withdraw/hooks';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
@@ -7,7 +7,7 @@ import { AmountInfo, InfoRow, Wrapper } from './styles';
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
   const [recipient, amount] = watch(['recipient', 'amount']);
-  const { isLoading, isError, data } = useSimulateWithDelegation({
+  const { isLoading, isError, data } = useSimulateWithdrawDashboard({
     recipient,
     amount,
   });
