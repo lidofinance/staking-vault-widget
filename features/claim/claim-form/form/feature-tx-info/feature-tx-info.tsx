@@ -1,30 +1,17 @@
 import { useFormContext } from 'react-hook-form';
-
-import { Loader, Text } from '@lidofinance/lido-ui';
-import { AmountInfo, InfoRow, Wrapper } from './styles';
-import { useSimulationClaim } from 'features/claim/claim-form/hooks';
+import { Wrapper } from './styles';
+import { useEstimateClaim } from 'features/claim/claim-form/hooks';
 import { Address } from 'viem';
+import { TxCostRow } from 'shared/components/tx-cost-row';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
   const recipient: Address = watch('recipient');
-  const { data, isLoading, isError } = useSimulationClaim(recipient);
+  const estimateQuery = useEstimateClaim(recipient);
 
   return (
     <Wrapper>
-      <InfoRow>
-        <Text size="xxs" color="secondary">
-          Transaction cost
-        </Text>
-        {isLoading && <Loader size="small" />}
-        {/*TODO: get simulated data*/}
-        {/*TODO: show error message*/}
-        {!!data?.result && !isLoading && (
-          <AmountInfo>{data?.result}</AmountInfo>
-        )}
-        {isError && !isLoading && <AmountInfo>-</AmountInfo>}
-        {!isLoading && !data && !isError && <AmountInfo>-</AmountInfo>}
-      </InfoRow>
+      <TxCostRow estimateGasQuery={estimateQuery} />
     </Wrapper>
   );
 };

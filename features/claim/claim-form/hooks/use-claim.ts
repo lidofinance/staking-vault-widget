@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import {
   useConfig,
-  useSimulateContract,
   usePublicClient,
   useWriteContract,
+  useEstimateGas,
+  useAccount,
 } from 'wagmi';
-import { Address } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
@@ -15,6 +16,8 @@ import {
   SubmitStep,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
+import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { fallbackedAddress } from 'utils/fallbacked-address';
 
 export const useClaim = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
@@ -66,18 +69,28 @@ export const useClaim = (onMutate = () => {}) => {
   };
 };
 
-export const useSimulationClaim = (recipient: Address) => {
+export const useEstimateClaim = (recipient?: Address) => {
+  const { address } = useAccount();
+  const { hasPermission } = useVaultPermissions('nodeOperatorFeeClaimer');
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
-  const isEnabled = !!owner && !!recipient;
+  const enabled = !!(
+    owner &&
+    address &&
+    hasPermission &&
+    activeVault.nodeOperatorUnclaimedFee > 0n
+  );
 
-  return useSimulateContract({
-    abi: dashboardAbi,
-    address: owner,
-    functionName: 'claimNodeOperatorFee',
-    args: [recipient],
+  return useEstimateGas({
+    to: owner,
+    account: address,
+    data: encodeFunctionData({
+      abi: dashboardAbi,
+      functionName: 'claimNodeOperatorFee',
+      args: [fallbackedAddress(recipient || address)],
+    }),
     query: {
-      enabled: isEnabled,
+      enabled,
     },
   });
 };

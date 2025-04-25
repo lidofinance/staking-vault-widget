@@ -1,5 +1,2 @@
 export { useWithdrawable } from './use-withdrawable';
-export {
-  useWithdrawWithDashboard,
-  useSimulateWithdrawDashboard,
-} from './use-withdraw-with-dashboard';
+export { useWithdraw, useEstimateGasWithdraw } from './use-withdraw';

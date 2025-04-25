@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import {
   useConfig,
-  useSimulateContract,
   useWriteContract,
   usePublicClient,
-  UseSimulateContractParameters,
+  useEstimateGas,
+  useAccount,
 } from 'wagmi';
-import { Address } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
@@ -16,6 +16,8 @@ import {
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
+import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { fallbackedAddress } from 'utils/fallbacked-address';
 
 export const useMint = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
@@ -63,32 +65,39 @@ export const useMint = (onMutate = () => {}) => {
   };
 };
 
-export interface SimulationMintProps {
+export type EstimateGasMintProps = {
   recipient: Address;
   token: string;
-  amount: number;
-}
+  amount: bigint;
+};
 
-export const useSimulationMint = ({
+export const useEstimateMint = ({
   recipient,
   token,
   amount,
-}: SimulationMintProps) => {
-  const payload = [recipient, BigInt(amount ?? 0)];
+}: EstimateGasMintProps) => {
+  const { hasPermission } = useVaultPermissions('minter');
+  const { address } = useAccount();
+  const payload = [
+    fallbackedAddress(recipient || address),
+    amount ?? 1n,
+  ] as const;
   const functionName = token === 'stETH' ? 'mintStETH' : 'mintWstETH';
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
-  const isEnabled = !!(recipient && owner);
 
-  const simulationContractPayload: UseSimulateContractParameters = {
-    abi: dashboardAbi,
-    address: owner,
-    functionName,
-    args: payload,
+  const enabled = !!(hasPermission && address);
+
+  return useEstimateGas({
+    to: owner,
+    account: address,
+    data: encodeFunctionData({
+      abi: dashboardAbi,
+      functionName,
+      args: payload,
+    }),
     query: {
-      enabled: isEnabled,
+      enabled,
     },
-  };
-
-  return useSimulateContract(simulationContractPayload);
+  });
 };
