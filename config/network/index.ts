@@ -8,6 +8,7 @@ import { getPreConfig } from 'config/get-preconfig';
 import type { CONTRACT_NAMES, NetworkConfig } from './const';
 
 // Main deployments
+import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
 import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
 import sepoliaSet from 'networks/sepolia.json' assert { type: 'json' };
 
@@ -43,6 +44,7 @@ const DEVNETS_MAP = {
 
 // Main deployments
 const NETWORKS_MAP = {
+  [CHAINS.Mainnet]: mainnetSet as NetworkConfig,
   [CHAINS.Hoodi]: hoodiSet as NetworkConfig,
   [CHAINS.Sepolia]: sepoliaSet as NetworkConfig,
 } as Record<string, NetworkConfig>;

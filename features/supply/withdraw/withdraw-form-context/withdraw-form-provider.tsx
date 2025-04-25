@@ -12,10 +12,7 @@ import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import {
-  useWithdrawable,
-  useWithdrawWithDashboard,
-} from 'features/supply/withdraw/hooks';
+import { useWithdrawable, useWithdraw } from 'features/supply/withdraw/hooks';
 
 import {
   FormController,
@@ -68,7 +65,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callWithdraw } = useWithdrawWithDashboard();
+  const { callWithdraw } = useWithdraw();
   const { retryEvent, retryFire } = useFormControllerRetry();
   const setModalState = useCallback((submitStep: SubmitPayload) => {
     setSubmitStep(submitStep);

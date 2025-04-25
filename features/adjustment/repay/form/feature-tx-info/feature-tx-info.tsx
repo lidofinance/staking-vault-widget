@@ -1,39 +1,33 @@
-import { AmountInfo, InfoRow, Wrapper } from './styles';
-import { Loader, Text } from '@lidofinance/lido-ui';
-import { useSimulateContract } from 'wagmi';
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'features/overview/contexts';
+import { Wrapper } from './styles';
 import { useFormContext } from 'react-hook-form';
+import { TxCostRow } from 'shared/components/tx-cost-row';
+import { useEstimateGasBurn } from '../../hooks';
+import { AllowanceDataTableRow } from 'shared/components/allowance-data-table-row';
+import { useAllowance } from 'modules/web3';
+import { useTokenAddress } from 'shared/hooks/use-token-address';
+import { useVaultInfo } from 'features/overview/contexts';
 
 export const FeatureTxInfo = () => {
-  const { activeVault } = useVaultInfo();
   const { watch } = useFormContext();
+  const { activeVault } = useVaultInfo();
   const [token, amount] = watch(['token', 'amount']);
-  const owner = activeVault?.owner;
-  const isEnabled = !!owner && !!amount;
-  const amountAsArg = amount ? BigInt(amount) : BigInt(0);
-  const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
-  const { isLoading, data, isError } = useSimulateContract({
-    abi: dashboardAbi,
-    address: owner,
-    functionName,
-    args: [amountAsArg],
-    query: {
-      enabled: isEnabled,
-    },
+  const tokenAddress = useTokenAddress(token);
+
+  const { data } = useAllowance({
+    token: tokenAddress,
+    spender: activeVault?.owner,
+  });
+
+  const estimateGasQuery = useEstimateGasBurn({
+    token,
+    amount,
+    allowance: data,
   });
 
   return (
     <Wrapper>
-      <InfoRow>
-        <Text size="xxs" color="secondary">
-          Transaction cost
-        </Text>
-        {isLoading && <Loader size="small" />}
-        {!!data?.result && <AmountInfo>{data?.result}</AmountInfo>}
-        {isError && !isLoading && <AmountInfo>Is not available</AmountInfo>}
-        {!isLoading && !data?.result && !isError && <AmountInfo>-</AmountInfo>}
-      </InfoRow>
+      <TxCostRow estimateGasQuery={estimateGasQuery} />
+      <AllowanceDataTableRow token={token} allowance={data} />
     </Wrapper>
   );
 };

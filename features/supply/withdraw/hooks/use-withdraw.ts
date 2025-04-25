@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { usePublicClient, useSimulateContract, useWriteContract } from 'wagmi';
-import { Address } from 'viem';
+import { useEstimateGas, usePublicClient, useWriteContract } from 'wagmi';
+import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
@@ -11,14 +11,15 @@ import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
+import { fallbackedAddress } from 'utils/fallbacked-address';
 
-type WithdrawWithDashboardArgs = {
+type WithdrawArgs = {
   recipient: Address;
   amount: bigint;
   setModalState: (submitStep: SubmitPayload) => void;
 };
 
-export const useWithdrawWithDashboard = (onMutate = () => {}) => {
+export const useWithdraw = (onMutate = () => {}) => {
   const { activeVault } = useVaultInfo();
   const publicClient = usePublicClient();
 
@@ -29,15 +30,9 @@ export const useWithdrawWithDashboard = (onMutate = () => {}) => {
   });
 
   const callWithdraw = useCallback(
-    async ({ amount, recipient, setModalState }: WithdrawWithDashboardArgs) => {
-      invariant(
-        activeVault,
-        '[useWithdrawWithDashboard] activeVault is undefined',
-      );
-      invariant(
-        publicClient,
-        '[useFundWithDashboard] publicClient is undefined',
-      );
+    async ({ amount, recipient, setModalState }: WithdrawArgs) => {
+      invariant(activeVault, '[useWithdraw] activeVault is undefined');
+      invariant(publicClient, '[useWithdraw] publicClient is undefined');
 
       setModalState({ step: SubmitStepEnum.confirming });
       const tx = await writeContractAsync({
@@ -63,28 +58,32 @@ export const useWithdrawWithDashboard = (onMutate = () => {}) => {
   };
 };
 
-type SimulateWithdrawDashboardArgs = {
+type EstimateGasWithdrawArgs = {
   recipient: Address;
   amount?: bigint;
 };
 
-export const useSimulateWithdrawDashboard = ({
+export const useEstimateGasWithdraw = ({
   recipient,
-  amount = 0n,
-}: SimulateWithdrawDashboardArgs) => {
+  amount,
+}: EstimateGasWithdrawArgs) => {
   const { activeVault } = useVaultInfo();
-  const { chainId } = useDappStatus();
+
+  const { address } = useDappStatus();
   const { hasPermission } = useVaultPermissions('withdrawer');
+  const enabled = !!(hasPermission && address);
   const owner = activeVault?.owner;
 
-  return useSimulateContract({
-    abi: dashboardAbi,
-    address: owner as Address,
-    functionName: 'withdraw',
-    args: [recipient, amount],
+  return useEstimateGas({
+    to: owner,
+    account: address,
+    data: encodeFunctionData({
+      abi: dashboardAbi,
+      functionName: 'withdraw',
+      args: [fallbackedAddress(recipient || address), amount || 1n],
+    }),
     query: {
-      enabled: !!owner && !!recipient && hasPermission,
+      enabled,
     },
-    chainId,
   });
 };

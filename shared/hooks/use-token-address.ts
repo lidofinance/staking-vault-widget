@@ -8,9 +8,10 @@ import { STRATEGY_CONSTANT } from 'consts/react-query-strategies';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 
 const fetchTokenAddress = async (
-  token: string,
+  token: keyof typeof CONTRACTS_BY_TOKENS | undefined,
   core: LidoSDKCore,
 ): Promise<Address> => {
+  invariant(token);
   const address = await core.getContractAddress(
     CONTRACTS_BY_TOKENS[token as keyof typeof CONTRACTS_BY_TOKENS],
   );
@@ -18,7 +19,9 @@ const fetchTokenAddress = async (
   return address;
 };
 
-export const useTokenAddress = (token: string): Address | undefined => {
+export const useTokenAddress = (
+  token?: keyof typeof CONTRACTS_BY_TOKENS,
+): Address | undefined => {
   const { chainId } = useDappStatus();
   const { core } = useLidoSDK();
 

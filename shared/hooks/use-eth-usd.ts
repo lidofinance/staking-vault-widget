@@ -15,6 +15,7 @@ export const useEthUsd = (amount?: bigint) => {
     CHAINS.Mainnet,
     'aggregatorEthUsdPriceFeed',
   );
+
   const {
     data: price,
     error,
