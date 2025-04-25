@@ -5,8 +5,9 @@ import {
   useCallback,
   createContext,
   useContext,
+  useState,
 } from 'react';
-import { isAddress, ReadContractErrorType } from 'viem';
+import { Address, isAddress, ReadContractErrorType } from 'viem';
 import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -23,6 +24,8 @@ import {
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
 import invariant from 'tiny-invariant';
+import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import { SubmitModal } from '../submit-modal';
 
 type ClaimDataContextValue = {
   availableToClaim: bigint | undefined;
@@ -47,6 +50,10 @@ export const useClaimFormData = () => {
 export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [submitStep, setSubmitStep] = useState<{
+    step: SubmitStep;
+    tx?: Address;
+  }>(() => ({ step: SubmitStepEnum.edit }));
   const { activeVault } = useVaultInfo();
 
   const {
@@ -83,17 +90,36 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
 
   const { callClaim } = useClaimDashboard();
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const setModalState = useCallback(
+    (submitStep: { step: SubmitStep; tx?: Address }) => {
+      setSubmitStep(submitStep);
+    },
+    [],
+  );
 
   const onSubmit = useCallback(
     async ({ recipient }: ClaimFormSchema) => {
       if (recipient && isAddress(recipient)) {
-        // TODO: resolve recipient if ens domain
-        await callClaim(recipient);
-        return true;
+        try {
+          setModalState({ step: SubmitStepEnum.initiate });
+          const tx = await callClaim(recipient, setModalState);
+          setModalState({ step: SubmitStepEnum.success, tx });
+          return true;
+        } catch (err) {
+          if (
+            err instanceof Error &&
+            err.message.includes('User rejected the request')
+          ) {
+            setModalState({ step: SubmitStepEnum.reject });
+          } else {
+            setModalState({ step: SubmitStepEnum.error });
+          }
+        }
       }
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callClaim],
   );
 
@@ -113,6 +139,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
       <FormProvider {...formObject}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
+          <SubmitModal submitStep={submitStep} setModalState={setModalState} />
         </FormControllerContext.Provider>
       </FormProvider>
     </ClaimDataContext.Provider>

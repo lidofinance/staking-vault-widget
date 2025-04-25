@@ -77,23 +77,21 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const onSubmit = useCallback(
     async ({ recipient, amount, token }: MintFormSchema) => {
-      try {
-        if (amount && recipient) {
+      if (amount && recipient) {
+        try {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callMint(recipient, amount, token, setModalState);
           setModalState({ step: SubmitStepEnum.success, tx });
           return true;
-        }
-
-        return false;
-      } catch (err) {
-        if (
-          err instanceof Error &&
-          err.message.includes('User rejected the request')
-        ) {
-          setModalState({ step: SubmitStepEnum.reject });
-        } else {
-          setModalState({ step: SubmitStepEnum.error });
+        } catch (err) {
+          if (
+            err instanceof Error &&
+            err.message.includes('User rejected the request')
+          ) {
+            setModalState({ step: SubmitStepEnum.reject });
+          } else {
+            setModalState({ step: SubmitStepEnum.error });
+          }
         }
       }
 
