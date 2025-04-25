@@ -17,8 +17,6 @@ import {
   MIN_CONFIRM_EXPIRY,
   MAX_CONFIRM_EXPIRY,
 } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { VaultFactoryArgs } from 'types/vault';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
@@ -69,37 +67,6 @@ export const createVaultSchema = z.object({
 });
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
-
-const JOINT_ROLE_MAP = { ...VAULTS_OWNER_ROLES_MAP, ...VAULTS_NO_ROLES_MAP };
-
-export const formatCreateVaultData = (
-  values: CreateVaultSchema,
-): VaultFactoryArgs => {
-  return {
-    defaultAdmin: values.defaultAdmin,
-    nodeOperator: values.nodeOperator,
-    nodeOperatorManager: values.nodeOperatorManager,
-    nodeOperatorFeeBP: BigInt(values.nodeOperatorFeeBP),
-    confirmExpiry: BigInt(values.confirmExpiry * 60 * 60),
-
-    roles: Object.entries(values.roles)
-      .filter(([_, roleData]) => {
-        return roleData.filter((item) => item.state === 'grant');
-      })
-      .flatMap(([roleName, roleData]) => {
-        const roleHash = JOINT_ROLE_MAP[roleName as PermissionKeys];
-        invariant(
-          roleHash,
-          `[formatCreateVaultData] no role hash found for ${roleName}`,
-        );
-        if (!roleData) return [];
-        return roleData.map((item) => ({
-          role: roleHash,
-          account: item.account,
-        }));
-      }),
-  };
-};
 
 export const validatePermissions = (
   getValues: UseFormGetValues<Record<string, any>>,

@@ -1,4 +1,4 @@
-export { useCreateVaultWihDashboard } from './use-create-vault-with-dashboard';
+export { useCreateVault as useCreateVaultWihDashboard } from './use-create-vault';
 export { useVaultData } from './use-vault-data';
 export { useVaultsByOwner } from './use-vaults-by-owner';
 export { useVaultsConnected } from './use-vaults-connected';

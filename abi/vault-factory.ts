@@ -205,4 +205,21 @@ export const VaultFactoryAbi = [
     stateMutability: 'payable',
     type: 'function',
   },
+  // Added for better decoding of errors
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'neededRole',
+        type: 'bytes32',
+      },
+    ],
+    name: 'AccessControlUnauthorizedAccount',
+    type: 'error',
+  },
 ] as const;

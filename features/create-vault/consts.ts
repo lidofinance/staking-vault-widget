@@ -1,6 +1,6 @@
 import { MainSettingsEntryType, PermissionsRoles } from './types';
 
-export const CREATE_VAULT_STEPS = 3;
+export const CREATE_VAULT_STEPS = 2;
 
 export enum PermissionToggleEnum {
   byPermission = 'by_permission',
@@ -23,8 +23,7 @@ export type ToggleValue =
 
 export const steps: Record<number, string> = {
   '1': 'Main settings',
-  '2': 'Permissions',
-  '3': 'Confirmation',
+  '2': 'Confirmation',
 };
 
 export const getSectionNameByStep = (step: number) => steps[step];
@@ -217,6 +216,6 @@ export const NO_MANAGER_PERMISSION_LIST: PermissionsRoles[] = [
 
 export enum CREATE_VAULT_FORM_STEPS {
   main,
-  permissions,
   confirm,
+  permissions,
 }

@@ -11,7 +11,10 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { useCreateVaultWihDashboard } from 'modules/vaults/hooks/use-create-vault-with-dashboard';
+import {
+  simulateCreateVault,
+  useCreateVault,
+} from 'modules/vaults/hooks/use-create-vault';
 
 import {
   FormController,
@@ -34,7 +37,6 @@ import {
 } from 'features/create-vault/consts';
 import { SubmitStepEnum } from 'features/create-vault/types';
 import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
-import { simulateCreateVault } from 'modules/vaults/contracts/vault-factory';
 import { Address } from 'viem';
 
 const CreateVaultDataContext =
@@ -59,7 +61,7 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     PermissionToggleEnum.byPermission,
   );
   const [submitStep, setSubmitStep] = useState<SubmittingInfo>();
-  const { callCreateVault } = useCreateVaultWihDashboard({
+  const { callCreateVault } = useCreateVault({
     onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
   });
 

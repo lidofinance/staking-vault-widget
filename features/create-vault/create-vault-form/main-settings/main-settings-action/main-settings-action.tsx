@@ -13,6 +13,7 @@ import {
   CREATE_VAULT_FORM_STEPS,
   mainSettingsFields,
 } from 'features/create-vault/consts';
+import { VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
 
 export interface MainSettingsActionProps {
   form: UseFormReturn<VaultMainSettingsType>;
@@ -48,9 +49,33 @@ export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
   };
 
   const handleSetNextStep = () => {
-    mainSettingsFields.map((field) => setValue(field, getValues(field)));
+    mainSettingsFields.forEach((field) => setValue(field, getValues(field)));
 
-    handleSetStep(CREATE_VAULT_FORM_STEPS.permissions);
+    // TODO: bring back permissions step
+    // This assigns default values to the roles
+    const vaultManager = getValues('defaultAdmin');
+    const vaultMangerRoles = Object.keys(VAULTS_OWNER_ROLES_MAP).reduce(
+      (acc, key) => {
+        acc[key] = [{ account: vaultManager, state: 'grant' }];
+        return acc;
+      },
+      {} as any,
+    );
+    // This is blocked by vaultFactory contract implementation
+    //const nodeOperatorManager = getValues('nodeOperatorManager');
+    // const nodeOperatorManagerRoles = Object.keys(VAULTS_NO_ROLES_MAP).reduce(
+    //   (acc, key) => {
+    //     acc[key] = [{ account: nodeOperatorManager, state: 'grant' }];
+    //     return acc;
+    //   },
+    //   {} as any,
+    // );
+
+    setValue('roles', {
+      ...vaultMangerRoles,
+    });
+
+    handleSetStep(CREATE_VAULT_FORM_STEPS.confirm);
   };
 
   return (
