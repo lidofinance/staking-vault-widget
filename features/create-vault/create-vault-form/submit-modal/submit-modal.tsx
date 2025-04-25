@@ -21,27 +21,42 @@ import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
 import { AppPaths } from '../../../../consts/urls';
 
 const getIconComponent = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success)
-    return <Success fill="var(--lido-color-success)" />;
-  if (step === SubmitStepEnum.reject) return <Error />;
-  if (step === SubmitStepEnum.error) return <Error />;
-  return <Loader size="large" />;
+  switch (step) {
+    case SubmitStepEnum.success:
+      return <Success fill="var(--lido-color-success)" />;
+    case SubmitStepEnum.reject:
+      return <Error />;
+    case SubmitStepEnum.error:
+      return <Error />;
+    default:
+      return <Loader size="large" />;
+  }
 };
 
 const getModalTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success) return 'New vault has been created';
-  if (step === SubmitStepEnum.reject) return 'Wallet tx signature';
-  if (step === SubmitStepEnum.error) return 'Simulation error';
-  return 'You are creating a new vault';
+  switch (step) {
+    case SubmitStepEnum.success:
+      return 'New vault has been created';
+    case SubmitStepEnum.reject:
+      return 'Wallet tx signature';
+    case SubmitStepEnum.error:
+      return 'Simulation error';
+    default:
+      return 'You are creating a new vault';
+  }
 };
 
 const getModalSubTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.submitting) return 'Awaiting wallet signature';
-  if (step === SubmitStepEnum.reject)
-    return 'User denied transaction signature';
-  if (step === SubmitStepEnum.error)
-    return 'Got error when called contract simulation';
-  return '';
+  switch (step) {
+    case SubmitStepEnum.submitting:
+      return 'Awaiting wallet signature';
+    case SubmitStepEnum.reject:
+      return 'User denied transaction signature';
+    case SubmitStepEnum.error:
+      return 'Got error when called contract simulation';
+    default:
+      return '';
+  }
 };
 
 export const SubmitModal: FC<ModalProps> = () => {

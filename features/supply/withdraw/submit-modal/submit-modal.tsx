@@ -22,27 +22,42 @@ import { useVaultInfo } from 'features/overview/contexts';
 import { Address } from 'viem';
 
 const getIconComponent = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success)
-    return <Success fill="var(--lido-color-success)" />;
-  if (step === SubmitStepEnum.reject) return <Error />;
-  if (step === SubmitStepEnum.error) return <Error />;
-  return <Loader size="large" />;
+  switch (step) {
+    case SubmitStepEnum.success:
+      return <Success fill="var(--lido-color-success)" />;
+    case SubmitStepEnum.reject:
+      return <Error />;
+    case SubmitStepEnum.error:
+      return <Error />;
+    default:
+      return <Loader size="large" />;
+  }
 };
 
 const getModalTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success) return 'Funds withdrawed';
-  if (step === SubmitStepEnum.reject) return 'Wallet tx signature';
-  if (step === SubmitStepEnum.error) return 'Transaction error';
-  return 'You are withdrawing to an address';
+  switch (step) {
+    case SubmitStepEnum.success:
+      return 'Funds withdrawed';
+    case SubmitStepEnum.reject:
+      return 'Wallet tx signature';
+    case SubmitStepEnum.error:
+      return 'Transaction error';
+    default:
+      return 'You are withdrawing to an address';
+  }
 };
 
 const getModalSubTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.submitting) return 'Awaiting wallet signature';
-  if (step === SubmitStepEnum.reject)
-    return 'User denied transaction signature';
-  if (step === SubmitStepEnum.error)
-    return 'Got error when called contract simulation or transaction';
-  return '';
+  switch (step) {
+    case SubmitStepEnum.submitting:
+      return 'Awaiting wallet signature';
+    case SubmitStepEnum.reject:
+      return 'User denied transaction signature';
+    case SubmitStepEnum.error:
+      return 'Got error when called contract simulation or transaction';
+    default:
+      return '';
+  }
 };
 
 interface SubmitModalProps extends ModalProps {
