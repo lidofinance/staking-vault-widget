@@ -16,5 +16,5 @@ export const LoaderWrapper = styled.div`
 `;
 
 export const ValueWrapper = styled.div`
-  padding-bottom: 8px;
+  padding-bottom: ${({ theme }) => theme.spaceMap.sm}px;
 `;
