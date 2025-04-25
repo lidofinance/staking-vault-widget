@@ -9,3 +9,12 @@ export const Title = styled.div`
   display: flex;
   align-items: center;
 `;
+
+export const LoaderWrapper = styled.div`
+  padding-top: 8px;
+  padding-bottom: 10px;
+`;
+
+export const ValueWrapper = styled.div`
+  padding-bottom: 8px;
+`;

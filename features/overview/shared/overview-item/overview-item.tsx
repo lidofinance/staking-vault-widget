@@ -5,19 +5,22 @@ import { ItemWrapper, Title } from './styles';
 import { useRouter } from 'next/router';
 import { useVaultInfo } from 'features/overview/contexts';
 
+import { OverviewItemValue } from './overview-item-value';
+
 export interface ItemProps {
   title: string;
   content: string | number | undefined;
   actionLink?: string;
   actionText?: string;
   isSuccess?: boolean;
+  isLoading?: boolean;
 }
 
 export const OverviewItem: FC<ItemProps> = (props) => {
   const router = useRouter();
   const { activeVault } = useVaultInfo();
-  const { title, content, isSuccess, actionLink, actionText } = props;
-  const contentColor = isSuccess ? 'success' : 'default';
+  const { title, content, isSuccess, actionLink, actionText, isLoading } =
+    props;
 
   return (
     <ItemWrapper>
@@ -26,9 +29,11 @@ export const OverviewItem: FC<ItemProps> = (props) => {
           {title}
         </Text>
       </Title>
-      <Text size="lg" color={contentColor} strong>
-        {content ?? '-'}
-      </Text>
+      <OverviewItemValue
+        content={content}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
+      />
       {!!actionLink && !!actionText && (
         <Button
           size="xs"

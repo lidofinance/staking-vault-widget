@@ -45,6 +45,7 @@ export const Balance = () => {
           content={item.payload}
           actionText={item.actionText}
           actionLink={item.actionLink}
+          isLoading={item.isLoading}
         />
       ))}
     </OverviewSection>

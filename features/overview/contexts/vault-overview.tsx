@@ -35,6 +35,7 @@ export interface VaultOverviewContextType {
     collateral: string;
     pendingUnlockEth: string;
   };
+  isLoadingVault?: boolean;
   getVaultDataToRender: (
     payload: SectionPayload[],
   ) => (SectionPayload & { payload: string | Address })[];
@@ -46,6 +47,7 @@ export type SectionPayload = {
   key: VaultOverviewContextKeys;
   actionText?: string;
   actionLink?: string;
+  isLoading?: boolean;
 };
 
 const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
@@ -56,7 +58,7 @@ const toEthValue = (value: bigint) => `${formatBalance(value).trimmed} ETH`;
 const toStethValue = (value: bigint) => `${formatBalance(value).trimmed} stETH`;
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, isLoadingVault } = useVaultInfo();
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
     if (activeVault) {
@@ -130,19 +132,24 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorFee,
         collateral,
         pendingUnlockEth,
+        isLoadingVault,
       };
     }
 
     return {} as VaultOverviewContextType['values'];
-  }, [activeVault]);
+  }, [activeVault, isLoadingVault]);
 
   const getVaultDataToRender = useCallback(
     (sectionPayloadList: SectionPayload[]) => {
       return sectionPayloadList.map((item) => {
-        return { ...item, payload: values[item.key] };
+        return {
+          ...item,
+          payload: values[item.key],
+          isLoading: isLoadingVault,
+        };
       });
     },
-    [values],
+    [values, isLoadingVault],
   );
 
   return (
