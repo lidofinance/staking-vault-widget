@@ -4,6 +4,7 @@ import { useTxCostInUsd } from 'shared/hooks/use-tx-cost-in-usd';
 import { FormatPrice } from 'shared/formatters';
 
 type TxCostRowProps = {
+  text?: string;
   estimateGasQuery: {
     data: bigint | undefined;
     isLoading: boolean;
@@ -11,14 +12,17 @@ type TxCostRowProps = {
   };
 };
 
-export const TxCostRow = ({ estimateGasQuery }: TxCostRowProps) => {
+export const TxCostRow = ({
+  estimateGasQuery,
+  text = 'Max Transaction cost',
+}: TxCostRowProps) => {
   const usdCostQuery = useTxCostInUsd(estimateGasQuery.data);
   const isLoading = usdCostQuery.isLoading || estimateGasQuery.isLoading;
   const noData = !isLoading && !usdCostQuery.txCostUsd;
   return (
     <InfoRow>
       <Text size="xxs" color="secondary">
-        Transaction cost
+        {text}
       </Text>
       {isLoading && <Loader size="small" />}
       {usdCostQuery.txCostUsd && (
