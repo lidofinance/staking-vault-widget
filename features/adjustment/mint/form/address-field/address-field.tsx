@@ -14,7 +14,6 @@ export const AddressField = () => {
     });
   };
 
-  // TODO: add error
   return (
     <Input
       {...field}

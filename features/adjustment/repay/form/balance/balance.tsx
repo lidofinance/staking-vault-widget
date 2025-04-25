@@ -29,7 +29,9 @@ export const Balance = () => {
             {formatBalance(balance).trimmed} {token}
           </AmountInfo>
         )}
-        {isError && <AmountInfo>stEth amount is not available</AmountInfo>}
+        {isError && !isLoading && (
+          <AmountInfo>stEth amount is not available</AmountInfo>
+        )}
       </InfoRow>
     </Wrapper>
   );

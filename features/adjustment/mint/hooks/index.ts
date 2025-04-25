@@ -1,4 +1,4 @@
 export {
-  useMintWithDelegation,
-  useSimulationMintWithDelegation,
-} from './use-mint-with-delegation';
+  useMintDashboard,
+  useSimulationMintDashboard,
+} from './use-mint-dashboard';

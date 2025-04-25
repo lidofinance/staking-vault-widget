@@ -13,7 +13,7 @@ export const FeatureTxInfo = () => {
   const isEnabled = !!owner && !!amount;
   const amountAsArg = amount ? BigInt(amount) : BigInt(0);
   const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
-  const { isLoading, data, isError } = useSimulateContract({
+  const { isLoading, data, isError, isFetching } = useSimulateContract({
     abi: dashboardAbi,
     address: owner,
     functionName,
@@ -23,17 +23,19 @@ export const FeatureTxInfo = () => {
     },
   });
 
+  const showLoader = isLoading || isFetching;
+
   return (
     <Wrapper>
       <InfoRow>
         <Text size="xxs" color="secondary">
           Transaction cost
         </Text>
-        {isLoading && <Loader size="small" />}
+        {showLoader && <Loader size="small" />}
         {/*TODO: replace static by real data*/}
-        {data && <AmountInfo>{'$99.99'}</AmountInfo>}
-        {isError && <AmountInfo>Is not available</AmountInfo>}
-        {!isLoading && !data && !isError && <AmountInfo>{'$0'}</AmountInfo>}
+        {data?.result && <AmountInfo>{'$0.99'}</AmountInfo>}
+        {isError && !showLoader && <AmountInfo>Is not available</AmountInfo>}
+        {!showLoader && !data?.result && !isError && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

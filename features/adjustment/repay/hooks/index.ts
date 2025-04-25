@@ -1,1 +1,1 @@
-export { useBurnWithDelegation } from './use-burn-with-delegation';
+export { useBurnDashboard } from './use-burn-dashboard';

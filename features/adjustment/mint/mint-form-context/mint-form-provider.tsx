@@ -5,13 +5,14 @@ import {
   useCallback,
   createContext,
   useContext,
+  useState,
 } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useVaultInfo } from 'features/overview/contexts';
-import { useMintWithDelegation } from 'features/adjustment/mint/hooks';
+import { useMintDashboard } from 'features/adjustment/mint/hooks';
 
 import {
   FormController,
@@ -19,6 +20,9 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { MintFormSchema } from 'features/adjustment/mint/types';
+import { SubmitModal } from 'features/adjustment/mint/submit-modal';
+import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import { Address } from 'viem';
 
 type MintDataContextValue = {
   mintableStETH: bigint;
@@ -39,16 +43,20 @@ export const useMintFormData = () => {
 };
 
 export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [submitStep, setSubmitStep] = useState<{
+    step: SubmitStep;
+    tx?: Address;
+  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<MintFormSchema>({
     defaultValues: {
       amount: undefined,
       token: 'stETH',
-      recipient: undefined,
+      recipient: '' as Address,
     },
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callMint } = useMintWithDelegation();
+  const { callMint } = useMintDashboard();
   const { activeVault } = useVaultInfo();
 
   const mintData = useMemo(() => {
@@ -60,16 +68,38 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [activeVault]);
 
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const setModalState = useCallback(
+    (submitStep: { step: SubmitStep; tx?: Address }) => {
+      setSubmitStep(submitStep);
+    },
+    [],
+  );
 
   const onSubmit = useCallback(
     async ({ recipient, amount, token }: MintFormSchema) => {
-      if (amount && recipient) {
-        await callMint(recipient, amount, token);
-        return true;
+      try {
+        if (amount && recipient) {
+          setModalState({ step: SubmitStepEnum.initiate });
+          const tx = await callMint(recipient, amount, token, setModalState);
+          setModalState({ step: SubmitStepEnum.success, tx });
+          return true;
+        }
+
+        return false;
+      } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
       }
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callMint],
   );
 
@@ -89,6 +119,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       <FormProvider {...formObject}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
+          <SubmitModal submitStep={submitStep} setModalState={setModalState} />
         </FormControllerContext.Provider>
       </FormProvider>
     </MintDataContext.Provider>
