@@ -9,16 +9,6 @@ import {
 } from 'modules/vaults';
 import { Address } from 'viem';
 
-export enum SubmittingMainFormStepsEnum {
-  edit = 'edit',
-  initiate = 'initiate',
-  confirming = 'confirming',
-  reject = 'reject',
-  error = 'error',
-  submitting = 'submitting',
-  success = 'success',
-}
-
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
 const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;

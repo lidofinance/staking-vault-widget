@@ -1,12 +1,11 @@
 import { Address, Hash, Hex } from 'viem';
-import { editMainSettingsSchema, SubmittingMainFormStepsEnum } from './consts';
+import { editMainSettingsSchema } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
 import { VAULT_ROOT_ROLES } from 'modules/vaults';
+import { SubmitStepEnum } from 'shared/components/submit-modal';
 
-export type SubmittingMainFormStep =
-  | keyof typeof SubmittingMainFormStepsEnum
-  | undefined;
+export type SubmittingMainFormStep = keyof typeof SubmitStepEnum | undefined;
 
 export type MainSettingsContextValue = {
   submitStep: MainSettingsSubmittingInfo;

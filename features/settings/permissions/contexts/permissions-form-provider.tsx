@@ -98,7 +98,6 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       try {
         await callEditPermissions(payload, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
-        setTimeout(refetch, 100);
         return true;
       } catch (err) {
         if (
@@ -111,6 +110,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         }
 
         return false;
+      } finally {
+        setTimeout(refetch, 100);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
