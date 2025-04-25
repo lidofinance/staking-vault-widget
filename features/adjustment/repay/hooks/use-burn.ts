@@ -4,8 +4,10 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
   usePublicClient,
+  useEstimateGas,
+  useAccount,
 } from 'wagmi';
-import { Address } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
@@ -15,6 +17,13 @@ import {
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
+import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+
+type BurnArgs = {
+  token: string;
+  amount: bigint;
+  setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void;
+};
 
 export const useBurn = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
@@ -34,15 +43,7 @@ export const useBurn = (onMutate = () => {}) => {
   });
 
   const callBurn = useCallback(
-    async ({
-      token,
-      amount,
-      setModalState,
-    }: {
-      token: string;
-      amount: bigint;
-      setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void;
-    }) => {
+    async ({ token, amount, setModalState }: BurnArgs) => {
       invariant(publicClient, '[useBurn] publicClient is undefined');
 
       setModalState({ step: SubmitStepEnum.confirming });
@@ -69,4 +70,33 @@ export const useBurn = (onMutate = () => {}) => {
     burnTx,
     burnReceipt,
   };
+};
+
+type EstimateGasBurnProps = {
+  token: string;
+  amount: bigint;
+};
+
+export const useEstimateGasBurn = ({ token, amount }: EstimateGasBurnProps) => {
+  const { hasPermission } = useVaultPermissions('repayer');
+  const { address } = useAccount();
+  const payload = [amount ?? 1n] as const;
+  const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
+  const { activeVault } = useVaultInfo();
+  const owner = activeVault?.owner;
+
+  const enabled = !!(hasPermission && address);
+
+  return useEstimateGas({
+    to: owner,
+    account: address,
+    data: encodeFunctionData({
+      abi: dashboardAbi,
+      functionName,
+      args: payload,
+    }),
+    query: {
+      enabled,
+    },
+  });
 };

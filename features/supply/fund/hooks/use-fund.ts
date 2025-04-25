@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import {
   usePublicClient,
-  useSimulateContract,
   useWriteContract,
   useAccount,
+  useEstimateGas,
 } from 'wagmi';
-import { Address } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'features/overview/contexts';
@@ -69,15 +69,20 @@ export type SimulationFundProps = {
   amount: bigint;
 };
 
-export const useSimulationFund = ({ address, amount }: SimulationFundProps) => {
+export const useEstimateGasFund = ({
+  address,
+  amount,
+}: SimulationFundProps) => {
   const { address: accountAddress } = useAccount();
   const { hasPermission } = useVaultPermissions('supplier');
 
-  return useSimulateContract({
-    abi: dashboardAbi,
-    address,
+  return useEstimateGas({
+    to: address as Address,
+    data: encodeFunctionData({
+      abi: dashboardAbi,
+      functionName: 'fund',
+    }),
     account: accountAddress,
-    functionName: 'fund',
     value: amount,
     query: {
       enabled: !!address && hasPermission && !!amount,

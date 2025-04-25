@@ -1,14 +1,15 @@
 import { useFormContext } from 'react-hook-form';
-import { useSimulateWithdrawDashboard } from 'features/supply/withdraw/hooks';
+import { useEstimateGasWithdraw } from 'features/supply/withdraw/hooks';
 
-import { Loader, Text } from '@lidofinance/lido-ui';
+import { Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 import { formatBalance } from 'utils';
+import { TxCostRow } from 'shared/components/tx-cost-row';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
   const [recipient, amount] = watch(['recipient', 'amount']);
-  const { isLoading, isError, data } = useSimulateWithdrawDashboard({
+  const estimateGasQuery = useEstimateGasWithdraw({
     recipient,
     amount,
   });
@@ -21,21 +22,7 @@ export const FeatureTxInfo = () => {
         </Text>
         <AmountInfo>{formatBalance(amount ?? 0n).trimmed} ETH</AmountInfo>
       </InfoRow>
-      <InfoRow>
-        <Text size="xxs" color="secondary">
-          Transaction cost
-        </Text>
-        {isLoading && <Loader size="small" />}
-        {isError && (
-          <Text size="xxs" color="secondary">
-            Can&apos;t load gas simulation info
-          </Text>
-        )}
-        {!!data?.result && !isLoading && (
-          <AmountInfo>{data?.result}</AmountInfo>
-        )}
-        {!data?.result && !isError && !isLoading && <AmountInfo>-</AmountInfo>}
-      </InfoRow>
+      <TxCostRow estimateGasQuery={estimateGasQuery}></TxCostRow>
     </Wrapper>
   );
 };

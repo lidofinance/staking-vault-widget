@@ -56,15 +56,14 @@ const rpc = rpcFactory({
     registry: Metrics.registry,
   },
   defaultChain: `${config.defaultChain}`,
-  providers: {
-    ...config.supportedChains.reduce(
-      (acc, chain) => {
-        acc[chain] = secretConfig[`rpcUrls_${chain}`];
-        return acc;
-      },
-      {} as Record<string, [string, ...string[]]>,
-    ),
-  },
+  providers: [1, ...config.supportedChains].reduce(
+    (acc, chain) => {
+      acc[chain] = secretConfig[`rpcUrls_${chain}`];
+      return acc;
+    },
+    {} as Record<string, [string, ...string[]]>,
+  ),
+
   validation: {
     allowedRPCMethods,
     allowedLogsAddresses,
