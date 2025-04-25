@@ -8,9 +8,9 @@ import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
 import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { getHealthScore } from 'utils/get-health-score';
 import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 import { bigIntMax } from 'utils/bigint-math';
+import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
 import type { VaultInfo } from 'types';
 import type { PublicClient, Address } from 'viem';
@@ -41,18 +41,17 @@ const getVaultData = async ({
     address: vaultContract.address,
   });
 
-  const vaultHubSocket = await vaultHubContract.read.vaultSocket([
-    vaultAddress,
-  ]);
+  const { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest } =
+    await vaultHubContract.read.vaultSocket([vaultAddress]);
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
   const [
-    valuation,
+    totalValue,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     nodeOperatorFeeBP,
-    totalMintableShares,
+    totalMintingCapacity,
     defaultAdmins,
     nodeOperatorManagers,
     confirmExpiry,
@@ -67,37 +66,44 @@ const getVaultData = async ({
     dashboardContract.read.getConfirmExpiry(),
   ]);
 
-  const [mintedEth, mintableEth, ethLimit] = await Promise.all([
-    shares.convertToSteth(vaultHubSocket.liabilityShares),
+  const [liabilityStETH, mintableStETH, stETHLimit] = await Promise.all([
+    shares.convertToSteth(liabilityShares),
     shares.convertToSteth(
-      bigIntMax(totalMintableShares - vaultHubSocket.liabilityShares, 0n),
+      bigIntMax(totalMintingCapacity - liabilityShares, 0n),
     ),
-    shares.convertToSteth(vaultHubSocket.shareLimit),
+    shares.convertToSteth(shareLimit),
   ]);
 
-  const healthScore = getHealthScore(valuation, vaultHubSocket);
+  const healthScore = calculateHealth({
+    totalValue,
+    liabilitySharesInStethWei: liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
+  });
 
   return {
-    mintable: mintableEth,
-    minted: mintedEth,
-    nodeOperator,
-    ethLimit,
-    valuation,
-    inOutDelta,
-    locked,
-    apr: null,
-    healthScore,
     address: vaultAddress,
-    totalMintableShares,
-    nodeOperatorUnclaimedFee,
-    withdrawableEther,
     owner,
-    balance,
-    nodeOperatorFeeBP,
+    nodeOperator,
     defaultAdmins,
     nodeOperatorManagers,
+    totalValue,
+    liabilityStETH,
+    mintableStETH,
+    stETHLimit,
+    apr: null,
+    healthScore: healthScore.healthRatio,
+    totalMintingCapacity,
+    inOutDelta,
+    locked,
+    nodeOperatorUnclaimedFee,
+    withdrawableEther,
+    balance,
+    nodeOperatorFeeBP,
     confirmExpiry,
-    ...vaultHubSocket,
+    shareLimit,
+    forcedRebalanceThresholdBP,
+    liabilityShares,
+    ...rest,
   };
 };
 

@@ -10,7 +10,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
-export const useBurnWithDelegation = (onMutate = () => {}) => {
+export const useBurn = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();

@@ -12,7 +12,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
-export const useMintWithDelegation = (onMutate = () => {}) => {
+export const useMint = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -48,17 +48,17 @@ export const useMintWithDelegation = (onMutate = () => {}) => {
   };
 };
 
-export interface SimulationMintWithDelegationProps {
+export interface SimulationMintProps {
   recipient: Address;
   token: string;
   amount: number;
 }
 
-export const useSimulationMintWithDelegation = ({
+export const useSimulationMint = ({
   recipient,
   token,
   amount,
-}: SimulationMintWithDelegationProps) => {
+}: SimulationMintProps) => {
   const payload = [recipient, BigInt(amount ?? 0)];
   const functionName = token === 'stETH' ? 'mintStETH' : 'mintWstETH';
   const { activeVault } = useVaultInfo();

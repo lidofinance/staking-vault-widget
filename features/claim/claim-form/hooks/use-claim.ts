@@ -11,7 +11,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 
-export const useClaimWithDelegation = (onMutate = () => {}) => {
+export const useClaim = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -48,7 +48,7 @@ export const useClaimWithDelegation = (onMutate = () => {}) => {
   };
 };
 
-export const useSimulationClaimWithDelegation = (recipient: Address) => {
+export const useSimulationClaim = (recipient: Address) => {
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const isEnabled = !!owner && !!recipient;

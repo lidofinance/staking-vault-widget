@@ -1,6 +1,6 @@
 import { Text, Loader } from '@lidofinance/lido-ui';
 import { useFormContext } from 'react-hook-form';
-import { useSimulationFundWithDashboard } from 'features/supply/fund/hooks';
+import { useSimulationFund } from 'features/supply/fund/hooks';
 
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 import { useVaultInfo } from 'features/overview/contexts';
@@ -11,7 +11,7 @@ export const FeatureTxInfo = () => {
   const { getValues } = useFormContext();
   const { amount } = getValues();
   const { activeVault } = useVaultInfo();
-  const { data, isLoading, isError } = useSimulationFundWithDashboard({
+  const { data, isLoading, isError } = useSimulationFund({
     address: activeVault?.address,
     amount: amount ?? 0,
   });

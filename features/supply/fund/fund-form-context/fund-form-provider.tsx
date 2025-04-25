@@ -1,7 +1,7 @@
 import { FC, ReactNode, useMemo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useFundWithDashboard } from 'features/supply/fund/hooks/use-fund-with-dashboard';
+import { useFund } from 'features/supply/fund/hooks/use-fund';
 import {
   FormController,
   FormControllerContext,
@@ -17,7 +17,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callVaultFund } = useFundWithDashboard();
+  const { callVaultFund } = useFund();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
 

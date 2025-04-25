@@ -18,10 +18,10 @@ export const adjustmentToggleList: { value: AdjustmentPaths; label: string }[] =
   [
     {
       value: ADJUSTMENT_PATHS.mint,
-      label: 'mint',
+      label: 'Mint',
     },
     {
       value: ADJUSTMENT_PATHS.repay,
-      label: 'repay',
+      label: 'Repay',
     },
   ];

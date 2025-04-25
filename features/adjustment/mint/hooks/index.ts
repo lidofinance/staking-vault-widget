@@ -1,4 +1,1 @@
-export {
-  useMintWithDelegation,
-  useSimulationMintWithDelegation,
-} from './use-mint-with-delegation';
+export * from './use-mint';

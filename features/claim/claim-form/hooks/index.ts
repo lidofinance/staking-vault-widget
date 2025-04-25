@@ -1,4 +1,1 @@
-export {
-  useClaimWithDelegation,
-  useSimulationClaimWithDelegation,
-} from './use-claim-with-delegation';
+export * from './use-claim';

@@ -1,34 +1,33 @@
-import { useRouter } from 'next/router';
 import { useAdjustment } from 'features/adjustment/contexts/adjustment-provider';
 import { useVaultInfo } from 'features/overview/contexts';
 
-import { ToggleSwitch } from 'shared/components/toggle';
-import { Mint } from './mint';
-import { Repay } from './repay';
-import { FormBlock, PageWrapper } from './styles';
-
-import { AdjustmentPaths, adjustmentToggleList } from './const';
+import { Switch } from 'shared/components/switch';
 import { ManifestConfigPageEnum } from 'config/external-config';
 
+import { Mint } from './mint';
+import { Repay } from './repay';
+import { adjustmentToggleList } from './const';
+import { FormBlock, PageWrapper } from './styles';
+
 export const AdjustmentTabs = () => {
-  const router = useRouter();
-  const initialPath = router.query.mode as AdjustmentPaths;
   const { isMintTab } = useAdjustment();
   const { activeVault } = useVaultInfo();
 
-  const handleToggleCb = (value: AdjustmentPaths) => {
-    void router.push(
-      `/${activeVault?.address}/${ManifestConfigPageEnum.adjustment}/${value}`,
-    );
-  };
+  // TODO: improve creation of the path
+  const mintRoutes = [
+    {
+      path: `/${activeVault?.address}${ManifestConfigPageEnum.adjustment}/${adjustmentToggleList[0].value}`,
+      name: adjustmentToggleList[0].label,
+    },
+    {
+      path: `/${activeVault?.address}${ManifestConfigPageEnum.adjustment}/${adjustmentToggleList[1].value}`,
+      name: adjustmentToggleList[1].label,
+    },
+  ];
 
   return (
     <PageWrapper>
-      <ToggleSwitch
-        options={adjustmentToggleList}
-        defaultActive={initialPath}
-        onToggle={({ value }) => handleToggleCb(value as AdjustmentPaths)}
-      />
+      <Switch checked={!isMintTab} routes={mintRoutes} />
       <FormBlock>{isMintTab ? <Mint /> : <Repay />}</FormBlock>
     </PageWrapper>
   );

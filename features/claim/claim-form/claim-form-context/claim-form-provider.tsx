@@ -11,7 +11,7 @@ import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useClaimWithDelegation } from 'features/claim/claim-form/hooks';
+import { useClaim } from 'features/claim/claim-form/hooks';
 import { useVaultInfo } from 'features/overview/contexts';
 
 import {
@@ -77,7 +77,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callClaim } = useClaimWithDelegation();
+  const { callClaim } = useClaim();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
 

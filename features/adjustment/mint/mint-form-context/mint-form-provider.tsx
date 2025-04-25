@@ -11,7 +11,7 @@ import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useVaultInfo } from 'features/overview/contexts';
-import { useMintWithDelegation } from 'features/adjustment/mint/hooks';
+import { useMint } from 'features/adjustment/mint/hooks';
 
 import {
   FormController,
@@ -48,11 +48,11 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mode: 'all',
     reValidateMode: 'onChange',
   });
-  const { callMint } = useMintWithDelegation();
+  const { callMint } = useMint();
   const { activeVault } = useVaultInfo();
 
   const mintData = useMemo(() => {
-    const mintableStETH = activeVault?.mintable ?? 0n;
+    const mintableStETH = activeVault?.mintableStETH ?? 0n;
     const mintableWstETH =
       (activeVault?.shareLimit ?? 0n) - (activeVault?.liabilityShares ?? 0n);
 

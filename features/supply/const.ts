@@ -18,10 +18,10 @@ export type SupplyPaths = (typeof SUPPLY_PATHS)[keyof typeof SUPPLY_PATHS];
 export const supplyToggleList: { value: SupplyPaths; label: string }[] = [
   {
     value: SUPPLY_PATHS.fund,
-    label: 'fund',
+    label: 'Supply',
   },
   {
     value: SUPPLY_PATHS.withdraw,
-    label: 'withdraw',
+    label: 'Withdraw',
   },
 ];
