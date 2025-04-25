@@ -30,10 +30,10 @@ const getIconComponent = (step: SubmitStep) => {
 };
 
 const getModalTitle = (step: SubmitStep) => {
-  if (step === SubmitStepEnum.success) return 'Vault has been funded';
+  if (step === SubmitStepEnum.success) return 'Funds withdrawed';
   if (step === SubmitStepEnum.reject) return 'Wallet tx signature';
   if (step === SubmitStepEnum.error) return 'Transaction error';
-  return 'You are supplying to the vault';
+  return 'You are withdrawing to an address';
 };
 
 const getModalSubTitle = (step: SubmitStep) => {

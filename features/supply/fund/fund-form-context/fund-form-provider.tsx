@@ -7,11 +7,8 @@ import {
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-import {
-  FundFormSchema,
-  SubmitStep,
-  SubmitStepEnum,
-} from 'features/supply/fund/types';
+import { FundFormSchema } from 'features/supply/fund/types';
+import { SubmitStepEnum, SubmitStep } from 'shared/transaction-modal/types';
 import { SubmitModal } from '../submit-modal';
 import { Address } from 'viem';
 

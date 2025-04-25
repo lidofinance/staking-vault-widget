@@ -7,7 +7,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 import { useDappStatus } from 'modules/web3';
-import { SubmitStep, SubmitStepEnum } from '../types';
+import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
 
 export const useFundWithDashboard = (onMutate = () => {}) => {
   const { activeVault } = useVaultInfo();
@@ -28,7 +28,10 @@ export const useFundWithDashboard = (onMutate = () => {}) => {
         activeVault?.owner,
         '[useFundWithDashboard] owner is undefined',
       );
-      invariant(publicClient, 'activeVault?.owner is undefined');
+      invariant(
+        publicClient,
+        '[useFundWithDashboard] publicClient is undefined',
+      );
 
       setModalState({ step: SubmitStepEnum.confirming });
       const tx = await writeContractAsync({
