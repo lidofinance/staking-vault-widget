@@ -114,7 +114,7 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
         if (amount) {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callBurn({ amount, token, setModalState });
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         }
 

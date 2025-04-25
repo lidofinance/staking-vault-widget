@@ -99,8 +99,12 @@ export const SubmitModal: FC<SubmitModalProps> = ({
     if (onClose) {
       onClose();
     } else {
-      setModalState({ step: SubmitStepEnum.edit });
+      handlePureCloseModal();
     }
+  };
+
+  const handlePureCloseModal = () => {
+    setModalState({ step: SubmitStepEnum.edit });
   };
 
   return (
@@ -125,9 +129,15 @@ export const SubmitModal: FC<SubmitModalProps> = ({
           </Text>
         )}
 
-        {step === SubmitStepEnum.success && (
+        {step === SubmitStepEnum.overview && (
           <Button onClick={handleNavigateToVault} fullwidth>
             Go to dashboard
+          </Button>
+        )}
+
+        {step === SubmitStepEnum.success && (
+          <Button onClick={handlePureCloseModal} fullwidth>
+            Close modal
           </Button>
         )}
 

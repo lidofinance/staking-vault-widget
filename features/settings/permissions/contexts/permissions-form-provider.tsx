@@ -98,7 +98,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       try {
         await callEditPermissions(payload, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
-        refetch();
+        setTimeout(refetch, 100);
         return true;
       } catch (err) {
         if (

@@ -99,7 +99,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
         if (amount && recipient && isAddress(recipient)) {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callWithdraw({ amount, recipient, setModalState });
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         }
       } catch (err) {

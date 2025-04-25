@@ -102,7 +102,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
         try {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callClaim(recipient, setModalState);
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         } catch (err) {
           if (

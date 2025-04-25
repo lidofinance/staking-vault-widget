@@ -41,7 +41,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (amount) {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callVaultFund(amount, setModalState);
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         }
       } catch (err) {

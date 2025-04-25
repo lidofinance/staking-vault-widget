@@ -82,7 +82,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
         try {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callMint(recipient, amount, token, setModalState);
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         } catch (err) {
           if (
