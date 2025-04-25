@@ -5,7 +5,7 @@ import {
 } from 'modules/vaults/consts';
 import { EditMainSettingsSchema, TxData } from './types';
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { dashboardFunctionsNamesMap } from 'utils/send-dashboard-tx';
+import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
 
 export const prepareMainTxData = (data: EditMainSettingsSchema) => {
   const {

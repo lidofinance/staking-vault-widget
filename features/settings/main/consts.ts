@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { MainSettingsOverview } from './types';
+import { MainSettingsOverview, TxData } from './types';
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
@@ -82,3 +82,12 @@ export const fieldsForRender: MainSettingsOverview[] = [
     canEditRole: 'nodeOperatorManager',
   },
 ];
+
+export const dashboardFunctionsNamesMap: Record<
+  keyof TxData,
+  'grantRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
+> = {
+  roles: 'grantRoles',
+  confirmExpiry: 'setConfirmExpiry',
+  nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
+};

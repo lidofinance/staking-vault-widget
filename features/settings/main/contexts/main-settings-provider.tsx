@@ -30,6 +30,7 @@ import {
 import { useEditMainSettings } from 'features/settings/main/hooks';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import { editMainSettingsSchema } from 'features/settings/main/consts';
+import { useVaultInfo } from '../../../overview/contexts';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
@@ -51,6 +52,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     step: SubmitStepEnum.edit,
   }));
   const abortControllerRef = useRef(new AbortController());
+  const { refetch } = useVaultInfo();
 
   const { callEditMainSettings } = useEditMainSettings();
   const handleCancelSubmit = useCallback(() => {
@@ -84,6 +86,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
+        return true;
       } catch (err) {
         if (
           err instanceof Error &&
@@ -93,14 +96,13 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
-
-        return false;
+        return true;
+      } finally {
+        setTimeout(refetch, 100);
       }
-
-      return true;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callEditMainSettings, submitStep],
+    [callEditMainSettings, submitStep, refetch],
   );
 
   const { reset } = formObject;

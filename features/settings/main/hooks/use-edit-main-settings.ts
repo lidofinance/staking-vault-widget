@@ -3,16 +3,18 @@ import invariant from 'tiny-invariant';
 import { useVaultInfo } from 'features/overview/contexts';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { prepareMainTxData } from 'features/settings/main/utils';
-import { EditMainSettingsSchema } from 'features/settings/main/types';
-import { sendDashboardTx } from 'utils/send-dashboard-tx';
+import { EditMainSettingsSchema, TxData } from 'features/settings/main/types';
+import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
 import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
+import { getContract, Hash } from 'viem';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 export const useEditMainSettings = () => {
   const {
     core: { web3Provider: walletClient, rpcProvider: publicClient },
   } = useLidoSDK();
   const { address } = useDappStatus();
-  const { activeVault, refetch } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
 
   const callEditMainSettings = useCallback(
     async (
@@ -37,28 +39,46 @@ export const useEditMainSettings = () => {
       );
       invariant(address, '[useEditMainSettings] address is not defined');
 
-      setModalState({ step: SubmitStepEnum.confirming });
-      const response = await sendDashboardTx({
-        txData,
-        publicClient,
-        walletClient,
-        contractAddress,
-        abortControllerRef,
+      const keys = Object.keys(txData) as (keyof TxData)[];
+      const contract = getContract({
+        address: contractAddress,
+        abi: dashboardAbi,
+        client: {
+          public: publicClient,
+          wallet: walletClient,
+        },
       });
 
-      setModalState({ step: SubmitStepEnum.submitting });
-      await Promise.all(
-        response.map(async ({ tx }) => {
-          await publicClient.waitForTransactionReceipt({
-            hash: tx,
-          });
-        }),
-      );
+      const responses: { tx: Hash; key: keyof TxData }[] = [];
+      for (const key of keys) {
+        const {
+          current: { signal },
+        } = abortControllerRef;
+        if (signal.aborted) {
+          return responses;
+        }
 
-      refetch();
-      return response;
+        const functionName = dashboardFunctionsNamesMap[key];
+
+        setModalState({ step: SubmitStepEnum.confirming });
+        // @ts-expect-error find out how to setup right types
+        const tx = await contract.write[functionName]({
+          address: contractAddress,
+          abi: dashboardAbi,
+          args: [txData[key]],
+        });
+
+        setModalState({ step: SubmitStepEnum.submitting });
+        await publicClient.waitForTransactionReceipt({
+          hash: tx,
+        });
+
+        responses.push({ tx, key });
+      }
+
+      return responses;
     },
-    [activeVault?.owner, address, publicClient, walletClient, refetch],
+    [activeVault?.owner, address, publicClient, walletClient],
   );
 
   return {
