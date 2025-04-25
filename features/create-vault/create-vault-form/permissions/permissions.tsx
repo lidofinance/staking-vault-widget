@@ -11,7 +11,7 @@ import {
 } from './styles';
 import { SectionContainer } from 'features/create-vault/styles';
 import { PermissionsRoles } from 'features/create-vault/types';
-import { CREATE_VAULT_FORM_STEPS } from '../../consts';
+import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 
 import {
   NO_MANAGER_PERMISSION_LIST,

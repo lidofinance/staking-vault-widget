@@ -4,7 +4,8 @@ import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styles';
 import { useFormContext } from 'react-hook-form';
-import { CREATE_VAULT_FORM_STEPS } from '../../../consts';
+
+import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 
 export const ConfirmationAction: FC = () => {
   const { handleSetStep } = useCreateVaultFormData();

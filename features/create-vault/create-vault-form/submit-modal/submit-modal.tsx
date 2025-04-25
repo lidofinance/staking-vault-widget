@@ -18,7 +18,7 @@ import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
 
 import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
-import { AppPaths } from '../../../../consts/urls';
+import { AppPaths } from 'consts/urls';
 
 const getIconComponent = (step: SubmitStep) => {
   if (step === SubmitStepEnum.success)
