@@ -17,9 +17,9 @@ export const EditMainSettings = () => {
           Main settings
         </Text>
         <NodeOperator />
-        {fieldsForRender.map((field) => {
-          return <DataField key={field.vaultKey} {...field} />;
-        })}
+        {fieldsForRender.map((field) => (
+          <DataField key={field.vaultKey} {...field} />
+        ))}
         <MainSettingsAction />
       </SectionContainer>
     </MainSettingsProvider>

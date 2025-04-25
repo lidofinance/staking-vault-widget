@@ -31,17 +31,17 @@ export const useVaultPermissions = (role?: DashboardRoles) => {
 };
 
 export const useVaultConfirmingRoles = () => {
-  // TODO: multicall/ useReadContracts
-  const role1 = useVaultPermissions('defaultAdmin');
-  const role2 = useVaultPermissions('nodeOperatorManager');
+  // TODO: multicall/useReadContracts
+  const roleAdmin = useVaultPermissions('defaultAdmin');
+  const roleNOM = useVaultPermissions('nodeOperatorManager');
 
-  const hasAtLeastOne = role1.hasPermission || role2.hasPermission;
+  const hasAtLeastOne = roleAdmin.hasPermission || roleNOM.hasPermission;
   return {
     hasConfirmingRole: hasAtLeastOne,
-    hasAdmin: role1.hasPermission,
-    hasNodeOperatporManager: role2.hasPermission,
-    hasBothConfirmingRoles: role1.hasPermission && role2.hasPermission,
-    isLoading: !hasAtLeastOne && (role1.isLoading || role2.isLoading),
-    error: role1.error || role2.error,
+    hasAdmin: roleAdmin.hasPermission,
+    hasNodeOperatporManager: roleNOM.hasPermission,
+    hasBothConfirmingRoles: roleAdmin.hasPermission && roleNOM.hasPermission,
+    isLoading: !hasAtLeastOne && (roleAdmin.isLoading || roleNOM.isLoading),
+    error: roleAdmin.error || roleNOM.error,
   };
 };
