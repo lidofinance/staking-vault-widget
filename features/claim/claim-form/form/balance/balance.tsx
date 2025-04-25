@@ -8,8 +8,9 @@ export const Balance = () => {
   const { isLoadingClaimInfo, availableToClaim, isErrorClaimInfo } =
     useClaimFormData();
 
+  const isAvailableToClaim = typeof availableToClaim === 'bigint';
   const isLoading =
-    (!isErrorClaimInfo && !availableToClaim) || isLoadingClaimInfo;
+    (!isErrorClaimInfo && !isAvailableToClaim) || isLoadingClaimInfo;
 
   return (
     <Wrapper>
@@ -18,7 +19,7 @@ export const Balance = () => {
           Available to claim
         </Text>
         {isLoading && <Loader size="small" />}
-        {!!availableToClaim && (
+        {isAvailableToClaim && (
           <AmountInfo>{formatBalance(availableToClaim).trimmed} ETH</AmountInfo>
         )}
       </InfoRow>

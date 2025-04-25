@@ -82,12 +82,12 @@ export const editPermissionsSchema = z.object({
 export const adminPermissionsList: PermissionsRoles[] = [
   {
     role: 'FUND_ROLE',
-    title: 'Mint ETH',
-    tooltip: 'Allows Funding ETH',
+    title: 'Supply ETH',
+    tooltip: 'Allows Supplying ETH',
   },
   {
     role: 'WITHDRAW_ROLE',
-    title: 'Repay ETH',
+    title: 'Withdraw ETH',
     tooltip: 'Allows Withdrawing unlocked ETH from stVault',
   },
   {
@@ -126,8 +126,8 @@ export const adminPermissionsList: PermissionsRoles[] = [
   },
   {
     role: 'BURN_ROLE',
-    title: 'Burn stETH',
-    tooltip: 'Allows Burning stETH',
+    title: 'Repay stETH',
+    tooltip: 'Allows Repaying stETH',
   },
   {
     role: 'VOLUNTARY_DISCONNECT_ROLE',

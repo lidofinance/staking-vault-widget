@@ -3,7 +3,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useVaultDataTable } from 'modules/vaults/hooks';
 import { useVaultsConnectedBound } from 'modules/vaults/hooks/use-vaults-connected-bound';
 
-import { VAULTS_PER_PAGE } from '../consts';
+import { VAULTS_PER_PAGE } from 'modules/vaults/consts';
 
 import type { Address } from 'viem';
 

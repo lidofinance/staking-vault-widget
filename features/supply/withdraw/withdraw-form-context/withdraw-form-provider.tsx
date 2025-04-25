@@ -5,24 +5,30 @@ import {
   useCallback,
   createContext,
   useContext,
+  useState,
 } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import {
+  useWithdrawable,
+  useWithdrawWithDashboard,
+} from 'features/supply/withdraw/hooks';
 
 import {
   FormController,
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
+import { SubmitModal } from 'shared/components';
 
 import { WithdrawFormSchema } from 'features/supply/withdraw/types';
 import {
-  useWithdrawable,
-  useWithdrawWithDashboard,
-} from 'features/supply/withdraw/hooks';
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 
 type WithdrawDataContextValue = {
   withdrawableAmount: bigint | undefined;
@@ -49,6 +55,10 @@ export const useWithdrawFormData = () => {
 export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [submitStep, setSubmitStep] = useState<{
+    step: SubmitStep;
+    tx?: Address;
+  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<WithdrawFormSchema>({
     defaultValues: {
       amount: undefined,
@@ -59,6 +69,12 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   });
   const { callWithdraw } = useWithdrawWithDashboard();
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const setModalState = useCallback(
+    (submitStep: { step: SubmitStep; tx?: Address }) => {
+      setSubmitStep(submitStep);
+    },
+    [],
+  );
 
   const {
     data: withdrawableAmount,
@@ -86,15 +102,27 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     async ({ amount, recipient }: WithdrawFormSchema) => {
       try {
         if (amount && recipient && isAddress(recipient)) {
-          await callWithdraw({ amount, recipient });
+          setModalState({ step: SubmitStepEnum.initiate });
+          const tx = await callWithdraw({ amount, recipient, setModalState });
+          setModalState({ step: SubmitStepEnum.success, tx });
           return true;
         }
-      } catch (e) {
+      } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
+
         return false;
       }
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callWithdraw],
   );
 
@@ -114,6 +142,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       <FormProvider {...formObject}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
+          <SubmitModal submitStep={submitStep} setModalState={setModalState} />
         </FormControllerContext.Provider>
       </FormProvider>
     </WithdrawDataContext.Provider>

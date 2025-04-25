@@ -24,7 +24,7 @@ export const Balance = () => {
             {formatBalance(withdrawableAmount).trimmed} ETH
           </AmountInfo>
         )}
-        {isWithdrawableError && (
+        {isWithdrawableError && !isWithdrawableLoading && (
           <AmountInfo>Balance is not available</AmountInfo>
         )}
       </InfoRow>
