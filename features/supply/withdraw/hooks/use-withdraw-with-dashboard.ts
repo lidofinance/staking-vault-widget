@@ -8,14 +8,14 @@ import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 import {
-  SubmitStep,
+  SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 
 type WithdrawWithDashboardArgs = {
   recipient: Address;
   amount: bigint;
-  setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void;
+  setModalState: (submitStep: SubmitPayload) => void;
 };
 
 export const useWithdrawWithDashboard = (onMutate = () => {}) => {

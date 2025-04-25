@@ -11,6 +11,7 @@ import { FundFormSchema } from 'features/supply/fund/types';
 import {
   SubmitStepEnum,
   SubmitStep,
+  SubmitPayload,
 } from 'shared/components/submit-modal/types';
 import { SubmitModal } from 'shared/components';
 import { Address } from 'viem';
@@ -30,12 +31,9 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { callVaultFund } = useFund();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback(
-    (submitStep: { step: SubmitStep; tx?: Address }) => {
-      setSubmitStep(submitStep);
-    },
-    [],
-  );
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const onSubmit = useCallback(
     async ({ amount }: FundFormSchema) => {

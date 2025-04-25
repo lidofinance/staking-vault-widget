@@ -22,6 +22,7 @@ import {
 import { MintFormSchema } from 'features/adjustment/mint/types';
 import { SubmitModal } from 'shared/components';
 import {
+  SubmitPayload,
   SubmitStep,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
@@ -71,12 +72,9 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [activeVault]);
 
   const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback(
-    (submitStep: { step: SubmitStep; tx?: Address }) => {
-      setSubmitStep(submitStep);
-    },
-    [],
-  );
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const onSubmit = useCallback(
     async ({ recipient, amount, token }: MintFormSchema) => {

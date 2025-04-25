@@ -71,11 +71,13 @@ interface SubmitModalProps extends ModalProps {
     tx?: Address;
   };
   setModalState: ({ step }: { step: SubmitStep }) => void;
+  onClose?: () => void;
 }
 
 export const SubmitModal: FC<SubmitModalProps> = ({
   submitStep,
   setModalState,
+  onClose,
 }) => {
   const router = useRouter();
   const {
@@ -94,7 +96,11 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   };
 
   const handleCloseModal = () => {
-    setModalState({ step: SubmitStepEnum.edit });
+    if (onClose) {
+      onClose();
+    } else {
+      setModalState({ step: SubmitStepEnum.edit });
+    }
   };
 
   return (

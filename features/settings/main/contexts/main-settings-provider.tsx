@@ -6,6 +6,7 @@ import {
   useCallback,
   createContext,
   useContext,
+  useRef,
 } from 'react';
 import invariant from 'tiny-invariant';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -16,20 +17,19 @@ import {
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-import { SubmitMainModal } from 'features/settings/main/components';
+import { SubmitModal } from 'shared/components';
 
 import {
-  editMainSettingsSchema,
-  SubmittingMainFormStepsEnum,
-} from 'features/settings/main/consts';
+  SubmitPayload,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 import {
   EditMainSettingsSchema,
   MainSettingsContextValue,
-  MainSettingsSubmittingInfo,
 } from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
-import { useVaultInfo } from 'features/overview/contexts';
 import { validateFormWithZod } from 'utils/validate-form-value';
+import { editMainSettingsSchema } from 'features/settings/main/consts';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
@@ -47,25 +47,25 @@ export const useMainSettingsData = () => {
 };
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [submitStep, setSubmitStep] = useState<MainSettingsSubmittingInfo>(
-    () => ({
-      step: SubmittingMainFormStepsEnum.edit,
-    }),
-  );
-  const { refetch } = useVaultInfo();
+  const [submitStep, setSubmitStep] = useState<SubmitPayload>(() => ({
+    step: SubmitStepEnum.edit,
+  }));
+  const abortControllerRef = useRef(new AbortController());
 
-  const { callEditMainSettings } = useEditMainSettings(async () =>
-    setSubmitStep({ step: SubmittingMainFormStepsEnum.submitting }),
-  );
-
+  const { callEditMainSettings } = useEditMainSettings();
   const handleCancelSubmit = useCallback(() => {
-    setSubmitStep({ step: SubmittingMainFormStepsEnum.edit });
+    abortControllerRef.current.abort();
+    setSubmitStep({ step: SubmitStepEnum.edit });
   }, []);
 
   const createVaultData = {
     submitStep,
     handleCancelSubmit,
   };
+
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const formObject = useForm<EditMainSettingsSchema>({
     defaultValues: {
@@ -80,22 +80,27 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
-      setSubmitStep({ step: SubmittingMainFormStepsEnum.initiate });
-      setSubmitStep({ step: SubmittingMainFormStepsEnum.confirming });
-
       try {
-        const response = await callEditMainSettings(data);
-        setSubmitStep({ step: SubmittingMainFormStepsEnum.success, response });
-        refetch();
+        setModalState({ step: SubmitStepEnum.initiate });
+        await callEditMainSettings(data, setModalState, abortControllerRef);
+        setModalState({ step: SubmitStepEnum.success });
       } catch (err) {
-        // TODO: handle more type of errors
-        setSubmitStep({ step: SubmittingMainFormStepsEnum.reject });
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
+
         return false;
       }
 
       return true;
     },
-    [callEditMainSettings, refetch],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [callEditMainSettings, submitStep],
   );
 
   const { reset } = formObject;
@@ -116,7 +121,11 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       <MainSettingsContext.Provider value={createVaultData}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
-          <SubmitMainModal />
+          <SubmitModal
+            submitStep={submitStep}
+            setModalState={setModalState}
+            onClose={handleCancelSubmit}
+          />
         </FormControllerContext.Provider>
       </MainSettingsContext.Provider>
     </FormProvider>

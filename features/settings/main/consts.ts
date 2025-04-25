@@ -7,6 +7,7 @@ import {
   MAX_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY,
 } from 'modules/vaults';
+import { Address } from 'viem';
 
 export enum SubmittingMainFormStepsEnum {
   edit = 'edit',
@@ -27,7 +28,8 @@ const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
 const addressSchema = z
   .string()
-  .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE });
+  .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .transform((value) => value as Address);
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManager: z.array(z.object({ value: addressSchema })),

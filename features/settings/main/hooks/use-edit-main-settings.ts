@@ -1,23 +1,26 @@
-import { useCallback } from 'react';
+import { MutableRefObject, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useVaultInfo } from 'features/overview/contexts';
-import { useAA, useDappStatus, useLidoSDK, useSendAACalls } from 'modules/web3';
-import { generateMainAATxData, prepareMainTxData } from '../utils';
-import { EditMainSettingsSchema } from '../types';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { prepareMainTxData } from 'features/settings/main/utils';
+import { EditMainSettingsSchema } from 'features/settings/main/types';
 import { sendDashboardTx } from 'utils/send-dashboard-tx';
+import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
 
-export const useEditMainSettings = (onMutate = async () => {}) => {
+export const useEditMainSettings = () => {
   const {
     core: { web3Provider: walletClient, rpcProvider: publicClient },
   } = useLidoSDK();
   const { address } = useDappStatus();
-  const { activeVault } = useVaultInfo();
-  const sendAACalls = useSendAACalls();
-  const { isAA } = useAA();
+  const { activeVault, refetch } = useVaultInfo();
 
   // TODO: add opportunity to get receipts
   const callEditMainSettings = useCallback(
-    async (payload: EditMainSettingsSchema) => {
+    async (
+      payload: EditMainSettingsSchema,
+      setModalState: (submitStep: SubmitPayload) => void,
+      abortControllerRef: MutableRefObject<AbortController>,
+    ) => {
       // TODO: replace by useWriteContracts in future
       const txData = prepareMainTxData(payload);
       const contractAddress = activeVault?.owner;
@@ -26,33 +29,28 @@ export const useEditMainSettings = (onMutate = async () => {}) => {
       invariant(walletClient);
       invariant(address);
 
-      if (isAA) {
-        const data = await generateMainAATxData({
-          txData,
-          publicClient,
-          address: contractAddress,
-          account: address,
-        });
+      setModalState({ step: SubmitStepEnum.confirming });
+      const response = await sendDashboardTx({
+        txData,
+        publicClient,
+        walletClient,
+        contractAddress,
+        abortControllerRef,
+      });
 
-        await sendAACalls(data, onMutate);
-      } else {
-        return await sendDashboardTx({
-          txData,
-          publicClient,
-          walletClient,
-          contractAddress,
-        });
-      }
+      setModalState({ step: SubmitStepEnum.submitting });
+      await Promise.all(
+        response.map(async ({ tx }) => {
+          await publicClient.waitForTransactionReceipt({
+            hash: tx,
+          });
+        }),
+      );
+
+      refetch();
+      return response;
     },
-    [
-      activeVault?.owner,
-      address,
-      publicClient,
-      walletClient,
-      isAA,
-      sendAACalls,
-      onMutate,
-    ],
+    [activeVault?.owner, address, publicClient, walletClient, refetch],
   );
 
   return {
