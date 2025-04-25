@@ -2,6 +2,7 @@ import { Address, Hash, Hex } from 'viem';
 import { editMainSettingsSchema, SubmittingMainFormStepsEnum } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
+import { VAULT_ROOT_ROLES } from 'modules/vaults';
 
 export type SubmittingMainFormStep =
   | keyof typeof SubmittingMainFormStepsEnum
@@ -34,6 +35,7 @@ export type MainSettingsOverview = {
   dataType: InputDataType;
   actionText?: string;
   vaultKey: keyof VaultInfo;
+  canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
 
 export type TxData = {

@@ -16,47 +16,60 @@ import { PermissionsDataProvider, PermissionsFormProvider } from './contexts';
 import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
+  VAULT_ROOT_ROLES,
 } from 'modules/vaults';
+import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 
-interface RenderPermissions {
+type PermissionSectionEntry = {
   permissionsTitle: string;
   payload: PermissionsRoles[];
-}
+  canEditRole: VAULT_ROOT_ROLES;
+};
 
-const renderPermissionsList: RenderPermissions[] = [
+const renderPermissionsList: PermissionSectionEntry[] = [
   {
     permissionsTitle: 'Vault Manager Permissions',
+    canEditRole: 'defaultAdmin',
     payload: VAULT_MANAGER_PERMISSIONS_LIST,
   },
   {
     permissionsTitle: 'Node Operator Manager Permissions',
+    canEditRole: 'nodeOperatorManager',
     payload: NO_MANAGER_PERMISSION_LIST,
   },
 ];
+
+const PermissionsSection = (props: PermissionSectionEntry) => {
+  const { hasPermission } = useVaultPermissions(props.canEditRole);
+
+  return (
+    <PermissionContainer>
+      <PermissionGroupTitle>{props.permissionsTitle}</PermissionGroupTitle>
+      <PermissionBlock>
+        {props.payload.map(({ role, title, tooltip }) => {
+          return (
+            <PermissionRoleWrapper key={role}>
+              <RoleDescription
+                permission={role}
+                description={title}
+                tooltip={tooltip}
+              />
+              <AddressList readonly={!hasPermission} permission={role} />
+            </PermissionRoleWrapper>
+          );
+        })}
+      </PermissionBlock>
+    </PermissionContainer>
+  );
+};
 
 export const PermissionsSettings = () => {
   return (
     <PermissionsDataProvider>
       <PermissionsFormProvider>
         <SectionContainer>
-          {renderPermissionsList.map(({ permissionsTitle, payload }) => (
-            <PermissionContainer key={permissionsTitle}>
-              <PermissionGroupTitle>{permissionsTitle}</PermissionGroupTitle>
-              <PermissionBlock>
-                {payload.map(({ role, title, tooltip }) => {
-                  return (
-                    <PermissionRoleWrapper key={role}>
-                      <RoleDescription
-                        permission={role}
-                        description={title}
-                        tooltip={tooltip}
-                      />
-                      <AddressList permission={role} />
-                    </PermissionRoleWrapper>
-                  );
-                })}
-              </PermissionBlock>
-            </PermissionContainer>
+          {renderPermissionsList.map((section) => (
+            <PermissionsSection key={section.permissionsTitle} {...section} />
           ))}
           <PermissionsAction />
         </SectionContainer>

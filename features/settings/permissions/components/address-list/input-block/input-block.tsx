@@ -13,11 +13,12 @@ import type {
   PermissionKeys,
 } from 'features/settings/permissions/types';
 
-export interface InputBlockProps {
+export type InputBlockProps = {
   permission: PermissionKeys;
-}
+  readonly?: boolean;
+};
 
-export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
+export const InputBlock: FC<InputBlockProps> = ({ permission, readonly }) => {
   const { getValues } = useFormContext();
 
   const {
@@ -54,16 +55,18 @@ export const InputBlock: FC<InputBlockProps> = ({ permission }) => {
         />
       ))}
 
-      <AddAddress
-        color="primary"
-        icon={<Plus />}
-        size="md"
-        variant="ghost"
-        type="button"
-        onClick={() => append({ value: '' })}
-      >
-        Add new address
-      </AddAddress>
+      {!readonly && (
+        <AddAddress
+          color="primary"
+          icon={<Plus />}
+          size="md"
+          variant="ghost"
+          type="button"
+          onClick={() => append({ value: '' })}
+        >
+          Add new address
+        </AddAddress>
+      )}
     </InputBlockWrapper>
   );
 };

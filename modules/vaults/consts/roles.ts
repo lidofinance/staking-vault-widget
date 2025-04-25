@@ -15,6 +15,8 @@ export const VAULTS_ROOT_ROLES_MAP = {
   ),
 } as const;
 
+export type VAULT_ROOT_ROLES = keyof typeof VAULTS_ROOT_ROLES_MAP;
+
 export const VAULTS_OWNER_ROLES_MAP = {
   supplier: toRoleHash('vaults.Permissions.Fund'),
   withdrawer: toRoleHash('vaults.Permissions.Withdraw'),
@@ -47,12 +49,16 @@ export const VAULTS_OWNER_ROLES_MAP = {
   assetRecoverer: toRoleHash('vaults.Dashboard.RecoverAssets'),
 } as const;
 
+export type VAULT_OWNER_ROLES = keyof typeof VAULTS_OWNER_ROLES_MAP;
+
 export const VAULTS_NO_ROLES_MAP = {
   nodeOperatorFeeClaimer: toRoleHash('vaults.NodeOperatorFee.FeeClaimRole'),
   nodeOperatorRewardsAdjuster: toRoleHash(
     'vaults.NodeOperatorFee.RewardsAdjustRole',
   ),
 } as const;
+
+export type VAULTS_NO_ROLES = keyof typeof VAULTS_NO_ROLES_MAP;
 
 export const VAULT_MANAGER_PERMISSIONS_LIST: PermissionEntry<
   typeof VAULTS_OWNER_ROLES_MAP

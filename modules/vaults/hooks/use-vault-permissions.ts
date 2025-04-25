@@ -7,11 +7,11 @@ import type { Address, Hash } from 'viem';
 
 export type DashboardRoles = keyof typeof VAULTS_ALL_ROLES_MAP;
 
-export const useVaultPermissions = (role: DashboardRoles) => {
+export const useVaultPermissions = (role?: DashboardRoles) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
-  const roleHash = VAULTS_ALL_ROLES_MAP[role];
+  const roleHash = role && VAULTS_ALL_ROLES_MAP[role];
 
   const query = useReadContract({
     abi: dashboardAbi,
@@ -27,5 +27,21 @@ export const useVaultPermissions = (role: DashboardRoles) => {
   return {
     hasPermission: !!query.data,
     ...query,
+  };
+};
+
+export const useVaultConfirmingRoles = () => {
+  // TODO: multicall/useReadContracts
+  const roleAdmin = useVaultPermissions('defaultAdmin');
+  const roleNOM = useVaultPermissions('nodeOperatorManager');
+
+  const hasAtLeastOne = roleAdmin.hasPermission || roleNOM.hasPermission;
+  return {
+    hasConfirmingRole: hasAtLeastOne,
+    hasAdmin: roleAdmin.hasPermission,
+    hasNodeOperatporManager: roleNOM.hasPermission,
+    hasBothConfirmingRoles: roleAdmin.hasPermission && roleNOM.hasPermission,
+    isLoading: !hasAtLeastOne && (roleAdmin.isLoading || roleNOM.isLoading),
+    error: roleAdmin.error || roleNOM.error,
   };
 };

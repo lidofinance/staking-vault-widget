@@ -3,20 +3,15 @@ import { ReadonlyInput } from './readonly-input';
 import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
 
-import { InputDataType } from 'features/settings/main/types';
-import { VaultInfo } from 'types';
+import type { MainSettingsOverview } from 'features/settings/main/types';
 import { EditProperty } from './edit-property';
 import { Text } from '@lidofinance/lido-ui';
+import {
+  useVaultConfirmingRoles,
+  useVaultPermissions,
+} from 'modules/vaults/hooks/use-vault-permissions';
 
-interface InputResolverProps {
-  name: string;
-  label: string;
-  editLabel: string;
-  title: string;
-  dataType: InputDataType;
-  vaultKey: keyof VaultInfo;
-  actionText?: string;
-}
+type InputResolverProps = MainSettingsOverview;
 
 export const DataField: FC<InputResolverProps> = ({
   label,
@@ -26,9 +21,16 @@ export const DataField: FC<InputResolverProps> = ({
   title,
   actionText = 'Initiate a change',
   vaultKey,
+  canEditRole,
 }) => {
   const isTypeAddress = dataType === 'address';
+  const isConfirmingRoles = canEditRole === 'confirmingRoles';
+  const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermissions(
+    isConfirmingRoles ? undefined : canEditRole,
+  );
 
+  const isEditable = hasConfirmingRole || hasPermission;
   return (
     <GroupWrapper>
       <Text size="xs" strong>
@@ -36,7 +38,13 @@ export const DataField: FC<InputResolverProps> = ({
       </Text>
       {isTypeAddress && <DisplayAddress name={name} vaultKey={vaultKey} />}
       {!isTypeAddress && <ReadonlyInput label={label} vaultKey={vaultKey} />}
-      <EditProperty editLabel={editLabel} name={name} actionText={actionText} />
+      {isEditable && (
+        <EditProperty
+          editLabel={editLabel}
+          name={name}
+          actionText={actionText}
+        />
+      )}
     </GroupWrapper>
   );
 };

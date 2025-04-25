@@ -10,13 +10,14 @@ import { PermissionKeys } from 'features/settings/permissions/types';
 
 export type AddressListProps = {
   permission: PermissionKeys;
+  readonly?: boolean;
 };
 
-export const AddressList: FC<AddressListProps> = ({ permission }) => {
+export const AddressList: FC<AddressListProps> = (props) => {
   return (
     <AddressListWrapper>
-      <AddressBlock permission={permission} />
-      <InputBlock permission={permission} />
+      <AddressBlock {...props} />
+      <InputBlock {...props} />
     </AddressListWrapper>
   );
 };
