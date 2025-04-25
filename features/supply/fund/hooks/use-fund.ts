@@ -53,7 +53,7 @@ export type SimulationFundProps = {
 
 export const useSimulationFund = ({ address, amount }: SimulationFundProps) => {
   const { address: accountAddress } = useAccount();
-  const { hasPermission } = useVaultPermissions('funder');
+  const { hasPermission } = useVaultPermissions('supplier');
   const simulationContractPayload: UseSimulateContractParameters = {
     abi: dashboardAbi,
     address,

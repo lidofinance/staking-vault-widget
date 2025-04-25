@@ -10,12 +10,13 @@ import {
   PermissionRoleWrapper,
 } from './styles';
 import { SectionContainer } from 'features/settings/permissions/styles';
-import {
-  adminPermissionsList,
-  noPermissionsList,
-} from 'features/settings/permissions/consts';
+
 import { PermissionsRoles } from 'features/settings/permissions/types';
 import { PermissionsDataProvider, PermissionsFormProvider } from './contexts';
+import {
+  VAULT_MANAGER_PERMISSIONS_LIST,
+  NO_MANAGER_PERMISSION_LIST,
+} from 'modules/vaults';
 
 interface RenderPermissions {
   permissionsTitle: string;
@@ -25,11 +26,11 @@ interface RenderPermissions {
 const renderPermissionsList: RenderPermissions[] = [
   {
     permissionsTitle: 'Vault Manager Permissions',
-    payload: adminPermissionsList,
+    payload: VAULT_MANAGER_PERMISSIONS_LIST,
   },
   {
     permissionsTitle: 'Node Operator Manager Permissions',
-    payload: noPermissionsList,
+    payload: NO_MANAGER_PERMISSION_LIST,
   },
 ];
 

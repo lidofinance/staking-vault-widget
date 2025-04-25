@@ -8,13 +8,13 @@ import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
 import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
 import { bigIntMax } from 'utils/bigint-math';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
 import type { VaultInfo } from 'types';
 import type { PublicClient, Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+import { VAULTS_ROOT_ROLES_MAP } from '../consts';
 
 type VaultDataArgs = {
   publicClient: PublicClient;
@@ -61,8 +61,10 @@ const getVaultData = async ({
     dashboardContract.read.withdrawableEther(),
     dashboardContract.read.nodeOperatorFeeBP(),
     dashboardContract.read.totalMintingCapacity(),
-    dashboardContract.read.getRoleMembers([DEFAULT_ADMIN_ROLE]),
-    dashboardContract.read.getRoleMembers([NODE_OPERATOR_MANAGER_ROLE]),
+    dashboardContract.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
+    dashboardContract.read.getRoleMembers([
+      VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
+    ]),
     dashboardContract.read.getConfirmExpiry(),
   ]);
 

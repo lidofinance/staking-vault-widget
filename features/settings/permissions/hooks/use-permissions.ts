@@ -14,6 +14,7 @@ export const useVaultPermissionsRoles = () => {
     query: {
       enabled: !!owner,
     },
+
     contracts: permissionsKeys.map((key) => ({
       abi: dashboardAbi,
       address: owner,

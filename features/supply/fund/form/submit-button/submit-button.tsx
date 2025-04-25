@@ -7,7 +7,7 @@ export const SubmitButton = () => {
   } = useFormContext();
   return (
     <PermissionedSubmitButton
-      dashboardRole="funder"
+      dashboardRole="supplier"
       type="submit"
       disabled={isSubmitting || !isValid || !isDirty}
     >

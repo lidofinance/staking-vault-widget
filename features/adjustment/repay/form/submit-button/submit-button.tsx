@@ -9,7 +9,7 @@ export const SubmitButton = () => {
 
   return (
     <PermissionedSubmitButton
-      dashboardRole="burner"
+      dashboardRole="repayer"
       type="submit"
       disabled={disabled}
     >
