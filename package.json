@@ -111,8 +111,7 @@
   },
   "resolutions": {
     "postcss": "^8.4.31",
-    "crypto-js": "^4.2.0",
-    "wrap-ansi": "7.0.0"
+    "crypto-js": "^4.2.0"
   },
   "lint-staged": {
     "./**/*.{ts,tsx}": [

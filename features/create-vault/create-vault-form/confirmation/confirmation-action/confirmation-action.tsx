@@ -19,7 +19,9 @@ export const ConfirmationAction: FC = () => {
   }, [trigger]);
 
   const handleSetPrevStep = () => {
-    handleSetStep(CREATE_VAULT_FORM_STEPS.permissions);
+    // TODO: bring back permissions step
+    // handleSetStep(CREATE_VAULT_FORM_STEPS.permissions);
+    handleSetStep(CREATE_VAULT_FORM_STEPS.main);
   };
 
   return (

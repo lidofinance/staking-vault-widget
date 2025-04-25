@@ -7,8 +7,8 @@ import invariant from 'tiny-invariant';
 
 export const ConfirmTime: FC<ConfirmDataItemProps> = ({ payload }) => {
   invariant(
-    typeof payload === 'string',
-    '[ConfirmTime] payload should be a string',
+    typeof payload === 'number' || typeof payload === 'string',
+    'Payload must be a string | number',
   );
   return <TextBold>{payload} hours</TextBold>;
 };
