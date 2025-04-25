@@ -1,5 +1,10 @@
 import { useCallback } from 'react';
-import { useConfig, usePublicClient, useWriteContract } from 'wagmi';
+import {
+  useConfig,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+  usePublicClient,
+} from 'wagmi';
 import { Address } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -8,7 +13,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
 import invariant from 'tiny-invariant';
 
-export const useBurnDashboard = (onMutate = () => {}) => {
+export const useBurn = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -21,6 +26,10 @@ export const useBurnDashboard = (onMutate = () => {}) => {
     },
   });
 
+  const { data: burnReceipt } = useWaitForTransactionReceipt({
+    hash: burnTx,
+  });
+
   const callBurn = useCallback(
     async ({
       token,
@@ -31,7 +40,7 @@ export const useBurnDashboard = (onMutate = () => {}) => {
       amount: bigint;
       setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void;
     }) => {
-      invariant(publicClient, '[useBurnDashboard] publicClient is undefined');
+      invariant(publicClient, '[useBurn] publicClient is undefined');
 
       setModalState({ step: SubmitStepEnum.confirming });
       const tx = await writeContractAsync({
@@ -55,5 +64,6 @@ export const useBurnDashboard = (onMutate = () => {}) => {
   return {
     callBurn,
     burnTx,
+    burnReceipt,
   };
 };

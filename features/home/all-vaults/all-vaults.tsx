@@ -9,6 +9,7 @@ export const AllVaults = () => {
     vaults,
     isLoading: isLoadingAllVaults,
     handlePagination,
+    page,
   } = useVaultsDataAll();
   const { data } = useConnectedVaultsNumber();
   const pagesCount = Math.ceil(Number(data ?? 0) / VAULTS_PER_PAGE);
@@ -21,14 +22,15 @@ export const AllVaults = () => {
         vaults={vaults}
         showTitle={!isLoadingAllVaults}
       />
-      {showPagination && (
+      {isLoadingAllVaults && <Loader color="primary" size="large" />}
+      {showPagination && !isLoadingAllVaults && (
         <Pagination
           onItemClick={handlePagination}
           pagesCount={pagesCount}
           siblingCount={1}
+          activePage={page}
         />
       )}
-      {isLoadingAllVaults && <Loader color="primary" size="large" />}
     </AllVaultsWrapper>
   );
 };

@@ -83,10 +83,10 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
                     <AddressCell value={vault.address} />
                   </TableCell>
                   <TableCell>
-                    <EtherCell value={vault.valuation} />
+                    <EtherCell value={vault.totalValue} />
                   </TableCell>
                   <TableCell>
-                    <MintCell value={vault.minted} />
+                    <MintCell value={vault.liabilityStETH} />
                   </TableCell>
                   <TableCell>
                     <DefaultCell value="?" />

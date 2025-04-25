@@ -1,4 +1,1 @@
-export {
-  useMintDashboard,
-  useSimulationMintDashboard,
-} from './use-mint-dashboard';
+export * from './use-mint';

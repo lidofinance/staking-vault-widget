@@ -1,1 +1,1 @@
-export { useBurnDashboard } from './use-burn-dashboard';
+export * from './use-burn';

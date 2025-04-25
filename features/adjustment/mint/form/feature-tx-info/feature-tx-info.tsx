@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useSimulationMintDashboard } from 'features/adjustment/mint/hooks';
+import { useSimulationMint } from 'features/adjustment/mint/hooks';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
@@ -7,12 +7,13 @@ import { AmountInfo, InfoRow, Wrapper } from './styles';
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
   const [token, amount, recipient] = watch(['token', 'amount', 'recipient']);
-  const { isLoading, data, isError } = useSimulationMintDashboard({
+  const { isLoading, data, isError } = useSimulationMint({
     token,
     amount,
     recipient,
   });
 
+  // TODO: add error
   return (
     <Wrapper>
       <InfoRow>

@@ -2,13 +2,13 @@ import { useFormContext } from 'react-hook-form';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
-import { useSimulationClaimDashboard } from 'features/claim/claim-form/hooks';
+import { useSimulationClaim } from 'features/claim/claim-form/hooks';
 import { Address } from 'viem';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
   const recipient: Address = watch('recipient');
-  const { data, isLoading, isError } = useSimulationClaimDashboard(recipient);
+  const { data, isLoading, isError } = useSimulationClaim(recipient);
 
   return (
     <Wrapper>

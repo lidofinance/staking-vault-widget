@@ -1,1 +1,1 @@
-export { useEditMainSettingsWithDelegation } from './use-edit-main-settings-with-delegation';
+export * from './use-edit-main-settings';

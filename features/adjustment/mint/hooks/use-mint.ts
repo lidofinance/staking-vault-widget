@@ -14,7 +14,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
 import invariant from 'tiny-invariant';
 
-export const useMintDashboard = (onMutate = () => {}) => {
+export const useMint = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -60,17 +60,17 @@ export const useMintDashboard = (onMutate = () => {}) => {
   };
 };
 
-export interface SimulationMintWithDelegationProps {
+export interface SimulationMintProps {
   recipient: Address;
   token: string;
   amount: number;
 }
 
-export const useSimulationMintDashboard = ({
+export const useSimulationMint = ({
   recipient,
   token,
   amount,
-}: SimulationMintWithDelegationProps) => {
+}: SimulationMintProps) => {
   const payload = [recipient, BigInt(amount ?? 0)];
   const functionName = token === 'stETH' ? 'mintStETH' : 'mintWstETH';
   const { activeVault } = useVaultInfo();

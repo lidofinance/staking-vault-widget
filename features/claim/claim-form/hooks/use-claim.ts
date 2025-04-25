@@ -13,7 +13,7 @@ import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
 
-export const useClaimDashboard = (onMutate = () => {}) => {
+export const useClaim = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -63,7 +63,7 @@ export const useClaimDashboard = (onMutate = () => {}) => {
   };
 };
 
-export const useSimulationClaimDashboard = (recipient: Address) => {
+export const useSimulationClaim = (recipient: Address) => {
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const isEnabled = !!owner && !!recipient;

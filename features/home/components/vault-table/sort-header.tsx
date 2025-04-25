@@ -26,7 +26,7 @@ export const SortableHeader: FC<SortableHeaderProps> = ({
       {label}
       {showQuestion && <Question />}
       <ArrowAnimated
-        isActive={sortConfig.key === 'valuation'}
+        isActive={sortConfig.key === 'totalValue'}
         direction={sortConfig.direction}
       />
     </SortHeader>

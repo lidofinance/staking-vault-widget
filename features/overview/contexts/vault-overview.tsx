@@ -8,13 +8,12 @@ import {
 } from 'react';
 import { Address } from 'viem';
 import invariant from 'tiny-invariant';
-import { useVaultInfo } from './vault-provider';
+import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-overview';
+
 import { formatBalance, formatPercent } from 'utils';
-import { bigIntMax, bigIntMin } from 'utils/bigint-math';
-import {
-  VAULT_TOTAL_BASIS_POINTS,
-  VAULT_TOTAL_BASIS_POINTS_BN,
-} from 'modules/vaults';
+
+import { useVaultInfo } from './vault-provider';
+import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 export interface VaultOverviewContextType {
   values: {
@@ -26,7 +25,7 @@ export interface VaultOverviewContextType {
     rebalanceThreshold: string;
     healthFactor: string;
     totalLocked: string;
-    mintedEth: string;
+    liabilityStETH: string;
     totalMintingCapacity: string;
     withdrawableEth: string;
     balanceEth: string;
@@ -54,6 +53,7 @@ const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
 );
 
 const toEthValue = (value: bigint) => `${formatBalance(value).trimmed} ETH`;
+const toStethValue = (value: bigint) => `${formatBalance(value).trimmed} stETH`;
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   const { activeVault } = useVaultInfo();
@@ -62,23 +62,32 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     if (activeVault) {
       const {
         address,
-        valuation,
-        minted,
         healthScore,
         reserveRatioBP,
         forcedRebalanceThresholdBP,
         locked,
         nodeOperatorUnclaimedFee,
-        ethLimit,
         withdrawableEther,
         balance,
         nodeOperatorFeeBP,
         nodeOperator,
       } = activeVault;
 
-      const totalValue = toEthValue(valuation);
+      const overview = calculateOverview({
+        totalValue: activeVault.totalValue,
+        reserveRatioBP: activeVault.reserveRatioBP,
+        liabilitySharesInStethWei: activeVault.liabilityStETH,
+        forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
+        withdrawableEther: activeVault.withdrawableEther,
+        balance: activeVault.balance,
+        locked: activeVault.locked,
+        nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
+        totalMintingCapacity: activeVault.totalMintingCapacity,
+      });
+
+      const totalValue = toEthValue(activeVault.totalValue);
       const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
-      const mintedEth = toEthValue(minted);
+      const liabilityStETH = toStethValue(activeVault.liabilityStETH);
       const withdrawableEth = toEthValue(withdrawableEther);
       const balanceEth = toEthValue(balance);
       const reserveRatio = formatPercent.format(
@@ -88,33 +97,15 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore);
-      const utilization =
-        minted === 0n
-          ? Infinity
-          : minted /
-            (minted * (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(reserveRatioBP)));
-      const utilizationRatio = formatPercent.format(utilization);
-      const totalMintable = bigIntMin(
-        ((valuation - nodeOperatorUnclaimedFee) *
-          BigInt(VAULT_TOTAL_BASIS_POINTS - reserveRatioBP)) /
-          VAULT_TOTAL_BASIS_POINTS_BN,
-        ethLimit,
-      );
-
-      const totalMintingCapacity = toEthValue(totalMintable);
-      const depositedToValidators = toEthValue(valuation - balance);
-      const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
+      const utilizationRatio = formatPercent.format(overview.utilizationRatio);
+      const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
+      const depositedToValidators = toEthValue(overview.depositedToValidators);
+      const accumulatedFee = toEthValue(overview.lockedByAccumulatedFees);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
       );
-
-      const reservable = valuation * BigInt(reserveRatioBP);
-      const reserved = minted
-        ? bigIntMax(valuation - minted, (minted * reservable) / totalMintable)
-        : valuation;
-
-      const collateral = toEthValue(bigIntMax(minted + reserved, locked));
-      const pendingUnlock = locked - minted - reserved;
+      const collateral = toEthValue(overview.collateral);
+      const pendingUnlock = overview.PendingUnlock;
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
       );
@@ -128,7 +119,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         rebalanceThreshold,
         healthFactor,
         totalLocked,
-        mintedEth,
+        liabilityStETH,
         totalMintingCapacity,
         withdrawableEth,
         balanceEth,
