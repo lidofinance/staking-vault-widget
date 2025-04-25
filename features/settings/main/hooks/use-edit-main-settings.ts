@@ -14,7 +14,6 @@ export const useEditMainSettings = () => {
   const { address } = useDappStatus();
   const { activeVault, refetch } = useVaultInfo();
 
-  // TODO: add opportunity to get receipts
   const callEditMainSettings = useCallback(
     async (
       payload: EditMainSettingsSchema,
