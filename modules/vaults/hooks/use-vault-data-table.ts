@@ -82,8 +82,8 @@ export const useVaultDataTable = (
         return vaults;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      for (const vaultAddress of vaultsAddressesList!) {
+      invariant(vaultsAddressesList, 'Vaults addresses list is empty');
+      for (const vaultAddress of vaultsAddressesList) {
         vaults.push(
           await getVaultDataTable({
             publicClient,
