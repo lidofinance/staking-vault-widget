@@ -1,6 +1,8 @@
 import { Address, encodeFunctionData, PublicClient, getContract } from 'viem';
-import { DEFAULT_ADMIN_ROLE, NODE_OPERATOR_MANAGER_ROLE } from 'consts/roles';
-import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults/consts';
+import {
+  VAULT_TOTAL_BASIS_POINTS,
+  VAULTS_ROOT_ROLES_MAP,
+} from 'modules/vaults/consts';
 import { EditMainSettingsSchema, TxData } from './types';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { dashboardFunctionsNamesMap } from 'utils/send-dashboard-tx';
@@ -18,7 +20,7 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
     const adminsList = (defaultAdmin as { value: Address }[]).map(
       ({ value }) => ({
         account: value,
-        role: DEFAULT_ADMIN_ROLE,
+        role: VAULTS_ROOT_ROLES_MAP.defaultAdmin,
       }),
     );
 
@@ -29,7 +31,7 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
     const noManagersList = (nodeOperatorManager as { value: Address }[]).map(
       ({ value }) => ({
         account: value,
-        role: NODE_OPERATOR_MANAGER_ROLE,
+        role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
       }),
     );
 

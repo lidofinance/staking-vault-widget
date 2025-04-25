@@ -8,7 +8,7 @@ export const SubmitButton = () => {
 
   return (
     <PermissionedSubmitButton
-      dashboardRole="funder"
+      dashboardRole="supplier"
       type="submit"
       disabled={isSubmitting || !isValid || !isDirty}
     >

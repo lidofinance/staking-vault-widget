@@ -6,11 +6,11 @@ import { Wrapper } from './styles';
 
 import {
   FieldSchema,
-  PermissionsKeys,
+  PermissionKeys,
 } from 'features/settings/permissions/types';
 
 export interface AddressBlockProps {
-  permission: PermissionsKeys;
+  permission: PermissionKeys;
 }
 
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {

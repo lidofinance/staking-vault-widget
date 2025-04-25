@@ -4,6 +4,7 @@ import {
   useContext,
   PropsWithChildren,
   useMemo,
+  useEffect,
 } from 'react';
 import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
@@ -29,6 +30,14 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
     ? vaultAddress
     : undefined;
   const query = useSingleVaultData(sanitizedVaultAddress);
+
+  useEffect(() => {
+    if (query.error)
+      console.error(
+        `[VaultProvider] error fetching ${vaultAddress}`,
+        query.error,
+      );
+  }, [query.error, vaultAddress]);
 
   const contextValue = useMemo<VaultContextType>(
     () => ({

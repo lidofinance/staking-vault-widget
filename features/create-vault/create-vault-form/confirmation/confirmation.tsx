@@ -4,14 +4,15 @@ import { ConfirmationAction } from 'features/create-vault/create-vault-form/conf
 import { ConfirmationVaultInfo } from 'features/create-vault/create-vault-form/confirmation/confirmation-vault-info';
 import { SectionContainer } from 'features/create-vault/styles';
 
+import { ConfirmationVaultInfoProps } from './confirmation-vault-info/confirmation-vault-info';
+import {
+  NO_MANAGER_PERMISSION_LIST,
+  VAULT_MANAGER_PERMISSIONS_LIST,
+} from 'modules/vaults';
 import {
   CREATE_VAULT_FORM_STEPS,
   MAIN_SETTINGS,
-  NO_MANAGER_PERMISSION_LIST,
-  VAULT_MANAGER_PERMISSIONS_LIST,
-} from '../../consts';
-
-import { ConfirmationVaultInfoProps } from './confirmation-vault-info/confirmation-vault-info';
+} from 'features/create-vault/consts';
 
 const confirmationList: ConfirmationVaultInfoProps[] = [
   {

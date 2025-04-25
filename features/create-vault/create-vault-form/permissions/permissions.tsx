@@ -11,11 +11,12 @@ import {
 } from './styles';
 import { SectionContainer } from 'features/create-vault/styles';
 import { PermissionsRoles } from 'features/create-vault/types';
+import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
+
 import {
-  CREATE_VAULT_FORM_STEPS,
   NO_MANAGER_PERMISSION_LIST,
   VAULT_MANAGER_PERMISSIONS_LIST,
-} from '../../consts';
+} from 'modules/vaults';
 
 type RenderPermissions = {
   permissionsTitle: string;

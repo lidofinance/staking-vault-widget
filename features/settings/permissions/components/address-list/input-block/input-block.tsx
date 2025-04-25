@@ -10,11 +10,11 @@ import { validatePermissions } from 'features/settings/permissions/validation';
 
 import type {
   VaultPermissions,
-  PermissionsKeys,
+  PermissionKeys,
 } from 'features/settings/permissions/types';
 
 export interface InputBlockProps {
-  permission: PermissionsKeys;
+  permission: PermissionKeys;
 }
 
 export const InputBlock: FC<InputBlockProps> = ({ permission }) => {

@@ -1,7 +1,7 @@
 import { Address, isAddress } from 'viem';
 import { Resolver, UseFormGetValues } from 'react-hook-form';
 import {
-  PermissionsKeys,
+  PermissionKeys,
   VaultPermissions,
 } from 'features/settings/permissions/types';
 import { isValidEns } from 'utils/ens';
@@ -11,13 +11,13 @@ export const validatePermissions = (
 ): Resolver<VaultPermissions> => {
   return async (values: VaultPermissions) => {
     const errors = {} as Record<
-      PermissionsKeys,
+      PermissionKeys,
       Record<number, { value: string }>
     >;
-    const keysList = Object.keys(values) as PermissionsKeys[];
+    const keysList = Object.keys(values) as PermissionKeys[];
 
     await Promise.all(
-      keysList.map(async (key: PermissionsKeys) => {
+      keysList.map(async (key: PermissionKeys) => {
         const payload = values[key];
         errors[key] = {};
 
