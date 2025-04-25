@@ -13,6 +13,7 @@ export const TableTitle = styled.caption<{ counter: number }>`
 
   &::after {
     position: absolute;
+    min-width: 30px;
     left: 100%;
     top: 50%;
     content: ${(props) => (props.counter ? `'${props.counter}'` : 'none')};
@@ -27,12 +28,10 @@ export const TableTitle = styled.caption<{ counter: number }>`
     line-height: 20px;
     transform: translateY(-50%);
     color: ${({ theme }) => theme.colors.textSecondary};
-    background-color: rgba(
-      39,
-      39,
-      46,
-      0.1
-    ); // TODO: get bg-color for dark/light theme;
+    background-color: ${({ theme }) =>
+      theme.name === 'dark'
+        ? 'rgba(255, 255, 255, 0.1)'
+        : 'rgba(0, 0, 0, 0.1)'};
   }
 `;
 
