@@ -32,8 +32,8 @@ export const FeatureTxInfo = () => {
           Transaction cost
         </Text>
         {showLoader && <Loader size="small" />}
-        {/*TODO: replace static by real data*/}
-        {data?.result && <AmountInfo>{'$0.99'}</AmountInfo>}
+        {/* TODO: fix simulation */}
+        {!!data?.result && <AmountInfo>{'$0.99'}</AmountInfo>}
         {isError && !showLoader && <AmountInfo>Is not available</AmountInfo>}
         {!showLoader && !data?.result && !isError && <AmountInfo>-</AmountInfo>}
       </InfoRow>

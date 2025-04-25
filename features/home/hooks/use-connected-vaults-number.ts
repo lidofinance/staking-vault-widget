@@ -4,7 +4,9 @@ import { VaultHubAbi } from 'abi/vault-hub';
 
 export const useConnectedVaultsNumber = () => {
   const publicClient = usePublicClient();
-  const address = getContractAddress(publicClient?.chain.id, 'vaultHub');
+  const address = publicClient?.chain.id
+    ? getContractAddress(publicClient.chain.id, 'vaultHub')
+    : undefined;
 
   return useReadContract({
     address,

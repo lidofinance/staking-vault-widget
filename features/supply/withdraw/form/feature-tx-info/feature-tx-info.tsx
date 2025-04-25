@@ -35,7 +35,7 @@ export const FeatureTxInfo = () => {
           </Text>
         )}
         {/* TODO: fix simulation */}
-        {data?.result && !showLoader && <AmountInfo>{'$0.99'}</AmountInfo>}
+        {!!data?.result && !showLoader && <AmountInfo>{'$0.99'}</AmountInfo>}
         {!data?.result && !isError && !showLoader && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>

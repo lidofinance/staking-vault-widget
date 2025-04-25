@@ -62,7 +62,7 @@ export const getNetworkConfig = (chain: CHAINS): NetworkConfig | undefined => {
 };
 
 export const getContractAddress = (
-  chain: CHAINS | undefined,
+  chain: CHAINS,
   contractName: CONTRACT_NAMES,
 ): Address | undefined => {
   const networkConfig = getNetworkConfig(chain);
