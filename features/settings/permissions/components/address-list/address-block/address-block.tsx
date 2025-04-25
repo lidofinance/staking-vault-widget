@@ -9,11 +9,15 @@ import {
   PermissionKeys,
 } from 'features/settings/permissions/types';
 
-export interface AddressBlockProps {
+export type AddressBlockProps = {
   permission: PermissionKeys;
-}
+  readonly?: boolean;
+};
 
-export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
+export const AddressBlock: FC<AddressBlockProps> = ({
+  permission,
+  readonly,
+}) => {
   const { watch } = useFormContext();
   const fields = (watch(permission) ?? []) as FieldSchema[];
 
@@ -25,6 +29,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
             key={field.account}
             field={field}
             index={index}
+            readonly={readonly}
             permission={permission}
           />
         );

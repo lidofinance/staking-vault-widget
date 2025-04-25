@@ -1,11 +1,17 @@
 import { MouseEvent, forwardRef, ForwardedRef } from 'react';
 
-import { Identicon, TextColors, TextWeight } from '@lidofinance/lido-ui';
+import {
+  Identicon,
+  Loader,
+  TextColors,
+  TextWeight,
+} from '@lidofinance/lido-ui';
 import { ButtonClose, ButtonRestore } from 'shared/components';
 import { PillContainer, AddressText } from './styles';
+import { zeroAddress } from 'viem';
 
-export interface AddressBadgeProps {
-  address: string | undefined;
+export type AddressBadgeProps = {
+  address?: string;
   symbols?: number;
   crossedText?: boolean;
   isActive?: boolean;
@@ -13,9 +19,11 @@ export interface AddressBadgeProps {
   color?: TextColors;
   weight?: TextWeight;
   bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
+  readonly?: boolean;
+  isLoading?: boolean;
   onToggle?: (event: MouseEvent<HTMLButtonElement>) => void;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-}
+};
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
@@ -29,10 +37,20 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       weight = 700,
       bgColor = 'default',
       onToggle,
+      readonly,
+      isLoading,
       onClick,
     },
     ref?: ForwardedRef<HTMLDivElement>,
   ) => {
+    if (isLoading) {
+      return (
+        <PillContainer bgColor={bgColor} onClick={onClick} ref={ref}>
+          <Identicon address={zeroAddress} />
+          <Loader size="large" />
+        </PillContainer>
+      );
+    }
     if (!address) {
       return null;
     }
@@ -51,8 +69,12 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           crossedText={crossedText}
         />
 
-        {!crossedText && onToggle && <ButtonClose onClick={onToggle} />}
-        {crossedText && onToggle && <ButtonRestore onClick={onToggle} />}
+        {!readonly && !crossedText && onToggle && (
+          <ButtonClose onClick={onToggle} />
+        )}
+        {!readonly && crossedText && onToggle && (
+          <ButtonRestore onClick={onToggle} />
+        )}
       </PillContainer>
     );
   },

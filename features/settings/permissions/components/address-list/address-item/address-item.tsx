@@ -16,16 +16,18 @@ import {
 } from 'features/settings/permissions/types';
 import { useFormContext } from 'react-hook-form';
 
-export interface AddressItemProps {
+export type AddressItemProps = {
   index: number;
   field: FieldSchema;
   permission: PermissionKeys;
-}
+  readonly?: boolean;
+};
 
 export const AddressItem: FC<AddressItemProps> = ({
   index,
   field,
   permission,
+  readonly,
 }) => {
   const { setValue } = useFormContext();
   const { account, state, group } = field;
@@ -85,6 +87,7 @@ export const AddressItem: FC<AddressItemProps> = ({
         address={account}
         crossedText={isTextCrossed}
         bgColor={bgColor}
+        readonly={readonly}
         onToggle={handleUpdateFormItem}
         onClick={handleShowPopover}
       />

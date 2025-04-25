@@ -58,6 +58,7 @@ export const fieldsForRender: MainSettingsOverview[] = [
     editLabel: 'Propose new Node Operator fee, %',
     dataType: 'percent',
     vaultKey: 'nodeOperatorFeeBP',
+    canEditRole: 'confirmingRoles',
   },
   {
     name: 'confirmExpiry',
@@ -66,6 +67,7 @@ export const fieldsForRender: MainSettingsOverview[] = [
     editLabel: 'Propose new Сonfirmation Lifetime, hours',
     dataType: 'time',
     vaultKey: 'confirmExpiry',
+    canEditRole: 'confirmingRoles',
   },
   {
     name: 'defaultAdmin',
@@ -75,6 +77,7 @@ export const fieldsForRender: MainSettingsOverview[] = [
     dataType: 'address',
     actionText: 'Add new address',
     vaultKey: 'defaultAdmins',
+    canEditRole: 'defaultAdmin',
   },
   {
     name: 'nodeOperatorManager',
@@ -84,5 +87,6 @@ export const fieldsForRender: MainSettingsOverview[] = [
     dataType: 'address',
     actionText: 'Add new address',
     vaultKey: 'nodeOperatorManagers',
+    canEditRole: 'nodeOperatorManager',
   },
 ];
