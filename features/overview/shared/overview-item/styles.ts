@@ -11,7 +11,7 @@ export const Title = styled.div`
 `;
 
 export const LoaderWrapper = styled.div`
-  padding-top: 8px;
+  padding-top: ${({ theme }) => theme.spaceMap.sm}px;
   padding-bottom: 10px;
 `;
 
