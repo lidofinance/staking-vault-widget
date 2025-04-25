@@ -31,6 +31,7 @@ export const Health = () => {
           key={item.title}
           title={item.title}
           content={item.payload}
+          isLoading={item.isLoading}
         />
       ))}
     </OverviewSection>

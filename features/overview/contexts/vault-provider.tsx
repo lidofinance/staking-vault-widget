@@ -43,14 +43,14 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
     () => ({
       vaultAddress: sanitizedVaultAddress,
       activeVault: query.data,
-      isLoadingVault: query.isLoading,
+      isLoadingVault: query.isPending,
       error: query.error,
       refetch: query.refetch,
     }),
     [
       sanitizedVaultAddress,
       query.data,
-      query.isLoading,
+      query.isPending,
       query.error,
       query.refetch,
     ],

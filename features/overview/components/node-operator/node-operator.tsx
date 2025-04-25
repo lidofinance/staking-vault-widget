@@ -27,6 +27,7 @@ export const NodeOperator = () => {
           content={item.payload}
           actionLink={item.actionLink}
           actionText={item.actionText}
+          isLoading={item.isLoading}
         />
       ))}
     </OverviewSection>
