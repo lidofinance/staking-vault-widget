@@ -27,7 +27,7 @@ import {
   MainSettingsContextValue,
   MainSettingsSubmittingInfo,
 } from 'features/settings/main/types';
-import { useEditMainSettingsWithDelegation } from 'features/settings/main/hooks';
+import { useEditMainSettings } from 'features/settings/main/hooks';
 import { useVaultInfo } from 'features/overview/contexts';
 import { validateFormWithZod } from 'utils/validate-form-value';
 
@@ -54,7 +54,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   );
   const { refetch } = useVaultInfo();
 
-  const { callEditMainSettings } = useEditMainSettingsWithDelegation(async () =>
+  const { callEditMainSettings } = useEditMainSettings(async () =>
     setSubmitStep({ step: SubmittingMainFormStepsEnum.submitting }),
   );
 

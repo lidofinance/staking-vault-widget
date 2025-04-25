@@ -6,9 +6,7 @@ import { generateMainAATxData, prepareMainTxData } from '../utils';
 import { EditMainSettingsSchema } from '../types';
 import { sendDashboardTx } from 'utils/send-dashboard-tx';
 
-export const useEditMainSettingsWithDelegation = (
-  onMutate = async () => {},
-) => {
+export const useEditMainSettings = (onMutate = async () => {}) => {
   const {
     core: { web3Provider: walletClient, rpcProvider: publicClient },
   } = useLidoSDK();

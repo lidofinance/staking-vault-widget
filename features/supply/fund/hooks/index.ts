@@ -1,1 +1,1 @@
-export * from './use-fund-with-dashboard';
+export * from './use-fund';
