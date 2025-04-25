@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { permissions, permissionsKeys } from 'consts/roles';
 import { useVaultInfo } from 'features/overview/contexts';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { PermissionAccounts } from '../types';
+import { EDITABLE_ROLES_LIST, EDITABLE_ROLES_MAP } from '../consts';
 
 export const useVaultPermissionsRoles = () => {
   const { activeVault } = useVaultInfo();
@@ -15,11 +15,11 @@ export const useVaultPermissionsRoles = () => {
       enabled: !!owner,
     },
 
-    contracts: permissionsKeys.map((key) => ({
+    contracts: EDITABLE_ROLES_LIST.map((key) => ({
       abi: dashboardAbi,
       address: owner,
       functionName: 'getRoleMembers',
-      args: [permissions[key]],
+      args: [EDITABLE_ROLES_MAP[key]],
     })),
   });
 
@@ -28,7 +28,7 @@ export const useVaultPermissionsRoles = () => {
       return result.map((item, index) => {
         if (item.status === 'success') {
           return {
-            permissionName: permissionsKeys[index],
+            permissionName: EDITABLE_ROLES_LIST[index],
             addressList: item.result as Address[],
           };
         }

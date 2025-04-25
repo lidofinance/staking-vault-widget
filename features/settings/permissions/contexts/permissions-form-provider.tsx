@@ -48,7 +48,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
               state: 'display',
             }) as FieldSchema,
         );
-        formObject.setValue(`${role.permissionName}`, values);
+        formObject.setValue(`${role.permissionName}` as const, values);
       });
     }
   }, [formObject, rolesList]);

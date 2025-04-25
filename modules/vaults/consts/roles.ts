@@ -1,10 +1,12 @@
-import { keccak256, parseEther, toHex, zeroHash } from 'viem';
-
-export const VAULTS_PER_PAGE = 6;
-
-export const VAULTS_CONNECT_DEPOSIT = parseEther('1');
+import { keccak256, toHex, zeroHash } from 'viem';
 
 const toRoleHash = (role: string) => keccak256(toHex(role));
+
+type PermissionEntry<TRolesMap> = {
+  role: keyof TRolesMap;
+  title: string;
+  tooltip: string;
+};
 
 export const VAULTS_ROOT_ROLES_MAP = {
   defaultAdmin: zeroHash,
@@ -51,12 +53,6 @@ export const VAULTS_NO_ROLES_MAP = {
     'vaults.NodeOperatorFee.RewardsAdjustRole',
   ),
 } as const;
-
-type PermissionEntry<TRolesMap> = {
-  role: keyof TRolesMap;
-  title: string;
-  tooltip: string;
-};
 
 export const VAULT_MANAGER_PERMISSIONS_LIST: PermissionEntry<
   typeof VAULTS_OWNER_ROLES_MAP
@@ -197,7 +193,7 @@ export const NO_MANAGER_PERMISSION_LIST: PermissionEntry<
     tooltip:
       'Allows to adjust accrued rewards(due to side deposits or consolidations) to decrease claimable fee',
   },
-] as const;
+];
 
 export const VAULTS_ALL_ROLES_MAP = {
   ...VAULTS_ROOT_ROLES_MAP,
@@ -205,12 +201,6 @@ export const VAULTS_ALL_ROLES_MAP = {
   ...VAULTS_NO_ROLES_MAP,
 } as const;
 
-// TOOD: remove in favor on bigint only calc
-export const VAULT_TOTAL_BASIS_POINTS = 10_000;
-export const VAULT_TOTAL_BASIS_POINTS_BN = 10_000n;
-
-// forms validation values
-export const MIN_FEE_VALUE = 0.01;
-export const MAX_FEE_VALUE = 99;
-export const MIN_CONFIRM_EXPIRY = 24;
-export const MAX_CONFIRM_EXPIRY = 24 * 30;
+export const VAULTS_ALL_ROLES_LIST = Object.keys(
+  VAULTS_ALL_ROLES_MAP,
+) as (keyof typeof VAULTS_ALL_ROLES_MAP)[];

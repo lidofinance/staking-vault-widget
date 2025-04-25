@@ -12,14 +12,14 @@ import { ActionGroup, ActionWrapper, PopoverContent } from './styles';
 import { truncateAddress } from 'utils/truncate-address';
 import {
   FieldSchema,
-  PermissionsKeys,
+  PermissionKeys,
 } from 'features/settings/permissions/types';
 import { useFormContext } from 'react-hook-form';
 
 export interface AddressItemProps {
   index: number;
   field: FieldSchema;
-  permission: PermissionsKeys;
+  permission: PermissionKeys;
 }
 
 export const AddressItem: FC<AddressItemProps> = ({

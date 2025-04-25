@@ -3,9 +3,11 @@ import {
   editPermissionsSchema,
   SubmitPermissionsStepEnum,
   ToggleValue,
+  EDITABLE_ROLES_MAP,
 } from './consts';
 import { z } from 'zod';
-import { EntirePermissionsType, PERMISSION } from 'consts/roles';
+
+export type PermissionKeys = keyof typeof EDITABLE_ROLES_MAP;
 
 export type SubmitPermissionsStep =
   | keyof typeof SubmitPermissionsStepEnum
@@ -19,7 +21,7 @@ export type PermissionsSettingsContextValue = {
 };
 
 export type PermissionAccounts = {
-  permissionName: PERMISSION;
+  permissionName: PermissionKeys;
   addressList: Address[];
 };
 
@@ -37,17 +39,14 @@ export type GrantRole = {
 };
 
 export type PermissionsRoles = {
-  role: PermissionsKeys;
+  role: PermissionKeys;
   title: string;
   tooltip: string;
 };
 
 type VaultPermissionInput = { value: string };
-export type PermissionsKeys = keyof Omit<
-  EntirePermissionsType,
-  'NODE_OPERATOR_MANAGER_ROLE'
->;
-export type VaultPermissions = Record<PermissionsKeys, VaultPermissionInput[]>;
+
+export type VaultPermissions = Record<PermissionKeys, VaultPermissionInput[]>;
 
 export type FieldSchema =
   | {

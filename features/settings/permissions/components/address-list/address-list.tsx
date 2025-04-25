@@ -1,4 +1,4 @@
-import { FC, memo } from 'react';
+import { FC } from 'react';
 
 import {
   AddressBlock,
@@ -6,17 +6,17 @@ import {
 } from 'features/settings/permissions/components';
 import { AddressListWrapper } from './styles';
 
-import { PermissionsKeys } from 'features/settings/permissions/types';
+import { PermissionKeys } from 'features/settings/permissions/types';
 
-export interface AddressListProps {
-  permission: PermissionsKeys;
-}
+export type AddressListProps = {
+  permission: PermissionKeys;
+};
 
-export const AddressList: FC<AddressListProps> = memo(({ permission }) => {
+export const AddressList: FC<AddressListProps> = ({ permission }) => {
   return (
     <AddressListWrapper>
       <AddressBlock permission={permission} />
       <InputBlock permission={permission} />
     </AddressListWrapper>
   );
-});
+};

@@ -14,11 +14,9 @@ import { InputWrapper } from './styles';
 
 import {
   VaultPermissions,
-  PermissionsKeys,
+  PermissionKeys,
 } from 'features/settings/permissions/types';
 import { isAddress } from 'viem';
-
-type ArrayFormKey = `${PermissionsKeys}.${number}.value`;
 
 export interface InputItemProps {
   permission: string;
@@ -39,7 +37,7 @@ export const InputItem: FC<InputItemProps> = ({
 }) => {
   const { setValue, getValues } = useFormContext();
   const [fieldError, setError] = useState<string>();
-  const inputKey = `${permission}.${index}.value` as ArrayFormKey;
+  const inputKey = `${permission as PermissionKeys}.${index}.value` as const;
 
   useEffect(() => {
     if (error?.value && (error.value as unknown as string) !== fieldError) {

@@ -4,8 +4,10 @@ import { useFormContext } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
-import { PERMISSION } from 'consts/roles';
-import { FieldSchema } from 'features/settings/permissions/types';
+import {
+  FieldSchema,
+  PermissionKeys,
+} from 'features/settings/permissions/types';
 
 export const PermissionsAction: FC = () => {
   const {
@@ -18,7 +20,7 @@ export const PermissionsAction: FC = () => {
 
   const handleResetFields = () => {
     const formValues = getValues();
-    const keys = Object.keys(formValues) as PERMISSION[];
+    const keys = Object.keys(formValues) as PermissionKeys[];
     keys.forEach((key) => {
       const permissionList: FieldSchema[] = formValues[key];
       const newList = permissionList
