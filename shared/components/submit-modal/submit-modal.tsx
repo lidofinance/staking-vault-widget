@@ -55,7 +55,7 @@ const getModalSubTitle = (step: SubmitStep) => {
     case SubmitStepEnum.confirming:
       return 'Awaiting wallet signature';
     case SubmitStepEnum.submitting:
-      return 'Awaiting network response';
+      return 'Awaiting block confirmation';
     case SubmitStepEnum.reject:
       return 'User denied transaction signature';
     case SubmitStepEnum.error:
