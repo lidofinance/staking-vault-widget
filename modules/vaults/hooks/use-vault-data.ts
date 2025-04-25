@@ -74,11 +74,11 @@ const getVaultData = async ({
     shares.convertToSteth(shareLimit),
   ]);
 
-  const healthScore = calculateHealth(
+  const healthScore = calculateHealth({
     totalValue,
-    liabilityStETH,
-    forcedRebalanceThresholdBP,
-  );
+    liabilitySharesInStethWei: liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
+  });
 
   return {
     address: vaultAddress,

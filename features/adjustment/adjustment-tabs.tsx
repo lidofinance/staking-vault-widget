@@ -13,6 +13,7 @@ export const AdjustmentTabs = () => {
   const { isMintTab } = useAdjustment();
   const { activeVault } = useVaultInfo();
 
+  // TODO: improve creation of the path
   const mintRoutes = [
     {
       path: `/${activeVault?.address}${ManifestConfigPageEnum.adjustment}/${adjustmentToggleList[0].value}`,

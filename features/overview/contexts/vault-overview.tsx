@@ -73,17 +73,17 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperator,
       } = activeVault;
 
-      const overview = calculateOverview(
-        activeVault.totalValue,
-        activeVault.reserveRatioBP,
-        activeVault.liabilityStETH,
-        activeVault.forcedRebalanceThresholdBP,
-        activeVault.withdrawableEther,
-        activeVault.balance,
-        activeVault.locked,
-        activeVault.nodeOperatorUnclaimedFee,
-        activeVault.totalMintingCapacity,
-      );
+      const overview = calculateOverview({
+        totalValue: activeVault.totalValue,
+        reserveRatioBP: activeVault.reserveRatioBP,
+        liabilitySharesInStethWei: activeVault.liabilityStETH,
+        forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
+        withdrawableEther: activeVault.withdrawableEther,
+        balance: activeVault.balance,
+        locked: activeVault.locked,
+        nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
+        totalMintingCapacity: activeVault.totalMintingCapacity,
+      });
 
       const totalValue = toEthValue(activeVault.totalValue);
       const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
