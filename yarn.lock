@@ -2532,10 +2532,10 @@
     ua-parser-js "^1.0.35"
     use-callback-ref "1.2.5"
 
-"@lidofinance/lsv-cli@1.0.0-alpha.35":
-  version "1.0.0-alpha.35"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lsv-cli/-/lsv-cli-1.0.0-alpha.35.tgz#a0c01fc489eae5ab3f322a33feeb9de50961e470"
-  integrity sha512-/xHPQup9dZdpDO4daAZ6R2hbpgoWUxCd+1o/vszyGY45rWLlJleuLHSItx0Mq+Hkcdnc1J25pHDmSUHmJpFOxA==
+"@lidofinance/lsv-cli@1.0.0-alpha.36":
+  version "1.0.0-alpha.36"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lsv-cli/-/lsv-cli-1.0.0-alpha.36.tgz#13e24cbc482d2bfd97a116107ef71318d5453b8e"
+  integrity sha512-aTB0/it6h5cDGDN/gdJkEiFu7gPlhKbinQZGEHandwuDYSEd8FtEYbje2uu/Efv4jp0G4YsGq1DGSR7qNOX0Qg==
   dependencies:
     "@chainsafe/blst" "^2.2.0"
     "@chainsafe/persistent-merkle-tree" "^1.0.1"
@@ -11603,6 +11603,7 @@ winston@*:
     winston-transport "^4.5.0"
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==

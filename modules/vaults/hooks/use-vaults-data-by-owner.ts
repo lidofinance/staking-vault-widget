@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 
-import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
+import { useVaultDataTable } from 'modules/vaults/hooks/use-vault-data-table';
 import { useVaultsByOwner } from 'modules/vaults/hooks/use-vaults-by-owner';
 import { useDappStatus } from '../../web3/hooks/use-dapp-status';
 
@@ -17,7 +17,7 @@ export const useVaultsDataByOwner = () => {
     isLoading,
     isError: isVaultsError,
     ...rest
-  } = useVaultData(ownerVaults as Address[] | undefined);
+  } = useVaultDataTable(ownerVaults as Address[] | undefined);
 
   return {
     vaults,

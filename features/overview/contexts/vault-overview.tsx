@@ -96,11 +96,13 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const rebalanceThreshold = formatPercent.format(
         forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
-      const healthFactor = formatPercent.format(healthScore);
-      const utilizationRatio = formatPercent.format(overview.utilizationRatio);
+      const healthFactor = formatPercent.format(healthScore / 100);
+      const utilizationRatio = formatPercent.format(
+        overview.utilizationRatio / 100,
+      );
       const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
       const depositedToValidators = toEthValue(overview.depositedToValidators);
-      const accumulatedFee = toEthValue(overview.lockedByAccumulatedFees);
+      const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
       );
