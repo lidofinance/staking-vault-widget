@@ -1,4 +1,4 @@
-import { keccak256, parseEther, toHex } from 'viem';
+import { keccak256, parseEther, toHex, zeroHash } from 'viem';
 
 export const VAULTS_PER_PAGE = 6;
 
@@ -7,7 +7,7 @@ export const VAULTS_CONNECT_DEPOSIT = parseEther('1');
 const toRoleHash = (role: string) => keccak256(toHex(role));
 
 export const VAULTS_ROOT_ROLES_MAP = {
-  defaultAdmin: '0x00',
+  defaultAdmin: zeroHash,
   nodeOperatorManager: toRoleHash(
     'vaults.NodeOperatorFee.NodeOperatorManagerRole',
   ),

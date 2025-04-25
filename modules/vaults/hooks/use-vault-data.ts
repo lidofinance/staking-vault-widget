@@ -137,6 +137,7 @@ export const useVaultData = (
     queryKey: ['vault-data', { data: vaultsAddressesList }],
     enabled: !!vaultsAddressesList?.length && !!publicClient,
     ...STRATEGY_LAZY,
+
     queryFn: async (): Promise<VaultInfo[]> => {
       invariant(publicClient, 'PublicClient is not ready');
 
