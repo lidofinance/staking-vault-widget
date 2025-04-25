@@ -16,7 +16,10 @@ import { useFormControllerContext } from 'shared/hook-form/form-controller';
 import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
 
-import { SubmitStepEnum, SubmitStep } from 'shared/transaction-modal/types';
+import {
+  SubmitStepEnum,
+  SubmitStep,
+} from 'shared/components/submit-modal/types';
 import { AppPaths } from 'consts/urls';
 import { useVaultInfo } from 'features/overview/contexts';
 import { Address } from 'viem';

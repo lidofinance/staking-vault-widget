@@ -20,8 +20,11 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { MintFormSchema } from 'features/adjustment/mint/types';
-import { SubmitModal } from 'features/adjustment/mint/submit-modal';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import { SubmitModal } from 'shared/components';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 import { Address } from 'viem';
 
 type MintDataContextValue = {

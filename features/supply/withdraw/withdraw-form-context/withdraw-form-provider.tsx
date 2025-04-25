@@ -22,10 +22,13 @@ import {
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-import { SubmitModal } from 'features/supply/withdraw/submit-modal';
+import { SubmitModal } from 'shared/components';
 
 import { WithdrawFormSchema } from 'features/supply/withdraw/types';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 
 type WithdrawDataContextValue = {
   withdrawableAmount: bigint | undefined;

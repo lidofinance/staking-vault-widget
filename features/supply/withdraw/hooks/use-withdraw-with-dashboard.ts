@@ -7,7 +7,10 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 
 type WithdrawWithDashboardArgs = {
   recipient: Address;

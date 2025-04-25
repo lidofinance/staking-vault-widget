@@ -24,7 +24,10 @@ import {
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
 import invariant from 'tiny-invariant';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 import { SubmitModal } from '../submit-modal';
 
 type ClaimDataContextValue = {

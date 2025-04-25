@@ -20,8 +20,8 @@ import {
 } from 'shared/hook-form/form-controller';
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
-import { SubmitModal } from 'features/adjustment/repay/submit-modal';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import { SubmitModal } from 'shared/components';
+import { SubmitStep, SubmitStepEnum } from 'shared/components/submit-modal';
 import { Address } from 'viem';
 
 type RepayDataContextValue = {

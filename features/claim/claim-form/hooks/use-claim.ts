@@ -11,7 +11,10 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 
 export const useClaim = (onMutate = () => {}) => {
   const { chainId } = useDappStatus();

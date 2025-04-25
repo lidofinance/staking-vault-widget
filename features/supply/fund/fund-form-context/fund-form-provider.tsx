@@ -8,8 +8,11 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { FundFormSchema } from 'features/supply/fund/types';
-import { SubmitStepEnum, SubmitStep } from 'shared/transaction-modal/types';
-import { SubmitModal } from '../submit-modal';
+import {
+  SubmitStepEnum,
+  SubmitStep,
+} from 'shared/components/submit-modal/types';
+import { SubmitModal } from 'shared/components';
 import { Address } from 'viem';
 
 export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {

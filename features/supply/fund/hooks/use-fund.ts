@@ -11,7 +11,10 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
-import { SubmitStep, SubmitStepEnum } from 'shared/transaction-modal/types';
+import {
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal/types';
 
 export const useFund = (onMutate = () => {}) => {
   const { activeVault } = useVaultInfo();

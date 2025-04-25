@@ -16,7 +16,10 @@ import { useFormControllerContext } from 'shared/hook-form/form-controller';
 import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
 
-import { SubmitStepEnum, SubmitStep } from 'shared/transaction-modal/types';
+import {
+  SubmitStepEnum,
+  SubmitStep,
+} from 'shared/components/submit-modal/types';
 import { AppPaths } from 'consts/urls';
 import { useVaultInfo } from 'features/overview/contexts';
 import { Address } from 'viem';
@@ -37,20 +40,22 @@ const getIconComponent = (step: SubmitStep) => {
 const getModalTitle = (step: SubmitStep) => {
   switch (step) {
     case SubmitStepEnum.success:
-      return 'Funds withdrawed';
+      return 'Transaction was finished successfully';
     case SubmitStepEnum.reject:
       return 'Wallet tx signature';
     case SubmitStepEnum.error:
       return 'Transaction error';
     default:
-      return 'You are withdrawing to an address';
+      return 'Transaction';
   }
 };
 
 const getModalSubTitle = (step: SubmitStep) => {
   switch (step) {
-    case SubmitStepEnum.submitting:
+    case SubmitStepEnum.confirming:
       return 'Awaiting wallet signature';
+    case SubmitStepEnum.submitting:
+      return 'Awaiting network response';
     case SubmitStepEnum.reject:
       return 'User denied transaction signature';
     case SubmitStepEnum.error:
