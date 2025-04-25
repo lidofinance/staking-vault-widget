@@ -7,13 +7,13 @@ import {
   useEstimateGas,
   useAccount,
 } from 'wagmi';
-import { Address, encodeFunctionData, maxUint256 } from 'viem';
+import { encodeFunctionData, maxUint256 } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import {
-  SubmitStep,
+  SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
@@ -23,7 +23,7 @@ import { useLidoSDK } from 'modules/web3';
 type BurnArgs = {
   token: string;
   amount: bigint;
-  setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void;
+  setModalState: (submitStep: SubmitPayload) => void;
 };
 
 export const useBurn = (onMutate = () => {}) => {

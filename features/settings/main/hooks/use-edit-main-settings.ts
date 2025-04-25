@@ -1,58 +1,84 @@
-import { useCallback } from 'react';
+import { MutableRefObject, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useVaultInfo } from 'features/overview/contexts';
-import { useAA, useDappStatus, useLidoSDK, useSendAACalls } from 'modules/web3';
-import { generateMainAATxData, prepareMainTxData } from '../utils';
-import { EditMainSettingsSchema } from '../types';
-import { sendDashboardTx } from 'utils/send-dashboard-tx';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { prepareMainTxData } from 'features/settings/main/utils';
+import { EditMainSettingsSchema, TxData } from 'features/settings/main/types';
+import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
+import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
+import { getContract, Hash } from 'viem';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
-export const useEditMainSettings = (onMutate = async () => {}) => {
+export const useEditMainSettings = () => {
   const {
     core: { web3Provider: walletClient, rpcProvider: publicClient },
   } = useLidoSDK();
   const { address } = useDappStatus();
   const { activeVault } = useVaultInfo();
-  const sendAACalls = useSendAACalls();
-  const { isAA } = useAA();
 
-  // TODO: add opportunity to get receipts
   const callEditMainSettings = useCallback(
-    async (payload: EditMainSettingsSchema) => {
+    async (
+      payload: EditMainSettingsSchema,
+      setModalState: (submitStep: SubmitPayload) => void,
+      abortControllerRef: MutableRefObject<AbortController>,
+    ) => {
       // TODO: replace by useWriteContracts in future
       const txData = prepareMainTxData(payload);
       const contractAddress = activeVault?.owner;
-      invariant(contractAddress);
-      invariant(publicClient);
-      invariant(walletClient);
-      invariant(address);
+      invariant(
+        contractAddress,
+        '[useEditMainSettings] contractAddress is not defined',
+      );
+      invariant(
+        publicClient,
+        '[useEditMainSettings] publicClient is not defined',
+      );
+      invariant(
+        walletClient,
+        '[useEditMainSettings] walletClient is not defined',
+      );
+      invariant(address, '[useEditMainSettings] address is not defined');
 
-      if (isAA) {
-        const data = await generateMainAATxData({
-          txData,
-          publicClient,
+      const keys = Object.keys(txData) as (keyof TxData)[];
+      const contract = getContract({
+        address: contractAddress,
+        abi: dashboardAbi,
+        client: {
+          public: publicClient,
+          wallet: walletClient,
+        },
+      });
+
+      const responses: { tx: Hash; key: keyof TxData }[] = [];
+      for (const key of keys) {
+        const {
+          current: { signal },
+        } = abortControllerRef;
+        if (signal.aborted) {
+          return responses;
+        }
+
+        const functionName = dashboardFunctionsNamesMap[key];
+
+        setModalState({ step: SubmitStepEnum.confirming });
+        // @ts-expect-error find out how to setup right types
+        const tx = await contract.write[functionName]({
           address: contractAddress,
-          account: address,
+          abi: dashboardAbi,
+          args: [txData[key]],
         });
 
-        await sendAACalls(data, onMutate);
-      } else {
-        return await sendDashboardTx({
-          txData,
-          publicClient,
-          walletClient,
-          contractAddress,
+        setModalState({ step: SubmitStepEnum.submitting });
+        await publicClient.waitForTransactionReceipt({
+          hash: tx,
         });
+
+        responses.push({ tx, key });
       }
+
+      return responses;
     },
-    [
-      activeVault?.owner,
-      address,
-      publicClient,
-      walletClient,
-      isAA,
-      sendAACalls,
-      onMutate,
-    ],
+    [activeVault?.owner, address, publicClient, walletClient],
   );
 
   return {

@@ -7,7 +7,7 @@ import {
   useContext,
   useState,
 } from 'react';
-import { Address, isAddress, ReadContractErrorType } from 'viem';
+import { isAddress, ReadContractErrorType } from 'viem';
 import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -25,10 +25,10 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
 import invariant from 'tiny-invariant';
 import {
-  SubmitStep,
+  SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
-import { SubmitModal } from '../submit-modal';
+import { SubmitModal } from 'shared/components';
 
 type ClaimDataContextValue = {
   availableToClaim: bigint | undefined;
@@ -53,10 +53,9 @@ export const useClaimFormData = () => {
 export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [submitStep, setSubmitStep] = useState<{
-    step: SubmitStep;
-    tx?: Address;
-  }>(() => ({ step: SubmitStepEnum.edit }));
+  const [submitStep, setSubmitStep] = useState<SubmitPayload>(() => ({
+    step: SubmitStepEnum.edit,
+  }));
   const { activeVault } = useVaultInfo();
 
   const {
@@ -93,12 +92,9 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   const { callClaim } = useClaim();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback(
-    (submitStep: { step: SubmitStep; tx?: Address }) => {
-      setSubmitStep(submitStep);
-    },
-    [],
-  );
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const onSubmit = useCallback(
     async ({ recipient }: ClaimFormSchema) => {
@@ -106,7 +102,7 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
         try {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callClaim(recipient, setModalState);
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         } catch (err) {
           if (

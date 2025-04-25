@@ -21,7 +21,11 @@ import {
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
 import { SubmitModal } from 'shared/components';
-import { SubmitStep, SubmitStepEnum } from 'shared/components/submit-modal';
+import {
+  SubmitPayload,
+  SubmitStep,
+  SubmitStepEnum,
+} from 'shared/components/submit-modal';
 import { Address } from 'viem';
 
 type RepayDataContextValue = {
@@ -100,12 +104,9 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback(
-    (submitStep: { step: SubmitStep; tx?: Address }) => {
-      setSubmitStep(submitStep);
-    },
-    [],
-  );
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const onSubmit = useCallback(
     async ({ amount, token }: RepayFormSchema) => {
@@ -113,7 +114,7 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
         if (amount) {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callBurn({ amount, token, setModalState });
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         }
 

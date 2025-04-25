@@ -1,3 +1,5 @@
+import { Address } from 'viem';
+
 export enum SubmitStepEnum {
   edit = 'edit',
   initiate = 'initiate',
@@ -6,6 +8,12 @@ export enum SubmitStepEnum {
   error = 'error',
   submitting = 'submitting',
   success = 'success',
+  overview = 'overview',
 }
 
 export type SubmitStep = keyof typeof SubmitStepEnum;
+
+export type SubmitPayload = {
+  step: SubmitStep;
+  tx?: Address;
+};

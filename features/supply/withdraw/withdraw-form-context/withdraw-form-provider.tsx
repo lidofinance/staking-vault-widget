@@ -23,6 +23,7 @@ import { SubmitModal } from 'shared/components';
 
 import { WithdrawFormSchema } from 'features/supply/withdraw/types';
 import {
+  SubmitPayload,
   SubmitStep,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
@@ -66,12 +67,9 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   });
   const { callWithdraw } = useWithdraw();
   const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback(
-    (submitStep: { step: SubmitStep; tx?: Address }) => {
-      setSubmitStep(submitStep);
-    },
-    [],
-  );
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const {
     data: withdrawableAmount,
@@ -101,7 +99,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
         if (amount && recipient && isAddress(recipient)) {
           setModalState({ step: SubmitStepEnum.initiate });
           const tx = await callWithdraw({ amount, recipient, setModalState });
-          setModalState({ step: SubmitStepEnum.success, tx });
+          setModalState({ step: SubmitStepEnum.overview, tx });
           return true;
         }
       } catch (err) {

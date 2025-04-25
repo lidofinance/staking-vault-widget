@@ -12,7 +12,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import {
-  SubmitStep,
+  SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
@@ -36,7 +36,7 @@ export const useMint = (onMutate = () => {}) => {
       recipient: Address,
       amount: bigint,
       token: string,
-      setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void,
+      setModalState: (submitStep: SubmitPayload) => void,
     ) => {
       invariant(publicClient, '[useMintDashboard] publicClient is undefined');
 

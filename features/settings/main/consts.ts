@@ -1,22 +1,13 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { MainSettingsOverview } from './types';
+import { MainSettingsOverview, TxData } from './types';
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY,
 } from 'modules/vaults';
-
-export enum SubmittingMainFormStepsEnum {
-  edit = 'edit',
-  initiate = 'initiate',
-  confirming = 'confirming',
-  reject = 'reject',
-  error = 'error',
-  submitting = 'submitting',
-  success = 'success',
-}
+import { Address } from 'viem';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
@@ -27,7 +18,8 @@ const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
 const addressSchema = z
   .string()
-  .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE });
+  .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .transform((value) => value as Address);
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManager: z.array(z.object({ value: addressSchema })),
@@ -90,3 +82,12 @@ export const fieldsForRender: MainSettingsOverview[] = [
     canEditRole: 'nodeOperatorManager',
   },
 ];
+
+export const dashboardFunctionsNamesMap: Record<
+  keyof TxData,
+  'grantRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
+> = {
+  roles: 'grantRoles',
+  confirmExpiry: 'setConfirmExpiry',
+  nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
+};

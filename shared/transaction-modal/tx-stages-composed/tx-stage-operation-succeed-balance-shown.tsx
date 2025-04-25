@@ -24,7 +24,7 @@ export const BalanceContainer = styled('div')`
 
 type TxStageOperationSucceedBalanceShownProps = {
   balance?: bigint;
-  balanceToken: string;
+  balanceToken: 'stETH' | 'wstETH' | 'unstETH';
   operationText: string;
   txHash?: Hash;
   footer?: React.ReactNode;

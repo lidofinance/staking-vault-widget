@@ -8,10 +8,10 @@ export const MainSettingsAction: FC = () => {
   const {
     reset,
     watch,
-    formState: { isValid, isDirty, isSubmitting, isSubmitted },
+    formState: { isValid, isDirty, isSubmitting },
   } = useFormContext();
   const isClearDisabled = !isDirty;
-  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting;
   const formFields = watch();
 
   const buttonText = useMemo(() => {

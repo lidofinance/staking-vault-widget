@@ -13,7 +13,7 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'features/overview/contexts';
 import invariant from 'tiny-invariant';
 import {
-  SubmitStep,
+  SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
@@ -36,7 +36,7 @@ export const useClaim = (onMutate = () => {}) => {
   const callClaim = useCallback(
     async (
       recipient: Address,
-      setModalState: (submitStep: { step: SubmitStep; tx?: Address }) => void,
+      setModalState: (submitStep: SubmitPayload) => void,
     ) => {
       invariant(owner, '[useClaimDashboard] owner is not available');
       invariant(
