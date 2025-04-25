@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo, useCallback } from 'react';
+import { FC, ReactNode, useMemo, useCallback, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useFund } from 'features/supply/fund/hooks/use-fund';
@@ -8,8 +8,18 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { FundFormSchema } from 'features/supply/fund/types';
+import {
+  SubmitStepEnum,
+  SubmitStep,
+} from 'shared/components/submit-modal/types';
+import { SubmitModal } from 'shared/components';
+import { Address } from 'viem';
 
 export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [submitStep, setSubmitStep] = useState<{
+    step: SubmitStep;
+    tx?: Address;
+  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<FundFormSchema>({
     defaultValues: {
       amount: undefined,
@@ -20,16 +30,38 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { callVaultFund } = useFund();
 
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const setModalState = useCallback(
+    (submitStep: { step: SubmitStep; tx?: Address }) => {
+      setSubmitStep(submitStep);
+    },
+    [],
+  );
 
   const onSubmit = useCallback(
     async ({ amount }: FundFormSchema) => {
-      if (amount) {
-        await callVaultFund(amount);
-        return true;
+      try {
+        if (amount) {
+          setModalState({ step: SubmitStepEnum.initiate });
+          const tx = await callVaultFund(amount, setModalState);
+          setModalState({ step: SubmitStepEnum.success, tx });
+          return true;
+        }
+      } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
+
+        return false;
       }
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callVaultFund],
   );
 
@@ -48,6 +80,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <FormProvider {...formObject}>
       <FormControllerContext.Provider value={formControllerValue}>
         <FormController>{children}</FormController>
+        <SubmitModal submitStep={submitStep} setModalState={setModalState} />
       </FormControllerContext.Provider>
     </FormProvider>
   );

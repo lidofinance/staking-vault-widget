@@ -8,7 +8,9 @@ import { formatBalance } from 'utils';
 
 export const Balance = () => {
   const { address } = useDappStatus();
-  const { data, isLoading, isSuccess, isError } = useBalance({ address });
+  const { data, isLoading, isSuccess, isError } = useBalance({
+    address,
+  });
 
   return (
     <Wrapper>
@@ -20,7 +22,7 @@ export const Balance = () => {
         {isSuccess && !isLoading && (
           <AmountInfo>{formatBalance(data.value).trimmed} ETH</AmountInfo>
         )}
-        {isError && <AmountInfo>Balance is not available</AmountInfo>}
+        {isError && !isLoading && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

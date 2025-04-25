@@ -3,10 +3,11 @@ import { useFormContext } from 'react-hook-form';
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 import { useSimulationClaim } from 'features/claim/claim-form/hooks';
+import { Address } from 'viem';
 
 export const FeatureTxInfo = () => {
-  const { getValues } = useFormContext();
-  const { recipient } = getValues();
+  const { watch } = useFormContext();
+  const recipient: Address = watch('recipient');
   const { data, isLoading, isError } = useSimulationClaim(recipient);
 
   return (
@@ -16,9 +17,13 @@ export const FeatureTxInfo = () => {
           Transaction cost
         </Text>
         {isLoading && <Loader size="small" />}
-        {data && <AmountInfo>{'$99.99'}</AmountInfo>}
-        {isError && <AmountInfo>Is not available</AmountInfo>}
-        {!isLoading && !data && !isError && <AmountInfo>{'$0'}</AmountInfo>}
+        {/*TODO: get simulated data*/}
+        {/*TODO: show error message*/}
+        {!!data?.result && !isLoading && (
+          <AmountInfo>{data?.result}</AmountInfo>
+        )}
+        {isError && !isLoading && <AmountInfo>-</AmountInfo>}
+        {!isLoading && !data && !isError && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

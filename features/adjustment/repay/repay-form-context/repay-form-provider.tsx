@@ -4,6 +4,7 @@ import {
   useCallback,
   createContext,
   useContext,
+  useState,
 } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
@@ -19,6 +20,9 @@ import {
 } from 'shared/hook-form/form-controller';
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
+import { SubmitModal } from 'shared/components';
+import { SubmitStep, SubmitStepEnum } from 'shared/components/submit-modal';
+import { Address } from 'viem';
 
 type RepayDataContextValue = {
   stEthBalance: bigint | undefined;
@@ -45,6 +49,10 @@ export const useRepayFormData = () => {
 };
 
 export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
+  const [submitStep, setSubmitStep] = useState<{
+    step: SubmitStep;
+    tx?: Address;
+  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<RepayFormSchema>({
     defaultValues: {
       amount: undefined,
@@ -92,16 +100,38 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const setModalState = useCallback(
+    (submitStep: { step: SubmitStep; tx?: Address }) => {
+      setSubmitStep(submitStep);
+    },
+    [],
+  );
 
   const onSubmit = useCallback(
     async ({ amount, token }: RepayFormSchema) => {
-      if (amount) {
-        await callBurn({ amount, token });
-        return true;
+      try {
+        if (amount) {
+          setModalState({ step: SubmitStepEnum.initiate });
+          const tx = await callBurn({ amount, token, setModalState });
+          setModalState({ step: SubmitStepEnum.success, tx });
+          return true;
+        }
+
+        return false;
+      } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
       }
 
       return false;
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callBurn],
   );
 
@@ -121,6 +151,7 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       <FormProvider {...formObject}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
+          <SubmitModal submitStep={submitStep} setModalState={setModalState} />
         </FormControllerContext.Provider>
       </FormProvider>
     </RepayDataContext.Provider>

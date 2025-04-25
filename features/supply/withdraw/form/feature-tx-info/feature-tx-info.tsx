@@ -3,6 +3,7 @@ import { useSimulateWithdrawDashboard } from 'features/supply/withdraw/hooks';
 
 import { Loader, Text } from '@lidofinance/lido-ui';
 import { AmountInfo, InfoRow, Wrapper } from './styles';
+import { formatBalance } from 'utils';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();
@@ -15,10 +16,10 @@ export const FeatureTxInfo = () => {
   return (
     <Wrapper>
       <InfoRow>
-        {/* <Text size="xxs" color="secondary">
+        <Text size="xxs" color="secondary">
           You will receive
         </Text>
-        <AmountInfo>{'50 ETH'}</AmountInfo> */}
+        <AmountInfo>{formatBalance(amount ?? 0n).trimmed} ETH</AmountInfo>
       </InfoRow>
       <InfoRow>
         <Text size="xxs" color="secondary">
@@ -30,9 +31,10 @@ export const FeatureTxInfo = () => {
             Can&apos;t load gas simulation info
           </Text>
         )}
-        {/*TODO: replace by real data*/}
-        {data && <AmountInfo>{'$99.99'}</AmountInfo>}
-        {!data && !isError && !isLoading && <AmountInfo>-</AmountInfo>}
+        {!!data?.result && !isLoading && (
+          <AmountInfo>{data?.result}</AmountInfo>
+        )}
+        {!data?.result && !isError && !isLoading && <AmountInfo>-</AmountInfo>}
       </InfoRow>
     </Wrapper>
   );

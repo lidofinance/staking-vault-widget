@@ -1,7 +1,6 @@
 import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useFormContext } from 'react-hook-form';
-import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form-context';
 
 import {
   Loader,
@@ -17,8 +16,13 @@ import { useFormControllerContext } from 'shared/hook-form/form-controller';
 import { ButtonLink, TxLinkEtherscan } from 'shared/components';
 import { Content } from './styles';
 
-import { SubmitStepEnum, SubmitStep } from 'features/create-vault/types';
+import {
+  SubmitStepEnum,
+  SubmitStep,
+} from 'shared/components/submit-modal/types';
 import { AppPaths } from 'consts/urls';
+import { useVaultInfo } from 'features/overview/contexts';
+import { Address } from 'viem';
 
 const getIconComponent = (step: SubmitStep) => {
   switch (step) {
@@ -36,67 +40,88 @@ const getIconComponent = (step: SubmitStep) => {
 const getModalTitle = (step: SubmitStep) => {
   switch (step) {
     case SubmitStepEnum.success:
-      return 'New vault has been created';
+      return 'Transaction was finished successfully';
     case SubmitStepEnum.reject:
       return 'Wallet tx signature';
     case SubmitStepEnum.error:
-      return 'Simulation error';
+      return 'Transaction error';
     default:
-      return 'You are creating a new vault';
+      return 'Transaction';
   }
 };
 
 const getModalSubTitle = (step: SubmitStep) => {
   switch (step) {
-    case SubmitStepEnum.submitting:
+    case SubmitStepEnum.confirming:
       return 'Awaiting wallet signature';
+    case SubmitStepEnum.submitting:
+      return 'Awaiting block confirmation';
     case SubmitStepEnum.reject:
       return 'User denied transaction signature';
     case SubmitStepEnum.error:
-      return 'Got error when called contract simulation';
+      return 'Got error when called contract simulation or transaction';
     default:
       return '';
   }
 };
 
-export const SubmitModal: FC<ModalProps> = () => {
+interface SubmitModalProps extends ModalProps {
+  submitStep: {
+    step: SubmitStep;
+    tx?: Address;
+  };
+  setModalState: ({ step }: { step: SubmitStep }) => void;
+}
+
+export const SubmitModal: FC<SubmitModalProps> = ({
+  submitStep,
+  setModalState,
+}) => {
   const router = useRouter();
   const {
-    formState: { isSubmitting },
+    formState: { isSubmitting, isSubmitted },
   } = useFormContext();
-  const { submitStep, handleCancelSubmit } = useCreateVaultFormData();
   const { retryFire } = useFormControllerContext();
-  const { step, address, tx } = submitStep ?? {};
+  const { step, tx } = submitStep ?? {};
+  const { activeVault } = useVaultInfo();
 
   const iconComponent = useMemo(() => getIconComponent(step), [step]);
   const title = getModalTitle(step);
   const subtitle = getModalSubTitle(step);
 
   const handleNavigateToVault = () => {
-    // TODO: add for responsive buttons onClick = () => Promise and handle promise there
-    void router.push(`/${address}/${AppPaths.overview}`);
+    void router.push(`/${activeVault?.address}/${AppPaths.overview}`);
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ step: SubmitStepEnum.edit });
   };
 
   return (
     <Modal
       center
-      open={isSubmitting || !!step}
-      onClose={handleCancelSubmit}
+      open={(isSubmitting || isSubmitted) && step !== SubmitStepEnum.edit}
+      onClose={handleCloseModal}
       title={title}
       subtitle={subtitle}
       titleIcon={iconComponent}
     >
       <Content>
-        {(step === SubmitStepEnum.initiate ||
-          step === SubmitStepEnum.confirming) && (
+        {step === SubmitStepEnum.initiate && (
+          <Text color="secondary" size="xxs">
+            Wait for wallet confirmation window
+          </Text>
+        )}
+
+        {step === SubmitStepEnum.confirming && (
           <Text color="secondary" size="xxs">
             Confirm this transaction in your wallet
           </Text>
         )}
 
-        {step === SubmitStepEnum.success && address && (
+        {step === SubmitStepEnum.success && (
           <Button onClick={handleNavigateToVault} fullwidth>
-            Go to vault
+            Go to dashboard
           </Button>
         )}
 
@@ -109,7 +134,7 @@ export const SubmitModal: FC<ModalProps> = () => {
         )}
 
         {step === SubmitStepEnum.error && (
-          <ButtonLink onClick={handleCancelSubmit}>close</ButtonLink>
+          <ButtonLink onClick={handleCloseModal}>close</ButtonLink>
         )}
       </Content>
     </Modal>
