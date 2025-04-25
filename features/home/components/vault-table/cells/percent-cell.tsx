@@ -6,7 +6,7 @@ import { formatPercent } from 'utils/format-number';
 import { BaseCellProps } from '../types';
 
 export const PercentCell: FC<BaseCellProps<number>> = ({ value }) => {
-  const percent = formatPercent.format(value);
+  const percent = formatPercent.format(value / 100);
 
   return <Percent value={value}>{percent}</Percent>;
 };

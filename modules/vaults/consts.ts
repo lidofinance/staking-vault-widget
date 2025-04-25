@@ -1,6 +1,6 @@
 import { keccak256, parseEther, toHex } from 'viem';
 
-export const VAULTS_PER_PAGE = 4;
+export const VAULTS_PER_PAGE = 6;
 
 export const VAULTS_CONNECT_DEPOSIT = parseEther('1');
 

@@ -3,13 +3,14 @@ import { FC } from 'react';
 import { Tbody } from '@lidofinance/lido-ui';
 import { TableCell } from 'features/home/components/vault-table/table-cell';
 import {
-  DefaultCell,
   EtherCell,
   AddressCell,
   PercentCell,
   MintCell,
   HeaderCell,
 } from 'features/home/components/vault-table/cells';
+import { VaultTableInfo } from 'modules/vaults';
+
 import {
   TableTitle,
   TableStyled,
@@ -18,12 +19,11 @@ import {
   TableHeaderCell,
 } from './styles';
 
-import { VaultInfo } from 'types';
-
 export interface VaultTableProps {
-  vaults?: VaultInfo[];
+  vaults?: VaultTableInfo[];
   title: string;
   showTitle?: boolean;
+  vaultsCount: number;
 }
 
 const tableHeaders = [
@@ -32,36 +32,36 @@ const tableHeaders = [
     showQuestion: false,
   },
   {
-    title: 'Valuation, ETH',
+    title: 'Total value, ETH',
     showQuestion: true,
   },
   {
-    title: 'stETH Minted',
+    title: 'stETH liability',
     showQuestion: true,
   },
+  // {
+  //   title: 'Net Staking APR',
+  //   showQuestion: true,
+  // },
+  // {
+  //   title: 'stVault APY',
+  //   showQuestion: true,
+  // },
   {
-    title: 'Net Staking APR',
-    showQuestion: true,
-  },
-  {
-    title: 'stVault APY',
-    showQuestion: true,
-  },
-  {
-    title: 'Health score',
+    title: 'Health factor',
     showQuestion: true,
   },
 ];
 
 export const VaultTable: FC<VaultTableProps> = (props) => {
-  const { vaults = [], title, showTitle = false } = props;
+  const { vaults = [], title, showTitle = false, vaultsCount } = props;
   const showTableContent = vaults.length > 0;
   const showTitleWhenNoContent = showTitle || showTableContent;
 
   return (
     <TableStyled>
       {showTitleWhenNoContent && (
-        <TableTitle counter={vaults.length}>{title}</TableTitle>
+        <TableTitle counter={vaultsCount}>{title}</TableTitle>
       )}
 
       {showTableContent && (
@@ -87,12 +87,6 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
                   </TableCell>
                   <TableCell>
                     <MintCell value={vault.liabilityStETH} />
-                  </TableCell>
-                  <TableCell>
-                    <DefaultCell value="?" />
-                  </TableCell>
-                  <TableCell>
-                    <DefaultCell value="?" />
                   </TableCell>
                   <TableCell>
                     <PercentCell value={vault.healthScore} />

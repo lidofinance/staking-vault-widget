@@ -10,6 +10,7 @@ export const AllVaults = () => {
     pagesCount,
     handlePagination,
     page,
+    vaultsCount,
   } = useVaultsDataAll();
   const showPagination = !!pagesCount;
 
@@ -19,6 +20,7 @@ export const AllVaults = () => {
         title="All Vaults"
         vaults={vaults}
         showTitle={!isLoadingAllVaults}
+        vaultsCount={vaultsCount}
       />
       {isLoadingAllVaults && <Loader color="primary" size="large" />}
       {showPagination && !isLoadingAllVaults && (

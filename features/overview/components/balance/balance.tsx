@@ -23,10 +23,6 @@ const sectionPayloadList: SectionPayload[] = [
     key: 'totalLocked',
   },
   {
-    title: 'Locked by accumulated fees',
-    key: 'accumulatedFee',
-  },
-  {
     title: 'Collateral',
     key: 'collateral',
   },

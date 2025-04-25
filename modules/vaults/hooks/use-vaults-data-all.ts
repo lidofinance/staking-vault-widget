@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 
-import { useVaultData } from 'modules/vaults/hooks/use-vault-data';
+import { useVaultDataTable } from 'modules/vaults/hooks';
 import { useVaultsConnectedBound } from 'modules/vaults/hooks/use-vaults-connected-bound';
 
 import { VAULTS_PER_PAGE } from '../consts';
@@ -10,7 +10,7 @@ import type { Address } from 'viem';
 export const useVaultsDataAll = () => {
   const [{ from, to, page }, setPaginationData] = useState({
     from: 0,
-    to: 4,
+    to: VAULTS_PER_PAGE,
     page: 1,
   });
 
@@ -26,17 +26,20 @@ export const useVaultsDataAll = () => {
     isLoading,
     isError: isVaultsDataError,
     ...rest
-  } = useVaultData(connectedVaults as Address[] | undefined);
+  } = useVaultDataTable(connectedVaults as Address[] | undefined);
 
   const handlePagination = useCallback((page: number) => {
-    const toCursor = page * VAULTS_PER_PAGE - 1;
     const fromCursor = VAULTS_PER_PAGE * (page - 1);
-    // TODO: refactor. Waiting for devnet
+    const toCursor = page * VAULTS_PER_PAGE;
     setPaginationData({ from: fromCursor, to: toCursor, page });
   }, []);
   const pages = useMemo(
     () => Math.ceil((to + Number(leftOver)) / VAULTS_PER_PAGE),
     [to, leftOver],
+  );
+  const vaultsCount = useMemo(
+    () => from + (vaults?.length ?? 0) + (Number(leftOver) ?? 0) || 0,
+    [from, vaults, leftOver],
   );
 
   return {
@@ -46,6 +49,7 @@ export const useVaultsDataAll = () => {
     handlePagination,
     isError: isErrorConnected || isVaultsDataError,
     page,
+    vaultsCount,
     ...rest,
   };
 };
