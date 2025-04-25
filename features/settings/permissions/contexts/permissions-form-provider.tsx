@@ -1,4 +1,12 @@
-import { FC, PropsWithChildren, useMemo, useCallback, useEffect } from 'react';
+import {
+  FC,
+  PropsWithChildren,
+  useMemo,
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+} from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useDappStatus } from 'modules/web3';
@@ -22,6 +30,8 @@ import {
 import { useVaultInfo } from 'features/overview/contexts';
 import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
 import { usePermissionsData } from './permissions-data-provider';
+import { SubmitModal } from 'shared/components';
+import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
@@ -31,6 +41,18 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { activeVault } = useVaultInfo();
   const { callEditPermissions } = useEditPermissionsWithDashboard();
   const { rolesList, refetch } = usePermissionsData();
+  const [submitStep, setSubmitStep] = useState<SubmitPayload>(() => ({
+    step: SubmitStepEnum.edit,
+  }));
+  const abortControllerRef = useRef(new AbortController());
+  const handleCancelSubmit = useCallback(() => {
+    abortControllerRef.current.abort();
+    setSubmitStep({ step: SubmitStepEnum.edit });
+  }, []);
+
+  const setModalState = useCallback((submitStep: SubmitPayload) => {
+    setSubmitStep(submitStep);
+  }, []);
 
   const formObject = useForm<EditPermissionsSchema>({
     resolver: validateFormWithZod(editPermissionsSchema),
@@ -55,9 +77,9 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
-      // TODO: use modal from components/tx-modal
       const payload = collectFormValuesToRpc(data);
       if (activeVault?.owner && publicClient && address) {
+        setModalState({ step: SubmitStepEnum.initiate });
         try {
           await simulateEditPermissionsWithDashboard({
             payload: payload,
@@ -66,6 +88,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
             account: address,
           });
         } catch (err) {
+          setModalState({ step: SubmitStepEnum.error });
           return false;
         }
       } else {
@@ -73,13 +96,24 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       }
 
       try {
-        await callEditPermissions(payload);
+        await callEditPermissions(payload, setModalState, abortControllerRef);
+        setModalState({ step: SubmitStepEnum.success });
         refetch();
         return true;
       } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message.includes('User rejected the request')
+        ) {
+          setModalState({ step: SubmitStepEnum.reject });
+        } else {
+          setModalState({ step: SubmitStepEnum.error });
+        }
+
         return false;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [callEditPermissions, address, publicClient, activeVault?.owner, refetch],
   );
 
@@ -99,6 +133,11 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
     <FormProvider {...formObject}>
       <FormControllerContext.Provider value={formControllerValue}>
         <FormController>{children}</FormController>
+        <SubmitModal
+          submitStep={submitStep}
+          setModalState={setModalState}
+          onClose={handleCancelSubmit}
+        />
       </FormControllerContext.Provider>
     </FormProvider>
   );

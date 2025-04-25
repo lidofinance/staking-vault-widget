@@ -23,10 +23,19 @@ export const useEditMainSettings = () => {
       // TODO: replace by useWriteContracts in future
       const txData = prepareMainTxData(payload);
       const contractAddress = activeVault?.owner;
-      invariant(contractAddress);
-      invariant(publicClient);
-      invariant(walletClient);
-      invariant(address);
+      invariant(
+        contractAddress,
+        '[useEditMainSettings] contractAddress is not defined',
+      );
+      invariant(
+        publicClient,
+        '[useEditMainSettings] publicClient is not defined',
+      );
+      invariant(
+        walletClient,
+        '[useEditMainSettings] walletClient is not defined',
+      );
+      invariant(address, '[useEditMainSettings] address is not defined');
 
       setModalState({ step: SubmitStepEnum.confirming });
       const response = await sendDashboardTx({

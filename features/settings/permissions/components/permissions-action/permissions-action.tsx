@@ -13,9 +13,9 @@ export const PermissionsAction: FC = () => {
   const {
     getValues,
     setValue,
-    formState: { isValid, isSubmitting, isSubmitted, isDirty },
+    formState: { isValid, isSubmitting, isDirty },
   } = useFormContext();
-  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isSubmitted;
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting;
   const isClearDisabled = !isDirty;
 
   const handleResetFields = () => {
