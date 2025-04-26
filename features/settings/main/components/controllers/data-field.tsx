@@ -5,6 +5,7 @@ import { GroupWrapper } from './styles';
 
 import type { MainSettingsOverview } from 'features/settings/main/types';
 import { EditProperty } from './edit-property';
+import { EditPropertyAddress } from './edit-property-address';
 import { Text } from '@lidofinance/lido-ui';
 import {
   useVaultConfirmingRoles,
@@ -38,7 +39,14 @@ export const DataField: FC<InputResolverProps> = ({
       </Text>
       {isTypeAddress && <DisplayAddress name={name} vaultKey={vaultKey} />}
       {!isTypeAddress && <ReadonlyInput label={label} vaultKey={vaultKey} />}
-      {isEditable && (
+      {isEditable && isTypeAddress && (
+        <EditPropertyAddress
+          editLabel={editLabel}
+          name={name}
+          actionText={actionText}
+        />
+      )}
+      {isEditable && !isTypeAddress && (
         <EditProperty
           editLabel={editLabel}
           name={name}

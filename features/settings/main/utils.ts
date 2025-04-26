@@ -1,46 +1,49 @@
-import { Address, encodeFunctionData, PublicClient, getContract } from 'viem';
+import {
+  Address,
+  encodeFunctionData,
+  PublicClient,
+  getContract,
+  Hex,
+} from 'viem';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
 } from 'modules/vaults/consts';
-import { EditMainSettingsSchema, TxData } from './types';
+import {
+  EditMainSettingsSchema,
+  TxData,
+  GrantOrRevokeRole,
+  RoleFieldSchema,
+} from './types';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
 
 export const prepareMainTxData = (data: EditMainSettingsSchema) => {
   const {
     confirmExpiry,
-    defaultAdmin,
+    defaultAdmins,
     nodeOperatorFeeBP,
-    nodeOperatorManager,
+    nodeOperatorManagers,
   } = data;
-  const txData: TxData = {};
+  const txData: TxData = {
+    grantRoles: [],
+    revokeRoles: [],
+  };
 
-  if (defaultAdmin.length > 0) {
-    const adminsList = (defaultAdmin as { value: Address }[]).map(
-      ({ value }) => ({
-        account: value,
-        role: VAULTS_ROOT_ROLES_MAP.defaultAdmin,
-      }),
-    );
+  const roleProcessors = [
+    { fields: defaultAdmins, role: VAULTS_ROOT_ROLES_MAP.defaultAdmin },
+    {
+      fields: nodeOperatorManagers,
+      role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
+    },
+  ];
 
-    txData.roles = adminsList;
-  }
-
-  if (nodeOperatorManager.length > 0) {
-    const noManagersList = (nodeOperatorManager as { value: Address }[]).map(
-      ({ value }) => ({
-        account: value,
-        role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
-      }),
-    );
-
-    if (txData.roles) {
-      txData.roles.push(...noManagersList);
-    } else {
-      txData.roles = noManagersList;
-    }
-  }
+  roleProcessors.forEach(({ fields, role }) => {
+    if (fields.length === 0) return;
+    const [grantList, revokeList] = processRoleFields(fields, role);
+    txData.grantRoles.push(...grantList);
+    txData.revokeRoles.push(...revokeList);
+  });
 
   if (confirmExpiry.length > 0) {
     txData.confirmExpiry = BigInt(confirmExpiry[0].value * 60 * 60); // in seconds
@@ -53,6 +56,21 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
   }
 
   return txData;
+};
+
+const processRoleFields = (
+  fields: Array<RoleFieldSchema>,
+  role: Hex,
+): [GrantOrRevokeRole[], GrantOrRevokeRole[]] => {
+  return fields.reduce(
+    ([grant, revoke], field) => {
+      const item = { account: field.value, role };
+      field.state === 'grant' && grant.push(item);
+      field.state === 'remove' && revoke.push(item);
+      return [grant, revoke];
+    },
+    [[], []] as [GrantOrRevokeRole[], GrantOrRevokeRole[]],
+  );
 };
 
 export const generateMainAATxData = async ({

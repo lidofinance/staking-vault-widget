@@ -1,8 +1,10 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect } from 'react';
 import { Address } from 'viem';
 
 import { useVaultInfo } from 'features/overview/contexts';
 import { VaultInfo } from 'types';
+import { useFormContext } from 'react-hook-form';
+import { RoleFieldSchema } from 'features/settings/main/types';
 import { RoleAddress } from './role-address';
 
 interface DisplayAddressProps {
@@ -10,21 +12,39 @@ interface DisplayAddressProps {
   vaultKey: keyof VaultInfo;
 }
 
-export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey }) => {
+export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey, name }) => {
   const { activeVault } = useVaultInfo();
-  const renderData = useMemo(() => {
-    return activeVault?.[vaultKey] as Address[] | Address | undefined;
-  }, [activeVault, vaultKey]);
+  const { setValue, watch } = useFormContext();
+  const roles = watch(name) as RoleFieldSchema[] | undefined;
 
-  if (Array.isArray(renderData)) {
-    return (
-      <>
-        {renderData.map((address) => (
-          <RoleAddress key={address} address={address} />
+  useEffect(() => {
+    const addresses = activeVault?.[vaultKey] as Address[] | undefined;
+    if (Array.isArray(addresses)) {
+      const values = addresses.map(
+        (address) =>
+          ({
+            isGranted: true,
+            value: address,
+            state: 'display',
+          }) as RoleFieldSchema,
+      );
+
+      setValue(name, values);
+    }
+  }, [activeVault, setValue, vaultKey, name]);
+
+  return (
+    <>
+      {!!roles &&
+        roles.map((role, index) => (
+          <RoleAddress
+            key={role.value}
+            index={index}
+            roles={roles}
+            role={role}
+            vaultKey={vaultKey}
+          />
         ))}
-      </>
-    );
-  }
-
-  return <RoleAddress address={renderData} />;
+    </>
+  );
 };

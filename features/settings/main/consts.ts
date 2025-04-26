@@ -16,13 +16,23 @@ const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or abov
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
-const addressSchema = z
+const accountSchema = z
   .string()
   .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
   .transform((value) => value as Address);
 
+export const addressSchema = z.object({
+  isGranted: z.boolean().optional(),
+  state: z.union([
+    z.literal('remove'),
+    z.literal('display'),
+    z.literal('grant'),
+  ]),
+  value: accountSchema,
+});
+
 export const editMainSettingsSchema = z.object({
-  nodeOperatorManager: z.array(z.object({ value: addressSchema })),
+  nodeOperatorManagers: z.array(addressSchema),
   nodeOperatorFeeBP: z.array(
     z.object({
       value: z.coerce
@@ -39,7 +49,7 @@ export const editMainSettingsSchema = z.object({
         .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
     }),
   ),
-  defaultAdmin: z.array(z.object({ value: addressSchema })),
+  defaultAdmins: z.array(addressSchema),
 });
 
 export const fieldsForRender: MainSettingsOverview[] = [
@@ -62,20 +72,20 @@ export const fieldsForRender: MainSettingsOverview[] = [
     canEditRole: 'confirmingRoles',
   },
   {
-    name: 'defaultAdmin',
+    name: 'defaultAdmins',
     title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
-    editLabel: 'Vault Manager address or ENS',
+    label: 'Vault Manager address',
+    editLabel: 'Vault Manager address',
     dataType: 'address',
     actionText: 'Add new address',
     vaultKey: 'defaultAdmins',
     canEditRole: 'defaultAdmin',
   },
   {
-    name: 'nodeOperatorManager',
+    name: 'nodeOperatorManagers',
     title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
-    editLabel: 'Node Operator Manager address or ENS',
+    label: 'Node Operator Manager address',
+    editLabel: 'Node Operator Manager address',
     dataType: 'address',
     actionText: 'Add new address',
     vaultKey: 'nodeOperatorManagers',
@@ -85,9 +95,10 @@ export const fieldsForRender: MainSettingsOverview[] = [
 
 export const dashboardFunctionsNamesMap: Record<
   keyof TxData,
-  'grantRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
+  'grantRoles' | 'revokeRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
 > = {
-  roles: 'grantRoles',
+  grantRoles: 'grantRoles',
+  revokeRoles: 'revokeRoles',
   confirmExpiry: 'setConfirmExpiry',
   nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
 };

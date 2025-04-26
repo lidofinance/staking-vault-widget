@@ -71,10 +71,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const formObject = useForm<EditMainSettingsSchema>({
     defaultValues: {
-      nodeOperatorManager: [],
+      nodeOperatorManagers: [],
       nodeOperatorFeeBP: [],
       confirmExpiry: [],
-      defaultAdmin: [],
+      defaultAdmins: [],
     },
     resolver: validateFormWithZod(editMainSettingsSchema),
     mode: 'all',

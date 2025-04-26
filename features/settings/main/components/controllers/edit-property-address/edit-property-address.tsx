@@ -12,15 +12,13 @@ interface EditPropertyProps {
   editLabel: string;
 }
 
-export const EditProperty: FC<EditPropertyProps> = ({
+export const EditPropertyAddress: FC<EditPropertyProps> = ({
   actionText,
   name,
   editLabel,
 }) => {
-  const { control, watch } = useFormContext();
+  const { control } = useFormContext();
   const { append, fields, remove } = useFieldArray({ control, name });
-  const fieldsInfo = watch(name) as { value: string }[];
-  const showAddButton = !fieldsInfo || fieldsInfo.length === 0;
 
   return (
     <EditWrapper>
@@ -35,18 +33,16 @@ export const EditProperty: FC<EditPropertyProps> = ({
           />
         );
       })}
-      {showAddButton && (
-        <ButtonContainer
-          color="primary"
-          icon={<Plus />}
-          size="md"
-          variant="ghost"
-          type="button"
-          onClick={() => append({ value: '' })}
-        >
-          {actionText}
-        </ButtonContainer>
-      )}
+      <ButtonContainer
+        color="primary"
+        icon={<Plus />}
+        size="md"
+        variant="ghost"
+        type="button"
+        onClick={() => append({ value: '', state: 'grant' })}
+      >
+        {actionText}
+      </ButtonContainer>
     </EditWrapper>
   );
 };
