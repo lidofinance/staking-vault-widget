@@ -14,6 +14,7 @@ const sectionPayloadList: SectionPayload[] = [
     actionText: 'Deposit to validators',
     actionLink: '/supply/fund',
   },
+  // TODO: add this after the metrics are implemented
   // {
   //   title: 'Deposited to validators',
   //   key: 'depositedToValidators',
