@@ -14,10 +14,10 @@ const sectionPayloadList: SectionPayload[] = [
     actionText: 'Deposit to validators',
     actionLink: '/supply/fund',
   },
-  {
-    title: 'Deposited to validators',
-    key: 'depositedToValidators',
-  },
+  // {
+  //   title: 'Deposited to validators',
+  //   key: 'depositedToValidators',
+  // },
   {
     title: 'Total locked',
     key: 'totalLocked',
