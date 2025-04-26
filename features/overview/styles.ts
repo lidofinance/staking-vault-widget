@@ -5,5 +5,6 @@ export const OverviewWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.md}px;
   max-width: 806px;
+  min-width: 540px;
   margin: 0 auto;
 `;

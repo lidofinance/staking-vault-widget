@@ -29,7 +29,6 @@ export interface VaultOverviewContextType {
     totalMintingCapacity: string;
     withdrawableEth: string;
     balanceEth: string;
-    depositedToValidators: string;
     accumulatedFee: string;
     nodeOperatorFee: string;
     collateral: string;
@@ -103,7 +102,6 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         overview.utilizationRatio / 100,
       );
       const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
-      const depositedToValidators = toEthValue(overview.depositedToValidators);
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
@@ -127,7 +125,6 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         totalMintingCapacity,
         withdrawableEth,
         balanceEth,
-        depositedToValidators,
         accumulatedFee,
         nodeOperatorFee,
         collateral,
