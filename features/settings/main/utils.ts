@@ -59,7 +59,7 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
 };
 
 const processRoleFields = (
-  fields: Array<RoleFieldSchema>,
+  fields: RoleFieldSchema[],
   role: Hex,
 ): [GrantOrRevokeRole[], GrantOrRevokeRole[]] => {
   return fields.reduce(
