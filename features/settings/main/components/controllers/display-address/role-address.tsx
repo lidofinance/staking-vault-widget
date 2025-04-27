@@ -38,7 +38,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
       state: state === 'display' ? 'remove' : 'display',
     };
 
-    setValue(itemKey, updatedItem);
+    setValue(itemKey, updatedItem, { shouldDirty: true });
   };
 
   return (

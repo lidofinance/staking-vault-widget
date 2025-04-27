@@ -3,19 +3,43 @@ import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
 import { useFormContext } from 'react-hook-form';
-import { RoleFieldSchema } from '../../types';
+import { RoleFieldSchema } from 'features/settings/main/types';
 
 export const MainSettingsAction: FC = () => {
   const {
-    reset,
     watch,
+    setValue,
     formState: { isValid, isDirty, isSubmitting },
   } = useFormContext();
   const isClearDisabled = !isDirty;
   const isSubmitDisabled = !isValid || !isDirty || isSubmitting;
   const formFields = watch();
 
-  const buttonText = useMemo(() => {
+  const handleClearMainForm = () => {
+    const filedsToSave = ['defaultAdmins', 'nodeOperatorManagers'];
+    const initialData: RoleFieldSchema[][] = Object.entries(formFields).map(
+      ([key, itemsList]) => {
+        if (filedsToSave.includes(key)) {
+          return itemsList
+            .filter((item: RoleFieldSchema) =>
+              ['display', 'remove'].includes(item.state),
+            )
+            .map((item: RoleFieldSchema) => ({
+              ...item,
+              state: 'display',
+            })) as RoleFieldSchema[];
+        }
+
+        return [];
+      },
+    );
+
+    Object.keys(formFields).map((key, index) =>
+      setValue(key, initialData[index]),
+    );
+  };
+
+  const [buttonText, counter] = useMemo(() => {
     let counter = 0;
     if (!isSubmitDisabled) {
       ['defaultAdmins', 'nodeOperatorManagers'].forEach((key) => {
@@ -40,25 +64,34 @@ export const MainSettingsAction: FC = () => {
       }
 
       if (counter) {
-        return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
+        return [
+          `Submit ${counter} transaction${counter > 1 ? 's' : ''}`,
+          counter,
+        ];
       }
     }
 
-    return 'No changes';
+    return ['No changes', counter];
   }, [formFields, isSubmitDisabled]);
+
+  const hasChanges = counter > 0;
 
   return (
     <Container>
       <Button
         type="button"
         variant="outlined"
-        disabled={isClearDisabled}
-        onClick={() => reset()}
+        disabled={isClearDisabled || !hasChanges}
+        onClick={handleClearMainForm}
         fullwidth
       >
         Clear changes
       </Button>
-      <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+      <Button
+        type="submit"
+        disabled={isSubmitDisabled || !hasChanges}
+        fullwidth
+      >
         {buttonText}
       </Button>
     </Container>
