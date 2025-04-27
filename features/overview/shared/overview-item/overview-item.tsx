@@ -12,15 +12,14 @@ export interface ItemProps {
   content: string | number | undefined;
   actionLink?: string;
   actionText?: string;
-  isSuccess?: boolean;
   isLoading?: boolean;
+  color?: string;
 }
 
 export const OverviewItem: FC<ItemProps> = (props) => {
   const router = useRouter();
   const { activeVault } = useVaultInfo();
-  const { title, content, isSuccess, actionLink, actionText, isLoading } =
-    props;
+  const { title, content, actionLink, actionText, isLoading, color } = props;
 
   return (
     <ItemWrapper>
@@ -32,7 +31,7 @@ export const OverviewItem: FC<ItemProps> = (props) => {
       <OverviewItemValue
         content={content}
         isLoading={isLoading}
-        isSuccess={isSuccess}
+        color={color}
       />
       {!!actionLink && !!actionText && (
         <Button
