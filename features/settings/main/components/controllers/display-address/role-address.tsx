@@ -32,12 +32,9 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   const isLast = roles.filter((role) => role.state === 'display').length === 1;
   const canToggle = (roles.length > 1 && !isLast) || toRemove;
   const onToggle = () => {
-    const { value, state, isGranted } = getValues(
-      itemFormKey,
-    ) as RoleFieldSchema;
+    const { state, ...rest } = getValues(itemFormKey) as RoleFieldSchema;
     const updatedItem = {
-      value,
-      isGranted,
+      ...rest,
       state: state === 'display' ? 'remove' : 'display',
     };
 

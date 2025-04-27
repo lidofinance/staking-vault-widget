@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
 
@@ -11,6 +11,7 @@ import {
 } from 'features/settings/main/types';
 import { Address } from 'viem';
 import { validateManagers } from 'features/settings/main/consts';
+import { useVaultInfo } from 'features/overview/contexts';
 
 interface EditPropertyAddressProps {
   name: ManagersKeys;
@@ -21,6 +22,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
   name,
   editLabel,
 }) => {
+  const { isRefetching } = useVaultInfo();
   const { getValues } = useFormContext();
   const {
     control,
@@ -41,6 +43,12 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
     control,
     name: `addresses.${name}`,
   });
+
+  useEffect(() => {
+    if (isRefetching) {
+      remove();
+    }
+  }, [remove, isRefetching]);
 
   return (
     <EditWrapper>

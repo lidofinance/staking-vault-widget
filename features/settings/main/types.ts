@@ -43,8 +43,8 @@ export type MainSettingsOverview = {
 };
 
 export type TxData = {
-  grantRoles: GrantOrRevokeRole[];
-  revokeRoles: GrantOrRevokeRole[];
+  grantRoles?: GrantOrRevokeRole[];
+  revokeRoles?: GrantOrRevokeRole[];
   confirmExpiry?: bigint;
   nodeOperatorFeeBP?: bigint;
 };

@@ -59,7 +59,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     step: SubmitStepEnum.edit,
   }));
   const abortControllerRef = useRef(new AbortController());
-  const { activeVault, refetch } = useVaultInfo();
+  const { activeVault, refetch, isRefetching } = useVaultInfo();
   const { callEditMainSettings } = useEditMainSettings();
 
   const handleCancelSubmit = useCallback(() => {
@@ -101,15 +101,17 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         });
       }
     });
-  }, [formObject, activeVault]);
+  }, [formObject, activeVault, isRefetching]);
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
+      abortControllerRef.current = new AbortController();
+
       try {
         setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
-        setTimeout(refetch, 100);
+        setTimeout(refetch, 500);
         return true;
       } catch (err) {
         if (
@@ -120,14 +122,12 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
-        setTimeout(refetch, 1500);
+        setTimeout(refetch, 1000);
         return true;
-      } finally {
-        setTimeout(refetch, 1500);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callEditMainSettings, submitStep, refetch],
+    [callEditMainSettings, refetch],
   );
 
   const { reset } = formObject;

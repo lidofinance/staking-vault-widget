@@ -25,10 +25,7 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
     nodeOperatorFeeBP,
     nodeOperatorManagers,
   } = data;
-  const txData: TxData = {
-    grantRoles: [],
-    revokeRoles: [],
-  };
+  const txData: TxData = {};
 
   const roleProcessors = [
     { fields: defaultAdmins, role: VAULTS_ROOT_ROLES_MAP.defaultAdmin },
@@ -41,12 +38,20 @@ export const prepareMainTxData = (data: EditMainSettingsSchema) => {
   roleProcessors.forEach(({ fields, role }) => {
     if (fields.length === 0) return;
     const [grantList, revokeList] = processRoleFields(fields, role);
-    txData.grantRoles.push(...grantList);
-    txData.revokeRoles.push(...revokeList);
+
+    if (grantList.length > 0) {
+      if (!txData.grantRoles) txData.grantRoles = [];
+      txData.grantRoles.push(...grantList);
+    }
+
+    if (revokeList.length > 0) {
+      if (!txData.revokeRoles) txData.revokeRoles = [];
+      txData.revokeRoles.push(...revokeList);
+    }
   });
 
   if (confirmExpiry.length > 0) {
-    txData.confirmExpiry = BigInt(confirmExpiry[0].value * 60 * 60); // in seconds
+    txData.confirmExpiry = BigInt(confirmExpiry[0].value * 60 * 60);
   }
 
   if (nodeOperatorFeeBP.length > 0) {
