@@ -29,7 +29,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey, name }) => {
           }) as RoleFieldSchema,
       );
 
-      setValue(name, values);
+      setValue(name, values, { shouldDirty: true, shouldTouch: true });
     }
   }, [activeVault, setValue, vaultKey, name]);
 
