@@ -6,12 +6,11 @@ import { LoaderWrapper, ValueWrapper } from './styles';
 export interface ItemValueProps {
   content: string | number | undefined;
   isLoading?: boolean;
-  isSuccess?: boolean;
+  color?: string;
 }
 
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
-  const { content, isSuccess, isLoading } = props;
-  const contentColor = isSuccess ? 'success' : 'default';
+  const { content, isLoading, color } = props;
 
   return (
     <>
@@ -21,7 +20,7 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
         </LoaderWrapper>
       ) : (
         <ValueWrapper>
-          <Text size="lg" color={contentColor} strong>
+          <Text size="lg" style={{ color }} strong>
             {content ?? '-'}
           </Text>
         </ValueWrapper>

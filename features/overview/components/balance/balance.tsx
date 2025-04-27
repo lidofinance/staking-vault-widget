@@ -11,7 +11,7 @@ const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Idle capital',
     key: 'balanceEth',
-    actionText: 'Deposit to validators',
+    actionText: 'Supply ETH',
     actionLink: '/supply/fund',
   },
   // TODO: add this after the metrics are implemented
