@@ -88,19 +88,21 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   });
 
   useEffect(() => {
-    (multipleDataFields as ManagersKeys[]).map((key) => {
-      const managersAddresses = activeVault?.[key];
-      if (managersAddresses && managersAddresses.length > 0) {
-        managersAddresses.forEach((address: Address, index: number) => {
-          const value = {
-            value: address,
-            state: 'display',
-            isGranted: true,
-          } as unknown as RoleFieldSchema;
-          formObject.setValue(`${key}.${index}` as const, value);
-        });
-      }
-    });
+    if (!isRefetching) {
+      (multipleDataFields as ManagersKeys[]).map((key) => {
+        const managersAddresses = activeVault?.[key];
+        if (managersAddresses && managersAddresses.length > 0) {
+          managersAddresses.forEach((address: Address, index: number) => {
+            const value = {
+              value: address,
+              state: 'display',
+              isGranted: true,
+            } as unknown as RoleFieldSchema;
+            formObject.setValue(`${key}.${index}` as const, value);
+          });
+        }
+      });
+    }
   }, [formObject, activeVault, isRefetching]);
 
   const onSubmit = useCallback(
@@ -111,7 +113,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
-        requestIdleCallback(refetch);
+        setTimeout(refetch, 1000);
         return true;
       } catch (err) {
         if (
@@ -122,7 +124,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
-        requestIdleCallback(refetch);
+        setTimeout(refetch, 1000);
         return true;
       }
     },
