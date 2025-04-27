@@ -1,13 +1,21 @@
 import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
-import { MainSettingsOverview, TxData } from './types';
+import {
+  MainSettingsOverview,
+  ManagersKeys,
+  ManagersNewAddresses,
+  RoleFieldSchema,
+  TxData,
+} from './types';
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY,
 } from 'modules/vaults';
-import { Address } from 'viem';
+import { Address, isAddress } from 'viem';
+import { Resolver, UseFormGetValues } from 'react-hook-form';
+import { isValidEns } from 'utils/ens';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
@@ -52,7 +60,7 @@ export const editMainSettingsSchema = z.object({
   defaultAdmins: z.array(addressSchema),
 });
 
-export const fieldsForRender: MainSettingsOverview[] = [
+export const indicatorsForRender: MainSettingsOverview[] = [
   {
     name: 'nodeOperatorFeeBP',
     title: 'Node Operator fee',
@@ -71,6 +79,9 @@ export const fieldsForRender: MainSettingsOverview[] = [
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
   },
+];
+
+export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'defaultAdmins',
     title: 'Vault Manager',
@@ -104,3 +115,58 @@ export const dashboardFunctionsNamesMap: Record<
 };
 
 export const multipleDataFields = ['defaultAdmins', 'nodeOperatorManagers'];
+
+export const validateManagers = (
+  getValues: UseFormGetValues<Record<string, any>>,
+): Resolver<ManagersNewAddresses> => {
+  return async (values) => {
+    const addresses = values.addresses;
+    const errors = { addresses: {} } as {
+      addresses: Record<
+        ManagersKeys,
+        Record<number, { value: { message: string } }>
+      >;
+    };
+
+    const keysList = Object.keys(addresses) as ManagersKeys[];
+
+    keysList.forEach((key: ManagersKeys) => {
+      const payload = addresses[key] ?? [];
+      errors.addresses[key] = {};
+
+      payload.forEach((field, index) => {
+        const { value: currentValue } = field;
+
+        if (!isAddress(currentValue)) {
+          const isValid = isValidEns(currentValue);
+
+          if (!isValid) {
+            errors.addresses[key][index] = {
+              value: {
+                message: 'Invalid ethereum address',
+              },
+            };
+          }
+        }
+
+        const mainFormValues = getValues(key) as RoleFieldSchema[];
+        const filtered = (mainFormValues ?? []).filter(
+          (item) => item.value === currentValue,
+        );
+
+        if (filtered.length > 0) {
+          errors.addresses[key][index] = {
+            value: {
+              message: 'Address already added',
+            },
+          };
+        }
+      });
+    });
+
+    return {
+      values,
+      errors,
+    };
+  };
+};

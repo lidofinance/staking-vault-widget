@@ -1,17 +1,42 @@
-import { FC, useMemo } from 'react';
+import {
+  FC,
+  FocusEvent,
+  KeyboardEvent,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { isAddress } from 'viem';
-import { useController, useFormContext } from 'react-hook-form';
+import {
+  FieldError,
+  FieldErrorsImpl,
+  Merge,
+  useFormContext,
+  useFieldArray,
+  UseFormRegister,
+  UseFormTrigger,
+  UseFormWatch,
+} from 'react-hook-form';
 
-import { Identicon, Input, Loader } from '@lidofinance/lido-ui';
+import { Identicon, Input } from '@lidofinance/lido-ui';
 import { ButtonClose } from 'shared/components';
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
 import { InputWrapper } from './styles';
+import {
+  ManagersKeys,
+  ManagersNewAddresses,
+  RoleFieldSchema,
+} from 'features/settings/main/types';
 
 export interface InputItemProps {
   name: string;
   editLabel: string;
   index: number;
   remove: (index?: number | number[]) => void;
+  register: UseFormRegister<{ addresses: Record<string, RoleFieldSchema[]> }>;
+  trigger: UseFormTrigger<{ addresses: Record<string, RoleFieldSchema[]> }>;
+  watch: UseFormWatch<ManagersNewAddresses>;
+  error: Merge<FieldError, FieldErrorsImpl<{ value: string }[]>> | undefined;
 }
 
 export const InputItem: FC<InputItemProps> = ({
@@ -19,40 +44,96 @@ export const InputItem: FC<InputItemProps> = ({
   editLabel,
   index,
   remove,
+  register,
+  trigger,
+  watch,
+  error,
 }) => {
-  const {
-    getValues,
-    formState: { errors },
-  } = useFormContext();
-  const inputKey = `${name}.${index}`;
-  const { field, fieldState } = useController({ name: `${inputKey}.value` });
+  const [decorator, setDecorator] = useState<ReactNode | null>();
+  const { control, setValue, getValues } = useFormContext();
+  const { remove: removeFromMain } = useFieldArray({ control, name });
+  const inputKey =
+    `addresses.${name}.${index}.value` as `addresses.${ManagersKeys}.${number}.value`;
+  const field = register(inputKey);
+  const fieldValue = watch(inputKey);
+  const errorText = error?.[index]?.value?.message ?? '';
 
-  // @ts-expect-error react-hook-form types incompatible to zod schema validation
-  const errorMessage = errors?.[name]?.[index]?.value.message;
+  const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const values: RoleFieldSchema[] = getValues(name);
+      const output = await trigger(inputKey);
 
-  const decorator = useMemo(() => {
-    const { invalid, isDirty, isValidating } = fieldState;
-    if (invalid) return <ErrorTriangle />;
-    if (isValidating) return <Loader size="small" />;
-    if (!isDirty) return null;
-    if (isAddress(field.value)) return <Identicon address={field.value} />;
+      if (output) {
+        const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
+        setValue(
+          `${name}.${values?.length ?? 0}`,
+          {
+            account: value,
+            state: 'grant',
+          },
+          { shouldDirty: true },
+        );
+      }
+    }
+  };
 
-    return null;
-  }, [field.value, fieldState]);
+  const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    const value = (e.currentTarget || e.target).value;
+    const output = await trigger(inputKey);
 
-  if ('isGranted' in getValues(inputKey)) {
-    return null;
-  }
+    if (isAddress(value) && output) {
+      const values: RoleFieldSchema[] = getValues(name);
+      const output = await trigger(inputKey);
+      if (output) {
+        setValue(
+          `${name}.${values?.length ?? 0}`,
+          {
+            value: value,
+            state: 'grant',
+          } as RoleFieldSchema,
+          { shouldDirty: true },
+        );
+      }
+    } else {
+      void field.onBlur(e);
+    }
+  };
+
+  const removeFieldItem = async () => {
+    const output = await trigger(inputKey);
+    const values: RoleFieldSchema[] = getValues(name);
+    const mainFormItemIndex = values.findIndex(
+      (item) => item.value === fieldValue,
+    );
+    if (mainFormItemIndex > -1 && output) {
+      removeFromMain(mainFormItemIndex);
+    }
+    remove(index);
+  };
+
+  useEffect(() => {
+    const getDecorator = async () => {
+      const output = await trigger(inputKey);
+      if (!output) setDecorator(<ErrorTriangle />);
+      else if (isAddress(fieldValue) && output)
+        setDecorator(<Identicon address={fieldValue} />);
+      else setDecorator(null);
+    };
+
+    void getDecorator();
+  }, [fieldValue, trigger, inputKey]);
 
   return (
     <InputWrapper>
       <Input
         {...field}
+        onKeyDown={handleKeyDown}
+        onBlur={handleBlur}
         leftDecorator={decorator}
         label={editLabel}
-        error={errorMessage}
+        error={errorText}
       />
-      <ButtonClose onClick={() => remove(index)} />
+      <ButtonClose onClick={removeFieldItem} />
     </InputWrapper>
   );
 };

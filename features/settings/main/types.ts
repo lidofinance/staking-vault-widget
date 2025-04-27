@@ -50,3 +50,7 @@ export type TxData = {
 };
 
 export type RoleFieldSchema = z.infer<typeof addressSchema>;
+export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
+export type ManagersNewAddresses = {
+  addresses: Record<ManagersKeys, RoleFieldSchema[]>;
+};

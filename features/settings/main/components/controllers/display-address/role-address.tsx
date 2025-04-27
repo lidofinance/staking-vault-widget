@@ -7,21 +7,22 @@ import { useFormContext } from 'react-hook-form';
 import { VaultInfo } from 'types';
 
 interface RoleAddressProps {
-  role: RoleFieldSchema;
-  roles: RoleFieldSchema[];
   vaultKey: keyof VaultInfo;
   index: number;
   isEditable: boolean;
+  role: RoleFieldSchema;
+  roles: RoleFieldSchema[];
 }
 
 export const RoleAddress: FC<RoleAddressProps> = ({
-  role,
   vaultKey,
-  roles,
   index,
   isEditable,
+  role,
+  roles,
 }) => {
   const { getValues, setValue } = useFormContext();
+  const itemFormKey = `${vaultKey}.${index}`;
   if (!('isGranted' in role)) {
     return null;
   }
@@ -30,28 +31,28 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   const bgColor = toRemove ? 'error' : 'default';
   const isLast = roles.filter((role) => role.state === 'display').length === 1;
   const canToggle = (roles.length > 1 && !isLast) || toRemove;
-
-  const onToggle = (index: number) => {
-    const itemKey = `${vaultKey}.${index}`;
-    const { value, state, isGranted } = getValues(itemKey) as RoleFieldSchema;
+  const onToggle = () => {
+    const { value, state, isGranted } = getValues(
+      itemFormKey,
+    ) as RoleFieldSchema;
     const updatedItem = {
       value,
       isGranted,
       state: state === 'display' ? 'remove' : 'display',
     };
 
-    setValue(itemKey, updatedItem, { shouldDirty: true });
+    setValue(itemFormKey, updatedItem, { shouldDirty: true });
   };
 
   return (
-    <AddressWrapper key={role.value}>
+    <AddressWrapper>
       <AddressBadge
         weight={400}
         address={role.value}
         crossedText={toRemove}
         bgColor={bgColor}
         symbols={21}
-        onToggle={canToggle && isEditable ? () => onToggle(index) : undefined}
+        onToggle={canToggle && isEditable ? () => onToggle() : undefined}
       />
     </AddressWrapper>
   );
