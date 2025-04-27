@@ -18,7 +18,7 @@ export const SettingsTabs = () => {
     <PageWrapper>
       <ToggleSwitch
         options={settingsToggleList}
-        defaultActive={SETTINGS_PATHS.main}
+        defaultValue={SETTINGS_PATHS.main}
         onToggle={({ value }) => handleToggleCb(value as SettingsPaths)}
       />
       <FormBlock>

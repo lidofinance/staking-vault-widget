@@ -1,5 +1,5 @@
 import { Address, Hash, Hex } from 'viem';
-import { editMainSettingsSchema } from './consts';
+import { addressSchema, editMainSettingsSchema } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
 import { VAULT_ROOT_ROLES } from 'modules/vaults';
@@ -15,6 +15,11 @@ export type MainSettingsContextValue = {
 export type MainSettingsSubmittingInfo = {
   step: SubmittingMainFormStep;
   response?: { tx: Hash; key: keyof TxData }[];
+};
+
+export type GrantOrRevokeRole = {
+  account: Address;
+  role: Hex;
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
@@ -38,7 +43,14 @@ export type MainSettingsOverview = {
 };
 
 export type TxData = {
-  roles?: { account: Address; role: Hex }[];
+  grantRoles?: GrantOrRevokeRole[];
+  revokeRoles?: GrantOrRevokeRole[];
   confirmExpiry?: bigint;
   nodeOperatorFeeBP?: bigint;
+};
+
+export type RoleFieldSchema = z.infer<typeof addressSchema>;
+export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
+export type ManagersNewAddresses = {
+  addresses: Record<ManagersKeys, RoleFieldSchema[]>;
 };

@@ -1,15 +1,56 @@
 import { FC } from 'react';
-import { Address } from 'viem';
 
 import { AddressBadge } from 'shared/components';
 import { AddressWrapper } from './styles';
+import { RoleFieldSchema } from 'features/settings/main/types';
+import { useFormContext } from 'react-hook-form';
+import { VaultInfo } from 'types';
 
 interface RoleAddressProps {
-  address: Address | undefined;
+  vaultKey: keyof VaultInfo;
+  index: number;
+  isEditable: boolean;
+  role: RoleFieldSchema;
+  roles: RoleFieldSchema[];
 }
 
-export const RoleAddress: FC<RoleAddressProps> = ({ address }) => (
-  <AddressWrapper>
-    <AddressBadge weight={400} address={address} symbols={21} />
-  </AddressWrapper>
-);
+export const RoleAddress: FC<RoleAddressProps> = ({
+  vaultKey,
+  index,
+  isEditable,
+  role,
+  roles,
+}) => {
+  const { getValues, setValue } = useFormContext();
+  const itemFormKey = `${vaultKey}.${index}`;
+  if (!('isGranted' in role)) {
+    return null;
+  }
+
+  const toRemove = role.state === 'remove';
+  const bgColor = toRemove ? 'error' : 'default';
+  const isLast = roles.filter((role) => role.state === 'display').length === 1;
+  const canToggle = (roles.length > 1 && !isLast) || toRemove;
+  const onToggle = () => {
+    const { state, ...rest } = getValues(itemFormKey) as RoleFieldSchema;
+    const updatedItem = {
+      ...rest,
+      state: state === 'display' ? 'remove' : 'display',
+    };
+
+    setValue(itemFormKey, updatedItem, { shouldDirty: true });
+  };
+
+  return (
+    <AddressWrapper>
+      <AddressBadge
+        weight={400}
+        address={role.value}
+        crossedText={toRemove}
+        bgColor={bgColor}
+        symbols={21}
+        onToggle={canToggle && isEditable ? () => onToggle() : undefined}
+      />
+    </AddressWrapper>
+  );
+};

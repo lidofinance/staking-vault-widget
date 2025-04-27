@@ -1,11 +1,20 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { ToggleContainer, ToggleOption } from './styles';
 
 export interface ToggleSwitchProps<T = string> {
   options: { value: T; label: string }[];
-  defaultActive: T;
-  onToggle: (payload: ToggleCbPayload<T>) => void;
+  defaultValue: T;
+  value?: T;
+  onToggle?: (payload: ToggleCbPayload<T>) => void;
+  onChange?: (value: T) => void;
+  name?: string;
 }
 
 export type ToggleCbPayload<T> = {
@@ -14,84 +23,114 @@ export type ToggleCbPayload<T> = {
   prevIndex: number;
 };
 
-// TODO: refactor and make ToggleSwitch more flexible and ready for using in forms
-export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
-  options,
-  defaultActive,
-  onToggle,
-}) => {
+export const ToggleSwitch = forwardRef(function ToggleSwitch<T extends string>(
+  {
+    options,
+    defaultValue,
+    value: controlledValue,
+    onToggle,
+    onChange,
+    name,
+  }: ToggleSwitchProps<T>,
+  ref: React.Ref<HTMLUListElement>,
+) {
   const containerRef = useRef<HTMLUListElement>(null);
-  const [activeOption, setActive] = useState<string>(() => defaultActive);
-  const [[prevElementWidth, activeIndexWidth], setWidth] = useState<
-    [number, number]
-  >([0, 0]);
-  const [[positionDiff, prevPositionX], setPosition] = useState<
-    [number, number]
-  >([0, 0]);
-  const [prevActiveIndex, setPrevActiveIndex] = useState<number>(() =>
-    options.findIndex((option) => option.value === defaultActive),
-  );
+  const isControlled = controlledValue !== undefined;
+  const [activeOption, setActive] = useState<T>(defaultValue);
+  const prevActiveRef = useRef<T>(defaultValue);
+
+  const activeValue = isControlled ? controlledValue : activeOption;
+
+  const updateDimensions = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const activeIndex = options.findIndex(
+      (option) => option.value === activeValue,
+    );
+    const prevActiveIndex = options.findIndex(
+      (option) => option.value === prevActiveRef.current,
+    );
+
+    const prevElement = containerRef.current.children[prevActiveIndex];
+    const activeElement = containerRef.current.children[activeIndex];
+
+    if (!prevElement || !activeElement) return;
+
+    const { width: prevWidth, x: prevX } = prevElement.getBoundingClientRect();
+    const { width: activeWidth, x: activeX } =
+      activeElement.getBoundingClientRect();
+    const { x: parentX } = containerRef.current.getBoundingClientRect();
+
+    return {
+      prevElementWidth: prevWidth,
+      activeIndexWidth: activeWidth,
+      positionDiff: activeX - parentX,
+      prevPositionX: prevX - parentX,
+    };
+  }, [activeValue, options]);
+
+  const [dimensions, setDimensions] = useState({
+    prevElementWidth: 0,
+    activeIndexWidth: 0,
+    positionDiff: 0,
+    prevPositionX: 0,
+  });
 
   useEffect(() => {
-    if (!activeOption && activeOption !== defaultActive) {
-      setActive(defaultActive);
+    if (isControlled) {
+      setActive(controlledValue);
     }
-  }, [activeOption, defaultActive]);
+  }, [isControlled, controlledValue]);
 
-  const handleClick = (value: string) => {
-    setPrevActiveIndex(activeIndex);
-    setActive(value);
-    const currentIndex = options.findIndex((option) => option.value === value);
-    onToggle({ value, currentIndex, prevIndex: activeIndex });
-  };
+  useEffect(() => {
+    const newDimensions = updateDimensions();
+    if (newDimensions) setDimensions(newDimensions);
+    prevActiveRef.current = activeValue;
+  }, [activeValue, updateDimensions]);
 
-  const activeIndex = options.findIndex(
-    (option) => option.value === activeOption,
+  const handleClick = useCallback(
+    (value: T) => {
+      if (isControlled && !onChange) return;
+
+      const prevIndex = options.findIndex(
+        (option) => option.value === prevActiveRef.current,
+      );
+      const currentIndex = options.findIndex(
+        (option) => option.value === value,
+      );
+
+      if (!isControlled) {
+        setActive(value);
+      }
+      onChange?.(value);
+      onToggle?.({
+        value,
+        currentIndex,
+        prevIndex,
+      });
+    },
+    [isControlled, onChange, onToggle, options],
   );
 
-  useLayoutEffect(() => {
-    const element = document.getElementById(`to_${activeOption}`);
-    const list = containerRef.current?.children;
-    let prevElement;
-    let activeElement;
-
-    if (element) {
-      prevElement = element.parentElement?.children[prevActiveIndex];
-      activeElement = element;
-    } else if (list) {
-      prevElement = list[prevActiveIndex];
-      activeElement = list[activeIndex];
-    }
-
-    if (prevElement && activeElement && containerRef.current) {
-      const { width: prevWidth, x: prevX } =
-        prevElement.getBoundingClientRect();
-      const { width: activeWidth, x: activeX } =
-        activeElement.getBoundingClientRect();
-      const { x: parentX } = containerRef.current.getBoundingClientRect();
-
-      setWidth([prevWidth, activeWidth]);
-      setPosition([activeX - parentX, prevX - parentX]);
-    }
-  }, [activeOption, activeIndex, prevActiveIndex]);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  useImperativeHandle(ref, () => containerRef.current!);
 
   return (
     <ToggleContainer
       ref={containerRef}
-      role="group"
+      role="radiogroup"
       aria-labelledby="Toggle Switch"
-      prevElementWidth={prevElementWidth}
-      activeIndexWidth={activeIndexWidth}
-      positionDiff={positionDiff}
-      prevPositionX={prevPositionX}
+      prevElementWidth={dimensions.prevElementWidth}
+      activeIndexWidth={dimensions.activeIndexWidth}
+      positionDiff={dimensions.positionDiff}
+      prevPositionX={dimensions.prevPositionX}
+      data-name={name}
     >
       {options.map((option) => {
-        const isActive = activeOption === option.value;
-
+        const isActive = activeValue === option.value;
         return (
           <ToggleOption
             key={option.value}
-            id={`to_${option.value}`}
             role="radio"
             aria-checked={isActive}
             aria-label={option.label}
@@ -104,4 +143,4 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       })}
     </ToggleContainer>
   );
-};
+});

@@ -18,6 +18,7 @@ type VaultContextType = {
   isLoadingVault?: boolean;
   error: Error | null;
   refetch: () => void;
+  isRefetching: boolean;
 };
 
 const VaultContext = createContext<VaultContextType | null>(null);
@@ -46,6 +47,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       isLoadingVault: query.isPending,
       error: query.error,
       refetch: query.refetch,
+      isRefetching: query.isRefetching,
     }),
     [
       sanitizedVaultAddress,
@@ -53,6 +55,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       query.isPending,
       query.error,
       query.refetch,
+      query.isRefetching,
     ],
   );
 

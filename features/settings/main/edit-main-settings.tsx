@@ -2,12 +2,13 @@ import { Text } from '@lidofinance/lido-ui';
 import {
   MainSettingsAction,
   DataField,
+  DataManagerField,
   NodeOperator,
 } from 'features/settings/main/components';
 import { SectionContainer } from 'features/settings/main/styles';
 import { MainSettingsProvider } from 'features/settings/main/contexts';
 
-import { fieldsForRender } from './consts';
+import { indicatorsForRender, adminsForRender } from './consts';
 
 export const EditMainSettings = () => {
   return (
@@ -17,8 +18,11 @@ export const EditMainSettings = () => {
           Main settings
         </Text>
         <NodeOperator />
-        {fieldsForRender.map((field) => (
+        {indicatorsForRender.map((field) => (
           <DataField key={field.vaultKey} {...field} />
+        ))}
+        {adminsForRender.map((field) => (
+          <DataManagerField key={field.vaultKey} {...field} />
         ))}
         <MainSettingsAction />
       </SectionContainer>

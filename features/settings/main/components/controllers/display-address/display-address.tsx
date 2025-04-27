@@ -1,30 +1,37 @@
-import { FC, useMemo } from 'react';
-import { Address } from 'viem';
+import { FC } from 'react';
 
-import { useVaultInfo } from 'features/overview/contexts';
 import { VaultInfo } from 'types';
 import { RoleAddress } from './role-address';
+import { RoleFieldSchema } from '../../../types';
+import { useFormContext } from 'react-hook-form';
 
 interface DisplayAddressProps {
-  name: string;
   vaultKey: keyof VaultInfo;
+  isEditable: boolean;
 }
 
-export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey }) => {
-  const { activeVault } = useVaultInfo();
-  const renderData = useMemo(() => {
-    return activeVault?.[vaultKey] as Address[] | Address | undefined;
-  }, [activeVault, vaultKey]);
+export const DisplayAddress: FC<DisplayAddressProps> = ({
+  isEditable,
+  vaultKey,
+}) => {
+  const { watch } = useFormContext();
+  const roles = watch(vaultKey) as RoleFieldSchema[];
 
-  if (Array.isArray(renderData)) {
-    return (
-      <>
-        {renderData.map((address) => (
-          <RoleAddress key={address} address={address} />
-        ))}
-      </>
-    );
-  }
-
-  return <RoleAddress address={renderData} />;
+  return (
+    <>
+      {!!roles &&
+        roles.map((role, index) => {
+          return (
+            <RoleAddress
+              key={role.value}
+              role={role}
+              roles={roles}
+              index={index}
+              vaultKey={vaultKey}
+              isEditable={isEditable}
+            />
+          );
+        })}
+    </>
+  );
 };

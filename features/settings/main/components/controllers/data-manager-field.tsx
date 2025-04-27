@@ -1,9 +1,12 @@
 import { FC } from 'react';
-import { ReadonlyInput } from './readonly-input';
+import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
 
-import type { MainSettingsOverview } from 'features/settings/main/types';
-import { EditProperty } from './edit-property';
+import {
+  MainSettingsOverview,
+  ManagersKeys,
+} from 'features/settings/main/types';
+import { EditPropertyAddress } from './edit-property-address';
 import { Text } from '@lidofinance/lido-ui';
 import {
   useVaultConfirmingRoles,
@@ -12,12 +15,10 @@ import {
 
 type InputResolverProps = MainSettingsOverview;
 
-export const DataField: FC<InputResolverProps> = ({
-  label,
+export const DataManagerField: FC<InputResolverProps> = ({
   editLabel,
   name,
   title,
-  actionText = 'Initiate a change',
   vaultKey,
   canEditRole,
 }) => {
@@ -33,12 +34,11 @@ export const DataField: FC<InputResolverProps> = ({
       <Text size="xs" strong>
         {title}
       </Text>
-      <ReadonlyInput label={label} vaultKey={vaultKey} />
+      <DisplayAddress isEditable={isEditable} vaultKey={vaultKey} />
       {isEditable && (
-        <EditProperty
+        <EditPropertyAddress
           editLabel={editLabel}
-          name={name}
-          actionText={actionText}
+          name={name as ManagersKeys}
         />
       )}
     </GroupWrapper>

@@ -19,9 +19,8 @@ export const EditProperty: FC<EditPropertyProps> = ({
 }) => {
   const { control, watch } = useFormContext();
   const { append, fields, remove } = useFieldArray({ control, name });
-  const isMultiple = ['defaultAdmin', 'nodeOperatorManager'].includes(name);
   const fieldsInfo = watch(name) as { value: string }[];
-  const showAddButton = !fieldsInfo || fieldsInfo.length === 0 || isMultiple;
+  const showAddButton = !fieldsInfo || fieldsInfo.length === 0;
 
   return (
     <EditWrapper>

@@ -7,6 +7,7 @@ import {
   createContext,
   useContext,
   useRef,
+  useEffect,
 } from 'react';
 import invariant from 'tiny-invariant';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -26,11 +27,17 @@ import {
 import {
   EditMainSettingsSchema,
   MainSettingsContextValue,
+  ManagersKeys,
+  RoleFieldSchema,
 } from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
 import { validateFormWithZod } from 'utils/validate-form-value';
-import { editMainSettingsSchema } from 'features/settings/main/consts';
-import { useVaultInfo } from '../../../overview/contexts';
+import {
+  editMainSettingsSchema,
+  multipleDataFields,
+} from 'features/settings/main/consts';
+import { useVaultInfo } from 'features/overview/contexts';
+import { Address } from 'viem';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(
   null,
@@ -52,9 +59,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     step: SubmitStepEnum.edit,
   }));
   const abortControllerRef = useRef(new AbortController());
-  const { refetch } = useVaultInfo();
-
+  const { activeVault, refetch, isRefetching } = useVaultInfo();
   const { callEditMainSettings } = useEditMainSettings();
+
   const handleCancelSubmit = useCallback(() => {
     abortControllerRef.current.abort();
     setSubmitStep({ step: SubmitStepEnum.edit });
@@ -71,21 +78,42 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const formObject = useForm<EditMainSettingsSchema>({
     defaultValues: {
-      nodeOperatorManager: [],
+      nodeOperatorManagers: [],
       nodeOperatorFeeBP: [],
       confirmExpiry: [],
-      defaultAdmin: [],
+      defaultAdmins: [],
     },
     resolver: validateFormWithZod(editMainSettingsSchema),
     mode: 'all',
   });
 
+  useEffect(() => {
+    if (!isRefetching) {
+      (multipleDataFields as ManagersKeys[]).map((key) => {
+        const managersAddresses = activeVault?.[key];
+        if (managersAddresses && managersAddresses.length > 0) {
+          managersAddresses.forEach((address: Address, index: number) => {
+            const value = {
+              value: address,
+              state: 'display',
+              isGranted: true,
+            } as unknown as RoleFieldSchema;
+            formObject.setValue(`${key}.${index}` as const, value);
+          });
+        }
+      });
+    }
+  }, [formObject, activeVault, isRefetching]);
+
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
+      abortControllerRef.current = new AbortController();
+
       try {
         setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
+        setTimeout(refetch, 1000);
         return true;
       } catch (err) {
         if (
@@ -96,13 +124,12 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
+        setTimeout(refetch, 1000);
         return true;
-      } finally {
-        setTimeout(refetch, 100);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callEditMainSettings, submitStep, refetch],
+    [callEditMainSettings, refetch],
   );
 
   const { reset } = formObject;
