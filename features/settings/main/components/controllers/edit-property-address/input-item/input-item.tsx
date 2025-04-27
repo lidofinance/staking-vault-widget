@@ -52,6 +52,7 @@ export const InputItem: FC<InputItemProps> = ({
   const [decorator, setDecorator] = useState<ReactNode | null>();
   const { control, setValue, getValues } = useFormContext();
   const { remove: removeFromMain } = useFieldArray({ control, name });
+
   const inputKey =
     `addresses.${name}.${index}.value` as `addresses.${ManagersKeys}.${number}.value`;
   const field = register(inputKey);
@@ -60,11 +61,22 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const values: RoleFieldSchema[] = getValues(name);
-      const output = await trigger(inputKey);
+      e.preventDefault();
 
+      const values: RoleFieldSchema[] = getValues(name);
+      const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
+
+      if (isAddress(value)) {
+        const item = getValues(
+          `${name}.${values?.length - 1 ?? 0}`,
+        ) as RoleFieldSchema;
+        if (item && item.value === value) {
+          return;
+        }
+      }
+
+      const output = await trigger(inputKey);
       if (output) {
-        const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
         setValue(
           `${name}.${values?.length ?? 0}`,
           {
@@ -79,10 +91,19 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const value = (e.currentTarget || e.target).value;
+    const values: RoleFieldSchema[] = getValues(name);
+    if (isAddress(value)) {
+      const item = getValues(
+        `${name}.${values?.length - 1 ?? 0}`,
+      ) as RoleFieldSchema;
+      if (item && item.value === value) {
+        return;
+      }
+    }
+
     const output = await trigger(inputKey);
 
     if (isAddress(value) && output) {
-      const values: RoleFieldSchema[] = getValues(name);
       const output = await trigger(inputKey);
       if (output) {
         setValue(
@@ -102,9 +123,10 @@ export const InputItem: FC<InputItemProps> = ({
   const removeFieldItem = async () => {
     const output = await trigger(inputKey);
     const values: RoleFieldSchema[] = getValues(name);
-    const mainFormItemIndex = values.findIndex(
+    const mainFormItemIndex = values.findLastIndex(
       (item) => item.value === fieldValue,
     );
+
     if (mainFormItemIndex > -1 && output) {
       removeFromMain(mainFormItemIndex);
     }
