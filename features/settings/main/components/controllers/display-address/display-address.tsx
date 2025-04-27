@@ -10,9 +10,14 @@ import { RoleAddress } from './role-address';
 interface DisplayAddressProps {
   name: string;
   vaultKey: keyof VaultInfo;
+  isEditable: boolean;
 }
 
-export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey, name }) => {
+export const DisplayAddress: FC<DisplayAddressProps> = ({
+  isEditable,
+  vaultKey,
+  name,
+}) => {
   const { activeVault } = useVaultInfo();
   const { setValue, watch } = useFormContext();
   const roles = watch(name) as RoleFieldSchema[] | undefined;
@@ -43,6 +48,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({ vaultKey, name }) => {
             roles={roles}
             role={role}
             vaultKey={vaultKey}
+            isEditable={isEditable}
           />
         ))}
     </>

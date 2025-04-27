@@ -4,6 +4,7 @@ import { Container } from './styled';
 
 import { useFormContext } from 'react-hook-form';
 import { RoleFieldSchema } from 'features/settings/main/types';
+import { multipleDataFields } from 'features/settings/main/consts';
 
 export const MainSettingsAction: FC = () => {
   const {
@@ -16,10 +17,9 @@ export const MainSettingsAction: FC = () => {
   const formFields = watch();
 
   const handleClearMainForm = () => {
-    const filedsToSave = ['defaultAdmins', 'nodeOperatorManagers'];
     const initialData: RoleFieldSchema[][] = Object.entries(formFields).map(
       ([key, itemsList]) => {
-        if (filedsToSave.includes(key)) {
+        if (multipleDataFields.includes(key)) {
           return itemsList
             .filter((item: RoleFieldSchema) =>
               ['display', 'remove'].includes(item.state),
@@ -42,7 +42,7 @@ export const MainSettingsAction: FC = () => {
   const [buttonText, counter] = useMemo(() => {
     let counter = 0;
     if (!isSubmitDisabled) {
-      ['defaultAdmins', 'nodeOperatorManagers'].forEach((key) => {
+      multipleDataFields.forEach((key) => {
         const fields = formFields[key];
         const [grant, remove] = fields.reduce(
           (acc: [number, number], field: RoleFieldSchema) => {

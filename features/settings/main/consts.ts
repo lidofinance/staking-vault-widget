@@ -102,3 +102,5 @@ export const dashboardFunctionsNamesMap: Record<
   confirmExpiry: 'setConfirmExpiry',
   nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
 };
+
+export const multipleDataFields = ['defaultAdmins', 'nodeOperatorManagers'];

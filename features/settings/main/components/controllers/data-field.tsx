@@ -37,7 +37,13 @@ export const DataField: FC<InputResolverProps> = ({
       <Text size="xs" strong>
         {title}
       </Text>
-      {isTypeAddress && <DisplayAddress name={name} vaultKey={vaultKey} />}
+      {isTypeAddress && (
+        <DisplayAddress
+          isEditable={isEditable}
+          name={name}
+          vaultKey={vaultKey}
+        />
+      )}
       {!isTypeAddress && <ReadonlyInput label={label} vaultKey={vaultKey} />}
       {isEditable && isTypeAddress && (
         <EditPropertyAddress

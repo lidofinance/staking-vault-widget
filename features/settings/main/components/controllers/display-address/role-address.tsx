@@ -11,6 +11,7 @@ interface RoleAddressProps {
   roles: RoleFieldSchema[];
   vaultKey: keyof VaultInfo;
   index: number;
+  isEditable: boolean;
 }
 
 export const RoleAddress: FC<RoleAddressProps> = ({
@@ -18,6 +19,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   vaultKey,
   roles,
   index,
+  isEditable,
 }) => {
   const { getValues, setValue } = useFormContext();
   if (!('isGranted' in role)) {
@@ -49,7 +51,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
         crossedText={toRemove}
         bgColor={bgColor}
         symbols={21}
-        onToggle={canToggle ? () => onToggle(index) : undefined}
+        onToggle={canToggle && isEditable ? () => onToggle(index) : undefined}
       />
     </AddressWrapper>
   );
