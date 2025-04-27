@@ -1,5 +1,6 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { getHealthFactorColor } from 'utils';
 
 const sectionPayloadList: SectionPayload[] = [
   {
@@ -19,15 +20,6 @@ const sectionPayloadList: SectionPayload[] = [
     key: 'rebalanceThreshold',
   },
 ];
-
-const getHealthFactorColor = (healthFactor: string) => {
-  if (!healthFactor) return '';
-  const healthFactorNumber = Number(healthFactor.split('%')[0]);
-  if (healthFactorNumber >= 125) return '#53BA95 ';
-  if (healthFactorNumber >= 105) return '#ffbf00';
-  if (healthFactorNumber >= 100) return '#E14D4D';
-  return 'darkRed';
-};
 
 export const Health = () => {
   const { getVaultDataToRender } = useVaultOverview();
