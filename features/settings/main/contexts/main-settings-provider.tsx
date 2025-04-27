@@ -111,7 +111,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
-        setTimeout(refetch, 500);
+        requestIdleCallback(refetch);
         return true;
       } catch (err) {
         if (
@@ -122,7 +122,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
-        setTimeout(refetch, 1000);
+        requestIdleCallback(refetch);
         return true;
       }
     },
