@@ -1,11 +1,11 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
-import { getHealthFactorColor } from 'utils';
+import { formatPercent, getHealthFactorColor } from 'utils';
 
 const sectionPayloadList: SectionPayload[] = [
   {
-    title: 'Health factor',
-    key: 'healthFactor',
+    title: 'Health factor number',
+    key: 'healthFactorNumber',
   },
   {
     title: 'Total value',
@@ -28,16 +28,19 @@ export const Health = () => {
   return (
     <OverviewSection title="Vault health" titleTooltip="Lorem Ipsum">
       {renderData.map((item) => {
-        const isHealthy = item.key === 'healthFactor';
+        const isHealthy = item.key === 'healthFactorNumber';
         const color = isHealthy
           ? getHealthFactorColor(item.payload)
           : undefined;
+        const value = isHealthy
+          ? formatPercent.format(Number(item.payload) / 100)
+          : item.payload;
 
         return (
           <OverviewItem
             key={item.title}
             title={item.title}
-            content={item.payload}
+            content={value}
             isLoading={item.isLoading}
             color={color}
           />

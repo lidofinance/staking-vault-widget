@@ -26,7 +26,7 @@ export const Capacity = () => {
       {renderData.map((item) => {
         const isUtilizationRatio = item.key === 'utilizationRatio';
         const color = isUtilizationRatio
-          ? getUtilizationRatioColor(item.payload)
+          ? getUtilizationRatioColor(String(item.payload))
           : undefined;
 
         return (
