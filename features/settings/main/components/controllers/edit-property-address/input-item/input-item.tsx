@@ -12,7 +12,7 @@ import {
   FieldErrorsImpl,
   Merge,
   useFormContext,
-  useFieldArray,
+  UseFormGetFieldState,
   UseFormRegister,
   UseFormTrigger,
   UseFormWatch,
@@ -37,6 +37,7 @@ export interface InputItemProps {
   trigger: UseFormTrigger<{ addresses: Record<string, RoleFieldSchema[]> }>;
   watch: UseFormWatch<ManagersNewAddresses>;
   error: Merge<FieldError, FieldErrorsImpl<{ value: string }[]>> | undefined;
+  getFieldState: UseFormGetFieldState<ManagersNewAddresses>;
 }
 
 export const InputItem: FC<InputItemProps> = ({
@@ -48,10 +49,11 @@ export const InputItem: FC<InputItemProps> = ({
   trigger,
   watch,
   error,
+  getFieldState,
 }) => {
   const [decorator, setDecorator] = useState<ReactNode | null>();
-  const { control, setValue, getValues } = useFormContext();
-  const { remove: removeFromMain } = useFieldArray({ control, name });
+  const { setValue, getValues } = useFormContext();
+
   const inputKey =
     `addresses.${name}.${index}.value` as `addresses.${ManagersKeys}.${number}.value`;
   const field = register(inputKey);
@@ -60,11 +62,22 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleKeyDown = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const values: RoleFieldSchema[] = getValues(name);
-      const output = await trigger(inputKey);
+      e.preventDefault();
 
+      const values: RoleFieldSchema[] = getValues(name);
+      const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
+
+      if (isAddress(value)) {
+        const item = getValues(
+          `${name}.${values?.length - 1 ?? 0}`,
+        ) as RoleFieldSchema;
+        if (item && item.value === value) {
+          return;
+        }
+      }
+
+      const output = await trigger(inputKey);
       if (output) {
-        const value = (e.currentTarget || (e.target as HTMLInputElement)).value;
         setValue(
           `${name}.${values?.length ?? 0}`,
           {
@@ -79,34 +92,41 @@ export const InputItem: FC<InputItemProps> = ({
 
   const handleBlur = async (e: FocusEvent<HTMLInputElement>) => {
     const value = (e.currentTarget || e.target).value;
-    const output = await trigger(inputKey);
-
-    if (isAddress(value) && output) {
-      const values: RoleFieldSchema[] = getValues(name);
-      const output = await trigger(inputKey);
-      if (output) {
-        setValue(
-          `${name}.${values?.length ?? 0}`,
-          {
-            value: value,
-            state: 'grant',
-          } as RoleFieldSchema,
-          { shouldDirty: true },
-        );
+    const values: RoleFieldSchema[] = getValues(name);
+    if (isAddress(value)) {
+      const item = getValues(
+        `${name}.${values?.length - 1 ?? 0}`,
+      ) as RoleFieldSchema;
+      if (item && item.value === value) {
+        return;
       }
+    }
+
+    const output = await trigger(inputKey);
+    if (isAddress(value) && output) {
+      setValue(
+        `${name}.${values?.length ?? 0}`,
+        {
+          value: value,
+          state: 'grant',
+        } as RoleFieldSchema,
+        { shouldDirty: true },
+      );
     } else {
       void field.onBlur(e);
     }
   };
 
   const removeFieldItem = async () => {
-    const output = await trigger(inputKey);
+    const { invalid } = getFieldState(inputKey);
     const values: RoleFieldSchema[] = getValues(name);
-    const mainFormItemIndex = values.findIndex(
-      (item) => item.value === fieldValue,
+    const mainFormItemIndex = values.findLastIndex(
+      (item) => !item.isGranted && item.value === fieldValue,
     );
-    if (mainFormItemIndex > -1 && output) {
-      removeFromMain(mainFormItemIndex);
+
+    if (mainFormItemIndex > -1 && !invalid) {
+      const filtered = values.filter((_, index) => index !== mainFormItemIndex);
+      setValue(name, filtered, { shouldDirty: true, shouldTouch: true });
     }
     remove(index);
   };
