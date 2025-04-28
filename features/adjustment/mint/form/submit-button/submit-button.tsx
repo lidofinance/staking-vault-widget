@@ -1,5 +1,8 @@
 import { useVaultInfo, type VAULT_OWNER_ROLES } from 'modules/vaults';
-import { MultiplePermissionedSubmitButton } from 'modules/vaults/components';
+import {
+  MultiplePermissionedSubmitButton,
+  OracleReportButton,
+} from 'modules/vaults/components';
 import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -20,6 +23,7 @@ export const SubmitButton = () => {
     name: ['amount', 'token'],
   });
 
+  // TODO: move this check to upper context
   const roles: VAULT_OWNER_ROLES[] = useMemo(() => {
     if (!activeVault || !amount) return NON_INCREASE_LOCK_ROLES;
     const isSteth = token === 'stETH';
@@ -37,12 +41,14 @@ export const SubmitButton = () => {
   const disabled = isSubmitting && !isValid;
 
   return (
-    <MultiplePermissionedSubmitButton
-      dashboardRoles={roles}
-      type="submit"
-      disabled={disabled}
-    >
-      Mint
-    </MultiplePermissionedSubmitButton>
+    <OracleReportButton>
+      <MultiplePermissionedSubmitButton
+        dashboardRoles={roles}
+        type="submit"
+        disabled={disabled}
+      >
+        Mint
+      </MultiplePermissionedSubmitButton>
+    </OracleReportButton>
   );
 };

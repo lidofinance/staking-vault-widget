@@ -76,12 +76,12 @@ export const useReportStatus = () => {
     query: { ...STRATEGY_EAGER },
   });
 
-  const shouldSkipCheck = !!(time == null || report.data);
+  const shouldSkipCheck = !!(time == null || !report.data);
 
   // optimistically say the report is fresh if we don't have data just yet
   const isReportFresh =
-    shouldSkipCheck &&
-    Number(report.data?.timestamp) + reportFreshnessDelta < time!;
+    shouldSkipCheck ||
+    time - Number(report.data.timestamp) < reportFreshnessDelta;
 
   const isReportAvailable =
     report.data && vaultHubReport.data
@@ -90,12 +90,13 @@ export const useReportStatus = () => {
 
   // when new report is available but old is still fresh
   // we can show suggestive reporting UI
-  const shouldApplyReport =
+  const shouldApplyReport = !!(
     isReportAvailable &&
     time &&
     report.data &&
-    (time - Number(report.data.timestamp)) / reportFreshnessDelta >
-      VAULT_SHOULD_REPORT_THRESHOLD;
+    (time - Number(report.data.timestamp)) / reportFreshnessDelta >=
+      VAULT_SHOULD_REPORT_THRESHOLD
+  );
 
   return {
     ...report,
