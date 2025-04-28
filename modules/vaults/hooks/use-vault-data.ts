@@ -68,11 +68,11 @@ const getVaultData = async ({
     dashboardContract.read.getConfirmExpiry(),
   ]);
 
+  const mintableShares = bigIntMax(totalMintingCapacity - liabilityShares, 0n);
+
   const [liabilityStETH, mintableStETH, stETHLimit] = await Promise.all([
     shares.convertToSteth(liabilityShares),
-    shares.convertToSteth(
-      bigIntMax(totalMintingCapacity - liabilityShares, 0n),
-    ),
+    shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
   ]);
 
@@ -91,6 +91,7 @@ const getVaultData = async ({
     totalValue,
     liabilityStETH,
     mintableStETH,
+    mintableShares,
     stETHLimit,
     apr: null,
     healthScore: healthScore.healthRatio,
