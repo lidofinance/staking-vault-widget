@@ -13,7 +13,7 @@ import { InpageNavigationProvider } from './inpage-navigation';
 import { ModalProvider } from './modal-provider';
 import { ExternalForbiddenRouteProvider } from './external-forbidden-route';
 
-import { VaultProvider } from 'features/overview/contexts';
+import { VaultProvider } from 'modules/vaults';
 
 type ProvidersProps = {
   prefetchedManifest?: unknown;

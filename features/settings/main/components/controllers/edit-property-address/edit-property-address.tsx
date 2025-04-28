@@ -11,7 +11,7 @@ import {
 } from 'features/settings/main/types';
 import { Address } from 'viem';
 import { validateManagers } from 'features/settings/main/consts';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 interface EditPropertyAddressProps {
   name: ManagersKeys;

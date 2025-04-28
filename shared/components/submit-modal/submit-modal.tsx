@@ -21,7 +21,7 @@ import {
   SubmitStep,
 } from 'shared/components/submit-modal/types';
 import { AppPaths } from 'consts/urls';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { Address } from 'viem';
 
 const getIconComponent = (step: SubmitStep) => {

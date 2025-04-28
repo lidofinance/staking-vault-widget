@@ -1,5 +1,5 @@
 import { useAccount, useReadContract } from 'wagmi';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { VAULTS_ALL_ROLES_MAP } from '../consts';
 import { dashboardAbi } from 'abi/dashboard-abi';
 

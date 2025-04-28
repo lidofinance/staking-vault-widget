@@ -36,7 +36,7 @@ import {
   editMainSettingsSchema,
   multipleDataFields,
 } from 'features/settings/main/consts';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { Address } from 'viem';
 
 const MainSettingsContext = createContext<MainSettingsContextValue | null>(

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 import { FormBlock, PageWrapper } from './styles';
 import { Fund } from './fund';

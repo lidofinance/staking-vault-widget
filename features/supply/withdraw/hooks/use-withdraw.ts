@@ -4,7 +4,7 @@ import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
 import {

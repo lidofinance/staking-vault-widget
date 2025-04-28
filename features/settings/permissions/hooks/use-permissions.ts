@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Address } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { PermissionAccounts } from '../types';
 import { EDITABLE_ROLES_LIST, EDITABLE_ROLES_MAP } from '../consts';

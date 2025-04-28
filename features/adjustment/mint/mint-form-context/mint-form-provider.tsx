@@ -11,7 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { useMint } from 'features/adjustment/mint/hooks';
 
 import {

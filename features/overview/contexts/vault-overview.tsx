@@ -12,7 +12,7 @@ import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-ove
 
 import { formatBalance, formatPercent } from 'utils';
 
-import { useVaultInfo } from './vault-provider';
+import { useVaultInfo } from 'modules/vaults/vault-context';
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 export interface VaultOverviewContextType {

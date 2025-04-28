@@ -1,6 +1,6 @@
 import { MutableRefObject, useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { prepareMainTxData } from 'features/settings/main/utils';
 import { EditMainSettingsSchema, TxData } from 'features/settings/main/types';

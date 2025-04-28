@@ -3,7 +3,7 @@ import { Loader } from '@lidofinance/lido-ui';
 import { formatBalance } from 'utils';
 import { useFormContext } from 'react-hook-form';
 import { useRepayFormData } from 'features/adjustment/repay/repay-form-context';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { bigIntMin } from 'utils/bigint-math';
 
 export const Balance = () => {
