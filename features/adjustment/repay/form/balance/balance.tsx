@@ -3,9 +3,12 @@ import { Loader } from '@lidofinance/lido-ui';
 import { formatBalance } from 'utils';
 import { useFormContext } from 'react-hook-form';
 import { useRepayFormData } from 'features/adjustment/repay/repay-form-context';
+import { useVaultInfo } from 'features/overview/contexts';
+import { bigIntMin } from 'utils/bigint-math';
 
 export const Balance = () => {
   const { watch } = useFormContext();
+  const { isLoadingVault, error: vaultError, activeVault } = useVaultInfo();
   const {
     stEthBalance,
     wstEthBalance,
@@ -15,22 +18,33 @@ export const Balance = () => {
     isWstEthError,
   } = useRepayFormData();
   const token = watch('token');
-  const isLoading = isStEthLoading || isWstEthLoading;
-  const isError = isStEthError || isWstEthError;
-  const balance = token === 'stETH' ? stEthBalance : wstEthBalance;
+  const isSteth = token === 'stETH';
+
+  const isError = (isSteth ? isStEthError : isWstEthError) || !!vaultError;
+
+  const isLoading =
+    (isSteth ? isStEthLoading : isWstEthLoading) || isLoadingVault;
+
+  const balance = isSteth ? stEthBalance : wstEthBalance;
+
+  const liability = isSteth
+    ? activeVault?.liabilityStETH
+    : activeVault?.liabilityShares;
+
+  const availableToRepay = bigIntMin(liability ?? 0n, balance ?? 0n);
 
   return (
     <Wrapper>
       <InfoRow>
         <span>Available to repay</span>
         {isLoading && <Loader size="small" />}
-        {!isLoading && !isError && balance !== undefined && (
+        {!isLoading && !isError && (
           <AmountInfo>
-            {formatBalance(balance).trimmed} {token}
+            {formatBalance(availableToRepay).trimmed} {token}
           </AmountInfo>
         )}
         {isError && !isLoading && (
-          <AmountInfo>stEth amount is not available</AmountInfo>
+          <AmountInfo>{token} amount is not available</AmountInfo>
         )}
       </InfoRow>
     </Wrapper>
