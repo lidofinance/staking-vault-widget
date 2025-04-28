@@ -30,6 +30,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
     trigger,
     watch,
     formState: { errors },
+    getFieldState,
   } = useForm<ManagersNewAddresses>({
     defaultValues: {
       addresses: {
@@ -64,6 +65,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
             watch={watch}
             error={errors.addresses?.[name]}
             index={index}
+            getFieldState={getFieldState}
           />
         );
       })}

@@ -12,7 +12,7 @@ import {
   FieldErrorsImpl,
   Merge,
   useFormContext,
-  useFieldArray,
+  UseFormGetFieldState,
   UseFormRegister,
   UseFormTrigger,
   UseFormWatch,
@@ -37,6 +37,7 @@ export interface InputItemProps {
   trigger: UseFormTrigger<{ addresses: Record<string, RoleFieldSchema[]> }>;
   watch: UseFormWatch<ManagersNewAddresses>;
   error: Merge<FieldError, FieldErrorsImpl<{ value: string }[]>> | undefined;
+  getFieldState: UseFormGetFieldState<ManagersNewAddresses>;
 }
 
 export const InputItem: FC<InputItemProps> = ({
@@ -48,10 +49,10 @@ export const InputItem: FC<InputItemProps> = ({
   trigger,
   watch,
   error,
+  getFieldState,
 }) => {
   const [decorator, setDecorator] = useState<ReactNode | null>();
-  const { control, setValue, getValues } = useFormContext();
-  const { remove: removeFromMain } = useFieldArray({ control, name });
+  const { setValue, getValues } = useFormContext();
 
   const inputKey =
     `addresses.${name}.${index}.value` as `addresses.${ManagersKeys}.${number}.value`;
@@ -102,33 +103,30 @@ export const InputItem: FC<InputItemProps> = ({
     }
 
     const output = await trigger(inputKey);
-
     if (isAddress(value) && output) {
-      const output = await trigger(inputKey);
-      if (output) {
-        setValue(
-          `${name}.${values?.length ?? 0}`,
-          {
-            value: value,
-            state: 'grant',
-          } as RoleFieldSchema,
-          { shouldDirty: true },
-        );
-      }
+      setValue(
+        `${name}.${values?.length ?? 0}`,
+        {
+          value: value,
+          state: 'grant',
+        } as RoleFieldSchema,
+        { shouldDirty: true },
+      );
     } else {
       void field.onBlur(e);
     }
   };
 
   const removeFieldItem = async () => {
-    const output = await trigger(inputKey);
+    const { invalid } = getFieldState(inputKey);
     const values: RoleFieldSchema[] = getValues(name);
     const mainFormItemIndex = values.findLastIndex(
-      (item) => item.value === fieldValue,
+      (item) => !item.isGranted && item.value === fieldValue,
     );
 
-    if (mainFormItemIndex > -1 && output) {
-      removeFromMain(mainFormItemIndex);
+    if (mainFormItemIndex > -1 && !invalid) {
+      const filtered = values.filter((_, index) => index !== mainFormItemIndex);
+      setValue(name, filtered, { shouldDirty: true, shouldTouch: true });
     }
     remove(index);
   };
