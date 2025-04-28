@@ -38,7 +38,7 @@ export interface VaultOverviewContextType {
   isLoadingVault?: boolean;
   getVaultDataToRender: (
     payload: SectionPayload[],
-  ) => (SectionPayload & { payload: string | Address })[];
+  ) => (SectionPayload & { payload: string | Address | number })[];
 }
 
 export type VaultOverviewContextKeys = keyof VaultOverviewContextType['values'];
