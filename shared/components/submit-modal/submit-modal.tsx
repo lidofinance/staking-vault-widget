@@ -27,6 +27,7 @@ import { Address } from 'viem';
 const getIconComponent = (step: SubmitStep) => {
   switch (step) {
     case SubmitStepEnum.success:
+    case SubmitStepEnum.overview:
       return <Success fill="var(--lido-color-success)" />;
     case SubmitStepEnum.reject:
       return <Error />;
@@ -42,6 +43,7 @@ const getModalTitle = (step: SubmitStep) => {
     case SubmitStepEnum.simulating:
       return 'Simulation';
     case SubmitStepEnum.success:
+    case SubmitStepEnum.overview:
       return 'Transaction was finished successfully';
     case SubmitStepEnum.reject:
       return 'Wallet tx signature';
@@ -96,7 +98,7 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   const subtitle = getModalSubTitle(step);
 
   const handleNavigateToVault = () => {
-    void router.push(`/${activeVault?.address}/${AppPaths.overview}`);
+    void router.push(`/${activeVault?.address}${AppPaths.overview}`);
   };
 
   const handleCloseModal = () => {
@@ -110,6 +112,12 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   const handlePureCloseModal = () => {
     setModalState({ step: SubmitStepEnum.edit });
   };
+
+  const isShowTxLink =
+    (SubmitStepEnum.success === step ||
+      SubmitStepEnum.submitting === step ||
+      SubmitStepEnum.overview === step) &&
+    tx;
 
   return (
     <Modal
@@ -145,16 +153,14 @@ export const SubmitModal: FC<SubmitModalProps> = ({
           </Button>
         )}
 
-        {(SubmitStepEnum.success === step ||
-          SubmitStepEnum.submitting === step) &&
-          tx && <TxLinkEtherscan txHash={tx} />}
+        {isShowTxLink && <TxLinkEtherscan txHash={tx} />}
 
         {step === SubmitStepEnum.reject && (
-          <ButtonLink onClick={retryFire}>retry</ButtonLink>
+          <ButtonLink onClick={retryFire}>Retry</ButtonLink>
         )}
 
         {step === SubmitStepEnum.error && (
-          <ButtonLink onClick={handleCloseModal}>close</ButtonLink>
+          <ButtonLink onClick={handleCloseModal}>Close</ButtonLink>
         )}
       </Content>
     </Modal>

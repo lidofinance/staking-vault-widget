@@ -1,24 +1,11 @@
-import styled, { DefaultTheme } from 'styled-components';
-import {
-  VAULT_GREEN_HEATH_PERCENT,
-  VAULT_YELLOW_HEATH_PERCENT,
-  VAULT_RED_HEATH_PERCENT,
-} from 'consts/threshold';
-
-const getColorByValue = (theme: DefaultTheme, value: number) => {
-  const percent = value * 100;
-  if (percent >= VAULT_GREEN_HEATH_PERCENT) return theme.colors.success;
-  if (percent >= VAULT_YELLOW_HEATH_PERCENT) return theme.colors.warning;
-  if (percent <= VAULT_RED_HEATH_PERCENT) return theme.colors.error;
-  return theme.colors.text;
-};
+import styled from 'styled-components';
 
 export const Mintable = styled.span`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-export const Percent = styled.span<{ value: number }>`
-  color: ${({ theme, value }) => getColorByValue(theme, value)};
+export const Percent = styled.span<{ color: string }>`
+  color: ${({ color }) => color};
   font-weight: 700;
 `;
 

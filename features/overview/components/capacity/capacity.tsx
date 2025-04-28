@@ -1,5 +1,6 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { getUtilizationRatioColor } from 'utils';
 
 const sectionPayloadList: SectionPayload[] = [
   {
@@ -22,14 +23,22 @@ export const Capacity = () => {
 
   return (
     <OverviewSection title="stETH capacity utilization">
-      {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          isLoading={item.isLoading}
-        />
-      ))}
+      {renderData.map((item) => {
+        const isUtilizationRatio = item.key === 'utilizationRatio';
+        const color = isUtilizationRatio
+          ? getUtilizationRatioColor(item.payload)
+          : undefined;
+
+        return (
+          <OverviewItem
+            key={item.title}
+            title={item.title}
+            content={item.payload}
+            isLoading={item.isLoading}
+            color={color}
+          />
+        );
+      })}
     </OverviewSection>
   );
 };

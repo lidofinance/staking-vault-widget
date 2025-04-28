@@ -84,6 +84,7 @@ export const PillContainer = styled.div<PillProps>`
   background-color: ${getBgColor};
   white-space: nowrap;
   text-wrap: nowrap;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `;
 
 export const AddressText = styled(Address)<InjectedProps>`

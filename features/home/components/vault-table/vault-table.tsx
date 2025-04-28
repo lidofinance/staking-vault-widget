@@ -10,6 +10,7 @@ import {
   HeaderCell,
 } from 'features/home/components/vault-table/cells';
 import { VaultTableInfo } from 'modules/vaults';
+import { getHealthFactorColor } from 'utils';
 
 import {
   TableTitle,
@@ -77,6 +78,8 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
           </TableHead>
           <Tbody>
             {vaults?.map((vault) => {
+              const healthColor = getHealthFactorColor(vault.healthScore);
+
               return (
                 <TableRow key={vault.address}>
                   <TableCell>
@@ -89,7 +92,10 @@ export const VaultTable: FC<VaultTableProps> = (props) => {
                     <MintCell value={vault.liabilityStETH} />
                   </TableCell>
                   <TableCell>
-                    <PercentCell value={vault.healthScore} />
+                    <PercentCell
+                      value={vault.healthScore}
+                      color={healthColor}
+                    />
                   </TableCell>
                 </TableRow>
               );
