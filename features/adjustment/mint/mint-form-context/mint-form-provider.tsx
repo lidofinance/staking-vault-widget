@@ -65,8 +65,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const mintData = useMemo(() => {
     const mintableStETH = activeVault?.mintableStETH ?? 0n;
-    const mintableWstETH =
-      (activeVault?.shareLimit ?? 0n) - (activeVault?.liabilityShares ?? 0n);
+    const mintableWstETH = activeVault?.mintableShares ?? 0n;
 
     return { mintableStETH, mintableWstETH };
   }, [activeVault]);

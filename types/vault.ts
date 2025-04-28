@@ -11,6 +11,7 @@ export interface VaultInfo extends VaultSocket {
   totalValue: bigint;
   liabilityStETH: bigint;
   mintableStETH: bigint;
+  mintableShares: bigint;
   stETHLimit: bigint;
   apr: null;
   healthScore: number;
