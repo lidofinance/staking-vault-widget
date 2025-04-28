@@ -1,6 +1,7 @@
 import { Button } from '@lidofinance/lido-ui';
 import {
   DashboardRoles,
+  useVaultPermission,
   useVaultPermissions,
 } from '../hooks/use-vault-permissions';
 
@@ -19,7 +20,7 @@ export const PermissionedSubmitButton = forwardRef<
 >((props, ref) => {
   const { children, dashboardRole, disabled, ...rest } = props;
   const { isAccountActive } = useDappStatus();
-  const { hasPermission, isLoading } = useVaultPermissions(dashboardRole);
+  const { hasPermission, isLoading } = useVaultPermission(dashboardRole);
 
   const shouldDisable =
     disabled || !isAccountActive || isLoading || !hasPermission;
@@ -31,6 +32,33 @@ export const PermissionedSubmitButton = forwardRef<
     <Button disabled={shouldDisable} ref={ref} {...rest}>
       {shouldShowPermissionError
         ? `You don't have ${capitilize(dashboardRole)} role`
+        : children}
+    </Button>
+  );
+});
+
+type MultiplePermissionedSubmitProps = {
+  dashboardRoles: DashboardRoles[];
+} & ComponentProps<typeof Button>;
+
+export const MultiplePermissionedSubmitButton = forwardRef<
+  HTMLButtonElement,
+  MultiplePermissionedSubmitProps
+>((props, ref) => {
+  const { children, dashboardRoles, disabled, ...rest } = props;
+  const { isAccountActive } = useDappStatus();
+  const { data, isLoading } = useVaultPermissions(dashboardRoles);
+
+  const shouldDisable =
+    disabled || !isAccountActive || isLoading || !data?.hasPermissions;
+
+  const shouldShowPermissionError =
+    !isLoading && !data?.hasPermissions && isAccountActive;
+
+  return (
+    <Button disabled={shouldDisable} ref={ref} {...rest}>
+      {shouldShowPermissionError
+        ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
         : children}
     </Button>
   );

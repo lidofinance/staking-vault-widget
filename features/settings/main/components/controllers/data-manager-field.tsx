@@ -10,7 +10,7 @@ import { EditPropertyAddress } from './edit-property-address';
 import { Text } from '@lidofinance/lido-ui';
 import {
   useVaultConfirmingRoles,
-  useVaultPermissions,
+  useVaultPermission,
 } from 'modules/vaults/hooks/use-vault-permissions';
 
 type InputResolverProps = MainSettingsOverview;
@@ -24,7 +24,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
 }) => {
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermissions(
+  const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 

@@ -16,7 +16,7 @@ import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 
 export const useClaim = (onMutate = () => {}) => {
@@ -71,7 +71,7 @@ export const useClaim = (onMutate = () => {}) => {
 
 export const useEstimateClaim = (recipient?: Address) => {
   const { address } = useAccount();
-  const { hasPermission } = useVaultPermissions('nodeOperatorFeeClaimer');
+  const { hasPermission } = useVaultPermission('nodeOperatorFeeClaimer');
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const enabled = !!(

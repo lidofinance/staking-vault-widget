@@ -31,6 +31,7 @@ import { Address } from 'viem';
 type MintDataContextValue = {
   mintableStETH: bigint;
   mintableWstETH: bigint;
+  lockedEther: bigint;
 };
 
 const MintDataContext = createContext<MintDataContextValue | null>(null);
@@ -66,8 +67,13 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const mintData = useMemo(() => {
     const mintableStETH = activeVault?.mintableStETH ?? 0n;
     const mintableWstETH = activeVault?.mintableShares ?? 0n;
+    const lockedEther = activeVault?.locked ?? 0n;
 
-    return { mintableStETH, mintableWstETH };
+    return {
+      mintableStETH,
+      mintableWstETH,
+      lockedEther,
+    };
   }, [activeVault]);
 
   const { retryEvent, retryFire } = useFormControllerRetry();

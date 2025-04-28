@@ -10,7 +10,7 @@ import { Address, encodeFunctionData } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import {
   SubmitPayload,
   SubmitStepEnum,
@@ -74,7 +74,7 @@ export const useEstimateGasFund = ({
   amount,
 }: SimulationFundProps) => {
   const { address: accountAddress } = useAccount();
-  const { hasPermission } = useVaultPermissions('supplier');
+  const { hasPermission } = useVaultPermission('supplier');
 
   return useEstimateGas({
     to: address as Address,

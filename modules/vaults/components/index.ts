@@ -1,1 +1,4 @@
-export { PermissionedSubmitButton } from './permissioned-submit-button';
+export {
+  PermissionedSubmitButton,
+  MultiplePermissionedSubmitButton,
+} from './permissioned-submit-button';
