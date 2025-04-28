@@ -40,6 +40,8 @@ const getIconComponent = (step: SubmitStep) => {
 
 const getModalTitle = (step: SubmitStep) => {
   switch (step) {
+    case SubmitStepEnum.simulating:
+      return 'Simulation';
     case SubmitStepEnum.success:
     case SubmitStepEnum.overview:
       return 'Transaction was finished successfully';
@@ -54,6 +56,8 @@ const getModalTitle = (step: SubmitStep) => {
 
 const getModalSubTitle = (step: SubmitStep) => {
   switch (step) {
+    case SubmitStepEnum.simulating:
+      return 'Awaiting simulating transaction(s)';
     case SubmitStepEnum.confirming:
       return 'Awaiting wallet signature';
     case SubmitStepEnum.submitting:

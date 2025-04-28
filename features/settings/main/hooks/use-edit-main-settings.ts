@@ -85,3 +85,48 @@ export const useEditMainSettings = () => {
     callEditMainSettings,
   };
 };
+
+export const useSimulateEditMainSettings = () => {
+  const {
+    core: { rpcProvider: publicClient },
+  } = useLidoSDK();
+  const { address } = useDappStatus();
+  const { activeVault } = useVaultInfo();
+
+  const simulateEditMainSettings = useCallback(
+    async (payload: EditMainSettingsSchema) => {
+      const txData = prepareMainTxData(payload);
+      const contractAddress = activeVault?.owner;
+      invariant(
+        contractAddress,
+        '[useSimulateEditMainSettings] contractAddress is not defined',
+      );
+      invariant(
+        publicClient,
+        '[useSimulateEditMainSettings] publicClient is not defined',
+      );
+      invariant(
+        address,
+        '[useSimulateEditMainSettings] address is not defined',
+      );
+
+      const keys = Object.keys(txData) as (keyof TxData)[];
+      for (const key of keys) {
+        const functionName = dashboardFunctionsNamesMap[key];
+        await publicClient.simulateContract({
+          address: contractAddress,
+          abi: dashboardAbi,
+          functionName,
+          // @ts-expect-error types
+          args: [txData[key]],
+          account: address,
+        });
+      }
+    },
+    [activeVault?.owner, address, publicClient],
+  );
+
+  return {
+    simulateEditMainSettings,
+  };
+};

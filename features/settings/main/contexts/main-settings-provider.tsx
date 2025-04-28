@@ -30,7 +30,10 @@ import {
   ManagersKeys,
   RoleFieldSchema,
 } from 'features/settings/main/types';
-import { useEditMainSettings } from 'features/settings/main/hooks';
+import {
+  useEditMainSettings,
+  useSimulateEditMainSettings,
+} from 'features/settings/main/hooks';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import {
   editMainSettingsSchema,
@@ -61,6 +64,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const abortControllerRef = useRef(new AbortController());
   const { activeVault, refetch, isRefetching } = useVaultInfo();
   const { callEditMainSettings } = useEditMainSettings();
+  const { simulateEditMainSettings } = useSimulateEditMainSettings();
 
   const handleCancelSubmit = useCallback(() => {
     abortControllerRef.current.abort();
@@ -108,9 +112,16 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       abortControllerRef.current = new AbortController();
+      setModalState({ step: SubmitStepEnum.initiate });
+      try {
+        setModalState({ step: SubmitStepEnum.simulating });
+        await simulateEditMainSettings(data);
+      } catch (err) {
+        setModalState({ step: SubmitStepEnum.error });
+        return false;
+      }
 
       try {
-        setModalState({ step: SubmitStepEnum.initiate });
         await callEditMainSettings(data, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
         setTimeout(refetch, 1000);
@@ -124,6 +135,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         } else {
           setModalState({ step: SubmitStepEnum.error });
         }
+
         setTimeout(refetch, 1000);
         return true;
       }
