@@ -10,8 +10,6 @@ export const getHealthFactorColor = (healthFactor: string | number) => {
   if (!healthFactor) return '';
   let healthFactorNumber = 0;
 
-  // TODO: remove this once the health factor is fixed
-  if (healthFactor === '∞%') return '#53BA95';
   if (typeof healthFactor === 'string')
     healthFactorNumber = Number(healthFactor.split('%')[0]);
   else healthFactorNumber = healthFactor;
