@@ -4,7 +4,7 @@ import { Input } from '@lidofinance/lido-ui';
 import { GeneralInputWrapper } from './styles';
 
 import { VaultInfo } from 'types';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 export interface GeneralInputProps {
   label: string;

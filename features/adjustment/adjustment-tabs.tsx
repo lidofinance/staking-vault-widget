@@ -1,5 +1,5 @@
 import { useAdjustment } from 'features/adjustment/contexts/adjustment-provider';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 import { Switch } from 'shared/components/switch';
 import { ManifestConfigPageEnum } from 'config/external-config';

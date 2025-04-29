@@ -5,7 +5,7 @@ import { useEstimateGasBurn } from '../../hooks';
 import { AllowanceDataTableRow } from 'shared/components/allowance-data-table-row';
 import { useAllowance } from 'modules/web3';
 import { useTokenAddress } from 'shared/hooks/use-token-address';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 export const FeatureTxInfo = () => {
   const { watch } = useFormContext();

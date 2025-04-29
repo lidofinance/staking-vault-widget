@@ -27,7 +27,7 @@ import {
   useEditPermissionsWithDashboard,
   simulateEditPermissionsWithDashboard,
 } from 'features/settings/permissions/hooks';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
 import { usePermissionsData } from './permissions-data-provider';
 import { SubmitModal } from 'shared/components';

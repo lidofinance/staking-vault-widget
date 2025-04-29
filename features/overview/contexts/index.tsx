@@ -1,4 +1,3 @@
-export { VaultProvider, useVaultInfo } from './vault-provider';
 export {
   VaultOverviewProvider,
   useVaultOverview,

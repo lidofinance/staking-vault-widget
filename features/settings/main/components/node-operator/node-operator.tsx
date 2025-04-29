@@ -12,7 +12,7 @@ import {
 import { ActionGroup, ActionWrapper, Content, Wrapper } from './styles';
 
 import { truncateAddress } from 'utils/truncate-address';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 export const NodeOperator: FC = () => {
   const { activeVault } = useVaultInfo();

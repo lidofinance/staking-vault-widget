@@ -2,7 +2,7 @@ import type { VaultHubAbi } from 'abi/vault-hub';
 import type { VaultFactoryAbi } from 'abi/vault-factory';
 import { Address, ReadContractReturnType, WriteContractParameters } from 'viem';
 
-export interface VaultInfo extends VaultSocket {
+export type VaultInfo = VaultSocket & {
   address: Address;
   owner: Address;
   nodeOperator: Address;
@@ -18,12 +18,13 @@ export interface VaultInfo extends VaultSocket {
   totalMintingCapacity: bigint;
   inOutDelta: bigint;
   locked: bigint;
+  lockedShares: bigint;
   nodeOperatorUnclaimedFee: bigint;
   withdrawableEther: bigint;
   balance: bigint;
   nodeOperatorFeeBP: bigint;
   confirmExpiry: bigint;
-}
+};
 
 export type VaultSocket = ReadContractReturnType<
   typeof VaultHubAbi,

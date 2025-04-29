@@ -10,13 +10,13 @@ import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 
 export const useClaim = (onMutate = () => {}) => {
@@ -71,7 +71,7 @@ export const useClaim = (onMutate = () => {}) => {
 
 export const useEstimateClaim = (recipient?: Address) => {
   const { address } = useAccount();
-  const { hasPermission } = useVaultPermissions('nodeOperatorFeeClaimer');
+  const { hasPermission } = useVaultPermission('nodeOperatorFeeClaimer');
   const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const enabled = !!(

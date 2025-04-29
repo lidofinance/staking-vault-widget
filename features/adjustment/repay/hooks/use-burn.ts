@@ -11,13 +11,13 @@ import { encodeFunctionData, maxUint256 } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { useLidoSDK } from 'modules/web3';
 
 type BurnArgs = {
@@ -109,7 +109,7 @@ export const useEstimateGasBurn = ({
   amount,
   allowance,
 }: EstimateGasBurnProps) => {
-  const { hasPermission } = useVaultPermissions('repayer');
+  const { hasPermission } = useVaultPermission('repayer');
   const { address } = useAccount();
   const payload = [amount ?? 1n] as const;
   const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';

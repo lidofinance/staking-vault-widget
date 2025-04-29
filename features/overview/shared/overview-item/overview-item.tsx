@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { Text, Button } from '@lidofinance/lido-ui';
 import { ItemWrapper, Title } from './styles';
 import { useRouter } from 'next/router';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 import { OverviewItemValue } from './overview-item-value';
 
