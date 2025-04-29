@@ -24,6 +24,7 @@ export interface VaultOverviewContextType {
     utilizationRatio: string;
     rebalanceThreshold: string;
     healthFactor: string;
+    healthFactorNumber: number;
     totalLocked: string;
     liabilityStETH: string;
     totalMintingCapacity: string;
@@ -37,7 +38,7 @@ export interface VaultOverviewContextType {
   isLoadingVault?: boolean;
   getVaultDataToRender: (
     payload: SectionPayload[],
-  ) => (SectionPayload & { payload: string | Address })[];
+  ) => (SectionPayload & { payload: string | Address | number })[];
 }
 
 export type VaultOverviewContextKeys = keyof VaultOverviewContextType['values'];
@@ -98,6 +99,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore / 100);
+      const healthFactorNumber = healthScore;
       const utilizationRatio = formatPercent.format(
         overview.utilizationRatio / 100,
       );
@@ -120,6 +122,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         utilizationRatio,
         rebalanceThreshold,
         healthFactor,
+        healthFactorNumber,
         totalLocked,
         liabilityStETH,
         totalMintingCapacity,
