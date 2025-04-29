@@ -82,7 +82,7 @@ const extractProofFromIPFS = async (cid: string, vault: Address) => {
     inOutDelta: vaultEntry.value[2],
     fee: vaultEntry.value[3],
     liabilityShares: vaultEntry.value[4],
-    proof: merkleTree.getProof(vaultIndex),
+    proof: merkleTree.getProof(vaultIndex) as Hex[],
   };
 };
 
