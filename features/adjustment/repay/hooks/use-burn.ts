@@ -55,16 +55,21 @@ export const useBurn = (onMutate = () => {}) => {
         to: activeVault.owner,
       });
       const needsAllowance = allowance < amount;
-
-      setModalState({ step: SubmitStepEnum.confirming });
-
       if (needsAllowance) {
+        setModalState({ step: SubmitStepEnum.confirming });
+
         const receipt = await tokenContract.approve({
           amount: maxUint256,
           to: activeVault.owner,
+          callback: async (props) => {
+            if (props.stage === 'receipt') {
+              setModalState({
+                step: SubmitStepEnum.submitting,
+                tx: receipt.hash,
+              });
+            }
+          },
         });
-
-        setModalState({ step: SubmitStepEnum.submitting, tx: receipt.hash });
 
         await publicClient.waitForTransactionReceipt({
           hash: receipt.hash,
@@ -72,7 +77,6 @@ export const useBurn = (onMutate = () => {}) => {
       }
 
       setModalState({ step: SubmitStepEnum.confirming });
-
       const tx = await writeContractAsync({
         abi: dashboardAbi,
         address: activeVault.owner,
