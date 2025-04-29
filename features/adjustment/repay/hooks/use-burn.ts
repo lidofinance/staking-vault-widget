@@ -58,22 +58,19 @@ export const useBurn = (onMutate = () => {}) => {
       if (needsAllowance) {
         setModalState({ step: SubmitStepEnum.confirming });
 
-        const receipt = await tokenContract.approve({
+        const result = await tokenContract.approve({
           amount: maxUint256,
           to: activeVault.owner,
           callback: async (props) => {
             if (props.stage === 'receipt') {
-              setModalState({
-                step: SubmitStepEnum.submitting,
-                tx: receipt.hash,
-              });
+              setModalState({ step: SubmitStepEnum.submitting });
             }
           },
         });
 
-        await publicClient.waitForTransactionReceipt({
-          hash: receipt.hash,
-        });
+        if (result.receipt?.status === 'reverted') {
+          throw new Error('Transaction was reverted');
+        }
       }
 
       setModalState({ step: SubmitStepEnum.confirming });
