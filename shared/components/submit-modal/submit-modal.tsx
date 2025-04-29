@@ -56,6 +56,8 @@ const getModalTitle = (step: SubmitStep) => {
 
 const getModalSubTitle = (step: SubmitStep) => {
   switch (step) {
+    case SubmitStepEnum.collecting:
+      return 'Fetching data for transaction';
     case SubmitStepEnum.simulating:
       return 'Awaiting simulating transaction(s)';
     case SubmitStepEnum.confirming:

@@ -3,6 +3,7 @@ import { Address } from 'viem';
 export enum SubmitStepEnum {
   edit = 'edit',
   initiate = 'initiate',
+  collecting = 'collecting',
   simulating = 'simulating',
   confirming = 'confirming',
   reject = 'reject',

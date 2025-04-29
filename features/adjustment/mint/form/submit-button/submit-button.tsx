@@ -1,8 +1,6 @@
+import { OracleReportButton } from 'features/report';
 import { useVaultInfo, type VAULT_OWNER_ROLES } from 'modules/vaults';
-import {
-  MultiplePermissionedSubmitButton,
-  OracleReportButton,
-} from 'modules/vaults/components';
+import { MultiplePermissionedSubmitButton } from 'modules/vaults/components';
 import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 

@@ -53,7 +53,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
     disabled || !isAccountActive || isLoading || !data?.hasPermissions;
 
   const shouldShowPermissionError =
-    !isLoading && !data?.hasPermissions && isAccountActive;
+    !isLoading && data && !data.hasPermissions && isAccountActive;
 
   return (
     <Button disabled={shouldDisable} ref={ref} {...rest}>
