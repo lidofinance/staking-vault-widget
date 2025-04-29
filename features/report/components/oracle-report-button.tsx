@@ -15,6 +15,7 @@ import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-for
 
 export type OracleReportButtonProps = React.PropsWithChildren<{
   ensureFreshReport?: boolean;
+  action?: string;
 }>;
 
 export type ModalState = {
@@ -24,6 +25,7 @@ export type ModalState = {
 
 export const OracleReportButton = ({
   ensureFreshReport = true,
+  action,
   children,
 }: OracleReportButtonProps) => {
   const [submitStep, setSubmitStep] = useState<ModalState>(() => ({
@@ -58,7 +60,7 @@ export const OracleReportButton = ({
             mutate();
           }}
         >
-          Apply Oracle Report
+          Apply Oracle Report {action ? `to unlock ${action}` : ''}
         </Button>
       ) : (
         children

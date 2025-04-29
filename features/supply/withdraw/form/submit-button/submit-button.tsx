@@ -10,7 +10,7 @@ export const SubmitButton = () => {
   const disabled = isSubmitting || !isValid || !isDirty;
 
   return (
-    <OracleReportButton>
+    <OracleReportButton action="withdrawal">
       <PermissionedSubmitButton
         type="submit"
         dashboardRole="withdrawer"

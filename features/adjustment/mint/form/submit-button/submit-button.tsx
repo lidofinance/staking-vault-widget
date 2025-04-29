@@ -39,7 +39,7 @@ export const SubmitButton = () => {
   const disabled = isSubmitting && !isValid;
 
   return (
-    <OracleReportButton>
+    <OracleReportButton action="minting">
       <MultiplePermissionedSubmitButton
         dashboardRoles={roles}
         type="submit"
