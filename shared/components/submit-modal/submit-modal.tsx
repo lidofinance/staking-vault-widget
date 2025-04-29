@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { useFormContext } from 'react-hook-form';
 
 import {
   Loader,
@@ -88,9 +87,6 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   onClose,
 }) => {
   const router = useRouter();
-  const {
-    formState: { isSubmitting, isSubmitted },
-  } = useFormContext();
   const { retryFire } = useFormControllerContext();
   const { step, tx } = submitStep ?? {};
   const { activeVault } = useVaultInfo();
@@ -124,7 +120,7 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   return (
     <Modal
       center
-      open={(isSubmitting || isSubmitted) && step !== SubmitStepEnum.edit}
+      open={step !== SubmitStepEnum.edit}
       onClose={handleCloseModal}
       title={title}
       subtitle={subtitle}

@@ -26,6 +26,8 @@ import type { Address, TransactionReceipt } from 'viem';
 import { fetchReportMerkle } from './ipfs';
 import { ModalState } from './components';
 
+const UI_UPDATE_INTERVAL = 5000; // 5 second
+
 const toBlockchainTime = () => Math.floor(Date.now() / 1000);
 
 // query to fetch constant  onchain with optimistic data
@@ -62,7 +64,7 @@ export const useReportStatus = () => {
     setTime(toBlockchainTime);
     const interval = setInterval(() => {
       setTime(toBlockchainTime);
-    }, 1000);
+    }, UI_UPDATE_INTERVAL);
     return () => {
       clearInterval(interval);
     };
@@ -73,7 +75,7 @@ export const useReportStatus = () => {
 
   const reportFreshnessDelta = useReportFreshnessDelta();
 
-  const report = useReadContract({
+  const vaultReport = useReadContract({
     address: activeVault?.address as Address,
     abi: StakingVaultAbi,
     functionName: 'latestReport',
@@ -87,16 +89,16 @@ export const useReportStatus = () => {
     query: { ...STRATEGY_EAGER },
   });
 
-  const shouldSkipCheck = !!(time == null || !report.data);
+  const shouldSkipCheck = !!(time == null || !vaultReport.data);
 
   // optimistically say the report is fresh if we don't have data just yet
   const isReportFresh =
     shouldSkipCheck ||
-    time - Number(report.data.timestamp) < reportFreshnessDelta;
+    time - Number(vaultReport.data.timestamp) < reportFreshnessDelta;
 
   const isReportAvailable =
-    report.data && vaultHubReport.data
-      ? report.data.timestamp < vaultHubReport.data[0]
+    vaultReport.data && vaultHubReport.data
+      ? vaultReport.data.timestamp < vaultHubReport.data[0]
       : false;
 
   // when new report is available but old is still fresh
@@ -104,14 +106,14 @@ export const useReportStatus = () => {
   const shouldApplyReport = !!(
     isReportAvailable &&
     time &&
-    report.data &&
-    (time - Number(report.data.timestamp)) / reportFreshnessDelta >=
+    vaultReport.data &&
+    (time - Number(vaultReport.data.timestamp)) / reportFreshnessDelta >=
       VAULT_SHOULD_REPORT_THRESHOLD
   );
 
   return {
-    ...report,
-    isLoading: report.isLoading || shouldSkipCheck,
+    ...vaultReport,
+    isLoading: vaultReport.isLoading || shouldSkipCheck,
     isReportFresh,
     isReportAvailable,
     shouldApplyReport,
@@ -148,7 +150,7 @@ export const useSendReport = ({ setModalState }: UseSendReportOptions) => {
         vaultAddress,
       );
 
-      setModalState({ step: 'initiate' });
+      setModalState({ step: 'confirming' });
 
       const tx = await hub.write.updateVaultData([
         vaultAddress,
@@ -159,7 +161,7 @@ export const useSendReport = ({ setModalState }: UseSendReportOptions) => {
         report.proof,
       ]);
 
-      setModalState({ step: 'confirming', tx });
+      setModalState({ step: 'submitting', tx });
 
       const receipt = await publicClient.waitForTransactionReceipt({
         hash: tx,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@lidofinance/lido-ui';
 
 import { SubmitModal } from 'shared/components';
@@ -7,6 +7,11 @@ import { SubmitStep, SubmitStepEnum } from 'shared/components/submit-modal';
 import { useSendReport, useReportStatus } from '../use-report';
 
 import type { Address } from 'viem';
+import {
+  FormControllerContext,
+  FormControllerContextValueType,
+} from 'shared/hook-form/form-controller';
+import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 
 export type OracleReportButtonProps = React.PropsWithChildren<{
   ensureFreshReport?: boolean;
@@ -24,12 +29,29 @@ export const OracleReportButton = ({
   const [submitStep, setSubmitStep] = useState<ModalState>(() => ({
     step: SubmitStepEnum.edit,
   }));
-  const { shouldApplyReport } = useReportStatus();
+  const { isReportAvailable } = useReportStatus();
+  const { retryEvent, retryFire } = useFormControllerRetry();
+
   const { mutate, isPending } = useSendReport({ setModalState: setSubmitStep });
 
+  useEffect(() => {
+    return retryEvent.subscribe(mutate);
+  }, [retryEvent, mutate]);
+
+  const formControllerValue: FormControllerContextValueType = useMemo(
+    () => ({
+      onSubmit: () => {
+        return Promise.resolve(true);
+      },
+      retryEvent,
+      retryFire,
+      onReset: () => {},
+    }),
+    [retryFire, retryEvent],
+  );
   return (
     <>
-      {shouldApplyReport && ensureFreshReport ? (
+      {isReportAvailable && ensureFreshReport ? (
         <Button
           loading={isPending}
           onClick={() => {
@@ -41,7 +63,9 @@ export const OracleReportButton = ({
       ) : (
         children
       )}
-      <SubmitModal setModalState={setSubmitStep} submitStep={submitStep} />
+      <FormControllerContext.Provider value={formControllerValue}>
+        <SubmitModal setModalState={setSubmitStep} submitStep={submitStep} />
+      </FormControllerContext.Provider>
     </>
   );
 };
