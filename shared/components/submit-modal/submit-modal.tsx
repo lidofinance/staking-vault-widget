@@ -153,11 +153,11 @@ export const SubmitModal: FC<SubmitModalProps> = ({
 
         {isShowTxLink && <TxLinkEtherscan txHash={tx} />}
 
-        {step === SubmitStepEnum.reject && (
+        {step === SubmitStepEnum.error && (
           <ButtonLink onClick={retryFire}>Retry</ButtonLink>
         )}
 
-        {step === SubmitStepEnum.error && (
+        {step === SubmitStepEnum.reject && (
           <ButtonLink onClick={handleCloseModal}>Close</ButtonLink>
         )}
       </Content>

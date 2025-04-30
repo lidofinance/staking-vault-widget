@@ -12,6 +12,7 @@ import {
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import { useDappStatus } from 'modules/web3';
 
 export type OracleReportButtonProps = React.PropsWithChildren<{
   ensureFreshReport?: boolean;
@@ -28,6 +29,7 @@ export const OracleReportButton = ({
   action,
   children,
 }: OracleReportButtonProps) => {
+  const { isAccountActive } = useDappStatus();
   const [submitStep, setSubmitStep] = useState<ModalState>(() => ({
     step: SubmitStepEnum.edit,
   }));
@@ -53,7 +55,7 @@ export const OracleReportButton = ({
   );
   return (
     <>
-      {isReportAvailable && ensureFreshReport ? (
+      {isReportAvailable && isAccountActive && ensureFreshReport ? (
         <Button
           loading={isPending}
           onClick={() => {
