@@ -1,7 +1,6 @@
 import type { Address } from 'viem';
 
-// For future overrides of APIs in devnets
-export const API_NAMES = {};
+const API_LIST = ['vaultApi'] as const;
 
 const CONTRACT_LIST = [
   'lido',
@@ -24,11 +23,16 @@ export const CONTRACTS = Object.fromEntries(
   CONTRACT_LIST.map((contract) => [contract, contract]),
 ) as { [key in (typeof CONTRACT_LIST)[number]]: key };
 
+export const APIS = Object.fromEntries(API_LIST.map((api) => [api, api])) as {
+  [key in (typeof API_LIST)[number]]: key;
+};
+
 export type CONTRACT_NAMES = (typeof CONTRACT_LIST)[number];
+export type API_NAMES = (typeof API_LIST)[number];
 
 export type NetworkConfig = {
   api: {
-    [K in keyof typeof API_NAMES]?: string;
+    [K in keyof typeof APIS]?: string;
   };
   contracts: {
     [K in keyof typeof CONTRACTS]?: Address;

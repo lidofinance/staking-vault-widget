@@ -1,7 +1,7 @@
 import { Wrapper } from './styles';
 
 import { AddressBadge } from 'shared/components/address-badge';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 export const SelectedVault = () => {
   const { activeVault } = useVaultInfo();

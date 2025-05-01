@@ -18,7 +18,7 @@ import {
   NO_MANAGER_PERMISSION_LIST,
   VAULT_ROOT_ROLES,
 } from 'modules/vaults';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
@@ -40,7 +40,7 @@ const renderPermissionsList: PermissionSectionEntry[] = [
 ];
 
 const PermissionsSection = (props: PermissionSectionEntry) => {
-  const { hasPermission } = useVaultPermissions(props.canEditRole);
+  const { hasPermission } = useVaultPermission(props.canEditRole);
 
   return (
     <PermissionContainer>

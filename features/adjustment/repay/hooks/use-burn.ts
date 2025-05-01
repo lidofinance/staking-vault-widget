@@ -11,13 +11,13 @@ import { encodeFunctionData, maxUint256 } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { useLidoSDK } from 'modules/web3';
 
 type BurnArgs = {
@@ -55,24 +55,25 @@ export const useBurn = (onMutate = () => {}) => {
         to: activeVault.owner,
       });
       const needsAllowance = allowance < amount;
-
-      setModalState({ step: SubmitStepEnum.confirming });
-
       if (needsAllowance) {
-        const receipt = await tokenContract.approve({
+        setModalState({ step: SubmitStepEnum.confirming });
+
+        const result = await tokenContract.approve({
           amount: maxUint256,
           to: activeVault.owner,
+          callback: async (props) => {
+            if (props.stage === 'receipt') {
+              setModalState({ step: SubmitStepEnum.submitting });
+            }
+          },
         });
 
-        setModalState({ step: SubmitStepEnum.submitting, tx: receipt.hash });
-
-        await publicClient.waitForTransactionReceipt({
-          hash: receipt.hash,
-        });
+        if (result.receipt?.status === 'reverted') {
+          throw new Error('Transaction was reverted');
+        }
       }
 
       setModalState({ step: SubmitStepEnum.confirming });
-
       const tx = await writeContractAsync({
         abi: dashboardAbi,
         address: activeVault.owner,
@@ -109,7 +110,7 @@ export const useEstimateGasBurn = ({
   amount,
   allowance,
 }: EstimateGasBurnProps) => {
-  const { hasPermission } = useVaultPermissions('repayer');
+  const { hasPermission } = useVaultPermission('repayer');
   const { address } = useAccount();
   const payload = [amount ?? 1n] as const;
   const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';

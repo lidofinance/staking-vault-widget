@@ -1,4 +1,4 @@
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { useReadContract } from 'wagmi';
 import { dashboardAbi } from 'abi/dashboard-abi';
 

@@ -1,6 +1,5 @@
 import { FC, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { useFormContext } from 'react-hook-form';
 
 import {
   Loader,
@@ -21,7 +20,7 @@ import {
   SubmitStep,
 } from 'shared/components/submit-modal/types';
 import { AppPaths } from 'consts/urls';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import { Address } from 'viem';
 
 const getIconComponent = (step: SubmitStep) => {
@@ -56,6 +55,8 @@ const getModalTitle = (step: SubmitStep) => {
 
 const getModalSubTitle = (step: SubmitStep) => {
   switch (step) {
+    case SubmitStepEnum.collecting:
+      return 'Fetching data for transaction';
     case SubmitStepEnum.simulating:
       return 'Awaiting simulating transaction(s)';
     case SubmitStepEnum.confirming:
@@ -86,9 +87,6 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   onClose,
 }) => {
   const router = useRouter();
-  const {
-    formState: { isSubmitting, isSubmitted },
-  } = useFormContext();
   const { retryFire } = useFormControllerContext();
   const { step, tx } = submitStep ?? {};
   const { activeVault } = useVaultInfo();
@@ -122,7 +120,7 @@ export const SubmitModal: FC<SubmitModalProps> = ({
   return (
     <Modal
       center
-      open={(isSubmitting || isSubmitted) && step !== SubmitStepEnum.edit}
+      open={step !== SubmitStepEnum.edit}
       onClose={handleCloseModal}
       title={title}
       subtitle={subtitle}
@@ -155,11 +153,11 @@ export const SubmitModal: FC<SubmitModalProps> = ({
 
         {isShowTxLink && <TxLinkEtherscan txHash={tx} />}
 
-        {step === SubmitStepEnum.reject && (
+        {step === SubmitStepEnum.error && (
           <ButtonLink onClick={retryFire}>Retry</ButtonLink>
         )}
 
-        {step === SubmitStepEnum.error && (
+        {step === SubmitStepEnum.reject && (
           <ButtonLink onClick={handleCloseModal}>Close</ButtonLink>
         )}
       </Content>

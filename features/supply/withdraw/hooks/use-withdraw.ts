@@ -4,9 +4,9 @@ import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import {
   SubmitPayload,
   SubmitStepEnum,
@@ -70,7 +70,7 @@ export const useEstimateGasWithdraw = ({
   const { activeVault } = useVaultInfo();
 
   const { address } = useDappStatus();
-  const { hasPermission } = useVaultPermissions('withdrawer');
+  const { hasPermission } = useVaultPermission('withdrawer');
   const enabled = !!(hasPermission && address);
   const owner = activeVault?.owner;
 

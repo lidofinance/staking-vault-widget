@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import { useEstimateGasFund } from 'features/supply/fund/hooks';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 import { Wrapper } from './styles';
 import { TxCostRow } from 'shared/components/tx-cost-row';

@@ -13,7 +13,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useClaim } from 'features/claim/claim-form/hooks';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 
 import {
   FormController,

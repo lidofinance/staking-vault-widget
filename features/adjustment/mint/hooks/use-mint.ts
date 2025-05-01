@@ -10,13 +10,13 @@ import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'features/overview/contexts';
+import { useVaultInfo } from 'modules/vaults';
 import {
   SubmitPayload,
   SubmitStepEnum,
 } from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
-import { useVaultPermissions } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 
 export const useMint = (onMutate = () => {}) => {
@@ -76,7 +76,7 @@ export const useEstimateMint = ({
   token,
   amount,
 }: EstimateGasMintProps) => {
-  const { hasPermission } = useVaultPermissions('minter');
+  const { hasPermission } = useVaultPermission('minter');
   const { address } = useAccount();
   const payload = [
     fallbackedAddress(recipient || address),
