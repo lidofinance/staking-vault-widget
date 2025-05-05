@@ -80,7 +80,7 @@ const getVaultData = async ({
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
-    shares.convertToSteth(locked),
+    shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacity),
   ]);
 
