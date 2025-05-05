@@ -70,13 +70,19 @@ const getVaultData = async ({
 
   const mintableShares = bigIntMax(totalMintingCapacity - liabilityShares, 0n);
 
-  const [liabilityStETH, mintableStETH, stETHLimit, lockedShares] =
-    await Promise.all([
-      shares.convertToSteth(liabilityShares),
-      shares.convertToSteth(mintableShares),
-      shares.convertToSteth(shareLimit),
-      shares.convertToSteth(locked),
-    ]);
+  const [
+    liabilityStETH,
+    mintableStETH,
+    stETHLimit,
+    lockedShares,
+    totalMintingCapacityStETH,
+  ] = await Promise.all([
+    shares.convertToSteth(liabilityShares),
+    shares.convertToSteth(mintableShares),
+    shares.convertToSteth(shareLimit),
+    shares.convertToSteth(locked),
+    shares.convertToSteth(totalMintingCapacity),
+  ]);
 
   const healthScore = calculateHealth({
     totalValue,
@@ -98,6 +104,7 @@ const getVaultData = async ({
     apr: null,
     healthScore: healthScore.healthRatio,
     totalMintingCapacity,
+    totalMintingCapacityStETH,
     inOutDelta,
     locked,
     lockedShares,

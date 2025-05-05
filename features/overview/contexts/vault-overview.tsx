@@ -28,6 +28,7 @@ export interface VaultOverviewContextType {
     totalLocked: string;
     liabilityStETH: string;
     totalMintingCapacity: string;
+    totalMintingCapacityStETH: string;
     withdrawableEth: string;
     balanceEth: string;
     accumulatedFee: string;
@@ -104,6 +105,9 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         overview.utilizationRatio / 100,
       );
       const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
+      const totalMintingCapacityStETH = toStethValue(
+        activeVault.totalMintingCapacityStETH,
+      );
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
@@ -126,6 +130,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         totalLocked,
         liabilityStETH,
         totalMintingCapacity,
+        totalMintingCapacityStETH,
         withdrawableEth,
         balanceEth,
         accumulatedFee,
