@@ -99,7 +99,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore / 100);
-      const healthFactorNumber = healthScore;
+      const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
       const utilizationRatio = formatPercent.format(
         overview.utilizationRatio / 100,
       );
