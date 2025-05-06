@@ -85,7 +85,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         balance: activeVault.balance,
         locked: activeVault.locked,
         nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
-        totalMintingCapacity: activeVault.totalMintingCapacity,
+        totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
       });
 
       const totalValue = toEthValue(activeVault.totalValue);
@@ -104,7 +104,9 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const utilizationRatio = formatPercent.format(
         overview.utilizationRatio / 100,
       );
-      const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
+      const totalMintingCapacity = toStethValue(
+        overview.totalMintingCapacityStethWei,
+      );
       const totalMintingCapacityStETH = toStethValue(
         activeVault.totalMintingCapacityStETH,
       );
