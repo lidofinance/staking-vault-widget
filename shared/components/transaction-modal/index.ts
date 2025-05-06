@@ -1,4 +1,1 @@
-export {
-  TransactionModal,
-  useTransactionModal as useTransactionModalContext,
-} from './transaction-modal';
+export { TransactionModal, useTransactionModal } from './transaction-modal';

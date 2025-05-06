@@ -18,7 +18,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     reValidateMode: 'onChange',
   });
 
-  const { fund, retryFire } = useFund();
+  const { fund, retryEvent } = useFund();
 
   const onSubmit = useCallback(
     async ({ amount }: FundFormSchema) => {
@@ -32,10 +32,10 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useMemo(
       () => ({
         onSubmit,
-        retryFire,
+        retryEvent,
         onReset: formObject.reset,
       }),
-      [retryFire, onSubmit, formObject.reset],
+      [onSubmit, retryEvent, formObject.reset],
     );
 
   return (

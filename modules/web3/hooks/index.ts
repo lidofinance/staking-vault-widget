@@ -8,3 +8,4 @@ export * from './use-wstETH-by-stETH';
 export * from './use-stETH-by-wstETH';
 export * from './use-is-metamask';
 export * from './use-aa';
+export * from './use-send-tx';

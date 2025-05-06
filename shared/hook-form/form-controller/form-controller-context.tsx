@@ -7,8 +7,8 @@ export type FormControllerContextValueType<F extends FieldValues = any> = {
   isLocked?: boolean;
   onSubmit: (args: F) => Promise<boolean>;
   onReset?: (args: F) => void;
-  retryEvent?: EventSubsciption;
-  retryFire: () => void;
+  retryEvent: EventSubsciption;
+  retryFire?: () => void;
 };
 
 export const FormControllerContext =

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useEstimateGas, usePublicClient, useWriteContract } from 'wagmi';
+import { useEstimateGas, usePublicClient } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -7,54 +7,87 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
+
 import { fallbackedAddress } from 'utils/fallbacked-address';
+import {
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3';
+import { useReportStatus } from 'features/report/use-report';
+import { fetchReportMerkle } from 'features/report/ipfs';
+import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 
 type WithdrawArgs = {
   recipient: Address;
   amount: bigint;
-  setModalState: (submitStep: SubmitPayload) => void;
 };
 
-export const useWithdraw = (onMutate = () => {}) => {
+export const useWithdraw = () => {
   const { activeVault } = useVaultInfo();
   const publicClient = usePublicClient();
+  const { sendTX, ...rest } = useSendTransaction();
+  const { shouldApplyReport } = useReportStatus();
 
-  const { data: withdrawTx, writeContractAsync } = useWriteContract({
-    mutation: {
-      onMutate,
-    },
-  });
-
-  const callWithdraw = useCallback(
-    async ({ amount, recipient, setModalState }: WithdrawArgs) => {
+  const withdraw = useCallback(
+    async ({ amount, recipient }: WithdrawArgs) => {
       invariant(activeVault, '[useWithdraw] activeVault is undefined');
       invariant(publicClient, '[useWithdraw] publicClient is undefined');
 
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: activeVault.owner,
-        functionName: 'withdraw',
-        args: [recipient, amount],
+      const transactions: TransactionEntry[] = [];
+
+      if (shouldApplyReport) {
+        const hub = getVaultHubContract(publicClient);
+        const reportCid = (await hub.read.latestReportData())[2];
+
+        const report = await fetchReportMerkle(
+          publicClient.chain.id,
+          reportCid,
+          activeVault.address,
+        );
+
+        transactions.push({
+          loadingActionText: 'Applying oracle report',
+          to: hub.address,
+          data: encodeFunctionData({
+            abi: hub.abi,
+            functionName: 'updateVaultData',
+            args: [
+              activeVault.address,
+              report.totalValueWei,
+              report.inOutDelta,
+              report.fee,
+              report.liabilityShares,
+              report.proof,
+            ],
+          }),
+        });
+      }
+
+      transactions.push({
+        loadingActionText: 'Withdrawing ETH from vault',
+        to: activeVault.owner,
+        data: encodeFunctionData({
+          abi: dashboardAbi,
+          functionName: 'withdraw',
+          args: [recipient, amount],
+        }),
       });
 
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
+      return withSuccess(
+        sendTX({
+          transactions,
+          mainActionLoadingText: 'Withdrawing ETH from vault',
+          mainActionCompleteText: 'ETH withdrawn from vault',
+        }),
+      );
     },
-    [activeVault, writeContractAsync, publicClient],
+    [activeVault, publicClient, shouldApplyReport, sendTX],
   );
 
   return {
-    callWithdraw,
-    withdrawTx,
+    withdraw,
+    ...rest,
   };
 };
 

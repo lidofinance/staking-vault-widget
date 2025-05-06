@@ -10,7 +10,7 @@ import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
-} from 'modules/web3/hooks/use-send-tx';
+} from 'modules/web3';
 
 export const useFund = () => {
   const { activeVault } = useVaultInfo();

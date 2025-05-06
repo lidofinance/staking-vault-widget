@@ -104,7 +104,7 @@ export const SubmitModal: FC<ModalProps> = () => {
           SubmitStepEnum.submitting === step) &&
           tx && <TxLinkEtherscan txHash={tx} />}
 
-        {step === SubmitStepEnum.reject && (
+        {step === SubmitStepEnum.reject && retryFire && (
           <ButtonLink onClick={retryFire}>Retry</ButtonLink>
         )}
 

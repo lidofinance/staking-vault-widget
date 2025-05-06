@@ -18,7 +18,7 @@ import {
   sendTransaction,
   waitForTransactionReceipt,
 } from '@wagmi/core';
-import { useTransactionModalContext } from 'shared/components/transaction-modal';
+import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 
 export type TransactionEntry = {
@@ -53,7 +53,7 @@ type TransactionResponse =
 
 export const useSendTransaction = () => {
   const config = useConfig();
-  const { dispatchModal } = useTransactionModalContext();
+  const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();
   const { isAA } = useAA();
 
