@@ -1,10 +1,7 @@
 import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { useCapabilities, useSendCalls } from 'wagmi/experimental';
-import {
-  eip5792Actions,
-  type GetCallsStatusReturnType,
-} from 'viem/experimental';
+import { useCapabilities, useSendCalls } from 'wagmi';
+import { type GetCallsStatusReturnType } from 'viem';
 import { TransactionCallbackStage } from '@lidofinance/lido-ethereum-sdk';
 
 import { useDappStatus } from './use-dapp-status';
@@ -39,18 +36,16 @@ export const useAA = () => {
       }
     : undefined;
 
-  // use new AA flow only for atomic batch supported accounts
   // per EIP-5792 ANY successful call to getCapabilities is a sign of EIP support
-  // but due to limited and variable support of this EIP we have to be narrow this down
-  // known issues - batched action support for EOAs in many wallets
-  const isAA = !!capabilities?.atomicBatch?.supported;
-
+  const isAA = capabilitiesQuery.isFetched && !!capabilitiesQuery.data;
+  const isAtomicBatchSupported = !!capabilities?.atomicBatch?.supported;
   const areAuxiliaryFundsSupported = !!capabilities?.auxiliaryFunds?.supported;
 
   return {
     ...capabilitiesQuery,
     isAA,
     capabilities,
+    isAtomicBatchSupported,
     areAuxiliaryFundsSupported,
   };
 };
@@ -92,7 +87,6 @@ export const useSendAACalls = () => {
     ) => {
       try {
         invariant(core.web3Provider);
-        const extendedWalletClient = core.web3Provider.extend(eip5792Actions());
 
         await callback({
           stage: TransactionCallbackStage.SIGN,
@@ -114,7 +108,7 @@ export const useSendAACalls = () => {
         const poll = async () => {
           const timeoutAt = Date.now() + config.AA_TX_POLLING_TIMEOUT;
           while (Date.now() < timeoutAt) {
-            const callStatus = await extendedWalletClient.getCallsStatus({
+            const callStatus = await core.web3Provider.getCallsStatus({
               id: callData.id,
             });
 

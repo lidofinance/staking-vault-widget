@@ -24,7 +24,7 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
 
   // Bind retry callback
   useEffect(() => {
-    return retryEvent.subscribe(doSubmit);
+    return retryEvent?.subscribe(doSubmit);
   }, [retryEvent, doSubmit]);
 
   // Reset form amount after disconnect wallet

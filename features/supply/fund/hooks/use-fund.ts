@@ -1,10 +1,5 @@
 import { useCallback } from 'react';
-import {
-  usePublicClient,
-  useWriteContract,
-  useAccount,
-  useEstimateGas,
-} from 'wagmi';
+import { useAccount, useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -12,55 +7,43 @@ import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3/hooks/use-send-tx';
 
-export const useFund = (onMutate = () => {}) => {
+export const useFund = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
-
-  const { data: fundTx, writeContractAsync } = useWriteContract({
-    mutation: {
-      onMutate,
-    },
-  });
-
-  const callVaultFund = useCallback(
-    async (
-      amount: bigint,
-      setModalState: (submitStep: SubmitPayload) => void,
-    ) => {
-      invariant(
-        activeVault?.owner,
-        '[useFundWithDashboard] owner is undefined',
-      );
-      invariant(
-        publicClient,
-        '[useFundWithDashboard] publicClient is undefined',
-      );
-
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: activeVault.owner,
-        functionName: 'fund',
-        value: amount,
-      });
-
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
-    },
-    [writeContractAsync, activeVault?.owner, publicClient],
-  );
+  const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    callVaultFund,
-    fundTx,
+    fund: useCallback(
+      async (amount: bigint) => {
+        invariant(activeVault?.owner, '[useFund] owner is undefined');
+
+        const fundCall: TransactionEntry = {
+          to: activeVault.owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'fund',
+          }),
+          value: amount,
+          loadingActionText: 'Supplying vault with ETH',
+        };
+
+        const { success } = await withSuccess(
+          sendTX({
+            transactions: [fundCall],
+            mainActionLoadingText: 'Supplying vault with ETH',
+            mainActionCompleteText: 'Vault supplied with ETH',
+          }),
+        );
+
+        return success;
+      },
+      [activeVault?.owner, sendTX],
+    ),
+    ...rest,
   };
 };
 

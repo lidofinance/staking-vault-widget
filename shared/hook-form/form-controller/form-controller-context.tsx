@@ -7,7 +7,7 @@ export type FormControllerContextValueType<F extends FieldValues = any> = {
   isLocked?: boolean;
   onSubmit: (args: F) => Promise<boolean>;
   onReset?: (args: F) => void;
-  retryEvent: EventSubsciption;
+  retryEvent?: EventSubsciption;
   retryFire: () => void;
 };
 
