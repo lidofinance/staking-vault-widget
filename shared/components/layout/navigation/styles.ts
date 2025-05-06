@@ -101,3 +101,11 @@ export const ArrowBackStyled = styled(ArrowBack)`
   height: 14px;
   margin-right: ${({ theme }) => theme.spaceMap.sm}px;
 `;
+
+export const FeedbackLink = styled.a`
+  display: flex;
+  align-items: center;
+  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
+  padding-top: ${({ theme }) => theme.spaceMap.xxl}px;
+  border-top: 1px solid var(--lido-color-border);
+`;

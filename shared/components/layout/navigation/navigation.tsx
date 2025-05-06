@@ -1,6 +1,6 @@
 import { FC, memo, useMemo, ReactNode } from 'react';
 import { Address } from 'viem';
-import { Stake, Withdraw, Wrap, Text } from '@lidofinance/lido-ui';
+import { Stake, Withdraw, Wrap, Text, External } from '@lidofinance/lido-ui';
 
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
@@ -19,8 +19,10 @@ import {
   AllVaults,
   ArrowBackStyled,
   NavList,
+  FeedbackLink,
 } from './styles';
 import { useRouter } from 'next/router';
+import { FEEDBACK_SURVEY_URL } from 'consts/external-links';
 
 type PageRoute = {
   name: string;
@@ -185,6 +187,9 @@ export const Navigation: FC = memo(() => {
           </NavList>
         </>
       )}
+      <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
+        Leave feedback <External />
+      </FeedbackLink>
     </Nav>
   );
 });
