@@ -87,7 +87,6 @@ export const useSendTransaction = () => {
             to: tx.to,
             data: tx.data,
             value: tx.value,
-            f,
           }));
 
           // For AA we display single modal with general action text
