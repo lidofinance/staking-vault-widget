@@ -12,11 +12,7 @@ import invariant from 'tiny-invariant';
 import { useVaultInfo } from 'modules/vaults';
 import { useMint } from 'features/adjustment/mint/hooks';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 import { MintFormSchema } from 'features/adjustment/mint/types';
 import { Address } from 'viem';
 
@@ -79,22 +75,12 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     [mint],
   );
 
-  const formControllerValue: FormControllerContextValueType<MintFormSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: formObject.reset,
-      }),
-      [retryEvent, onSubmit, formObject.reset],
-    );
-
   return (
     <MintDataContext.Provider value={mintData}>
       <FormProvider {...formObject}>
-        <FormControllerContext.Provider value={formControllerValue}>
-          <FormController>{children}</FormController>
-        </FormControllerContext.Provider>
+        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+          {children}
+        </FormController>
       </FormProvider>
     </MintDataContext.Provider>
   );

@@ -11,11 +11,7 @@ import invariant from 'tiny-invariant';
 import { useBurn } from 'features/adjustment/repay/hooks';
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
 
@@ -105,22 +101,12 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
     [burn],
   );
 
-  const formControllerValue: FormControllerContextValueType<RepayFormSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: formObject.reset,
-      }),
-      [retryEvent, onSubmit, formObject.reset],
-    );
-
   return (
     <RepayDataContext.Provider value={repayData}>
       <FormProvider {...formObject}>
-        <FormControllerContext.Provider value={formControllerValue}>
-          <FormController>{children}</FormController>
-        </FormControllerContext.Provider>
+        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+          {children}
+        </FormController>
       </FormProvider>
     </RepayDataContext.Provider>
   );

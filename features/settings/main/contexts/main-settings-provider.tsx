@@ -1,11 +1,7 @@
-import { FC, PropsWithChildren, useMemo, useCallback, useEffect } from 'react';
+import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 
 import {
   EditMainSettingsSchema,
@@ -67,22 +63,11 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     [editMainSettings, refetch],
   );
 
-  const { reset } = formObject;
-  const formControllerValue: FormControllerContextValueType<EditMainSettingsSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: reset,
-      }),
-      [retryEvent, onSubmit, reset],
-    );
-
   return (
     <FormProvider {...formObject}>
-      <FormControllerContext.Provider value={formControllerValue}>
-        <FormController>{children}</FormController>
-      </FormControllerContext.Provider>
+      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+        {children}
+      </FormController>
     </FormProvider>
   );
 };

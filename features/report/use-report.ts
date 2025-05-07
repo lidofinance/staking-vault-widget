@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { usePublicClient, useReadContract, useWalletClient } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
   useVaultInfo,
@@ -16,10 +10,7 @@ import {
   VAULT_SHOULD_REPORT_THRESHOLD,
 } from 'modules/vaults';
 
-import {
-  getVaultHubContract,
-  getWritableVaultHubContract,
-} from '../../modules/vaults/contracts/vault-hub';
+import { getVaultHubContract } from '../../modules/vaults/contracts/vault-hub';
 import {
   STRATEGY_EAGER,
   STRATEGY_IMMUTABLE,
@@ -28,13 +19,8 @@ import { getContractAddress } from 'config';
 import { StakingVaultAbi } from 'abi/vault';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import {
-  encodeFunctionData,
-  type Address,
-  type TransactionReceipt,
-} from 'viem';
+import { encodeFunctionData, type Address } from 'viem';
 import { fetchReportMerkle } from './ipfs';
-import { ModalState } from './components';
 
 const UI_UPDATE_INTERVAL = 5000; // 5 second
 
@@ -160,67 +146,4 @@ export const useReportStatus = () => {
     isReportAvailable,
     shouldApplyReport,
   };
-};
-
-type UseSendReportOptions = {
-  setModalState: Dispatch<SetStateAction<ModalState>>;
-};
-
-export const useSendReport = ({ setModalState }: UseSendReportOptions) => {
-  const publicClient = usePublicClient();
-  const { data: walletClient } = useWalletClient();
-  const { vaultAddress, refetch: refetchVaultInfo } = useVaultInfo();
-  const { refetch: refetchReport } = useReportStatus();
-
-  return useMutation<TransactionReceipt, Error>({
-    mutationKey: ['sendReport', vaultAddress, publicClient?.chain.id],
-    mutationFn: async () => {
-      setModalState({ step: 'collecting' });
-
-      // no enabled for useMutation so
-      // we have to enforce those invariants with UI
-      invariant(publicClient, 'publicClient is required');
-      invariant(vaultAddress, 'vaultAddress is required');
-      invariant(walletClient, 'walletClient is required');
-
-      const hub = getWritableVaultHubContract(publicClient, walletClient);
-      const reportCid = (await hub.read.latestReportData())[2];
-
-      const report = await fetchReportMerkle(
-        publicClient.chain.id,
-        reportCid,
-        vaultAddress,
-      );
-
-      setModalState({ step: 'confirming' });
-
-      const tx = await hub.write.updateVaultData([
-        vaultAddress,
-        report.totalValueWei,
-        report.inOutDelta,
-        report.fee,
-        report.liabilityShares,
-        report.proof,
-      ]);
-
-      setModalState({ step: 'submitting', tx });
-
-      const receipt = await publicClient.waitForTransactionReceipt({
-        hash: tx,
-        confirmations: 1,
-      });
-
-      setModalState({ step: 'success', tx });
-
-      return receipt;
-    },
-    onError: (error) => {
-      console.error('[useSendReport] Error', error);
-      setModalState({ step: 'error' });
-    },
-    onSuccess: () => {
-      // TODO to query client invalidateQueries
-      void Promise.all([refetchVaultInfo(), refetchReport()]);
-    },
-  });
 };

@@ -13,11 +13,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useClaim } from 'features/claim/claim-form/hooks';
 import { useVaultInfo } from 'modules/vaults';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
@@ -92,22 +88,12 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     [availableToClaim, isLoadingClaimInfo, isErrorClaimInfo, errorClaimInfo],
   );
 
-  const formControllerValue: FormControllerContextValueType<ClaimFormSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: formObject.reset,
-      }),
-      [retryEvent, onSubmit, formObject.reset],
-    );
-
   return (
     <ClaimDataContext.Provider value={claimInfo}>
       <FormProvider {...formObject}>
-        <FormControllerContext.Provider value={formControllerValue}>
-          <FormController>{children}</FormController>
-        </FormControllerContext.Provider>
+        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+          {children}
+        </FormController>
       </FormProvider>
     </ClaimDataContext.Provider>
   );

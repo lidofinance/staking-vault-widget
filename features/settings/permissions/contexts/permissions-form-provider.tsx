@@ -1,11 +1,7 @@
-import { FC, PropsWithChildren, useMemo, useCallback, useEffect } from 'react';
+import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
 import {
@@ -51,21 +47,11 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
     [editPermissions, refetch],
   );
 
-  const formControllerValue: FormControllerContextValueType<EditPermissionsSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: formObject.reset,
-      }),
-      [retryEvent, onSubmit, formObject.reset],
-    );
-
   return (
     <FormProvider {...formObject}>
-      <FormControllerContext.Provider value={formControllerValue}>
-        <FormController>{children}</FormController>
-      </FormControllerContext.Provider>
+      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+        {children}
+      </FormController>
     </FormProvider>
   );
 };

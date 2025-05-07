@@ -11,11 +11,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 import { useCreateVault } from 'features/create-vault/hooks/use-create-vault';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 
 import { type CreateVaultDataContextValue } from 'features/create-vault/types';
 import { createVaultSchema, CreateVaultSchema } from './validation';
@@ -73,16 +69,6 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     [createVault],
   );
 
-  const formControllerValue: FormControllerContextValueType<CreateVaultSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        onReset: formObject.reset,
-      }),
-      [retryEvent, onSubmit, formObject.reset],
-    );
-
   const createVaultData = useMemo<CreateVaultDataContextValue>(
     () => ({
       step,
@@ -96,9 +82,9 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   return (
     <FormProvider {...formObject}>
       <CreateVaultDataContext.Provider value={createVaultData}>
-        <FormControllerContext.Provider value={formControllerValue}>
-          <FormController>{children}</FormController>
-        </FormControllerContext.Provider>
+        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+          {children}
+        </FormController>
       </CreateVaultDataContext.Provider>
     </FormProvider>
   );

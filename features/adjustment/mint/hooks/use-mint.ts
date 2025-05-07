@@ -8,7 +8,7 @@ import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
-import { useReportStatus } from 'features/report/use-report';
+import { useReportStatus } from 'features/report';
 
 export const useMint = () => {
   const { activeVault } = useVaultInfo();
