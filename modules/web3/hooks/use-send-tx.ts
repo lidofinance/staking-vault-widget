@@ -21,6 +21,7 @@ import {
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
+import { TransactionModalState } from 'shared/components/transaction-modal/types';
 
 export type TransactionEntry = {
   to: Address;
@@ -35,12 +36,12 @@ export type SendTransactionArguments = {
   mainActionCompleteText: string;
   forceAtomic?: boolean;
   forceLegacy?: boolean;
-};
+} & Pick<TransactionModalState['details'], 'renderSuccessContent'>;
 
 // TODO: wrapper around error with readable message
 type TransactionError = Error;
 
-type TransactionResponse =
+export type TransactionResponse =
   | {
       isAA: true;
       callStatus: WaitForCallsStatusReturnType;
@@ -71,6 +72,7 @@ export const useSendTransaction = () => {
       mainActionLoadingText,
       forceAtomic,
       forceLegacy,
+      renderSuccessContent,
     }) => {
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !!forceLegacy && isAA;
@@ -85,6 +87,7 @@ export const useSendTransaction = () => {
           details: {
             actionCompleteText: mainActionCompleteText,
             actionLoadingText: mainActionLoadingText,
+            renderSuccessContent,
           },
         });
 
@@ -137,16 +140,21 @@ export const useSendTransaction = () => {
             throw new Error('Batch failed');
           }
 
-          dispatchModal({
-            type: 'stage',
-            stage: 'success',
-          });
-
-          return {
+          const transactionResult = {
             isAA,
             callStatus,
             receipts: callStatus.receipts,
           } as TransactionResponse;
+
+          dispatchModal({
+            type: 'stage',
+            stage: 'success',
+            details: {
+              transactionResult,
+            },
+          });
+
+          return transactionResult;
         }
 
         for (const tx of transactions) {
@@ -184,17 +192,20 @@ export const useSendTransaction = () => {
           }
         }
 
+        const transactionResult = { isAA: useSendCalls, receipts };
+
         dispatchModal({
           type: 'stage',
           stage: 'success',
+          details: { transactionResult },
         });
+
+        return transactionResult;
       } catch (error) {
         dispatchModal({ type: 'stage', stage: 'error' });
         console.error(`[useSendTransaction] TX Error`, error);
         throw error;
       }
-
-      return { isAA: useSendCalls, receipts };
     },
   });
 

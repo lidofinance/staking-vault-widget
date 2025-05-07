@@ -51,6 +51,7 @@ const getModalTitle = (state: TransactionModalState) => {
 };
 
 const getMainContent = (state: TransactionModalState) => {
+  const { transactionResult, renderSuccessContent, errorText } = state.details;
   switch (state.stage) {
     case 'collecting':
       return (
@@ -71,11 +72,15 @@ const getMainContent = (state: TransactionModalState) => {
         </Text>
       );
     case 'success':
-      return state.details.renderSuccessContent?.() ?? null;
+      return (
+        renderSuccessContent &&
+        transactionResult &&
+        renderSuccessContent({ result: transactionResult })
+      );
     case 'error':
       return (
         <Text color="secondary" size="xxs">
-          {state.details.errorText ?? 'Something went wrong'}
+          {errorText ?? 'Something went wrong'}
         </Text>
       );
     default:

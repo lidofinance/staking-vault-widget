@@ -1,4 +1,5 @@
-import { Dispatch } from 'react';
+import type { TransactionResponse } from 'modules/web3';
+import type { Dispatch } from 'react';
 
 type TransactionModalStage =
   | 'none'
@@ -11,11 +12,14 @@ type TransactionModalStage =
 type TransactionModalDetails = {
   actionLoadingText: string;
   actionCompleteText: string;
-  renderSuccessContent?: () => JSX.Element;
+  renderSuccessContent?: (props: {
+    result: TransactionResponse;
+  }) => JSX.Element;
   errorText?: string;
   errorDescription?: string;
   // txHash or callId depending on isBatch
   transactionId?: string;
+  transactionResult?: TransactionResponse;
 };
 
 export type TransactionModalState = {

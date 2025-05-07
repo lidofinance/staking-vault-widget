@@ -46,6 +46,7 @@ export const useMint = () => {
             transactions,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
+            forceAtomic: true,
           }),
         );
 

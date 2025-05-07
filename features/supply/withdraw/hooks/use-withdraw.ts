@@ -47,6 +47,7 @@ export const useWithdraw = () => {
           transactions,
           mainActionLoadingText: 'Withdrawing ETH from vault',
           mainActionCompleteText: 'ETH withdrawn from vault',
+          forceAtomic: true,
         }),
       );
     },

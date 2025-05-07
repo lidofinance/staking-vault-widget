@@ -63,6 +63,7 @@ export const useBurn = () => {
             transactions,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
+            forceAtomic: true,
           }),
         );
 

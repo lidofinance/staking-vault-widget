@@ -8,26 +8,16 @@ import {
   useContext,
 } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
-import { useDappStatus, useLidoSDK } from 'modules/web3';
-import {
-  simulateCreateVault,
-  useCreateVault,
-} from 'modules/vaults/hooks/use-create-vault';
+import { useCreateVault } from 'features/create-vault/hooks/use-create-vault';
 
 import {
   FormController,
   FormControllerContext,
   FormControllerContextValueType,
 } from 'shared/hook-form/form-controller';
-import { SubmitModal } from 'features/create-vault/create-vault-form/submit-modal';
 
-import {
-  type CreateVaultDataContextValue,
-  CreateVaultStep,
-  SubmittingInfo,
-} from 'features/create-vault/types';
+import { type CreateVaultDataContextValue } from 'features/create-vault/types';
 import { createVaultSchema, CreateVaultSchema } from './validation';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import {
@@ -35,7 +25,6 @@ import {
   PermissionToggleEnum,
   CREATE_VAULT_FORM_STEPS,
 } from 'features/create-vault/consts';
-import { SubmitStepEnum } from 'features/create-vault/types';
 import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
 import { Address } from 'viem';
 
@@ -54,38 +43,6 @@ export const useCreateVaultFormData = () => {
 };
 
 export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { core } = useLidoSDK();
-  const { address } = useDappStatus();
-  const [step, setStep] = useState(() => CREATE_VAULT_FORM_STEPS.main);
-  const [permissionsView, setPermissionsView] = useState<ToggleValue>(
-    PermissionToggleEnum.byPermission,
-  );
-  const [submitStep, setSubmitStep] = useState<SubmittingInfo>();
-  const { callCreateVault } = useCreateVault({
-    onMutate: () => setSubmitStep({ step: SubmitStepEnum.submitting }),
-  });
-
-  const handleSetStep = useCallback((step: CreateVaultStep) => {
-    setStep(step);
-  }, []);
-
-  const handleSetPermissionsView = useCallback((value: ToggleValue) => {
-    setPermissionsView(value);
-  }, []);
-
-  const handleCancelSubmit = useCallback(() => {
-    setSubmitStep(void 0);
-  }, []);
-
-  const createVaultData = {
-    step,
-    permissionsView,
-    submitStep,
-    handleSetStep,
-    handleSetPermissionsView,
-    handleCancelSubmit,
-  };
-
   const formObject = useForm<CreateVaultSchema>({
     defaultValues: {
       nodeOperator: '' as Address,
@@ -99,54 +56,48 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
     mode: 'all',
   });
 
-  const onSubmit = useCallback(
-    async (data: CreateVaultSchema): Promise<boolean> => {
-      setSubmitStep({ step: SubmitStepEnum.initiate });
-      const payload = formatCreateVaultData(data);
-
-      try {
-        await simulateCreateVault(core.rpcProvider, address, payload);
-      } catch (err) {
-        console.error('[CreateFormProvider]Error simulating create vault', err);
-        setSubmitStep({ step: SubmitStepEnum.error });
-        return false;
-      }
-
-      setSubmitStep({ step: SubmitStepEnum.confirming });
-      try {
-        const { address, tx } = await callCreateVault(payload);
-        setSubmitStep({ step: SubmitStepEnum.success, tx, address });
-      } catch (err) {
-        console.error('[CreateFormProvider] Error sending create vault', err);
-
-        setSubmitStep({ step: SubmitStepEnum.reject });
-
-        return false;
-      }
-
-      return true;
-    },
-    [callCreateVault, address, core.rpcProvider],
+  const [step, setStep] = useState(() => CREATE_VAULT_FORM_STEPS.main);
+  const [permissionsView, setPermissionsView] = useState<ToggleValue>(
+    PermissionToggleEnum.byPermission,
   );
 
-  const { retryEvent, retryFire } = useFormControllerRetry();
+  const { createVault, retryEvent } = useCreateVault();
+
+  const onSubmit = useCallback(
+    async (data: CreateVaultSchema): Promise<boolean> => {
+      const payload = formatCreateVaultData(data);
+
+      const { success } = await createVault(payload);
+      return success;
+    },
+    [createVault],
+  );
+
   const formControllerValue: FormControllerContextValueType<CreateVaultSchema> =
     useMemo(
       () => ({
         onSubmit,
         retryEvent,
-        retryFire,
         onReset: formObject.reset,
       }),
-      [retryFire, retryEvent, onSubmit, formObject.reset],
+      [retryEvent, onSubmit, formObject.reset],
     );
+
+  const createVaultData = useMemo<CreateVaultDataContextValue>(
+    () => ({
+      step,
+      permissionsView,
+      handleSetStep: setStep,
+      handleSetPermissionsView: setPermissionsView,
+    }),
+    [permissionsView, step],
+  );
 
   return (
     <FormProvider {...formObject}>
       <CreateVaultDataContext.Provider value={createVaultData}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
-          <SubmitModal />
         </FormControllerContext.Provider>
       </CreateVaultDataContext.Provider>
     </FormProvider>
