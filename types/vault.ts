@@ -16,6 +16,7 @@ export type VaultInfo = VaultSocket & {
   apr: null;
   healthScore: number;
   totalMintingCapacity: bigint;
+  totalMintingCapacityStETH: bigint;
   inOutDelta: bigint;
   locked: bigint;
   lockedShares: bigint;

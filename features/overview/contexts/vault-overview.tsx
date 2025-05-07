@@ -28,6 +28,7 @@ export interface VaultOverviewContextType {
     totalLocked: string;
     liabilityStETH: string;
     totalMintingCapacity: string;
+    totalMintingCapacityStETH: string;
     withdrawableEth: string;
     balanceEth: string;
     accumulatedFee: string;
@@ -84,7 +85,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         balance: activeVault.balance,
         locked: activeVault.locked,
         nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
-        totalMintingCapacity: activeVault.totalMintingCapacity,
+        totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
       });
 
       const totalValue = toEthValue(activeVault.totalValue);
@@ -99,11 +100,16 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
       );
       const healthFactor = formatPercent.format(healthScore / 100);
-      const healthFactorNumber = healthScore;
+      const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
       const utilizationRatio = formatPercent.format(
         overview.utilizationRatio / 100,
       );
-      const totalMintingCapacity = toStethValue(overview.totalMintingCapacity);
+      const totalMintingCapacity = toStethValue(
+        overview.totalMintingCapacityStethWei,
+      );
+      const totalMintingCapacityStETH = toStethValue(
+        activeVault.totalMintingCapacityStETH,
+      );
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFee = formatPercent.format(
         Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
@@ -126,6 +132,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         totalLocked,
         liabilityStETH,
         totalMintingCapacity,
+        totalMintingCapacityStETH,
         withdrawableEth,
         balanceEth,
         accumulatedFee,

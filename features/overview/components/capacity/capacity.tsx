@@ -13,7 +13,7 @@ const sectionPayloadList: SectionPayload[] = [
   },
   {
     title: 'Total minting capacity',
-    key: 'totalMintingCapacity',
+    key: 'totalMintingCapacityStETH',
   },
 ];
 

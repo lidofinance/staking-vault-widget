@@ -57,7 +57,8 @@ const getVaultDataTable = async ({
     owner,
     totalValue,
     liabilityStETH,
-    healthScore: healthScore.healthRatio,
+    healthScore:
+      healthScore.healthRatio > 100000 ? Infinity : healthScore.healthRatio,
     forcedRebalanceThresholdBP,
     liabilityShares,
   };
