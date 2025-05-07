@@ -20,6 +20,7 @@ import {
 } from '@wagmi/core';
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import invariant from 'tiny-invariant';
 
 export type TransactionEntry = {
   to: Address;
@@ -96,6 +97,11 @@ export const useSendTransaction = () => {
 
           transactions = await transactions();
         }
+
+        invariant(
+          transactions.length > 0,
+          '[useSendTransaction] No transactions provided',
+        );
 
         if (useSendCalls) {
           const calls = transactions.map((tx) => ({

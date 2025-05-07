@@ -1,132 +1,141 @@
-import { MutableRefObject, useCallback } from 'react';
+import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { useVaultInfo } from 'modules/vaults';
-import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { prepareMainTxData } from 'features/settings/main/utils';
-import { EditMainSettingsSchema, TxData } from 'features/settings/main/types';
-import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
-import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
-import { getContract, Hash } from 'viem';
+import {
+  useVaultInfo,
+  VAULT_TOTAL_BASIS_POINTS,
+  VAULTS_ROOT_ROLES_MAP,
+} from 'modules/vaults';
+import {
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3';
+import { EditMainSettingsSchema } from 'features/settings/main/types';
+import { encodeFunctionData, Hash } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
+import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
+
+const onlyState =
+  (state: 'grant' | 'remove') =>
+  (value: EditMainSettingsSchema['defaultAdmins'][number]) =>
+    value.state === state;
+
+const toMethodArg =
+  (role: Hash) => (value: EditMainSettingsSchema['defaultAdmins'][number]) => ({
+    role,
+    account: value.value,
+  });
 
 export const useEditMainSettings = () => {
-  const {
-    core: { web3Provider: walletClient, rpcProvider: publicClient },
-  } = useLidoSDK();
-  const { address } = useDappStatus();
+  const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault } = useVaultInfo();
+  const owner = activeVault?.owner;
 
-  const callEditMainSettings = useCallback(
-    async (
-      payload: EditMainSettingsSchema,
-      setModalState: (submitStep: SubmitPayload) => void,
-      abortControllerRef: MutableRefObject<AbortController>,
-    ) => {
-      // TODO: replace by useWriteContracts in future
-      const txData = prepareMainTxData(payload);
-      const contractAddress = activeVault?.owner;
-      invariant(
-        contractAddress,
-        '[useEditMainSettings] contractAddress is not defined',
-      );
-      invariant(
-        publicClient,
-        '[useEditMainSettings] publicClient is not defined',
-      );
-      invariant(
-        walletClient,
-        '[useEditMainSettings] walletClient is not defined',
-      );
-      invariant(address, '[useEditMainSettings] address is not defined');
+  const { sendTX, ...rest } = useSendTransaction();
 
-      const keys = Object.keys(txData) as (keyof TxData)[];
-      const contract = getContract({
-        address: contractAddress,
-        abi: dashboardAbi,
-        client: {
-          public: publicClient,
-          wallet: walletClient,
-        },
-      });
+  return {
+    editMainSettings: useCallback(
+      async (payload: EditMainSettingsSchema) => {
+        invariant(owner, '[useEditMainSettings] owner is undefined');
 
-      const responses: { tx: Hash; key: keyof TxData }[] = [];
-      for (const key of keys) {
-        const {
-          current: { signal },
-        } = abortControllerRef;
-        if (signal.aborted) {
-          return responses;
+        const transactions: TransactionEntry[] = [];
+
+        const grantRoles = [
+          ...payload.defaultAdmins
+            .filter(onlyState('grant'))
+            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
+          ...payload.nodeOperatorManagers
+            .filter(onlyState('grant'))
+            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
+        ];
+
+        if (grantRoles.length > 0) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'grantRoles',
+              args: [grantRoles],
+            }),
+            loadingActionText: `Granting ${grantRoles.length} roles`,
+          });
         }
 
-        const functionName = dashboardFunctionsNamesMap[key];
+        const revokeRoles = [
+          ...payload.defaultAdmins
+            .filter(onlyState('remove'))
+            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
+          ...payload.nodeOperatorManagers
+            .filter(onlyState('remove'))
+            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
+        ];
 
-        setModalState({ step: SubmitStepEnum.confirming });
-        // @ts-expect-error find out how to setup right types
-        const tx = await contract.write[functionName]({
-          address: contractAddress,
-          abi: dashboardAbi,
-          args: [txData[key]],
-        });
+        const confirmingRoleAction = hasBothConfirmingRoles
+          ? 'Setting'
+          : 'Proposing';
 
-        setModalState({ step: SubmitStepEnum.submitting });
-        await publicClient.waitForTransactionReceipt({
-          hash: tx,
-        });
+        if (revokeRoles.length > 0) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'revokeRoles',
+              args: [revokeRoles],
+            }),
+            loadingActionText: `Revoking ${revokeRoles.length} roles`,
+          });
+        }
 
-        responses.push({ tx, key });
-      }
+        if (payload.nodeOperatorFeeBP.length > 0) {
+          invariant(
+            payload.nodeOperatorFeeBP.length == 1,
+            '[useEditMainSettings] Invalid nodeOperatorFeeBP length',
+          );
+          const newFee = Math.floor(
+            payload.nodeOperatorFeeBP[0].value * VAULT_TOTAL_BASIS_POINTS,
+          );
 
-      return responses;
-    },
-    [activeVault?.owner, address, publicClient, walletClient],
-  );
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'setNodeOperatorFeeBP',
+              args: [BigInt(newFee)],
+            }),
+            loadingActionText: `${confirmingRoleAction} ${newFee / VAULT_TOTAL_BASIS_POINTS}% Node Operator fee  `,
+          });
+        }
 
-  return {
-    callEditMainSettings,
-  };
-};
+        if (payload.confirmExpiry.length > 0) {
+          invariant(
+            payload.confirmExpiry.length == 1,
+            '[useEditMainSettings] Invalid confirmExpiry length',
+          );
+          const newConfirmExpiry = BigInt(
+            Math.floor(payload.confirmExpiry[0].value * 86400),
+          );
 
-export const useSimulateEditMainSettings = () => {
-  const {
-    core: { rpcProvider: publicClient },
-  } = useLidoSDK();
-  const { address } = useDappStatus();
-  const { activeVault } = useVaultInfo();
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'setConfirmExpiry',
+              args: [newConfirmExpiry],
+            }),
+            loadingActionText: `${confirmingRoleAction} ${newConfirmExpiry} hours Confirmation Lifetime`,
+          });
+        }
 
-  const simulateEditMainSettings = useCallback(
-    async (payload: EditMainSettingsSchema) => {
-      const txData = prepareMainTxData(payload);
-      const contractAddress = activeVault?.owner;
-      invariant(
-        contractAddress,
-        '[useSimulateEditMainSettings] contractAddress is not defined',
-      );
-      invariant(
-        publicClient,
-        '[useSimulateEditMainSettings] publicClient is not defined',
-      );
-      invariant(
-        address,
-        '[useSimulateEditMainSettings] address is not defined',
-      );
-
-      const keys = Object.keys(txData) as (keyof TxData)[];
-      for (const key of keys) {
-        const functionName = dashboardFunctionsNamesMap[key];
-        await publicClient.simulateContract({
-          address: contractAddress,
-          abi: dashboardAbi,
-          functionName,
-          // @ts-expect-error types
-          args: [txData[key]],
-          account: address,
-        });
-      }
-    },
-    [activeVault?.owner, address, publicClient],
-  );
-
-  return {
-    simulateEditMainSettings,
+        return withSuccess(
+          sendTX({
+            transactions,
+            mainActionLoadingText: 'Editing vault settings',
+            mainActionCompleteText: 'Edited vault settings',
+          }),
+        );
+      },
+      [hasBothConfirmingRoles, owner, sendTX],
+    ),
+    ...rest,
   };
 };

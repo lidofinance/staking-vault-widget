@@ -16,5 +16,4 @@ export { VaultImpactDashboard } from './vault-impact-dashboard';
 export { VaultImpactValuation } from './vault-impact-valuation';
 export { InputAmount } from './input-amount';
 export { Chip } from './chip';
-export { SubmitModal } from './submit-modal';
 export { AddressWithPopover } from './address-with-popover';
