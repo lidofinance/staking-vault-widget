@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import invariant from 'tiny-invariant';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { usePublicClient, useReadContract, useWalletClient } from 'wagmi';
@@ -22,7 +28,11 @@ import { getContractAddress } from 'config';
 import { StakingVaultAbi } from 'abi/vault';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import type { Address, TransactionReceipt } from 'viem';
+import {
+  encodeFunctionData,
+  type Address,
+  type TransactionReceipt,
+} from 'viem';
 import { fetchReportMerkle } from './ipfs';
 import { ModalState } from './components';
 
@@ -111,8 +121,40 @@ export const useReportStatus = () => {
       VAULT_SHOULD_REPORT_THRESHOLD
   );
 
+  const prepareReportCall = useCallback(async () => {
+    invariant(publicClient, 'publicClient is required');
+    invariant(activeVault, 'activeVault is required');
+
+    const hub = getVaultHubContract(publicClient);
+    const reportCid = (await hub.read.latestReportData())[2];
+
+    const report = await fetchReportMerkle(
+      publicClient.chain.id,
+      reportCid,
+      activeVault.address,
+    );
+
+    return {
+      loadingActionText: 'Applying oracle report',
+      to: hub.address,
+      data: encodeFunctionData({
+        abi: hub.abi,
+        functionName: 'updateVaultData',
+        args: [
+          activeVault.address,
+          report.totalValueWei,
+          report.inOutDelta,
+          report.fee,
+          report.liabilityShares,
+          report.proof,
+        ],
+      }),
+    };
+  }, [activeVault, publicClient]);
+
   return {
     ...vaultReport,
+    prepareReportCall,
     isLoading: vaultReport.isLoading || shouldSkipCheck,
     isReportFresh,
     isReportAvailable,

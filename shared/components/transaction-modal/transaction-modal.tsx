@@ -11,6 +11,7 @@ import type {
   TransactionModalContextValue,
   TransactionModalState,
 } from './types';
+import { TransactionModalContent } from './transaction-modal-content';
 
 const TransactionModalContext =
   createContext<TransactionModalContextValue | null>(null);
@@ -84,6 +85,7 @@ export const TransactionModal = ({ children }: PropsWithChildren) => {
   return (
     <TransactionModalContext.Provider value={value}>
       {children}
+      <TransactionModalContent />
     </TransactionModalContext.Provider>
   );
 };

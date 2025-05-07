@@ -4,12 +4,10 @@ import {
   useCallback,
   createContext,
   useContext,
-  useState,
 } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useBurn } from 'features/adjustment/repay/hooks';
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
 
@@ -20,13 +18,6 @@ import {
 } from 'shared/hook-form/form-controller';
 
 import { RepayFormSchema } from 'features/adjustment/repay/types';
-import { SubmitModal } from 'shared/components';
-import {
-  SubmitPayload,
-  SubmitStep,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal';
-import { Address } from 'viem';
 
 type RepayDataContextValue = {
   stEthBalance: bigint | undefined;
@@ -53,19 +44,16 @@ export const useRepayFormData = () => {
 };
 
 export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
-  const [submitStep, setSubmitStep] = useState<{
-    step: SubmitStep;
-    tx?: Address;
-  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<RepayFormSchema>({
     defaultValues: {
       amount: undefined,
       token: 'stETH',
     },
     mode: 'all',
+    // TODO: validation
     reValidateMode: 'onChange',
   });
-  const { callBurn } = useBurn();
+  const { burn, retryEvent } = useBurn();
   const { address } = useDappStatus();
   const {
     data: stEthBalance,
@@ -103,37 +91,18 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
     ],
   );
 
-  const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback((submitStep: SubmitPayload) => {
-    setSubmitStep(submitStep);
-  }, []);
-
   const onSubmit = useCallback(
     async ({ amount, token }: RepayFormSchema) => {
-      try {
-        if (amount) {
-          setModalState({ step: SubmitStepEnum.initiate });
-          const tx = await callBurn({ amount, token, setModalState });
-          setModalState({ step: SubmitStepEnum.overview, tx });
-          return true;
-        }
+      // TODO: add validation, remove stub
+      if (!amount || !token) return false;
 
-        return false;
-      } catch (err) {
-        if (
-          err instanceof Error &&
-          err.message.includes('User rejected the request')
-        ) {
-          setModalState({ step: SubmitStepEnum.reject });
-        } else {
-          setModalState({ step: SubmitStepEnum.error });
-        }
-      }
+      invariant(amount, '[RepayFormProvider] amount is undefined');
+      invariant(token, '[RepayFormProvider] token is undefined');
 
-      return false;
+      return await burn(amount, token);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callBurn],
+    [burn],
   );
 
   const formControllerValue: FormControllerContextValueType<RepayFormSchema> =
@@ -141,10 +110,9 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       () => ({
         onSubmit,
         retryEvent,
-        retryFire,
         onReset: formObject.reset,
       }),
-      [retryFire, retryEvent, onSubmit, formObject.reset],
+      [retryEvent, onSubmit, formObject.reset],
     );
 
   return (
@@ -152,7 +120,6 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       <FormProvider {...formObject}>
         <FormControllerContext.Provider value={formControllerValue}>
           <FormController>{children}</FormController>
-          <SubmitModal submitStep={submitStep} setModalState={setModalState} />
         </FormControllerContext.Provider>
       </FormProvider>
     </RepayDataContext.Provider>

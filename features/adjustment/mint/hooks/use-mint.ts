@@ -1,67 +1,59 @@
 import { useCallback } from 'react';
-import {
-  useConfig,
-  useWriteContract,
-  usePublicClient,
-  useEstimateGas,
-  useAccount,
-} from 'wagmi';
+import { useEstimateGas, useAccount } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'modules/vaults';
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
+import { useSendTransaction, withSuccess } from 'modules/web3';
+import { useReportStatus } from 'features/report/use-report';
 
-export const useMint = (onMutate = () => {}) => {
-  const { chainId } = useDappStatus();
-  const wagmiConfig = useConfig();
+export const useMint = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
-  const { data: mintTx, writeContractAsync } = useWriteContract({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
-
-  const callMint = useCallback(
-    async (
-      recipient: Address,
-      amount: bigint,
-      token: string,
-      setModalState: (submitStep: SubmitPayload) => void,
-    ) => {
-      invariant(publicClient, '[useMintDashboard] publicClient is undefined');
-
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: activeVault?.owner as Address,
-        functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
-        args: [recipient, amount],
-        chainId,
-      });
-
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
-    },
-    [chainId, writeContractAsync, activeVault?.owner, publicClient],
-  );
+  const { shouldApplyReport, prepareReportCall } = useReportStatus();
+  const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    callMint,
-    mintTx,
+    mint: useCallback(
+      async (recipient: Address, amount: bigint, token: string) => {
+        invariant(activeVault?.owner, '[useMint] owner is undefined');
+
+        const loadingActionText = `Minting ${token} backed by vault`;
+        const mainActionCompleteText = `Minted ${token} backed by vault`;
+
+        const mintCall = {
+          to: activeVault.owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
+            args: [recipient, amount],
+          }),
+          value: amount,
+          loadingActionText,
+        };
+
+        // if we have to post report, there will be extra modal due to async fetch
+        const transactions = shouldApplyReport
+          ? async () => {
+              return [await prepareReportCall(), mintCall];
+            }
+          : [mintCall];
+
+        const { success } = await withSuccess(
+          sendTX({
+            transactions,
+            mainActionLoadingText: loadingActionText,
+            mainActionCompleteText,
+          }),
+        );
+
+        return success;
+      },
+      [activeVault?.owner, prepareReportCall, sendTX, shouldApplyReport],
+    ),
+    ...rest,
   };
 };
 

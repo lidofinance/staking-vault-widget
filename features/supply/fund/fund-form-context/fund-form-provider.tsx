@@ -15,6 +15,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       amount: undefined,
     },
     mode: 'all',
+    // TODO: add validation
     reValidateMode: 'onChange',
   });
 
@@ -22,6 +23,8 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   const onSubmit = useCallback(
     async ({ amount }: FundFormSchema) => {
+      // TODO: add validation, remove stub
+      if (!amount) return false;
       invariant(amount, '[FundFormProvider] amount is undefined');
       return fund(amount);
     },

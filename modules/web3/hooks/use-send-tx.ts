@@ -28,8 +28,8 @@ export type TransactionEntry = {
   loadingActionText?: string;
 };
 
-type SendTransactionArguments = {
-  transactions: TransactionEntry[];
+export type SendTransactionArguments = {
+  transactions: TransactionEntry[] | (() => Promise<TransactionEntry[]>);
   mainActionLoadingText: string;
   mainActionCompleteText: string;
   forceAtomic?: boolean;
@@ -73,6 +73,7 @@ export const useSendTransaction = () => {
     }) => {
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !!forceLegacy && isAA;
+
       try {
         dispatchModal({
           type: 'init',
@@ -80,7 +81,21 @@ export const useSendTransaction = () => {
           isOpen: false,
           stage: 'none',
           onRetry: retryFire,
+          details: {
+            actionCompleteText: mainActionCompleteText,
+            actionLoadingText: mainActionLoadingText,
+          },
         });
+
+        // Optionally callback can be provided if some tx prep is async
+        if (typeof transactions === 'function') {
+          dispatchModal({
+            type: 'stage',
+            stage: 'collecting',
+          });
+
+          transactions = await transactions();
+        }
 
         if (useSendCalls) {
           const calls = transactions.map((tx) => ({
@@ -134,8 +149,6 @@ export const useSendTransaction = () => {
             type: 'stage',
             stage: 'signing',
             details: {
-              actionCompleteText:
-                tx.loadingActionText ?? mainActionCompleteText,
               actionLoadingText: tx.loadingActionText ?? mainActionLoadingText,
             },
           });

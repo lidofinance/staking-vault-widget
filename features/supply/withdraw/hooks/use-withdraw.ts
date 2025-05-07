@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useEstimateGas, usePublicClient } from 'wagmi';
+import { useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -9,14 +9,8 @@ import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
-import {
-  TransactionEntry,
-  useSendTransaction,
-  withSuccess,
-} from 'modules/web3';
+import { useSendTransaction, withSuccess } from 'modules/web3';
 import { useReportStatus } from 'features/report/use-report';
-import { fetchReportMerkle } from 'features/report/ipfs';
-import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 
 type WithdrawArgs = {
   recipient: Address;
@@ -25,54 +19,28 @@ type WithdrawArgs = {
 
 export const useWithdraw = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
+  const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
-  const { shouldApplyReport } = useReportStatus();
+  const { shouldApplyReport, prepareReportCall } = useReportStatus();
 
   const withdraw = useCallback(
     async ({ amount, recipient }: WithdrawArgs) => {
-      invariant(activeVault, '[useWithdraw] activeVault is undefined');
-      invariant(publicClient, '[useWithdraw] publicClient is undefined');
+      invariant(vaultOwner, '[useWithdraw] vaultOwner is undefined');
 
-      const transactions: TransactionEntry[] = [];
-
-      if (shouldApplyReport) {
-        const hub = getVaultHubContract(publicClient);
-        const reportCid = (await hub.read.latestReportData())[2];
-
-        const report = await fetchReportMerkle(
-          publicClient.chain.id,
-          reportCid,
-          activeVault.address,
-        );
-
-        transactions.push({
-          loadingActionText: 'Applying oracle report',
-          to: hub.address,
-          data: encodeFunctionData({
-            abi: hub.abi,
-            functionName: 'updateVaultData',
-            args: [
-              activeVault.address,
-              report.totalValueWei,
-              report.inOutDelta,
-              report.fee,
-              report.liabilityShares,
-              report.proof,
-            ],
-          }),
-        });
-      }
-
-      transactions.push({
+      const withdrawCall = {
         loadingActionText: 'Withdrawing ETH from vault',
-        to: activeVault.owner,
+        to: vaultOwner,
         data: encodeFunctionData({
           abi: dashboardAbi,
           functionName: 'withdraw',
           args: [recipient, amount],
         }),
-      });
+      };
+
+      // if we have to post report, there will be extra modal due to async fetch
+      const transactions = shouldApplyReport
+        ? async () => [await prepareReportCall(), withdrawCall]
+        : [withdrawCall];
 
       return withSuccess(
         sendTX({
@@ -82,7 +50,7 @@ export const useWithdraw = () => {
         }),
       );
     },
-    [activeVault, publicClient, shouldApplyReport, sendTX],
+    [vaultOwner, shouldApplyReport, sendTX, prepareReportCall],
   );
 
   return {

@@ -2,6 +2,9 @@ import { z, ZodSchema } from 'zod';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
 import { isZodError } from 'utils/errors';
 
+// TODO: recheck with lib to remove this code
+// https://react-hook-form.com/docs/useform#:~:text=of%20your%20fields.-,Examples%3A,-YUP
+
 export const validateFormValue = <T>(value: T): boolean => {
   if (
     typeof value === 'number' ||

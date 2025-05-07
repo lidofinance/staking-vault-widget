@@ -51,6 +51,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       recipient: '' as Address,
     },
     mode: 'all',
+    // TODO: add form validation
     reValidateMode: 'onChange',
   });
   const { withdraw, retryEvent } = useWithdraw();
@@ -79,6 +80,8 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
 
   const onSubmit = useCallback(
     async ({ amount, recipient }: WithdrawFormSchema) => {
+      // TODO: add validation, remove stub
+      if (!recipient || !amount) return false;
       invariant(
         amount,
         '[WithdrawFormProvider] withdrawableAmount is undefined',
