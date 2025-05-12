@@ -16,10 +16,10 @@ type VaultContextType = {
   vaultAddress: Address | undefined;
   activeVault?: VaultInfo;
   isLoadingVault?: boolean;
-  error: Error | null;
-  refetch: () => void;
-  isRefetching: boolean;
-};
+} & Pick<
+  ReturnType<typeof useSingleVaultData>,
+  'refetch' | 'isRefetching' | 'error'
+>;
 
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';

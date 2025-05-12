@@ -1,101 +1,79 @@
 import { useCallback } from 'react';
-import {
-  useConfig,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-  usePublicClient,
-  useEstimateGas,
-  useAccount,
-} from 'wagmi';
-import { encodeFunctionData, maxUint256 } from 'viem';
+import { useEstimateGas, useAccount } from 'wagmi';
+import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'modules/vaults';
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
 import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
-import { useLidoSDK } from 'modules/web3';
+import {
+  TransactionEntry,
+  useLidoSDK,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
-type BurnArgs = {
-  token: string;
-  amount: bigint;
-  setModalState: (submitStep: SubmitPayload) => void;
-};
-
-export const useBurn = (onMutate = () => {}) => {
-  const { chainId } = useDappStatus();
-  const { stETH, wstETH } = useLidoSDK();
-  const wagmiConfig = useConfig();
+export const useBurn = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
-
-  const { data: burnTx, writeContractAsync } = useWriteContract({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
-
-  const { data: burnReceipt } = useWaitForTransactionReceipt({
-    hash: burnTx,
-  });
-
-  const callBurn = useCallback(
-    async ({ token, amount, setModalState }: BurnArgs) => {
-      invariant(publicClient, '[useBurn] publicClient is undefined');
-      invariant(activeVault, '[useBurn] activeVault is undefined ');
-      const isSteth = token === 'stETH';
-      const tokenContract = isSteth ? stETH : wstETH;
-
-      const allowance = await tokenContract.allowance({
-        to: activeVault.owner,
-      });
-      const needsAllowance = allowance < amount;
-      if (needsAllowance) {
-        setModalState({ step: SubmitStepEnum.confirming });
-
-        const result = await tokenContract.approve({
-          amount: maxUint256,
-          to: activeVault.owner,
-          callback: async (props) => {
-            if (props.stage === 'receipt') {
-              setModalState({ step: SubmitStepEnum.submitting });
-            }
-          },
-        });
-
-        if (result.receipt?.status === 'reverted') {
-          throw new Error('Transaction was reverted');
-        }
-      }
-
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: activeVault.owner,
-        functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
-        args: [amount],
-        chainId,
-      });
-
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
-    },
-    [publicClient, activeVault, stETH, wstETH, writeContractAsync, chainId],
-  );
+  const { stETH, wstETH } = useLidoSDK();
+  const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    callBurn,
-    burnTx,
-    burnReceipt,
+    burn: useCallback(
+      async (amount: bigint, token: string) => {
+        invariant(activeVault?.owner, '[useMint] owner is undefined');
+
+        const loadingActionText = `Repaying ${token}`;
+        const mainActionCompleteText = `Repaid ${token}`;
+
+        const transactions = async () => {
+          const calls: TransactionEntry[] = [];
+
+          const isSteth = token === 'stETH';
+          const tokenContract = isSteth ? stETH : wstETH;
+
+          const allowance = await tokenContract.allowance({
+            to: activeVault.owner,
+          });
+          const needsAllowance = allowance < amount;
+          if (needsAllowance) {
+            const approveCall = {
+              ...(await tokenContract.populateApprove({
+                amount,
+                to: activeVault.owner,
+              })),
+              loadingActionText: `Approving ${token}`,
+            };
+            calls.push(approveCall);
+          }
+          calls.push({
+            to: activeVault.owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
+              args: [amount],
+            }),
+            loadingActionText,
+          });
+          return calls;
+        };
+
+        const { success } = await withSuccess(
+          sendTX({
+            transactions,
+            forceAtomic: true,
+            mainActionLoadingText: loadingActionText,
+            mainActionCompleteText,
+            renderSuccessContent: GoToVault,
+          }),
+        );
+
+        return success;
+      },
+      [activeVault?.owner, sendTX, stETH, wstETH],
+    ),
+    ...rest,
   };
 };
 

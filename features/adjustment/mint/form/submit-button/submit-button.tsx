@@ -1,4 +1,3 @@
-import { OracleReportButton } from 'features/report';
 import { useVaultInfo, type VAULT_OWNER_ROLES } from 'modules/vaults';
 import { MultiplePermissionedSubmitButton } from 'modules/vaults/components';
 import { useMemo } from 'react';
@@ -39,14 +38,12 @@ export const SubmitButton = () => {
   const disabled = isSubmitting && !isValid;
 
   return (
-    <OracleReportButton action="minting">
-      <MultiplePermissionedSubmitButton
-        dashboardRoles={roles}
-        type="submit"
-        disabled={disabled}
-      >
-        Mint
-      </MultiplePermissionedSubmitButton>
-    </OracleReportButton>
+    <MultiplePermissionedSubmitButton
+      dashboardRoles={roles}
+      type="submit"
+      disabled={disabled}
+    >
+      Mint
+    </MultiplePermissionedSubmitButton>
   );
 };

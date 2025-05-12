@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useEstimateGas, usePublicClient, useWriteContract } from 'wagmi';
+import { useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -7,54 +7,58 @@ import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
+
 import { fallbackedAddress } from 'utils/fallbacked-address';
+import { useSendTransaction, withSuccess } from 'modules/web3';
+import { useReportStatus } from 'features/report';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 type WithdrawArgs = {
   recipient: Address;
   amount: bigint;
-  setModalState: (submitStep: SubmitPayload) => void;
 };
 
-export const useWithdraw = (onMutate = () => {}) => {
+export const useWithdraw = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
+  const vaultOwner = activeVault?.owner;
+  const { sendTX, ...rest } = useSendTransaction();
+  const { shouldApplyReport, prepareReportCall } = useReportStatus();
 
-  const { data: withdrawTx, writeContractAsync } = useWriteContract({
-    mutation: {
-      onMutate,
+  const withdraw = useCallback(
+    async ({ amount, recipient }: WithdrawArgs) => {
+      invariant(vaultOwner, '[useWithdraw] vaultOwner is undefined');
+
+      const withdrawCall = {
+        loadingActionText: 'Withdrawing ETH from vault',
+        to: vaultOwner,
+        data: encodeFunctionData({
+          abi: dashboardAbi,
+          functionName: 'withdraw',
+          args: [recipient, amount],
+        }),
+      };
+
+      // if we have to post report, there will be extra modal due to async fetch
+      const transactions = shouldApplyReport
+        ? async () => [await prepareReportCall(), withdrawCall]
+        : [withdrawCall];
+
+      return withSuccess(
+        sendTX({
+          transactions,
+          forceAtomic: true,
+          mainActionLoadingText: 'Withdrawing ETH from vault',
+          mainActionCompleteText: 'ETH withdrawn from vault',
+          renderSuccessContent: GoToVault,
+        }),
+      );
     },
-  });
-
-  const callWithdraw = useCallback(
-    async ({ amount, recipient, setModalState }: WithdrawArgs) => {
-      invariant(activeVault, '[useWithdraw] activeVault is undefined');
-      invariant(publicClient, '[useWithdraw] publicClient is undefined');
-
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: activeVault.owner,
-        functionName: 'withdraw',
-        args: [recipient, amount],
-      });
-
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
-    },
-    [activeVault, writeContractAsync, publicClient],
+    [vaultOwner, shouldApplyReport, sendTX, prepareReportCall],
   );
 
   return {
-    callWithdraw,
-    withdrawTx,
+    withdraw,
+    ...rest,
   };
 };
 

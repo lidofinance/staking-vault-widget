@@ -1,39 +1,14 @@
-import {
-  FC,
-  PropsWithChildren,
-  useState,
-  useMemo,
-  useCallback,
-  createContext,
-  useContext,
-  useRef,
-  useEffect,
-} from 'react';
-import invariant from 'tiny-invariant';
+import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
-import { SubmitModal } from 'shared/components';
+import { FormController } from 'shared/hook-form/form-controller';
 
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
 import {
   EditMainSettingsSchema,
-  MainSettingsContextValue,
   ManagersKeys,
   RoleFieldSchema,
 } from 'features/settings/main/types';
-import {
-  useEditMainSettings,
-  useSimulateEditMainSettings,
-} from 'features/settings/main/hooks';
+import { useEditMainSettings } from 'features/settings/main/hooks';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import {
   editMainSettingsSchema,
@@ -42,43 +17,9 @@ import {
 import { useVaultInfo } from 'modules/vaults';
 import { Address } from 'viem';
 
-const MainSettingsContext = createContext<MainSettingsContextValue | null>(
-  null,
-);
-MainSettingsContext.displayName = 'MainSettingsContext';
-
-export const useMainSettingsData = () => {
-  const value = useContext(MainSettingsContext);
-  invariant(
-    value,
-    'useMainSettingsData was used outside the MainSettingsContext provider',
-  );
-
-  return value;
-};
-
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [submitStep, setSubmitStep] = useState<SubmitPayload>(() => ({
-    step: SubmitStepEnum.edit,
-  }));
-  const abortControllerRef = useRef(new AbortController());
   const { activeVault, refetch, isRefetching } = useVaultInfo();
-  const { callEditMainSettings } = useEditMainSettings();
-  const { simulateEditMainSettings } = useSimulateEditMainSettings();
-
-  const handleCancelSubmit = useCallback(() => {
-    abortControllerRef.current.abort();
-    setSubmitStep({ step: SubmitStepEnum.edit });
-  }, []);
-
-  const createVaultData = {
-    submitStep,
-    handleCancelSubmit,
-  };
-
-  const setModalState = useCallback((submitStep: SubmitPayload) => {
-    setSubmitStep(submitStep);
-  }, []);
+  const { editMainSettings, retryEvent } = useEditMainSettings();
 
   const formObject = useForm<EditMainSettingsSchema>({
     defaultValues: {
@@ -111,64 +52,22 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
-      abortControllerRef.current = new AbortController();
-      setModalState({ step: SubmitStepEnum.initiate });
-      try {
-        setModalState({ step: SubmitStepEnum.simulating });
-        await simulateEditMainSettings(data);
-      } catch (err) {
-        setModalState({ step: SubmitStepEnum.error });
-        return false;
-      }
+      const { success } = await editMainSettings(data);
 
-      try {
-        await callEditMainSettings(data, setModalState, abortControllerRef);
-        setModalState({ step: SubmitStepEnum.success });
-        setTimeout(refetch, 1000);
-        return true;
-      } catch (err) {
-        if (
-          err instanceof Error &&
-          err.message.includes('User rejected the request')
-        ) {
-          setModalState({ step: SubmitStepEnum.reject });
-        } else {
-          setModalState({ step: SubmitStepEnum.error });
-        }
+      // refetch even when error because some transactions may be successful
+      // or reverted due to state change
+      await refetch({ cancelRefetch: true, throwOnError: true });
 
-        setTimeout(refetch, 1000);
-        return true;
-      }
+      return success;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callEditMainSettings, refetch],
+    [editMainSettings, refetch],
   );
-
-  const { reset } = formObject;
-  const { retryEvent, retryFire } = useFormControllerRetry();
-  const formControllerValue: FormControllerContextValueType<EditMainSettingsSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        retryFire,
-        onReset: reset,
-      }),
-      [retryFire, retryEvent, onSubmit, reset],
-    );
 
   return (
     <FormProvider {...formObject}>
-      <MainSettingsContext.Provider value={createVaultData}>
-        <FormControllerContext.Provider value={formControllerValue}>
-          <FormController>{children}</FormController>
-          <SubmitModal
-            submitStep={submitStep}
-            setModalState={setModalState}
-            onClose={handleCancelSubmit}
-          />
-        </FormControllerContext.Provider>
-      </MainSettingsContext.Provider>
+      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+        {children}
+      </FormController>
     </FormProvider>
   );
 };
