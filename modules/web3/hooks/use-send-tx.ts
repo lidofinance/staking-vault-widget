@@ -64,7 +64,7 @@ export const useSendTransaction = () => {
     TransactionError,
     SendTransactionArguments
   >({
-    mutationKey: ['sendTransaction'],
+    mutationKey: ['sendTransaction', isAA, retryFire],
 
     mutationFn: async ({
       transactions,
@@ -75,7 +75,7 @@ export const useSendTransaction = () => {
       renderSuccessContent,
     }) => {
       const receipts: TransactionReceipt[] = [];
-      const useSendCalls = !!forceLegacy && isAA;
+      const useSendCalls = !forceLegacy && isAA;
 
       try {
         dispatchModal({
