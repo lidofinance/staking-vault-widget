@@ -5,7 +5,6 @@ import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
-import { AppPaths } from 'consts/urls';
 import { useFormContext, UseFormReturn } from 'react-hook-form';
 import { validateFormValue } from 'utils/validate-form-value';
 import { VaultMainSettingsType } from 'features/create-vault/types';
@@ -14,6 +13,7 @@ import {
   mainSettingsFields,
 } from 'features/create-vault/consts';
 import { VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
+import { appPaths } from 'consts/routing';
 
 export interface MainSettingsActionProps {
   form: UseFormReturn<VaultMainSettingsType>;
@@ -45,7 +45,7 @@ export const MainSettingsAction: FC<MainSettingsActionProps> = ({ form }) => {
     isValidating || stepByFields || !stepByConfirm || !isValid;
 
   const handleNavigateToRoot = () => {
-    void router.push(AppPaths.main);
+    void router.push(appPaths.myVaults);
   };
 
   const handleSetNextStep = () => {

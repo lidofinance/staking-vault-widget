@@ -2,26 +2,30 @@ import { useAdjustment } from 'features/adjustment/contexts/adjustment-provider'
 import { useVaultInfo } from 'modules/vaults';
 
 import { Switch } from 'shared/components/switch';
-import { ManifestConfigPageEnum } from 'config/external-config';
 
 import { Mint } from './mint';
 import { Repay } from './repay';
-import { adjustmentToggleList } from './const';
 import { FormBlock, PageWrapper } from './styles';
+import { appPaths } from 'consts/routing';
+import { zeroAddress } from 'viem';
 
 export const AdjustmentTabs = () => {
   const { isMintTab } = useAdjustment();
-  const { activeVault } = useVaultInfo();
+  const { vaultAddress } = useVaultInfo();
 
   // TODO: improve creation of the path
   const mintRoutes = [
     {
-      path: `/${activeVault?.address}${ManifestConfigPageEnum.adjustment}/${adjustmentToggleList[0].value}`,
-      name: adjustmentToggleList[0].label,
+      path: appPaths.vaults
+        .vault(vaultAddress ?? zeroAddress)
+        .adjustment('mint'),
+      name: 'Mint',
     },
     {
-      path: `/${activeVault?.address}${ManifestConfigPageEnum.adjustment}/${adjustmentToggleList[1].value}`,
-      name: adjustmentToggleList[1].label,
+      path: appPaths.vaults
+        .vault(vaultAddress ?? zeroAddress)
+        .adjustment('repay'),
+      name: 'Repay',
     },
   ];
 

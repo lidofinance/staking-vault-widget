@@ -6,7 +6,7 @@ import { Layout } from 'shared/components';
 
 const Claim: FC = () => {
   return (
-    <Layout title="Claim" containerSize="content">
+    <Layout navigationMode="vault" title="Claim" containerSize="content">
       <Head>
         <title>ClaimPage | Lido</title>
       </Head>
