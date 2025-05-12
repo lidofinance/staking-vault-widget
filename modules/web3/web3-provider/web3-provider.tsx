@@ -35,7 +35,6 @@ import { walletMetricProps } from 'consts/matomo-wallets-events';
 
 import { SupportL1Chains } from './dapp-chain';
 import { useWeb3Transport } from './use-web3-transport';
-import { TransactionModal } from 'shared/components/transaction-modal';
 
 type ChainsList = [wagmiChains.Chain, ...wagmiChains.Chain[]];
 
@@ -191,9 +190,7 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
             config={walletsModalConfig}
             darkThemeEnabled={themeName === 'dark'}
           />
-          <SupportL1Chains>
-            <TransactionModal>{children}</TransactionModal>
-          </SupportL1Chains>
+          <SupportL1Chains>{children}</SupportL1Chains>
         </ReefKnotProvider>
       </WagmiProvider>
     </Web3ProviderContext.Provider>

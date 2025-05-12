@@ -14,6 +14,7 @@ import { EditMainSettingsSchema } from 'features/settings/main/types';
 import { encodeFunctionData, Hash } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -131,6 +132,7 @@ export const useEditMainSettings = () => {
             transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
+            renderSuccessContent: GoToVault,
           }),
         );
       },

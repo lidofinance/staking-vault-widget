@@ -11,6 +11,7 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useFund = () => {
   const { activeVault } = useVaultInfo();
@@ -36,6 +37,7 @@ export const useFund = () => {
             transactions: [fundCall],
             mainActionLoadingText: 'Supplying vault with ETH',
             mainActionCompleteText: 'Vault supplied with ETH',
+            renderSuccessContent: GoToVault,
           }),
         );
 

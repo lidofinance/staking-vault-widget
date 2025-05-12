@@ -9,6 +9,7 @@ import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 import { useReportStatus } from 'features/report';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useMint = () => {
   const { activeVault } = useVaultInfo();
@@ -44,9 +45,10 @@ export const useMint = () => {
         const { success } = await withSuccess(
           sendTX({
             transactions,
+            forceAtomic: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
-            forceAtomic: true,
+            renderSuccessContent: GoToVault,
           }),
         );
 

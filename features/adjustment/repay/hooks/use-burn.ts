@@ -12,6 +12,7 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useBurn = () => {
   const { activeVault } = useVaultInfo();
@@ -61,9 +62,10 @@ export const useBurn = () => {
         const { success } = await withSuccess(
           sendTX({
             transactions,
+            forceAtomic: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
-            forceAtomic: true,
+            renderSuccessContent: GoToVault,
           }),
         );
 

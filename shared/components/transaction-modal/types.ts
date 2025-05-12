@@ -9,12 +9,15 @@ type TransactionModalStage =
   | 'success'
   | 'error';
 
+export type ModalRenderSuccessContent = (props: {
+  closeModal: () => void;
+  result: TransactionResponse;
+}) => JSX.Element;
+
 type TransactionModalDetails = {
   actionLoadingText: string;
   actionCompleteText: string;
-  renderSuccessContent?: (props: {
-    result: TransactionResponse;
-  }) => JSX.Element;
+  renderSuccessContent?: ModalRenderSuccessContent;
   errorText?: string;
   errorDescription?: string;
   // txHash or callId depending on isBatch

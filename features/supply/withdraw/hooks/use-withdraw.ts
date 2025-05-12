@@ -11,6 +11,7 @@ import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 import { useReportStatus } from 'features/report';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 type WithdrawArgs = {
   recipient: Address;
@@ -45,9 +46,10 @@ export const useWithdraw = () => {
       return withSuccess(
         sendTX({
           transactions,
+          forceAtomic: true,
           mainActionLoadingText: 'Withdrawing ETH from vault',
           mainActionCompleteText: 'ETH withdrawn from vault',
-          forceAtomic: true,
+          renderSuccessContent: GoToVault,
         }),
       );
     },

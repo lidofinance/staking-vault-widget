@@ -10,6 +10,7 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 type EditPermissionsArgs = {
   toRevoke: GrantRole[];
@@ -53,6 +54,7 @@ export const useEditPermissions = () => {
             transactions,
             mainActionLoadingText: 'Editing vault permissions',
             mainActionCompleteText: 'Vault permissions edited',
+            renderSuccessContent: GoToVault,
           }),
         );
       },

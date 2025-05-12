@@ -12,7 +12,8 @@ import { TxLinkAA, TxLinkEtherscan } from '../tx-link-etherscan';
 import { ButtonLink } from '../button-link';
 
 import type { Hash } from 'viem';
-import type { TransactionModalState } from './types';
+import type { TransactionModalAction, TransactionModalState } from './types';
+import type { Dispatch } from 'react';
 
 const getIconComponent = (state: TransactionModalState) => {
   switch (state.stage) {
@@ -50,7 +51,10 @@ const getModalTitle = (state: TransactionModalState) => {
   }
 };
 
-const getMainContent = (state: TransactionModalState) => {
+const getMainContent = (
+  state: TransactionModalState,
+  dispatchModal: Dispatch<TransactionModalAction>,
+) => {
   const { transactionResult, renderSuccessContent, errorText } = state.details;
   switch (state.stage) {
     case 'collecting':
@@ -75,7 +79,14 @@ const getMainContent = (state: TransactionModalState) => {
       return (
         renderSuccessContent &&
         transactionResult &&
-        renderSuccessContent({ result: transactionResult })
+        renderSuccessContent({
+          result: transactionResult,
+          closeModal: () => {
+            dispatchModal({
+              type: 'close',
+            });
+          },
+        })
       );
     case 'error':
       return (
@@ -127,7 +138,7 @@ export const TransactionModalContent = () => {
       }}
     >
       <Content>
-        {getMainContent(state)}
+        {getMainContent(state, dispatchModal)}
         {showEtherscanLink(state)}
         {showRetryButton(state)}
       </Content>

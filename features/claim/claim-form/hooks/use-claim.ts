@@ -8,6 +8,7 @@ import invariant from 'tiny-invariant';
 import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useClaim = () => {
   const { activeVault } = useVaultInfo();
@@ -37,6 +38,7 @@ export const useClaim = () => {
             transactions: [claimCall],
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
+            renderSuccessContent: GoToVault,
           }),
         );
 
