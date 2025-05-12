@@ -100,7 +100,6 @@ export const adminsForRender: MainSettingsOverview[] = [
     dataType: 'address',
     actionText: 'Add new address',
     vaultKey: 'nodeOperatorManagers',
-
     canEditRole: 'nodeOperatorManager',
   },
 ];
