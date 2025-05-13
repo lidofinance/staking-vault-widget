@@ -5,7 +5,7 @@ import { Layout } from 'shared/components';
 
 const Validators: FC = () => {
   return (
-    <Layout title="Coming soon" containerSize="content">
+    <Layout navigationMode="vault" title="Coming soon" containerSize="content">
       <Head>
         <title>Validators | Lido</title>
       </Head>

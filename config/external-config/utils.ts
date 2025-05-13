@@ -23,7 +23,7 @@ export const isPagesValid = (config: object) => {
   const pages = config.pages as ManifestConfig['pages'];
   if (pages && typeof pages === 'object') {
     // INFO: exclude possible issue when main page can be deactivated
-    return !pages[ManifestConfigPageEnum.main]?.shouldDisable;
+    return !pages['/']?.shouldDisable;
   }
 
   return false;

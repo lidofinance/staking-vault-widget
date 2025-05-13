@@ -7,21 +7,3 @@ export const TOKENS_TO_MINT = {
 } as const;
 
 export type TOKENS_TO_MINT = keyof typeof TOKENS_TO_MINT;
-
-export enum SUPPLY_PATHS {
-  fund = 'fund',
-  withdraw = 'withdraw',
-}
-
-export type SupplyPaths = (typeof SUPPLY_PATHS)[keyof typeof SUPPLY_PATHS];
-
-export const supplyToggleList: { value: SupplyPaths; label: string }[] = [
-  {
-    value: SUPPLY_PATHS.fund,
-    label: 'Supply',
-  },
-  {
-    value: SUPPLY_PATHS.withdraw,
-    label: 'Withdraw',
-  },
-];

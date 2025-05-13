@@ -21,17 +21,23 @@ type LayoutProps = {
   title?: ReactNode;
   subtitle?: ReactNode;
   containerSize?: ContainerProps['size'];
+  navigationMode?: React.ComponentProps<typeof Navigation>['mode'];
 };
 
-export const Layout: FC<PropsWithChildren<LayoutProps>> = (props) => {
-  const { title, subtitle, containerSize, children } = props;
+export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
+  title,
+  subtitle,
+  containerSize,
+  navigationMode,
+  children,
+}) => {
   const errorMessage = useErrorMessage();
 
   return (
     <LayoutStyles isError={!!errorMessage}>
       <Header />
       <ChainBanner />
-      <Navigation />
+      <Navigation mode={navigationMode} />
       <Main size={containerSize}>
         {config.ipfsMode && (
           <IPFSInfoBoxOnlyMobileAndPortableWrapper>

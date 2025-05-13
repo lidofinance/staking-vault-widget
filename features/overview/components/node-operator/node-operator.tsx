@@ -1,5 +1,6 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionPayload[] = [
   {
@@ -9,7 +10,7 @@ const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Accumulated',
     key: 'accumulatedFee',
-    actionLink: '/claim',
+    actionLink: (vault) => appPaths.vaults.vault(vault).claim,
     actionText: 'Claim',
   },
 ];

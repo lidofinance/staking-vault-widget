@@ -18,7 +18,7 @@ export type ManifestConfig = {
     };
   };
 };
-
+// TODO adjust for vaults routing
 export enum ManifestConfigPageEnum {
   main = '/',
   overview = '/overview',

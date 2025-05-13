@@ -13,12 +13,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { config } from 'config';
 import { useGetRpcUrlByChainId } from 'config/rpc';
-import { AppPaths } from 'consts/urls';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 import { useDappStatus, useContractAddress } from 'modules/web3';
 import { useCSPViolation } from 'features/ipfs/csp-violation-box/use-csp-violation';
-import { useRouterPath } from 'shared/hooks/use-router-path';
 import { useLocalStorage } from 'shared/hooks/use-local-storage';
 import { checkRpcUrl } from 'utils/check-rpc-url';
 
@@ -69,8 +67,8 @@ export const IPFSInfoBoxStatusesProvider: FC<PropsWithChildren> = ({
   });
   const isRPCAvailable = isRPCAvailableRaw === true;
 
-  const pathname = useRouterPath();
-  const isSettingsPage = pathname === AppPaths.settings;
+  //const pathname = useRouterPath();
+  const isSettingsPage = false;
 
   const isShownTheRPCNotAvailableBox =
     (!isDismissed || !isRPCAvailable) &&

@@ -7,19 +7,27 @@ import { useVaultInfo } from 'modules/vaults';
 
 import { OverviewItemValue } from './overview-item-value';
 
-export interface ItemProps {
+import type { Address } from 'viem';
+
+export type ItemProps = {
   title: string;
   content: string | number | undefined;
-  actionLink?: string;
+  actionLink?: (vaultAddress: Address) => string;
   actionText?: string;
   isLoading?: boolean;
   color?: string;
-}
+};
 
-export const OverviewItem: FC<ItemProps> = (props) => {
+export const OverviewItem: FC<ItemProps> = ({
+  title,
+  content,
+  actionLink,
+  actionText,
+  isLoading,
+  color,
+}) => {
+  const { vaultAddress } = useVaultInfo();
   const router = useRouter();
-  const { activeVault } = useVaultInfo();
-  const { title, content, actionLink, actionText, isLoading, color } = props;
 
   return (
     <ItemWrapper>
@@ -33,11 +41,11 @@ export const OverviewItem: FC<ItemProps> = (props) => {
         isLoading={isLoading}
         color={color}
       />
-      {!!actionLink && !!actionText && (
+      {!!(actionLink && actionText && vaultAddress) && (
         <Button
           size="xs"
           variant="translucent"
-          onClick={() => router.push(`/${activeVault?.address}${actionLink}`)}
+          onClick={() => router.push(actionLink(vaultAddress))}
         >
           {actionText}
         </Button>

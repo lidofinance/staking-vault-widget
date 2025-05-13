@@ -6,7 +6,7 @@ import { SettingsTabs } from 'features/settings';
 
 const Settings: FC = () => {
   return (
-    <Layout title="Settings" containerSize="content">
+    <Layout navigationMode="vault" title="Settings" containerSize="content">
       <SettingsProvider>
         <SettingsTabs />
       </SettingsProvider>

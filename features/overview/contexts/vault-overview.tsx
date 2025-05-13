@@ -47,7 +47,7 @@ export type SectionPayload = {
   title: string;
   key: VaultOverviewContextKeys;
   actionText?: string;
-  actionLink?: string;
+  actionLink?: (vaultAddress: Address) => string;
   isLoading?: boolean;
 };
 

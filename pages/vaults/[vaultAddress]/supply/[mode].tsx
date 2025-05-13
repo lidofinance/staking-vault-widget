@@ -16,7 +16,7 @@ const Supply: FC = () => {
   const title = mode === 'fund' ? 'Supply' : 'Withdraw';
 
   return (
-    <Layout title={title} containerSize="content">
+    <Layout navigationMode="vault" title={title} containerSize="content">
       <Head>
         <title>{title} | Lido</title>
       </Head>

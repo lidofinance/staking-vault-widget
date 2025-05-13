@@ -3,10 +3,10 @@ import { useRouter } from 'next/router';
 
 import { Button } from '@lidofinance/lido-ui';
 
-import { AppPaths } from 'consts/urls';
 import { parseEventLogs } from 'viem';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import { ModalRenderSuccessContent } from 'shared/components/transaction-modal';
+import { appPaths } from 'consts/routing';
 
 export const ModalCTA: ModalRenderSuccessContent = ({ result, closeModal }) => {
   const isRouting = useRef<boolean>(false);
@@ -36,8 +36,7 @@ export const ModalCTA: ModalRenderSuccessContent = ({ result, closeModal }) => {
 
     try {
       isRouting.current = true;
-      // todo fix routing
-      await router.push(`/${vaultAddress}/${AppPaths.overview}`);
+      await router.push(appPaths.vaults.vault(vaultAddress).overview);
       closeModal();
     } finally {
       isRouting.current = false;

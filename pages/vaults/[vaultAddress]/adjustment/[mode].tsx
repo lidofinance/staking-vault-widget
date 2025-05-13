@@ -17,7 +17,7 @@ const Adjustment: FC = () => {
   const title = mode === 'mint' ? 'Mint' : 'Repay';
 
   return (
-    <Layout title={title} containerSize="content">
+    <Layout navigationMode="vault" title={title} containerSize="content">
       <Head>
         <title>{title} | Lido</title>
       </Head>
