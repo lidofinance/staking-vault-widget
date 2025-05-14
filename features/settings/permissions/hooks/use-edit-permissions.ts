@@ -9,7 +9,7 @@ import { GrantRole } from 'features/settings/permissions/types';
 import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
 import invariant from 'tiny-invariant';
 
-export const useEditPermissionsWithDashboard = (onMutate = () => {}) => {
+export const useEditPermissionsWithDashboard = () => {
   const { chainId } = useDappStatus();
   const wagmiConfig = useConfig();
   const { activeVault } = useVaultInfo();
@@ -18,22 +18,12 @@ export const useEditPermissionsWithDashboard = (onMutate = () => {}) => {
   const {
     data: grantPermissionsTx,
     writeContractAsync: writeGrantContractAsync,
-  } = useWriteContract({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
+  } = useWriteContract({ config: wagmiConfig });
 
   const {
     data: revokePermissionsTx,
     writeContractAsync: writeRevokeContractAsync,
-  } = useWriteContract({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
+  } = useWriteContract({ config: wagmiConfig });
 
   const callEditPermissions = useCallback(
     async (

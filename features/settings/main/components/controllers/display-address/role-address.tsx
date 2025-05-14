@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { AddressBadge } from 'shared/components';
+import { AddressBadge, AddressBadgeSelectable } from 'shared/components';
 import { AddressWrapper } from './styles';
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { useFormContext } from 'react-hook-form';
@@ -28,7 +28,6 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   }
 
   const toRemove = role.state === 'remove';
-  const bgColor = toRemove ? 'error' : 'default';
   const isLast = roles.filter((role) => role.state === 'display').length === 1;
   const canToggle = (roles.length > 1 && !isLast) || toRemove;
   const onToggle = () => {
@@ -43,14 +42,24 @@ export const RoleAddress: FC<RoleAddressProps> = ({
 
   return (
     <AddressWrapper>
-      <AddressBadge
-        weight={400}
-        address={role.value}
-        crossedText={toRemove}
-        bgColor={bgColor}
-        symbols={21}
-        onToggle={canToggle && isEditable ? () => onToggle() : undefined}
-      />
+      {canToggle && isEditable ? (
+        <AddressBadgeSelectable
+          weight={400}
+          address={role.value}
+          checked={toRemove}
+          defaultBg="default"
+          onCheckedChange={onToggle}
+          symbols={21}
+        />
+      ) : (
+        <AddressBadge
+          weight={400}
+          address={role.value}
+          crossed={toRemove}
+          bgColor="default"
+          symbols={21}
+        />
+      )}
     </AddressWrapper>
   );
 };

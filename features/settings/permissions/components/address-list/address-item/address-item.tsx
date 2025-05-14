@@ -1,25 +1,23 @@
-import { FC, useState, useRef, useMemo, MouseEvent } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 
-import { Popover, Copy, External, ToastSuccess } from '@lidofinance/lido-ui';
+import { AddressBadge, AddressPopoverSelectable } from 'shared/components';
+
 import {
-  AddressBadge,
-  AddressLinkEtherscan,
-  ButtonLink,
-} from 'shared/components';
-
-import { ActionGroup, ActionWrapper, PopoverContent } from './styles';
-
-import { truncateAddress } from 'utils/truncate-address';
-import {
+  EditPermissionsSchema,
   FieldSchema,
   PermissionKeys,
 } from 'features/settings/permissions/types';
-import { useFormContext } from 'react-hook-form';
+import {
+  FieldArrayWithId,
+  UseFieldArrayUpdate,
+  useFormContext,
+} from 'react-hook-form';
 
 export type AddressItemProps = {
   index: number;
-  field: FieldSchema;
+  field: FieldArrayWithId<FieldSchema>;
   permission: PermissionKeys;
+  update: UseFieldArrayUpdate<EditPermissionsSchema>;
   readonly?: boolean;
 };
 
@@ -28,26 +26,28 @@ export const AddressItem: FC<AddressItemProps> = ({
   index,
   field,
   permission,
+  update,
   readonly,
 }) => {
-  const { setValue } = useFormContext();
-  const { account, state, group } = field;
-  const [showPopover, showPopoverVisibility] = useState(false);
-  const badgeRef = useRef<HTMLDivElement>(null);
-  const isTextCrossed = useMemo(
+  const { register } = useFormContext();
+  const { account, state, group } = field as Record<'id', string> & FieldSchema;
+  const fieldKey = `${permission}.${index}.${account}` as const;
+  const isChecked = useMemo(
     () => ['restore', 'remove'].includes(state),
     [state],
   );
+
   const bgColor = useMemo(() => {
-    if (isTextCrossed) return 'error';
+    if (isChecked) return 'error';
     if (state === 'grant') return 'success';
     return 'default';
-  }, [isTextCrossed, state]);
+  }, [isChecked, state]);
 
-  const handleUpdateFormItem = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
+  useEffect(() => {
+    register(fieldKey);
+  }, [register, fieldKey]);
 
+  const handleUpdateFormItem = () => {
     let newState;
     if (group === 'settled') {
       newState = state === 'display' ? 'remove' : 'display';
@@ -55,69 +55,19 @@ export const AddressItem: FC<AddressItemProps> = ({
       newState = state === 'grant' ? 'restore' : 'grant';
     }
 
-    setValue(
-      `${permission}.${index}`,
-      {
-        account,
-        group,
-        state: newState,
-      },
-      { shouldDirty: true },
-    );
+    update(index, { account, group, state: newState } as FieldSchema);
   };
 
-  const handleShowPopover = () => {
-    showPopoverVisibility(true);
-  };
-
-  const handleCopyLink = () => {
-    void navigator.clipboard.writeText(account);
-    ToastSuccess(
-      `Address ${truncateAddress({ address: account })} have been copied`,
-    );
-  };
-
-  const handleClosePopover = () => {
-    showPopoverVisibility(false);
-  };
+  if (readonly) {
+    return <AddressBadge address={account} />;
+  }
 
   return (
-    <>
-      <AddressBadge
-        ref={badgeRef}
-        address={account}
-        crossedText={isTextCrossed}
-        bgColor={bgColor}
-        readonly={readonly}
-        onToggle={handleUpdateFormItem}
-        onClick={handleShowPopover}
-      />
-      {!!badgeRef?.current && (
-        <Popover
-          anchorRef={{
-            current: badgeRef.current,
-          }}
-          backdrop
-          offset="xs"
-          onClose={handleClosePopover}
-          placement="topLeft"
-          open={showPopover}
-        >
-          <PopoverContent>
-            <AddressBadge address={account} symbols={21} />
-            <ActionGroup>
-              <ActionWrapper>
-                <Copy fill="var(--lido-color-primary)" />
-                <ButtonLink onClick={handleCopyLink}>Copy address</ButtonLink>
-              </ActionWrapper>
-              <ActionWrapper>
-                <External fill="var(--lido-color-primary)" />
-                <AddressLinkEtherscan address={account} />
-              </ActionWrapper>
-            </ActionGroup>
-          </PopoverContent>
-        </Popover>
-      )}
-    </>
+    <AddressPopoverSelectable
+      address={account}
+      checked={isChecked}
+      bgColor={bgColor}
+      onCheckedChange={handleUpdateFormItem}
+    />
   );
 };

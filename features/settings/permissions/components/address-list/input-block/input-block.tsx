@@ -1,68 +1,81 @@
-import { FC } from 'react';
-import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import { FC, FocusEvent, KeyboardEvent, useState } from 'react';
+import { Input, Plus } from '@lidofinance/lido-ui';
+import { UseFieldArrayAppend } from 'react-hook-form';
 
-import { Plus } from '@lidofinance/lido-ui';
-import { InputItem } from './input-item';
-import { AddAddress } from '../styles';
-import { InputBlockWrapper } from './styles';
-
-import { validatePermissions } from 'features/settings/permissions/validation';
-
-import type {
-  VaultPermissions,
-  PermissionKeys,
+import {
+  EditPermissionsSchema,
+  FieldSchema,
 } from 'features/settings/permissions/types';
+import { ButtonClose } from 'shared/components';
+import { InputBlockWrapper, AddAddress } from './styles';
+import { useAddressValidation } from 'features/settings/permissions/hooks/validate-address';
 
 export type InputBlockProps = {
-  permission: PermissionKeys;
+  fields: (Record<'id', string> & FieldSchema)[];
+  append: UseFieldArrayAppend<EditPermissionsSchema>;
   readonly?: boolean;
 };
 
-export const InputBlock: FC<InputBlockProps> = ({ permission, readonly }) => {
-  const { getValues } = useFormContext();
+export const InputBlock: FC<InputBlockProps> = ({
+  fields,
+  append,
+  readonly,
+}) => {
+  const { inputError, resetError, validateInputValue } =
+    useAddressValidation(fields);
+  const [showInput, setInputVisibility] = useState(false);
 
-  const {
-    control,
-    register,
-    trigger,
-    formState: { errors },
-  } = useForm<VaultPermissions>({
-    defaultValues: {
-      [permission]: [],
-    },
-    resolver: validatePermissions(getValues),
-    mode: 'all',
-  });
+  const handleInputEvent = (
+    e: KeyboardEvent<HTMLInputElement> | FocusEvent<HTMLInputElement>,
+  ) => {
+    const isEnterKey = e.type === 'keydown' && 'key' in e && e.key === 'Enter';
+    const isBlur = e.type === 'blur';
 
-  const { append, fields, remove } = useFieldArray({
-    name: permission,
-    control,
-  });
+    if (!isEnterKey && !isBlur) return;
 
-  const inputError = errors[permission];
+    const value = e.currentTarget.value.trim();
+    if (!validateInputValue(value)) return;
+
+    if (isEnterKey) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    append({ account: value, state: 'grant', group: 'eventual' });
+    hideInputField();
+  };
+
+  const hideInputField = () => {
+    setInputVisibility(false);
+    resetError();
+  };
 
   return (
     <InputBlockWrapper>
-      {fields.map((field, index) => (
-        <InputItem
-          error={inputError?.[index]}
-          remove={remove}
-          trigger={trigger}
-          register={register}
-          key={field.id}
-          permission={permission}
-          index={index}
-        />
-      ))}
+      {!readonly && showInput && (
+        <>
+          <Input
+            placeholder="Ethereum address"
+            type="text"
+            autoComplete="off"
+            error={inputError}
+            onKeyDown={handleInputEvent}
+            onBlur={handleInputEvent}
+            autoFocus
+          />
 
-      {!readonly && (
+          <ButtonClose onClick={hideInputField} />
+        </>
+      )}
+
+      {!readonly && !showInput && (
         <AddAddress
           color="primary"
           icon={<Plus />}
           size="md"
           variant="ghost"
           type="button"
-          onClick={() => append({ value: '' })}
+          onClick={() => setInputVisibility(true)}
         >
           Add new address
         </AddAddress>

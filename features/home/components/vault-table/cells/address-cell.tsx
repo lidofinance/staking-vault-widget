@@ -20,8 +20,8 @@ export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   };
 
   return (
-    <AddressWrapper role="link" onClick={handleClick}>
-      <AddressBadge address={data ?? value} />
+    <AddressWrapper role="link">
+      <AddressBadge address={data ?? value} onClick={handleClick} />
     </AddressWrapper>
   );
 };

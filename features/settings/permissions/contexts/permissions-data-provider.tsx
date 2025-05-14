@@ -16,6 +16,7 @@ import {
 } from 'features/settings/permissions/consts';
 import { PermissionsSettingsContextValue } from 'features/settings/permissions/types';
 import { useVaultPermissionsRoles } from 'features/settings/permissions/hooks';
+import { collectRolesToFormValues } from '../utils';
 
 const PermissionsDataContext =
   createContext<PermissionsSettingsContextValue | null>(null);
@@ -49,7 +50,7 @@ export const PermissionsDataProvider: FC<PropsWithChildren> = ({
     () => ({
       permissionsView,
       handleSetPermissionsView,
-      rolesList: data,
+      rolesList: collectRolesToFormValues(data),
       refetch,
     }),
     [permissionsView, handleSetPermissionsView, data, refetch],

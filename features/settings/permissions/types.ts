@@ -16,7 +16,7 @@ export type SubmitPermissionsStep =
 export type PermissionsSettingsContextValue = {
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
-  rolesList: PermissionAccounts[];
+  rolesList: Record<PermissionKeys, FieldSchema[]> | null;
   refetch: () => void;
 };
 

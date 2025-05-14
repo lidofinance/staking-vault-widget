@@ -1,13 +1,14 @@
 import { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { AddressItem } from 'features/settings/permissions/components/address-list/address-item';
 import { Wrapper } from './styles';
 
 import {
-  FieldSchema,
+  EditPermissionsSchema,
   PermissionKeys,
 } from 'features/settings/permissions/types';
+import { InputBlock } from '../input-block';
 
 export type AddressBlockProps = {
   permission: PermissionKeys;
@@ -18,24 +19,28 @@ export const AddressBlock: FC<AddressBlockProps> = ({
   permission,
   readonly,
 }) => {
-  const { watch } = useFormContext();
-  const fields = (watch(permission) ?? []) as FieldSchema[];
+  const { control } = useFormContext();
+  const { fields, update, append } = useFieldArray<EditPermissionsSchema>({
+    control,
+    name: permission,
+  });
 
   return (
     <Wrapper>
       {fields.map((field, index) => {
         return (
           <AddressItem
-            key={field.account}
+            key={field.id}
             field={field}
             index={index}
             readonly={readonly}
             permission={permission}
+            update={update}
           />
         );
       })}
+
+      <InputBlock fields={fields} readonly={readonly} append={append} />
     </Wrapper>
   );
 };
-
-// addresses => { account: address, group: 'settled' | 'eventual', state: 'restore' | 'grant' | 'remove' | 'display' }

@@ -3,7 +3,6 @@ import {
   PropsWithChildren,
   useMemo,
   useCallback,
-  useEffect,
   useState,
   useRef,
 } from 'react';
@@ -19,19 +18,18 @@ import {
 } from 'shared/hook-form/form-controller';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
-import {
-  EditPermissionsSchema,
-  FieldSchema,
-} from 'features/settings/permissions/types';
+import { EditPermissionsSchema } from 'features/settings/permissions/types';
 import {
   useEditPermissionsWithDashboard,
   simulateEditPermissionsWithDashboard,
 } from 'features/settings/permissions/hooks';
 import { useVaultInfo } from 'modules/vaults';
 import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
+import { FormBackdrop } from 'features/settings/permissions/components';
 import { usePermissionsData } from './permissions-data-provider';
 import { SubmitModal } from 'shared/components';
 import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
@@ -41,6 +39,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { activeVault } = useVaultInfo();
   const { callEditPermissions } = useEditPermissionsWithDashboard();
   const { rolesList, refetch } = usePermissionsData();
+  const someAsync = useAwaiter(rolesList);
+
   const [submitStep, setSubmitStep] = useState<SubmitPayload>(() => ({
     step: SubmitStepEnum.edit,
   }));
@@ -55,31 +55,20 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   }, []);
 
   const formObject = useForm<EditPermissionsSchema>({
+    defaultValues: async () => {
+      const data = await someAsync.awaiter;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return data!;
+    },
     resolver: validateFormWithZod(editPermissionsSchema),
-    mode: 'all',
+    mode: 'onBlur',
   });
-
-  useEffect(() => {
-    if (rolesList.length > 0) {
-      rolesList.forEach((role) => {
-        const values = role.addressList.map(
-          (address) =>
-            ({
-              account: address,
-              group: 'settled',
-              state: 'display',
-            }) as FieldSchema,
-        );
-        formObject.setValue(`${role.permissionName}` as const, values);
-      });
-    }
-  }, [formObject, rolesList]);
 
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
       const payload = collectFormValuesToRpc(data);
       if (activeVault?.owner && publicClient && address) {
-        setModalState({ step: SubmitStepEnum.initiate });
+        setModalState({ step: SubmitStepEnum.simulating });
         try {
           await simulateEditPermissionsWithDashboard({
             payload: payload,
@@ -98,6 +87,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       try {
         await callEditPermissions(payload, setModalState, abortControllerRef);
         setModalState({ step: SubmitStepEnum.success });
+        setTimeout(refetch, 100);
         return true;
       } catch (err) {
         if (
@@ -109,9 +99,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
           setModalState({ step: SubmitStepEnum.error });
         }
 
-        return false;
-      } finally {
         setTimeout(refetch, 100);
+        return false;
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,6 +128,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
           setModalState={setModalState}
           onClose={handleCancelSubmit}
         />
+        <FormBackdrop open={formObject.formState.isLoading} />
       </FormControllerContext.Provider>
     </FormProvider>
   );

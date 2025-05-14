@@ -19,7 +19,7 @@ import { truncateAddress } from 'utils/truncate-address';
 import { Address } from 'viem';
 
 export const AddressWithPopover: FC<AddressBadgeProps> = (props) => {
-  const { address, onToggle, onClick, bgColor, crossedText } = props;
+  const { address, onClick, bgColor, crossed } = props;
   const [showPopover, showPopoverVisibility] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
 
@@ -46,11 +46,9 @@ export const AddressWithPopover: FC<AddressBadgeProps> = (props) => {
     <>
       <AddressBadge
         ref={badgeRef}
-        crossedText={crossedText}
+        crossed={crossed}
         bgColor={bgColor}
         address={address}
-        isActive={showPopover}
-        onToggle={onToggle}
         onClick={handleClick}
       />
       {!!badgeRef?.current && (

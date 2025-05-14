@@ -34,7 +34,8 @@ export const permissionsToggleList = [
 export type ToggleValue =
   (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 const validateAddress = (value: string) => isValidAnyAddress(value);
 const accountSchema = z
   .string()
