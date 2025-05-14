@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form-context';
+import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form';
 
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';

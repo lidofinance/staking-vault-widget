@@ -8,21 +8,29 @@ import {
   useContext,
 } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
 import { useCreateVault } from 'features/create-vault/hooks/use-create-vault';
 
 import { FormController } from 'shared/hook-form/form-controller';
 
-import { type CreateVaultDataContextValue } from 'features/create-vault/types';
-import { createVaultSchema, CreateVaultSchema } from './validation';
-import { validateFormWithZod } from 'utils/validate-form-value';
 import {
-  ToggleValue,
-  PermissionToggleEnum,
+  CreateVaultSchema,
+  type CreateVaultDataContextValue,
+} from 'features/create-vault/types';
+import { createVaultSchema } from './validation';
+import {
   CREATE_VAULT_FORM_STEPS,
+  CREATE_VAULT_STEPS,
+  getSectionNameByStep,
 } from 'features/create-vault/consts';
 import { formatCreateVaultData } from 'features/create-vault/utils/format-data';
-import { Address } from 'viem';
+
+import { FormTitle, FormBlock } from './styles';
+import { MainSettings } from './stages/main-settings';
+import { Confirmation } from './stages/confirmation';
+
+import type { Address } from 'viem';
 
 const CreateVaultDataContext =
   createContext<CreateVaultDataContextValue | null>(null);
@@ -38,24 +46,21 @@ export const useCreateVaultFormData = () => {
   return value;
 };
 
-export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
-  const formObject = useForm<CreateVaultSchema>({
+export const CreateVaultForm: FC<PropsWithChildren> = () => {
+  const [step, setStep] = useState(() => CREATE_VAULT_FORM_STEPS.main);
+  const formObject = useForm({
     defaultValues: {
       nodeOperator: '' as Address,
       nodeOperatorManager: '' as Address,
+      defaultAdmin: '' as Address,
       nodeOperatorFeeBP: 5,
       confirmExpiry: 36,
-      defaultAdmin: '' as Address,
+      acceptTerms: false,
       roles: {},
     },
-    resolver: validateFormWithZod(createVaultSchema),
-    mode: 'all',
+    mode: 'onBlur',
+    resolver: zodResolver(createVaultSchema, { async: true }),
   });
-
-  const [step, setStep] = useState(() => CREATE_VAULT_FORM_STEPS.main);
-  const [permissionsView, setPermissionsView] = useState<ToggleValue>(
-    PermissionToggleEnum.byPermission,
-  );
 
   const { createVault, retryEvent } = useCreateVault();
 
@@ -72,19 +77,23 @@ export const CreateFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const createVaultData = useMemo<CreateVaultDataContextValue>(
     () => ({
       step,
-      permissionsView,
       handleSetStep: setStep,
-      handleSetPermissionsView: setPermissionsView,
     }),
-    [permissionsView, step],
+    [step],
   );
 
   return (
     <FormProvider {...formObject}>
       <CreateVaultDataContext.Provider value={createVaultData}>
-        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormController>
+        <FormBlock>
+          <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+            Step {step + 1} of {CREATE_VAULT_STEPS}
+            <FormTitle>{getSectionNameByStep(step)}</FormTitle>
+            <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
+            <Confirmation isShown={step === CREATE_VAULT_FORM_STEPS.confirm} />
+            {/*TODO: Final overview stage*/}
+          </FormController>
+        </FormBlock>
       </CreateVaultDataContext.Provider>
     </FormProvider>
   );

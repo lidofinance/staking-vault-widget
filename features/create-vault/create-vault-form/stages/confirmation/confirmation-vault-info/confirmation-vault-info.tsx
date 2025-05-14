@@ -7,8 +7,8 @@ import {
   PermissionTitle,
   Wrapper,
 } from './styles';
-import { ConfirmationData } from 'features/create-vault/create-vault-form/confirmation/confirmation-data';
 import { InputDataType } from 'features/create-vault/types';
+import { ConfirmationData } from '../confirmation-data';
 
 export type ConfirmationVaultInfoProps = {
   title: string;

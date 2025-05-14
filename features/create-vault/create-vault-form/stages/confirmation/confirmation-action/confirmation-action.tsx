@@ -1,5 +1,5 @@
-import { FC, useEffect } from 'react';
-import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form-context';
+import { FC } from 'react';
+import { useCreateVaultFormData } from 'features/create-vault/create-vault-form/create-vault-form';
 
 import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styles';
@@ -10,14 +10,8 @@ import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 export const ConfirmationAction: FC = () => {
   const { handleSetStep } = useCreateVaultFormData();
   const {
-    trigger,
     formState: { isValid },
   } = useFormContext();
-
-  useEffect(() => {
-    // validate core form to unlock submit button
-    void trigger();
-  }, [trigger]);
 
   const handleSetPrevStep = () => {
     // TODO: bring back permissions step

@@ -3,7 +3,7 @@ import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ALL_ROLES_MAP,
 } from 'modules/vaults/consts';
-import { CreateVaultSchema } from '../create-vault-form/create-vault-form-context/validation';
+import { CreateVaultSchema } from '../create-vault-form/validation';
 import { PermissionKeys } from '../types';
 import invariant from 'tiny-invariant';
 

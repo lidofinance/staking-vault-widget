@@ -1,6 +1,6 @@
-import { FC, useMemo } from 'react';
-import { Address, isAddress } from 'viem';
-import { UseFormReturn } from 'react-hook-form';
+import { FC } from 'react';
+import { isAddress } from 'viem';
+import { useController } from 'react-hook-form';
 
 import { Identicon, Input, Loader } from '@lidofinance/lido-ui';
 import { AddressLinkEtherscan } from 'shared/components';
@@ -13,29 +13,35 @@ import {
 } from './styles';
 
 import {
-  InputDataType,
-  VaultMainSettingsType,
+  CreateVaultSchema,
   MainSettingsKeys,
 } from 'features/create-vault/types';
 
-export interface AddressInputProps {
-  form: UseFormReturn<VaultMainSettingsType>;
+export type AddressInputProps = {
   name: MainSettingsKeys;
   label?: string;
-  type?: string;
   title: string;
   notes?: string;
-  dataType?: InputDataType;
+  dataType: 'address';
   afterText?: string;
-}
+};
 
-export const AddressInput: FC<AddressInputProps> = (props) => {
-  const { form, name, label, title, notes, dataType } = props;
-  const { getValues, getFieldState, register } = form;
-  const { error, invalid, isValidating, isDirty } = getFieldState(name);
-  const value = getValues(name) as string;
+export const AddressInput: FC<AddressInputProps> = ({
+  name,
+  label,
+  title,
+  notes,
+  dataType,
+}) => {
+  const { field, fieldState } = useController<
+    CreateVaultSchema,
+    'defaultAdmin'
+  >({ name: name as 'defaultAdmin' });
+  const { invalid, isDirty, isValidating, error } = fieldState;
 
-  const decorator = useMemo(() => {
+  const value = field.value;
+
+  const decorator = (() => {
     if (isAddress(value) || dataType === 'address') {
       if (invalid) return <ErrorTriangle />;
       if (isValidating) return <Loader size="small" />;
@@ -43,25 +49,24 @@ export const AddressInput: FC<AddressInputProps> = (props) => {
 
       return <Identicon address={value} />;
     }
-
     return null;
-  }, [value, dataType, invalid, isDirty, isValidating]);
+  })();
 
   return (
     <div>
       <InputTitle>{title}</InputTitle>
       <AddressInputWrapper>
         <Input
+          {...field}
           label={label}
           leftDecorator={decorator}
           type="text"
           error={error?.message}
           fullwidth
-          {...register(name)}
         />
         {!invalid && value && (
           <EtherScanLink>
-            <AddressLinkEtherscan address={value as Address} />
+            <AddressLinkEtherscan address={value} />
           </EtherScanLink>
         )}
       </AddressInputWrapper>

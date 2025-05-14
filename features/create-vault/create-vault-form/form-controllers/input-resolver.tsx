@@ -6,7 +6,7 @@ export const InputResolver: FC<GeneralInputProps> = (props) => {
   const { dataType } = props;
 
   return dataType === 'address' ? (
-    <AddressInput {...props} />
+    <AddressInput {...props} dataType={dataType} />
   ) : (
     <GeneralInput {...props} />
   );

@@ -6,7 +6,7 @@ import { InputItem } from './input-item';
 import { AddAddress } from '../styles';
 import { InputBlockWrapper } from './styles';
 
-import { validatePermissions } from 'features/create-vault/create-vault-form/create-vault-form-context/validation';
+import { validatePermissions } from 'features/create-vault/create-vault-form/validation';
 
 import {
   PermissionKeys,

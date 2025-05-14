@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { AddressItem } from 'features/create-vault/create-vault-form/permissions/address-list/address-item';
 import { Wrapper } from './styles';
 import { PermissionField, PermissionKeys } from 'features/create-vault/types';
+import { AddressItem } from '../address-item';
 
-export interface AddressBlockProps {
+export type AddressBlockProps = {
   permission: PermissionKeys;
-}
+};
 
 export const AddressBlock: FC<AddressBlockProps> = ({ permission }) => {
   const { watch } = useFormContext();
