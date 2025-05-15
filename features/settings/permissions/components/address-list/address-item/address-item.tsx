@@ -21,7 +21,6 @@ export type AddressItemProps = {
   readonly?: boolean;
 };
 
-// TODO: use shared/components/AddressWithPopover component
 export const AddressItem: FC<AddressItemProps> = ({
   index,
   field,

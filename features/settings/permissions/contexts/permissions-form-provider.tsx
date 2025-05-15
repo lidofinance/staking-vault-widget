@@ -6,7 +6,11 @@ import { validateFormWithZod } from 'utils/validate-form-value';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
 import { EditPermissionsSchema } from 'features/settings/permissions/types';
 import { useEditPermissions } from 'features/settings/permissions/hooks';
-import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
+import {
+  collectFormValuesToRpc,
+  collectRolesToFormValues,
+  formatRawPermissions,
+} from 'features/settings/permissions/utils';
 import { usePermissionsData } from './permissions-data-provider';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormBackdrop } from '../components';
@@ -31,10 +35,21 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
       const { success } = await editPermissions(collectFormValuesToRpc(data));
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      const { data: refetchData } = await refetch({
+        cancelRefetch: true,
+        throwOnError: false,
+      });
+
+      if (refetchData) {
+        formObject.reset(
+          // @ts-expect-error ts-types
+          collectRolesToFormValues(formatRawPermissions(refetchData)),
+        );
+      }
+
       return success;
     },
-    [editPermissions, refetch],
+    [editPermissions, refetch, formObject],
   );
 
   return (

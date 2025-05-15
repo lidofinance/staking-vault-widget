@@ -17,7 +17,7 @@ export const PermissionsAction: FC = () => {
 
   const handleResetFields = () => {
     if (rolesList) {
-      reset(structuredClone(rolesList));
+      reset(rolesList, { keepDirtyValues: false, keepDirty: false });
     }
   };
 
