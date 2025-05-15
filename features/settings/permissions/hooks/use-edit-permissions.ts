@@ -1,108 +1,66 @@
-import { MutableRefObject, useCallback } from 'react';
-import { useConfig, usePublicClient, useWriteContract } from 'wagmi';
-import { Address, Hash, PublicClient } from 'viem';
+import { useCallback } from 'react';
+import { Address, encodeFunctionData, PublicClient } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
 import { useVaultInfo } from 'modules/vaults';
 import { GrantRole } from 'features/settings/permissions/types';
-import { SubmitPayload, SubmitStepEnum } from 'shared/components/submit-modal';
 import invariant from 'tiny-invariant';
+import {
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
-export const useEditPermissionsWithDashboard = () => {
-  const { chainId } = useDappStatus();
-  const wagmiConfig = useConfig();
+type EditPermissionsArgs = {
+  toRevoke: GrantRole[];
+  toGrant: GrantRole[];
+};
+
+export const useEditPermissions = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
-
-  const {
-    data: grantPermissionsTx,
-    writeContractAsync: writeGrantContractAsync,
-  } = useWriteContract({ config: wagmiConfig });
-
-  const {
-    data: revokePermissionsTx,
-    writeContractAsync: writeRevokeContractAsync,
-  } = useWriteContract({ config: wagmiConfig });
-
-  const callEditPermissions = useCallback(
-    async (
-      { toRevoke, toGrant }: { toRevoke: GrantRole[]; toGrant: GrantRole[] },
-      setModalState: (submitStep: SubmitPayload) => void,
-      abortControllerRef: MutableRefObject<AbortController>,
-    ) => {
-      invariant(
-        publicClient,
-        '[useEditPermissionsWithDashboard] publicClient is not defined',
-      );
-      invariant(
-        activeVault?.owner,
-        '[useEditPermissionsWithDashboard] owner is not defined',
-      );
-
-      const payload: {
-        functionName: 'revokeRoles' | 'grantRoles';
-        args: [GrantRole[]];
-      }[] = [];
-      if (toRevoke.length > 0) {
-        payload.push({
-          functionName: 'revokeRoles',
-          args: [toRevoke],
-        });
-      }
-
-      if (toGrant.length > 0) {
-        payload.push({
-          functionName: 'grantRoles',
-          args: [toGrant],
-        });
-      }
-
-      const responses: Hash[] = [];
-      for (const { functionName, args } of payload) {
-        const {
-          current: { signal },
-        } = abortControllerRef;
-        if (signal.aborted) {
-          return responses;
-        }
-
-        setModalState({ step: SubmitStepEnum.confirming });
-        const callFunction =
-          functionName === 'grantRoles'
-            ? writeGrantContractAsync
-            : writeRevokeContractAsync;
-        const tx = await callFunction({
-          abi: dashboardAbi,
-          address: activeVault.owner,
-          functionName,
-          args,
-          chainId,
-        });
-
-        setModalState({ step: SubmitStepEnum.submitting });
-        await publicClient.waitForTransactionReceipt({
-          hash: tx,
-        });
-
-        responses.push(tx);
-      }
-
-      return responses;
-    },
-    [
-      chainId,
-      writeGrantContractAsync,
-      activeVault?.owner,
-      writeRevokeContractAsync,
-      publicClient,
-    ],
-  );
+  const owner = activeVault?.owner;
+  const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    callEditPermissions,
-    grantPermissionsTx,
-    revokePermissionsTx,
+    editPermissions: useCallback(
+      ({ toGrant, toRevoke }: EditPermissionsArgs) => {
+        invariant(owner, '[useEditPermissions] owner is not defined');
+        const transactions: TransactionEntry[] = [];
+        if (toGrant.length > 0) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'grantRoles',
+              args: [toGrant],
+            }),
+            loadingActionText: `Granting ${toGrant.length} permissions`,
+          });
+        }
+        if (toRevoke.length > 0) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'revokeRoles',
+              args: [toRevoke],
+            }),
+            loadingActionText: `Revoking ${toRevoke.length} permissions`,
+          });
+        }
+        return withSuccess(
+          sendTX({
+            transactions,
+            mainActionLoadingText: 'Editing vault permissions',
+            mainActionCompleteText: 'Vault permissions edited',
+            renderSuccessContent: GoToVault,
+          }),
+        );
+      },
+      [owner, sendTX],
+    ),
+    ...rest,
   };
 };
 

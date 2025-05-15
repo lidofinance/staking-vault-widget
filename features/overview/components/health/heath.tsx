@@ -4,7 +4,7 @@ import { formatPercent, getHealthFactorColor } from 'utils';
 
 const sectionPayloadList: SectionPayload[] = [
   {
-    title: 'Health factor number',
+    title: 'Health factor',
     key: 'healthFactorNumber',
   },
   {

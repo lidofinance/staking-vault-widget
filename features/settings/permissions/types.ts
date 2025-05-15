@@ -6,6 +6,7 @@ import {
   EDITABLE_ROLES_MAP,
 } from './consts';
 import { z } from 'zod';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 export type PermissionKeys = keyof typeof EDITABLE_ROLES_MAP;
 
@@ -17,7 +18,7 @@ export type PermissionsSettingsContextValue = {
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
   rolesList: Record<PermissionKeys, FieldSchema[]> | null;
-  refetch: () => void;
+  refetch: UseQueryResult['refetch'];
 };
 
 export type PermissionAccounts = {

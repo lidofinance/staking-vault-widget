@@ -3,7 +3,6 @@ import invariant from 'tiny-invariant';
 
 import { useAccount } from 'wagmi';
 import { config } from 'config';
-import { ModalProvider } from 'providers/modal-provider';
 
 import { wagmiChainMap } from './web3-provider';
 import { LidoSDKProvider } from './lido-sdk';
@@ -76,9 +75,7 @@ export const SupportL1Chains: React.FC<React.PropsWithChildren> = ({
         [chainId],
       )}
     >
-      <LidoSDKProvider>
-        <ModalProvider>{children}</ModalProvider>
-      </LidoSDKProvider>
+      <LidoSDKProvider>{children}</LidoSDKProvider>
     </DappChainContext.Provider>
   );
 };

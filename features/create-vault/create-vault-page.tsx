@@ -11,7 +11,11 @@ import { PageWrapper } from './styles';
 
 export const CreateVaultPage: FC = () => {
   return (
-    <Layout containerSize="content" title="Creating new vault">
+    <Layout
+      navigationMode="create-vault"
+      containerSize="content"
+      title="Creating new vault"
+    >
       <Head>
         <title>Create Vault | Lido</title>
       </Head>

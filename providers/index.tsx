@@ -14,6 +14,7 @@ import { ModalProvider } from './modal-provider';
 import { ExternalForbiddenRouteProvider } from './external-forbidden-route';
 
 import { VaultProvider } from 'modules/vaults';
+import { TransactionModal } from 'shared/components/transaction-modal';
 
 type ProvidersProps = {
   prefetchedManifest?: unknown;
@@ -41,7 +42,9 @@ export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
               <InpageNavigationProvider>
                 <ModalProvider>
                   <ExternalForbiddenRouteProvider>
-                    <VaultProvider>{children}</VaultProvider>
+                    <VaultProvider>
+                      <TransactionModal>{children}</TransactionModal>
+                    </VaultProvider>
                   </ExternalForbiddenRouteProvider>
                 </ModalProvider>
               </InpageNavigationProvider>

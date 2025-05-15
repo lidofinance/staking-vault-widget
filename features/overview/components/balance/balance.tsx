@@ -1,18 +1,19 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Available to withdraw',
     key: 'withdrawableEth',
     actionText: 'Withdraw ETH',
-    actionLink: '/supply/withdraw',
+    actionLink: (vault) => appPaths.vaults.vault(vault).supply('withdraw'),
   },
   {
     title: 'Idle capital',
     key: 'balanceEth',
     actionText: 'Supply ETH',
-    actionLink: '/supply/fund',
+    actionLink: (vault) => appPaths.vaults.vault(vault).supply('fund'),
   },
   // TODO: add this after the metrics are implemented
   // {

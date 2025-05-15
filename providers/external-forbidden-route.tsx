@@ -3,13 +3,10 @@ import { useRouter } from 'next/router';
 
 import { useRouterPath } from 'shared/hooks/use-router-path';
 import { useConfig } from 'config';
-import {
-  ManifestConfigPage,
-  ManifestConfigPageEnum,
-} from 'config/external-config';
-import { AppPaths } from 'consts/urls';
+import { ManifestConfigPage } from 'config/external-config';
 
 import { LayoutEffectSsrDelayed } from 'shared/components/layout-effect-ssr-delayed';
+import { appPaths } from 'consts/routing';
 
 export const ExternalForbiddenRouteProvider = ({
   children,
@@ -27,14 +24,14 @@ export const ExternalForbiddenRouteProvider = ({
       const forbiddenPath = paths.find((pathKey) => path.includes(pathKey));
       if (
         forbiddenPath &&
-        forbiddenPath !== ManifestConfigPageEnum.main &&
+        forbiddenPath !== appPaths.myVaults &&
         // TODO: fix after adding the new page
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         pages[forbiddenPath]?.shouldDisable
       ) {
         setShowContent(false);
-        void router.push(AppPaths.main).finally(() => setShowContent(true));
+        void router.push(appPaths.myVaults).finally(() => setShowContent(true));
       }
     }
   }, [pages, path, router]);

@@ -8,16 +8,17 @@ import type { ParsedUrlQuery } from 'querystring';
 
 import Metrics from 'utilsApi/metrics';
 import { fetchExternalManifest } from './fetch-external-manifest';
-import type { Manifest, ManifestConfigPage } from 'config/external-config';
+import type { Manifest } from 'config/external-config';
 import { config } from 'config';
 import { shouldRedirectToRoot } from 'config/external-config';
+import { AppPathsType } from 'consts/routing';
 
 export const getDefaultStaticProps = <
   P extends { [key: string]: any } = { [key: string]: any },
   Q extends ParsedUrlQuery = ParsedUrlQuery,
   D extends PreviewData = PreviewData,
 >(
-  currentPath: ManifestConfigPage,
+  currentPath: AppPathsType,
   custom?: GetStaticProps<P, Q, D>,
 ): GetStaticProps<P & { ___prefetch_manifest___?: object }, Q, D> => {
   return async (context) => {

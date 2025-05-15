@@ -83,10 +83,8 @@ export type FieldConfig<T extends FieldName> = {
 export type CreateVaultDataContextValue = {
   step: CreateVaultStep;
   permissionsView: ToggleValue;
-  submitStep: SubmittingInfo | undefined;
   handleSetStep: (step: CreateVaultStep) => void;
   handleSetPermissionsView: (value: ToggleValue) => void;
-  handleCancelSubmit: () => void;
 };
 
 export type CreateVaultStep =
