@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { Input } from '@lidofinance/lido-ui';
 import { InputTitle } from './styles';
@@ -26,20 +26,29 @@ export const GeneralInput: FC<GeneralInputProps> = ({
   title,
   type,
 }) => {
+  const [inFocus, setInFocus] = useState(false);
+
   const {
     register,
     formState: { errors },
   } = useFormContext<CreateVaultSchema>();
 
+  const error = errors[name];
   return (
     <div>
       <InputTitle>{title}</InputTitle>
       <Input
         label={label}
         type="text"
-        error={errors[name]?.message}
+        error={inFocus ? error?.message : Boolean(error?.message)}
         fullwidth
+        onFocus={() => {
+          setInFocus(true);
+        }}
         {...register(name, {
+          onBlur: () => {
+            setInFocus(false);
+          },
           valueAsNumber: type === 'number',
         })}
       />

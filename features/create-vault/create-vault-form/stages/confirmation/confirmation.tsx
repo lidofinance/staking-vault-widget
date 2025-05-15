@@ -1,49 +1,57 @@
-import {
-  ConfirmationVaultInfo,
-  ConfirmationVaultInfoProps,
-} from './confirmation-vault-info/confirmation-vault-info';
-import {
-  NO_MANAGER_PERMISSION_LIST,
-  VAULT_MANAGER_PERMISSIONS_LIST,
-} from 'modules/vaults';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 import { ConfirmationAction } from './confirmation-action';
 import { SectionContainer } from '../../styles';
-
-const confirmationList: ConfirmationVaultInfoProps[] = [
-  {
-    title: 'Main settings',
-    list: MAIN_SETTINGS,
-  },
-  {
-    title: 'Vault Manager Permissions',
-    list: VAULT_MANAGER_PERMISSIONS_LIST.map((p) => ({
-      title: p.title,
-      name: `roles.${p.role}`,
-      dataType: 'address',
-    })),
-  },
-  {
-    title: 'Node Operator Manager Permissions',
-    list: NO_MANAGER_PERMISSION_LIST.map((p) => ({
-      title: p.title,
-      name: `roles.${p.role}`,
-      dataType: 'address',
-    })),
-  },
-];
+import { ConfirmationData } from './confirmation-data';
+import {
+  ConfirmInfoTitle,
+  List,
+  ListItem,
+  ListItemCompact,
+  PermissionTitle,
+} from './styles';
+import {
+  TextBold,
+  TextError,
+} from './confirmation-data/confirmation-data-item/styles';
+import { CreateVaultCost } from './create-vaut-cost';
+import { PreSupplyWarning } from './pre-suply-warning';
+import { useSupplyBalance } from './use-supply-balance';
+import { useDappStatus } from 'modules/web3';
 
 type ConfirmationProps = {
   isShown: boolean;
 };
 
 export const Confirmation = ({ isShown }: ConfirmationProps) => {
+  const { isWalletConnected } = useDappStatus();
+  const { hasEnoughETH, isLoading } = useSupplyBalance();
+  const showWarning = isWalletConnected && !isLoading && !hasEnoughETH;
+
+  const PreSupplyAmountComponent = showWarning ? TextError : TextBold;
+
   return (
     <SectionContainer isShown={isShown}>
-      {confirmationList.map(({ title, list }) => (
-        <ConfirmationVaultInfo key={title} title={title} list={list} />
-      ))}
-      <ConfirmationAction />
+      <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
+      <List>
+        {MAIN_SETTINGS.map((item) => {
+          return (
+            <ListItem key={item.name}>
+              <PermissionTitle>{item.title}</PermissionTitle>
+              <ConfirmationData name={item.name} dataType={item.dataType} />
+            </ListItem>
+          );
+        })}
+        <ListItemCompact>
+          <PermissionTitle>Initial supply to stVault</PermissionTitle>
+          <PreSupplyAmountComponent>1 ETH</PreSupplyAmountComponent>
+        </ListItemCompact>
+        <CreateVaultCost />
+      </List>
+      {showWarning && <PreSupplyWarning />}
+      <ConfirmationAction
+        isConnected={isWalletConnected}
+        isDisabled={!hasEnoughETH}
+      />
     </SectionContainer>
   );
 };

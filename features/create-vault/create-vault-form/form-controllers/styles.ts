@@ -1,7 +1,7 @@
+import { ButtonIcon } from '@lidofinance/lido-ui';
 import styled from 'styled-components';
 
 export const InputTitle = styled.p`
-  margin-bottom: 8px;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: 700;
   line-height: 24px;
@@ -18,6 +18,7 @@ export const InputNotes = styled.p`
 
 export const AddressInputWrapper = styled.div`
   position: relative;
+  flex-grow: 1;
 `;
 
 export const EtherScanLink = styled.span`
@@ -30,4 +31,30 @@ export const EtherScanLink = styled.span`
   & > a {
     text-wrap: nowrap;
   }
+`;
+
+export const AddressList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;
+
+export const AppendButton = styled(ButtonIcon)`
+  width: fit-content;
+  padding: 0;
+
+  &:hover,
+  &:active {
+    background: none;
+  }
+
+  &::before {
+    background: none;
+  }
+`;
+
+export const AddressInputGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
 `;

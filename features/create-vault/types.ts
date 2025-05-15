@@ -1,5 +1,3 @@
-import type { Address } from 'viem';
-import type { CREATE_VAULT_FORM_STEPS } from './consts';
 import type {
   VAULTS_NO_ROLES_MAP,
   VAULTS_OWNER_ROLES_MAP,
@@ -15,7 +13,8 @@ export type InputDataType =
   | 'percent'
   | 'time'
   | 'default'
-  | 'number';
+  | 'number'
+  | 'addressArray';
 
 export type VaultMainSettingsType = Omit<CreateVaultSchema, 'roles'>;
 
@@ -34,26 +33,3 @@ export type MainSettingsEntryType = {
 export type PermissionKeys =
   | keyof typeof VAULTS_OWNER_ROLES_MAP
   | keyof typeof VAULTS_NO_ROLES_MAP;
-
-export type VaultPermissionsType = {
-  [K in PermissionKeys]: { value: string }[];
-};
-
-export type PermissionsRoles = {
-  role: PermissionKeys;
-  title: string;
-  tooltip: string;
-};
-
-export type CreateVaultDataContextValue = {
-  step: CreateVaultStep;
-  handleSetStep: (step: CreateVaultStep) => void;
-};
-
-export type CreateVaultStep =
-  (typeof CREATE_VAULT_FORM_STEPS)[keyof typeof CREATE_VAULT_FORM_STEPS];
-
-export type PermissionField = {
-  account: Address;
-  state: 'grant' | 'restore';
-};

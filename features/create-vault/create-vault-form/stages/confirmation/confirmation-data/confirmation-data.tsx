@@ -5,47 +5,41 @@ import {
   ConfirmPercent,
   ConfirmAddress,
   ConfirmTime,
-  ConfirmDefault,
   ConfirmNumber,
-  ConfirmDataItemProps,
+  ConfirmAddressArray,
 } from './confirmation-data-item';
 
-import { validateFormValue } from 'utils/validate-form-value';
 import { InputDataType } from 'features/create-vault/types';
+import invariant from 'tiny-invariant';
 
-export interface ConfirmationDataProps {
-  permission: string;
+export type ConfirmationDataProps = {
+  name: string;
   dataType: InputDataType;
-}
-
-const ComponentByType: Record<InputDataType, FC<ConfirmDataItemProps>> = {
-  address: ConfirmAddress,
-  percent: ConfirmPercent,
-  time: ConfirmTime,
-  number: ConfirmNumber,
-  default: ConfirmDefault,
 };
 
 const getComponentByType = (dataType: InputDataType) => {
-  const Component = ComponentByType[dataType];
-  if (!Component) {
-    return ConfirmDefault;
+  switch (dataType) {
+    case 'address':
+      return ConfirmAddress;
+    case 'addressArray':
+      return ConfirmAddressArray;
+    case 'percent':
+      return ConfirmPercent;
+    case 'time':
+      return ConfirmTime;
+    case 'number':
+      return ConfirmNumber;
+    default:
+      invariant(false, `Unknown dataType: ${dataType}`);
   }
-
-  return Component;
 };
 
 export const ConfirmationData: FC<ConfirmationDataProps> = ({
-  permission,
+  name,
   dataType,
 }) => {
   const { getValues } = useFormContext();
-
-  const value = getValues(permission);
-  if (!validateFormValue(value)) {
-    dataType = 'default';
-  }
-
+  const value = getValues(name);
   const DataComponent = getComponentByType(dataType);
 
   return <DataComponent payload={value} />;

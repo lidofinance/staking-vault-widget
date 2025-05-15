@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Block, H2 } from '@lidofinance/lido-ui';
+import { Block, Button, H2 } from '@lidofinance/lido-ui';
 
 export const FormBlock = styled(Block)`
   display: flex;
@@ -13,6 +13,20 @@ export const FormTitle = styled(H2)`
   line-height: 28px;
 `;
 
+export const ActionButton = styled(Button)`
+  padding-inline: ${({ theme }) => theme.spaceMap.xs}px;
+`;
+
+export const ActionButtonContainer = styled.section`
+  display: flex;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  width: 100%;
+
+  & > button {
+    flex: 1 1 50% !important;
+  }
+`;
+
 export const SectionContainer = styled.section<{
   isShown: boolean;
 }>`
@@ -21,4 +35,8 @@ export const SectionContainer = styled.section<{
   gap: ${({ theme }) => theme.spaceMap.xl}px;
   width: 100%;
   margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
+
+  & > a {
+    text-align: center;
+  }
 `;

@@ -1,18 +1,15 @@
 import { MainSettingsEntryType } from './types';
 
-export const CREATE_VAULT_STEPS = 2;
+export enum CREATE_VAULT_FORM_STEPS {
+  main = 1,
+  confirm,
+}
 
-export const steps = ['Main settings', 'Confirmation'];
+const steps = ['Main settings', 'Verify new vaults settings'];
 
-export const getSectionNameByStep = (step: number) => steps[step];
+export const getSectionNameByStep = (step: number) => steps[step - 1];
 
-export const mainSettingsFields = [
-  'defaultAdmin',
-  'nodeOperator',
-  'nodeOperatorFeeBP',
-  'confirmExpiry',
-  'nodeOperatorManager',
-] as const;
+export const CREATE_VAULT_STEPS = steps.length;
 
 export const MAIN_SETTINGS: MainSettingsEntryType[] = [
   {
@@ -38,10 +35,10 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     type: 'number',
   },
   {
-    name: 'defaultAdmin',
+    name: 'vaultManager',
     title: 'Vault Manager',
     label: 'Vault Manager address or ENS',
-    dataType: 'address',
+    dataType: 'addressArray',
   },
   {
     name: 'nodeOperatorManager',
@@ -50,9 +47,3 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     dataType: 'address',
   },
 ];
-
-export enum CREATE_VAULT_FORM_STEPS {
-  main,
-  confirm,
-  permissions,
-}
