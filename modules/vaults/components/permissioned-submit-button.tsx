@@ -7,6 +7,7 @@ import {
 
 import { forwardRef, type ComponentProps } from 'react';
 import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
 
 type PermissionedSubmitProps = {
   dashboardRole: DashboardRoles;
@@ -29,11 +30,13 @@ export const PermissionedSubmitButton = forwardRef<
     !isLoading && !hasPermission && isAccountActive;
 
   return (
-    <Button disabled={shouldDisable} ref={ref} {...rest}>
-      {shouldShowPermissionError
-        ? `You don't have ${capitilize(dashboardRole)} role`
-        : children}
-    </Button>
+    <ConnectWalletButton>
+      <Button disabled={shouldDisable} ref={ref} {...rest}>
+        {shouldShowPermissionError
+          ? `You don't have ${capitilize(dashboardRole)} role`
+          : children}
+      </Button>
+    </ConnectWalletButton>
   );
 });
 
@@ -56,10 +59,12 @@ export const MultiplePermissionedSubmitButton = forwardRef<
     !isLoading && data && !data.hasPermissions && isAccountActive;
 
   return (
-    <Button disabled={shouldDisable} ref={ref} {...rest}>
-      {shouldShowPermissionError
-        ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
-        : children}
-    </Button>
+    <ConnectWalletButton>
+      <Button disabled={shouldDisable} ref={ref} {...rest}>
+        {shouldShowPermissionError
+          ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
+          : children}
+      </Button>
+    </ConnectWalletButton>
   );
 });
