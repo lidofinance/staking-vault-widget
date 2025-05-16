@@ -8,6 +8,7 @@ import {
   FieldSchema,
   PermissionKeys,
 } from 'features/settings/permissions/types';
+import { ConnectWalletButton } from 'shared/wallet';
 
 export const PermissionsAction: FC = () => {
   const {
@@ -36,17 +37,19 @@ export const PermissionsAction: FC = () => {
 
   return (
     <Container>
-      <Button
-        onClick={handleResetFields}
-        disabled={isClearDisabled}
-        variant="outlined"
-        fullwidth
-      >
-        Clear changes
-      </Button>
-      <Button type="submit" disabled={isSubmitDisabled} fullwidth>
-        {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
-      </Button>
+      <ConnectWalletButton>
+        <Button
+          onClick={handleResetFields}
+          disabled={isClearDisabled}
+          variant="outlined"
+          fullwidth
+        >
+          Clear changes
+        </Button>
+        <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+          {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
+        </Button>
+      </ConnectWalletButton>
     </Container>
   );
 };
