@@ -1,31 +1,15 @@
 import { FC, useState } from 'react';
-
-import { Input } from '@lidofinance/lido-ui';
-import { InputTitle } from './styles';
-
-import {
-  CreateVaultSchema,
-  InputDataType,
-  MainSettingsKeys,
-} from 'features/create-vault/types';
 import { useFormContext } from 'react-hook-form';
+import { Input } from '@lidofinance/lido-ui';
 
-export type GeneralInputProps = {
-  name: MainSettingsKeys;
-  label?: string;
-  type?: string;
-  title: string;
-  notes?: string;
-  dataType?: InputDataType;
-  afterText?: string; // TODO: add option for text like 'hours' (confirmExpiry field)
-};
+import type {
+  CreateVaultSchema,
+  MainSettingsEntryType,
+} from 'features/create-vault/types';
 
-export const GeneralInput: FC<GeneralInputProps> = ({
-  name,
-  label,
-  title,
-  type,
-}) => {
+export type GeneralInputProps = MainSettingsEntryType;
+
+export const GeneralInput: FC<GeneralInputProps> = ({ name, label, type }) => {
   const [inFocus, setInFocus] = useState(false);
 
   const {
@@ -35,23 +19,20 @@ export const GeneralInput: FC<GeneralInputProps> = ({
 
   const error = errors[name];
   return (
-    <div>
-      <InputTitle>{title}</InputTitle>
-      <Input
-        label={label}
-        type="text"
-        error={inFocus ? error?.message : Boolean(error?.message)}
-        fullwidth
-        onFocus={() => {
-          setInFocus(true);
-        }}
-        {...register(name, {
-          onBlur: () => {
-            setInFocus(false);
-          },
-          valueAsNumber: type === 'number',
-        })}
-      />
-    </div>
+    <Input
+      label={label}
+      type="text"
+      error={inFocus ? error?.message : Boolean(error?.message)}
+      fullwidth
+      onFocus={() => {
+        setInFocus(true);
+      }}
+      {...register(name, {
+        onBlur: () => {
+          setInFocus(false);
+        },
+        valueAsNumber: type === 'number',
+      })}
+    />
   );
 };

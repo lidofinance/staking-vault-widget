@@ -1,5 +1,5 @@
-import { VAULTS_CONNECT_DEPOSIT } from 'modules/vaults';
 import { useAA, useEthereumBalance } from 'modules/web3';
+import { VAULTS_CONNECT_DEPOSIT } from 'modules/vaults';
 
 export const useSupplyBalance = () => {
   const { areAuxiliaryFundsSupported } = useAA();

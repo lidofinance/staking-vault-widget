@@ -1,3 +1,11 @@
+import { useMemo } from 'react';
+import Link from 'next/link';
+
+import { Button } from '@lidofinance/lido-ui';
+
+import { appPaths } from 'consts/routing';
+import { TxLinkEtherscan } from 'shared/components';
+
 import {
   FormTitle,
   SectionContainer,
@@ -7,18 +15,16 @@ import {
   List,
   ListItem,
   ListItemCompact,
-  PermissionTitle,
+  ConfirmationLabel,
 } from '../confirmation/styles';
 import { ConfirmationData } from '../confirmation/confirmation-data';
-import { MAIN_SETTINGS } from 'features/create-vault/consts';
 import { ConfirmAddress } from '../confirmation/confirmation-data/confirmation-data-item';
-import { TransactionResponse } from 'modules/web3';
-import { useMemo } from 'react';
+import { TextBold } from '../confirmation/confirmation-data/confirmation-data-item/styles';
+
 import { parseVaultTx } from '../../utils';
-import { Button } from '@lidofinance/lido-ui';
-import Link from 'next/link';
-import { appPaths } from 'consts/routing';
-import { TxLinkEtherscan } from 'shared/components';
+import { MAIN_SETTINGS } from 'features/create-vault/consts';
+
+import type { TransactionResponse } from 'modules/web3';
 
 type ResultOverviewProps = {
   transactionResult?: TransactionResponse;
@@ -40,21 +46,27 @@ export const ResultOverview = ({ transactionResult }: ResultOverviewProps) => {
       <FormTitle>New vault has been created</FormTitle>
       <List>
         <ListItemCompact>
-          <PermissionTitle>Vault address</PermissionTitle>
+          <ConfirmationLabel>Vault address</ConfirmationLabel>
           <ConfirmAddress payload={vaultAddress} />
         </ListItemCompact>
       </List>
-      <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
+
       <List>
+        <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
         {MAIN_SETTINGS.map((item) => {
           return (
             <ListItem key={item.name}>
-              <PermissionTitle>{item.title}</PermissionTitle>
+              <ConfirmationLabel>{item.title}</ConfirmationLabel>
               <ConfirmationData name={item.name} dataType={item.dataType} />
             </ListItem>
           );
         })}
+        <ListItemCompact>
+          <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>
+          <TextBold>1 ETH</TextBold>
+        </ListItemCompact>
       </List>
+
       <Link href={appPaths.vaults.vault(vaultAddress).overview}>
         <Button fullwidth>Go to vault</Button>
       </Link>

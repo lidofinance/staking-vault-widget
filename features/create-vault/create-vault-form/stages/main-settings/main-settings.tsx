@@ -1,7 +1,7 @@
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 
-import { SectionContainer } from '../../styles';
-import { InputResolver } from '../../form-controllers';
+import { SectionContainer } from 'features/create-vault/create-vault-form/styles';
+import { InputResolver } from 'features/create-vault/create-vault-form/form-controllers';
 
 import { ConfirmTerms } from './confirm-terms';
 import { MainSettingsAction } from './main-settings-action';

@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 import { z } from 'zod';
-import { PermissionKeys } from 'features/create-vault/types';
+
 import { isValidAnyAddress } from 'utils/address-validation';
 import {
   MIN_FEE_VALUE,
@@ -11,6 +11,8 @@ import {
   MAX_CONFIRM_EXPIRY,
   VAULT_TOTAL_BASIS_POINTS,
 } from 'modules/vaults';
+
+import type { PermissionKeys } from 'features/create-vault/types';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;

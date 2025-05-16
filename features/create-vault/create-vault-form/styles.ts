@@ -8,9 +8,16 @@ export const FormBlock = styled(Block)`
   width: 100%;
 `;
 
+export const FormSubtitle = styled.span`
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  line-height: 20px;
+  font-weight: 700;
+`;
+
 export const FormTitle = styled(H2)`
   font-size: ${({ theme }) => theme.fontSizesMap.lg}px;
   line-height: 28px;
+  font-weight: 700;
 `;
 
 export const ActionButton = styled(Button)`
@@ -34,7 +41,7 @@ export const SectionContainer = styled.section<{
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.xl}px;
   width: 100%;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
+  margin-top: ${({ theme }) => theme.spaceMap.xl}px;
 
   & > a {
     text-align: center;

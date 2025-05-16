@@ -8,8 +8,4 @@ export const PageWrapper = styled(Container)`
   max-width: 600px;
   margin-top: 16px;
   padding: 0;
-
-  & form {
-    width: 100%;
-  }
 `;

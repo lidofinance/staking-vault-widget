@@ -1,8 +1,6 @@
-import { FC } from 'react';
+import { useFormContext, useFormState } from 'react-hook-form';
 import { useRouter } from 'next/router';
 
-import { useFormContext, useFormState } from 'react-hook-form';
-import { CreateVaultSchema } from 'features/create-vault/types';
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 import { appPaths } from 'consts/routing';
 
@@ -10,6 +8,9 @@ import {
   ActionButton,
   ActionButtonContainer,
 } from 'features/create-vault/create-vault-form/styles';
+
+import type { FC } from 'react';
+import type { CreateVaultSchema } from 'features/create-vault/types';
 
 export const MainSettingsAction: FC = () => {
   const router = useRouter();

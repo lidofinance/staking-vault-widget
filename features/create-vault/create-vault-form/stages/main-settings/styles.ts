@@ -7,8 +7,11 @@ export const Wrapper = styled.article`
   gap: ${({ theme }) => theme.spaceMap.md}px;
 `;
 
-export const InfoList = styled.ul`
+export const InfoList = styled.span`
   list-style-position: inside;
+  display: flex;
+  flex-direction: column;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const StyledCheckbox = styled(Checkbox)<{

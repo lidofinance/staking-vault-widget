@@ -1,14 +1,15 @@
-import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
+import { Connect } from 'shared/wallet';
 
+import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 import {
   ActionButton,
   ActionButtonContainer,
 } from 'features/create-vault/create-vault-form/styles';
-import { CreateVaultSchema } from 'features/create-vault/types';
-import { Connect } from 'shared/wallet';
+
+import type { CreateVaultSchema } from 'features/create-vault/types';
+import type { FC } from 'react';
 
 type ConfirmationActionProps = {
   isDisabled?: boolean;

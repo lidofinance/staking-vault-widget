@@ -30,20 +30,19 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     name: 'confirmExpiry',
     title: 'Confirmation Lifetime',
     label: 'Confirmation Lifetime, hours',
-    afterText: 'hours',
     dataType: 'time',
     type: 'number',
   },
   {
     name: 'vaultManager',
     title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
+    label: 'Vault Manager address',
     dataType: 'addressArray',
   },
   {
     name: 'nodeOperatorManager',
     title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
+    label: 'Node Operator Manager address',
     dataType: 'address',
   },
 ];

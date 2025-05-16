@@ -26,8 +26,8 @@ export type MainSettingsEntryType = {
   title: string;
   label: string;
   notes?: string;
+  hint?: string;
   type?: string;
-  afterText?: string;
 };
 
 export type PermissionKeys =

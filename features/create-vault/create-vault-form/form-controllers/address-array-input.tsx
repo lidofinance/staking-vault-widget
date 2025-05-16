@@ -1,34 +1,21 @@
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import {
-  AddressInputGroup,
-  AddressList,
-  AppendButton,
-  InputTitle,
-} from './styles';
-import { Address } from 'viem';
-
 import { Plus } from '@lidofinance/lido-ui';
+
 import { ButtonClose } from 'shared/components';
+import { AddressInputGroup, AddressList, AppendButton } from './styles';
 import { AddressInputBase } from './address-input-base';
 
-export type AddressArrayProps = {
-  name: string;
-  label?: string;
-  title: string;
-  notes?: string;
-  dataType?: 'addressArray';
-  afterText?: string; // TODO: add option for text like 'hours' (confirmExpiry field)
-};
+import type { MainSettingsEntryType } from 'features/create-vault/types';
+import type { FC } from 'react';
+import type { Address } from 'viem';
+
+export type AddressArrayProps = MainSettingsEntryType;
 
 type PlaceholderForm = {
   addresses: { value: Address }[];
 };
 
-export const AddressArrayInput = ({
-  name,
-  title,
-  label,
-}: AddressArrayProps) => {
+export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
   const { register } = useFormContext();
   const { fields, append, remove } = useFieldArray<
     PlaceholderForm,
@@ -37,7 +24,6 @@ export const AddressArrayInput = ({
   const allowDelete = fields.length > 1;
   return (
     <AddressList>
-      <InputTitle>{title}</InputTitle>
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>

@@ -1,25 +1,27 @@
 import { useCallback, useMemo } from 'react';
-import { encodeFunctionData } from 'viem';
-import { VaultFactoryAbi } from 'abi/vault-factory';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-
-import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
+import { encodeFunctionData } from 'viem';
+import { useEstimateGas } from 'wagmi';
+import { useFormContext, useFormState } from 'react-hook-form';
+
+import {
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+  useDappStatus,
+} from 'modules/web3';
+import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
+import { getContractAddress } from 'config';
+
+import { VaultFactoryAbi } from 'abi/vault-factory';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_CONNECT_DEPOSIT,
   VAULTS_OWNER_ROLES_MAP,
 } from 'modules/vaults/consts';
-import {
-  TransactionEntry,
-  useSendTransaction,
-  withSuccess,
-} from 'modules/web3';
+
 import { ModalCTA } from './modal-cta';
 import { CreateVaultSchema } from '../types';
-import { useEstimateGas } from 'wagmi';
-import { useFormState, useWatch } from 'react-hook-form';
-import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
 
 const schemaToTx = (values: CreateVaultSchema) => {
   const {
@@ -105,12 +107,12 @@ export const useCreateVault = () => {
 export const useEstimateGasCreateVault = () => {
   const { chainId } = useDappStatus();
   const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
+  const { getValues } = useFormContext<CreateVaultSchema>();
   const { isValid } = useFormState();
-  const values = useWatch<CreateVaultSchema>();
 
   const txData = useMemo(
-    () => (isValid ? schemaToTx(values as CreateVaultSchema) : null),
-    [isValid, values],
+    () => (isValid ? schemaToTx(getValues()) : null),
+    [getValues, isValid],
   );
 
   return useEstimateGas({

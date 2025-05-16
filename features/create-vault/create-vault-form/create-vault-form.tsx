@@ -1,24 +1,26 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateVault } from 'features/create-vault/create-vault-form/use-create-vault';
 
 import { FormController } from 'shared/hook-form/form-controller';
 
 import { CreateVaultSchema } from 'features/create-vault/types';
-import { createVaultSchema } from './validation';
 import {
   CREATE_VAULT_FORM_STEPS,
   CREATE_VAULT_STEPS,
   getSectionNameByStep,
 } from 'features/create-vault/consts';
 
-import { FormTitle, FormBlock } from './styles';
+import { createVaultSchema } from './validation';
+import { useCreateVault } from './use-create-vault';
+
 import { MainSettings } from './stages/main-settings';
 import { Confirmation } from './stages/confirmation';
+import { ResultOverview } from './stages/result-overview';
+
+import { FormTitle, FormBlock, FormSubtitle } from './styles';
 
 import type { Address } from 'viem';
-import { ResultOverview } from './stages/result-overview';
 
 const defaultValues: CreateVaultSchema = {
   nodeOperator: '' as Address,
@@ -53,13 +55,15 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
 
   return (
     <FormProvider {...formObject}>
-      <FormBlock>
-        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+        <FormBlock>
           {mutation.isSuccess ? (
             <ResultOverview transactionResult={mutation.data} />
           ) : (
             <>
-              Step {step} of {CREATE_VAULT_STEPS}
+              <FormSubtitle>
+                Step {step} of {CREATE_VAULT_STEPS}
+              </FormSubtitle>
               <FormTitle>{getSectionNameByStep(step)}</FormTitle>
               <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
               <Confirmation
@@ -67,8 +71,8 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
               />
             </>
           )}
-        </FormController>
-      </FormBlock>
+        </FormBlock>
+      </FormController>
     </FormProvider>
   );
 };

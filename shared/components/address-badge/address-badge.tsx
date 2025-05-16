@@ -23,7 +23,7 @@ export type AddressBadgeProps = {
   isLoading?: boolean;
   onToggle?: (event: MouseEvent<HTMLButtonElement>) => void;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-};
+} & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
@@ -34,12 +34,14 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       isActive = false,
       size = 'xs',
       color = 'default',
-      weight = 700,
+      weight = 400,
       bgColor = 'default',
       onToggle,
       readonly,
       isLoading,
       onClick,
+
+      ...props
     },
     ref?: ForwardedRef<HTMLDivElement>,
   ) => {
@@ -58,7 +60,12 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     const containerBgColor = isActive ? 'active' : bgColor;
 
     return (
-      <PillContainer bgColor={containerBgColor} onClick={onClick} ref={ref}>
+      <PillContainer
+        {...props}
+        bgColor={containerBgColor}
+        onClick={onClick}
+        ref={ref}
+      >
         <Identicon address={address} />
         <AddressText
           size={size}

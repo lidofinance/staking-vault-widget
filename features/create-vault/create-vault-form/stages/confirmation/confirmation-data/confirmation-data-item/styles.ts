@@ -1,3 +1,4 @@
+import { AddressBadge } from 'shared/components';
 import styled, { css } from 'styled-components';
 
 const textBase = css`
@@ -19,10 +20,10 @@ export const TextBold = styled.span`
   ${textBase};
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
+  justify-self: end;
 `;
 
-export const AddressList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+export const ConfirmationAddressBadge = styled(AddressBadge)`
+  grid-column: 2;
+  justify-self: end;
 `;

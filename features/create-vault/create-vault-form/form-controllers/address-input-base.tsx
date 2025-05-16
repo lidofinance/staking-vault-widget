@@ -1,14 +1,16 @@
-import { Input, Loader, Identicon } from '@lidofinance/lido-ui';
 import { forwardRef, useState } from 'react';
+import { Address, isAddress } from 'viem';
 import {
   UseFormRegisterReturn,
   useFormContext,
   useWatch,
 } from 'react-hook-form';
+import { Input, Loader, Identicon } from '@lidofinance/lido-ui';
+
 import { AddressLinkEtherscan } from 'shared/components';
-import { Address, isAddress } from 'viem';
-import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
 import { AddressInputWrapper, EtherScanLink } from './styles';
+
+import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
 
 type AddressInputProps = Omit<UseFormRegisterReturn, 'ref'> &
   React.ComponentProps<typeof Input>;

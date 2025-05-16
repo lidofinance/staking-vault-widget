@@ -1,9 +1,11 @@
+import { Loader } from '@lidofinance/lido-ui';
+
 import { useTxCostInUsd } from 'shared/hooks/use-tx-cost-in-usd';
+import { FormatPrice } from 'shared/formatters';
+
 import { useEstimateGasCreateVault } from '../../use-create-vault';
 import { TextBold } from './confirmation-data/confirmation-data-item/styles';
-import { ListItemCompact, PermissionTitle } from './styles';
-import { Loader } from '@lidofinance/lido-ui';
-import { FormatPrice } from 'shared/formatters';
+import { ListItemCompact, ConfirmationLabel } from './styles';
 
 export const CreateVaultCost = () => {
   const estimateGasQuery = useEstimateGasCreateVault();
@@ -12,7 +14,7 @@ export const CreateVaultCost = () => {
   const noData = !isLoading && !usdCostQuery.txCostUsd;
   return (
     <ListItemCompact>
-      <PermissionTitle>Transaction cost</PermissionTitle>
+      <ConfirmationLabel>Transaction cost</ConfirmationLabel>
       <TextBold>
         {isLoading && <Loader size="small" />}
         {usdCostQuery.txCostUsd && (

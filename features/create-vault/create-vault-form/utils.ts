@@ -1,12 +1,14 @@
+import { encodeFunctionData, parseEventLogs } from 'viem';
+
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_OWNER_ROLES_MAP,
   VAULTS_CONNECT_DEPOSIT,
 } from 'modules/vaults';
-import { encodeFunctionData, parseEventLogs } from 'viem';
-import { CreateVaultSchema } from '../types';
-import { TransactionResponse } from 'modules/web3';
+
+import type { CreateVaultSchema } from '../types';
+import type { TransactionResponse } from 'modules/web3';
 
 export const schemaToTx = (values: CreateVaultSchema) => {
   const {

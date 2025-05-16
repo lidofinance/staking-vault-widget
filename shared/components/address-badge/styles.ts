@@ -47,8 +47,19 @@ const getColorTransparency = (color: string, percent: string) => {
   return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
 };
 
-const getBgColor = ({ theme: { colors }, bgColor }: PillProps) => {
+const bgColorHover = ({ theme: { colors }, bgColor }: PillProps) => {
   bgColor ??= 'default';
+  const bgColorMapHover = {
+    default: getColorTransparency('var(--lido-color-textDark)', '12%'),
+    transparent: 'transparent',
+    error: getColorTransparency(colors.error, '30%'),
+    success: getColorTransparency(colors.success, '40%'),
+    active: getColorTransparency('var(--lido-color-textDark)', '150%'),
+  };
+  return bgColorMapHover[bgColor];
+};
+
+const getBgColor = ({ theme: { colors }, bgColor }: PillProps) => {
   const bgColorMap = {
     default: 'var(--lido-color-shadowLight)',
     transparent: 'transparent',
@@ -85,6 +96,14 @@ export const PillContainer = styled.div<PillProps>`
   white-space: nowrap;
   text-wrap: nowrap;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
+  ${({ onClick }) =>
+    onClick
+      ? css`
+          &:hover {
+            background-color: ${bgColorHover};
+          }
+        `
+      : ''};
 `;
 
 export const AddressText = styled(Address)<InjectedProps>`

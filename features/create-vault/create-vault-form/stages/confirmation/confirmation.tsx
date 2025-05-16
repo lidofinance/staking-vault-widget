@@ -1,14 +1,10 @@
+import { useDappStatus } from 'modules/web3';
+
+import { Hint } from 'features/create-vault/shared/hint';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
-import { ConfirmationAction } from './confirmation-action';
 import { SectionContainer } from '../../styles';
+import { ConfirmationAction } from './confirmation-action';
 import { ConfirmationData } from './confirmation-data';
-import {
-  ConfirmInfoTitle,
-  List,
-  ListItem,
-  ListItemCompact,
-  PermissionTitle,
-} from './styles';
 import {
   TextBold,
   TextError,
@@ -16,7 +12,13 @@ import {
 import { CreateVaultCost } from './create-vaut-cost';
 import { PreSupplyWarning } from './pre-suply-warning';
 import { useSupplyBalance } from './use-supply-balance';
-import { useDappStatus } from 'modules/web3';
+import {
+  ConfirmInfoTitle,
+  List,
+  ListItem,
+  ListItemCompact,
+  ConfirmationLabel,
+} from './styles';
 
 type ConfirmationProps = {
   isShown: boolean;
@@ -31,18 +33,20 @@ export const Confirmation = ({ isShown }: ConfirmationProps) => {
 
   return (
     <SectionContainer isShown={isShown}>
-      <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
       <List>
+        <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
         {MAIN_SETTINGS.map((item) => {
           return (
             <ListItem key={item.name}>
-              <PermissionTitle>{item.title}</PermissionTitle>
+              <ConfirmationLabel>
+                {item.title} <Hint hint={item.hint} />
+              </ConfirmationLabel>
               <ConfirmationData name={item.name} dataType={item.dataType} />
             </ListItem>
           );
         })}
         <ListItemCompact>
-          <PermissionTitle>Initial supply to stVault</PermissionTitle>
+          <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>
           <PreSupplyAmountComponent>1 ETH</PreSupplyAmountComponent>
         </ListItemCompact>
         <CreateVaultCost />
