@@ -65,7 +65,7 @@ export const AddressPopoverSelectable: FC<AddressPopoverSelectableProps> = ({
         onClick={handleBadgeToggle}
       />
 
-      {ref.current && (
+      {open && (
         <PopoverWrapper
           anchorRef={ref}
           open={open}

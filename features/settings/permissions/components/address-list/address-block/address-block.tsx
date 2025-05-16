@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray } from 'react-hook-form';
 
 import { AddressItem } from 'features/settings/permissions/components/address-list/address-item';
 import { Wrapper } from './styles';
@@ -19,9 +19,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({
   permission,
   readonly,
 }) => {
-  const { control } = useFormContext();
   const { fields, update, append } = useFieldArray<EditPermissionsSchema>({
-    control,
     name: permission,
   });
 
@@ -34,7 +32,6 @@ export const AddressBlock: FC<AddressBlockProps> = ({
             field={field}
             index={index}
             readonly={readonly}
-            permission={permission}
             update={update}
           />
         );

@@ -4,7 +4,11 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { FormController } from 'shared/hook-form/form-controller';
 import { validateFormWithZod } from 'utils/validate-form-value';
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
-import { EditPermissionsSchema } from 'features/settings/permissions/types';
+import {
+  EditPermissionsSchema,
+  FieldSchema,
+  PermissionKeys,
+} from 'features/settings/permissions/types';
 import { useEditPermissions } from 'features/settings/permissions/hooks';
 import {
   collectFormValuesToRpc,
@@ -23,11 +27,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { editPermissions, retryEvent } = useEditPermissions();
 
   const formObject = useForm<EditPermissionsSchema>({
-    defaultValues: async () => {
-      const data = await someAsync.awaiter;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return data!;
-    },
+    defaultValues: async () =>
+      (await someAsync.awaiter) as Record<PermissionKeys, FieldSchema[]>,
     resolver: validateFormWithZod(editPermissionsSchema),
     mode: 'onBlur',
   });
@@ -40,16 +41,17 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         throwOnError: false,
       });
 
-      if (refetchData) {
-        formObject.reset(
-          // @ts-expect-error ts-types
-          collectRolesToFormValues(formatRawPermissions(refetchData)),
-        );
+      const newDefaultValues = collectRolesToFormValues(
+        formatRawPermissions(refetchData as []),
+      );
+      if (newDefaultValues) {
+        formObject.reset(newDefaultValues);
       }
 
       return success;
     },
-    [editPermissions, refetch, formObject],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [editPermissions, refetch, formObject.reset],
   );
 
   return (
