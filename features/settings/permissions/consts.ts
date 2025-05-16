@@ -34,25 +34,22 @@ export const permissionsToggleList = [
 export type ToggleValue =
   (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 const validateAddress = (value: string) => isValidAnyAddress(value);
 const accountSchema = z
   .string()
   .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
   .transform((value) => value as Address);
 
-const addressSchema = z.discriminatedUnion('group', [
-  z.object({
-    group: z.literal('eventual'),
-    state: z.union([z.literal('restore'), z.literal('grant')]),
-    account: accountSchema,
-  }),
-  z.object({
-    group: z.literal('settled'),
-    state: z.union([z.literal('remove'), z.literal('display')]),
-    account: accountSchema,
-  }),
-]);
+const addressSchema = z.object({
+  action: z.union([
+    z.literal('display'),
+    z.literal('revoke'),
+    z.literal('grant'),
+  ]),
+  account: accountSchema,
+});
 
 export const EDITABLE_ROLES_MAP = {
   ...VAULTS_OWNER_ROLES_MAP,

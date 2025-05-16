@@ -1,7 +1,7 @@
 import {
-  AddressList,
   RoleDescription,
   PermissionsAction,
+  AddressBlock,
 } from 'features/settings/permissions/components';
 import {
   PermissionBlock,
@@ -54,7 +54,7 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
                 description={title}
                 tooltip={tooltip}
               />
-              <AddressList readonly={!hasPermission} permission={role} />
+              <AddressBlock readonly={!hasPermission} permission={role} />
             </PermissionRoleWrapper>
           );
         })}

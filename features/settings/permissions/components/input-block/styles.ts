@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { ButtonIcon } from '@lidofinance/lido-ui';
 
-export const AddressListWrapper = styled.div`
+export const InputBlockWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  align-items: center;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
+  width: 100%;
 `;
 
 export const AddAddress = styled(ButtonIcon)`

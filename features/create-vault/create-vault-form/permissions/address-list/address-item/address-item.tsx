@@ -1,4 +1,4 @@
-import { FC, useState, useRef, useMemo, MouseEvent } from 'react';
+import { FC, useState, useRef, useMemo } from 'react';
 
 import { Copy, External, ToastSuccess } from '@lidofinance/lido-ui';
 import {
@@ -15,7 +15,6 @@ import {
 } from './styles';
 
 import { truncateAddress } from 'utils/truncate-address';
-import { useFormContext } from 'react-hook-form';
 import { PermissionField, PermissionKeys } from 'features/create-vault/types';
 
 export interface AddressItemProps {
@@ -25,12 +24,7 @@ export interface AddressItemProps {
 }
 
 // TODO: use shared/components/AddressWithPopover component
-export const AddressItem: FC<AddressItemProps> = ({
-  index,
-  permission,
-  field,
-}) => {
-  const { setValue } = useFormContext();
+export const AddressItem: FC<AddressItemProps> = ({ field }) => {
   const { account, state } = field;
   const [showPopover, showPopoverVisibility] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
@@ -41,22 +35,6 @@ export const AddressItem: FC<AddressItemProps> = ({
     if (state === 'grant') return 'success';
     return 'default';
   }, [isTextCrossed, state]);
-
-  const handleUpdateFormItem = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    const newState = state === 'grant' ? 'restore' : 'grant';
-
-    setValue(
-      `roles.${permission}.${index}`,
-      {
-        account,
-        state: newState,
-      },
-      { shouldDirty: true },
-    );
-  };
 
   const handleShowPopover = () => {
     showPopoverVisibility(true);
@@ -77,11 +55,9 @@ export const AddressItem: FC<AddressItemProps> = ({
     <>
       <AddressBadge
         ref={badgeRef}
-        crossedText={isTextCrossed}
+        crossed={isTextCrossed}
         bgColor={bgColor}
         address={account}
-        isActive={showPopover}
-        onToggle={handleUpdateFormItem}
         onClick={handleShowPopover}
       />
       {!!badgeRef?.current && (
