@@ -8,10 +8,10 @@ export const appPaths = {
     vault: (vaultAddress: Address) =>
       ({
         overview: `/vaults/${vaultAddress}`,
-        supply: (mode: 'fund' | 'withdraw') =>
-          `/vaults/${vaultAddress}/supply/${mode}` as const,
-        adjustment: (mode: 'mint' | 'repay') =>
-          `/vaults/${vaultAddress}/adjustment/${mode}` as const,
+        eth: (mode: 'supply' | 'withdraw') =>
+          `/vaults/${vaultAddress}/eth/${mode}` as const,
+        steth: (mode: 'mint' | 'repay') =>
+          `/vaults/${vaultAddress}/steth/${mode}` as const,
         claim: `/vaults/${vaultAddress}/claim`,
         settings: `/vaults/${vaultAddress}/settings`,
         validators: `/vaults/${vaultAddress}/validators`,

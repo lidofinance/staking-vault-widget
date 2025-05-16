@@ -7,13 +7,13 @@ import { SupplyTabs } from 'features/supply';
 import { useRouter } from 'next/router';
 
 type SupplyModePageParams = {
-  mode: 'fund' | 'withdraw';
+  mode: 'supply' | 'withdraw';
   address: Address;
 };
 
 const Supply: FC = () => {
   const { mode } = useRouter().query as SupplyModePageParams;
-  const title = mode === 'fund' ? 'Supply' : 'Withdraw';
+  const title = mode === 'supply' ? 'Supply' : 'Withdraw';
 
   return (
     <Layout navigationMode="vault" title={title} containerSize="content">
