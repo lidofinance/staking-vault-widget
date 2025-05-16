@@ -42,18 +42,14 @@ const accountSchema = z
   .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
   .transform((value) => value as Address);
 
-const addressSchema = z.discriminatedUnion('group', [
-  z.object({
-    group: z.literal('eventual'),
-    state: z.union([z.literal('restore'), z.literal('grant')]),
-    account: accountSchema,
-  }),
-  z.object({
-    group: z.literal('settled'),
-    state: z.union([z.literal('remove'), z.literal('display')]),
-    account: accountSchema,
-  }),
-]);
+const addressSchema = z.object({
+  action: z.union([
+    z.literal('display'),
+    z.literal('revoke'),
+    z.literal('grant'),
+  ]),
+  account: accountSchema,
+});
 
 export const EDITABLE_ROLES_MAP = {
   ...VAULTS_OWNER_ROLES_MAP,

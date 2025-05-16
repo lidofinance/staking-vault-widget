@@ -1,11 +1,12 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useFieldArray } from 'react-hook-form';
 
-import { AddressItem } from 'features/settings/permissions/components/address-list/address-item';
+import { AddressField } from 'features/settings/permissions/components';
 import { Wrapper } from './styles';
 
 import {
   EditPermissionsSchema,
+  FieldSchema,
   PermissionKeys,
 } from 'features/settings/permissions/types';
 import { InputBlock } from '../input-block';
@@ -19,20 +20,36 @@ export const AddressBlock: FC<AddressBlockProps> = ({
   permission,
   readonly,
 }) => {
-  const { fields, update, append } = useFieldArray<EditPermissionsSchema>({
-    name: permission,
-  });
+  const { fields, update, append, remove } =
+    useFieldArray<EditPermissionsSchema>({
+      name: permission,
+    });
+
+  const handleUpdateField = useCallback(
+    (content: FieldSchema, index: number) => {
+      update(index, content);
+    },
+    [update],
+  );
+
+  const handleRemoveField = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove],
+  );
 
   return (
     <Wrapper>
       {fields.map((field, index) => {
         return (
-          <AddressItem
+          <AddressField
             key={field.id}
-            field={field}
             index={index}
             readonly={readonly}
-            update={update}
+            permission={permission}
+            onUpdate={handleUpdateField}
+            onRemove={handleRemoveField}
           />
         );
       })}

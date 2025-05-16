@@ -16,14 +16,14 @@ export const collectFormValuesToRpc = (formData: EditPermissionsSchema) => {
       invariant(role, '[collectFormValuesToRpc] role not found');
       const { toRevoke, toGrant } = acc;
       fieldList?.forEach((field) => {
-        if (field.state === 'grant') {
+        if (field.action === 'grant') {
           toGrant.push({
             account: field.account,
             role,
           });
         }
 
-        if (field.state === 'remove') {
+        if (field.action === 'revoke') {
           toRevoke.push({
             account: field.account,
             role,
@@ -67,8 +67,7 @@ export const collectRolesToFormValues = (
         (address) =>
           ({
             account: address,
-            group: 'settled',
-            state: 'display',
+            action: 'display',
           }) as FieldSchema,
       );
 

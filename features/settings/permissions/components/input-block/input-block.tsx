@@ -41,7 +41,7 @@ export const InputBlock: FC<InputBlockProps> = ({
       e.preventDefault();
     }
 
-    append({ account: value, state: 'grant', group: 'eventual' });
+    append({ account: value, action: 'grant' });
     hideInputField();
   };
 
