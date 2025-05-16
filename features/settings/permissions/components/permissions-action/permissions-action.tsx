@@ -5,6 +5,7 @@ import { Button } from '@lidofinance/lido-ui';
 import { Container } from './styled';
 
 import { usePermissionsData } from 'features/settings/permissions/contexts';
+import { ConnectWalletButton } from 'shared/wallet';
 
 export const PermissionsAction: FC = () => {
   const {
@@ -23,19 +24,21 @@ export const PermissionsAction: FC = () => {
 
   return (
     <Container>
-      {isDirty && (
-        <Button
-          onClick={handleResetFields}
-          disabled={isClearDisabled}
-          variant="outlined"
-          fullwidth
-        >
-          Clear changes
+      <ConnectWalletButton>
+        {isDirty && (
+          <Button
+            onClick={handleResetFields}
+            disabled={isClearDisabled}
+            variant="outlined"
+            fullwidth
+          >
+            Clear changes
+          </Button>
+        )}
+        <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+          {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
         </Button>
-      )}
-      <Button type="submit" disabled={isSubmitDisabled} fullwidth>
-        {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
-      </Button>
+      </ConnectWalletButton>
     </Container>
   );
 };

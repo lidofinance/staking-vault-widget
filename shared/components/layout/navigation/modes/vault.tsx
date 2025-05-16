@@ -19,15 +19,13 @@ const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   },
   {
     title: 'Supply/Withdraw',
-    path: appPaths.vaults.vault(vaultAddress).supply(overrideMode ?? 'fund'),
+    path: appPaths.vaults.vault(vaultAddress).eth(overrideMode ?? 'supply'),
     icon: <Stake />,
     exact: true,
   },
   {
     title: 'Mint/Repay stETH',
-    path: appPaths.vaults
-      .vault(vaultAddress)
-      .adjustment(overrideMode ?? 'mint'),
+    path: appPaths.vaults.vault(vaultAddress).steth(overrideMode ?? 'mint'),
     icon: <Withdraw />,
     exact: true,
   },

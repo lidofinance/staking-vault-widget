@@ -5,6 +5,7 @@ import { Container } from './styled';
 import { useFormContext } from 'react-hook-form';
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
+import { ConnectWalletButton } from 'shared/wallet';
 
 export const MainSettingsAction: FC = () => {
   const {
@@ -78,22 +79,24 @@ export const MainSettingsAction: FC = () => {
 
   return (
     <Container>
-      <Button
-        type="button"
-        variant="outlined"
-        disabled={isClearDisabled || !hasChanges}
-        onClick={handleClearMainForm}
-        fullwidth
-      >
-        Clear changes
-      </Button>
-      <Button
-        type="submit"
-        disabled={isSubmitDisabled || !hasChanges}
-        fullwidth
-      >
-        {buttonText}
-      </Button>
+      <ConnectWalletButton>
+        <Button
+          type="button"
+          variant="outlined"
+          disabled={isClearDisabled || !hasChanges}
+          onClick={handleClearMainForm}
+          fullwidth
+        >
+          Clear changes
+        </Button>
+        <Button
+          type="submit"
+          disabled={isSubmitDisabled || !hasChanges}
+          fullwidth
+        >
+          {buttonText}
+        </Button>
+      </ConnectWalletButton>
     </Container>
   );
 };
