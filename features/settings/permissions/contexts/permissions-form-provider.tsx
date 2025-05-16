@@ -23,12 +23,12 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const { rolesList, refetch } = usePermissionsData();
-  const someAsync = useAwaiter(rolesList);
+  const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
 
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () =>
-      (await someAsync.awaiter) as Record<PermissionKeys, FieldSchema[]>,
+      (await asyncPermissions.awaiter) as Record<PermissionKeys, FieldSchema[]>,
     resolver: validateFormWithZod(editPermissionsSchema),
     mode: 'onBlur',
   });
