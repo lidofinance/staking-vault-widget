@@ -9,6 +9,7 @@ import {
 
 import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
+import { addressSchema } from 'utils/validate-form-value';
 
 export type AddressBadgeProps = {
   address?: string;
@@ -40,8 +41,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     const backupRef = useRef<HTMLDivElement>(null);
     const ref = forwardedRef || backupRef;
     const [isOpen, setIsOpen] = useState(false);
-
-    const address = props.address?.trim().toLowerCase();
+    const parsing = addressSchema.safeParse(props.address);
 
     const onClick = showPopover
       ? (event: MouseEvent) => {
@@ -65,9 +65,9 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       );
     }
 
-    if (!address) {
-      return null;
-    }
+    if (!parsing.success) return null;
+
+    const address = parsing.data;
 
     return (
       <>

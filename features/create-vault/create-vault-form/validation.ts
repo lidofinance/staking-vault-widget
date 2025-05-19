@@ -1,7 +1,5 @@
-import { Address } from 'viem';
 import { z, ZodTypeAny } from 'zod';
 
-import { isValidAnyAddress } from 'utils/address-validation';
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
@@ -13,8 +11,7 @@ import {
 } from 'modules/vaults';
 
 import type { PermissionKeys } from 'features/create-vault/types';
-
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+import { addressSchema } from 'utils/validate-form-value';
 
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
 const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
@@ -40,15 +37,6 @@ const validateBasisPoints = (value: number) =>
   value * VAULT_TOTAL_BASIS_POINTS -
     Math.floor(value * VAULT_TOTAL_BASIS_POINTS) ===
   0;
-
-const validateAddress = (value: string | null) =>
-  !!(value && isValidAnyAddress(value));
-
-const addressSchema = z
-  .string()
-  .trim()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value.toLocaleLowerCase() as Address);
 
 const numberSchema = (zodPipe: ZodTypeAny) =>
   z.coerce

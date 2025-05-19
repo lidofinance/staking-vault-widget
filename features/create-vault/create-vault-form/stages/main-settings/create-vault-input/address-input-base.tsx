@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { Address, isAddress } from 'viem';
+import { Address } from 'viem';
 import {
   UseFormRegisterReturn,
   useFormContext,
@@ -11,6 +11,7 @@ import { AddressLinkEtherscan } from 'shared/components';
 import { AddressInputWrapper, EtherScanLink } from './styles';
 
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
+import { addressSchema } from 'utils/validate-form-value';
 
 type AddressInputProps = Omit<UseFormRegisterReturn, 'ref'> &
   React.ComponentProps<typeof Input>;
@@ -24,10 +25,12 @@ export const AddressInputBase = forwardRef<HTMLInputElement, AddressInputProps>(
 
     const { invalid, isDirty, isValidating, error } = getFieldState(name);
 
-    const value = useWatch<{ value: Address }>({ name });
+    const { data: value } = addressSchema.safeParse(
+      useWatch<{ value: Address }>({ name }),
+    );
 
     const decorator = (() => {
-      if (isAddress(value)) {
+      if (value) {
         if (invalid) return <ErrorTriangle />;
         if (invalid && isValidating) return <Loader size="small" />;
         if (!isDirty) return null;
