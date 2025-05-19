@@ -2,33 +2,6 @@ import { z, ZodSchema } from 'zod';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
 import { isZodError } from 'utils/errors';
 
-// TODO: recheck with lib to remove this code
-// https://react-hook-form.com/docs/useform#:~:text=of%20your%20fields.-,Examples%3A,-YUP
-
-export const validateFormValue = <T>(value: T): boolean => {
-  if (
-    typeof value === 'number' ||
-    typeof value === 'boolean' ||
-    typeof value === 'bigint'
-  ) {
-    return true;
-  } else if (typeof value === 'string') {
-    return value !== '' || value.length > 0;
-  } else if (typeof value === 'undefined') {
-    return false;
-  }
-
-  if (value instanceof Date) {
-    return !isNaN(value.getTime());
-  }
-
-  return !(
-    (Array.isArray(value) && value.length === 0) ||
-    ((value instanceof Set || value instanceof Map) && value.size === 0) ||
-    (value && typeof value === 'object' && Object.keys(value).length === 0)
-  );
-};
-
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
   validateAllFieldCriteria: boolean,
@@ -76,6 +49,8 @@ export const parseZodErrorSchema = (
   return errors;
 };
 
+// TODO: recheck with lib to remove this code
+// https://react-hook-form.com/docs/useform#:~:text=of%20your%20fields.-,Examples%3A,-YUP
 export const validateFormWithZod = <T extends ZodSchema>(
   schema: T,
 ): Resolver<z.infer<T>> => {

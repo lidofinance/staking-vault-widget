@@ -8,9 +8,8 @@ export { InfoBox } from './info-box/info-box';
 export { Switch } from './switch/switch';
 export {
   AddressBadge,
-  type AddressBadgeProps,
   AddressBadgeSelectable,
-  AddressPopoverSelectable,
+  type AddressBadgeProps,
 } from './address-badge';
 export { ButtonClose } from './button-close';
 export { ButtonRestore } from './button-restore';

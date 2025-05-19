@@ -18,7 +18,7 @@ export const TxCostRow = ({
 }: TxCostRowProps) => {
   const usdCostQuery = useTxCostInUsd(estimateGasQuery.data);
   const isLoading = usdCostQuery.isLoading || estimateGasQuery.isLoading;
-  const noData = !isLoading && !usdCostQuery.txCostUsd;
+  const isEmpty = !isLoading && !usdCostQuery.txCostUsd;
   return (
     <InfoRow>
       <Text size="xxs" color="secondary">
@@ -30,7 +30,7 @@ export const TxCostRow = ({
           <FormatPrice amount={usdCostQuery.txCostUsd} />
         </AmountInfo>
       )}
-      {noData && <AmountInfo>-</AmountInfo>}
+      {isEmpty && <AmountInfo>-</AmountInfo>}
     </InfoRow>
   );
 };

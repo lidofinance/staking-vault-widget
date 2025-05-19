@@ -1,14 +1,16 @@
-import { forwardRef, MouseEventHandler } from 'react';
+import { forwardRef, type MouseEvent, useRef, useState } from 'react';
+import { zeroAddress } from 'viem';
 import {
   Identicon,
   Loader,
   TextColors,
   TextWeight,
 } from '@lidofinance/lido-ui';
-import { zeroAddress } from 'viem';
+
+import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
 
-export interface AddressBadgeProps {
+export type AddressBadgeProps = {
   address?: string;
   symbols?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
@@ -17,8 +19,8 @@ export interface AddressBadgeProps {
   bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
   crossed?: boolean;
   isLoading?: boolean;
-  onClick?: MouseEventHandler<HTMLDivElement>;
-}
+  showPopover?: boolean;
+} & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
@@ -27,14 +29,26 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       symbols = 6,
       size = 'xs',
       color = 'default',
-      weight = 700,
+      weight = 400,
       bgColor = 'default',
       crossed = false,
       isLoading = false,
-      onClick,
+      showPopover = false,
+      ...props
     },
-    ref,
+    forwardedRef,
   ) => {
+    const backupRef = useRef<HTMLDivElement>(null);
+    const ref = forwardedRef || backupRef;
+    const [isOpen, setIsOpen] = useState(false);
+
+    const onClick = showPopover
+      ? (event: MouseEvent) => {
+          setIsOpen(true);
+          props.onClick?.(event);
+        }
+      : props.onClick;
+
     if (isLoading) {
       return (
         <PillContainer
@@ -42,6 +56,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           bgColor={bgColor}
           onClick={onClick}
           ref={ref}
+          {...props}
         >
           <Identicon address={zeroAddress} />
           <Loader size="large" />
@@ -54,22 +69,33 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     }
 
     return (
-      <PillContainer
-        crossed={crossed}
-        bgColor={bgColor}
-        onClick={onClick}
-        ref={ref}
-      >
-        <Identicon address={address} />
-        <AddressText
-          size={size}
-          color={color}
-          weight={weight}
-          symbols={symbols}
-          address={address}
-          crossedText={crossed}
-        />
-      </PillContainer>
+      <>
+        <PillContainer
+          crossed={crossed}
+          bgColor={bgColor}
+          onClick={onClick}
+          ref={ref}
+          {...props}
+        >
+          <Identicon address={address} />
+          <AddressText
+            size={size}
+            color={color}
+            weight={weight}
+            symbols={symbols}
+            address={address}
+            crossedText={crossed}
+          />
+        </PillContainer>
+        {showPopover && (
+          <AddressPopover
+            anchorRef={ref as any}
+            isOpen={isOpen}
+            address={address}
+            onClose={() => setIsOpen(false)}
+          />
+        )}
+      </>
     );
   },
 );

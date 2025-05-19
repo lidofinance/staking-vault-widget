@@ -65,7 +65,6 @@ export const useSendTransaction = () => {
     SendTransactionArguments
   >({
     mutationKey: ['sendTransaction', isAA, retryFire],
-
     mutationFn: async ({
       transactions,
       mainActionCompleteText,

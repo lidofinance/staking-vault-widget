@@ -28,7 +28,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
 `;
 
 export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`
-  font-weight: 800;
+  font-weight: 700;
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   margin-bottom: 0.2em;
   line-height: 1.2em;

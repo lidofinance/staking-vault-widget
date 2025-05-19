@@ -1,23 +1,46 @@
 import styled from 'styled-components';
+import { ButtonIcon, Question } from '@lidofinance/lido-ui';
+
+/// CreateVaultInput
+
+export const InputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;
 
 export const InputTitle = styled.p`
-  margin-bottom: 8px;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: 700;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
+  display: inline-flex;
+`;
+
+export const QuestionIcon = styled(Question)`
+  width: 20px;
+  height: 20px;
+  fill: ${({ theme }) => theme.colors.textSecondary};
+  align-self: center;
 `;
 
 export const InputNotes = styled.p`
-  margin-top: 8px;
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   font-weight: 400;
   line-height: 20px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textSecondary};
+
+  & > b {
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
+
+// AddressInput
 
 export const AddressInputWrapper = styled.div`
   position: relative;
+  flex-grow: 1;
 `;
 
 export const EtherScanLink = styled.span`
@@ -30,4 +53,33 @@ export const EtherScanLink = styled.span`
   & > a {
     text-wrap: nowrap;
   }
+`;
+
+export const AddressList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;
+
+export const AppendButton = styled(ButtonIcon)`
+  width: fit-content;
+  padding: 0;
+  padding-inline: 4px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover,
+  &:active {
+    background: none;
+  }
+
+  &::before {
+    background: none;
+  }
+`;
+
+export const AddressInputGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
 `;

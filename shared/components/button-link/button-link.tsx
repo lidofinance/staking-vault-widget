@@ -1,18 +1,27 @@
 import { MouseEvent, FC, PropsWithChildren } from 'react';
 
 import { Button } from './styles';
+import Link from 'next/link';
 
-export interface CloseButtonProps {
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
-}
+export type CloseButtonProps = {
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  href?: string;
+};
 
 export const ButtonLink: FC<PropsWithChildren<CloseButtonProps>> = ({
   onClick,
   children,
+  href,
 }) => {
-  return (
+  const content = (
     <Button onClick={onClick} type="button">
       {children}
     </Button>
   );
+
+  if (href) {
+    <Link href={href}>{content}</Link>;
+  }
+
+  return content;
 };

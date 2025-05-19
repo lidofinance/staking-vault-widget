@@ -46,32 +46,52 @@ type PillProps = {
 
 type BgColor = 'transparent' | 'default' | 'error' | 'success' | 'active';
 
-const buildBgColorMap = (colors: PillProps['theme']['colors']) => ({
-  default: 'var(--lido-color-shadowLight)',
+const buildBgColorMap = (
+  colors: PillProps['theme']['colors'],
+  isHover?: boolean,
+) => ({
+  default: isHover
+    ? getColorTransparency('var(--lido-color-textDark)', '12%')
+    : getColorTransparency('var(--lido-color-textDark)', '6%'),
   transparent: 'transparent',
-  error: getColorTransparency(colors.error, '20%'),
-  success: getColorTransparency(colors.success, '30%'),
-  active: getColorTransparency('var(--lido-color-textDark)', '12%'),
+  error: getColorTransparency(colors.error, isHover ? '30%' : '20%'),
+  success: getColorTransparency(colors.success, isHover ? '40%' : '30%'),
+  active: getColorTransparency(
+    'var(--lido-color-textDark)',
+    isHover ? '15%' : '12%',
+  ),
 });
 
 const getColorTransparency = (color: string, percent: string) => {
   return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
 };
 
-const createBgGetter = (options: { considerCrossed: boolean }) => {
+const createBgGetter = (options: {
+  considerCrossed: boolean;
+  isHover?: boolean;
+}) => {
   return ({
     theme: { colors },
     bgColor = 'default',
     crossed = false,
   }: PillProps) => {
-    const map = buildBgColorMap(colors);
+    const map = buildBgColorMap(colors, options.isHover);
     const key: BgColor = options.considerCrossed && crossed ? 'error' : bgColor;
     return map[key];
   };
 };
 
-export const getBgColor = createBgGetter({ considerCrossed: true });
-export const getPillBgColor = createBgGetter({ considerCrossed: false });
+const getBgColor = createBgGetter({ considerCrossed: true });
+const getBgColorHover = createBgGetter({
+  considerCrossed: true,
+  isHover: true,
+});
+
+const getPillBgColor = createBgGetter({ considerCrossed: false });
+const getPillBgHover = createBgGetter({
+  considerCrossed: false,
+  isHover: true,
+});
 
 const getTextColor = ({ theme: { colors }, color }: InjectedProps) => {
   const colorsMap = {
@@ -98,10 +118,14 @@ export const PillContainer = styled.div<PillProps>`
   white-space: nowrap;
   text-wrap: nowrap;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
-
-  &:has(+ label > input[type='checkbox']) {
-    padding-right: 0;
-  }
+  ${({ onClick }) =>
+    onClick
+      ? css`
+          &:hover {
+            background-color: ${getPillBgHover};
+          }
+        `
+      : ''};
 `;
 
 export const AddressText = styled(Address)<InjectedProps>`
@@ -122,6 +146,9 @@ export const SelectableWrapper = styled.div<PillProps>`
   padding-right: ${({ theme }) => theme.spaceMap.sm}px;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
   background-color: ${getBgColor};
+  &:hover {
+    background-color: ${getBgColorHover};
+  }
 `;
 
 export const Label = styled.label`

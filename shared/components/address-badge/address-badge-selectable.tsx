@@ -5,12 +5,11 @@ import { ReactComponent as RestoreIcon } from 'assets/icons/restore.svg';
 
 import { SelectableWrapper, HiddenCheckbox, Label } from './styles';
 
-export interface SelectableAddressBadgeProps
-  extends Omit<AddressBadgeProps, 'crossed' | 'bgColor'> {
+export type SelectableAddressBadgeProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   defaultBg?: AddressBadgeProps['bgColor'];
-}
+} & Omit<AddressBadgeProps, 'crossed' | 'bgColor'>;
 
 export const AddressBadgeSelectable = forwardRef<
   HTMLDivElement | null,
