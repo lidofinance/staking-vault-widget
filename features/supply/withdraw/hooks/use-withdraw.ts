@@ -22,7 +22,7 @@ export const useWithdraw = () => {
   const { activeVault } = useVaultInfo();
   const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
-  const { shouldApplyReport, prepareReportCall } = useReportStatus();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
 
   const withdraw = useCallback(
     async ({ amount, recipient }: WithdrawArgs) => {
@@ -39,7 +39,7 @@ export const useWithdraw = () => {
       };
 
       // if we have to post report, there will be extra modal due to async fetch
-      const transactions = shouldApplyReport
+      const transactions = isReportAvailable
         ? async () => [await prepareReportCall(), withdrawCall]
         : [withdrawCall];
 
@@ -53,7 +53,7 @@ export const useWithdraw = () => {
         }),
       );
     },
-    [vaultOwner, shouldApplyReport, sendTX, prepareReportCall],
+    [vaultOwner, isReportAvailable, sendTX, prepareReportCall],
   );
 
   return {

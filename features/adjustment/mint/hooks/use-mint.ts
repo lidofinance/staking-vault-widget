@@ -13,7 +13,7 @@ import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useMint = () => {
   const { activeVault } = useVaultInfo();
-  const { shouldApplyReport, prepareReportCall } = useReportStatus();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
@@ -35,7 +35,7 @@ export const useMint = () => {
         };
 
         // if we have to post report, there will be extra modal due to async fetch
-        const transactions = shouldApplyReport
+        const transactions = isReportAvailable
           ? async () => {
               return [await prepareReportCall(), mintCall];
             }
@@ -53,7 +53,7 @@ export const useMint = () => {
 
         return success;
       },
-      [activeVault?.owner, prepareReportCall, sendTX, shouldApplyReport],
+      [activeVault?.owner, prepareReportCall, sendTX, isReportAvailable],
     ),
     ...rest,
   };
