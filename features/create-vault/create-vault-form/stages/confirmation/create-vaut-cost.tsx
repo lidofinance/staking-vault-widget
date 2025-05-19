@@ -11,7 +11,7 @@ export const CreateVaultCost = () => {
   const estimateGasQuery = useEstimateGasCreateVault();
   const usdCostQuery = useTxCostInUsd(estimateGasQuery.data);
   const isLoading = usdCostQuery.isLoading || estimateGasQuery.isLoading;
-  const noData = !isLoading && !usdCostQuery.txCostUsd;
+  const isEmpty = !isLoading && !usdCostQuery.txCostUsd;
 
   return (
     <ListItemCompact>
@@ -21,7 +21,7 @@ export const CreateVaultCost = () => {
         {usdCostQuery.txCostUsd && (
           <FormatPrice amount={usdCostQuery.txCostUsd} />
         )}
-        {noData && '-'}
+        {isEmpty && '-'}
       </TextBold>
     </ListItemCompact>
   );

@@ -1,16 +1,19 @@
-import { RefObject } from 'react';
+import type { RefObject } from 'react';
+import type { Address } from 'viem';
+
+import { Copy, ToastSuccess, External, Popover } from '@lidofinance/lido-ui';
+
+import { truncateAddress } from 'utils/truncate-address';
 import { AddressBadge } from './address-badge';
+import { ButtonLink } from '../button-link';
+import { AddressLinkEtherscan } from '../address-link-etherscan';
+
 import {
   ActionGroup,
   ActionWrapper,
   PopoverContent,
   PopoverWrapper,
 } from './styles';
-import { Copy, ToastSuccess, External, Popover } from '@lidofinance/lido-ui';
-import { ButtonLink } from '../button-link';
-import { truncateAddress } from 'utils/truncate-address';
-import { AddressLinkEtherscan } from '../address-link-etherscan';
-import { Address } from 'viem';
 
 type AddressPopoverProps = {
   address?: string;

@@ -22,25 +22,23 @@ export const AddressBadgeSelectable = forwardRef<
   };
 
   return (
-    <>
-      <SelectableWrapper crossed={checked} bgColor={defaultBg}>
-        <AddressBadge
-          ref={ref}
-          {...badgeProps}
-          bgColor="transparent"
-          crossed={checked}
-        />
+    <SelectableWrapper crossed={checked} bgColor={defaultBg}>
+      <AddressBadge
+        ref={ref}
+        {...badgeProps}
+        bgColor="transparent"
+        crossed={checked}
+      />
 
-        <Label htmlFor={id}>
-          <HiddenCheckbox
-            id={id}
-            type="checkbox"
-            checked={checked}
-            onChange={handleInputChange}
-          />
-          {checked ? <RestoreIcon /> : <Close />}
-        </Label>
-      </SelectableWrapper>
-    </>
+      <Label htmlFor={id}>
+        <HiddenCheckbox
+          id={id}
+          type="checkbox"
+          checked={checked}
+          onChange={handleInputChange}
+        />
+        {checked ? <RestoreIcon /> : <Close />}
+      </Label>
+    </SelectableWrapper>
   );
 });

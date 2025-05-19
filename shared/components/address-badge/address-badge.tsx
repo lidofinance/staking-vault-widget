@@ -1,13 +1,14 @@
-import { forwardRef, MouseEvent, useRef, useState } from 'react';
+import { forwardRef, type MouseEvent, useRef, useState } from 'react';
+import { zeroAddress } from 'viem';
 import {
   Identicon,
   Loader,
   TextColors,
   TextWeight,
 } from '@lidofinance/lido-ui';
-import { zeroAddress } from 'viem';
-import { PillContainer, AddressText } from './styles';
+
 import { AddressPopover } from './address-popover';
+import { PillContainer, AddressText } from './styles';
 
 export type AddressBadgeProps = {
   address?: string;
@@ -51,11 +52,11 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     if (isLoading) {
       return (
         <PillContainer
-          {...props}
           crossed={crossed}
           bgColor={bgColor}
           onClick={onClick}
           ref={ref}
+          {...props}
         >
           <Identicon address={zeroAddress} />
           <Loader size="large" />
@@ -70,11 +71,11 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     return (
       <>
         <PillContainer
-          {...props}
           crossed={crossed}
           bgColor={bgColor}
           onClick={onClick}
           ref={ref}
+          {...props}
         >
           <Identicon address={address} />
           <AddressText
