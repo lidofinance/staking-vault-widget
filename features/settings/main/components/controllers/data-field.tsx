@@ -1,14 +1,13 @@
 import { FC } from 'react';
+import { Text } from '@lidofinance/lido-ui';
+
+import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+
+import { EditProperty } from './edit-property';
 import { ReadonlyInput } from './readonly-input';
 import { GroupWrapper } from './styles';
 
 import type { MainSettingsOverview } from 'features/settings/main/types';
-import { EditProperty } from './edit-property';
-import { Text } from '@lidofinance/lido-ui';
-import {
-  useVaultConfirmingRoles,
-  useVaultPermission,
-} from 'modules/vaults/hooks/use-vault-permissions';
 
 type InputResolverProps = MainSettingsOverview;
 

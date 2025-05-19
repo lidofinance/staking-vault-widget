@@ -5,3 +5,8 @@ export { useVaultsConnectedBound } from './use-vaults-connected-bound';
 export { useVaultsDataAll } from './use-vaults-data-all';
 export { useVaultsDataByOwner } from './use-vaults-data-by-owner';
 export { useVaultDataTable, type VaultTableInfo } from './use-vault-data-table';
+export {
+  useVaultPermission,
+  useVaultPermissions,
+  useVaultConfirmingRoles,
+} from './use-vault-permissions';

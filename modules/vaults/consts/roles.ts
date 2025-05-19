@@ -207,6 +207,8 @@ export const VAULTS_ALL_ROLES_MAP = {
   ...VAULTS_NO_ROLES_MAP,
 } as const;
 
+export type VAULTS_ALL_ROLES = keyof typeof VAULTS_ALL_ROLES_MAP;
+
 export const VAULTS_ALL_ROLES_LIST = Object.keys(
   VAULTS_ALL_ROLES_MAP,
-) as (keyof typeof VAULTS_ALL_ROLES_MAP)[];
+) as VAULTS_ALL_ROLES[];

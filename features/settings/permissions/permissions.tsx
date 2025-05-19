@@ -17,8 +17,8 @@ import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
   VAULT_ROOT_ROLES,
+  useVaultPermission,
 } from 'modules/vaults';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;

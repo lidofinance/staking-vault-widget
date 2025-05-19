@@ -13,7 +13,7 @@ import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-ove
 import { formatBalance, formatPercent } from 'utils';
 
 import { useVaultInfo } from 'modules/vaults/vault-context';
-import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import { VAULT_TOTAL_BASIS_POINTS, VAULTS_ALL_ROLES } from 'modules/vaults';
 
 export interface VaultOverviewContextType {
   values: {
@@ -47,6 +47,7 @@ export type SectionPayload = {
   title: string;
   key: VaultOverviewContextKeys;
   actionText?: string;
+  actionRole?: VAULTS_ALL_ROLES;
   actionLink?: (vaultAddress: Address) => string;
   isLoading?: boolean;
 };

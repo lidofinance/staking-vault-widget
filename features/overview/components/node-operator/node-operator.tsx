@@ -12,6 +12,7 @@ const sectionPayloadList: SectionPayload[] = [
     key: 'accumulatedFee',
     actionLink: (vault) => appPaths.vaults.vault(vault).claim,
     actionText: 'Claim',
+    actionRole: 'nodeOperatorFeeClaimer',
   },
 ];
 
