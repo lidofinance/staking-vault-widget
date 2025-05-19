@@ -7,7 +7,13 @@ export enum CREATE_VAULT_FORM_STEPS {
 
 const steps = ['Main settings', 'Verify new vaults settings'];
 
-export const getSectionNameByStep = (step: number) => steps[step - 1];
+export const SECTION_NAMES_BY_STEP = steps.reduce(
+  (acc, step, index) => ({
+    ...acc,
+    [index + 1]: step,
+  }),
+  {} as Record<number, string>,
+);
 
 export const CREATE_VAULT_STEPS = steps.length;
 

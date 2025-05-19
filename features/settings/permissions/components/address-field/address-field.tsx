@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react';
 
-import { AddressBadge, AddressPopoverSelectable } from 'shared/components';
+import { AddressBadge, AddressBadgeSelectable } from 'shared/components';
 
 import {
   FieldSchema,
@@ -50,14 +50,15 @@ export const AddressField: FC<AddressItemProps> = ({
   };
 
   if (readonly) {
-    return <AddressBadge address={account} />;
+    return <AddressBadge address={account} showPopover={true} />;
   }
 
   return (
-    <AddressPopoverSelectable
+    <AddressBadgeSelectable
       address={account}
       checked={isChecked}
       bgColor={bgColor}
+      showPopover={true}
       onCheckedChange={handleChangeField}
     />
   );

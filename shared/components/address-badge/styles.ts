@@ -51,8 +51,8 @@ const buildBgColorMap = (
   isHover?: boolean,
 ) => ({
   default: isHover
-    ? 'var(--lido-color-shadowLight)'
-    : getColorTransparency('var(--lido-color-shadowLight)', '12%'),
+    ? getColorTransparency('var(--lido-color-textDark)', '12%')
+    : getColorTransparency('var(--lido-color-textDark)', '6%'),
   transparent: 'transparent',
   error: getColorTransparency(colors.error, isHover ? '30%' : '20%'),
   success: getColorTransparency(colors.success, isHover ? '40%' : '30%'),
@@ -86,7 +86,12 @@ const getBgColorHover = createBgGetter({
   considerCrossed: true,
   isHover: true,
 });
+
 const getPillBgColor = createBgGetter({ considerCrossed: false });
+const getPillBgHover = createBgGetter({
+  considerCrossed: false,
+  isHover: true,
+});
 
 const getTextColor = ({ theme: { colors }, color }: InjectedProps) => {
   const colorsMap = {
@@ -117,7 +122,7 @@ export const PillContainer = styled.div<PillProps>`
     onClick
       ? css`
           &:hover {
-            background-color: ${getBgColorHover};
+            background-color: ${getPillBgHover};
           }
         `
       : ''};
@@ -141,6 +146,9 @@ export const SelectableWrapper = styled.div<PillProps>`
   padding-right: ${({ theme }) => theme.spaceMap.sm}px;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
   background-color: ${getBgColor};
+  &:hover {
+    background-color: ${getBgColorHover};
+  }
 `;
 
 export const Label = styled.label`

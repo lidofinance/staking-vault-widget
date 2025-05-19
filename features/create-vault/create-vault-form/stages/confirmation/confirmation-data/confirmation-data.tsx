@@ -1,16 +1,14 @@
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import {
-  ConfirmPercent,
-  ConfirmAddress,
-  ConfirmTime,
-  ConfirmNumber,
-  ConfirmAddressArray,
-} from './confirmation-data-item';
-
-import { InputDataType } from 'features/create-vault/types';
 import invariant from 'tiny-invariant';
+
+import { ConfirmAddress, ConfirmAddressArray } from './confirm-address';
+import { ConfirmNumber } from './confirm-number';
+import { ConfirmPercent } from './confirm-percent';
+import { ConfirmTime } from './confirm-time';
+
+import type { InputDataType } from 'features/create-vault/types';
 
 export type ConfirmationDataProps = {
   name: string;

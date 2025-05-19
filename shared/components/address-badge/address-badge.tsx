@@ -1,4 +1,4 @@
-import { forwardRef, MouseEvent } from 'react';
+import { forwardRef, MouseEvent, useRef, useState } from 'react';
 import {
   Identicon,
   Loader,
@@ -7,6 +7,7 @@ import {
 } from '@lidofinance/lido-ui';
 import { zeroAddress } from 'viem';
 import { PillContainer, AddressText } from './styles';
+import { AddressPopover } from './address-popover';
 
 export type AddressBadgeProps = {
   address?: string;
@@ -17,7 +18,7 @@ export type AddressBadgeProps = {
   bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
   crossed?: boolean;
   isLoading?: boolean;
-  onToggle?: (event: MouseEvent<HTMLButtonElement>) => void;
+  showPopover?: boolean;
 } & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
@@ -31,15 +32,26 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       bgColor = 'default',
       crossed = false,
       isLoading = false,
-      onClick,
-
+      showPopover = false,
       ...props
     },
-    ref,
+    forwardedRef,
   ) => {
+    const backupRef = useRef<HTMLDivElement>(null);
+    const ref = forwardedRef || backupRef;
+    const [isOpen, setIsOpen] = useState(false);
+
+    const onClick = showPopover
+      ? (event: MouseEvent) => {
+          setIsOpen(true);
+          props.onClick?.(event);
+        }
+      : props.onClick;
+
     if (isLoading) {
       return (
         <PillContainer
+          {...props}
           crossed={crossed}
           bgColor={bgColor}
           onClick={onClick}
@@ -56,23 +68,33 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     }
 
     return (
-      <PillContainer
-        {...props}
-        crossed={crossed}
-        bgColor={bgColor}
-        onClick={onClick}
-        ref={ref}
-      >
-        <Identicon address={address} />
-        <AddressText
-          size={size}
-          color={color}
-          weight={weight}
-          symbols={symbols}
-          address={address}
-          crossedText={crossed}
-        />
-      </PillContainer>
+      <>
+        <PillContainer
+          {...props}
+          crossed={crossed}
+          bgColor={bgColor}
+          onClick={onClick}
+          ref={ref}
+        >
+          <Identicon address={address} />
+          <AddressText
+            size={size}
+            color={color}
+            weight={weight}
+            symbols={symbols}
+            address={address}
+            crossedText={crossed}
+          />
+        </PillContainer>
+        {showPopover && (
+          <AddressPopover
+            anchorRef={ref as any}
+            isOpen={isOpen}
+            address={address}
+            onClose={() => setIsOpen(false)}
+          />
+        )}
+      </>
     );
   },
 );

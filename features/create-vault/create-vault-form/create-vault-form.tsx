@@ -8,7 +8,7 @@ import { CreateVaultSchema } from 'features/create-vault/types';
 import {
   CREATE_VAULT_FORM_STEPS,
   CREATE_VAULT_STEPS,
-  getSectionNameByStep,
+  SECTION_NAMES_BY_STEP,
 } from 'features/create-vault/consts';
 
 import { createVaultSchema } from './validation';
@@ -22,22 +22,19 @@ import { FormTitle, FormBlock, FormSubtitle } from './styles';
 
 import type { Address } from 'viem';
 
-const defaultValues: CreateVaultSchema = {
-  nodeOperator: '' as Address,
-  vaultManager: [{ value: '' as Address }],
-  nodeOperatorManager: '' as Address,
-  nodeOperatorFeeBP: '' as unknown as number,
-  confirmExpiry: 36,
-  acceptTerms: false,
-  roles: {},
-  step: CREATE_VAULT_FORM_STEPS.main,
-};
-
 export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const formObject = useForm({
-    defaultValues,
+    defaultValues: {
+      nodeOperator: '' as Address,
+      vaultManager: [{ value: '' as Address }],
+      nodeOperatorManager: '' as Address,
+      nodeOperatorFeeBP: undefined,
+      confirmExpiry: 36,
+      acceptTerms: false,
+      roles: {},
+      step: CREATE_VAULT_FORM_STEPS.main,
+    },
     mode: 'onTouched',
-
     resolver: zodResolver(createVaultSchema, { async: true }),
   });
 
@@ -64,7 +61,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
               <FormSubtitle>
                 Step {step} of {CREATE_VAULT_STEPS}
               </FormSubtitle>
-              <FormTitle>{getSectionNameByStep(step)}</FormTitle>
+              <FormTitle> {SECTION_NAMES_BY_STEP[step]}</FormTitle>
               <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
               <Confirmation
                 isShown={step === CREATE_VAULT_FORM_STEPS.confirm}

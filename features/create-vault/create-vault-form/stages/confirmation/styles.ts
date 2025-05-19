@@ -1,4 +1,24 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+export { SectionContainer } from 'features/create-vault/create-vault-form/styles';
+
+const textBase = css`
+  font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
+  line-height: 24px;
+  text-wrap: balance;
+`;
+
+export const TextError = styled.span`
+  ${textBase};
+  color: ${({ theme }) => theme.colors.error};
+`;
+
+export const TextBold = styled.span`
+  ${textBase};
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.text};
+  justify-self: end;
+`;
 
 export const Wrapper = styled.article`
   display: flex;

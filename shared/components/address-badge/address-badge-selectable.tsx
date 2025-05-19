@@ -5,12 +5,11 @@ import { ReactComponent as RestoreIcon } from 'assets/icons/restore.svg';
 
 import { SelectableWrapper, HiddenCheckbox, Label } from './styles';
 
-export interface SelectableAddressBadgeProps
-  extends Omit<AddressBadgeProps, 'crossed' | 'bgColor'> {
+export type SelectableAddressBadgeProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   defaultBg?: AddressBadgeProps['bgColor'];
-}
+} & Omit<AddressBadgeProps, 'crossed' | 'bgColor'>;
 
 export const AddressBadgeSelectable = forwardRef<
   HTMLDivElement | null,
@@ -23,23 +22,25 @@ export const AddressBadgeSelectable = forwardRef<
   };
 
   return (
-    <SelectableWrapper crossed={checked} bgColor={defaultBg}>
-      <AddressBadge
-        ref={ref}
-        {...badgeProps}
-        bgColor="transparent"
-        crossed={checked}
-      />
-
-      <Label htmlFor={id}>
-        <HiddenCheckbox
-          id={id}
-          type="checkbox"
-          checked={checked}
-          onChange={handleInputChange}
+    <>
+      <SelectableWrapper crossed={checked} bgColor={defaultBg}>
+        <AddressBadge
+          ref={ref}
+          {...badgeProps}
+          bgColor="transparent"
+          crossed={checked}
         />
-        {checked ? <RestoreIcon /> : <Close />}
-      </Label>
-    </SelectableWrapper>
+
+        <Label htmlFor={id}>
+          <HiddenCheckbox
+            id={id}
+            type="checkbox"
+            checked={checked}
+            onChange={handleInputChange}
+          />
+          {checked ? <RestoreIcon /> : <Close />}
+        </Label>
+      </SelectableWrapper>
+    </>
   );
 });

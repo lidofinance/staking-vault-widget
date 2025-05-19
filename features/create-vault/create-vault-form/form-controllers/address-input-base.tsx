@@ -16,19 +16,20 @@ type AddressInputProps = Omit<UseFormRegisterReturn, 'ref'> &
   React.ComponentProps<typeof Input>;
 
 export const AddressInputBase = forwardRef<HTMLInputElement, AddressInputProps>(
-  (props, ref) => {
+  ({ onFocus, onBlur, ...rest }, ref) => {
+    const name = rest.name as 'value';
+
     const [inFocus, setInFocus] = useState(false);
-    const name = props.name as 'value';
     const { getFieldState } = useFormContext();
 
-    const { invalid, isDirty, isValidating, error } = getFieldState(props.name);
+    const { invalid, isDirty, isValidating, error } = getFieldState(name);
 
     const value = useWatch<{ value: Address }>({ name });
 
     const decorator = (() => {
       if (isAddress(value)) {
         if (invalid) return <ErrorTriangle />;
-        if (isValidating) return <Loader size="small" />;
+        if (invalid && isValidating) return <Loader size="small" />;
         if (!isDirty) return null;
 
         return <Identicon address={value} />;
@@ -39,20 +40,20 @@ export const AddressInputBase = forwardRef<HTMLInputElement, AddressInputProps>(
     return (
       <AddressInputWrapper>
         <Input
-          {...props}
-          ref={ref}
           leftDecorator={decorator}
           type="text"
           fullwidth
+          ref={ref}
           onFocus={(e) => {
             setInFocus(true);
-            props.onFocus?.(e);
+            onFocus?.(e);
           }}
           onBlur={(e) => {
-            void props.onBlur?.(e);
             setInFocus(false);
+            void onBlur?.(e);
           }}
           error={inFocus ? error?.message : Boolean(error?.message)}
+          {...rest}
         />
         {!invalid && value && (
           <EtherScanLink>

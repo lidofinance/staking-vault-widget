@@ -5,24 +5,21 @@ import { Button } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
 import { TxLinkEtherscan } from 'shared/components';
+import { parseVaultTx } from 'features/create-vault/create-vault-form/utils';
+import { MAIN_SETTINGS } from 'features/create-vault/consts';
 
 import {
-  FormTitle,
   SectionContainer,
-} from 'features/create-vault/create-vault-form/styles';
-import {
+  FormTitle,
+  ConfirmationLabel,
   ConfirmInfoTitle,
   List,
   ListItem,
+  TextBold,
   ListItemCompact,
-  ConfirmationLabel,
-} from '../confirmation/styles';
-import { ConfirmationData } from '../confirmation/confirmation-data';
-import { ConfirmAddress } from '../confirmation/confirmation-data/confirmation-data-item';
-import { TextBold } from '../confirmation/confirmation-data/confirmation-data-item/styles';
-
-import { parseVaultTx } from '../../utils';
-import { MAIN_SETTINGS } from 'features/create-vault/consts';
+  ConfirmationData,
+  ConfirmAddress,
+} from './styles';
 
 import type { TransactionResponse } from 'modules/web3';
 

@@ -22,6 +22,7 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
     'addresses'
   >({ name: name as 'addresses' });
   const allowDelete = fields.length > 1;
+
   return (
     <AddressList>
       {fields.map((field, index) => {

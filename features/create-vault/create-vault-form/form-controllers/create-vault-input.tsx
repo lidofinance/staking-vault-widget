@@ -19,7 +19,7 @@ const getInput = (dataType: GeneralInputProps['dataType']) => {
   }
 };
 
-export const InputResolver: FC<GeneralInputProps> = (props) => {
+export const CreateVaultInput: FC<GeneralInputProps> = (props) => {
   const { dataType, title, notes, hint } = props;
 
   const Input = getInput(dataType);

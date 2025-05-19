@@ -2,22 +2,21 @@ import { useDappStatus } from 'modules/web3';
 
 import { Hint } from 'features/create-vault/shared/hint';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
-import { SectionContainer } from '../../styles';
 import { ConfirmationAction } from './confirmation-action';
 import { ConfirmationData } from './confirmation-data';
-import {
-  TextBold,
-  TextError,
-} from './confirmation-data/confirmation-data-item/styles';
 import { CreateVaultCost } from './create-vaut-cost';
 import { PreSupplyWarning } from './pre-suply-warning';
 import { useSupplyBalance } from './use-supply-balance';
+
 import {
   ConfirmInfoTitle,
   List,
   ListItem,
   ListItemCompact,
   ConfirmationLabel,
+  SectionContainer,
+  TextBold,
+  TextError,
 } from './styles';
 
 type ConfirmationProps = {

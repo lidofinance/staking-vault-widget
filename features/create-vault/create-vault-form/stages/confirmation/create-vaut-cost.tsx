@@ -4,7 +4,7 @@ import { useTxCostInUsd } from 'shared/hooks/use-tx-cost-in-usd';
 import { FormatPrice } from 'shared/formatters';
 
 import { useEstimateGasCreateVault } from '../../use-create-vault';
-import { TextBold } from './confirmation-data/confirmation-data-item/styles';
+import { TextBold } from './confirmation-data/styles';
 import { ListItemCompact, ConfirmationLabel } from './styles';
 
 export const CreateVaultCost = () => {
@@ -12,6 +12,7 @@ export const CreateVaultCost = () => {
   const usdCostQuery = useTxCostInUsd(estimateGasQuery.data);
   const isLoading = usdCostQuery.isLoading || estimateGasQuery.isLoading;
   const noData = !isLoading && !usdCostQuery.txCostUsd;
+
   return (
     <ListItemCompact>
       <ConfirmationLabel>Transaction cost</ConfirmationLabel>

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ButtonIcon, Question } from '@lidofinance/lido-ui';
 
-/// InputResolver
+/// CreateVaultInput
 
 export const InputContainer = styled.div`
   display: flex;

@@ -22,6 +22,7 @@ export const MainSettingsAction: FC = () => {
   };
 
   const handleSetNextStep = async () => {
+    // trigger validation and focus user on the first error
     const isValid = await trigger(undefined, { shouldFocus: true });
     if (!isValid) return;
 

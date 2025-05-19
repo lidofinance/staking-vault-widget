@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import invariant from 'tiny-invariant';
-import { encodeFunctionData } from 'viem';
 import { useEstimateGas } from 'wagmi';
 import { useFormContext, useFormState } from 'react-hook-form';
 
@@ -13,57 +12,9 @@ import {
 import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
 import { getContractAddress } from 'config';
 
-import { VaultFactoryAbi } from 'abi/vault-factory';
-import {
-  VAULT_TOTAL_BASIS_POINTS,
-  VAULTS_CONNECT_DEPOSIT,
-  VAULTS_OWNER_ROLES_MAP,
-} from 'modules/vaults/consts';
-
 import { ModalCTA } from './modal-cta';
 import { CreateVaultSchema } from '../types';
-
-const schemaToTx = (values: CreateVaultSchema) => {
-  const {
-    confirmExpiry,
-    nodeOperatorFeeBP,
-    nodeOperator,
-    nodeOperatorManager,
-  } = values;
-  const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
-  const nodeOperatorFeeBPFormatted = BigInt(
-    (nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100,
-  );
-
-  // first manager goes to factory as direct argument
-  const [defaultAdmin] = values.vaultManager;
-
-  // For now we populate all VaultManagers to all their roles
-  // will be changed for next contract version
-  const roles = Object.values(VAULTS_OWNER_ROLES_MAP).flatMap((role) => {
-    return values.vaultManager.map((admin) => ({
-      role,
-      account: admin.value,
-    }));
-  });
-
-  return {
-    data: encodeFunctionData({
-      abi: VaultFactoryAbi,
-      functionName: 'createVaultWithDashboard',
-      args: [
-        defaultAdmin.value,
-        nodeOperator,
-        nodeOperatorManager,
-        nodeOperatorFeeBPFormatted,
-        confirmExpiryFormatted,
-        roles,
-        '0x',
-      ],
-    }),
-    value: VAULTS_CONNECT_DEPOSIT,
-  };
-};
+import { schemaToTx } from './utils';
 
 export const useCreateVault = () => {
   const { chainId } = useDappStatus();

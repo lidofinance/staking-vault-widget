@@ -14,9 +14,7 @@ export const useSupplyBalance = () => {
     };
   }
 
-  const hasEnoughETH =
-    areAuxiliaryFundsSupported ||
-    !!(ethBalance && ethBalance >= VAULTS_CONNECT_DEPOSIT);
+  const hasEnoughETH = !!(ethBalance && ethBalance >= VAULTS_CONNECT_DEPOSIT);
 
   return {
     isLoading: ethBalanceLoading,

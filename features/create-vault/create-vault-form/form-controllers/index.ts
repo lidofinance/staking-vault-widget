@@ -1,1 +1,1 @@
-export { InputResolver } from './input-resolver';
+export { CreateVaultInput } from './create-vault-input';
