@@ -43,14 +43,7 @@ export const Balance = () => {
   return (
     <OverviewSection title="Balance overview">
       {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          actionText={item.actionText}
-          actionLink={item.actionLink}
-          isLoading={item.isLoading}
-        />
+        <OverviewItem {...item} key={item.key} content={item.payload} />
       ))}
     </OverviewSection>
   );

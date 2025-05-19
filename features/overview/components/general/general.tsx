@@ -23,12 +23,7 @@ export const General = () => {
   return (
     <OverviewSection titleContent={<AddressSection />}>
       {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          isLoading={item.isLoading}
-        />
+        <OverviewItem {...item} key={item.key} content={item.payload} />
       ))}
     </OverviewSection>
   );

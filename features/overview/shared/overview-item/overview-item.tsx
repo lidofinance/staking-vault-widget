@@ -11,7 +11,6 @@ import { ItemWrapper, Title } from './styles';
 import type { SectionPayload } from 'features/overview/contexts';
 
 export type ItemProps = {
-  isLoading?: boolean;
   content: string | Address | number;
   color?: string;
 } & Omit<SectionPayload, 'key'>;

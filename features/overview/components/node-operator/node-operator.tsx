@@ -23,14 +23,7 @@ export const NodeOperator = () => {
   return (
     <OverviewSection title="Node operator reward share">
       {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          actionLink={item.actionLink}
-          actionText={item.actionText}
-          isLoading={item.isLoading}
-        />
+        <OverviewItem {...item} key={item.key} content={item.payload} />
       ))}
     </OverviewSection>
   );
