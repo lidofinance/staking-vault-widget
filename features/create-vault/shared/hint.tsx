@@ -1,5 +1,5 @@
 import { Tooltip } from '@lidofinance/lido-ui';
-import { QuestionIcon } from '../create-vault-form/form-controllers/styles';
+import { QuestionIcon } from '../create-vault-form/stages/main-settings/create-vault-input/styles';
 
 type HintProps = {
   hint?: string;

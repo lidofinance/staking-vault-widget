@@ -9,8 +9,10 @@ import {
 
 import type { CreateVaultSchema } from '../types';
 import type { TransactionResponse } from 'modules/web3';
+import { createVaultSchema } from './validation';
 
-export const schemaToTx = (values: CreateVaultSchema) => {
+export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
+  const values = createVaultSchema.parse(unparsedValues);
   const {
     confirmExpiry,
     nodeOperatorFeeBP,
@@ -19,7 +21,7 @@ export const schemaToTx = (values: CreateVaultSchema) => {
   } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
   const nodeOperatorFeeBPFormatted = BigInt(
-    (nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100,
+    Math.floor((nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100),
   );
 
   // first manager goes to factory as direct argument

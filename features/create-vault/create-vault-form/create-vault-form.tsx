@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
+import type { Address } from 'viem';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -20,7 +21,9 @@ import { ResultOverview } from './stages/result-overview';
 
 import { FormTitle, FormBlock, FormSubtitle } from './styles';
 
-import type { Address } from 'viem';
+const AFTER_SUBMIT_RESET_OPTIONS = {
+  keepValues: true,
+};
 
 export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const formObject = useForm({
@@ -29,13 +32,14 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
       vaultManager: [{ value: '' as Address }],
       nodeOperatorManager: '' as Address,
       nodeOperatorFeeBP: undefined,
-      confirmExpiry: 36,
+      confirmExpiry: '36',
       acceptTerms: false,
       roles: {},
       step: CREATE_VAULT_FORM_STEPS.main,
     },
     mode: 'onTouched',
-    resolver: zodResolver(createVaultSchema, { async: true }),
+    shouldUnregister: false,
+    resolver: zodResolver(createVaultSchema, { async: false }, { raw: false }),
   });
 
   const { createVault, retryEvent, mutation } = useCreateVault();
@@ -52,7 +56,12 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
 
   return (
     <FormProvider {...formObject}>
-      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+      <FormController
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+        // this allows not to reset values and display ResultOverview
+        afterSubmitResetOptions={AFTER_SUBMIT_RESET_OPTIONS}
+      >
         <FormBlock>
           {mutation.isSuccess ? (
             <ResultOverview transactionResult={mutation.data} />

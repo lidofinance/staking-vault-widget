@@ -10,7 +10,9 @@ const textBase = css`
 
 export const TextError = styled.span`
   ${textBase};
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.error};
+  justify-self: end;
 `;
 
 export const TextBold = styled.span`

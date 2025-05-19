@@ -1,5 +1,5 @@
 import { Address } from 'viem';
-import { z } from 'zod';
+import { z, ZodTypeAny } from 'zod';
 
 import { isValidAnyAddress } from 'utils/address-validation';
 import {
@@ -15,10 +15,16 @@ import {
 import type { PermissionKeys } from 'features/create-vault/types';
 
 const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
 const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
-const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
-const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
+
+const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} hours or above`;
+const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} hours or less`;
+
+const INVALID_NUMBER_DATA_OBJECT_MESSAGE = {
+  message: 'Only number is valid',
+};
 const INVALID_BASIS_POINTS_MESSAGE = {
   message: 'Min step 0.001%',
 };
@@ -36,12 +42,26 @@ const validateBasisPoints = (value: number) =>
   0;
 
 const validateAddress = (value: string | null) =>
-  value && isValidAnyAddress(value);
+  !!(value && isValidAnyAddress(value));
 
 const addressSchema = z
   .string()
+  .trim()
   .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
   .transform((value) => value.toLocaleLowerCase() as Address);
+
+const numberSchema = (zodPipe: ZodTypeAny) =>
+  z.coerce
+    .string(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+    .nonempty(INVALID_NUMBER_DATA_OBJECT_MESSAGE.message)
+    .refine(
+      (value) => value.trim() !== '' && !isNaN(Number(value)),
+      INVALID_NUMBER_DATA_OBJECT_MESSAGE,
+    )
+    .pipe(
+      z.coerce.string({ message: 'vbab' }).transform((value) => Number(value)),
+    )
+    .pipe(zodPipe);
 
 const permissionSchema = z.object({
   state: z.union([z.literal('restore'), z.literal('grant')]),
@@ -76,16 +96,20 @@ export const createVaultSchema = z.object({
   vaultManager: uniqueAddressesSchema,
   nodeOperatorManager: addressSchema,
 
-  nodeOperatorFeeBP: z
-    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-    .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE)
-    .refine(validateBasisPoints, INVALID_BASIS_POINTS_MESSAGE),
+  nodeOperatorFeeBP: numberSchema(
+    z
+      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+      .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+      .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE)
+      .refine(validateBasisPoints, INVALID_BASIS_POINTS_MESSAGE),
+  ),
 
-  confirmExpiry: z.coerce
-    .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-    .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_MIN_MESSAGE)
-    .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+  confirmExpiry: numberSchema(
+    z
+      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+      .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+      .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+  ),
 
   acceptTerms: z.boolean().refine((accepted) => accepted, INVALID_TERMS),
 

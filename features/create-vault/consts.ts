@@ -5,7 +5,7 @@ export enum CREATE_VAULT_FORM_STEPS {
   confirm,
 }
 
-const steps = ['Main settings', 'Verify new vaults settings'];
+const steps = ['Main settings', 'Verify new vault’s settings'];
 
 export const SECTION_NAMES_BY_STEP = steps.reduce(
   (acc, step, index) => ({
@@ -50,5 +50,10 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     title: 'Node Operator Manager',
     label: 'Node Operator Manager address',
     dataType: 'address',
+  },
+  {
+    name: 'acceptTerms',
+    notes: 'Vault creation requires a supply of 1 ETH.',
+    dataType: 'confirm',
   },
 ];

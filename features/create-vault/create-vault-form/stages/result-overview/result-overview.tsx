@@ -14,11 +14,10 @@ import {
   ConfirmationLabel,
   ConfirmInfoTitle,
   List,
-  ListItem,
   TextBold,
   ListItemCompact,
-  ConfirmationData,
   ConfirmAddress,
+  ConfirmationEntry,
 } from './styles';
 
 import type { TransactionResponse } from 'modules/web3';
@@ -51,12 +50,7 @@ export const ResultOverview = ({ transactionResult }: ResultOverviewProps) => {
       <List>
         <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
         {MAIN_SETTINGS.map((item) => {
-          return (
-            <ListItem key={item.name}>
-              <ConfirmationLabel>{item.title}</ConfirmationLabel>
-              <ConfirmationData name={item.name} dataType={item.dataType} />
-            </ListItem>
-          );
+          return <ConfirmationEntry {...item} key={item.name} />;
         })}
         <ListItemCompact>
           <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>

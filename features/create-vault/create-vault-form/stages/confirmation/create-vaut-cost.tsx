@@ -4,7 +4,7 @@ import { useTxCostInUsd } from 'shared/hooks/use-tx-cost-in-usd';
 import { FormatPrice } from 'shared/formatters';
 
 import { useEstimateGasCreateVault } from '../../use-create-vault';
-import { TextBold } from './confirmation-data/styles';
+import { TextBold } from './confirmation-entry/styles';
 import { ListItemCompact, ConfirmationLabel } from './styles';
 
 export const CreateVaultCost = () => {

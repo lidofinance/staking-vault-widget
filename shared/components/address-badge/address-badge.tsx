@@ -25,7 +25,6 @@ export type AddressBadgeProps = {
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
     {
-      address,
       symbols = 6,
       size = 'xs',
       color = 'default',
@@ -41,6 +40,8 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     const backupRef = useRef<HTMLDivElement>(null);
     const ref = forwardedRef || backupRef;
     const [isOpen, setIsOpen] = useState(false);
+
+    const address = props.address?.trim().toLowerCase();
 
     const onClick = showPopover
       ? (event: MouseEvent) => {

@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useEffect, useMemo } from 'react';
-import { FieldValues, useFormContext } from 'react-hook-form';
+import { FieldValues, useFormContext, UseFormReset } from 'react-hook-form';
 import { useWagmiConnectionChangedCallback } from 'shared/hooks/use-wagmi-connection-changed-callback';
 import { useDappStatus } from 'modules/web3';
 import type { EventSubsciption } from 'utils/event-subsciption';
@@ -7,12 +7,14 @@ import type { EventSubsciption } from 'utils/event-subsciption';
 type FormControllerProps<F extends FieldValues = any> = {
   onSubmit: (args: F) => Promise<boolean>;
   retryEvent: EventSubsciption;
+  afterSubmitResetOptions?: Parameters<UseFormReset<any>>[1];
 } & Omit<React.ComponentProps<'form'>, 'onSubmit'>;
 
 export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   children,
   onSubmit,
   retryEvent,
+  afterSubmitResetOptions,
   ...props
 }) => {
   const { isDappActive } = useDappStatus();
@@ -22,9 +24,9 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   const doSubmit = useMemo(() => {
     return handleSubmit(async (args) => {
       const success = await onSubmit(args);
-      if (success) resetDefault();
+      if (success) resetDefault(undefined, afterSubmitResetOptions);
     });
-  }, [handleSubmit, onSubmit, resetDefault]);
+  }, [afterSubmitResetOptions, handleSubmit, onSubmit, resetDefault]);
 
   // Bind retry callback
   useEffect(() => {

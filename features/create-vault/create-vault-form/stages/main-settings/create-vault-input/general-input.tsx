@@ -9,7 +9,7 @@ import type {
 
 export type GeneralInputProps = MainSettingsEntryType;
 
-export const GeneralInput: FC<GeneralInputProps> = ({ name, label, type }) => {
+export const GeneralInput: FC<GeneralInputProps> = ({ name, label }) => {
   const [inFocus, setInFocus] = useState(false);
 
   const {
@@ -18,11 +18,12 @@ export const GeneralInput: FC<GeneralInputProps> = ({ name, label, type }) => {
   } = useFormContext<CreateVaultSchema>();
 
   const error = errors[name];
+
   return (
     <Input
       label={label}
       type="text"
-      error={inFocus ? error?.message : Boolean(error?.message)}
+      error={inFocus ? error?.message?.toString() : Boolean(error?.message)}
       fullwidth
       onFocus={() => {
         setInFocus(true);
@@ -31,7 +32,6 @@ export const GeneralInput: FC<GeneralInputProps> = ({ name, label, type }) => {
         onBlur: () => {
           setInFocus(false);
         },
-        valueAsNumber: type === 'number',
       })}
     />
   );

@@ -1,9 +1,8 @@
 import { useDappStatus } from 'modules/web3';
 
-import { Hint } from 'features/create-vault/shared/hint';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 import { ConfirmationAction } from './confirmation-action';
-import { ConfirmationData } from './confirmation-data';
+import { ConfirmationEntry } from './confirmation-entry';
 import { CreateVaultCost } from './create-vaut-cost';
 import { PreSupplyWarning } from './pre-suply-warning';
 import { useSupplyBalance } from './use-supply-balance';
@@ -11,7 +10,6 @@ import { useSupplyBalance } from './use-supply-balance';
 import {
   ConfirmInfoTitle,
   List,
-  ListItem,
   ListItemCompact,
   ConfirmationLabel,
   SectionContainer,
@@ -35,14 +33,7 @@ export const Confirmation = ({ isShown }: ConfirmationProps) => {
       <List>
         <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
         {MAIN_SETTINGS.map((item) => {
-          return (
-            <ListItem key={item.name}>
-              <ConfirmationLabel>
-                {item.title} <Hint hint={item.hint} />
-              </ConfirmationLabel>
-              <ConfirmationData name={item.name} dataType={item.dataType} />
-            </ListItem>
-          );
+          return <ConfirmationEntry {...item} key={item.name} />;
         })}
         <ListItemCompact>
           <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>

@@ -1,19 +1,21 @@
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import invariant from 'tiny-invariant';
+import { Hint } from 'features/create-vault/shared/hint';
 
 import { ConfirmAddress, ConfirmAddressArray } from './confirm-address';
 import { ConfirmNumber } from './confirm-number';
 import { ConfirmPercent } from './confirm-percent';
 import { ConfirmTime } from './confirm-time';
 
-import type { InputDataType } from 'features/create-vault/types';
+import { ConfirmationLabel, ListItem } from './styles';
 
-export type ConfirmationDataProps = {
-  name: string;
-  dataType: InputDataType;
-};
+import type {
+  InputDataType,
+  MainSettingsEntryType,
+} from 'features/create-vault/types';
+
+export type ConfirmationDataProps = MainSettingsEntryType;
 
 const getComponentByType = (dataType: InputDataType) => {
   switch (dataType) {
@@ -28,17 +30,29 @@ const getComponentByType = (dataType: InputDataType) => {
     case 'number':
       return ConfirmNumber;
     default:
-      invariant(false, `Unknown dataType: ${dataType}`);
+      null;
   }
 };
 
-export const ConfirmationData: FC<ConfirmationDataProps> = ({
+export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   name,
   dataType,
+  title,
+  hint,
 }) => {
   const { getValues } = useFormContext();
   const value = getValues(name);
   const DataComponent = getComponentByType(dataType);
 
-  return <DataComponent payload={value} />;
+  // For some inputs we don't need confirmation e.g. terms checkbox
+  if (!DataComponent) return null;
+
+  return (
+    <ListItem key={name}>
+      <ConfirmationLabel>
+        {title} <Hint hint={hint} />
+      </ConfirmationLabel>
+      <DataComponent payload={value} />
+    </ListItem>
+  );
 };

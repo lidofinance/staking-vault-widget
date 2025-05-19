@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonIcon, Question } from '@lidofinance/lido-ui';
+import { ButtonIcon, Checkbox, Question } from '@lidofinance/lido-ui';
 
 /// CreateVaultInput
 
@@ -82,4 +82,22 @@ export const AddressInputGroup = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+`;
+
+// ConfirmInput
+export const InfoList = styled.span`
+  list-style-position: inside;
+  display: flex;
+  flex-direction: column;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+export const StyledCheckbox = styled(Checkbox)<{
+  isError?: boolean;
+}>`
+  align-items: flex-start;
+  svg {
+    box-shadow: ${({ isError, theme }) =>
+      isError ? ` inset 0 0 0 1px ${theme.colors.error} !important` : 'unset'};
+  }
 `;

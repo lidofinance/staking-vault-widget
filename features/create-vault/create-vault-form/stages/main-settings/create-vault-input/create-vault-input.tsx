@@ -1,12 +1,12 @@
+import type { FC } from 'react';
 import { Hint } from 'features/create-vault/shared/hint';
 
 import { GeneralInput, GeneralInputProps } from './general-input';
 import { AddressInput } from './address-input';
+import { ConfirmInput } from './confirm-input';
 import { AddressArrayInput } from './address-array-input';
 
 import { InputContainer, InputNotes, InputTitle } from './styles';
-
-import type { FC } from 'react';
 
 const getInput = (dataType: GeneralInputProps['dataType']) => {
   switch (dataType) {
@@ -14,6 +14,8 @@ const getInput = (dataType: GeneralInputProps['dataType']) => {
       return AddressArrayInput;
     case 'address':
       return AddressInput;
+    case 'confirm':
+      return ConfirmInput;
     default:
       return GeneralInput;
   }
@@ -26,10 +28,12 @@ export const CreateVaultInput: FC<GeneralInputProps> = (props) => {
 
   return (
     <InputContainer>
-      <InputTitle>
-        {title}
-        <Hint hint={hint} />
-      </InputTitle>
+      {title && (
+        <InputTitle>
+          {title}
+          <Hint hint={hint} />
+        </InputTitle>
+      )}
       <Input {...props} />
       {!!notes && (
         <InputNotes>

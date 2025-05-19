@@ -28,7 +28,6 @@ export const useCreateVault = () => {
           vaultFactoryAddress,
           '[useCreateVaultWihDashboard] vaultFactoryAddress is not defined',
         );
-
         const { data, value } = schemaToTx(values);
 
         const tx: TransactionEntry = {
@@ -38,7 +37,7 @@ export const useCreateVault = () => {
           value,
         };
 
-        const result = await withSuccess(
+        return await withSuccess(
           sendTX({
             transactions: [tx],
             mainActionCompleteText: 'Vault created',
@@ -46,8 +45,6 @@ export const useCreateVault = () => {
             renderSuccessContent: ModalCTA,
           }),
         );
-
-        return result;
       },
       [chainId, sendTX],
     ),

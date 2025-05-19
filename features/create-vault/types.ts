@@ -14,6 +14,7 @@ export type InputDataType =
   | 'time'
   | 'default'
   | 'number'
+  | 'confirm'
   | 'addressArray';
 
 export type VaultMainSettingsType = Omit<CreateVaultSchema, 'roles'>;
@@ -23,8 +24,8 @@ export type MainSettingsKeys = keyof VaultMainSettingsType;
 export type MainSettingsEntryType = {
   name: MainSettingsKeys;
   dataType: InputDataType;
-  title: string;
-  label: string;
+  title?: string;
+  label?: string;
   notes?: string;
   hint?: string;
   type?: string;
