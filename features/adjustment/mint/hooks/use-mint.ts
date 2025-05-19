@@ -31,7 +31,6 @@ export const useMint = () => {
             functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
             args: [recipient, amount],
           }),
-          value: amount,
           loadingActionText,
         };
 
