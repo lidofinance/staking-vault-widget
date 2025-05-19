@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
 import { FormController } from 'shared/hook-form/form-controller';
@@ -7,44 +7,52 @@ import { editPermissionsSchema } from 'features/settings/permissions/consts';
 import {
   EditPermissionsSchema,
   FieldSchema,
+  PermissionKeys,
 } from 'features/settings/permissions/types';
 import { useEditPermissions } from 'features/settings/permissions/hooks';
-import { collectFormValuesToRpc } from 'features/settings/permissions/utils';
+import {
+  collectFormValuesToRpc,
+  collectRolesToFormValues,
+  formatRawPermissions,
+} from 'features/settings/permissions/utils';
 import { usePermissionsData } from './permissions-data-provider';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { FormBackdrop } from '../components';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
-  const formObject = useForm<EditPermissionsSchema>({
-    resolver: validateFormWithZod(editPermissionsSchema),
-    mode: 'all',
-  });
-  const { editPermissions, retryEvent } = useEditPermissions();
   const { rolesList, refetch } = usePermissionsData();
+  const asyncPermissions = useAwaiter(rolesList);
+  const { editPermissions, retryEvent } = useEditPermissions();
 
-  useEffect(() => {
-    if (rolesList.length > 0) {
-      rolesList.forEach((role) => {
-        const values = role.addressList.map(
-          (address) =>
-            ({
-              account: address,
-              group: 'settled',
-              state: 'display',
-            }) as FieldSchema,
-        );
-        formObject.setValue(`${role.permissionName}` as const, values);
-      });
-    }
-  }, [formObject, rolesList]);
+  const formObject = useForm<EditPermissionsSchema>({
+    defaultValues: async () =>
+      (await asyncPermissions.awaiter) as Record<PermissionKeys, FieldSchema[]>,
+    resolver: validateFormWithZod(editPermissionsSchema),
+    mode: 'onBlur',
+  });
+
+  const reset = formObject.reset;
 
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
       const { success } = await editPermissions(collectFormValuesToRpc(data));
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      const { data: refetchData } = await refetch({
+        cancelRefetch: true,
+        throwOnError: false,
+      });
+
+      const newDefaultValues = collectRolesToFormValues(
+        formatRawPermissions(refetchData as []),
+      );
+      if (newDefaultValues) {
+        reset(newDefaultValues);
+      }
+
       return success;
     },
-    [editPermissions, refetch],
+    [editPermissions, refetch, reset],
   );
 
   return (
@@ -52,6 +60,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
         {children}
       </FormController>
+      <FormBackdrop open={formObject.formState.isLoading} />
     </FormProvider>
   );
 };

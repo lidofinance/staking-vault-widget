@@ -16,15 +16,11 @@ export const AdjustmentTabs = () => {
   // TODO: improve creation of the path
   const mintRoutes = [
     {
-      path: appPaths.vaults
-        .vault(vaultAddress ?? zeroAddress)
-        .adjustment('mint'),
+      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).steth('mint'),
       name: 'Mint',
     },
     {
-      path: appPaths.vaults
-        .vault(vaultAddress ?? zeroAddress)
-        .adjustment('repay'),
+      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).steth('repay'),
       name: 'Repay',
     },
   ];

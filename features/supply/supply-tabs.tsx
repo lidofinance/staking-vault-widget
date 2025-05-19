@@ -8,23 +8,21 @@ import { Withdraw } from './withdraw';
 import { Switch } from 'shared/components/switch';
 import { appPaths } from 'consts/routing';
 import { zeroAddress } from 'viem';
-export interface SupplyTabProps {
-  mode: 'fund' | 'withdraw';
-}
+export type SupplyTabProps = {
+  mode: 'supply' | 'withdraw';
+};
 
 export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
-  const isFundTab = mode === 'fund';
+  const isFundTab = mode === 'supply';
   const { vaultAddress } = useVaultInfo();
 
   const supplyRoutes = [
     {
-      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).supply('fund'),
+      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('supply'),
       name: 'Supply',
     },
     {
-      path: appPaths.vaults
-        .vault(vaultAddress ?? zeroAddress)
-        .supply('withdraw'),
+      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('withdraw'),
       name: 'Withdraw',
     },
   ];

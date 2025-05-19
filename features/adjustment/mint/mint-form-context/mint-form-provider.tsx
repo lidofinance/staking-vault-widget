@@ -71,7 +71,6 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
       return await mint(recipient, amount, token);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [mint],
   );
 

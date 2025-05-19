@@ -16,6 +16,8 @@ export const PageWrapper = styled.div`
 export const FormBlock = styled(Block)`
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: clip;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.xxl}px;
   width: 100%;

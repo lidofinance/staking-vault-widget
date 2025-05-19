@@ -17,7 +17,7 @@ export type SubmitPermissionsStep =
 export type PermissionsSettingsContextValue = {
   permissionsView: ToggleValue;
   handleSetPermissionsView: (value: ToggleValue) => void;
-  rolesList: PermissionAccounts[];
+  rolesList: Record<PermissionKeys, FieldSchema[]> | null;
   refetch: UseQueryResult['refetch'];
 };
 
@@ -49,14 +49,7 @@ type VaultPermissionInput = { value: string };
 
 export type VaultPermissions = Record<PermissionKeys, VaultPermissionInput[]>;
 
-export type FieldSchema =
-  | {
-      group: 'eventual';
-      state: 'restore' | 'grant';
-      account: Address;
-    }
-  | {
-      group: 'settled';
-      state: 'remove' | 'display';
-      account: Address;
-    };
+export type FieldSchema = {
+  action: 'display' | 'revoke' | 'grant';
+  account: Address;
+};

@@ -1,6 +1,19 @@
 import { useCapabilities } from 'wagmi';
 import { useDappStatus } from './use-dapp-status';
 
+const isCapabilitySupported = (capability?: {
+  supported?: boolean;
+  status?: 'supported' | 'ready' | 'unsupported';
+}) => {
+  if (!capability) return false;
+
+  if (typeof capability.status === 'string') {
+    return capability.status != 'unsupported';
+  }
+
+  return !!capability.supported;
+};
+
 export const useAA = () => {
   const { chainId, isAccountActive } = useDappStatus();
   const capabilitiesQuery = useCapabilities({
@@ -17,11 +30,18 @@ export const useAA = () => {
       }
     : undefined;
 
-  // per EIP-5792 ANY successful call to getCapabilities is a sign of EIP support
-  const isAA = capabilitiesQuery.isFetched && !!capabilitiesQuery.data;
+  const isAtomicBatchSupported =
+    isCapabilitySupported(capabilities?.atomic) ||
+    // legacy
+    isCapabilitySupported(capabilities?.atomicBatch);
 
-  const isAtomicBatchSupported = !!capabilities?.atomicBatch?.supported;
-  const areAuxiliaryFundsSupported = !!capabilities?.auxiliaryFunds?.supported;
+  const areAuxiliaryFundsSupported = isCapabilitySupported(
+    capabilities?.auxiliaryFunds,
+  );
+
+  // per EIP-5792 ANY successful call to getCapabilities is a sign of EIP support
+  // but MM is not following the spec properly
+  const isAA = capabilitiesQuery.isFetched && isAtomicBatchSupported;
 
   return {
     ...capabilitiesQuery,

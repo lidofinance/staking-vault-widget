@@ -97,7 +97,6 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
 
       return await burn(amount, token);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [burn],
   );
 

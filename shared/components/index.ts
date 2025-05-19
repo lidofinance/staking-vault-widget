@@ -6,7 +6,12 @@ export { TooltipHoverable } from './tooltip-hoverable/tooltip-hoverable';
 export { MatomoLink } from './matomo-link/matomo-link';
 export { InfoBox } from './info-box/info-box';
 export { Switch } from './switch/switch';
-export { AddressBadge, type AddressBadgeProps } from './address-badge';
+export {
+  AddressBadge,
+  type AddressBadgeProps,
+  AddressBadgeSelectable,
+  AddressPopoverSelectable,
+} from './address-badge';
 export { ButtonClose } from './button-close';
 export { ButtonRestore } from './button-restore';
 export { ButtonLink } from './button-link';
@@ -17,3 +22,4 @@ export { VaultImpactValuation } from './vault-impact-valuation';
 export { InputAmount } from './input-amount';
 export { Chip } from './chip';
 export { AddressWithPopover } from './address-with-popover';
+export { Backdrop } from './backdrop';
