@@ -1,13 +1,15 @@
+import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { useEstimateGas, useAccount } from 'wagmi';
-import { Address, encodeFunctionData } from 'viem';
+import { type Address, encodeFunctionData } from 'viem';
+
+import { useSendTransaction, withSuccess } from 'modules/web3';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+
 import { fallbackedAddress } from 'utils/fallbacked-address';
-import { useSendTransaction, withSuccess } from 'modules/web3';
+
 import { useReportStatus } from 'features/report';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 

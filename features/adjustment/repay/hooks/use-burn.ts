@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
+import invariant from 'tiny-invariant';
 import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+
 import {
   TransactionEntry,
   useLidoSDK,

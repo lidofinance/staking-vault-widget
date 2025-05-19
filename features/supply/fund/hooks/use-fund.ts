@@ -1,17 +1,18 @@
+import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { useAccount, useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
+
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
+
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 export const useFund = () => {
   const { activeVault } = useVaultInfo();

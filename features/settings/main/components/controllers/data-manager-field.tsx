@@ -1,17 +1,16 @@
 import { FC } from 'react';
+import { Text } from '@lidofinance/lido-ui';
 import { DisplayAddress } from './display-address';
-import { GroupWrapper } from './styles';
 
 import {
   MainSettingsOverview,
   ManagersKeys,
 } from 'features/settings/main/types';
 import { EditPropertyAddress } from './edit-property-address';
-import { Text } from '@lidofinance/lido-ui';
-import {
-  useVaultConfirmingRoles,
-  useVaultPermission,
-} from 'modules/vaults/hooks/use-vault-permissions';
+
+import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+
+import { GroupWrapper } from './styles';
 
 type InputResolverProps = MainSettingsOverview;
 
@@ -28,7 +27,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
     isConfirmingRoles ? undefined : canEditRole,
   );
 
-  const isEditable = hasConfirmingRole || hasPermission;
+  const isEditable = (isConfirmingRoles && hasConfirmingRole) || hasPermission;
   return (
     <GroupWrapper>
       <Text size="xs" strong>

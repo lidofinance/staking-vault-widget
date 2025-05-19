@@ -1,16 +1,17 @@
-import { Button } from '@lidofinance/lido-ui';
-import {
-  DashboardRoles,
-  useVaultPermission,
-  useVaultPermissions,
-} from '../hooks/use-vault-permissions';
-
 import { forwardRef, type ComponentProps } from 'react';
+import { Button } from '@lidofinance/lido-ui';
+
 import { useDappStatus } from 'modules/web3';
 import { ConnectWalletButton } from 'shared/wallet';
 
+import {
+  useVaultPermission,
+  useVaultPermissions,
+} from '../hooks/use-vault-permissions';
+import { VAULTS_ALL_ROLES } from '../consts';
+
 type PermissionedSubmitProps = {
-  dashboardRole: DashboardRoles;
+  dashboardRole: VAULTS_ALL_ROLES;
 } & ComponentProps<typeof Button>;
 
 const capitilize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -41,7 +42,7 @@ export const PermissionedSubmitButton = forwardRef<
 });
 
 type MultiplePermissionedSubmitProps = {
-  dashboardRoles: DashboardRoles[];
+  dashboardRoles: VAULTS_ALL_ROLES[];
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<

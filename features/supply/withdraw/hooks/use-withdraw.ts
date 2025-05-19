@@ -1,17 +1,15 @@
+import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
+import { useSendTransaction, withSuccess, useDappStatus } from 'modules/web3';
+import { useReportStatus } from 'features/report';
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
-import { useSendTransaction, withSuccess } from 'modules/web3';
-import { useReportStatus } from 'features/report';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 type WithdrawArgs = {
   recipient: Address;

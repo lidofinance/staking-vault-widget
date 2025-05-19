@@ -7,12 +7,14 @@ const sectionPayloadList: SectionPayload[] = [
     title: 'Available to withdraw',
     key: 'withdrawableEth',
     actionText: 'Withdraw ETH',
+    actionRole: 'withdrawer',
     actionLink: (vault) => appPaths.vaults.vault(vault).eth('withdraw'),
   },
   {
     title: 'Idle capital',
     key: 'balanceEth',
     actionText: 'Supply ETH',
+    actionRole: 'supplier',
     actionLink: (vault) => appPaths.vaults.vault(vault).eth('supply'),
   },
   // TODO: add this after the metrics are implemented

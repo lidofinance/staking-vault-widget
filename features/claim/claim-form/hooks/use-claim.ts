@@ -3,9 +3,8 @@ import { useEstimateGas, useAccount } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';

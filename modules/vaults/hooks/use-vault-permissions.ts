@@ -1,14 +1,12 @@
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
 import { useVaultInfo } from 'modules/vaults';
-import { VAULTS_ALL_ROLES_MAP } from '../consts';
+import { VAULTS_ALL_ROLES, VAULTS_ALL_ROLES_MAP } from '../consts';
 import { dashboardAbi } from 'abi/dashboard-abi';
 
 import type { Address, Hash } from 'viem';
 import { useMemo } from 'react';
 
-export type DashboardRoles = keyof typeof VAULTS_ALL_ROLES_MAP;
-
-export const useVaultPermission = (role?: DashboardRoles) => {
+export const useVaultPermission = (role?: VAULTS_ALL_ROLES) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
@@ -31,7 +29,7 @@ export const useVaultPermission = (role?: DashboardRoles) => {
   };
 };
 
-export const useVaultPermissions = (roles: DashboardRoles[]) => {
+export const useVaultPermissions = (roles: VAULTS_ALL_ROLES[]) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
