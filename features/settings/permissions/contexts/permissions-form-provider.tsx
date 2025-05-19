@@ -33,6 +33,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
     mode: 'onBlur',
   });
 
+  const reset = formObject.reset;
+
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
       const { success } = await editPermissions(collectFormValuesToRpc(data));
@@ -45,13 +47,12 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         formatRawPermissions(refetchData as []),
       );
       if (newDefaultValues) {
-        formObject.reset(newDefaultValues);
+        reset(newDefaultValues);
       }
 
       return success;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [editPermissions, refetch, formObject.reset],
+    [editPermissions, refetch, reset],
   );
 
   return (
