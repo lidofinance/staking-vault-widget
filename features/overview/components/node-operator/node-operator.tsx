@@ -1,5 +1,6 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionPayload[] = [
   {
@@ -9,8 +10,9 @@ const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Accumulated',
     key: 'accumulatedFee',
-    actionLink: '/claim',
+    actionLink: (vault) => appPaths.vaults.vault(vault).claim,
     actionText: 'Claim',
+    actionRole: 'nodeOperatorFeeClaimer',
   },
 ];
 
@@ -21,14 +23,7 @@ export const NodeOperator = () => {
   return (
     <OverviewSection title="Node operator reward share">
       {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          actionLink={item.actionLink}
-          actionText={item.actionText}
-          isLoading={item.isLoading}
-        />
+        <OverviewItem {...item} key={item.key} content={item.payload} />
       ))}
     </OverviewSection>
   );

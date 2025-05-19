@@ -1,7 +1,7 @@
 import {
-  AddressList,
   RoleDescription,
   PermissionsAction,
+  AddressBlock,
 } from 'features/settings/permissions/components';
 import {
   PermissionBlock,
@@ -17,8 +17,8 @@ import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
   VAULT_ROOT_ROLES,
+  useVaultPermission,
 } from 'modules/vaults';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
@@ -54,7 +54,7 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
                 description={title}
                 tooltip={tooltip}
               />
-              <AddressList readonly={!hasPermission} permission={role} />
+              <AddressBlock readonly={!hasPermission} permission={role} />
             </PermissionRoleWrapper>
           );
         })}

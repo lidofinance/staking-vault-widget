@@ -1,85 +1,37 @@
-import { FC, ReactNode, useMemo, useCallback, useState } from 'react';
+import { FC, ReactNode, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import { useFund } from 'features/supply/fund/hooks/use-fund';
-import {
-  FormController,
-  FormControllerContext,
-  FormControllerContextValueType,
-} from 'shared/hook-form/form-controller';
+import { FormController } from 'shared/hook-form/form-controller';
 import { FundFormSchema } from 'features/supply/fund/types';
-import {
-  SubmitStepEnum,
-  SubmitStep,
-  SubmitPayload,
-} from 'shared/components/submit-modal/types';
-import { SubmitModal } from 'shared/components';
-import { Address } from 'viem';
+import invariant from 'tiny-invariant';
 
 export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [submitStep, setSubmitStep] = useState<{
-    step: SubmitStep;
-    tx?: Address;
-  }>(() => ({ step: SubmitStepEnum.edit }));
   const formObject = useForm<FundFormSchema>({
     defaultValues: {
       amount: undefined,
     },
     mode: 'all',
+    // TODO: add validation
     reValidateMode: 'onChange',
   });
-  const { callVaultFund } = useFund();
 
-  const { retryEvent, retryFire } = useFormControllerRetry();
-  const setModalState = useCallback((submitStep: SubmitPayload) => {
-    setSubmitStep(submitStep);
-  }, []);
+  const { fund, retryEvent } = useFund();
 
   const onSubmit = useCallback(
     async ({ amount }: FundFormSchema) => {
-      try {
-        if (amount) {
-          setModalState({ step: SubmitStepEnum.initiate });
-          const tx = await callVaultFund(amount, setModalState);
-          setModalState({ step: SubmitStepEnum.overview, tx });
-          return true;
-        }
-      } catch (err) {
-        if (
-          err instanceof Error &&
-          err.message.includes('User rejected the request')
-        ) {
-          setModalState({ step: SubmitStepEnum.reject });
-        } else {
-          setModalState({ step: SubmitStepEnum.error });
-        }
-
-        return false;
-      }
-
-      return false;
+      // TODO: add validation, remove stub
+      if (!amount) return false;
+      invariant(amount, '[FundFormProvider] amount is undefined');
+      return fund(amount);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [callVaultFund],
+    [fund],
   );
-
-  const formControllerValue: FormControllerContextValueType<FundFormSchema> =
-    useMemo(
-      () => ({
-        onSubmit,
-        retryEvent,
-        retryFire,
-        onReset: formObject.reset,
-      }),
-      [retryFire, retryEvent, onSubmit, formObject.reset],
-    );
 
   return (
     <FormProvider {...formObject}>
-      <FormControllerContext.Provider value={formControllerValue}>
-        <FormController>{children}</FormController>
-        <SubmitModal submitStep={submitStep} setModalState={setModalState} />
-      </FormControllerContext.Provider>
+      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+        {children}
+      </FormController>
     </FormProvider>
   );
 };

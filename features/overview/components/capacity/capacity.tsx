@@ -31,10 +31,9 @@ export const Capacity = () => {
 
         return (
           <OverviewItem
-            key={item.title}
-            title={item.title}
+            {...item}
+            key={item.key}
             content={item.payload}
-            isLoading={item.isLoading}
             color={color}
           />
         );

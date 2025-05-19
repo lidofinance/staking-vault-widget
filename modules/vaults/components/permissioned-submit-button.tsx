@@ -1,15 +1,17 @@
+import { forwardRef, type ComponentProps } from 'react';
 import { Button } from '@lidofinance/lido-ui';
+
+import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
+
 import {
-  DashboardRoles,
   useVaultPermission,
   useVaultPermissions,
 } from '../hooks/use-vault-permissions';
-
-import { forwardRef, type ComponentProps } from 'react';
-import { useDappStatus } from 'modules/web3';
+import { VAULTS_ALL_ROLES } from '../consts';
 
 type PermissionedSubmitProps = {
-  dashboardRole: DashboardRoles;
+  dashboardRole: VAULTS_ALL_ROLES;
 } & ComponentProps<typeof Button>;
 
 const capitilize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -29,16 +31,18 @@ export const PermissionedSubmitButton = forwardRef<
     !isLoading && !hasPermission && isAccountActive;
 
   return (
-    <Button disabled={shouldDisable} ref={ref} {...rest}>
-      {shouldShowPermissionError
-        ? `You don't have ${capitilize(dashboardRole)} role`
-        : children}
-    </Button>
+    <ConnectWalletButton>
+      <Button disabled={shouldDisable} ref={ref} {...rest}>
+        {shouldShowPermissionError
+          ? `You don't have ${capitilize(dashboardRole)} role`
+          : children}
+      </Button>
+    </ConnectWalletButton>
   );
 });
 
 type MultiplePermissionedSubmitProps = {
-  dashboardRoles: DashboardRoles[];
+  dashboardRoles: VAULTS_ALL_ROLES[];
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<
@@ -56,10 +60,12 @@ export const MultiplePermissionedSubmitButton = forwardRef<
     !isLoading && data && !data.hasPermissions && isAccountActive;
 
   return (
-    <Button disabled={shouldDisable} ref={ref} {...rest}>
-      {shouldShowPermissionError
-        ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
-        : children}
-    </Button>
+    <ConnectWalletButton>
+      <Button disabled={shouldDisable} ref={ref} {...rest}>
+        {shouldShowPermissionError
+          ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
+          : children}
+      </Button>
+    </ConnectWalletButton>
   );
 });

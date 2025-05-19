@@ -1,5 +1,3 @@
-import { SendCallsError } from 'modules/web3';
-
 export enum ErrorMessage {
   NOT_ENOUGH_ETHER = 'Not enough ether for gas.',
   DENIED_SIG = 'User denied the transaction signature.',
@@ -59,11 +57,9 @@ export const getErrorMessage = (error: unknown): ErrorMessage | string => {
 };
 
 // extracts message from Errors made by us
+// TODO: add more error types
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const extractHumaneMessage = (error: unknown) => {
-  if (error instanceof SendCallsError) {
-    return error.message;
-  }
-
   return null;
 };
 

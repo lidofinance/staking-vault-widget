@@ -7,7 +7,7 @@ import { AddressBadge } from 'shared/components/address-badge';
 import { AddressWrapper } from './styles';
 
 import { BaseCellProps } from 'features/home/components/vault-table/types';
-import { AppPaths } from 'consts/urls';
+import { appPaths } from 'consts/routing';
 
 export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   const router = useRouter();
@@ -16,12 +16,12 @@ export const AddressCell: FC<BaseCellProps<Address>> = ({ value }) => {
   });
 
   const handleClick = () => {
-    void router.push(`/${value}${AppPaths.overview}`);
+    void router.push(appPaths.vaults.vault(value).overview);
   };
 
   return (
-    <AddressWrapper role="link" onClick={handleClick}>
-      <AddressBadge address={data ?? value} />
+    <AddressWrapper role="link">
+      <AddressBadge address={data ?? value} onClick={handleClick} />
     </AddressWrapper>
   );
 };

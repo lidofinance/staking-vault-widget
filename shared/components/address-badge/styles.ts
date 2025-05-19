@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components';
 
 import {
   Address,
+  Block,
+  Popover,
   TextColors,
   TextProps,
   TextWeight,
@@ -39,26 +41,57 @@ type InjectedProps = {
 type PillProps = {
   theme: Theme;
   bgColor: BgColor;
+  crossed?: boolean;
 };
 
 type BgColor = 'transparent' | 'default' | 'error' | 'success' | 'active';
+
+const buildBgColorMap = (
+  colors: PillProps['theme']['colors'],
+  isHover?: boolean,
+) => ({
+  default: isHover
+    ? getColorTransparency('var(--lido-color-textDark)', '12%')
+    : getColorTransparency('var(--lido-color-textDark)', '6%'),
+  transparent: 'transparent',
+  error: getColorTransparency(colors.error, isHover ? '30%' : '20%'),
+  success: getColorTransparency(colors.success, isHover ? '40%' : '30%'),
+  active: getColorTransparency(
+    'var(--lido-color-textDark)',
+    isHover ? '15%' : '12%',
+  ),
+});
 
 const getColorTransparency = (color: string, percent: string) => {
   return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
 };
 
-const getBgColor = ({ theme: { colors }, bgColor }: PillProps) => {
-  bgColor ??= 'default';
-  const bgColorMap = {
-    default: 'var(--lido-color-shadowLight)',
-    transparent: 'transparent',
-    error: getColorTransparency(colors.error, '20%'),
-    success: getColorTransparency(colors.success, '30%'),
-    active: getColorTransparency('var(--lido-color-textDark)', '12%'),
+const createBgGetter = (options: {
+  considerCrossed: boolean;
+  isHover?: boolean;
+}) => {
+  return ({
+    theme: { colors },
+    bgColor = 'default',
+    crossed = false,
+  }: PillProps) => {
+    const map = buildBgColorMap(colors, options.isHover);
+    const key: BgColor = options.considerCrossed && crossed ? 'error' : bgColor;
+    return map[key];
   };
-
-  return bgColorMap[bgColor];
 };
+
+const getBgColor = createBgGetter({ considerCrossed: true });
+const getBgColorHover = createBgGetter({
+  considerCrossed: true,
+  isHover: true,
+});
+
+const getPillBgColor = createBgGetter({ considerCrossed: false });
+const getPillBgHover = createBgGetter({
+  considerCrossed: false,
+  isHover: true,
+});
 
 const getTextColor = ({ theme: { colors }, color }: InjectedProps) => {
   const colorsMap = {
@@ -81,10 +114,18 @@ export const PillContainer = styled.div<PillProps>`
   padding: ${({ theme }) => theme.spaceMap.sm}px;
   padding-right: ${({ theme }) => theme.spaceMap.md}px;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
-  background-color: ${getBgColor};
+  background-color: ${getPillBgColor};
   white-space: nowrap;
   text-wrap: nowrap;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
+  ${({ onClick }) =>
+    onClick
+      ? css`
+          &:hover {
+            background-color: ${getPillBgHover};
+          }
+        `
+      : ''};
 `;
 
 export const AddressText = styled(Address)<InjectedProps>`
@@ -95,4 +136,61 @@ export const AddressText = styled(Address)<InjectedProps>`
     text-decoration-color: ${crossedText ? 'var(--lido-color-text)' : 'none'};
     ${sizes[size]}
   `}
+`;
+
+export const SelectableWrapper = styled.div<PillProps>`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  width: fit-content;
+  padding-right: ${({ theme }) => theme.spaceMap.sm}px;
+  border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
+  background-color: ${getBgColor};
+  &:hover {
+    background-color: ${getBgColorHover};
+  }
+`;
+
+export const Label = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: color-mix(
+    in srgb,
+    var(--lido-color-textSecondary) 20%,
+    transparent
+  );
+  cursor: pointer;
+`;
+
+export const HiddenCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+`;
+
+export const PopoverWrapper = styled(Popover)`
+  padding: ${({ theme }) => theme.spaceMap.md}px;
+`;
+
+export const PopoverContent = styled(Block)`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  padding: 0;
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.xl}px;
+`;
+
+export const ActionWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;

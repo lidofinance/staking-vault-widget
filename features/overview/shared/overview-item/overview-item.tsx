@@ -1,25 +1,45 @@
-import { FC } from 'react';
-
-import { Text, Button } from '@lidofinance/lido-ui';
-import { ItemWrapper, Title } from './styles';
+import type { FC } from 'react';
+import type { Address } from 'viem';
 import { useRouter } from 'next/router';
-import { useVaultInfo } from 'modules/vaults';
+import { Text, Button } from '@lidofinance/lido-ui';
+
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 
 import { OverviewItemValue } from './overview-item-value';
+import { ItemWrapper, Title } from './styles';
 
-export interface ItemProps {
-  title: string;
-  content: string | number | undefined;
-  actionLink?: string;
-  actionText?: string;
-  isLoading?: boolean;
+import type { SectionPayload } from 'features/overview/contexts';
+
+export type ItemProps = {
+  content: string | Address | number;
   color?: string;
-}
+} & Omit<SectionPayload, 'key'>;
 
-export const OverviewItem: FC<ItemProps> = (props) => {
+export const OverviewItem: FC<ItemProps> = ({
+  title,
+  content,
+  actionLink,
+  actionRole,
+  actionText,
+  isLoading,
+  color,
+}) => {
+  const { vaultAddress } = useVaultInfo();
+  const { hasPermission } = useVaultPermission(actionRole);
+
+  // show action if
+  const showAction = !!(
+    // 1. all data is provided
+    (
+      actionLink &&
+      actionText &&
+      vaultAddress &&
+      // 2. user has permission for it (if actionRole is provided)
+      (!actionRole || hasPermission)
+    )
+  );
+
   const router = useRouter();
-  const { activeVault } = useVaultInfo();
-  const { title, content, actionLink, actionText, isLoading, color } = props;
 
   return (
     <ItemWrapper>
@@ -33,11 +53,11 @@ export const OverviewItem: FC<ItemProps> = (props) => {
         isLoading={isLoading}
         color={color}
       />
-      {!!actionLink && !!actionText && (
+      {showAction && (
         <Button
           size="xs"
           variant="translucent"
-          onClick={() => router.push(`/${activeVault?.address}${actionLink}`)}
+          onClick={() => router.push(actionLink(vaultAddress))}
         >
           {actionText}
         </Button>

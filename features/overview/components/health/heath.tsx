@@ -38,10 +38,9 @@ export const Health = () => {
 
         return (
           <OverviewItem
-            key={item.title}
-            title={item.title}
+            {...item}
+            key={item.key}
             content={value}
-            isLoading={item.isLoading}
             color={color}
           />
         );

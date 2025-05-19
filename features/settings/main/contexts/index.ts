@@ -1,4 +1,1 @@
-export {
-  MainSettingsProvider,
-  useMainSettingsData,
-} from './main-settings-provider';
+export { MainSettingsProvider } from './main-settings-provider';

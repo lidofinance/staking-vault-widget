@@ -1,71 +1,51 @@
 import { useCallback } from 'react';
-import {
-  useConfig,
-  usePublicClient,
-  useWriteContract,
-  useEstimateGas,
-  useAccount,
-} from 'wagmi';
+import { useEstimateGas, useAccount } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 import invariant from 'tiny-invariant';
-import {
-  SubmitPayload,
-  SubmitStepEnum,
-} from 'shared/components/submit-modal/types';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
 import { fallbackedAddress } from 'utils/fallbacked-address';
+import { useSendTransaction, withSuccess } from 'modules/web3';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
-export const useClaim = (onMutate = () => {}) => {
-  const { chainId } = useDappStatus();
-  const wagmiConfig = useConfig();
+export const useClaim = () => {
   const { activeVault } = useVaultInfo();
-  const publicClient = usePublicClient();
   const owner = activeVault?.owner;
-
-  const { data: claimTx, writeContractAsync } = useWriteContract({
-    config: wagmiConfig,
-    mutation: {
-      onMutate,
-    },
-  });
-
-  const callClaim = useCallback(
-    async (
-      recipient: Address,
-      setModalState: (submitStep: SubmitPayload) => void,
-    ) => {
-      invariant(owner, '[useClaimDashboard] owner is not available');
-      invariant(
-        publicClient,
-        '[useClaimDashboard] publicClient is not available',
-      );
-
-      setModalState({ step: SubmitStepEnum.confirming });
-      const tx = await writeContractAsync({
-        abi: dashboardAbi,
-        address: owner,
-        functionName: 'claimNodeOperatorFee',
-        args: [recipient],
-        chainId,
-      });
-
-      setModalState({ step: SubmitStepEnum.submitting, tx });
-      await publicClient.waitForTransactionReceipt({
-        hash: tx,
-      });
-
-      return tx;
-    },
-    [chainId, writeContractAsync, owner, publicClient],
-  );
+  const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    callClaim,
-    claimTx,
+    claim: useCallback(
+      async (recipient: Address) => {
+        invariant(owner, '[useClaim] owner is undefined');
+
+        const loadingActionText = `Claiming node operator fee`;
+        const mainActionCompleteText = `Claimed node operator fee`;
+
+        const claimCall = {
+          to: owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'claimNodeOperatorFee',
+            args: [recipient],
+          }),
+          loadingActionText,
+        };
+
+        const { success } = await withSuccess(
+          sendTX({
+            transactions: [claimCall],
+            mainActionLoadingText: loadingActionText,
+            mainActionCompleteText,
+            renderSuccessContent: GoToVault,
+          }),
+        );
+
+        return success;
+      },
+      [owner, sendTX],
+    ),
+    ...rest,
   };
 };
 

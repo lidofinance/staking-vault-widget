@@ -1,18 +1,21 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionPayload[] = [
   {
     title: 'Available to withdraw',
     key: 'withdrawableEth',
     actionText: 'Withdraw ETH',
-    actionLink: '/supply/withdraw',
+    actionRole: 'withdrawer',
+    actionLink: (vault) => appPaths.vaults.vault(vault).eth('withdraw'),
   },
   {
     title: 'Idle capital',
     key: 'balanceEth',
     actionText: 'Supply ETH',
-    actionLink: '/supply/fund',
+    actionRole: 'supplier',
+    actionLink: (vault) => appPaths.vaults.vault(vault).eth('supply'),
   },
   // TODO: add this after the metrics are implemented
   // {
@@ -40,14 +43,7 @@ export const Balance = () => {
   return (
     <OverviewSection title="Balance overview">
       {renderData.map((item) => (
-        <OverviewItem
-          key={item.title}
-          title={item.title}
-          content={item.payload}
-          actionText={item.actionText}
-          actionLink={item.actionLink}
-          isLoading={item.isLoading}
-        />
+        <OverviewItem {...item} key={item.key} content={item.payload} />
       ))}
     </OverviewSection>
   );

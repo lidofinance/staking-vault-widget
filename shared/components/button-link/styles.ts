@@ -13,6 +13,8 @@ export const Button = styled.button`
   &:hover {
     color: color-mix(in srgb, var(--lido-color-primary) 60%, transparent);
     text-decoration: none;
+    border: none;
+    outline: none;
   }
 
   &:visited {
@@ -26,9 +28,13 @@ export const Button = styled.button`
   &:focus {
     outline: 1px solid var(--lido-color-primary);
     outline-offset: 2px;
+    border: none;
+    outline: none;
   }
 
   &:active {
     color: var(--lido-color-errorHover);
+    border: none;
+    outline: none;
   }
 `;

@@ -1,30 +1,9 @@
 import { z, ZodSchema } from 'zod';
+import { type Address, isAddress } from 'viem';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
 import { isZodError } from 'utils/errors';
 
-export const validateFormValue = <T>(value: T): boolean => {
-  if (
-    typeof value === 'number' ||
-    typeof value === 'boolean' ||
-    typeof value === 'bigint'
-  ) {
-    return true;
-  } else if (typeof value === 'string') {
-    return value !== '' || value.length > 0;
-  } else if (typeof value === 'undefined') {
-    return false;
-  }
-
-  if (value instanceof Date) {
-    return !isNaN(value.getTime());
-  }
-
-  return !(
-    (Array.isArray(value) && value.length === 0) ||
-    ((value instanceof Set || value instanceof Map) && value.size === 0) ||
-    (value && typeof value === 'object' && Object.keys(value).length === 0)
-  );
-};
+const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
@@ -73,6 +52,8 @@ export const parseZodErrorSchema = (
   return errors;
 };
 
+// TODO: recheck with lib to remove this code
+// https://react-hook-form.com/docs/useform#:~:text=of%20your%20fields.-,Examples%3A,-YUP
 export const validateFormWithZod = <T extends ZodSchema>(
   schema: T,
 ): Resolver<z.infer<T>> => {
@@ -99,3 +80,11 @@ export const validateFormWithZod = <T extends ZodSchema>(
     }
   };
 };
+
+const validateAddress = (value: string | null) => !!(value && isAddress(value));
+
+export const addressSchema = z
+  .string()
+  .trim()
+  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .transform((value) => value.toLocaleLowerCase() as Address);

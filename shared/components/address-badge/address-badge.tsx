@@ -1,81 +1,102 @@
-import { MouseEvent, forwardRef, ForwardedRef } from 'react';
-
+import { forwardRef, type MouseEvent, useRef, useState } from 'react';
+import { zeroAddress } from 'viem';
 import {
   Identicon,
   Loader,
   TextColors,
   TextWeight,
 } from '@lidofinance/lido-ui';
-import { ButtonClose, ButtonRestore } from 'shared/components';
+
+import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
-import { zeroAddress } from 'viem';
+import { addressSchema } from 'utils/validate-form-value';
 
 export type AddressBadgeProps = {
   address?: string;
   symbols?: number;
-  crossedText?: boolean;
-  isActive?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: TextColors;
   weight?: TextWeight;
   bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
-  readonly?: boolean;
+  crossed?: boolean;
   isLoading?: boolean;
-  onToggle?: (event: MouseEvent<HTMLButtonElement>) => void;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-};
+  showPopover?: boolean;
+} & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
     {
-      address,
       symbols = 6,
-      crossedText = false,
-      isActive = false,
       size = 'xs',
       color = 'default',
-      weight = 700,
+      weight = 400,
       bgColor = 'default',
-      onToggle,
-      readonly,
-      isLoading,
-      onClick,
+      crossed = false,
+      isLoading = false,
+      showPopover = false,
+      ...props
     },
-    ref?: ForwardedRef<HTMLDivElement>,
+    forwardedRef,
   ) => {
+    const backupRef = useRef<HTMLDivElement>(null);
+    const ref = forwardedRef || backupRef;
+    const [isOpen, setIsOpen] = useState(false);
+    const parsing = addressSchema.safeParse(props.address);
+
+    const onClick = showPopover
+      ? (event: MouseEvent) => {
+          setIsOpen(true);
+          props.onClick?.(event);
+        }
+      : props.onClick;
+
     if (isLoading) {
       return (
-        <PillContainer bgColor={bgColor} onClick={onClick} ref={ref}>
+        <PillContainer
+          crossed={crossed}
+          bgColor={bgColor}
+          onClick={onClick}
+          ref={ref}
+          {...props}
+        >
           <Identicon address={zeroAddress} />
           <Loader size="large" />
         </PillContainer>
       );
     }
-    if (!address) {
-      return null;
-    }
 
-    const containerBgColor = isActive ? 'active' : bgColor;
+    if (!parsing.success) return null;
+
+    const address = parsing.data;
 
     return (
-      <PillContainer bgColor={containerBgColor} onClick={onClick} ref={ref}>
-        <Identicon address={address} />
-        <AddressText
-          size={size}
-          color={color}
-          weight={weight}
-          symbols={symbols}
-          address={address}
-          crossedText={crossedText}
-        />
-
-        {!readonly && !crossedText && onToggle && (
-          <ButtonClose onClick={onToggle} />
+      <>
+        <PillContainer
+          crossed={crossed}
+          bgColor={bgColor}
+          onClick={onClick}
+          ref={ref}
+          {...props}
+        >
+          <Identicon address={address} />
+          <AddressText
+            size={size}
+            color={color}
+            weight={weight}
+            symbols={symbols}
+            address={address}
+            crossedText={crossed}
+          />
+        </PillContainer>
+        {showPopover && (
+          <AddressPopover
+            anchorRef={ref as any}
+            isOpen={isOpen}
+            address={address}
+            onClose={() => setIsOpen(false)}
+          />
         )}
-        {!readonly && crossedText && onToggle && (
-          <ButtonRestore onClick={onToggle} />
-        )}
-      </PillContainer>
+      </>
     );
   },
 );

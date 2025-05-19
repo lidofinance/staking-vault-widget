@@ -6,22 +6,3 @@ export const TOKENS_TO_MINT = {
 } as const;
 
 export type TOKENS_TO_MINT = keyof typeof TOKENS_TO_MINT;
-
-export enum ADJUSTMENT_PATHS {
-  mint = 'mint',
-  repay = 'repay',
-}
-
-export type AdjustmentPaths = 'mint' | 'repay';
-
-export const adjustmentToggleList: { value: AdjustmentPaths; label: string }[] =
-  [
-    {
-      value: ADJUSTMENT_PATHS.mint,
-      label: 'Mint',
-    },
-    {
-      value: ADJUSTMENT_PATHS.repay,
-      label: 'Repay',
-    },
-  ];

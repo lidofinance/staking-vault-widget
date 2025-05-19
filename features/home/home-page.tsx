@@ -2,9 +2,9 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { HomeContent } from 'features/home/home-content';
 
 import { PageWrapper } from './styles';
+import { MyVaults } from './my-vaults';
 
 export const HomePage: FC = () => {
   return (
@@ -13,7 +13,7 @@ export const HomePage: FC = () => {
         <title>Vault | Lido</title>
       </Head>
       <PageWrapper>
-        <HomeContent />
+        <MyVaults />
       </PageWrapper>
     </Layout>
   );

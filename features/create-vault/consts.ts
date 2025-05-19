@@ -1,40 +1,21 @@
 import { MainSettingsEntryType } from './types';
 
-export const CREATE_VAULT_STEPS = 2;
-
-export enum PermissionToggleEnum {
-  byPermission = 'by_permission',
-  byAddress = 'by_address',
+export enum CREATE_VAULT_FORM_STEPS {
+  main = 1,
+  confirm,
 }
 
-export const permissionsToggleList = [
-  {
-    value: PermissionToggleEnum.byPermission,
-    label: 'by Permission',
-  },
-  {
-    value: PermissionToggleEnum.byAddress,
-    label: 'by address',
-  },
-];
+const steps = ['Main settings', 'Verify new vault’s settings'];
 
-export type ToggleValue =
-  (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
+export const SECTION_NAMES_BY_STEP = steps.reduce(
+  (acc, step, index) => ({
+    ...acc,
+    [index + 1]: step,
+  }),
+  {} as Record<number, string>,
+);
 
-export const steps: Record<number, string> = {
-  '1': 'Main settings',
-  '2': 'Confirmation',
-};
-
-export const getSectionNameByStep = (step: number) => steps[step];
-
-export const mainSettingsFields = [
-  'defaultAdmin',
-  'nodeOperator',
-  'nodeOperatorFeeBP',
-  'confirmExpiry',
-  'nodeOperatorManager',
-] as const;
+export const CREATE_VAULT_STEPS = steps.length;
 
 export const MAIN_SETTINGS: MainSettingsEntryType[] = [
   {
@@ -55,26 +36,24 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     name: 'confirmExpiry',
     title: 'Confirmation Lifetime',
     label: 'Confirmation Lifetime, hours',
-    afterText: 'hours',
     dataType: 'time',
     type: 'number',
   },
   {
-    name: 'defaultAdmin',
+    name: 'vaultManager',
     title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
-    dataType: 'address',
+    label: 'Vault Manager address',
+    dataType: 'addressArray',
   },
   {
     name: 'nodeOperatorManager',
     title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
+    label: 'Node Operator Manager address',
     dataType: 'address',
   },
+  {
+    name: 'acceptTerms',
+    notes: 'Vault creation requires a supply of 1 ETH.',
+    dataType: 'confirm',
+  },
 ];
-
-export enum CREATE_VAULT_FORM_STEPS {
-  main,
-  confirm,
-  permissions,
-}
