@@ -1,7 +1,15 @@
 import styled, { css } from 'styled-components';
-import { Table, Thead, Tr, Th, ArrowBottom, Td } from '@lidofinance/lido-ui';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  ArrowBottom,
+  Td,
+} from '@lidofinance/lido-ui';
 
-export const TableTitle = styled.caption<{ counter: number }>`
+export const TableTitle = styled.caption<{ counter?: number }>`
   position: relative;
   width: fit-content;
   margin-bottom: ${({ theme }) => theme.spaceMap.md}px;
@@ -40,12 +48,16 @@ export const TableStyled = styled(Table)`
   width: 100%;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
   background-color: var(--lido-color-foreground);
+  overflow: hidden;
 `;
 
 export const TableHead = styled(Thead)`
   border-top: 0;
 `;
 
+export const TableBody = styled(Tbody)`
+  position: relative;
+`;
 export const TableHeaderCell = styled(Th)`
   padding: 24px 0 16px;
   text-align: center;
@@ -81,6 +93,40 @@ export const TableRow = styled(Tr)`
   }
 `;
 
+export const SpacerRow = styled(Tr).attrs({ ariaHidden: true })`
+  height: 128px;
+  background-color: ${({ theme }) =>
+    theme.name === 'light' ? `#F7F9FB` : `rgba(0, 0, 0, 0.2)`};
+  & > * {
+    opacity: 0;
+    pointer-events: none;
+  }
+`;
+
+export const NonTableRow = styled(Tr)<{ overlay?: boolean }>`
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ overlay, theme }) =>
+    overlay
+      ? theme.name === 'light'
+        ? `rgba(255, 255, 255, 0.8)`
+        : `rgba(0, 0, 0, 0.2)`
+      : 'unset'};
+
+  & > td {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
 export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
   border: 0;
   font-size: ${({ theme, fontSize }) => fontSize ?? theme.fontSizesMap.xs}px;
@@ -101,13 +147,9 @@ export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
   }
 `;
 
-export const ArrowAnimated = styled(ArrowBottom)<{
-  isActive: boolean;
-  direction: 'asc' | 'desc';
-}>`
-  transition: transform 0.2s ease-in-out;
-  transform: ${({ isActive, direction }) =>
-    isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
+export const EmptyCell = styled.td`
+  height: 128px;
+  background-color: #f7f9fb;
 `;
 
 const headerCell = css`
@@ -130,4 +172,13 @@ export const SortHeader = styled.div`
   &:hover {
     color: var(--lido-color-primary);
   }
+`;
+
+export const ArrowAnimated = styled(ArrowBottom)<{
+  isActive: boolean;
+  direction: 'asc' | 'desc';
+}>`
+  transition: transform 0.2s ease-in-out;
+  transform: ${({ isActive, direction }) =>
+    isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
 `;

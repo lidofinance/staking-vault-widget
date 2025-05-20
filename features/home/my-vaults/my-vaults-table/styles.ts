@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+export { AddVaultButton } from '../styles';
+
 export const MyVaultsWrapper = styled.div`
   display: flex;
   align-items: center;

@@ -1,15 +1,32 @@
 import { useDappStatus } from 'modules/web3';
 
-import { ConnectWallet } from 'features/home/my-vaults/connect-wallet';
-import { ConnectedWalletContent } from 'features/home/my-vaults/auth-content';
-import { Wrapper } from './styles';
+import { useConnect } from 'reef-knot/core-react';
+
+import { MyVaultsTable } from 'features/home/my-vaults/my-vaults-table';
+import { Wrapper, ConnectWalletButton } from './styles';
 
 export const MyVaults = () => {
-  const { address } = useDappStatus();
+  const { isWalletConnected } = useDappStatus();
+  const { connect } = useConnect();
+
+  const handleConnect = () => {
+    void connect();
+  };
 
   return (
     <Wrapper>
-      {!address ? <ConnectWallet /> : <ConnectedWalletContent />}
+      {isWalletConnected ? (
+        <MyVaultsTable />
+      ) : (
+        <ConnectWalletButton
+          variant="outlined"
+          color="secondary"
+          size="lg"
+          onClick={handleConnect}
+        >
+          Connect wallet to create a vault
+        </ConnectWalletButton>
+      )}
     </Wrapper>
   );
 };

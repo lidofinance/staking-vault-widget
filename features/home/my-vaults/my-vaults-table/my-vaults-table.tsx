@@ -1,24 +1,25 @@
 import { VaultTable } from 'features/home/components/vault-table';
-import { useConnectedVaultsList } from './use-connected-vaults-list';
+import { AddVault } from './add-vault';
 
-import { AllVaultsWrapper } from './styles';
+import { MyVaultsWrapper } from './styles';
+import { useMyVaultsList } from './use-my-vaults-list';
 
-export const AllVaults = () => {
+export const MyVaultsTable = () => {
   const {
-    data: vaults,
+    vaults,
     isLoading,
-    page,
-    pagesCount,
-    setPage,
-    refetch,
-    isError,
     totalVaultsCount,
-  } = useConnectedVaultsList();
-
+    refetch,
+    page,
+    setPage,
+    pagesCount,
+    isError,
+  } = useMyVaultsList();
   return (
-    <AllVaultsWrapper>
+    <MyVaultsWrapper>
       <VaultTable
-        title="All Vaults"
+        title="My Vaults"
+        emptyDisplay="hideTable"
         vaults={vaults}
         vaultsCount={totalVaultsCount}
         isError={isError}
@@ -28,6 +29,7 @@ export const AllVaults = () => {
         pagesCount={pagesCount}
         setPage={setPage}
       />
-    </AllVaultsWrapper>
+      <AddVault />
+    </MyVaultsWrapper>
   );
 };

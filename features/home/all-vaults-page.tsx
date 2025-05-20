@@ -1,19 +1,17 @@
-import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-
+import { AllVaults } from './all-vaults/all-vaults';
 import { PageWrapper } from './styles';
-import { MyVaults } from './my-vaults';
 
-export const HomePage: FC = () => {
+export const AllVaultsPage = () => {
   return (
     <Layout containerSize="content">
       <Head>
         <title>Vault | Lido</title>
       </Head>
       <PageWrapper>
-        <MyVaults />
+        <AllVaults />
       </PageWrapper>
     </Layout>
   );

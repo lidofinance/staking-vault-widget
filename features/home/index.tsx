@@ -1,1 +1,2 @@
-export { HomePage } from './home-page';
+export { MyVaultsPage } from './my-vaults-page';
+export { AllVaultsPage } from './all-vaults-page';

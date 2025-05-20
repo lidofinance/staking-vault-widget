@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 
 import { Plus } from '@lidofinance/lido-ui';
-import { AddVaultButton } from 'features/home/styles';
+import { AddVaultButton } from './styles';
 
 import { appPaths } from 'consts/routing';
 
