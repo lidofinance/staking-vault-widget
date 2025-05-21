@@ -1,7 +1,6 @@
 import { VaultTable } from 'features/home/components/vault-table';
 import { AddVault } from './add-vault';
 
-import { MyVaultsWrapper } from './styles';
 import { useMyVaultsList } from './use-my-vaults-list';
 
 export const MyVaultsTable = () => {
@@ -16,7 +15,7 @@ export const MyVaultsTable = () => {
     isError,
   } = useMyVaultsList();
   return (
-    <MyVaultsWrapper>
+    <>
       <VaultTable
         title="My Vaults"
         emptyDisplay="hideTable"
@@ -30,6 +29,6 @@ export const MyVaultsTable = () => {
         setPage={setPage}
       />
       <AddVault />
-    </MyVaultsWrapper>
+    </>
   );
 };
