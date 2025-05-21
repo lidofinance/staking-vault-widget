@@ -1,19 +1,29 @@
 import { FC } from 'react';
 
-import { Question } from '@lidofinance/lido-ui';
-import { CommonHeader } from 'features/home/components/vault-table/styles';
+import { Hint } from 'shared/components';
+import { ArrowAnimated, CommonHeader } from './styles';
 
-export interface HeaderCellProps {
+type SortDirection = 'asc' | 'desc';
+
+export type HeaderCellProps = {
   title: string;
-  showQuestion?: boolean;
-}
+  hint?: string;
+  onSort?: (dir: SortDirection) => void;
+  sortDirection?: SortDirection;
+};
 
-export const HeaderCell: FC<HeaderCellProps> = (props) => {
-  const { title, showQuestion = true } = props;
+export const HeaderCell: FC<HeaderCellProps> = ({
+  title,
+  hint,
+  onSort,
+  sortDirection,
+}) => {
+  const showSort = !!(onSort && sortDirection);
   return (
     <CommonHeader>
       {title}
-      {showQuestion && <Question />}
+      {hint && <Hint text={hint} />}
+      {showSort && <ArrowAnimated direction={sortDirection} />}
     </CommonHeader>
   );
 };

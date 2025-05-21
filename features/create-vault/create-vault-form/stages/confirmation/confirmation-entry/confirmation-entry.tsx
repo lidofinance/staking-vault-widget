@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { Hint } from 'features/create-vault/shared/hint';
+import { Hint } from 'shared/components';
 
 import { ConfirmAddress, ConfirmAddressArray } from './confirm-address';
 import { ConfirmNumber } from './confirm-number';

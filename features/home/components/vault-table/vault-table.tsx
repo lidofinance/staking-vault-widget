@@ -1,18 +1,11 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import { Button, Loader, Pagination, Text } from '@lidofinance/lido-ui';
 
 import { VaultTableInfo } from 'modules/vaults';
 import { getHealthFactorColor } from 'utils';
 
-import { TableCell } from './table-cell';
-import {
-  EtherCell,
-  AddressCell,
-  PercentCell,
-  MintCell,
-  HeaderCell,
-} from './cells';
+import { PercentCell, HeaderCell } from './cells';
 import {
   TableTitle,
   TableStyled,
@@ -22,8 +15,13 @@ import {
   TableHeaderCell,
   NonTableRow,
   SpacerRow,
+  TableCell,
 } from './styles';
-import { zeroAddress } from 'viem';
+import { isAddress, zeroAddress } from 'viem';
+import { FormatToken } from 'shared/formatters';
+import { useRouter } from 'next/router';
+import { appPaths } from 'consts/routing';
+import { AddressBadge } from 'shared/components';
 
 export type VaultTableProps = {
   title: string;
@@ -41,27 +39,21 @@ export type VaultTableProps = {
 const tableHeaders = [
   {
     title: 'Vault Address / ENS',
-    showQuestion: false,
   },
   {
     title: 'Total value, ETH',
-    showQuestion: true,
   },
   {
     title: 'stETH liability',
-    showQuestion: true,
   },
   // {
   //   title: 'Net Staking APR',
-  //   showQuestion: true,
   // },
   // {
   //   title: 'stVault APY',
-  //   showQuestion: true,
   // },
   {
     title: 'Health factor',
-    showQuestion: true,
   },
 ];
 
@@ -79,19 +71,25 @@ type VaultTableRowProps = {
   vault: VaultTableInfo;
 };
 
-const VaultTableRow = ({ vault }: VaultTableRowProps) => {
+const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
   return (
     <>
       <TableCell>
-        <AddressCell value={vault.address} />
+        <AddressBadge
+          weight={700}
+          showPopover
+          popoverMode="hover"
+          popoverPlacement="top"
+          address={vault.address}
+        />
       </TableCell>
-      <TableCell>
-        <EtherCell value={vault.totalValue} />
+      <TableCell align="right">
+        <FormatToken amount={vault.totalValue} />
       </TableCell>
-      <TableCell>
-        <MintCell value={vault.liabilityStETH} />
+      <TableCell align="right">
+        <FormatToken amount={vault.liabilityStETH} />
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <PercentCell
           value={vault.healthScore}
           color={getHealthFactorColor(vault.healthScore)}
@@ -154,7 +152,7 @@ const QueryStatus = ({
       {/* SpacerRow predefines table cell to avoid layout shift */}
       {isEmpty && (
         <SpacerRow>
-          <VaultTableRow vault={PLACEHOLDER_VAULT} />
+          <VaultTableRowContent vault={PLACEHOLDER_VAULT} />
         </SpacerRow>
       )}
       {/*  Overlay is shown only when loader is superimposed over data for correct bg color */}
@@ -177,6 +175,7 @@ export const VaultTable: FC<VaultTableProps> = ({
   setPage,
   pagesCount,
 }) => {
+  const router = useRouter();
   const isEmpty = (vaults?.length ?? 0) === 0;
   const showTable = !(
     emptyDisplay === 'hideTable' &&
@@ -185,6 +184,17 @@ export const VaultTable: FC<VaultTableProps> = ({
     isEmpty
   );
   const showPagination = !!(pagesCount && pagesCount > 1 && setPage);
+
+  const onRowClick = useCallback(
+    (e: React.MouseEvent<HTMLTableRowElement>) => {
+      const vaultAddress = e.currentTarget.dataset.address;
+      if (vaultAddress && isAddress(vaultAddress)) {
+        void router.push(appPaths.vaults.vault(vaultAddress).overview);
+      }
+    },
+    [router],
+  );
+
   return (
     <>
       <TableStyled>
@@ -193,9 +203,9 @@ export const VaultTable: FC<VaultTableProps> = ({
           <>
             <TableHead>
               <TableRow>
-                {tableHeaders.map(({ title, showQuestion }) => (
+                {tableHeaders.map(({ title }) => (
                   <TableHeaderCell key={title}>
-                    <HeaderCell title={title} showQuestion={showQuestion} />
+                    <HeaderCell title={title} />
                   </TableHeaderCell>
                 ))}
               </TableRow>
@@ -203,8 +213,12 @@ export const VaultTable: FC<VaultTableProps> = ({
             <TableBody>
               {vaults?.map((vault) => {
                 return (
-                  <TableRow key={vault.address}>
-                    <VaultTableRow vault={vault} />
+                  <TableRow
+                    onClick={onRowClick}
+                    data-address={vault.address}
+                    key={vault.address}
+                  >
+                    <VaultTableRowContent vault={vault} />
                   </TableRow>
                 );
               })}

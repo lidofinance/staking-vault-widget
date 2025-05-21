@@ -1,13 +1,6 @@
+import type { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  ArrowBottom,
-  Td,
-} from '@lidofinance/lido-ui';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@lidofinance/lido-ui';
 
 export const TableTitle = styled.caption<{ counter?: number }>`
   position: relative;
@@ -77,7 +70,7 @@ export const TableHeaderCell = styled(Th)`
   }
 `;
 
-export const TableRow = styled(Tr)`
+export const TableRow = styled(Tr)<Pick<ComponentProps<typeof Tr>, 'onClick'>>`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: normal;
   line-height: 24px;
@@ -88,7 +81,16 @@ export const TableRow = styled(Tr)`
     border: 0 !important;
   }
 
-  &:has(td):nth-child(odd) {
+  ${({ onClick }) =>
+    onClick &&
+    css`
+      cursor: pointer;
+      &:hover {
+        background-color: var(--lido-color-accentBorder);
+      }
+    `}
+
+  &:has(td):nth-child(odd):not(:hover) {
     background-color: var(--custom-background-secondary);
   }
 `;
@@ -127,11 +129,10 @@ export const NonTableRow = styled(Tr)<{ overlay?: boolean }>`
   }
 `;
 
-export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
+export const TableCell = styled(Td)<{ fontSize?: string }>`
   border: 0;
   font-size: ${({ theme, fontSize }) => fontSize ?? theme.fontSizesMap.xs}px;
   padding: 12px;
-  text-align: center;
 
   &:before,
   &:after {
@@ -145,40 +146,4 @@ export const TableCellStyled = styled(Td)<{ fontSize?: string }>`
   &:last-of-type {
     text-align: end;
   }
-`;
-
-export const EmptyCell = styled.td`
-  height: 128px;
-  background-color: #f7f9fb;
-`;
-
-const headerCell = css`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.xs}px;
-  text-align: center;
-  user-select: none;
-`;
-
-export const CommonHeader = styled.div`
-  ${headerCell};
-`;
-
-export const SortHeader = styled.div`
-  ${headerCell};
-  cursor: pointer;
-
-  &:hover {
-    color: var(--lido-color-primary);
-  }
-`;
-
-export const ArrowAnimated = styled(ArrowBottom)<{
-  isActive: boolean;
-  direction: 'asc' | 'desc';
-}>`
-  transition: transform 0.2s ease-in-out;
-  transform: ${({ isActive, direction }) =>
-    isActive && direction === 'desc' ? 'rotate(180deg)' : 'none'};
 `;

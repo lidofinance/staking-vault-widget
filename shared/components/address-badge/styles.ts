@@ -3,12 +3,14 @@ import styled, { css } from 'styled-components';
 import {
   Address,
   Block,
+  Loader,
   Popover,
   TextColors,
   TextProps,
   TextWeight,
   Theme,
 } from '@lidofinance/lido-ui';
+import { getColorTransparency } from 'styles';
 
 export const sizes = {
   xs: css`
@@ -61,10 +63,6 @@ const buildBgColorMap = (
     isHover ? '15%' : '12%',
   ),
 });
-
-const getColorTransparency = (color: string, percent: string) => {
-  return `color-mix(in display-p3, ${color} ${percent}, transparent)`;
-};
 
 const createBgGetter = (options: {
   considerCrossed: boolean;
@@ -193,4 +191,24 @@ export const ActionGroup = styled.div`
 export const ActionWrapper = styled.div`
   display: flex;
   align-items: center;
+`;
+
+// AddressAvatar
+
+const commonAvatarStyles = css`
+  margin: 0px;
+  height: 24px;
+  width: 24px;
+`;
+
+export const AddressAvatarImage = styled.img`
+  ${commonAvatarStyles}
+  border-radius: 50px;
+  display: inline-block;
+  overflow: hidden;
+  padding: 0px;
+`;
+
+export const AddressAvatarLoader = styled(Loader).attrs({ size: 'small' })`
+  ${commonAvatarStyles}
 `;

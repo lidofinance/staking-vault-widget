@@ -1,18 +1,23 @@
-import { forwardRef, type MouseEvent, useRef, useState } from 'react';
+import { type MouseEvent, forwardRef, useRef, useState } from 'react';
 import { zeroAddress } from 'viem';
 import {
   Identicon,
-  Loader,
+  InlineLoader,
   TextColors,
   TextWeight,
+  Tooltip,
 } from '@lidofinance/lido-ui';
 
+import { useSafeEnsName } from 'shared/hooks/use-safe-ens-name';
+import { addressSchema } from 'utils/validate-form-value';
+
+import { AddressAvatar } from './address-avatar';
 import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
-import { addressSchema } from 'utils/validate-form-value';
 
 export type AddressBadgeProps = {
   address?: string;
+  showEnsName?: boolean;
   symbols?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: TextColors;
@@ -21,6 +26,8 @@ export type AddressBadgeProps = {
   crossed?: boolean;
   isLoading?: boolean;
   showPopover?: boolean;
+  popoverPlacement?: React.ComponentProps<typeof Tooltip>['placement'];
+  popoverMode?: 'default' | 'hover';
 } & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
@@ -34,6 +41,9 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       crossed = false,
       isLoading = false,
       showPopover = false,
+      showEnsName = false,
+      popoverMode = 'default',
+      popoverPlacement = 'topLeft',
       ...props
     },
     forwardedRef,
@@ -43,14 +53,16 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     const [isOpen, setIsOpen] = useState(false);
     const parsing = addressSchema.safeParse(props.address);
 
-    const onClick = showPopover
-      ? (event: MouseEvent) => {
-          setIsOpen(true);
-          props.onClick?.(event);
-        }
-      : props.onClick;
+    const { ensName, isLoading: isEnsLoading } = useSafeEnsName(
+      parsing.success && showEnsName ? parsing.data : undefined,
+    );
 
-    if (isLoading) {
+    const onClick = (event: MouseEvent) => {
+      setIsOpen(true);
+      props.onClick?.(event);
+    };
+
+    if (isLoading || (showEnsName && isEnsLoading)) {
       return (
         <PillContainer
           crossed={crossed}
@@ -59,8 +71,9 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           ref={ref}
           {...props}
         >
-          <Identicon address={zeroAddress} />
-          <Loader size="large" />
+          {/* if ens forced loading we can show right identicon */}
+          <Identicon address={parsing.data ?? zeroAddress} />
+          <InlineLoader style={{ width: 113 }} />
         </PillContainer>
       );
     }
@@ -68,35 +81,43 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     if (!parsing.success) return null;
 
     const address = parsing.data;
+    const mainText = showEnsName && ensName ? ensName : address;
 
-    return (
-      <>
-        <PillContainer
-          crossed={crossed}
-          bgColor={bgColor}
-          onClick={onClick}
-          ref={ref}
-          {...props}
-        >
-          <Identicon address={address} />
-          <AddressText
-            size={size}
-            color={color}
-            weight={weight}
-            symbols={symbols}
-            address={address}
-            crossedText={crossed}
-          />
-        </PillContainer>
-        {showPopover && (
-          <AddressPopover
-            anchorRef={ref as any}
-            isOpen={isOpen}
-            address={address}
-            onClose={() => setIsOpen(false)}
-          />
-        )}
-      </>
+    const mainContent = (
+      <PillContainer
+        crossed={crossed}
+        bgColor={bgColor}
+        onClick={onClick}
+        ref={ref}
+        {...props}
+      >
+        <AddressAvatar address={address} ensName={ensName} />
+        <AddressText
+          size={size}
+          color={color}
+          weight={weight}
+          symbols={symbols}
+          address={mainText}
+          crossedText={crossed}
+        />
+      </PillContainer>
     );
+
+    if (showPopover) {
+      return (
+        <AddressPopover
+          mode={popoverMode}
+          anchorRef={ref as any}
+          isOpen={isOpen}
+          address={address}
+          placement={popoverPlacement}
+          onClose={() => setIsOpen(false)}
+        >
+          {mainContent}
+        </AddressPopover>
+      );
+    }
+
+    return mainContent;
   },
 );

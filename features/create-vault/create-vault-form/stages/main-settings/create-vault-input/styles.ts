@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonIcon, Checkbox, Question } from '@lidofinance/lido-ui';
+import { ButtonIcon, Checkbox } from '@lidofinance/lido-ui';
 
 /// CreateVaultInput
 
@@ -16,13 +16,6 @@ export const InputTitle = styled.p`
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
   display: inline-flex;
-`;
-
-export const QuestionIcon = styled(Question)`
-  width: 20px;
-  height: 20px;
-  fill: ${({ theme }) => theme.colors.textSecondary};
-  align-self: center;
 `;
 
 export const InputNotes = styled.p`
