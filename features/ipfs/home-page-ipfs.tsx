@@ -5,7 +5,7 @@ import { getPathWithoutFirstSlash } from 'consts/urls';
 import NoSSRWrapper from 'shared/components/no-ssr-wrapper';
 import { usePrefixedReplace } from 'shared/hooks/use-prefixed-history';
 
-import { HomePage } from 'features/home';
+import { MyVaultsPage } from 'features/home';
 import { appPaths } from 'consts/routing';
 import { AllVaults } from 'features/home/all-vaults';
 
@@ -55,7 +55,7 @@ export const HomePageIpfs: FC = () => {
     }
 
     default: {
-      spaPage = <HomePage />;
+      spaPage = <MyVaultsPage />;
     }
   }
 
