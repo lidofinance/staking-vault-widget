@@ -77,6 +77,7 @@ const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
         <AddressBadge
           weight={700}
           showPopover="hover"
+          hoverEffect={false}
           popoverPlacement="top"
           address={vault.address}
         />
