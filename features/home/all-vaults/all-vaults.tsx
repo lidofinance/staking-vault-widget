@@ -1,38 +1,29 @@
-import { Loader, Pagination } from '@lidofinance/lido-ui';
-import { VaultTable } from 'features/home/components/vault-table';
-import { AllVaultsWrapper } from './styles';
-import { useVaultsDataAll, VAULTS_PER_PAGE } from 'modules/vaults';
-import { useConnectedVaultsNumber } from 'features/home/hooks';
+import { VaultTable } from 'features/home/vault-table';
+import { useConnectedVaultsList } from './use-connected-vaults-list';
 
 export const AllVaults = () => {
   const {
     vaults,
-    isLoading: isLoadingAllVaults,
-    handlePagination,
+    isLoading,
     page,
-    vaultsCount,
-  } = useVaultsDataAll();
-  const { data } = useConnectedVaultsNumber();
-  const pagesCount = Math.ceil(Number(data ?? 0) / VAULTS_PER_PAGE);
-  const showPagination = !!vaults && vaults?.length > 0 && pagesCount > 1;
+    pagesCount,
+    setPage,
+    refetch,
+    isError,
+    totalVaultsCount,
+  } = useConnectedVaultsList();
 
   return (
-    <AllVaultsWrapper>
-      <VaultTable
-        title="All Vaults"
-        vaults={vaults}
-        showTitle={!isLoadingAllVaults}
-        vaultsCount={vaultsCount}
-      />
-      {isLoadingAllVaults && <Loader color="primary" size="large" />}
-      {showPagination && !isLoadingAllVaults && (
-        <Pagination
-          onItemClick={handlePagination}
-          pagesCount={pagesCount}
-          siblingCount={1}
-          activePage={page}
-        />
-      )}
-    </AllVaultsWrapper>
+    <VaultTable
+      title="All Vaults"
+      vaults={vaults}
+      vaultsCount={totalVaultsCount}
+      isError={isError}
+      isLoading={isLoading}
+      refetch={refetch}
+      page={page}
+      pagesCount={pagesCount}
+      setPage={setPage}
+    />
   );
 };

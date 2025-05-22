@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Hint } from 'features/create-vault/shared/hint';
+import { Hint } from 'shared/components';
 
 import { GeneralInput, GeneralInputProps } from './general-input';
 import { AddressInput } from './address-input';

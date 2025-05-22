@@ -1,1 +1,1 @@
-export * from './add-vault';
+export { AddVault } from './add-vault';

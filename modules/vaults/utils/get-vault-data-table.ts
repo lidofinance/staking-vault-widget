@@ -1,0 +1,58 @@
+import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
+import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
+import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
+
+import type { PublicClient, Address } from 'viem';
+import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+
+type VaultDataArgs = {
+  publicClient: PublicClient;
+  vaultAddress: Address;
+  shares: LidoSDKShares;
+};
+
+export type VaultTableInfo = {
+  address: Address;
+  owner: Address;
+  totalValue: bigint;
+  liabilityStETH: bigint;
+  healthScore: number;
+  forcedRebalanceThresholdBP: number;
+  liabilityShares: bigint;
+};
+
+export const getVaultDataTable = async ({
+  publicClient,
+  vaultAddress,
+  shares,
+}: VaultDataArgs): Promise<VaultTableInfo> => {
+  const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
+  const owner = await vaultContract.read.owner();
+  const dashboardContract = getDashboardContract(owner, publicClient);
+
+  const [totalValue, liabilityShares, forcedRebalanceThresholdBP] =
+    await Promise.all([
+      dashboardContract.read.totalValue(),
+      dashboardContract.read.liabilityShares(),
+      dashboardContract.read.forcedRebalanceThresholdBP(),
+    ]);
+
+  const liabilityStETH = await shares.convertToSteth(liabilityShares);
+
+  const healthScore = calculateHealth({
+    totalValue,
+    liabilitySharesInStethWei: liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
+  });
+
+  return {
+    address: vaultAddress,
+    owner,
+    totalValue,
+    liabilityStETH,
+    healthScore:
+      healthScore.healthRatio > 100000 ? Infinity : healthScore.healthRatio,
+    forcedRebalanceThresholdBP,
+    liabilityShares,
+  };
+};
