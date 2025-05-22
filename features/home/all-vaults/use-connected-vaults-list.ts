@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useReadContract } from 'wagmi';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
@@ -8,36 +7,12 @@ import {
   getVaultViewerContract,
   getVaultDataTable,
 } from 'modules/vaults';
-import { getContractAddress } from 'config';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-
-import { VaultHubAbi } from 'abi/vault-hub';
-
-const useVaultCount = () => {
-  const { chainId } = useLidoSDK();
-  const vaultHubAddress = getContractAddress(chainId, 'vaultHub');
-  return useReadContract({
-    address: vaultHubAddress,
-    abi: VaultHubAbi,
-    functionName: 'vaultsCount',
-    query: {
-      enabled: !!vaultHubAddress,
-      select: Number,
-    },
-  });
-};
 
 export const useConnectedVaultsList = () => {
   const { shares, core } = useLidoSDK();
   const [page, setPage] = useState(1);
   const publicClient = core.rpcProvider;
-
-  const { data: totalVaultsCount, ...vaultCountQuery } = useVaultCount();
-
-  const pagesCount =
-    typeof totalVaultsCount === 'number'
-      ? Math.ceil(totalVaultsCount / VAULTS_PER_PAGE)
-      : undefined;
 
   const query = useQuery({
     queryKey: ['vaults-connected', publicClient?.chain?.id, page],
@@ -46,10 +21,8 @@ export const useConnectedVaultsList = () => {
       const vaultViewer = getVaultViewerContract(publicClient);
       const fromCursor = BigInt(VAULTS_PER_PAGE * (page - 1));
       const toCursor = BigInt(page * VAULTS_PER_PAGE);
-      const [vaultAddress] = await vaultViewer.read.vaultsConnectedBound([
-        fromCursor,
-        toCursor,
-      ]);
+      const [vaultAddress, leftOver] =
+        await vaultViewer.read.vaultsConnectedBound([fromCursor, toCursor]);
       const vaults = await Promise.all(
         vaultAddress.map((vaultAddress) =>
           getVaultDataTable({
@@ -59,7 +32,11 @@ export const useConnectedVaultsList = () => {
           }),
         ),
       );
-      return vaults;
+      const totalVaultsCount =
+        Number(fromCursor) + vaultAddress.length + Number(leftOver);
+      const pagesCount = Math.ceil(totalVaultsCount / VAULTS_PER_PAGE);
+
+      return { vaults, totalVaultsCount, pagesCount };
     },
     ...STRATEGY_LAZY,
   });
@@ -67,10 +44,10 @@ export const useConnectedVaultsList = () => {
   return {
     ...query,
     isLoading: query.isPending || query.isPlaceholderData,
-    vaultCountQuery,
     page,
     setPage,
-    pagesCount,
-    totalVaultsCount,
+    vaults: query.data?.vaults,
+    pagesCount: query.data?.pagesCount,
+    totalVaultsCount: query.data?.totalVaultsCount,
   };
 };

@@ -3,7 +3,7 @@ import { useConnectedVaultsList } from './use-connected-vaults-list';
 
 export const AllVaults = () => {
   const {
-    data: vaults,
+    vaults,
     isLoading,
     page,
     pagesCount,

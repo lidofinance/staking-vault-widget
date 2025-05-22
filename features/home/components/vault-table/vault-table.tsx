@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react';
 
-import { Button, Loader, Pagination, Text } from '@lidofinance/lido-ui';
+import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
 
 import { VaultTableInfo } from 'modules/vaults';
 import { getHealthFactorColor } from 'utils';
@@ -9,7 +9,6 @@ import { PercentCell, HeaderCell } from './cells';
 import {
   TableTitle,
   TableStyled,
-  TableHead,
   TableBody,
   TableRow,
   TableHeaderCell,
@@ -77,8 +76,7 @@ const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
       <TableCell>
         <AddressBadge
           weight={700}
-          showPopover
-          popoverMode="hover"
+          showPopover="hover"
           popoverPlacement="top"
           address={vault.address}
         />
@@ -183,6 +181,7 @@ export const VaultTable: FC<VaultTableProps> = ({
     !isError &&
     isEmpty
   );
+
   const showPagination = !!(pagesCount && pagesCount > 1 && setPage);
 
   const onRowClick = useCallback(
@@ -201,7 +200,7 @@ export const VaultTable: FC<VaultTableProps> = ({
         <TableTitle counter={vaultsCount}>{title}</TableTitle>
         {showTable && (
           <>
-            <TableHead>
+            <Thead>
               <TableRow>
                 {tableHeaders.map(({ title }) => (
                   <TableHeaderCell key={title}>
@@ -209,7 +208,7 @@ export const VaultTable: FC<VaultTableProps> = ({
                   </TableHeaderCell>
                 ))}
               </TableRow>
-            </TableHead>
+            </Thead>
             <TableBody>
               {vaults?.map((vault) => {
                 return (

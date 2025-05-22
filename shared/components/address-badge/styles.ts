@@ -44,6 +44,7 @@ type PillProps = {
   theme: Theme;
   bgColor: BgColor;
   crossed?: boolean;
+  hoverEffect?: boolean;
 };
 
 type BgColor = 'transparent' | 'default' | 'error' | 'success' | 'active';
@@ -116,8 +117,8 @@ export const PillContainer = styled.div<PillProps>`
   white-space: nowrap;
   text-wrap: nowrap;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
-  ${({ onClick }) =>
-    onClick
+  ${({ onClick, hoverEffect }) =>
+    onClick && hoverEffect
       ? css`
           &:hover {
             background-color: ${getPillBgHover};

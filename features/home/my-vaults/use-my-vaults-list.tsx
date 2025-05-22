@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import {
   VAULTS_PER_PAGE,
@@ -17,8 +17,12 @@ export const useMyVaultsList = () => {
 
   const query = useQuery({
     queryKey: ['user-vaults-connected', publicClient?.chain?.id, address, page],
-    placeholderData: keepPreviousData,
     enabled: !!address,
+    placeholderData: (prevData) => {
+      if (!address) return undefined;
+      return prevData;
+    },
+
     queryFn: async () => {
       invariant(address, 'Address is required');
       const vaultViewer = getVaultViewerContract(publicClient);
@@ -53,7 +57,7 @@ export const useMyVaultsList = () => {
     ...query,
     page,
     setPage,
-    isLoading: query.isPending || query.isPlaceholderData,
+    isLoading: query.isLoading || query.isPlaceholderData,
     pagesCount: query.data?.pagesCount,
     totalVaultsCount: query.data?.totalVaultsCount,
     vaults: query.data?.vaults,

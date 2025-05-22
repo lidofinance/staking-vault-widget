@@ -1,6 +1,5 @@
-import type { ComponentProps } from 'react';
 import styled, { css } from 'styled-components';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@lidofinance/lido-ui';
+import { Table, Tbody, Tr, Th, Td } from '@lidofinance/lido-ui';
 
 export const TableTitle = styled.caption<{ counter?: number }>`
   position: relative;
@@ -10,7 +9,6 @@ export const TableTitle = styled.caption<{ counter?: number }>`
   font-weight: 700;
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   line-height: 38px;
-  user-select: none;
 
   &::after {
     position: absolute;
@@ -44,33 +42,20 @@ export const TableStyled = styled(Table)`
   overflow: hidden;
 `;
 
-export const TableHead = styled(Thead)`
-  border-top: 0;
-`;
-
 export const TableBody = styled(Tbody)`
   position: relative;
 `;
 export const TableHeaderCell = styled(Th)`
-  padding: 24px 0 16px;
-  text-align: center;
-
-  & > div {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
+  padding: 24px 2px 16px;
+  text-align: right;
+  border-top: 0;
 
   &:first-child {
     text-align: left;
   }
-
-  &:last-child {
-    text-align: right;
-  }
 `;
 
-export const TableRow = styled(Tr)<Pick<ComponentProps<typeof Tr>, 'onClick'>>`
+export const TableRow = styled(Tr)`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: normal;
   line-height: 24px;
@@ -81,12 +66,14 @@ export const TableRow = styled(Tr)<Pick<ComponentProps<typeof Tr>, 'onClick'>>`
     border: 0 !important;
   }
 
-  ${({ onClick }) =>
+  ${({ onClick, theme }) =>
     onClick &&
     css`
       cursor: pointer;
       &:hover {
-        background-color: var(--lido-color-accentBorder);
+        background-color: ${theme.name === 'light'
+          ? '#edeff3'
+          : 'var(--lido-color-accentBorder)'};
       }
     `}
 

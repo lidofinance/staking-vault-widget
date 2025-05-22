@@ -1,1 +1,1 @@
-export * from './vault-table';
+export { VaultTable, type VaultTableProps } from './vault-table';

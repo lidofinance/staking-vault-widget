@@ -16,18 +16,19 @@ import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
 
 export type AddressBadgeProps = {
+  // display
   address?: string;
   showEnsName?: boolean;
+  showPopover?: boolean | 'default' | 'hover';
+  popoverPlacement?: React.ComponentProps<typeof Tooltip>['placement'];
+  // state
+  isLoading?: boolean;
+  // style
   symbols?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: TextColors;
   weight?: TextWeight;
-  bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
-  crossed?: boolean;
-  isLoading?: boolean;
-  showPopover?: boolean;
-  popoverPlacement?: React.ComponentProps<typeof Tooltip>['placement'];
-  popoverMode?: 'default' | 'hover';
+  hoverEffect?: boolean;
 } & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
@@ -42,7 +43,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       isLoading = false,
       showPopover = false,
       showEnsName = false,
-      popoverMode = 'default',
+      hoverEffect = true,
       popoverPlacement = 'topLeft',
       ...props
     },
@@ -85,10 +86,11 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
 
     const mainContent = (
       <PillContainer
+        ref={ref}
         crossed={crossed}
         bgColor={bgColor}
         onClick={onClick}
-        ref={ref}
+        hoverEffect={hoverEffect}
         {...props}
       >
         <AddressAvatar address={address} ensName={ensName} />
@@ -102,6 +104,9 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
         />
       </PillContainer>
     );
+
+    const popoverMode =
+      typeof showPopover === 'boolean' ? 'default' : showPopover;
 
     if (showPopover) {
       return (
