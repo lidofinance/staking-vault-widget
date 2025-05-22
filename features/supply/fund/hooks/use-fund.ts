@@ -48,7 +48,7 @@ export const useFund = () => {
 
         return success;
       },
-      [activeVault.owner, refetchVaultInfo, sendTX],
+      [activeVault?.owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

@@ -84,9 +84,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       );
       invariant(recipient, '[WithdrawFormProvider] recipient is undefined');
 
-      const { success } = await withdraw({ amount, recipient });
-
-      return success;
+      return await withdraw({ amount, recipient });
     },
     [withdraw],
   );
