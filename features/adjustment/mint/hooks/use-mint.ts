@@ -6,7 +6,7 @@ import { type Address, encodeFunctionData } from 'viem';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
 
@@ -20,11 +20,11 @@ export const useMint = () => {
 
   return {
     mint: useCallback(
-      async (recipient: Address, amount: bigint, token: string) => {
+      async (recipient: Address, amount: bigint, token: 'stETH' | 'wstETH') => {
         invariant(activeVault?.owner, '[useMint] owner is undefined');
 
-        const loadingActionText = `Minting ${token} backed by vault`;
-        const mainActionCompleteText = `Minted ${token} backed by vault`;
+        const loadingActionText = vaultTexts.actions.mint.loading(token);
+        const mainActionCompleteText = vaultTexts.actions.mint.completed(token);
 
         const mintCall = {
           to: activeVault.owner,

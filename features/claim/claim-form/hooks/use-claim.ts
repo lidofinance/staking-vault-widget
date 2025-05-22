@@ -3,7 +3,7 @@ import { useEstimateGas, useAccount } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
@@ -19,8 +19,8 @@ export const useClaim = () => {
       async (recipient: Address) => {
         invariant(owner, '[useClaim] owner is undefined');
 
-        const loadingActionText = `Claiming node operator fee`;
-        const mainActionCompleteText = `Claimed node operator fee`;
+        const loadingActionText = vaultTexts.actions.claim.loading;
+        const mainActionCompleteText = vaultTexts.actions.claim.completed;
 
         const claimCall = {
           to: owner,

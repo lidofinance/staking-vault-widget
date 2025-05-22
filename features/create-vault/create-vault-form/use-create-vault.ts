@@ -11,6 +11,7 @@ import {
 } from 'modules/web3';
 import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
 import { getContractAddress } from 'config';
+import { vaultTexts } from 'modules/vaults';
 
 import { ModalCTA } from './modal-cta';
 import { CreateVaultSchema } from '../types';
@@ -32,7 +33,7 @@ export const useCreateVault = () => {
 
         const tx: TransactionEntry = {
           to: vaultFactoryAddress,
-          loadingActionText: 'Creating vault',
+          loadingActionText: vaultTexts.actions.createVault.loading,
           data,
           value,
         };
@@ -40,8 +41,8 @@ export const useCreateVault = () => {
         return await withSuccess(
           sendTX({
             transactions: [tx],
-            mainActionCompleteText: 'Vault created',
-            mainActionLoadingText: 'Creating vault',
+            mainActionCompleteText: vaultTexts.actions.createVault.loading,
+            mainActionLoadingText: vaultTexts.actions.createVault.completed,
             renderSuccessContent: ModalCTA,
           }),
         );

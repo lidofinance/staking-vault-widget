@@ -5,7 +5,7 @@ import { Address, encodeFunctionData } from 'viem';
 
 import { useSendTransaction, withSuccess, useDappStatus } from 'modules/web3';
 import { useReportStatus } from 'features/report';
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
@@ -27,7 +27,7 @@ export const useWithdraw = () => {
       invariant(vaultOwner, '[useWithdraw] vaultOwner is undefined');
 
       const withdrawCall = {
-        loadingActionText: 'Withdrawing ETH from vault',
+        loadingActionText: vaultTexts.actions.withdraw.loading,
         to: vaultOwner,
         data: encodeFunctionData({
           abi: dashboardAbi,
@@ -45,8 +45,8 @@ export const useWithdraw = () => {
         sendTX({
           transactions,
           forceAtomic: true,
-          mainActionLoadingText: 'Withdrawing ETH from vault',
-          mainActionCompleteText: 'ETH withdrawn from vault',
+          mainActionLoadingText: vaultTexts.actions.withdraw.loading,
+          mainActionCompleteText: vaultTexts.actions.withdraw.completed,
           renderSuccessContent: GoToVault,
         }),
       );

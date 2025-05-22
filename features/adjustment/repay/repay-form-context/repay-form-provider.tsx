@@ -93,7 +93,10 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       if (!amount || !token) return false;
 
       invariant(amount, '[RepayFormProvider] amount is undefined');
-      invariant(token, '[RepayFormProvider] token is undefined');
+      invariant(
+        token === 'stETH' || token === 'wstETH',
+        '[RepayFormProvider] token is invalid',
+      );
 
       return await burn(amount, token);
     },
