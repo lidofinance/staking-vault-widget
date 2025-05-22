@@ -1,3 +1,4 @@
+import { vaultTexts } from 'modules/vaults';
 import { MainSettingsEntryType } from './types';
 
 export enum CREATE_VAULT_FORM_STEPS {
@@ -5,7 +6,7 @@ export enum CREATE_VAULT_FORM_STEPS {
   confirm,
 }
 
-const steps = ['Main settings', 'Verify new vault’s settings'];
+const steps = vaultTexts.actions.createVault.steps;
 
 export const SECTION_NAMES_BY_STEP = steps.reduce(
   (acc, step, index) => ({
@@ -17,43 +18,39 @@ export const SECTION_NAMES_BY_STEP = steps.reduce(
 
 export const CREATE_VAULT_STEPS = steps.length;
 
+const texts = vaultTexts.actions.createVault.fields;
+
 export const MAIN_SETTINGS: MainSettingsEntryType[] = [
   {
     name: 'nodeOperator',
-    title: 'Node Operator',
-    label: 'Node Operator address',
-    notes: 'Node Operator address cannot be changed after the vault is created',
     dataType: 'address',
+    ...texts.nodeOperator,
   },
   {
     name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    label: 'Node Operator fee, %',
     dataType: 'percent',
     type: 'number',
+    ...texts.nodeOperatorFee,
   },
   {
     name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    label: 'Confirmation Lifetime, hours',
     dataType: 'time',
     type: 'number',
+    ...texts.confirmationLifetime,
   },
   {
     name: 'vaultManager',
-    title: 'Vault Manager',
-    label: 'Vault Manager address',
     dataType: 'addressArray',
+    ...texts.vaultManager,
   },
   {
     name: 'nodeOperatorManager',
-    title: 'Node Operator Manager',
-    label: 'Node Operator Manager address',
     dataType: 'address',
+    ...texts.nodeOperatorManager,
   },
   {
     name: 'acceptTerms',
-    notes: 'Vault creation requires a supply of 1 ETH.',
     dataType: 'confirm',
+    ...texts.acceptTerms,
   },
 ];

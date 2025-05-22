@@ -31,7 +31,7 @@ export const CreateVaultInput: FC<GeneralInputProps> = (props) => {
       {title && (
         <InputTitle>
           {title}
-          <Hint hint={hint} />
+          <Hint text={hint} />
         </InputTitle>
       )}
       <Input {...props} />

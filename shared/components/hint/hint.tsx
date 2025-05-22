@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import { Question, Tooltip } from '@lidofinance/lido-ui';
+import { Fragment } from 'react';
 
 const QuestionIcon = styled(Question)`
   width: 20px;
@@ -21,6 +22,15 @@ type HintProps = {
 export const Hint = ({ text, placement = 'topLeft', ...rest }: HintProps) => {
   if (!text) {
     return null;
+  }
+
+  if (typeof text === 'string') {
+    text = text.split('\n').map((line, index, array) => (
+      <Fragment key={index}>
+        {line}
+        {index !== array.length - 1 && <br />}
+      </Fragment>
+    ));
   }
 
   return (
