@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { formatPercent } from 'utils/format-number';
 
 import { Percent } from './styles';

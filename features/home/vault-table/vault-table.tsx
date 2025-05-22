@@ -37,22 +37,19 @@ export type VaultTableProps = {
 
 const tableHeaders = [
   {
-    title: 'Vault Address / ENS',
+    title: 'Vault Address',
   },
   {
     title: 'Total value, ETH',
+    hint: 'The total amount of ETH deposited on validators and on the vault balance.',
   },
   {
     title: 'stETH liability',
+    hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
   },
-  // {
-  //   title: 'Net Staking APR',
-  // },
-  // {
-  //   title: 'stVault APY',
-  // },
   {
     title: 'Health factor',
+    hint: 'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.',
   },
 ];
 
@@ -203,9 +200,9 @@ export const VaultTable: FC<VaultTableProps> = ({
           <>
             <Thead>
               <TableRow>
-                {tableHeaders.map(({ title }) => (
+                {tableHeaders.map(({ title, hint }) => (
                   <TableHeaderCell key={title}>
-                    <HeaderCell title={title} />
+                    <HeaderCell hint={hint} title={title} />
                   </TableHeaderCell>
                 ))}
               </TableRow>

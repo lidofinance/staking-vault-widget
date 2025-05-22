@@ -7,7 +7,8 @@ const QuestionIcon = styled(Question)`
   width: 20px;
   height: 20px;
   fill: ${({ theme }) => theme.colors.textSecondary};
-  align-self: center;
+  align-self: baseline;
+  vertical-align: text-bottom;
 `;
 
 type TooltipProps = ComponentProps<typeof Tooltip>;
