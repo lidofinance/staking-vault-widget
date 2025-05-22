@@ -1,8 +1,9 @@
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { AllVaults } from './all-vaults/all-vaults';
-import { PageWrapper } from './styles';
+
+import { AllVaults } from './all-vaults';
+import { PageWrapper } from '../styles';
 
 export const AllVaultsPage = () => {
   return (

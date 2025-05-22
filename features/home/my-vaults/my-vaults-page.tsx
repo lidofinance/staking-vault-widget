@@ -3,8 +3,9 @@ import Head from 'next/head';
 
 import { Layout } from 'shared/components';
 
-import { PageWrapper } from './styles';
 import { MyVaults } from './my-vaults';
+
+import { PageWrapper } from '../styles';
 
 export const MyVaultsPage: FC = () => {
   return (

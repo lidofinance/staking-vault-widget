@@ -1,4 +1,4 @@
-import { VaultTable } from 'features/home/components/vault-table';
+import { VaultTable } from 'features/home/vault-table';
 import { useConnectedVaultsList } from './use-connected-vaults-list';
 
 export const AllVaults = () => {

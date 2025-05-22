@@ -1,6 +1,6 @@
-import { VaultTable } from 'features/home/components/vault-table';
-import { AddVault } from './add-vault/add-vault';
+import { VaultTable } from 'features/home/vault-table';
 
+import { AddVault } from './add-vault';
 import { useMyVaultsList } from './use-my-vaults-list';
 
 export const MyVaults = () => {

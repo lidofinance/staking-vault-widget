@@ -7,7 +7,7 @@ import { usePrefixedReplace } from 'shared/hooks/use-prefixed-history';
 
 import { MyVaultsPage } from 'features/home';
 import { appPaths } from 'consts/routing';
-import { AllVaults } from 'features/home/all-vaults';
+import { AllVaultsPage } from 'features/home/all-vaults';
 
 /**
  * We are using single index.html endpoint
@@ -50,7 +50,7 @@ export const HomePageIpfs: FC = () => {
   switch (parsedPath[0]) {
     case getPathWithoutFirstSlash(appPaths.vaults.all): {
       // TODO: fix and get address in IPFS mode
-      spaPage = <AllVaults />;
+      spaPage = <AllVaultsPage />;
       break;
     }
 
