@@ -10,7 +10,7 @@ import { useSendTransaction, withSuccess } from 'modules/web3';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useClaim = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -41,9 +41,13 @@ export const useClaim = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [owner, sendTX],
+      [owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

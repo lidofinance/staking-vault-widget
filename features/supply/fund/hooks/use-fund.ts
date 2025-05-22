@@ -15,7 +15,7 @@ import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { dashboardAbi } from 'abi/dashboard-abi';
 
 export const useFund = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
@@ -42,9 +42,13 @@ export const useFund = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, sendTX],
+      [activeVault.owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

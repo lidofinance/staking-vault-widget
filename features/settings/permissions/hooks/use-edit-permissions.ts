@@ -18,13 +18,13 @@ type EditPermissionsArgs = {
 };
 
 export const useEditPermissions = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     editPermissions: useCallback(
-      ({ toGrant, toRevoke }: EditPermissionsArgs) => {
+      async ({ toGrant, toRevoke }: EditPermissionsArgs) => {
         invariant(owner, '[useEditPermissions] owner is not defined');
         const transactions: TransactionEntry[] = [];
         if (toGrant.length > 0) {
@@ -53,7 +53,7 @@ export const useEditPermissions = () => {
             ),
           });
         }
-        return withSuccess(
+        const result = withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault permissions',
@@ -61,8 +61,12 @@ export const useEditPermissions = () => {
             renderSuccessContent: GoToVault,
           }),
         );
+
+        await refetchVaultInfo();
+
+        return result;
       },
-      [owner, sendTX],
+      [owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

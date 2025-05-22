@@ -14,7 +14,7 @@ import { useReportStatus } from 'features/report';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useMint = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -53,9 +53,19 @@ export const useMint = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, prepareReportCall, sendTX, isReportAvailable],
+      [
+        activeVault?.owner,
+        refetchVaultInfo,
+        prepareReportCall,
+        sendTX,
+        isReportAvailable,
+      ],
     ),
     ...rest,
   };

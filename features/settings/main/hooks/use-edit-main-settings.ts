@@ -30,7 +30,7 @@ const toMethodArg =
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
@@ -138,7 +138,7 @@ export const useEditMainSettings = () => {
           });
         }
 
-        return withSuccess(
+        const result = withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -146,8 +146,12 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
+
+        await refetchVaultInfo();
+
+        return result;
       },
-      [hasBothConfirmingRoles, owner, sendTX],
+      [hasBothConfirmingRoles, owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

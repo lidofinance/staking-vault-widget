@@ -15,7 +15,7 @@ import {
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useBurn = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -70,9 +70,13 @@ export const useBurn = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, sendTX, stETH, wstETH],
+      [activeVault?.owner, refetchVaultInfo, sendTX, stETH, wstETH],
     ),
     ...rest,
   };

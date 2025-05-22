@@ -17,7 +17,7 @@ type WithdrawArgs = {
 };
 
 export const useWithdraw = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
   const { isReportAvailable, prepareReportCall } = useReportStatus();
@@ -41,7 +41,7 @@ export const useWithdraw = () => {
         ? async () => [await prepareReportCall(), withdrawCall]
         : [withdrawCall];
 
-      return withSuccess(
+      const { success } = await withSuccess(
         sendTX({
           transactions,
           forceAtomic: true,
@@ -50,8 +50,20 @@ export const useWithdraw = () => {
           renderSuccessContent: GoToVault,
         }),
       );
+
+      if (success) {
+        await refetchVaultInfo();
+      }
+
+      return success;
     },
-    [vaultOwner, isReportAvailable, sendTX, prepareReportCall],
+    [
+      vaultOwner,
+      isReportAvailable,
+      refetchVaultInfo,
+      sendTX,
+      prepareReportCall,
+    ],
   );
 
   return {
