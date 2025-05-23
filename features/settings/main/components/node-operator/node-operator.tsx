@@ -7,12 +7,15 @@ import {
   AddressBadge,
   AddressLinkEtherscan,
   ButtonLink,
+  Hint,
 } from 'shared/components';
 
 import { ActionGroup, ActionWrapper, Content, Wrapper } from './styles';
 
 import { truncateAddress } from 'utils/truncate-address';
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultInfo, vaultTexts } from 'modules/vaults';
+
+const texts = vaultTexts.actions.settings.fields.nodeOperator;
 
 export const NodeOperator: FC = () => {
   const { activeVault } = useVaultInfo();
@@ -33,7 +36,8 @@ export const NodeOperator: FC = () => {
     <Wrapper>
       <Content>
         <Text size="xs" strong>
-          Node Operator
+          {texts.title}
+          <Hint text={texts.hint} />
         </Text>
         <AddressBadge weight={400} address={nodeOperatorAddress} symbols={21} />
         <ActionGroup>

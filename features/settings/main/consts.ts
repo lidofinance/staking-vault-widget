@@ -12,6 +12,7 @@ import {
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY,
+  vaultTexts,
 } from 'modules/vaults';
 import { Address, isAddress } from 'viem';
 import { Resolver, UseFormGetValues } from 'react-hook-form';
@@ -63,44 +64,34 @@ export const editMainSettingsSchema = z.object({
 export const indicatorsForRender: MainSettingsOverview[] = [
   {
     name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    label: 'Current Node Operator fee, %',
-    editLabel: 'Propose new Node Operator fee, %',
     dataType: 'percent',
     vaultKey: 'nodeOperatorFeeBP',
     canEditRole: 'confirmingRoles',
+    ...vaultTexts.actions.settings.fields.nodeOperatorFee,
   },
   {
     name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    label: 'Current Confirmation Life Time, hours',
-    editLabel: 'Propose new Сonfirmation Lifetime, hours',
     dataType: 'time',
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
+    ...vaultTexts.actions.settings.fields.confirmationLifetime,
   },
 ];
 
 export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'defaultAdmins',
-    title: 'Vault Manager',
-    label: 'Vault Manager address',
-    editLabel: 'Vault Manager address',
     dataType: 'address',
-    actionText: 'Add new address',
     vaultKey: 'defaultAdmins',
     canEditRole: 'defaultAdmin',
+    ...vaultTexts.actions.settings.fields.vaultManager,
   },
   {
     name: 'nodeOperatorManagers',
-    title: 'Node Operator Manager',
-    label: 'Node Operator Manager address',
-    editLabel: 'Node Operator Manager address',
     dataType: 'address',
-    actionText: 'Add new address',
     vaultKey: 'nodeOperatorManagers',
     canEditRole: 'nodeOperatorManager',
+    ...vaultTexts.actions.settings.fields.nodeOperatorManager,
   },
 ];
 

@@ -37,9 +37,11 @@ export const vaultTexts = {
         nodeOperatorManager: {
           title: 'Node Operator Manager',
           label: 'Node Operator Manager address',
-          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
+          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.',
         },
         acceptTerms: {
+          label:
+            'I confirm that I’ve read and agree:\n •  with the fees structure\n •  mechanisms applied in extreme scenarios',
           notes: 'Vault creation requires a supply of 1 ETH.',
         },
       },
@@ -76,6 +78,38 @@ export const vaultTexts = {
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      fields: {
+        nodeOperator: {
+          title: 'Node Operator',
+          hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
+        },
+        nodeOperatorFee: {
+          title: 'Node Operator Fee',
+          label: 'Node Operator fee, %',
+          editLabel: 'Propose new Node Operator fee, %',
+          hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
+        },
+        confirmationLifetime: {
+          title: 'Confirmation Lifetime',
+          label: 'Confirmation Lifetime, hours',
+          editLabel: 'Propose new Confirmation Lifetime, hours',
+          hint: 'The time period in which the Node Operator has to confirm the report.\nMandatory parameter, [0 hours .. 24 hours].\nIf the Node Operator does not confirm the report within this time period, it will be automatically confirmed.',
+        },
+        vaultManager: {
+          title: 'Vault Manager',
+          label: 'Vault Manager address',
+          editLabel: 'Vault Manager address',
+          actionText: 'Add new address',
+          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Vault Owner (Staker) perspective.\nMultiple addresses supported.',
+        },
+        nodeOperatorManager: {
+          title: 'Node Operator Manager',
+          label: 'Node Operator Manager address',
+          editLabel: 'Node Operator Manager address',
+          actionText: 'Add new address',
+          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
+        },
+      },
     },
   },
   metrics: {

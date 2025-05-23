@@ -23,6 +23,7 @@ export type MainSettingsOverview = {
   title: string;
   label: string;
   editLabel: string;
+  hint?: string;
   dataType: InputDataType;
   actionText?: string;
   vaultKey: keyof VaultInfo;
