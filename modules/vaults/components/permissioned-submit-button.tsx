@@ -15,8 +15,6 @@ type PermissionedSubmitProps = {
   dashboardRole: VAULTS_ALL_ROLES;
 } & ComponentProps<typeof Button>;
 
-const capitilize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
 export const PermissionedSubmitButton = forwardRef<
   HTMLButtonElement,
   PermissionedSubmitProps
@@ -62,11 +60,15 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   const shouldShowPermissionError =
     !isLoading && data && !data.hasPermissions && isAccountActive;
 
+  const missingRoles = data?.missingRoles
+    .map((role) => vaultTexts.roles[role].title)
+    .join(', ');
+
   return (
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
+          ? `You don't have ${missingRoles} role${data && data.missingRoles.length > 1 ? 's' : ''}`
           : children}
       </Button>
     </ConnectWalletButton>
