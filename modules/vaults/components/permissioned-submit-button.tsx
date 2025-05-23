@@ -8,7 +8,8 @@ import {
   useVaultPermission,
   useVaultPermissions,
 } from '../hooks/use-vault-permissions';
-import { VAULTS_ALL_ROLES } from '../consts';
+
+import { VAULTS_ALL_ROLES, vaultTexts } from '../consts';
 
 type PermissionedSubmitProps = {
   dashboardRole: VAULTS_ALL_ROLES;
@@ -30,11 +31,13 @@ export const PermissionedSubmitButton = forwardRef<
   const shouldShowPermissionError =
     !isLoading && !hasPermission && isAccountActive;
 
+  const roleTitle = vaultTexts.roles[dashboardRole].title;
+
   return (
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${capitilize(dashboardRole)} role`
+          ? `You don't have ${roleTitle} role`
           : children}
       </Button>
     </ConnectWalletButton>

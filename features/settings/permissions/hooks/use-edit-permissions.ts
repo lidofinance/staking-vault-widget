@@ -18,7 +18,7 @@ type EditPermissionsArgs = {
 };
 
 export const useEditPermissions = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -62,11 +62,9 @@ export const useEditPermissions = () => {
           }),
         );
 
-        await refetchVaultInfo();
-
         return result;
       },
-      [owner, refetchVaultInfo, sendTX],
+      [owner, sendTX],
     ),
     ...rest,
   };

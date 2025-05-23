@@ -11,18 +11,20 @@ import {
 } from './styles';
 import { SectionContainer } from 'features/settings/permissions/styles';
 
-import { PermissionsRoles } from 'features/settings/permissions/types';
 import { PermissionsDataProvider, PermissionsFormProvider } from './contexts';
 import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
   VAULT_ROOT_ROLES,
   useVaultPermission,
+  vaultTexts,
+  VAULTS_NO_ROLES,
+  VAULT_OWNER_ROLES,
 } from 'modules/vaults';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
-  payload: PermissionsRoles[];
+  roles: (VAULTS_NO_ROLES | VAULT_OWNER_ROLES)[];
   canEditRole: VAULT_ROOT_ROLES;
 };
 
@@ -30,12 +32,12 @@ const renderPermissionsList: PermissionSectionEntry[] = [
   {
     permissionsTitle: 'Vault Manager Permissions',
     canEditRole: 'defaultAdmin',
-    payload: VAULT_MANAGER_PERMISSIONS_LIST,
+    roles: VAULT_MANAGER_PERMISSIONS_LIST,
   },
   {
     permissionsTitle: 'Node Operator Manager Permissions',
     canEditRole: 'nodeOperatorManager',
-    payload: NO_MANAGER_PERMISSION_LIST,
+    roles: NO_MANAGER_PERMISSION_LIST,
   },
 ];
 
@@ -46,13 +48,14 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
     <PermissionContainer>
       <PermissionGroupTitle>{props.permissionsTitle}</PermissionGroupTitle>
       <PermissionBlock>
-        {props.payload.map(({ role, title, tooltip }) => {
+        {props.roles.map((role) => {
+          const { title, hint } = vaultTexts.roles[role];
           return (
             <PermissionRoleWrapper key={role}>
               <RoleDescription
                 permission={role}
                 description={title}
-                tooltip={tooltip}
+                tooltip={hint}
               />
               <AddressBlock readonly={!hasPermission} permission={role} />
             </PermissionRoleWrapper>
