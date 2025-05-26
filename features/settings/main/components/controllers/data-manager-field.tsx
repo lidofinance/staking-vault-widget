@@ -12,6 +12,7 @@ import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
 import { Hint } from 'shared/components';
 
 import { GroupWrapper } from './styles';
+import { useDappStatus } from 'modules/web3';
 
 type InputResolverProps = MainSettingsOverview;
 
@@ -25,11 +26,14 @@ export const DataManagerField: FC<InputResolverProps> = ({
 }) => {
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { isDappActive } = useDappStatus();
   const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 
-  const isEditable = (isConfirmingRoles && hasConfirmingRole) || hasPermission;
+  const isEditable =
+    isDappActive && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
+
   return (
     <GroupWrapper>
       <Text size="xs" strong>

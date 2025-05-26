@@ -87,7 +87,7 @@ export const useEditMainSettings = () => {
               args: [revokeRoles],
             }),
             loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
-              grantRoles.length,
+              revokeRoles.length,
             ),
           });
         }

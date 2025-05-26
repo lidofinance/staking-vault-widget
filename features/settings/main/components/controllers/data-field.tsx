@@ -9,6 +9,7 @@ import { ReadonlyInput } from './readonly-input';
 import { GroupWrapper } from './styles';
 
 import type { MainSettingsOverview } from 'features/settings/main/types';
+import { useDappStatus } from 'modules/web3';
 
 type InputResolverProps = MainSettingsOverview;
 
@@ -24,11 +25,13 @@ export const DataField: FC<InputResolverProps> = ({
 }) => {
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { isDappActive } = useDappStatus();
   const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 
-  const isEditable = hasConfirmingRole || hasPermission;
+  const isEditable =
+    isDappActive && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
   return (
     <GroupWrapper>
       <Text size="xs" strong>

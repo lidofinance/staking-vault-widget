@@ -21,6 +21,7 @@ import {
   VAULTS_NO_ROLES,
   VAULT_OWNER_ROLES,
 } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
@@ -42,7 +43,10 @@ const renderPermissionsList: PermissionSectionEntry[] = [
 ];
 
 const PermissionsSection = (props: PermissionSectionEntry) => {
+  const { isDappActive } = useDappStatus();
   const { hasPermission } = useVaultPermission(props.canEditRole);
+
+  const isReadonly = !isDappActive || !hasPermission;
 
   return (
     <PermissionContainer>
@@ -57,7 +61,7 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
                 description={title}
                 tooltip={hint}
               />
-              <AddressBlock readonly={!hasPermission} permission={role} />
+              <AddressBlock readonly={isReadonly} permission={role} />
             </PermissionRoleWrapper>
           );
         })}
