@@ -3,5 +3,6 @@ export {
   useVaultOverview,
   type VaultOverviewContextType,
   type VaultOverviewContextKeys,
-  type SectionData as SectionPayload,
+  type SectionData,
+  type SectionPayload,
 } from './vault-overview';

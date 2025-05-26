@@ -1,8 +1,8 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
-import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { SectionData, useVaultOverview } from 'features/overview/contexts';
 import { appPaths } from 'consts/routing';
 
-const sectionPayloadList: SectionPayload[] = [
+const sectionPayloadList: SectionData[] = [
   {
     key: 'nodeOperatorFee',
   },

@@ -35,7 +35,7 @@ export const PermissionedSubmitButton = forwardRef<
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${roleTitle} role`
+          ? vaultTexts.common.errors.noRoles([roleTitle])
           : children}
       </Button>
     </ConnectWalletButton>
@@ -60,15 +60,14 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   const shouldShowPermissionError =
     !isLoading && data && !data.hasPermissions && isAccountActive;
 
-  const missingRoles = data?.missingRoles
-    .map((role) => vaultTexts.roles[role].title)
-    .join(', ');
+  const missingRoles =
+    data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
 
   return (
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${missingRoles} role${data && data.missingRoles.length > 1 ? 's' : ''}`
+          ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}
       </Button>
     </ConnectWalletButton>

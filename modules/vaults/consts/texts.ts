@@ -2,7 +2,10 @@ type Token = 'stETH' | 'wstETH';
 
 type ConfirmAction = 'Setting' | 'Proposing';
 
+// This structure contains texts related to vault functionality
+// such texts for actions, metrics, roles and etc
 export const vaultTexts = {
+  // configuration for transactions and forms
   actions: {
     approve: {
       loading: (token: Token) => `Approving ${token}` as const,
@@ -112,6 +115,8 @@ export const vaultTexts = {
       },
     },
   },
+  // configuration for vault metrics as seen in overview page
+  // but can be used in other places as well where vault status is displayed
   metrics: {
     totalValue: {
       title: 'Total value',
@@ -175,6 +180,7 @@ export const vaultTexts = {
       action: 'Claim',
     },
   },
+  // configuration for vault roles
   roles: {
     defaultAdmin: {
       title: 'Vault Owner',
@@ -281,6 +287,13 @@ export const vaultTexts = {
     locker: {
       title: 'Increase lock amount in vault',
       hint: 'Allows to increase locked ETH amount on stVault to allow stETH minting',
+    },
+  },
+  // common texts like errors, warnings, etc.
+  common: {
+    errors: {
+      noRoles: (roleNames: string[]) =>
+        `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
     },
   },
 } as const;

@@ -1,8 +1,8 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
-import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { SectionData, useVaultOverview } from 'features/overview/contexts';
 import { formatPercent, getHealthFactorColor } from 'utils';
 
-const sectionPayloadList: SectionPayload[] = [
+const sectionPayloadList: SectionData[] = [
   {
     key: 'healthFactorNumber',
   },

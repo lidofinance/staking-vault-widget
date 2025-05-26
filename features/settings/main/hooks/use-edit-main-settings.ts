@@ -147,6 +147,7 @@ export const useEditMainSettings = () => {
           }),
         );
 
+        // refetch anyway because some transactions may be successful
         await refetchVaultInfo();
 
         return result;

@@ -8,8 +8,8 @@ import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 import { OverviewItemValue } from './overview-item-value';
 import { ItemWrapper, Title } from './styles';
 
-import type { SectionPayload } from 'features/overview/contexts/vault-overview';
 import { Hint } from 'shared/components';
+import type { SectionPayload } from 'features/overview/contexts';
 
 export type ItemProps = {
   payload: string | Address | number;
