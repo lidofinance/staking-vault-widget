@@ -4,7 +4,7 @@ import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
 
 import {
   TransactionEntry,
@@ -15,19 +15,20 @@ import {
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useBurn = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     burn: useCallback(
-      async (amount: bigint, token: string) => {
+      async (amount: bigint, token: 'stETH' | 'wstETH') => {
         invariant(activeVault?.owner, '[useMint] owner is undefined');
 
-        const loadingActionText = `Repaying ${token}`;
-        const mainActionCompleteText = `Repaid ${token}`;
+        const loadingActionText = vaultTexts.actions.repay.loading(token);
+        const mainActionCompleteText =
+          vaultTexts.actions.repay.completed(token);
 
-        const transactions = async () => {
+        const prepareTransactions = async () => {
           const calls: TransactionEntry[] = [];
 
           const isSteth = token === 'stETH';
@@ -43,7 +44,7 @@ export const useBurn = () => {
                 amount,
                 to: activeVault.owner,
               })),
-              loadingActionText: `Approving ${token}`,
+              loadingActionText: vaultTexts.actions.approve.loading(token),
             };
             calls.push(approveCall);
           }
@@ -61,7 +62,7 @@ export const useBurn = () => {
 
         const { success } = await withSuccess(
           sendTX({
-            transactions,
+            transactions: prepareTransactions,
             forceAtomic: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
@@ -69,9 +70,13 @@ export const useBurn = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, sendTX, stETH, wstETH],
+      [activeVault?.owner, refetchVaultInfo, sendTX, stETH, wstETH],
     ),
     ...rest,
   };

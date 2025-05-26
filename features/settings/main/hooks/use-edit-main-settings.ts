@@ -4,6 +4,7 @@ import {
   useVaultInfo,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
+  vaultTexts,
 } from 'modules/vaults';
 import {
   TransactionEntry,
@@ -29,7 +30,7 @@ const toMethodArg =
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
@@ -58,7 +59,9 @@ export const useEditMainSettings = () => {
               functionName: 'grantRoles',
               args: [grantRoles],
             }),
-            loadingActionText: `Granting ${grantRoles.length} roles`,
+            loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
+              grantRoles.length,
+            ),
           });
         }
 
@@ -83,7 +86,9 @@ export const useEditMainSettings = () => {
               functionName: 'revokeRoles',
               args: [revokeRoles],
             }),
-            loadingActionText: `Revoking ${revokeRoles.length} roles`,
+            loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
+              grantRoles.length,
+            ),
           });
         }
 
@@ -103,7 +108,10 @@ export const useEditMainSettings = () => {
               functionName: 'setNodeOperatorFeeBP',
               args: [BigInt(newFee)],
             }),
-            loadingActionText: `${confirmingRoleAction} ${newFee / VAULT_TOTAL_BASIS_POINTS}% Node Operator fee  `,
+            loadingActionText: vaultTexts.actions.settings.confirmNoFee(
+              confirmingRoleAction,
+              newFee / VAULT_TOTAL_BASIS_POINTS,
+            ),
           });
         }
 
@@ -123,11 +131,14 @@ export const useEditMainSettings = () => {
               functionName: 'setConfirmExpiry',
               args: [newConfirmExpiry],
             }),
-            loadingActionText: `${confirmingRoleAction} ${newConfirmExpiry} hours Confirmation Lifetime`,
+            loadingActionText: vaultTexts.actions.settings.confirmExpiry(
+              confirmingRoleAction,
+              Number(newConfirmExpiry),
+            ),
           });
         }
 
-        return withSuccess(
+        const result = withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -135,8 +146,13 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
+
+        // refetch anyway because some transactions may be successful
+        await refetchVaultInfo();
+
+        return result;
       },
-      [hasBothConfirmingRoles, owner, sendTX],
+      [hasBothConfirmingRoles, owner, refetchVaultInfo, sendTX],
     ),
     ...rest,
   };

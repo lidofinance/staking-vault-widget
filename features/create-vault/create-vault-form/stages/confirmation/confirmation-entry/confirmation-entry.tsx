@@ -50,7 +50,7 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   return (
     <ListItem key={name}>
       <ConfirmationLabel>
-        {title} <Hint hint={hint} />
+        {title} <Hint text={hint} />
       </ConfirmationLabel>
       <DataComponent payload={value} />
     </ListItem>

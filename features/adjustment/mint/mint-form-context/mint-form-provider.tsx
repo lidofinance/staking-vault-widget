@@ -68,6 +68,10 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       invariant(recipient, '[MintFormProvider] recipient is undefined');
       invariant(amount, '[MintFormProvider] amount is undefined');
       invariant(token, '[MintFormProvider] token is undefined');
+      invariant(
+        token === 'stETH' || token === 'wstETH',
+        '[MintFormProvider] token is invalid',
+      );
 
       return await mint(recipient, amount, token);
     },

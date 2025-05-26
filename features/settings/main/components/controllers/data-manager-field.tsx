@@ -9,6 +9,7 @@ import {
 import { EditPropertyAddress } from './edit-property-address';
 
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+import { Hint } from 'shared/components';
 
 import { GroupWrapper } from './styles';
 
@@ -19,6 +20,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
   name,
   title,
   vaultKey,
+  hint,
   canEditRole,
 }) => {
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
@@ -32,6 +34,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
     <GroupWrapper>
       <Text size="xs" strong>
         {title}
+        <Hint text={hint} />
       </Text>
       <DisplayAddress isEditable={isEditable} vaultKey={vaultKey} />
       {isEditable && (

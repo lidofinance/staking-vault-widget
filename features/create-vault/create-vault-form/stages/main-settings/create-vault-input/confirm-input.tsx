@@ -17,9 +17,9 @@ export const ConfirmInput = (props: GeneralInputProps) => {
       isError={isError}
       label={
         <InfoList>
-          <span>I confirm that I&apos;ve read and agree:</span>
-          <span>&ensp;&bull; with the fees structure</span>
-          <span>&ensp;&bull; mechanisms applied in extreme scenarios</span>
+          {props.label
+            ?.split('\n')
+            .map((item, index) => <span key={index}>{item}</span>)}
         </InfoList>
       }
       {...register(props.name, {

@@ -1,13 +1,17 @@
+import { useCallback } from 'react';
 import { Accordion } from '@lidofinance/lido-ui';
 import { useInpageNavigation } from 'providers/inpage-navigation';
-import { useCallback } from 'react';
 
 type AccordionNavigatableProps = React.ComponentProps<typeof Accordion> & {
   id: string;
 };
 
-export const AccordionNavigatable = (props: AccordionNavigatableProps) => {
-  const { onCollapse, id } = props;
+export const AccordionNavigatable = ({
+  onCollapse,
+  id,
+  defaultExpanded,
+  ...rest
+}: AccordionNavigatableProps) => {
   const { hashNav, resetSpecificAnchor } = useInpageNavigation();
 
   const handleCollapse = useCallback(() => {
@@ -15,10 +19,13 @@ export const AccordionNavigatable = (props: AccordionNavigatableProps) => {
     onCollapse?.();
   }, [resetSpecificAnchor, id, onCollapse]);
 
+  const shouldExpand = hashNav ? hashNav === id : defaultExpanded;
+
   return (
     <Accordion
-      defaultExpanded={hashNav === id}
-      {...props}
+      {...rest}
+      id={id}
+      defaultExpanded={shouldExpand}
       onCollapse={handleCollapse}
     />
   );

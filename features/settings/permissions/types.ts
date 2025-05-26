@@ -39,12 +39,6 @@ export type GrantRole = {
   role: Hex;
 };
 
-export type PermissionsRoles = {
-  role: PermissionKeys;
-  title: string;
-  tooltip: string;
-};
-
 type VaultPermissionInput = { value: string };
 
 export type VaultPermissions = Record<PermissionKeys, VaultPermissionInput[]>;

@@ -18,7 +18,7 @@ import { useVaultInfo } from 'modules/vaults';
 import { Address } from 'viem';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, refetch, isRefetching } = useVaultInfo();
+  const { activeVault, isRefetching } = useVaultInfo();
   const { editMainSettings, retryEvent } = useEditMainSettings();
 
   const formObject = useForm<EditMainSettingsSchema>({
@@ -54,13 +54,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       const { success } = await editMainSettings(data);
 
-      // refetch even when error because some transactions may be successful
-      // or reverted due to state change
-      await refetch({ cancelRefetch: true, throwOnError: true });
-
       return success;
     },
-    [editMainSettings, refetch],
+    [editMainSettings],
   );
 
   return (

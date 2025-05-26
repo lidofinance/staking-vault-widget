@@ -8,19 +8,21 @@ import { useVaultInfo, useVaultPermission } from 'modules/vaults';
 import { OverviewItemValue } from './overview-item-value';
 import { ItemWrapper, Title } from './styles';
 
+import { Hint } from 'shared/components';
 import type { SectionPayload } from 'features/overview/contexts';
 
 export type ItemProps = {
-  content: string | Address | number;
+  payload: string | Address | number;
   color?: string;
 } & Omit<SectionPayload, 'key'>;
 
 export const OverviewItem: FC<ItemProps> = ({
   title,
-  content,
+  payload,
   actionLink,
   actionRole,
-  actionText,
+  action,
+  hint,
   isLoading,
   color,
 }) => {
@@ -32,7 +34,7 @@ export const OverviewItem: FC<ItemProps> = ({
     // 1. all data is provided
     (
       actionLink &&
-      actionText &&
+      action &&
       vaultAddress &&
       // 2. user has permission for it (if actionRole is provided)
       (!actionRole || hasPermission)
@@ -46,10 +48,11 @@ export const OverviewItem: FC<ItemProps> = ({
       <Title>
         <Text color="secondary" size="xxs">
           {title}
+          <Hint text={hint} />
         </Text>
       </Title>
       <OverviewItemValue
-        content={content}
+        content={payload}
         isLoading={isLoading}
         color={color}
       />
@@ -59,7 +62,7 @@ export const OverviewItem: FC<ItemProps> = ({
           variant="translucent"
           onClick={() => router.push(actionLink(vaultAddress))}
         >
-          {actionText}
+          {action}
         </Button>
       )}
     </ItemWrapper>

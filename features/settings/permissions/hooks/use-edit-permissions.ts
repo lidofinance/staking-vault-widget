@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Address, encodeFunctionData, PublicClient } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultInfo, vaultTexts } from 'modules/vaults';
 import { GrantRole } from 'features/settings/permissions/types';
 import invariant from 'tiny-invariant';
 import {
@@ -24,7 +24,7 @@ export const useEditPermissions = () => {
 
   return {
     editPermissions: useCallback(
-      ({ toGrant, toRevoke }: EditPermissionsArgs) => {
+      async ({ toGrant, toRevoke }: EditPermissionsArgs) => {
         invariant(owner, '[useEditPermissions] owner is not defined');
         const transactions: TransactionEntry[] = [];
         if (toGrant.length > 0) {
@@ -35,7 +35,9 @@ export const useEditPermissions = () => {
               functionName: 'grantRoles',
               args: [toGrant],
             }),
-            loadingActionText: `Granting ${toGrant.length} permissions`,
+            loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
+              toGrant.length,
+            ),
           });
         }
         if (toRevoke.length > 0) {
@@ -46,10 +48,12 @@ export const useEditPermissions = () => {
               functionName: 'revokeRoles',
               args: [toRevoke],
             }),
-            loadingActionText: `Revoking ${toRevoke.length} permissions`,
+            loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
+              toRevoke.length,
+            ),
           });
         }
-        return withSuccess(
+        const result = withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault permissions',
@@ -57,6 +61,8 @@ export const useEditPermissions = () => {
             renderSuccessContent: GoToVault,
           }),
         );
+
+        return result;
       },
       [owner, sendTX],
     ),
