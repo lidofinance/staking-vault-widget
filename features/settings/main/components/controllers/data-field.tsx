@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
+import { useDappStatus } from 'modules/web3';
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
 
 import { Hint } from 'shared/components';
@@ -9,7 +10,6 @@ import { ReadonlyInput } from './readonly-input';
 import { GroupWrapper } from './styles';
 
 import type { MainSettingsOverview } from 'features/settings/main/types';
-import { useDappStatus } from 'modules/web3';
 
 type InputResolverProps = MainSettingsOverview;
 

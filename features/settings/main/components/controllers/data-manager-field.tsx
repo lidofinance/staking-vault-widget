@@ -1,18 +1,18 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
-import { DisplayAddress } from './display-address';
 
-import {
-  MainSettingsOverview,
-  ManagersKeys,
-} from 'features/settings/main/types';
-import { EditPropertyAddress } from './edit-property-address';
-
+import { useDappStatus } from 'modules/web3';
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
 import { Hint } from 'shared/components';
 
+import { EditPropertyAddress } from './edit-property-address';
+import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
-import { useDappStatus } from 'modules/web3';
+
+import type {
+  MainSettingsOverview,
+  ManagersKeys,
+} from 'features/settings/main/types';
 
 type InputResolverProps = MainSettingsOverview;
 
