@@ -70,11 +70,11 @@ export const editMainSettingsSchema = z.object({
   defaultAdmins: z.array(addressSchema),
   nodeOperatorFeeBP: z.object({
     options: z.array(votingFeeSchema),
-    selectedIndex: z.number(),
+    selectedIndex: z.string(),
   }),
   confirmExpiry: z.object({
     options: z.array(votingLifetimeSchema),
-    selectedIndex: z.number(),
+    selectedIndex: z.string(),
   }),
 });
 

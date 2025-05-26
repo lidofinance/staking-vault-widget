@@ -74,12 +74,12 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     });
 
     nodeOperatorFeeBP.push({
-      value: 0,
+      value: '',
       type: 'edit',
     });
 
     confirmExpiry.push({
-      value: 0,
+      value: '',
       type: 'edit',
     });
 
