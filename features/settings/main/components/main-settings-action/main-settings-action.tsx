@@ -10,38 +10,20 @@ import { ConnectWalletButton } from 'shared/wallet';
 export const MainSettingsAction: FC = () => {
   const {
     watch,
-    setValue,
-    formState: { isValid, isDirty, isSubmitting },
+    formState: { isValid, isDirty, isSubmitting, isValidating },
+    reset,
   } = useFormContext();
   const isClearDisabled = !isDirty;
-  const isSubmitDisabled = !isValid || !isDirty || isSubmitting;
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isValidating;
   const formFields = watch();
 
   const handleClearMainForm = () => {
-    const initialData: RoleFieldSchema[][] = Object.entries(formFields).map(
-      ([key, itemsList]) => {
-        if (multipleDataFields.includes(key)) {
-          return itemsList
-            .filter((item: RoleFieldSchema) =>
-              ['display', 'remove'].includes(item.state),
-            )
-            .map((item: RoleFieldSchema) => ({
-              ...item,
-              state: 'display',
-            })) as RoleFieldSchema[];
-        }
-
-        return [];
-      },
-    );
-
-    Object.keys(formFields).map((key, index) =>
-      setValue(key, initialData[index]),
-    );
+    reset();
   };
 
   const [buttonText, counter] = useMemo(() => {
     let counter = 0;
+
     if (!isSubmitDisabled) {
       multipleDataFields.forEach((key) => {
         const fields = formFields[key];
@@ -56,11 +38,11 @@ export const MainSettingsAction: FC = () => {
         counter += Number(grant > 0) + Number(remove > 0);
       });
 
-      if (formFields.nodeOperatorFeeBP.length > 0) {
+      if (formFields.nodeOperatorFeeBP.selectedIndex > 0) {
         counter++;
       }
 
-      if (formFields.confirmExpiry.length > 0) {
+      if (formFields.confirmExpiry.selectedIndex > 0) {
         counter++;
       }
 

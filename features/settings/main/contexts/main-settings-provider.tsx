@@ -1,54 +1,60 @@
-import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
 import { FormController } from 'shared/hook-form/form-controller';
 
-import {
-  EditMainSettingsSchema,
-  ManagersKeys,
-  RoleFieldSchema,
-} from 'features/settings/main/types';
+import { EditMainSettingsSchema } from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
 import { validateFormWithZod } from 'utils/validate-form-value';
-import {
-  editMainSettingsSchema,
-  multipleDataFields,
-} from 'features/settings/main/consts';
+import { editMainSettingsSchema } from 'features/settings/main/consts';
 import { useVaultInfo } from 'modules/vaults';
-import { Address } from 'viem';
+import { useMainSettingsData } from './main-settings-data-provider';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, refetch, isRefetching } = useVaultInfo();
+  const { refetch } = useVaultInfo();
   const { editMainSettings, retryEvent } = useEditMainSettings();
+  const settingsData = useMainSettingsData();
+  const promisedSettingsData = useAwaiter(settingsData);
 
   const formObject = useForm<EditMainSettingsSchema>({
-    defaultValues: {
-      nodeOperatorManagers: [],
-      nodeOperatorFeeBP: [],
-      confirmExpiry: [],
-      defaultAdmins: [],
+    defaultValues: async () => {
+      const settingsData = await promisedSettingsData.awaiter;
+      if (settingsData) {
+        const {
+          confirmExpiry,
+          defaultAdmins,
+          nodeOperatorFeeBP,
+          nodeOperatorManagers,
+        } = settingsData;
+        return {
+          defaultAdmins,
+          nodeOperatorManagers,
+          confirmExpiry: {
+            options: confirmExpiry,
+            selectedIndex: confirmExpiry
+              .findIndex((item) => item.type === 'current')
+              .toString(),
+          },
+          nodeOperatorFeeBP: {
+            options: nodeOperatorFeeBP,
+            selectedIndex: nodeOperatorFeeBP
+              .findIndex((item) => item.type === 'current')
+              .toString(),
+          },
+        };
+      }
+      //
+      return {
+        nodeOperatorManagers: [],
+        defaultAdmins: [],
+        confirmExpiry: { options: [], selectedIndex: 0 },
+        nodeOperatorFeeBP: { options: [], selectedIndex: 0 },
+      };
     },
     resolver: validateFormWithZod(editMainSettingsSchema),
     mode: 'all',
   });
-
-  useEffect(() => {
-    if (!isRefetching) {
-      (multipleDataFields as ManagersKeys[]).map((key) => {
-        const managersAddresses = activeVault?.[key];
-        if (managersAddresses && managersAddresses.length > 0) {
-          managersAddresses.forEach((address: Address, index: number) => {
-            const value = {
-              value: address,
-              state: 'display',
-              isGranted: true,
-            } as unknown as RoleFieldSchema;
-            formObject.setValue(`${key}.${index}` as const, value);
-          });
-        }
-      });
-    }
-  }, [formObject, activeVault, isRefetching]);
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {

@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { ReadonlyInput } from './readonly-input';
+import { ReadonlyView } from './readonly-view';
 import { GroupWrapper } from './styles';
 
-import type { MainSettingsOverview } from 'features/settings/main/types';
+import { MainSettingsVoting } from 'features/settings/main/types';
 import { EditProperty } from './edit-property';
 import { Text } from '@lidofinance/lido-ui';
 import {
@@ -10,16 +10,15 @@ import {
   useVaultPermission,
 } from 'modules/vaults/hooks/use-vault-permissions';
 
-type InputResolverProps = MainSettingsOverview;
+type InputResolverProps = MainSettingsVoting;
 
 export const DataField: FC<InputResolverProps> = ({
-  label,
   editLabel,
   name,
   title,
-  actionText = 'Initiate a change',
   vaultKey,
   canEditRole,
+  mask,
 }) => {
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
@@ -28,18 +27,15 @@ export const DataField: FC<InputResolverProps> = ({
   );
 
   const isEditable = hasConfirmingRole || hasPermission;
+
   return (
     <GroupWrapper>
       <Text size="xs" strong>
         {title}
       </Text>
-      <ReadonlyInput label={label} vaultKey={vaultKey} />
+      {!isEditable && <ReadonlyView vaultKey={vaultKey} />}
       {isEditable && (
-        <EditProperty
-          editLabel={editLabel}
-          name={name}
-          actionText={actionText}
-        />
+        <EditProperty editLabel={editLabel} name={name} mask={mask} />
       )}
     </GroupWrapper>
   );

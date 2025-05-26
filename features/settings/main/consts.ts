@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
 import {
   MainSettingsOverview,
+  MainSettingsVoting,
   ManagersKeys,
   ManagersNewAddresses,
   RoleFieldSchema,
@@ -39,43 +40,58 @@ export const addressSchema = z.object({
   value: accountSchema,
 });
 
-export const editMainSettingsSchema = z.object({
-  nodeOperatorManagers: z.array(addressSchema),
-  nodeOperatorFeeBP: z.array(
-    z.object({
-      value: z.coerce
-        .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-        .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-        .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
-    }),
-  ),
-  confirmExpiry: z.array(
-    z.object({
-      value: z.coerce
-        .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-        .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-        .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
-    }),
-  ),
-  defaultAdmins: z.array(addressSchema),
+export const votingBase = z.object({
+  value: z.coerce.number(INVALID_NUMBER_DATA_OBJECT_MESSAGE), // сюда позже добавим min/max
+  expiryDate: z.date().optional(),
+  type: z
+    .union([
+      z.literal('current'),
+      z.literal('edit'),
+      z.literal('to_me'),
+      z.literal('by_me'),
+    ])
+    .optional(),
 });
 
-export const indicatorsForRender: MainSettingsOverview[] = [
+export const votingFeeSchema = votingBase.extend({
+  value: votingBase.shape.value
+    .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+    .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
+});
+
+export const votingLifetimeSchema = votingBase.extend({
+  value: votingBase.shape.value
+    .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+    .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+});
+
+export const editMainSettingsSchema = z.object({
+  nodeOperatorManagers: z.array(addressSchema),
+  defaultAdmins: z.array(addressSchema),
+  nodeOperatorFeeBP: z.object({
+    options: z.array(votingFeeSchema),
+    selectedIndex: z.number(),
+  }),
+  confirmExpiry: z.object({
+    options: z.array(votingLifetimeSchema),
+    selectedIndex: z.number(),
+  }),
+});
+
+export const indicatorsForRender: MainSettingsVoting[] = [
   {
     name: 'nodeOperatorFeeBP',
     title: 'Node Operator fee',
-    label: 'Current Node Operator fee, %',
-    editLabel: 'Propose new Node Operator fee, %',
-    dataType: 'percent',
+    editLabel: 'Propose new, %',
+    mask: '%',
     vaultKey: 'nodeOperatorFeeBP',
     canEditRole: 'confirmingRoles',
   },
   {
     name: 'confirmExpiry',
     title: 'Confirmation Lifetime',
-    label: 'Current Confirmation Life Time, hours',
-    editLabel: 'Propose new Сonfirmation Lifetime, hours',
-    dataType: 'time',
+    editLabel: 'Propose new, hours',
+    mask: ' hours',
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
   },
@@ -85,7 +101,6 @@ export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'defaultAdmins',
     title: 'Vault Manager',
-    label: 'Vault Manager address',
     editLabel: 'Vault Manager address',
     dataType: 'address',
     actionText: 'Add new address',
@@ -95,7 +110,6 @@ export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'nodeOperatorManagers',
     title: 'Node Operator Manager',
-    label: 'Node Operator Manager address',
     editLabel: 'Node Operator Manager address',
     dataType: 'address',
     actionText: 'Add new address',

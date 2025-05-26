@@ -87,13 +87,17 @@ export const useEditMainSettings = () => {
           });
         }
 
-        if (payload.nodeOperatorFeeBP.length > 0) {
+        if (payload.nodeOperatorFeeBP.selectedIndex > 0) {
           invariant(
-            payload.nodeOperatorFeeBP.length == 1,
+            payload.nodeOperatorFeeBP.options.length !== 1,
             '[useEditMainSettings] Invalid nodeOperatorFeeBP length',
           );
+
+          const index = payload.nodeOperatorFeeBP.selectedIndex;
           const newFee = Math.floor(
-            payload.nodeOperatorFeeBP[0].value * VAULT_TOTAL_BASIS_POINTS,
+            (payload.nodeOperatorFeeBP.options[index].value *
+              VAULT_TOTAL_BASIS_POINTS) /
+              100,
           );
 
           transactions.push({
@@ -103,17 +107,18 @@ export const useEditMainSettings = () => {
               functionName: 'setNodeOperatorFeeBP',
               args: [BigInt(newFee)],
             }),
-            loadingActionText: `${confirmingRoleAction} ${newFee / VAULT_TOTAL_BASIS_POINTS}% Node Operator fee  `,
+            loadingActionText: `${confirmingRoleAction} ${(newFee * 100) / VAULT_TOTAL_BASIS_POINTS}% Node Operator fee  `,
           });
         }
 
-        if (payload.confirmExpiry.length > 0) {
+        if (payload.confirmExpiry.selectedIndex > 0) {
           invariant(
-            payload.confirmExpiry.length == 1,
+            payload.confirmExpiry.options.length !== 1,
             '[useEditMainSettings] Invalid confirmExpiry length',
           );
+          const index = payload.confirmExpiry.selectedIndex;
           const newConfirmExpiry = BigInt(
-            Math.floor(payload.confirmExpiry[0].value * 86400),
+            Math.floor(payload.confirmExpiry.options[index].value * 3600),
           );
 
           transactions.push({
@@ -123,7 +128,7 @@ export const useEditMainSettings = () => {
               functionName: 'setConfirmExpiry',
               args: [newConfirmExpiry],
             }),
-            loadingActionText: `${confirmingRoleAction} ${newConfirmExpiry} hours Confirmation Lifetime`,
+            loadingActionText: `${confirmingRoleAction} ${payload.confirmExpiry.options[index].value} hours Confirmation Lifetime`,
           });
         }
 

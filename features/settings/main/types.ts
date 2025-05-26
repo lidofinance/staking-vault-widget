@@ -1,5 +1,5 @@
 import { Address, Hex } from 'viem';
-import { addressSchema, editMainSettingsSchema } from './consts';
+import { addressSchema, editMainSettingsSchema, votingBase } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
 import { VAULT_ROOT_ROLES } from 'modules/vaults';
@@ -10,6 +10,7 @@ export type GrantOrRevokeRole = {
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
+export type VotingOptionType = z.infer<typeof votingBase>;
 
 export type InputDataType =
   | 'address'
@@ -21,13 +22,17 @@ export type InputDataType =
 export type MainSettingsOverview = {
   name: string;
   title: string;
-  label: string;
   editLabel: string;
   dataType: InputDataType;
   actionText?: string;
   vaultKey: keyof VaultInfo;
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
+
+export type MainSettingsVoting = Omit<
+  MainSettingsOverview,
+  'dataType' | 'name'
+> & { mask: '%' | ' hours'; name: VotingKeys };
 
 export type TxData = {
   grantRoles?: GrantOrRevokeRole[];
@@ -38,6 +43,16 @@ export type TxData = {
 
 export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
+export type VotingKeys = 'nodeOperatorFeeBP' | 'confirmExpiry';
 export type ManagersNewAddresses = {
   addresses: Record<ManagersKeys, RoleFieldSchema[]>;
+};
+
+export type ChipBadge = Date | string | undefined;
+
+export type MainSettingsDataContextValue = {
+  defaultAdmins: RoleFieldSchema[];
+  nodeOperatorManagers: RoleFieldSchema[];
+  nodeOperatorFeeBP: VotingOptionType[];
+  confirmExpiry: VotingOptionType[];
 };

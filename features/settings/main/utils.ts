@@ -121,3 +121,7 @@ export const generateMainAATxData = async ({
 
   return await Promise.all(aaPayload);
 };
+
+export const getHoursDifference = (dateA: Date, dateB: Date) => {
+  return Math.ceil((dateA.getTime() - dateB.getTime()) / (1000 * 60 * 60));
+};
