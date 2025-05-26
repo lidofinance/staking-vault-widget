@@ -9,6 +9,7 @@ import { ReadonlyInput } from './readonly-input';
 import { GroupWrapper } from './styles';
 
 import type { MainSettingsOverview } from 'features/settings/main/types';
+import { useFormState } from 'react-hook-form';
 
 type InputResolverProps = MainSettingsOverview;
 
@@ -22,13 +23,16 @@ export const DataField: FC<InputResolverProps> = ({
   vaultKey,
   canEditRole,
 }) => {
+  const { disabled } = useFormState();
+
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 
-  const isEditable = hasConfirmingRole || hasPermission;
+  const isEditable =
+    !disabled && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
   return (
     <GroupWrapper>
       <Text size="xs" strong>

@@ -1,4 +1,4 @@
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useFormState } from 'react-hook-form';
 import { Plus } from '@lidofinance/lido-ui';
 
 import { ButtonClose } from 'shared/components';
@@ -17,6 +17,7 @@ type PlaceholderForm = {
 
 export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
   const { register } = useFormContext();
+  const { disabled } = useFormState();
   const { fields, append, remove } = useFieldArray<
     PlaceholderForm,
     'addresses'
@@ -37,16 +38,18 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
           </AddressInputGroup>
         );
       })}
-      <AppendButton
-        color="primary"
-        icon={<Plus />}
-        size="md"
-        variant="ghost"
-        type="button"
-        onClick={() => append({ value: '' as Address })}
-      >
-        Add new address
-      </AppendButton>
+      {!disabled && (
+        <AppendButton
+          color="primary"
+          icon={<Plus />}
+          size="md"
+          variant="ghost"
+          type="button"
+          onClick={() => append({ value: '' as Address })}
+        >
+          Add new address
+        </AppendButton>
+      )}
     </AddressList>
   );
 };

@@ -3,6 +3,7 @@ import type { Address } from 'viem';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
 
 import { CreateVaultSchema } from 'features/create-vault/types';
@@ -26,6 +27,7 @@ const AFTER_SUBMIT_RESET_OPTIONS = {
 };
 
 export const CreateVaultForm: FC<PropsWithChildren> = () => {
+  const { isDappActive } = useDappStatus();
   const formObject = useForm({
     defaultValues: {
       nodeOperator: '' as Address,
@@ -37,6 +39,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
       roles: {},
       step: CREATE_VAULT_FORM_STEPS.main,
     },
+    disabled: !isDappActive,
     mode: 'onTouched',
     shouldUnregister: false,
     resolver: zodResolver(createVaultSchema, { async: false }, { raw: false }),

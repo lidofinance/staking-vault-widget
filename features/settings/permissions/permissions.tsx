@@ -1,3 +1,5 @@
+import { useFormState } from 'react-hook-form';
+
 import {
   RoleDescription,
   PermissionsAction,
@@ -42,7 +44,10 @@ const renderPermissionsList: PermissionSectionEntry[] = [
 ];
 
 const PermissionsSection = (props: PermissionSectionEntry) => {
+  const { disabled } = useFormState();
   const { hasPermission } = useVaultPermission(props.canEditRole);
+
+  const isReadonly = disabled || !hasPermission;
 
   return (
     <PermissionContainer>
@@ -57,7 +62,7 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
                 description={title}
                 tooltip={hint}
               />
-              <AddressBlock readonly={!hasPermission} permission={role} />
+              <AddressBlock readonly={isReadonly} permission={role} />
             </PermissionRoleWrapper>
           );
         })}

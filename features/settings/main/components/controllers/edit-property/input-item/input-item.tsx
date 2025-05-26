@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { useController, useFormState } from 'react-hook-form';
 
 import { Input } from '@lidofinance/lido-ui';
 import { ButtonClose } from 'shared/components';
@@ -18,9 +18,7 @@ export const InputItem: FC<InputItemProps> = ({
   index,
   remove,
 }) => {
-  const {
-    formState: { errors },
-  } = useFormContext();
+  const { errors } = useFormState();
   const inputKey = `${name}.${index}.value`;
   const { field } = useController({ name: inputKey });
 
