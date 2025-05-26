@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
+import { useFormState } from 'react-hook-form';
 
-import { useDappStatus } from 'modules/web3';
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
 import { Hint } from 'shared/components';
 
@@ -24,15 +24,15 @@ export const DataManagerField: FC<InputResolverProps> = ({
   hint,
   canEditRole,
 }) => {
+  const { disabled } = useFormState();
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
-  const { isDappActive } = useDappStatus();
   const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 
   const isEditable =
-    isDappActive && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
+    !disabled && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
 
   return (
     <GroupWrapper>

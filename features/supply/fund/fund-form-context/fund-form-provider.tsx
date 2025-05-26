@@ -1,16 +1,21 @@
 import { FC, ReactNode, useCallback } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useFund } from 'features/supply/fund/hooks/use-fund';
-import { FormController } from 'shared/hook-form/form-controller';
-import { FundFormSchema } from 'features/supply/fund/types';
 import invariant from 'tiny-invariant';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import { useDappStatus } from 'modules/web3';
+import { FormController } from 'shared/hook-form/form-controller';
+
+import { useFund } from 'features/supply/fund/hooks/use-fund';
+import { FundFormSchema } from 'features/supply/fund/types';
 
 export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { isDappActive } = useDappStatus();
   const formObject = useForm<FundFormSchema>({
     defaultValues: {
       amount: undefined,
     },
     mode: 'all',
+    disabled: !isDappActive,
     // TODO: add validation
     reValidateMode: 'onChange',
   });

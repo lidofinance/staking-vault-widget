@@ -1,22 +1,27 @@
 import { FC, useEffect } from 'react';
-
-import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import type { Address } from 'viem';
+import {
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useFormState,
+} from 'react-hook-form';
 
 import { Plus } from '@lidofinance/lido-ui';
-import { InputItem } from './input-item';
-import { ButtonContainer, EditWrapper } from './styles';
+import { useVaultInfo } from 'modules/vaults';
+
 import {
   ManagersKeys,
   ManagersNewAddresses,
 } from 'features/settings/main/types';
-import { Address } from 'viem';
 import { validateManagers } from 'features/settings/main/consts';
-import { useVaultInfo } from 'modules/vaults';
+import { InputItem } from './input-item';
+import { ButtonContainer, EditWrapper } from './styles';
 
-interface EditPropertyAddressProps {
+type EditPropertyAddressProps = {
   name: ManagersKeys;
   editLabel: string;
-}
+};
 
 export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
   name,
@@ -24,6 +29,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
 }) => {
   const { isRefetching } = useVaultInfo();
   const { getValues } = useFormContext();
+  const { disabled } = useFormState();
   const {
     control,
     register,
@@ -37,6 +43,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
         [name]: [],
       },
     },
+    disabled,
     resolver: validateManagers(getValues),
     mode: 'all',
   });

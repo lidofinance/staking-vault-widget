@@ -1,24 +1,19 @@
 import { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 
 import { ConnectWalletButton } from 'shared/wallet';
-import { useDappStatus } from 'modules/web3';
 
 import { usePermissionsData } from 'features/settings/permissions/contexts';
 
 import { Container } from './styled';
 
 export const PermissionsAction: FC = () => {
-  const {
-    reset,
-    formState: { isValid, isSubmitting, isDirty, disabled },
-  } = useFormContext();
+  const { reset } = useFormContext();
+  const { isValid, isSubmitting, isDirty, disabled } = useFormState();
   const { rolesList } = usePermissionsData();
-  const { isDappActive } = useDappStatus();
-  const isClearDisabled = isSubmitting || disabled;
-  const isSubmitDisabled =
-    !isDappActive || !isValid || !isDirty || isClearDisabled;
+  const isClearDisabled = isSubmitting;
+  const isSubmitDisabled = !isValid || !isDirty || isClearDisabled || disabled;
 
   const handleResetFields = () => {
     if (rolesList) {

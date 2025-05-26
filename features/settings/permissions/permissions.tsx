@@ -1,3 +1,5 @@
+import { useFormState } from 'react-hook-form';
+
 import {
   RoleDescription,
   PermissionsAction,
@@ -21,7 +23,6 @@ import {
   VAULTS_NO_ROLES,
   VAULT_OWNER_ROLES,
 } from 'modules/vaults';
-import { useDappStatus } from 'modules/web3';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
@@ -43,10 +44,10 @@ const renderPermissionsList: PermissionSectionEntry[] = [
 ];
 
 const PermissionsSection = (props: PermissionSectionEntry) => {
-  const { isDappActive } = useDappStatus();
+  const { disabled } = useFormState();
   const { hasPermission } = useVaultPermission(props.canEditRole);
 
-  const isReadonly = !isDappActive || !hasPermission;
+  const isReadonly = disabled || !hasPermission;
 
   return (
     <PermissionContainer>

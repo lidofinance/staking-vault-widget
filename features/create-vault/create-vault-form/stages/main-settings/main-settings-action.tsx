@@ -2,7 +2,6 @@ import type { FC } from 'react';
 import { useFormContext, useFormState } from 'react-hook-form';
 import { useRouter } from 'next/router';
 
-import { useDappStatus } from 'modules/web3';
 import { appPaths } from 'consts/routing';
 
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
@@ -16,10 +15,9 @@ import type { CreateVaultSchema } from 'features/create-vault/types';
 export const MainSettingsAction: FC = () => {
   const router = useRouter();
   const { trigger, setValue } = useFormContext<CreateVaultSchema>();
-  const { isValidating } = useFormState<CreateVaultSchema>();
-  const { isDappActive } = useDappStatus();
+  const { isValidating, isValid } = useFormState<CreateVaultSchema>();
 
-  const isSubmitDisabled = !isDappActive || isValidating;
+  const isSubmitDisabled = isValidating || !isValid;
 
   const handleNavigateToRoot = () => {
     void router.push(appPaths.myVaults);
