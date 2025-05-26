@@ -9,6 +9,7 @@ type AccordionNavigatableProps = React.ComponentProps<typeof Accordion> & {
 export const AccordionNavigatable = ({
   onCollapse,
   id,
+  defaultExpanded,
   ...rest
 }: AccordionNavigatableProps) => {
   const { hashNav, resetSpecificAnchor } = useInpageNavigation();
@@ -18,10 +19,13 @@ export const AccordionNavigatable = ({
     onCollapse?.();
   }, [resetSpecificAnchor, id, onCollapse]);
 
+  const shouldExpand = hashNav ? hashNav === id : defaultExpanded;
+
   return (
     <Accordion
       {...rest}
-      defaultExpanded={hashNav === id}
+      id={id}
+      defaultExpanded={shouldExpand}
       onCollapse={handleCollapse}
     />
   );
