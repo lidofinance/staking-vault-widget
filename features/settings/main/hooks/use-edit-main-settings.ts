@@ -16,6 +16,7 @@ import { encodeFunctionData, Hash } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import { useConfirmationsInfo } from './use-confirmations-info';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -31,6 +32,7 @@ const toMethodArg =
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
   const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
@@ -171,10 +173,16 @@ export const useEditMainSettings = () => {
 
         // refetch anyway because some transactions may be successful
         await refetchVaultInfo();
-
+        await refetchConfirmationsInfo();
         return result;
       },
-      [hasBothConfirmingRoles, owner, refetchVaultInfo, sendTX],
+      [
+        hasBothConfirmingRoles,
+        owner,
+        refetchVaultInfo,
+        refetchConfirmationsInfo,
+        sendTX,
+      ],
     ),
     ...rest,
   };

@@ -91,8 +91,6 @@ export const editMainSettingsSchema = z
 export const indicatorsForRender: MainSettingsVoting[] = [
   {
     name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    editLabel: 'Propose new, %',
     mask: '%',
     vaultKey: 'nodeOperatorFeeBP',
     canEditRole: 'confirmingRoles',
@@ -100,8 +98,6 @@ export const indicatorsForRender: MainSettingsVoting[] = [
   },
   {
     name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    editLabel: 'Propose new, hours',
     mask: ' hours',
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
@@ -112,8 +108,6 @@ export const indicatorsForRender: MainSettingsVoting[] = [
 export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'defaultAdmins',
-    title: 'Vault Manager',
-    editLabel: 'Vault Manager address',
     dataType: 'address',
     vaultKey: 'defaultAdmins',
     canEditRole: 'defaultAdmin',
@@ -121,8 +115,6 @@ export const adminsForRender: MainSettingsOverview[] = [
   },
   {
     name: 'nodeOperatorManagers',
-    title: 'Node Operator Manager',
-    editLabel: 'Node Operator Manager address',
     dataType: 'address',
     vaultKey: 'nodeOperatorManagers',
     canEditRole: 'nodeOperatorManager',

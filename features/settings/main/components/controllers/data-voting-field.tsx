@@ -5,7 +5,7 @@ import { GroupWrapper } from './styles';
 
 import { MainSettingsVoting } from 'features/settings/main/types';
 import { EditProperty } from './edit-property';
-import { Text } from '@lidofinance/lido-ui';
+import { InlineLoader, Text } from '@lidofinance/lido-ui';
 import {
   useVaultConfirmingRoles,
   useVaultPermission,
@@ -21,7 +21,7 @@ export const DataVotingField: FC<DataVotingFieldProps> = ({
   canEditRole,
   mask,
 }) => {
-  const { disabled } = useFormState();
+  const { disabled, isLoading } = useFormState();
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission(
@@ -36,6 +36,7 @@ export const DataVotingField: FC<DataVotingFieldProps> = ({
       <Text size="xs" strong>
         {title}
       </Text>
+      {isLoading && <InlineLoader />}
       {!isEditable && <ReadonlyView vaultKey={vaultKey} />}
       {isEditable && (
         <EditProperty editLabel={editLabel} name={name} mask={mask} />

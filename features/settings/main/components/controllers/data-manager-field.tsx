@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Text } from '@lidofinance/lido-ui';
+import { InlineLoader, Text } from '@lidofinance/lido-ui';
 import { useFormState } from 'react-hook-form';
 
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
@@ -24,7 +24,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
   hint,
   canEditRole,
 }) => {
-  const { disabled } = useFormState();
+  const { disabled, isLoading } = useFormState();
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission(
@@ -40,6 +40,7 @@ export const DataManagerField: FC<InputResolverProps> = ({
         {title}
         <Hint text={hint} />
       </Text>
+      {isLoading && <InlineLoader />}
       <DisplayAddress isEditable={isEditable} vaultKey={vaultKey} />
       {isEditable && (
         <EditPropertyAddress
