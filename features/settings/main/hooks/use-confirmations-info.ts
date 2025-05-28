@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
-import { decodeFunctionData, parseAbiItem } from 'viem';
+import {
+  decodeFunctionData,
+  DecodeFunctionDataReturnType,
+  parseAbiItem,
+} from 'viem';
 import type { Address, Hex } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import invariant from 'tiny-invariant';
@@ -10,16 +14,18 @@ const AVG_BLOCK_TIME_SEC = 12n;
 
 type FunctionName = 'setConfirmExpiry' | 'setNodeOperatorFeeBP';
 
+type DecodedData = DecodeFunctionDataReturnType<
+  typeof dashboardAbi,
+  FunctionName
+>;
+
 type ConfirmationsInfo = {
   member: Address;
   role: Hex;
   expiryTimestamp: bigint;
   expiryDate: Date;
   data: Hex;
-  decodedData: {
-    functionName: FunctionName;
-    args: readonly [bigint];
-  };
+  decodedData: DecodedData;
 };
 export type LogsData = ConfirmationsInfo[];
 
@@ -87,10 +93,8 @@ export const useConfirmationsInfo = () => {
             expiryTimestamp: args.expiryTimestamp,
             expiryDate: new Date(Number(args.expiryTimestamp) * 1000),
             data: args.data,
-            decodedData: decoded as {
-              functionName: FunctionName;
-              args: readonly [];
-            },
+            // @ts-expect-error list of decoded types is not compatible to functions: FunctionName
+            decodedData: decoded,
           });
           return acc;
         }, []);
