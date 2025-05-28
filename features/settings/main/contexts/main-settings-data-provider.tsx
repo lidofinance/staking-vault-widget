@@ -29,13 +29,14 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
   const { activeVault } = useVaultInfo();
   const { data: confirmationsList } = useConfirmationsInfo();
 
-  const values: MainSettingsDataContextValue = useMemo(() => {
+  const values: MainSettingsDataContextValue | null = useMemo(() => {
     if (!activeVault || !confirmationsList) {
       return null;
     }
 
     const confirmExpiry: VotingOptionType[] = [
       {
+        id: crypto.randomUUID(),
         value: Number(activeVault.confirmExpiry / (60n * 60n)),
         type: 'current',
       },
@@ -43,6 +44,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
 
     const nodeOperatorFeeBP: VotingOptionType[] = [
       {
+        id: crypto.randomUUID(),
         value: Number(
           (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
         ),
@@ -55,6 +57,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
 
       if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
         confirmExpiry.push({
+          id: crypto.randomUUID(),
           value: Number(confirmation.decodedData.args[0] / (60n * 60n)),
           expiryDate: confirmation.expiryDate,
           type,
@@ -63,6 +66,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         confirmation.decodedData.functionName === 'setNodeOperatorFeeBP'
       ) {
         nodeOperatorFeeBP.push({
+          id: crypto.randomUUID(),
           value: Number(
             (confirmation.decodedData.args[0] * 100n) /
               VAULT_TOTAL_BASIS_POINTS_BN,

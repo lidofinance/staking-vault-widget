@@ -40,30 +40,25 @@ export const EditProperty: FC<EditPropertyProps> = ({
   return (
     <EditWrapper>
       {renderList.map((field) => {
-        const decoratorsList = [];
-        const isEditField = field.type === 'edit';
-        if (field.expiryDate) decoratorsList.push(field.expiryDate);
-        if (!isEditField) decoratorsList.push(field.type);
-
         if (field.type !== 'by_me')
           return (
             <InputWithRadioDecorator
-              key={`${field.value}${field.type}`}
-              rightDecorator={<ChipDecorator list={decoratorsList} />}
+              key={field.id}
+              rightDecorator={<ChipDecorator field={field} />}
               placeholder={editLabel}
               value={field.value}
               mask={mask}
               name={name}
               defaultChecked={field.type === 'current'}
-              defaultDisabled={!isEditField}
+              defaultDisabled
             />
           );
 
         return (
           <Input
-            key={`${field.value}${field.type}`}
+            key={field.id}
             value={`${field.value}${mask}`}
-            rightDecorator={<ChipDecorator list={decoratorsList} />}
+            rightDecorator={<ChipDecorator field={field} />}
             disabled
           />
         );

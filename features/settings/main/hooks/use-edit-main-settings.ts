@@ -34,115 +34,135 @@ export const useEditMainSettings = () => {
 
   const { sendTX, ...rest } = useSendTransaction();
 
-  return {
-    editMainSettings: useCallback(
-      async (payload: EditMainSettingsSchema) => {
-        invariant(owner, '[useEditMainSettings] owner is undefined');
+  const editMainSettings = useCallback(
+    async (payload: EditMainSettingsSchema) => {
+      invariant(owner, '[useEditMainSettings] owner is undefined');
 
-        const transactions: TransactionEntry[] = [];
+      const transactions: TransactionEntry[] = [];
 
-        const grantRoles = [
-          ...payload.defaultAdmins
-            .filter(onlyState('grant'))
-            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
-            .filter(onlyState('grant'))
-            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
-        ];
+      const grantRoles = [
+        ...payload.defaultAdmins
+          .filter(onlyState('grant'))
+          .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
+        ...payload.nodeOperatorManagers
+          .filter(onlyState('grant'))
+          .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
+      ];
 
-        if (grantRoles.length > 0) {
-          transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'grantRoles',
-              args: [grantRoles],
-            }),
-            loadingActionText: `Granting ${grantRoles.length} roles`,
-          });
-        }
-
-        const revokeRoles = [
-          ...payload.defaultAdmins
-            .filter(onlyState('remove'))
-            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
-            .filter(onlyState('remove'))
-            .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
-        ];
-
-        const confirmingRoleAction = hasBothConfirmingRoles
-          ? 'Setting'
-          : 'Proposing';
-
-        if (revokeRoles.length > 0) {
-          transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'revokeRoles',
-              args: [revokeRoles],
-            }),
-            loadingActionText: `Revoking ${revokeRoles.length} roles`,
-          });
-        }
-
-        if (payload.nodeOperatorFeeBP.selectedIndex > 0) {
-          invariant(
-            payload.nodeOperatorFeeBP.options.length !== 1,
-            '[useEditMainSettings] Invalid nodeOperatorFeeBP length',
-          );
-
-          const index = payload.nodeOperatorFeeBP.selectedIndex;
-          const newFee = Math.floor(
-            (payload.nodeOperatorFeeBP.options[index].value *
-              VAULT_TOTAL_BASIS_POINTS) /
-              100,
-          );
-
-          transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeBP',
-              args: [BigInt(newFee)],
-            }),
-            loadingActionText: `${confirmingRoleAction} ${(newFee * 100) / VAULT_TOTAL_BASIS_POINTS}% Node Operator fee  `,
-          });
-        }
-
-        if (payload.confirmExpiry.selectedIndex > 0) {
-          invariant(
-            payload.confirmExpiry.options.length !== 1,
-            '[useEditMainSettings] Invalid confirmExpiry length',
-          );
-          const index = payload.confirmExpiry.selectedIndex;
-          const newConfirmExpiry = BigInt(
-            Math.floor(payload.confirmExpiry.options[index].value * 3600),
-          );
-
-          transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setConfirmExpiry',
-              args: [newConfirmExpiry],
-            }),
-            loadingActionText: `${confirmingRoleAction} ${payload.confirmExpiry.options[index].value} hours Confirmation Lifetime`,
-          });
-        }
-
-        return withSuccess(
-          sendTX({
-            transactions,
-            mainActionLoadingText: 'Editing vault settings',
-            mainActionCompleteText: 'Edited vault settings',
-            renderSuccessContent: GoToVault,
+      if (grantRoles.length > 0) {
+        transactions.push({
+          to: owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'grantRoles',
+            args: [grantRoles],
           }),
+          loadingActionText: `Granting ${grantRoles.length} roles`,
+        });
+      }
+
+      const revokeRoles = [
+        ...payload.defaultAdmins
+          .filter(onlyState('remove'))
+          .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
+        ...payload.nodeOperatorManagers
+          .filter(onlyState('remove'))
+          .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
+      ];
+
+      const confirmingRoleAction = hasBothConfirmingRoles
+        ? 'Setting'
+        : 'Proposing';
+
+      if (revokeRoles.length > 0) {
+        transactions.push({
+          to: owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'revokeRoles',
+            args: [revokeRoles],
+          }),
+          loadingActionText: `Revoking ${revokeRoles.length} roles`,
+        });
+      }
+
+      const {
+        nodeOperatorFeeBP,
+        nodeOperatorFeeBPCustom,
+        nodeOperatorFeeBPDefault,
+      } = payload;
+      const isOtherFee = nodeOperatorFeeBP === 'other';
+      const feeValue = isOtherFee
+        ? nodeOperatorFeeBPCustom
+        : Number(nodeOperatorFeeBP);
+      const feeChanged = isOtherFee
+        ? Boolean(feeValue)
+        : feeValue !== nodeOperatorFeeBPDefault;
+
+      if (feeChanged && feeValue) {
+        invariant(
+          !isOtherFee || nodeOperatorFeeBPCustom,
+          '[useEditMainSettings] Invalid nodeOperatorFeeBPCustom',
         );
-      },
-      [hasBothConfirmingRoles, owner, sendTX],
-    ),
+
+        const newFeeBP = Math.floor(
+          (feeValue * VAULT_TOTAL_BASIS_POINTS) / 100,
+        );
+        const textFeePercent = (newFeeBP * 100) / VAULT_TOTAL_BASIS_POINTS;
+
+        transactions.push({
+          to: owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'setNodeOperatorFeeBP',
+            args: [BigInt(newFeeBP)],
+          }),
+          loadingActionText: `${confirmingRoleAction} ${textFeePercent}% Node Operator fee`,
+        });
+      }
+
+      const { confirmExpiry, confirmExpiryCustom, confirmExpiryDefault } =
+        payload;
+      const isOtherExpiry = confirmExpiry === 'other';
+      const expiryValue = isOtherExpiry ? confirmExpiryCustom : confirmExpiry;
+      const expiryChanged = isOtherExpiry
+        ? Boolean(expiryValue)
+        : expiryValue !== confirmExpiryDefault;
+
+      if (expiryChanged) {
+        invariant(
+          !isOtherExpiry || confirmExpiryCustom,
+          '[useEditMainSettings] Invalid confirmExpiryCustom',
+        );
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const newConfirmExpiry = BigInt(Math.floor(expiryValue! * 3600));
+
+        transactions.push({
+          to: owner,
+          data: encodeFunctionData({
+            abi: dashboardAbi,
+            functionName: 'setConfirmExpiry',
+            args: [newConfirmExpiry],
+          }),
+          loadingActionText: `${confirmingRoleAction} ${expiryValue} hours Confirmation Lifetime`,
+        });
+      }
+
+      return withSuccess(
+        sendTX({
+          transactions,
+          mainActionLoadingText: 'Editing vault settings',
+          mainActionCompleteText: 'Edited vault settings',
+          renderSuccessContent: GoToVault,
+        }),
+      );
+    },
+    [hasBothConfirmingRoles, owner, sendTX],
+  );
+
+  return {
+    editMainSettings,
     ...rest,
   };
 };

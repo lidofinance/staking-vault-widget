@@ -2,19 +2,15 @@ import { FC, useMemo } from 'react';
 import { ChipsWrapper } from './styles';
 import { getHoursDifference } from 'features/settings/main/utils';
 import { Chip } from '@lidofinance/lido-ui';
-import { ChipBadge } from 'features/settings/main/types';
+import { VotingOptionType } from 'features/settings/main/types';
 
 export type ChipDecoratorProps = {
-  list?: ChipBadge[];
+  field: VotingOptionType;
 };
 
-export const ChipDecorator: FC<ChipDecoratorProps> = ({ list }) => {
+export const ChipDecorator: FC<ChipDecoratorProps> = ({ field }) => {
   const listForRender = useMemo(() => {
-    if (!list || list.length === 0) {
-      return null;
-    }
-
-    return list
+    return Object.keys(field)
       .filter((value) => value)
       .map((value) => {
         if (typeof value === 'object') {
@@ -31,7 +27,7 @@ export const ChipDecorator: FC<ChipDecoratorProps> = ({ list }) => {
 
         return 'Current';
       });
-  }, [list]);
+  }, [field]);
 
   if (!listForRender) {
     return null;

@@ -5,7 +5,7 @@ import { Container } from './styled';
 import { useFormContext } from 'react-hook-form';
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
-import { useMainSettingsData } from 'features/settings/main/contexts';
+import { shouldIncrementTxCounter } from 'features/settings/main/utils';
 import { ConnectWalletButton } from 'shared/wallet';
 
 export const MainSettingsAction: FC = () => {
@@ -14,23 +14,9 @@ export const MainSettingsAction: FC = () => {
     formState: { isValid, isDirty, isSubmitting, isValidating },
     reset,
   } = useFormContext();
-  const mainSettingsData = useMainSettingsData();
   const isClearDisabled = !isDirty;
   const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isValidating;
-  const { nodeOperatorFeeBPCurrent, confirmExpiryCurrent } = useMemo(() => {
-    if (mainSettingsData) {
-      const nodeOperatorFeeBPCurrent = mainSettingsData.nodeOperatorFeeBP.find(
-        (item) => item.type === 'current',
-      )?.value;
-      const confirmExpiryCurrent = mainSettingsData.confirmExpiry.find(
-        (item) => item.type === 'current',
-      )?.value;
 
-      return { nodeOperatorFeeBPCurrent, confirmExpiryCurrent };
-    }
-
-    return { nodeOperatorFeeBPCurrent: 0, confirmExpiryCurrent: 0 };
-  }, [mainSettingsData]);
   const formFields = watch();
 
   const handleClearMainForm = () => {
@@ -57,27 +43,29 @@ export const MainSettingsAction: FC = () => {
       const {
         nodeOperatorFeeBP,
         nodeOperatorFeeBPCustom,
+        nodeOperatorFeeBPDefault,
         confirmExpiry,
         confirmExpiryCustom,
+        confirmExpiryDefault,
       } = formFields;
 
       if (
-        nodeOperatorFeeBP !== 'other' &&
-        Number(nodeOperatorFeeBP) !== nodeOperatorFeeBPCurrent
+        shouldIncrementTxCounter(
+          nodeOperatorFeeBP,
+          nodeOperatorFeeBPDefault,
+          nodeOperatorFeeBPCustom,
+        )
       ) {
-        counter++;
-        // eslint-disable-next-line sonarjs/no-duplicated-branches
-      } else if (nodeOperatorFeeBP === 'other' && !!nodeOperatorFeeBPCustom) {
         counter++;
       }
 
       if (
-        confirmExpiry !== 'other' &&
-        Number(confirmExpiry) !== confirmExpiryCurrent
+        shouldIncrementTxCounter(
+          confirmExpiry,
+          confirmExpiryDefault,
+          confirmExpiryCustom,
+        )
       ) {
-        counter++;
-        // eslint-disable-next-line sonarjs/no-duplicated-branches
-      } else if (confirmExpiry === 'other' && !!confirmExpiryCustom) {
         counter++;
       }
 
@@ -90,12 +78,7 @@ export const MainSettingsAction: FC = () => {
     }
 
     return ['No changes', counter];
-  }, [
-    formFields,
-    isSubmitDisabled,
-    nodeOperatorFeeBPCurrent,
-    confirmExpiryCurrent,
-  ]);
+  }, [formFields, isSubmitDisabled]);
 
   const hasChanges = counter > 0;
 

@@ -1,5 +1,5 @@
 import { Address, Hex } from 'viem';
-import { addressSchema, editMainSettingsSchema, votingBase } from './consts';
+import { addressSchema, editMainSettingsSchema } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
 import { VAULT_ROOT_ROLES } from 'modules/vaults';
@@ -10,7 +10,12 @@ export type GrantOrRevokeRole = {
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
-export type VotingOptionType = z.infer<typeof votingBase>;
+export type VotingOptionType = {
+  id: string;
+  value: number;
+  type: 'current' | 'to_me' | 'by_me';
+  expiryDate?: Date;
+};
 
 export type InputDataType =
   | 'address'

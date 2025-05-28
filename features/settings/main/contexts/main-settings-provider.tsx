@@ -40,7 +40,11 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           confirmExpiry: confirmExpiryCurrent!,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          confirmExpiryDefault: confirmExpiryCurrent!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           nodeOperatorFeeBP: nodeOperatorFeeBPCurrent!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          nodeOperatorFeeBPDefault: nodeOperatorFeeBPCurrent!,
         };
       }
       //
@@ -48,7 +52,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorManagers: [],
         defaultAdmins: [],
         confirmExpiry: 0,
+        confirmExpiryDefault: 0,
         nodeOperatorFeeBP: 0,
+        nodeOperatorFeeBPDefault: 0,
       };
     },
     resolver: zodResolver(editMainSettingsSchema),

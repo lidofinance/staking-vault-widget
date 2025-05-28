@@ -40,77 +40,26 @@ export const addressSchema = z.object({
   value: accountSchema,
 });
 
-export const votingBase = z.object({
-  value: z.coerce.number(INVALID_NUMBER_DATA_OBJECT_MESSAGE), // сюда позже добавим min/max
-  expiryDate: z.date().optional(),
-  type: z
-    .union([
-      z.literal('current'),
-      z.literal('edit'),
-      z.literal('to_me'),
-      z.literal('by_me'),
-    ])
-    .optional(),
-});
+export const votingFeeSchema = z.coerce
+  .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+  .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+  .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE);
 
-export const votingFeeSchema = votingBase.extend({
-  value: votingBase.shape.value
-    .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-    .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
-});
-
-export const votingLifetimeSchema = votingBase.extend({
-  value: votingBase.shape.value
-    .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-    .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
-});
+export const votingLifetimeSchema = z.coerce
+  .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+  .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+  .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE);
 
 export const editMainSettingsSchema = z
   .object({
     nodeOperatorManagers: z.array(addressSchema),
     defaultAdmins: z.array(addressSchema),
-    nodeOperatorFeeBPCustom: z.coerce
-      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-      .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-      .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE)
-      .optional(),
-    nodeOperatorFeeBP: z.preprocess(
-      (val) => {
-        if (typeof val === 'string') {
-          const n = parseInt(val, 10);
-          return isNaN(n) ? val : n;
-        }
-        return val;
-      },
-      z.union([
-        z
-          .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-          .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-          .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
-        z.literal('other'),
-      ]),
-    ),
-    confirmExpiryCustom: z.coerce
-      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-      .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-      .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE)
-      .optional(),
-    confirmExpiry: z.preprocess(
-      (val) => {
-        if (typeof val === 'string') {
-          const n = parseInt(val, 10);
-          return isNaN(n) ? val : n;
-        }
-        return val;
-      },
-      z.union([
-        z
-          .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-          .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-          .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
-        z.literal('other'),
-      ]),
-    ),
+    nodeOperatorFeeBPCustom: votingFeeSchema.optional(),
+    nodeOperatorFeeBPDefault: votingFeeSchema.optional(),
+    nodeOperatorFeeBP: z.union([votingFeeSchema, z.literal('other')]),
+    confirmExpiryCustom: votingLifetimeSchema.optional(),
+    confirmExpiryDefault: votingLifetimeSchema.optional(),
+    confirmExpiry: z.union([votingLifetimeSchema, z.literal('other')]),
   })
   .superRefine((data, ctx) => {
     const {
