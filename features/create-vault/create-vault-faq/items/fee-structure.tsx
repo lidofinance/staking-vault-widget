@@ -10,14 +10,14 @@ export const FeeStructure: FC<FAQComponentProps> = ({ defaultExpanded }) => {
         <li>Lido Fees</li>
       </ul>
       <p>
-        The validation rewards receiving by the vault are subject to the Node
+        The validation rewards received by the vault are subject to the Node
         Operator Fee.
       </p>
       <p>
         Node Operator Fee is not therefore deducted from the rewards
         automatically, but remain part of validators balance and vault balance
         as they are received. The accumulated Node Operator Fee is counted and
-        reported by the Oracle regularly, and locked for the withdrawn by the
+        reported by the Oracle regularly, and locked for the withdrawal by the
         Vault Owner so that only Node Operator representative can claim it.
       </p>
       Lido fees consist of two potential parts depending on the stVault selected
@@ -33,7 +33,7 @@ export const FeeStructure: FC<FAQComponentProps> = ({ defaultExpanded }) => {
         </li>
       </ul>
       <p>
-        Lido fees amount is locked for the withdrawn by the Vault Owner and
+        Lido fees amount is locked for the withdrawal by the Vault Owner and
         claimed automatically from the vault contract balance within the Oracle
         report applying.
       </p>
