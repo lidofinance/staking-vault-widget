@@ -8,11 +8,10 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
-import { useBurn } from 'features/adjustment/repay/hooks';
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
-
 import { FormController } from 'shared/hook-form/form-controller';
 
+import { useBurn } from 'features/adjustment/repay/hooks';
 import { RepayFormSchema } from 'features/adjustment/repay/types';
 
 type RepayDataContextValue = {
@@ -40,12 +39,14 @@ export const useRepayFormData = () => {
 };
 
 export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
+  const { isDappActive } = useDappStatus();
   const formObject = useForm<RepayFormSchema>({
     defaultValues: {
       amount: undefined,
       token: 'stETH',
     },
     mode: 'all',
+    disabled: !isDappActive,
     // TODO: validation
     reValidateMode: 'onChange',
   });
@@ -93,11 +94,13 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       if (!amount || !token) return false;
 
       invariant(amount, '[RepayFormProvider] amount is undefined');
-      invariant(token, '[RepayFormProvider] token is undefined');
+      invariant(
+        token === 'stETH' || token === 'wstETH',
+        '[RepayFormProvider] token is invalid',
+      );
 
       return await burn(amount, token);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [burn],
   );
 

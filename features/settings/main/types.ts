@@ -28,6 +28,7 @@ export type MainSettingsOverview = {
   name: string;
   title: string;
   editLabel: string;
+  hint?: string;
   dataType: InputDataType;
   actionText?: string;
   vaultKey: keyof VaultInfo;

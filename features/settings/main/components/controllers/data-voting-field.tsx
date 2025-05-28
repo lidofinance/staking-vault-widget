@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useFormState } from 'react-hook-form';
 import { ReadonlyView } from './readonly-view';
 import { GroupWrapper } from './styles';
 
@@ -20,13 +21,15 @@ export const DataVotingField: FC<DataVotingFieldProps> = ({
   canEditRole,
   mask,
 }) => {
+  const { disabled } = useFormState();
   const isConfirmingRoles = canEditRole === 'confirmingRoles';
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission(
     isConfirmingRoles ? undefined : canEditRole,
   );
 
-  const isEditable = hasConfirmingRole || hasPermission;
+  const isEditable =
+    !disabled && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
 
   return (
     <GroupWrapper>

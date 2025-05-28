@@ -1,28 +1,30 @@
+import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { useEstimateGas, useAccount } from 'wagmi';
-import { Address, encodeFunctionData } from 'viem';
+import { type Address, encodeFunctionData } from 'viem';
+
+import { useSendTransaction, withSuccess } from 'modules/web3';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
+
 import { fallbackedAddress } from 'utils/fallbacked-address';
-import { useSendTransaction, withSuccess } from 'modules/web3';
+
 import { useReportStatus } from 'features/report';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useMint = () => {
-  const { activeVault } = useVaultInfo();
-  const { shouldApplyReport, prepareReportCall } = useReportStatus();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     mint: useCallback(
-      async (recipient: Address, amount: bigint, token: string) => {
+      async (recipient: Address, amount: bigint, token: 'stETH' | 'wstETH') => {
         invariant(activeVault?.owner, '[useMint] owner is undefined');
 
-        const loadingActionText = `Minting ${token} backed by vault`;
-        const mainActionCompleteText = `Minted ${token} backed by vault`;
+        const loadingActionText = vaultTexts.actions.mint.loading(token);
+        const mainActionCompleteText = vaultTexts.actions.mint.completed(token);
 
         const mintCall = {
           to: activeVault.owner,
@@ -31,12 +33,11 @@ export const useMint = () => {
             functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
             args: [recipient, amount],
           }),
-          value: amount,
           loadingActionText,
         };
 
         // if we have to post report, there will be extra modal due to async fetch
-        const transactions = shouldApplyReport
+        const transactions = isReportAvailable
           ? async () => {
               return [await prepareReportCall(), mintCall];
             }
@@ -52,9 +53,19 @@ export const useMint = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, prepareReportCall, sendTX, shouldApplyReport],
+      [
+        activeVault?.owner,
+        refetchVaultInfo,
+        prepareReportCall,
+        sendTX,
+        isReportAvailable,
+      ],
     ),
     ...rest,
   };

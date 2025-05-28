@@ -1,8 +1,11 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
+import { useDappStatus } from 'modules/web3';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
 import { validateFormWithZod } from 'utils/validate-form-value';
+
 import { editPermissionsSchema } from 'features/settings/permissions/consts';
 import {
   EditPermissionsSchema,
@@ -16,12 +19,13 @@ import {
   formatRawPermissions,
 } from 'features/settings/permissions/utils';
 import { usePermissionsData } from './permissions-data-provider';
-import { useAwaiter } from 'shared/hooks/use-awaiter';
+
 import { FormBackdrop } from '../components';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
+  const { isDappActive } = useDappStatus();
   const { rolesList, refetch } = usePermissionsData();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
@@ -30,8 +34,11 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
     defaultValues: async () =>
       (await asyncPermissions.awaiter) as Record<PermissionKeys, FieldSchema[]>,
     resolver: validateFormWithZod(editPermissionsSchema),
+    disabled: !isDappActive,
     mode: 'onBlur',
   });
+
+  const reset = formObject.reset;
 
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
@@ -45,13 +52,12 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         formatRawPermissions(refetchData as []),
       );
       if (newDefaultValues) {
-        formObject.reset(newDefaultValues);
+        reset(newDefaultValues);
       }
 
       return success;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [editPermissions, refetch, formObject.reset],
+    [editPermissions, refetch, reset],
   );
 
   return (

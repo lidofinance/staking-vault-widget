@@ -1,17 +1,15 @@
+import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useDappStatus } from 'modules/web3/hooks/use-dapp-status';
-import { useVaultInfo } from 'modules/vaults';
-import invariant from 'tiny-invariant';
-import { useVaultPermission } from 'modules/vaults/hooks/use-vault-permissions';
+import { useSendTransaction, withSuccess, useDappStatus } from 'modules/web3';
+import { useReportStatus } from 'features/report';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
-import { useSendTransaction, withSuccess } from 'modules/web3';
-import { useReportStatus } from 'features/report';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import { dashboardAbi } from 'abi/dashboard-abi';
 
 type WithdrawArgs = {
   recipient: Address;
@@ -19,17 +17,17 @@ type WithdrawArgs = {
 };
 
 export const useWithdraw = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
-  const { shouldApplyReport, prepareReportCall } = useReportStatus();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
 
   const withdraw = useCallback(
     async ({ amount, recipient }: WithdrawArgs) => {
       invariant(vaultOwner, '[useWithdraw] vaultOwner is undefined');
 
       const withdrawCall = {
-        loadingActionText: 'Withdrawing ETH from vault',
+        loadingActionText: vaultTexts.actions.withdraw.loading,
         to: vaultOwner,
         data: encodeFunctionData({
           abi: dashboardAbi,
@@ -39,21 +37,33 @@ export const useWithdraw = () => {
       };
 
       // if we have to post report, there will be extra modal due to async fetch
-      const transactions = shouldApplyReport
+      const transactions = isReportAvailable
         ? async () => [await prepareReportCall(), withdrawCall]
         : [withdrawCall];
 
-      return withSuccess(
+      const { success } = await withSuccess(
         sendTX({
           transactions,
           forceAtomic: true,
-          mainActionLoadingText: 'Withdrawing ETH from vault',
-          mainActionCompleteText: 'ETH withdrawn from vault',
+          mainActionLoadingText: vaultTexts.actions.withdraw.loading,
+          mainActionCompleteText: vaultTexts.actions.withdraw.completed,
           renderSuccessContent: GoToVault,
         }),
       );
+
+      if (success) {
+        await refetchVaultInfo();
+      }
+
+      return success;
     },
-    [vaultOwner, shouldApplyReport, sendTX, prepareReportCall],
+    [
+      vaultOwner,
+      isReportAvailable,
+      refetchVaultInfo,
+      sendTX,
+      prepareReportCall,
+    ],
   );
 
   return {

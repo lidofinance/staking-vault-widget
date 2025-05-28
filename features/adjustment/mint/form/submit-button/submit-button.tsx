@@ -1,15 +1,13 @@
 import { useVaultInfo, type VAULT_OWNER_ROLES } from 'modules/vaults';
 import { MultiplePermissionedSubmitButton } from 'modules/vaults/components';
 import { useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFormState, useWatch } from 'react-hook-form';
 
 const NON_INCREASE_LOCK_ROLES = ['minter'] as VAULT_OWNER_ROLES[];
 const INCREASE_LOCK_ROLES = ['minter', 'locker'] as VAULT_OWNER_ROLES[];
 
 export const SubmitButton = () => {
-  const {
-    formState: { isSubmitting, isValid },
-  } = useFormContext();
+  const { isSubmitting, isValid, disabled } = useFormState();
 
   const { activeVault } = useVaultInfo();
 
@@ -35,13 +33,13 @@ export const SubmitButton = () => {
     return NON_INCREASE_LOCK_ROLES;
   }, [activeVault, amount, token]);
 
-  const disabled = isSubmitting && !isValid;
+  const isDisabled = isSubmitting && !isValid && disabled;
 
   return (
     <MultiplePermissionedSubmitButton
       dashboardRoles={roles}
       type="submit"
-      disabled={disabled}
+      disabled={isDisabled}
     >
       Mint
     </MultiplePermissionedSubmitButton>

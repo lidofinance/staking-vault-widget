@@ -1,80 +1,56 @@
+import { vaultTexts } from 'modules/vaults';
 import { MainSettingsEntryType } from './types';
 
-export const CREATE_VAULT_STEPS = 2;
-
-export enum PermissionToggleEnum {
-  byPermission = 'by_permission',
-  byAddress = 'by_address',
+export enum CREATE_VAULT_FORM_STEPS {
+  main = 1,
+  confirm,
 }
 
-export const permissionsToggleList = [
-  {
-    value: PermissionToggleEnum.byPermission,
-    label: 'by Permission',
-  },
-  {
-    value: PermissionToggleEnum.byAddress,
-    label: 'by address',
-  },
-];
+const steps = vaultTexts.actions.createVault.steps;
 
-export type ToggleValue =
-  (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
+export const SECTION_NAMES_BY_STEP = steps.reduce(
+  (acc, step, index) => ({
+    ...acc,
+    [index + 1]: step,
+  }),
+  {} as Record<number, string>,
+);
 
-export const steps: Record<number, string> = {
-  '1': 'Main settings',
-  '2': 'Confirmation',
-};
+export const CREATE_VAULT_STEPS = steps.length;
 
-export const getSectionNameByStep = (step: number) => steps[step];
-
-export const mainSettingsFields = [
-  'defaultAdmin',
-  'nodeOperator',
-  'nodeOperatorFeeBP',
-  'confirmExpiry',
-  'nodeOperatorManager',
-] as const;
+const texts = vaultTexts.actions.createVault.fields;
 
 export const MAIN_SETTINGS: MainSettingsEntryType[] = [
   {
     name: 'nodeOperator',
-    title: 'Node Operator',
-    label: 'Node Operator address',
-    notes: 'Node Operator address cannot be changed after the vault is created',
     dataType: 'address',
+    ...texts.nodeOperator,
   },
   {
     name: 'nodeOperatorFeeBP',
-    title: 'Node Operator fee',
-    label: 'Node Operator fee, %',
     dataType: 'percent',
     type: 'number',
+    ...texts.nodeOperatorFee,
   },
   {
     name: 'confirmExpiry',
-    title: 'Confirmation Lifetime',
-    label: 'Confirmation Lifetime, hours',
-    afterText: 'hours',
     dataType: 'time',
     type: 'number',
+    ...texts.confirmationLifetime,
   },
   {
-    name: 'defaultAdmin',
-    title: 'Vault Manager',
-    label: 'Vault Manager address or ENS',
-    dataType: 'address',
+    name: 'vaultManager',
+    dataType: 'addressArray',
+    ...texts.vaultManager,
   },
   {
     name: 'nodeOperatorManager',
-    title: 'Node Operator Manager',
-    label: 'Node Operator Manager address or ENS',
     dataType: 'address',
+    ...texts.nodeOperatorManager,
+  },
+  {
+    name: 'acceptTerms',
+    dataType: 'confirm',
+    ...texts.acceptTerms,
   },
 ];
-
-export enum CREATE_VAULT_FORM_STEPS {
-  main,
-  confirm,
-  permissions,
-}

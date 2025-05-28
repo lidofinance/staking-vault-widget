@@ -1,6 +1,5 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
-import type { VaultFactoryAbi } from 'abi/vault-factory';
-import { Address, ReadContractReturnType, WriteContractParameters } from 'viem';
+import { Address, ReadContractReturnType } from 'viem';
 
 export type VaultInfo = VaultSocket & {
   address: Address;
@@ -32,17 +31,3 @@ export type VaultSocket = ReadContractReturnType<
   'vaultSocket',
   [Address]
 >;
-
-type FactoryParams = WriteContractParameters<
-  typeof VaultFactoryAbi,
-  'createVaultWithDashboard'
->['args'];
-
-export type VaultFactoryArgs = {
-  defaultAdmin: FactoryParams[0];
-  nodeOperator: FactoryParams[1];
-  nodeOperatorManager: FactoryParams[2];
-  nodeOperatorFeeBP: FactoryParams[3];
-  confirmExpiry: FactoryParams[4];
-  roles: FactoryParams[5];
-};

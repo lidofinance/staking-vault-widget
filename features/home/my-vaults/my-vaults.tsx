@@ -1,15 +1,34 @@
-import { useDappStatus } from 'modules/web3';
+import { VaultTable } from 'features/home/vault-table';
 
-import { ConnectWallet } from 'features/home/my-vaults/connect-wallet';
-import { ConnectedWalletContent } from 'features/home/my-vaults/auth-content';
-import { Wrapper } from './styles';
+import { AddVault } from './add-vault';
+import { useMyVaultsList } from './use-my-vaults-list';
 
 export const MyVaults = () => {
-  const { address } = useDappStatus();
-
+  const {
+    vaults,
+    isLoading,
+    totalVaultsCount,
+    refetch,
+    page,
+    setPage,
+    pagesCount,
+    isError,
+  } = useMyVaultsList();
   return (
-    <Wrapper>
-      {!address ? <ConnectWallet /> : <ConnectedWalletContent />}
-    </Wrapper>
+    <>
+      <VaultTable
+        title="My Vaults"
+        emptyDisplay="hideTable"
+        vaults={vaults}
+        vaultsCount={totalVaultsCount}
+        isError={isError}
+        isLoading={isLoading}
+        refetch={refetch}
+        page={page}
+        pagesCount={pagesCount}
+        setPage={setPage}
+      />
+      <AddVault />
+    </>
   );
 };

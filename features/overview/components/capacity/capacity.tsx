@@ -1,43 +1,32 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
-import { SectionPayload, useVaultOverview } from 'features/overview/contexts';
+import { SectionData, useVaultOverview } from 'features/overview/contexts';
 import { getUtilizationRatioColor } from 'utils';
 
-const sectionPayloadList: SectionPayload[] = [
+const sectionPayloadList: SectionData[] = [
   {
-    title: 'Utilization ratio',
     key: 'utilizationRatio',
   },
   {
-    title: 'stETH liability',
     key: 'liabilityStETH',
   },
   {
-    title: 'Total minting capacity',
     key: 'totalMintingCapacityStETH',
   },
 ];
 
 export const Capacity = () => {
   const { getVaultDataToRender } = useVaultOverview();
-  const renderData = getVaultDataToRender(sectionPayloadList);
 
   return (
     <OverviewSection title="stETH capacity utilization">
-      {renderData.map((item) => {
-        const isUtilizationRatio = item.key === 'utilizationRatio';
+      {sectionPayloadList.map((sectionItem) => {
+        const { key, ...item } = getVaultDataToRender(sectionItem);
+        const isUtilizationRatio = key === 'utilizationRatio';
         const color = isUtilizationRatio
           ? getUtilizationRatioColor(String(item.payload))
           : undefined;
 
-        return (
-          <OverviewItem
-            key={item.title}
-            title={item.title}
-            content={item.payload}
-            isLoading={item.isLoading}
-            color={color}
-          />
-        );
+        return <OverviewItem {...item} key={key} color={color} />;
       })}
     </OverviewSection>
   );

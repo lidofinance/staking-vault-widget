@@ -4,7 +4,10 @@ import { Text } from '@lidofinance/lido-ui';
 import { AddressBadge } from 'shared/components';
 
 import { Wrapper } from './styles';
-import { useVaultInfo } from 'modules/vaults';
+
+import { useVaultInfo, vaultTexts } from 'modules/vaults';
+
+const texts = vaultTexts.actions.settings.fields.nodeOperator;
 
 export const NodeOperator: FC = () => {
   const { activeVault } = useVaultInfo();
@@ -12,7 +15,7 @@ export const NodeOperator: FC = () => {
   return (
     <Wrapper>
       <Text size="xs" strong>
-        Node Operator
+        {texts.title}
       </Text>
       <AddressBadge
         weight={400}

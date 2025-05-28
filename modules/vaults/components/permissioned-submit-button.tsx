@@ -1,19 +1,19 @@
+import { forwardRef, type ComponentProps } from 'react';
 import { Button } from '@lidofinance/lido-ui';
+
+import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
+
 import {
-  DashboardRoles,
   useVaultPermission,
   useVaultPermissions,
 } from '../hooks/use-vault-permissions';
 
-import { forwardRef, type ComponentProps } from 'react';
-import { useDappStatus } from 'modules/web3';
-import { ConnectWalletButton } from 'shared/wallet';
+import { VAULTS_ALL_ROLES, vaultTexts } from '../consts';
 
 type PermissionedSubmitProps = {
-  dashboardRole: DashboardRoles;
+  dashboardRole: VAULTS_ALL_ROLES;
 } & ComponentProps<typeof Button>;
-
-const capitilize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 export const PermissionedSubmitButton = forwardRef<
   HTMLButtonElement,
@@ -29,11 +29,13 @@ export const PermissionedSubmitButton = forwardRef<
   const shouldShowPermissionError =
     !isLoading && !hasPermission && isAccountActive;
 
+  const roleTitle = vaultTexts.roles[dashboardRole].title;
+
   return (
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${capitilize(dashboardRole)} role`
+          ? vaultTexts.common.errors.noRoles([roleTitle])
           : children}
       </Button>
     </ConnectWalletButton>
@@ -41,7 +43,7 @@ export const PermissionedSubmitButton = forwardRef<
 });
 
 type MultiplePermissionedSubmitProps = {
-  dashboardRoles: DashboardRoles[];
+  dashboardRoles: VAULTS_ALL_ROLES[];
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<
@@ -58,11 +60,14 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   const shouldShowPermissionError =
     !isLoading && data && !data.hasPermissions && isAccountActive;
 
+  const missingRoles =
+    data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
+
   return (
     <ConnectWalletButton>
       <Button disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
-          ? `You don't have ${data?.missingRoles.map(capitilize).join(', ')} role${data && data.missingRoles.length > 1 ? 's' : ''}`
+          ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}
       </Button>
     </ConnectWalletButton>

@@ -10,10 +10,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import type { Address } from 'viem';
 import invariant from 'tiny-invariant';
 
-import { useWithdrawable, useWithdraw } from 'features/supply/withdraw/hooks';
-
+import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
 
+import { useWithdrawable, useWithdraw } from 'features/supply/withdraw/hooks';
 import { WithdrawFormSchema } from 'features/supply/withdraw/types';
 
 type WithdrawDataContextValue = {
@@ -41,12 +41,14 @@ export const useWithdrawFormData = () => {
 export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { isDappActive } = useDappStatus();
   const formObject = useForm<WithdrawFormSchema>({
     defaultValues: {
       amount: undefined,
       recipient: '' as Address,
     },
     mode: 'all',
+    disabled: !isDappActive,
     // TODO: add form validation
     reValidateMode: 'onChange',
   });
@@ -84,9 +86,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       );
       invariant(recipient, '[WithdrawFormProvider] recipient is undefined');
 
-      const { success } = await withdraw({ amount, recipient });
-
-      return success;
+      return await withdraw({ amount, recipient });
     },
     [withdraw],
   );

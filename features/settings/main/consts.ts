@@ -13,6 +13,7 @@ import {
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY,
+  vaultTexts,
 } from 'modules/vaults';
 import { Address, isAddress } from 'viem';
 import { Resolver, UseFormGetValues } from 'react-hook-form';
@@ -95,6 +96,7 @@ export const indicatorsForRender: MainSettingsVoting[] = [
     mask: '%',
     vaultKey: 'nodeOperatorFeeBP',
     canEditRole: 'confirmingRoles',
+    ...vaultTexts.actions.settings.fields.nodeOperatorFee,
   },
   {
     name: 'confirmExpiry',
@@ -103,6 +105,7 @@ export const indicatorsForRender: MainSettingsVoting[] = [
     mask: ' hours',
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
+    ...vaultTexts.actions.settings.fields.confirmationLifetime,
   },
 ];
 
@@ -112,18 +115,18 @@ export const adminsForRender: MainSettingsOverview[] = [
     title: 'Vault Manager',
     editLabel: 'Vault Manager address',
     dataType: 'address',
-    actionText: 'Add new address',
     vaultKey: 'defaultAdmins',
     canEditRole: 'defaultAdmin',
+    ...vaultTexts.actions.settings.fields.vaultManager,
   },
   {
     name: 'nodeOperatorManagers',
     title: 'Node Operator Manager',
     editLabel: 'Node Operator Manager address',
     dataType: 'address',
-    actionText: 'Add new address',
     vaultKey: 'nodeOperatorManagers',
     canEditRole: 'nodeOperatorManager',
+    ...vaultTexts.actions.settings.fields.nodeOperatorManager,
   },
 ];
 

@@ -1,18 +1,18 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 
+import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
+import { useEditMainSettings } from 'features/settings/main/hooks';
+import { useMainSettingsData } from './main-settings-data-provider';
 
 import { EditMainSettingsSchema } from 'features/settings/main/types';
-import { useEditMainSettings } from 'features/settings/main/hooks';
-import { editMainSettingsSchema } from 'features/settings/main/consts';
-import { useVaultInfo } from 'modules/vaults';
-import { useMainSettingsData } from './main-settings-data-provider';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { editMainSettingsSchema } from 'features/settings/main/consts';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { refetch } = useVaultInfo();
+  const { isDappActive } = useDappStatus();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const settingsData = useMainSettingsData();
   const promisedSettingsData = useAwaiter(settingsData);
@@ -57,6 +57,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorFeeBPDefault: 0,
       };
     },
+    disabled: !isDappActive,
     resolver: zodResolver(editMainSettingsSchema),
     mode: 'all',
   });
@@ -65,13 +66,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       const { success } = await editMainSettings(data);
 
-      // refetch even when error because some transactions may be successful
-      // or reverted due to state change
-      await refetch({ cancelRefetch: true, throwOnError: true });
-
       return success;
     },
-    [editMainSettings, refetch],
+    [editMainSettings],
   );
 
   return (

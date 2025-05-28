@@ -1,21 +1,22 @@
 import { FC, useMemo } from 'react';
+import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
-import { Container } from './styled';
 
-import { useFormContext } from 'react-hook-form';
+import { ConnectWalletButton } from 'shared/wallet';
+
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
 import { shouldIncrementTxCounter } from 'features/settings/main/utils';
-import { ConnectWalletButton } from 'shared/wallet';
+
+import { Container } from './styled';
 
 export const MainSettingsAction: FC = () => {
-  const {
-    watch,
-    formState: { isValid, isDirty, isSubmitting, isValidating },
-    reset,
-  } = useFormContext();
+  const { watch, reset } = useFormContext();
+  const { isValid, isDirty, isSubmitting, isValidating, disabled } =
+    useFormState();
   const isClearDisabled = !isDirty;
-  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isValidating;
+  const isSubmitDisabled =
+    !isValid || !isDirty || isSubmitting || disabled || isValidating;
 
   const formFields = watch();
 

@@ -11,15 +11,14 @@ import { Address, isAddress } from 'viem';
 import invariant from 'tiny-invariant';
 import { useSingleVaultData } from 'modules/vaults/hooks/use-vault-data';
 import { VaultInfo } from 'types';
+import { QueryObserverResult } from '@tanstack/react-query';
 
 type VaultContextType = {
   vaultAddress: Address | undefined;
   activeVault?: VaultInfo;
-  isLoadingVault?: boolean;
-} & Pick<
-  ReturnType<typeof useSingleVaultData>,
-  'refetch' | 'isRefetching' | 'error'
->;
+  refetchVaultInfo: () => Promise<QueryObserverResult<VaultInfo, Error>>;
+  isLoadingVault: boolean;
+} & Pick<ReturnType<typeof useSingleVaultData>, 'isRefetching' | 'error'>;
 
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';
@@ -30,34 +29,26 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const sanitizedVaultAddress = isAddress(vaultAddress)
     ? vaultAddress
     : undefined;
-  const query = useSingleVaultData(sanitizedVaultAddress);
+  const { data, error, refetch, isPending, isRefetching } = useSingleVaultData(
+    sanitizedVaultAddress,
+  );
 
   useEffect(() => {
-    if (query.error)
-      console.error(
-        `[VaultProvider] error fetching ${vaultAddress}`,
-        query.error,
-      );
-  }, [query.error, vaultAddress]);
+    if (error)
+      console.error(`[VaultProvider] error fetching ${vaultAddress}`, error);
+  }, [error, vaultAddress]);
 
-  const contextValue = useMemo<VaultContextType>(
-    () => ({
+  const contextValue = useMemo<VaultContextType>(() => {
+    return {
       vaultAddress: sanitizedVaultAddress,
-      activeVault: query.data,
-      isLoadingVault: query.isPending,
-      error: query.error,
-      refetch: query.refetch,
-      isRefetching: query.isRefetching,
-    }),
-    [
-      sanitizedVaultAddress,
-      query.data,
-      query.isPending,
-      query.error,
-      query.refetch,
-      query.isRefetching,
-    ],
-  );
+      activeVault: data,
+      isLoadingVault: isPending,
+      error: error,
+      refetchVaultInfo: () =>
+        refetch({ cancelRefetch: true, throwOnError: false }),
+      isRefetching: isRefetching,
+    };
+  }, [sanitizedVaultAddress, data, isPending, error, isRefetching, refetch]);
 
   return (
     <VaultContext.Provider value={contextValue}>

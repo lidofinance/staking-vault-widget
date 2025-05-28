@@ -1,75 +1,128 @@
-import { forwardRef, MouseEventHandler } from 'react';
+import { type MouseEvent, forwardRef, useRef, useState } from 'react';
+import { zeroAddress } from 'viem';
 import {
   Identicon,
-  Loader,
+  InlineLoader,
   TextColors,
   TextWeight,
+  Tooltip,
 } from '@lidofinance/lido-ui';
-import { zeroAddress } from 'viem';
+
+import { useSafeEnsName } from 'shared/hooks/use-safe-ens-name';
+import { addressSchema } from 'utils/validate-form-value';
+
+import { AddressAvatar } from './address-avatar';
+import { AddressPopover } from './address-popover';
 import { PillContainer, AddressText } from './styles';
 
-export interface AddressBadgeProps {
+export type AddressBadgeProps = {
+  // display
   address?: string;
+  showEnsName?: boolean;
+  showPopover?: boolean | 'default' | 'hover';
+  popoverPlacement?: React.ComponentProps<typeof Tooltip>['placement'];
+  // state
+  isLoading?: boolean;
+  // style
   symbols?: number;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   color?: TextColors;
   weight?: TextWeight;
-  bgColor?: 'transparent' | 'default' | 'error' | 'success' | 'active';
-  crossed?: boolean;
-  isLoading?: boolean;
-  onClick?: MouseEventHandler<HTMLDivElement>;
-}
+  hoverEffect?: boolean;
+} & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
   (
     {
-      address,
       symbols = 6,
       size = 'xs',
       color = 'default',
-      weight = 700,
+      weight = 400,
       bgColor = 'default',
       crossed = false,
       isLoading = false,
-      onClick,
+      showPopover = false,
+      showEnsName = false,
+      hoverEffect = true,
+      popoverPlacement = 'topLeft',
+      ...props
     },
-    ref,
+    forwardedRef,
   ) => {
-    if (isLoading) {
+    const backupRef = useRef<HTMLDivElement>(null);
+    const ref = forwardedRef || backupRef;
+    const [isOpen, setIsOpen] = useState(false);
+    const parsing = addressSchema.safeParse(props.address);
+
+    const { ensName, isLoading: isEnsLoading } = useSafeEnsName(
+      parsing.success && showEnsName ? parsing.data : undefined,
+    );
+
+    const onClick = (event: MouseEvent) => {
+      setIsOpen(true);
+      props.onClick?.(event);
+    };
+
+    if (isLoading || (showEnsName && isEnsLoading)) {
       return (
         <PillContainer
           crossed={crossed}
           bgColor={bgColor}
           onClick={onClick}
           ref={ref}
+          {...props}
         >
-          <Identicon address={zeroAddress} />
-          <Loader size="large" />
+          {/* if ens forced loading we can show right identicon */}
+          <Identicon address={parsing.data ?? zeroAddress} />
+          <InlineLoader style={{ width: 113 }} />
         </PillContainer>
       );
     }
 
-    if (!address) {
-      return null;
-    }
+    if (!parsing.success) return null;
 
-    return (
+    const address = parsing.data;
+    const mainText = showEnsName && ensName ? ensName : address;
+
+    const mainContent = (
       <PillContainer
+        ref={ref}
         crossed={crossed}
         bgColor={bgColor}
         onClick={onClick}
-        ref={ref}
+        hoverEffect={hoverEffect}
+        {...props}
       >
-        <Identicon address={address} />
+        <AddressAvatar address={address} ensName={ensName} />
         <AddressText
           size={size}
           color={color}
           weight={weight}
           symbols={symbols}
-          address={address}
+          address={mainText}
           crossedText={crossed}
         />
       </PillContainer>
     );
+
+    const popoverMode =
+      typeof showPopover === 'boolean' ? 'default' : showPopover;
+
+    if (showPopover) {
+      return (
+        <AddressPopover
+          mode={popoverMode}
+          anchorRef={ref as any}
+          isOpen={isOpen}
+          address={address}
+          placement={popoverPlacement}
+          onClose={() => setIsOpen(false)}
+        >
+          {mainContent}
+        </AddressPopover>
+      );
+    }
+
+    return mainContent;
   },
 );
