@@ -5,11 +5,11 @@ import { FormController } from 'shared/hook-form/form-controller';
 
 import { EditMainSettingsSchema } from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
-import { validateFormWithZod } from 'utils/validate-form-value';
 import { editMainSettingsSchema } from 'features/settings/main/consts';
 import { useVaultInfo } from 'modules/vaults';
 import { useMainSettingsData } from './main-settings-data-provider';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { refetch } = useVaultInfo();
@@ -27,32 +27,31 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
           nodeOperatorFeeBP,
           nodeOperatorManagers,
         } = settingsData;
+        const confirmExpiryCurrent = confirmExpiry.find(
+          (item) => item.type === 'current',
+        )?.value;
+        const nodeOperatorFeeBPCurrent = nodeOperatorFeeBP.find(
+          (item) => item.type === 'current',
+        )?.value;
+
         return {
           defaultAdmins,
           nodeOperatorManagers,
-          confirmExpiry: {
-            options: confirmExpiry,
-            selectedIndex: confirmExpiry
-              .findIndex((item) => item.type === 'current')
-              .toString(),
-          },
-          nodeOperatorFeeBP: {
-            options: nodeOperatorFeeBP,
-            selectedIndex: nodeOperatorFeeBP
-              .findIndex((item) => item.type === 'current')
-              .toString(),
-          },
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          confirmExpiry: confirmExpiryCurrent!,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          nodeOperatorFeeBP: nodeOperatorFeeBPCurrent!,
         };
       }
       //
       return {
         nodeOperatorManagers: [],
         defaultAdmins: [],
-        confirmExpiry: { options: [], selectedIndex: 0 },
-        nodeOperatorFeeBP: { options: [], selectedIndex: 0 },
+        confirmExpiry: 0,
+        nodeOperatorFeeBP: 0,
       };
     },
-    resolver: validateFormWithZod(editMainSettingsSchema),
+    resolver: zodResolver(editMainSettingsSchema),
     mode: 'all',
   });
 

@@ -10,9 +10,9 @@ import {
   useVaultPermission,
 } from 'modules/vaults/hooks/use-vault-permissions';
 
-type InputResolverProps = MainSettingsVoting;
+type DataVotingFieldProps = MainSettingsVoting;
 
-export const DataField: FC<InputResolverProps> = ({
+export const DataVotingField: FC<DataVotingFieldProps> = ({
   editLabel,
   name,
   title,

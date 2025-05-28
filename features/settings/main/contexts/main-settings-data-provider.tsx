@@ -73,16 +73,6 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       }
     });
 
-    nodeOperatorFeeBP.push({
-      value: '',
-      type: 'edit',
-    });
-
-    confirmExpiry.push({
-      value: '',
-      type: 'edit',
-    });
-
     return {
       defaultAdmins: activeVault.defaultAdmins.map((address) => ({
         value: address,

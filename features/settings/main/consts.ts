@@ -65,18 +65,78 @@ export const votingLifetimeSchema = votingBase.extend({
     .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
 });
 
-export const editMainSettingsSchema = z.object({
-  nodeOperatorManagers: z.array(addressSchema),
-  defaultAdmins: z.array(addressSchema),
-  nodeOperatorFeeBP: z.object({
-    options: z.array(votingFeeSchema),
-    selectedIndex: z.string(),
-  }),
-  confirmExpiry: z.object({
-    options: z.array(votingLifetimeSchema),
-    selectedIndex: z.string(),
-  }),
-});
+export const editMainSettingsSchema = z
+  .object({
+    nodeOperatorManagers: z.array(addressSchema),
+    defaultAdmins: z.array(addressSchema),
+    nodeOperatorFeeBPCustom: z.coerce
+      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+      .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+      .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE)
+      .optional(),
+    nodeOperatorFeeBP: z.preprocess(
+      (val) => {
+        if (typeof val === 'string') {
+          const n = parseInt(val, 10);
+          return isNaN(n) ? val : n;
+        }
+        return val;
+      },
+      z.union([
+        z
+          .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+          .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+          .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
+        z.literal('other'),
+      ]),
+    ),
+    confirmExpiryCustom: z.coerce
+      .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+      .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+      .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE)
+      .optional(),
+    confirmExpiry: z.preprocess(
+      (val) => {
+        if (typeof val === 'string') {
+          const n = parseInt(val, 10);
+          return isNaN(n) ? val : n;
+        }
+        return val;
+      },
+      z.union([
+        z
+          .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+          .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+          .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
+        z.literal('other'),
+      ]),
+    ),
+  })
+  .superRefine((data, ctx) => {
+    const {
+      confirmExpiry,
+      confirmExpiryCustom,
+      nodeOperatorFeeBP,
+      nodeOperatorFeeBPCustom,
+    } = data;
+
+    if (confirmExpiry === 'other' && confirmExpiryCustom == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Add value',
+        path: ['confirmExpiryCustom'],
+      });
+    } else if (
+      nodeOperatorFeeBP === 'other' &&
+      nodeOperatorFeeBPCustom == null
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Add value',
+        path: ['nodeOperatorFeeBPCustom'],
+      });
+    }
+  });
 
 export const indicatorsForRender: MainSettingsVoting[] = [
   {

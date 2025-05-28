@@ -1,7 +1,7 @@
 import { Text } from '@lidofinance/lido-ui';
 import {
   MainSettingsAction,
-  DataField,
+  DataVotingField,
   DataManagerField,
   NodeOperator,
 } from 'features/settings/main/components';
@@ -26,7 +26,7 @@ export const EditMainSettings = () => {
             <DataManagerField key={field.vaultKey} {...field} />
           ))}
           {indicatorsForRender.map((field) => (
-            <DataField key={field.vaultKey} {...field} />
+            <DataVotingField key={field.vaultKey} {...field} />
           ))}
           <MainSettingsAction />
         </SectionContainer>

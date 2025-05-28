@@ -5,6 +5,7 @@ import { Container } from './styled';
 import { useFormContext } from 'react-hook-form';
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
+import { useMainSettingsData } from 'features/settings/main/contexts';
 import { ConnectWalletButton } from 'shared/wallet';
 
 export const MainSettingsAction: FC = () => {
@@ -13,8 +14,23 @@ export const MainSettingsAction: FC = () => {
     formState: { isValid, isDirty, isSubmitting, isValidating },
     reset,
   } = useFormContext();
+  const mainSettingsData = useMainSettingsData();
   const isClearDisabled = !isDirty;
   const isSubmitDisabled = !isValid || !isDirty || isSubmitting || isValidating;
+  const { nodeOperatorFeeBPCurrent, confirmExpiryCurrent } = useMemo(() => {
+    if (mainSettingsData) {
+      const nodeOperatorFeeBPCurrent = mainSettingsData.nodeOperatorFeeBP.find(
+        (item) => item.type === 'current',
+      )?.value;
+      const confirmExpiryCurrent = mainSettingsData.confirmExpiry.find(
+        (item) => item.type === 'current',
+      )?.value;
+
+      return { nodeOperatorFeeBPCurrent, confirmExpiryCurrent };
+    }
+
+    return { nodeOperatorFeeBPCurrent: 0, confirmExpiryCurrent: 0 };
+  }, [mainSettingsData]);
   const formFields = watch();
 
   const handleClearMainForm = () => {
@@ -38,15 +54,34 @@ export const MainSettingsAction: FC = () => {
         counter += Number(grant > 0) + Number(remove > 0);
       });
 
-      if (formFields.nodeOperatorFeeBP.selectedIndex > 0) {
+      const {
+        nodeOperatorFeeBP,
+        nodeOperatorFeeBPCustom,
+        confirmExpiry,
+        confirmExpiryCustom,
+      } = formFields;
+
+      if (
+        nodeOperatorFeeBP !== 'other' &&
+        Number(nodeOperatorFeeBP) !== nodeOperatorFeeBPCurrent
+      ) {
+        counter++;
+        // eslint-disable-next-line sonarjs/no-duplicated-branches
+      } else if (nodeOperatorFeeBP === 'other' && !!nodeOperatorFeeBPCustom) {
         counter++;
       }
 
-      if (formFields.confirmExpiry.selectedIndex > 0) {
+      if (
+        confirmExpiry !== 'other' &&
+        Number(confirmExpiry) !== confirmExpiryCurrent
+      ) {
+        counter++;
+        // eslint-disable-next-line sonarjs/no-duplicated-branches
+      } else if (confirmExpiry === 'other' && !!confirmExpiryCustom) {
         counter++;
       }
 
-      if (counter) {
+      if (counter > 0) {
         return [
           `Submit ${counter} transaction${counter > 1 ? 's' : ''}`,
           counter,
@@ -55,7 +90,12 @@ export const MainSettingsAction: FC = () => {
     }
 
     return ['No changes', counter];
-  }, [formFields, isSubmitDisabled]);
+  }, [
+    formFields,
+    isSubmitDisabled,
+    nodeOperatorFeeBPCurrent,
+    confirmExpiryCurrent,
+  ]);
 
   const hasChanges = counter > 0;
 

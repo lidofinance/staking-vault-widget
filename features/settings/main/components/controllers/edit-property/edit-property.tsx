@@ -1,16 +1,13 @@
-import { FC } from 'react';
-
-import { useFieldArray } from 'react-hook-form';
+import { FC, useMemo } from 'react';
 
 import { Input } from '@lidofinance/lido-ui';
 import { InputWithRadioDecorator } from '../input-with-radio-decorator';
 import { ChipDecorator } from '../input-with-radio-decorator/chip-decorator';
 import { EditWrapper } from './styles';
 
-import {
-  EditMainSettingsSchema,
-  VotingKeys,
-} from 'features/settings/main/types';
+import { VotingKeys } from 'features/settings/main/types';
+import { useMainSettingsData } from 'features/settings/main/contexts';
+import { InputWithRadioControlled } from '../input-with-radio-decorator/input-with-radio-controlled';
 
 interface EditPropertyProps {
   name: VotingKeys;
@@ -23,15 +20,26 @@ export const EditProperty: FC<EditPropertyProps> = ({
   editLabel,
   mask,
 }) => {
-  const { fields } = useFieldArray<
-    EditMainSettingsSchema,
-    'nodeOperatorFeeBP.options' | 'confirmExpiry.options',
-    'id'
-  >({ name: `${name}.options` });
+  // const { fields } = useFieldArray<
+  //   EditMainSettingsSchema,
+  //   'nodeOperatorFeeBP.options' | 'confirmExpiry.options',
+  //   'id'
+  // >({ name: `${name}.options` });
+
+  const mainSettingsData = useMainSettingsData();
+  const renderList = useMemo(() => {
+    if (mainSettingsData) return mainSettingsData[name];
+    return [];
+  }, [mainSettingsData, name]);
+
+  const textFieldName =
+    name === 'confirmExpiry'
+      ? 'confirmExpiryCustom'
+      : 'nodeOperatorFeeBPCustom';
 
   return (
     <EditWrapper>
-      {fields.map((field, index) => {
+      {renderList.map((field) => {
         const decoratorsList = [];
         const isEditField = field.type === 'edit';
         if (field.expiryDate) decoratorsList.push(field.expiryDate);
@@ -40,13 +48,12 @@ export const EditProperty: FC<EditPropertyProps> = ({
         if (field.type !== 'by_me')
           return (
             <InputWithRadioDecorator
-              key={field.id}
+              key={`${field.value}${field.type}`}
               rightDecorator={<ChipDecorator list={decoratorsList} />}
               placeholder={editLabel}
+              value={field.value}
               mask={mask}
-              name={`${name}.options.${index}.value`}
-              radioName={`${name}.selectedIndex`}
-              index={index}
+              name={name}
               defaultChecked={field.type === 'current'}
               defaultDisabled={!isEditField}
             />
@@ -54,13 +61,23 @@ export const EditProperty: FC<EditPropertyProps> = ({
 
         return (
           <Input
-            key={field.id}
+            key={`${field.value}${field.type}`}
             value={`${field.value}${mask}`}
             rightDecorator={<ChipDecorator list={decoratorsList} />}
             disabled
           />
         );
       })}
+
+      {renderList.length > 0 && (
+        <InputWithRadioControlled
+          placeholder={editLabel}
+          mask={mask}
+          name={name}
+          textFieldName={textFieldName}
+          value="other"
+        />
+      )}
     </EditWrapper>
   );
 };
