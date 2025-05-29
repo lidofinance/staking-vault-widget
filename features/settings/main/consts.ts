@@ -15,7 +15,7 @@ import {
   MIN_CONFIRM_EXPIRY,
   vaultTexts,
 } from 'modules/vaults';
-import { Address, isAddress } from 'viem';
+import { getAddress, isAddress } from 'viem';
 import { Resolver, UseFormGetValues } from 'react-hook-form';
 import { isValidEns } from 'utils/ens';
 
@@ -26,10 +26,10 @@ const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or abov
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 
-const accountSchema = z
+export const accountSchema = z
   .string()
   .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value as Address);
+  .transform((val) => getAddress(val));
 
 export const addressSchema = z.object({
   isGranted: z.boolean().optional(),

@@ -37,14 +37,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         return {
           defaultAdmins,
           nodeOperatorManagers,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          confirmExpiry: confirmExpiryCurrent!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          confirmExpiryDefault: confirmExpiryCurrent!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          nodeOperatorFeeBP: nodeOperatorFeeBPCurrent!,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          nodeOperatorFeeBPDefault: nodeOperatorFeeBPCurrent!,
+          confirmExpiry: confirmExpiryCurrent ?? 0,
+          confirmExpiryDefault: confirmExpiryCurrent ?? 0,
+          nodeOperatorFeeBP: nodeOperatorFeeBPCurrent ?? 0,
+          nodeOperatorFeeBPDefault: nodeOperatorFeeBPCurrent ?? 0,
         };
       }
       //
@@ -58,6 +54,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       };
     },
     disabled: !isDappActive,
+    // @ts-expect-error TODO: fix zod Address validation type
     resolver: zodResolver(editMainSettingsSchema),
     mode: 'all',
   });
