@@ -15,7 +15,11 @@ export const InputTitle = styled.p`
   font-weight: 700;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
+  gap: 4px;
   display: inline-flex;
+  & > svg {
+    align-self: center;
+  }
 `;
 
 export const InputNotes = styled.p`

@@ -30,7 +30,7 @@ export const vaultTexts = {
         confirmationLifetime: {
           title: 'Confirmation Lifetime',
           label: 'Confirmation Lifetime, hours',
-          hint: 'The time period in which the Node Operator has to confirm the report.\nMandatory parameter, [0 hours .. 24 hours].\nIf the Node Operator does not confirm the report within this time period, it will be automatically confirmed.',
+          hint: 'The main parameter of the “Multi-role confirmation” mechanism. This mechanism is used for editing some of the stVault parameters via finding consensus between two representatives of the stVault: the Vault Owner and the Node Operator Manager.\nMandatory parameter, hours [24h .. 720h (30 days)].\nIn this mechanism, the first representative initiates changing the parameter, and another representative confirms the change within the period of time equal to the Confirmation Lifetime value.\nUsed for:\n - Node Operator Fee\n - Confirmation Lifetime',
         },
         vaultManager: {
           title: 'Vault Manager',
@@ -96,7 +96,7 @@ export const vaultTexts = {
           title: 'Confirmation Lifetime',
           label: 'Confirmation Lifetime, hours',
           editLabel: 'Propose new Confirmation Lifetime, hours',
-          hint: 'The time period in which the Node Operator has to confirm the report.\nMandatory parameter, [0 hours .. 24 hours].\nIf the Node Operator does not confirm the report within this time period, it will be automatically confirmed.',
+          hint: 'The main parameter of the “Multi-role confirmation” mechanism. This mechanism is used for editing some of the stVault parameters via finding consensus between two representatives of the stVault: the Vault Owner and the Node Operator Manager.\nMandatory parameter, hours [24h .. 720h (30 days)].\nIn this mechanism, the first representative initiates changing the parameter, and another representative confirms the change within the period of time equal to the Confirmation Lifetime value.\nUsed for:\n- Node Operator Fee\n- Confirmation Lifetime',
         },
         vaultManager: {
           title: 'Vault Manager',
