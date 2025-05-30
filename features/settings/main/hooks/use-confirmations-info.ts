@@ -67,23 +67,11 @@ export const useConfirmationsInfo = () => {
         ),
         fromBlock,
         toBlock: currentBlock,
+        strict: true,
       });
 
       const dataObject: LogsData = logs
         .map((log) => log.args)
-        .filter(
-          (
-            args,
-          ): args is {
-            member: Address;
-            role: Hex;
-            expiryTimestamp: bigint;
-            data: Hex;
-          } =>
-            Boolean(
-              args.member && args.role && args.expiryTimestamp && args.data,
-            ),
-        )
         .sort((a, b) => Number(a.expiryTimestamp - b.expiryTimestamp))
         .reduce<LogsData>((acc, args) => {
           const decoded = decodeFunctionData({

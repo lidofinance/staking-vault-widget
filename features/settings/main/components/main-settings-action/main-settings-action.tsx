@@ -15,8 +15,7 @@ export const MainSettingsAction: FC = () => {
   const { isValid, isDirty, isSubmitting, isValidating, disabled } =
     useFormState();
   const isClearDisabled = !isDirty;
-  const isSubmitDisabled =
-    !isValid || !isDirty || isSubmitting || disabled || isValidating;
+  const isSubmitDisabled = isSubmitting || disabled || isValidating;
 
   const formFields = watch();
 
@@ -27,7 +26,7 @@ export const MainSettingsAction: FC = () => {
   const [buttonText, counter] = useMemo(() => {
     let counter = 0;
 
-    if (!isSubmitDisabled) {
+    if (isValid) {
       multipleDataFields.forEach((key) => {
         const fields = formFields[key];
         const [grant, remove] = fields.reduce(
@@ -79,7 +78,7 @@ export const MainSettingsAction: FC = () => {
     }
 
     return ['No changes', counter];
-  }, [formFields, isSubmitDisabled]);
+  }, [formFields, isValid]);
 
   const hasChanges = counter > 0;
 

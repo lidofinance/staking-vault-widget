@@ -1,32 +1,31 @@
 import { FC, useMemo } from 'react';
-import { ChipsWrapper } from './styles';
-import { getHoursDifference } from 'features/settings/main/utils';
 import { Chip } from '@lidofinance/lido-ui';
+
+import { getHoursDifference } from 'features/settings/main/utils';
 import { VotingOptionType } from 'features/settings/main/types';
+
+import { ChipsWrapper } from './styles';
 
 export type ChipDecoratorProps = {
   field: VotingOptionType;
 };
 
+const typeLabels: Record<VotingOptionType['type'], string> = {
+  to_me: 'Proposed to me',
+  by_me: 'My proposal',
+  current: 'Current',
+};
+
 export const ChipDecorator: FC<ChipDecoratorProps> = ({ field }) => {
   const listForRender = useMemo(() => {
-    return Object.keys(field)
-      .filter((value) => value)
-      .map((value) => {
-        if (typeof value === 'object') {
-          return `Expires in ${getHoursDifference(value, new Date())}h`;
-        }
+    const { type, expiryDate } = field;
+    const list = [typeLabels[type]];
 
-        if (value === 'to_me') {
-          return 'Proposed to me';
-        }
+    if (expiryDate) {
+      list.unshift(`Expires in ${getHoursDifference(expiryDate, new Date())}h`);
+    }
 
-        if (value === 'by_me') {
-          return 'My proposal';
-        }
-
-        return 'Current';
-      });
+    return list;
   }, [field]);
 
   if (!listForRender) {
