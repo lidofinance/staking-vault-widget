@@ -23,10 +23,10 @@ export const InputWithRadioDecorator: FC<InputWithRadioProps> = ({
   defaultDisabled = false,
   ...rest
 }) => {
-  const { watch } = useFormContext();
+  const { getValues } = useFormContext();
   const { field: radioField } = useController({ name });
   const id = useId();
-  const currentValue = watch(name);
+  const currentValue = getValues(name);
 
   const displayValue = useMemo(() => {
     if (unitIndicator) {
