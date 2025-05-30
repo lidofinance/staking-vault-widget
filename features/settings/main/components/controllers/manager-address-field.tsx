@@ -16,7 +16,7 @@ import type {
 
 type InputResolverProps = MainSettingsOverview;
 
-export const DataManagerField: FC<InputResolverProps> = ({
+export const ManagerAddressField: FC<InputResolverProps> = ({
   editLabel,
   name,
   title,

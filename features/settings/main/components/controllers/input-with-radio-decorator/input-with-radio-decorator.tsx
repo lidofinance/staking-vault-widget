@@ -1,19 +1,18 @@
 import { FC, useMemo, useId } from 'react';
 import { InputProps } from '@lidofinance/lido-ui';
-import { InputField, Label, Radio } from './styles';
+import { HiddenRadio, InputField, Label, RadioIcon } from './styles';
 import { useController, useFormContext } from 'react-hook-form';
 
-export interface InputWithRadioProps
-  extends Omit<InputProps, 'value' | 'name'> {
+export type InputWithRadioProps = Omit<InputProps, 'value' | 'name'> & {
   name: string;
   value: string | number;
-  mask?: string;
+  unitIndicator?: string;
   defaultDisabled?: boolean;
-}
+};
 
 export const InputWithRadioDecorator: FC<InputWithRadioProps> = ({
   name,
-  mask,
+  unitIndicator,
   value,
   rightDecorator,
   onFocus,
@@ -30,27 +29,31 @@ export const InputWithRadioDecorator: FC<InputWithRadioProps> = ({
   const currentValue = watch(name);
 
   const displayValue = useMemo(() => {
-    if (mask) {
-      return `${value}${mask}`;
+    if (unitIndicator) {
+      return `${value}${unitIndicator}`;
     }
 
     return value;
-  }, [value, mask]);
+  }, [value, unitIndicator]);
+
+  if (!currentValue) {
+    return null;
+  }
 
   return (
     <Label htmlFor={id}>
       <InputField
         defaultValue={displayValue}
         leftDecorator={
-          <div>
-            <Radio
+          <RadioIcon>
+            <HiddenRadio
               {...radioField}
               value={value}
               type="radio"
               id={id}
-              checked={Number(currentValue) === value}
+              defaultChecked={Number(currentValue) === value}
             />
-          </div>
+          </RadioIcon>
         }
         rightDecorator={rightDecorator}
         $checked={defaultChecked}

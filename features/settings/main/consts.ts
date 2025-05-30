@@ -91,14 +91,16 @@ export const editMainSettingsSchema = z
 export const indicatorsForRender: MainSettingsVoting[] = [
   {
     name: 'nodeOperatorFeeBP',
-    mask: '%',
+    textFieldName: 'nodeOperatorFeeBPCustom',
+    unitIndicator: '%',
     vaultKey: 'nodeOperatorFeeBP',
     canEditRole: 'confirmingRoles',
     ...vaultTexts.actions.settings.fields.nodeOperatorFee,
   },
   {
     name: 'confirmExpiry',
-    mask: ' hours',
+    textFieldName: 'confirmExpiryCustom',
+    unitIndicator: ' hours',
     vaultKey: 'confirmExpiry',
     canEditRole: 'confirmingRoles',
     ...vaultTexts.actions.settings.fields.confirmationLifetime,

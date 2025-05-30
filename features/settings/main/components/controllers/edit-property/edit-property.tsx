@@ -1,41 +1,35 @@
 import { FC, useMemo } from 'react';
-
 import { Input } from '@lidofinance/lido-ui';
-import { InputWithRadioDecorator } from '../input-with-radio-decorator';
+
+import { useMainSettingsData } from 'features/settings/main/contexts';
+
+import {
+  InputWithRadioDecorator,
+  InputWithRadioControlled,
+} from '../input-with-radio-decorator';
 import { ChipDecorator } from '../input-with-radio-decorator/chip-decorator';
 import { EditWrapper } from './styles';
 
-import { VotingKeys } from 'features/settings/main/types';
-import { useMainSettingsData } from 'features/settings/main/contexts';
-import { InputWithRadioControlled } from '../input-with-radio-decorator/input-with-radio-controlled';
+import { VotingCustomKeys, VotingKeys } from 'features/settings/main/types';
 
 interface EditPropertyProps {
   name: VotingKeys;
+  textFieldName: VotingCustomKeys;
   editLabel: string;
-  mask: '%' | ' hours';
+  unitIndicator: '%' | ' hours';
 }
 
 export const EditProperty: FC<EditPropertyProps> = ({
   name,
   editLabel,
-  mask,
+  unitIndicator,
+  textFieldName,
 }) => {
-  // const { fields } = useFieldArray<
-  //   EditMainSettingsSchema,
-  //   'nodeOperatorFeeBP.options' | 'confirmExpiry.options',
-  //   'id'
-  // >({ name: `${name}.options` });
-
   const mainSettingsData = useMainSettingsData();
   const renderList = useMemo(() => {
     if (mainSettingsData) return mainSettingsData[name];
     return [];
   }, [mainSettingsData, name]);
-
-  const textFieldName =
-    name === 'confirmExpiry'
-      ? 'confirmExpiryCustom'
-      : 'nodeOperatorFeeBPCustom';
 
   return (
     <EditWrapper>
@@ -47,7 +41,7 @@ export const EditProperty: FC<EditPropertyProps> = ({
               rightDecorator={<ChipDecorator field={field} />}
               placeholder={editLabel}
               value={field.value}
-              mask={mask}
+              unitIndicator={unitIndicator}
               name={name}
               defaultChecked={field.type === 'current'}
               defaultDisabled
@@ -57,7 +51,7 @@ export const EditProperty: FC<EditPropertyProps> = ({
         return (
           <Input
             key={field.id}
-            value={`${field.value}${mask}`}
+            value={`${field.value}${unitIndicator}`}
             rightDecorator={<ChipDecorator field={field} />}
             disabled
           />
@@ -67,7 +61,7 @@ export const EditProperty: FC<EditPropertyProps> = ({
       {renderList.length > 0 && (
         <InputWithRadioControlled
           placeholder={editLabel}
-          mask={mask}
+          unitIndicator={unitIndicator}
           name={name}
           textFieldName={textFieldName}
           value="other"

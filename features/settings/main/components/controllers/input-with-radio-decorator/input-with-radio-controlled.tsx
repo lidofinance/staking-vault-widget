@@ -1,20 +1,23 @@
 import { FC, useState, useMemo, useId } from 'react';
 import { InputProps } from '@lidofinance/lido-ui';
-import { InputField, Label, Radio } from './styles';
 import { useController } from 'react-hook-form';
 
-export interface InputWithRadioControlledProps
-  extends Omit<InputProps, 'value' | 'name'> {
+import { HiddenRadio, InputField, Label, RadioIcon } from './styles';
+
+export type InputWithRadioControlledProps = Omit<
+  InputProps,
+  'value' | 'name'
+> & {
   name: string;
   textFieldName: string;
   value: string | number;
-  mask?: string;
+  unitIndicator?: string;
   defaultDisabled?: boolean;
-}
+};
 
 export const InputWithRadioControlled: FC<InputWithRadioControlledProps> = ({
   name,
-  mask,
+  unitIndicator,
   value,
   disabled,
   defaultChecked = false,
@@ -31,13 +34,13 @@ export const InputWithRadioControlled: FC<InputWithRadioControlledProps> = ({
   const id = useId();
 
   const displayValue = useMemo(() => {
-    if (mask && textField.value) {
-      return isFocused ? textField.value : `${textField.value}${mask}`;
+    if (unitIndicator && textField.value) {
+      return isFocused ? textField.value : `${textField.value}${unitIndicator}`;
     }
 
     return textField.value;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [textField.value, mask, isFocused]);
+  }, [textField.value, unitIndicator, isFocused]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -53,9 +56,9 @@ export const InputWithRadioControlled: FC<InputWithRadioControlledProps> = ({
         {...textField}
         value={isFocused ? textField.value : displayValue}
         leftDecorator={
-          <div>
-            <Radio {...radioField} value={value} type="radio" id={id} />
-          </div>
+          <RadioIcon>
+            <HiddenRadio {...radioField} value={value} type="radio" id={id} />
+          </RadioIcon>
         }
         onFocus={handleFocus}
         onBlur={handleBlur}

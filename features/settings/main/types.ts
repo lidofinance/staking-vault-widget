@@ -38,7 +38,11 @@ export type MainSettingsOverview = {
 export type MainSettingsVoting = Omit<
   MainSettingsOverview,
   'dataType' | 'name'
-> & { mask: '%' | ' hours'; name: VotingKeys };
+> & {
+  unitIndicator: '%' | ' hours';
+  name: VotingKeys;
+  textFieldName: VotingCustomKeys;
+};
 
 export type TxData = {
   grantRoles?: GrantOrRevokeRole[];
@@ -50,6 +54,9 @@ export type TxData = {
 export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
 export type VotingKeys = 'nodeOperatorFeeBP' | 'confirmExpiry';
+export type VotingCustomKeys =
+  | 'nodeOperatorFeeBPCustom'
+  | 'confirmExpiryCustom';
 export type ManagersNewAddresses = {
   addresses: Record<ManagersKeys, RoleFieldSchema[]>;
 };

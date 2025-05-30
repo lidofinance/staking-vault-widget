@@ -13,8 +13,16 @@ const getBackgroundColor = ({
     : theme.colors.primaryContrast;
 };
 
-export const Radio = styled.input`
+export const HiddenRadio = styled.input`
   display: none;
+`;
+
+export const RadioIcon = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  cursor: pointer;
 `;
 
 export const Label = styled.label`
@@ -46,14 +54,6 @@ export const InputField = styled(Input)<{
     & > div input[type='text'] {
       pointer-events: ${({ $defaultDisabled }) =>
         $defaultDisabled ? 'none' : 'inherit'};
-    }
-
-    & > span:first-child > div {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 1px solid ${({ theme }) => theme.colors.border};
-      cursor: pointer;
     }
   }
 `;

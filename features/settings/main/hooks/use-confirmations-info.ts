@@ -1,14 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 import {
   decodeFunctionData,
   DecodeFunctionDataReturnType,
   parseAbiItem,
 } from 'viem';
-import type { Address, Hex } from 'viem';
-import { dashboardAbi } from 'abi/dashboard-abi';
 import invariant from 'tiny-invariant';
+import type { Address, Hex } from 'viem';
+
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'modules/vaults';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
@@ -32,26 +34,28 @@ export type LogsData = ConfirmationsInfo[];
 export const useConfirmationsInfo = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVaultInfo();
-  const [data, setLogsData] = useState<LogsData | undefined>();
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
 
-  const fetchConfirmationsInfo = useCallback(async () => {
-    invariant(
-      publicClient,
-      '[useConfirmationsInfo] publicClient is not defined',
-    );
-    const dashboardAddress = activeVault?.owner;
-    const confirmExpiry = activeVault?.confirmExpiry;
+  return useQuery<LogsData>({
+    queryKey: [
+      'confirmations-info',
+      activeVault?.owner,
+      publicClient?.chain.id,
+    ],
+    ...STRATEGY_LAZY,
+    enabled: !!activeVault?.owner && !!publicClient?.chain.id,
+    queryFn: async () => {
+      invariant(
+        publicClient,
+        '[useConfirmationsInfo] publicClient is not defined',
+      );
+      invariant(
+        activeVault?.owner,
+        '[useConfirmationsInfo] owner is not defined',
+      );
 
-    if (!dashboardAddress || !confirmExpiry) {
-      return;
-    }
+      const dashboardAddress = activeVault?.owner;
+      const confirmExpiry = activeVault?.confirmExpiry;
 
-    setLoading(true);
-    setError(null);
-
-    try {
       const currentBlock = await publicClient.getBlockNumber();
       const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
       const fromBlock = currentBlock - confirmExpireInBlocks;
@@ -99,7 +103,7 @@ export const useConfirmationsInfo = () => {
           return acc;
         }, []);
 
-      const votings = await Promise.all(
+      const voting = await Promise.all(
         dataObject.map(async (log) => {
           const { role, data } = log;
           const confirmations = await publicClient.readContract({
@@ -114,20 +118,7 @@ export const useConfirmationsInfo = () => {
         }),
       );
 
-      const filteredVotingList = votings.filter(
-        (voting) => voting !== null,
-      ) as LogsData;
-      setLogsData(filteredVotingList);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, [activeVault, publicClient]);
-
-  useEffect(() => {
-    void fetchConfirmationsInfo();
-  }, [fetchConfirmationsInfo]);
-
-  return { data, isLoading, error, refetch: fetchConfirmationsInfo };
+      return voting.filter((vote) => vote !== null) as LogsData;
+    },
+  });
 };
