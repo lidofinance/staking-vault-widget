@@ -11,10 +11,11 @@ export type GrantOrRevokeRole = {
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type VotingOptionType = {
-  id: string;
-  value: number;
-  type: 'current' | 'to_me' | 'by_me';
-  expiryDate?: Date;
+  value: string;
+  type: 'current' | 'Proposed to me' | 'My proposal' | 'custom';
+  tags: string[];
+  symbol: string;
+  placeholder?: string;
 };
 
 export type InputDataType =

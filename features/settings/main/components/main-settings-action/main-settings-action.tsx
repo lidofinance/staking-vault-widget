@@ -9,6 +9,7 @@ import { multipleDataFields } from 'features/settings/main/consts';
 import { shouldIncrementTxCounter } from 'features/settings/main/utils';
 
 import { Container } from './styled';
+import { useMainSettingsData } from '../../contexts';
 
 export const MainSettingsAction: FC = () => {
   const { watch, reset } = useFormContext();
@@ -17,6 +18,7 @@ export const MainSettingsAction: FC = () => {
   const isClearDisabled = !isDirty;
   const isSubmitDisabled =
     !isValid || !isDirty || isSubmitting || disabled || isValidating;
+  const mainSettingsData = useMainSettingsData();
 
   const formFields = watch();
 
@@ -41,20 +43,14 @@ export const MainSettingsAction: FC = () => {
         counter += Number(grant > 0) + Number(remove > 0);
       });
 
-      const {
-        nodeOperatorFeeBP,
-        nodeOperatorFeeBPCustom,
-        nodeOperatorFeeBPDefault,
-        confirmExpiry,
-        confirmExpiryCustom,
-        confirmExpiryDefault,
-      } = formFields;
+      const { nodeOperatorFeeBP, confirmExpiry } = formFields;
 
       if (
         shouldIncrementTxCounter(
           nodeOperatorFeeBP,
-          nodeOperatorFeeBPDefault,
-          nodeOperatorFeeBPCustom,
+          mainSettingsData?.nodeOperatorFeeBP.find(
+            (item) => item.type === 'current',
+          )?.value,
         )
       ) {
         counter++;
@@ -63,8 +59,9 @@ export const MainSettingsAction: FC = () => {
       if (
         shouldIncrementTxCounter(
           confirmExpiry,
-          confirmExpiryDefault,
-          confirmExpiryCustom,
+          mainSettingsData?.confirmExpiry.find(
+            (item) => item.type === 'current',
+          )?.value,
         )
       ) {
         counter++;
@@ -79,7 +76,12 @@ export const MainSettingsAction: FC = () => {
     }
 
     return ['No changes', counter];
-  }, [formFields, isSubmitDisabled]);
+  }, [
+    formFields,
+    isSubmitDisabled,
+    mainSettingsData?.confirmExpiry,
+    mainSettingsData?.nodeOperatorFeeBP,
+  ]);
 
   const hasChanges = counter > 0;
 

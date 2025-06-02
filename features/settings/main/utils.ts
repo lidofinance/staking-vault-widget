@@ -2,13 +2,9 @@ import { MainSettingsDataContextValue } from './types';
 
 export const shouldIncrementTxCounter = (
   value: string,
-  defaultValue: number | undefined,
-  custom: string | undefined,
+  defaultValue: string | undefined,
 ) => {
-  return (
-    (value !== 'other' && Number(value) !== defaultValue) ||
-    (value === 'other' && Boolean(custom))
-  );
+  return value !== defaultValue;
 };
 
 export const getHoursDifference = (dateA: Date, dateB: Date) => {
@@ -37,20 +33,16 @@ export const prepareDefaultValues = (
       return {
         defaultAdmins,
         nodeOperatorManagers,
-        confirmExpiry: confirmExpiryCurrent ?? 0,
-        confirmExpiryDefault: confirmExpiryCurrent ?? 0,
-        nodeOperatorFeeBP: nodeOperatorFeeBPCurrent ?? 0,
-        nodeOperatorFeeBPDefault: nodeOperatorFeeBPCurrent ?? 0,
+        confirmExpiry: String(confirmExpiryCurrent),
+        nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
       };
     }
 
     return {
       nodeOperatorManagers: [],
       defaultAdmins: [],
-      confirmExpiry: 0,
-      confirmExpiryDefault: 0,
-      nodeOperatorFeeBP: 0,
-      nodeOperatorFeeBPDefault: 0,
+      confirmExpiry: '',
+      nodeOperatorFeeBP: '',
     };
   };
 };
