@@ -17,10 +17,12 @@ import { VaultViewerAbi } from 'abi/vault-viewer';
 import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
 import { VaultHubAbi } from 'abi/vault-hub';
 import { VaultFactoryAbi } from 'abi/vault-factory';
+import { WethABI } from 'abi/weth-abi';
 
 export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.lido]: StethAbi,
   [CONTRACTS.wsteth]: WstethABI,
+  [CONTRACTS.weth]: WethABI,
   [CONTRACTS.withdrawalQueue]: WithdrawalQueueAbi,
   [CONTRACTS.aggregatorEthUsdPriceFeed]: AggregatorAbi,
   [CONTRACTS.lidoLocator]: LidoLocatorAbi,

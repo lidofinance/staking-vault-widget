@@ -29,7 +29,7 @@ export const useVaultPermission = (role?: VAULTS_ALL_ROLES) => {
   };
 };
 
-export const useVaultPermissions = (roles: VAULTS_ALL_ROLES[]) => {
+export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 

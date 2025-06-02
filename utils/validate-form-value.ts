@@ -1,9 +1,9 @@
 import { z, ZodSchema } from 'zod';
 import { type Address, isAddress } from 'viem';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
-import { isZodError } from 'utils/errors';
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+import { isZodError } from 'utils/errors';
+import { vaultTexts } from 'modules/vaults';
 
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
@@ -86,5 +86,7 @@ const validateAddress = (value: string | null) => !!(value && isAddress(value));
 export const addressSchema = z
   .string()
   .trim()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
+  .refine(validateAddress, {
+    message: vaultTexts.common.errors.address.invalid,
+  })
   .transform((value) => value.toLocaleLowerCase() as Address);

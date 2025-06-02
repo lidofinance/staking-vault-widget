@@ -15,6 +15,7 @@ import type { VaultInfo } from 'types';
 import type { PublicClient, Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
+import { useMemo } from 'react';
 
 type VaultDataArgs = {
   publicClient: PublicClient;
@@ -124,52 +125,22 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
   const { shares } = useLidoSDK();
   const publicClient = usePublicClient();
 
-  return useQuery({
-    queryKey: ['single-vault-data', publicClient?.chain.id, vaultAddress],
-    enabled: !!vaultAddress && !!publicClient,
-    queryFn: async (): Promise<VaultInfo> => {
-      invariant(publicClient, 'PublicClient is not defined');
-      invariant(vaultAddress, 'vaultAddress is not defined');
+  const queryKey = useMemo(() => {
+    return ['single-vault-data', publicClient?.chain.id, vaultAddress] as const;
+  }, [publicClient?.chain.id, vaultAddress]);
 
-      return getVaultData({ publicClient, shares, vaultAddress });
-    },
-    ...STRATEGY_LAZY,
-  });
-};
+  return {
+    ...useQuery({
+      queryKey,
+      enabled: !!vaultAddress && !!publicClient,
+      queryFn: async (): Promise<VaultInfo> => {
+        invariant(publicClient, 'PublicClient is not defined');
+        invariant(vaultAddress, 'vaultAddress is not defined');
 
-// TODO: find way to remove readonly
-export const useVaultData = (
-  vaultsAddressesList: readonly Address[] | undefined,
-) => {
-  const { shares } = useLidoSDK();
-  const publicClient = usePublicClient();
-
-  return useQuery({
-    queryKey: ['vault-data', { data: vaultsAddressesList }],
-    enabled: !!vaultsAddressesList?.length && !!publicClient,
-    ...STRATEGY_LAZY,
-
-    queryFn: async (): Promise<VaultInfo[]> => {
-      invariant(publicClient, 'PublicClient is not ready');
-
-      const vaults: VaultInfo[] = [];
-
-      if (vaultsAddressesList?.length && vaultsAddressesList.length === 0) {
-        return vaults;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      for (const vaultAddress of vaultsAddressesList!) {
-        vaults.push(
-          await getVaultData({
-            publicClient,
-            vaultAddress,
-            shares,
-          }),
-        );
-      }
-
-      return vaults;
-    },
-  });
+        return getVaultData({ publicClient, shares, vaultAddress });
+      },
+      ...STRATEGY_LAZY,
+    }),
+    queryKey,
+  };
 };
