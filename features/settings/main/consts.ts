@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { isValidAnyAddress } from 'utils/address-validation';
 import {
   MainSettingsOverview,
-  MainSettingsVoting,
   ManagersKeys,
   ManagersNewAddresses,
   RoleFieldSchema,
@@ -25,6 +24,7 @@ const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
 const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
+const INVALID_EMPTY_STRING = 'Value cannot be empty';
 
 export const accountSchema = z
   .string()
@@ -56,34 +56,15 @@ export const editMainSettingsSchema = z.object({
   defaultAdmins: z.array(addressSchema),
   nodeOperatorFeeBP: z
     .string()
-    .refine((val) => val !== '', { message: 'Value cannot be empty' })
+    .refine((val) => val !== '', { message: INVALID_EMPTY_STRING })
     .pipe(votingFeeSchema)
     .transform((val) => String(val)),
   confirmExpiry: z
     .string()
-    .refine((val) => val !== '', { message: 'Value cannot be empty' })
+    .refine((val) => val !== '', { message: INVALID_EMPTY_STRING })
     .pipe(votingLifetimeSchema)
     .transform((val) => String(val)),
 });
-
-export const indicatorsForRender: MainSettingsVoting[] = [
-  {
-    name: 'nodeOperatorFeeBP',
-    textFieldName: 'nodeOperatorFeeBPCustom',
-    unitIndicator: '%',
-    vaultKey: 'nodeOperatorFeeBP',
-    canEditRole: 'confirmingRoles',
-    ...vaultTexts.actions.settings.fields.nodeOperatorFee,
-  },
-  {
-    name: 'confirmExpiry',
-    textFieldName: 'confirmExpiryCustom',
-    unitIndicator: ' hours',
-    vaultKey: 'confirmExpiry',
-    canEditRole: 'confirmingRoles',
-    ...vaultTexts.actions.settings.fields.confirmationLifetime,
-  },
-];
 
 export const adminsForRender: MainSettingsOverview[] = [
   {

@@ -35,7 +35,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     }
 
     // Current values for voting
-    const currentConfirmExpiry = activeVault.confirmExpiry / (60n * 60n);
+    const currentConfirmExpiry = Number(activeVault.confirmExpiry) / 3600;
     const currentNodeOperatorFeeBP = Number(
       (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
     );

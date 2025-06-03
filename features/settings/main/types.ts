@@ -36,15 +36,6 @@ export type MainSettingsOverview = {
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
 
-export type MainSettingsVoting = Omit<
-  MainSettingsOverview,
-  'dataType' | 'name'
-> & {
-  unitIndicator: '%' | ' hours';
-  name: VotingKeys;
-  textFieldName: VotingCustomKeys;
-};
-
 export type TxData = {
   grantRoles?: GrantOrRevokeRole[];
   revokeRoles?: GrantOrRevokeRole[];
@@ -54,15 +45,9 @@ export type TxData = {
 
 export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
-export type VotingKeys = 'nodeOperatorFeeBP' | 'confirmExpiry';
-export type VotingCustomKeys =
-  | 'nodeOperatorFeeBPCustom'
-  | 'confirmExpiryCustom';
 export type ManagersNewAddresses = {
   addresses: Record<ManagersKeys, RoleFieldSchema[]>;
 };
-
-export type ChipBadge = Date | string | undefined;
 
 export type MainSettingsDataContextValue = {
   defaultAdmins: RoleFieldSchema[];

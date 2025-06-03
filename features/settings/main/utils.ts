@@ -8,10 +8,6 @@ export const shouldIncrementTxCounter = (
   return value !== defaultValue;
 };
 
-export const getHoursDifference = (dateA: Date, dateB: Date) => {
-  return Math.ceil((dateA.getTime() - dateB.getTime()) / (1000 * 60 * 60));
-};
-
 export const prepareDefaultValues = (
   promisifiedSettingsData: Promise<MainSettingsDataContextValue | null>,
 ) => {
@@ -39,4 +35,16 @@ export const prepareDefaultValues = (
       nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
     };
   };
+};
+
+export const formatInputValue = (
+  value: string,
+  symbol: string | undefined,
+  isFocused: boolean,
+) => {
+  if (symbol && value) {
+    return isFocused ? value : `${value}${symbol}`;
+  }
+
+  return value;
 };

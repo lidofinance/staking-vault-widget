@@ -1,11 +1,4 @@
-import {
-  useRef,
-  forwardRef,
-  useState,
-  ChangeEvent,
-  useCallback,
-  useMemo,
-} from 'react';
+import { useRef, forwardRef, useState, ChangeEvent, useCallback } from 'react';
 import { UseFormSetValue, FieldValues } from 'react-hook-form';
 import { mergeRefs } from 'utils';
 import { InputProps } from '@lidofinance/lido-ui';
@@ -13,6 +6,8 @@ import { InputProps } from '@lidofinance/lido-ui';
 import { RadioInput, RadioInputProps } from '../radio';
 
 import { InputStyled } from './radio-with-input.styles';
+
+import { formatInputValue } from 'features/settings/main/utils';
 
 type RadioWithInputProps = Omit<InputProps, 'type'> & {
   radioProps: RadioInputProps;
@@ -26,17 +21,9 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
 
     const [value, setValue] = useState<string>('');
     const [isFocused, setIsFocused] = useState(false);
-
-    const displayValue = useMemo(() => {
-      if (radioProps.symbol && value) {
-        return isFocused ? value : `${value}${radioProps.symbol}`;
-      }
-
-      return value;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [value, radioProps.symbol, isFocused]);
-
     const radioRef = useRef<HTMLInputElement>(null);
+
+    const displayValue = formatInputValue(value, radioProps.symbol, isFocused);
 
     const updateRadioValue = useCallback(
       (value: string) => {

@@ -22,20 +22,20 @@ export type RadioFormData = {
 
 type VotingSelectorProps = {
   data?: RadioFormData[];
-  radioType: keyof VaultInfo;
+  vaultKey: keyof VaultInfo;
   title: string;
 };
 
 export const RadioSelector: FC<VotingSelectorProps> = ({
   data,
-  radioType,
+  vaultKey,
   title,
 }) => {
   const { isLoading, errors, disabled } = useFormState();
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission();
   const { register, setValue } = useFormContext();
-  const inputError = errors[radioType];
+  const inputError = errors[vaultKey];
   const isEditable = !disabled && (hasConfirmingRole || hasPermission);
 
   return (
@@ -45,7 +45,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
       {isEditable && !isLoading ? (
         <>
           {data?.map(({ type, value, tags, symbol, placeholder }, index) => {
-            const key = `${radioType}-${type}-${index}-${value}`;
+            const key = `${vaultKey}-${type}-${index}-${value}`;
             const isCustom = type === 'custom';
             const isMy = type === 'My proposal';
 
@@ -58,9 +58,9 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                     symbol: symbol,
                     tags: tags,
                     id: key,
-                    ...register(radioType),
+                    ...register(vaultKey),
                   }}
-                  type={radioType}
+                  type={vaultKey}
                   placeholder={placeholder}
                   setRadioValue={setValue}
                   error={inputError?.message as string}
@@ -74,14 +74,14 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                 tags={tags}
                 id={key}
                 symbol={symbol}
-                {...register(radioType)}
+                {...register(vaultKey)}
                 disabled={isMy}
               />
             );
           })}
         </>
       ) : (
-        <ReadonlyView vaultKey={radioType} />
+        <ReadonlyView vaultKey={vaultKey} />
       )}
     </RadioSelectorContainer>
   );
