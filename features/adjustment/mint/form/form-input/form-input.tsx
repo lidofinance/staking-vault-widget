@@ -7,7 +7,7 @@ import {
 import { TOKENS_TO_MINT } from 'features/adjustment/const';
 
 const OPTIONS: TokenOption[] = [
-  { token: TOKENS_TO_MINT.ETH },
+  { token: TOKENS_TO_MINT.stETH },
   { token: TOKENS_TO_MINT.wstETH },
 ];
 
