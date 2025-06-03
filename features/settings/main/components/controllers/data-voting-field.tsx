@@ -40,14 +40,15 @@ export const DataVotingField: FC<DataVotingFieldProps> = ({
         {title}
       </Text>
       {isLoading && <InlineLoader />}
-      {!isEditable && <ReadonlyView vaultKey={vaultKey} />}
-      {isEditable && (
+      {isEditable ? (
         <EditProperty
           editLabel={editLabel}
           name={name}
           unitIndicator={unitIndicator}
           {...rest}
         />
+      ) : (
+        <ReadonlyView vaultKey={vaultKey} />
       )}
     </GroupWrapper>
   );

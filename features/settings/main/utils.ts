@@ -1,4 +1,5 @@
 import { MainSettingsDataContextValue } from './types';
+import invariant from 'tiny-invariant';
 
 export const shouldIncrementTxCounter = (
   value: string,
@@ -16,33 +17,26 @@ export const prepareDefaultValues = (
 ) => {
   return async () => {
     const settingsData = await promisifiedSettingsData;
-    if (settingsData) {
-      const {
-        confirmExpiry,
-        defaultAdmins,
-        nodeOperatorFeeBP,
-        nodeOperatorManagers,
-      } = settingsData;
-      const confirmExpiryCurrent = confirmExpiry.find(
-        (item) => item.type === 'current',
-      )?.value;
-      const nodeOperatorFeeBPCurrent = nodeOperatorFeeBP.find(
-        (item) => item.type === 'current',
-      )?.value;
+    invariant(settingsData, '[prepareDefaultValues] settings data is empty.');
 
-      return {
-        defaultAdmins,
-        nodeOperatorManagers,
-        confirmExpiry: String(confirmExpiryCurrent),
-        nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
-      };
-    }
+    const {
+      confirmExpiry,
+      defaultAdmins,
+      nodeOperatorFeeBP,
+      nodeOperatorManagers,
+    } = settingsData;
+    const confirmExpiryCurrent = confirmExpiry.find(
+      (item) => item.type === 'current',
+    )?.value;
+    const nodeOperatorFeeBPCurrent = nodeOperatorFeeBP.find(
+      (item) => item.type === 'current',
+    )?.value;
 
     return {
-      nodeOperatorManagers: [],
-      defaultAdmins: [],
-      confirmExpiry: '',
-      nodeOperatorFeeBP: '',
+      defaultAdmins,
+      nodeOperatorManagers,
+      confirmExpiry: String(confirmExpiryCurrent),
+      nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
     };
   };
 };
