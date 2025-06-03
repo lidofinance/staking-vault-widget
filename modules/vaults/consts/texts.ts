@@ -73,6 +73,7 @@ export const vaultTexts = {
       loading: 'Applying oracle report',
     },
     settings: {
+      title: 'Main settings',
       rolesGrantLoading: (roleCount: number) =>
         `Granting ${roleCount} roles` as const,
       rolesRevokeLoading: (roleCount: number) =>
@@ -81,6 +82,11 @@ export const vaultTexts = {
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      submit: (counter: number) => {
+        if (counter > 0)
+          return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
+        return 'No changes';
+      },
       fields: {
         nodeOperator: {
           title: 'Node Operator',
@@ -113,6 +119,7 @@ export const vaultTexts = {
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
         },
       },
+      clearChanges: 'Clear changes',
     },
   },
   // configuration for vault metrics as seen in overview page

@@ -1,8 +1,9 @@
 import { Text } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
+
 import {
   MainSettingsAction,
-  ManagerAddressField,
   NodeOperator,
 } from 'features/settings/main/components';
 import { SectionContainer } from 'features/settings/main/styles';
@@ -11,10 +12,8 @@ import {
   MainSettingsProvider,
 } from 'features/settings/main/contexts';
 
-import { adminsForRender } from './consts';
-
-import { VotingForm } from './custom';
-import { NewForm } from './new';
+import { Voting } from './custom';
+import { Admins } from './components';
 
 export const EditMainSettings = () => {
   return (
@@ -23,21 +22,15 @@ export const EditMainSettings = () => {
         <MainSettingsProvider>
           <SectionContainer>
             <Text size="lg" strong>
-              Main settings
+              {vaultTexts.actions.settings.title}
             </Text>
             <NodeOperator />
-            {adminsForRender.map((field) => (
-              <ManagerAddressField key={field.vaultKey} {...field} />
-            ))}
-            {/* {indicatorsForRender.map((field) => (
-            <DataVotingField key={field.vaultKey} {...field} />
-          ))} */}
-            <VotingForm />
+            <Admins />
+            <Voting />
             <MainSettingsAction />
           </SectionContainer>
         </MainSettingsProvider>
       </MainSettingsDataProvider>
-      <NewForm />
     </>
   );
 };

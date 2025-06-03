@@ -3,13 +3,14 @@ import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 
 import { ConnectWalletButton } from 'shared/wallet';
+import { vaultTexts } from 'modules/vaults';
 
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
 import { shouldIncrementTxCounter } from 'features/settings/main/utils';
+import { useMainSettingsData } from 'features/settings/main/contexts';
 
 import { Container } from './styled';
-import { useMainSettingsData } from '../../contexts';
 
 export const MainSettingsAction: FC = () => {
   const { watch, reset } = useFormContext();
@@ -25,7 +26,7 @@ export const MainSettingsAction: FC = () => {
     reset();
   };
 
-  const [buttonText, counter] = useMemo(() => {
+  const counter = useMemo(() => {
     let counter = 0;
 
     if (isValid) {
@@ -65,16 +66,9 @@ export const MainSettingsAction: FC = () => {
       ) {
         counter++;
       }
-
-      if (counter > 0) {
-        return [
-          `Submit ${counter} transaction${counter > 1 ? 's' : ''}`,
-          counter,
-        ];
-      }
     }
 
-    return ['No changes', counter];
+    return counter;
   }, [
     formFields,
     isValid,
@@ -94,14 +88,14 @@ export const MainSettingsAction: FC = () => {
           onClick={handleClearMainForm}
           fullwidth
         >
-          Clear changes
+          {vaultTexts.actions.settings.clearChanges}
         </Button>
         <Button
           type="submit"
           disabled={isSubmitDisabled || !hasChanges}
           fullwidth
         >
-          {buttonText}
+          {vaultTexts.actions.settings.submit(counter)}
         </Button>
       </ConnectWalletButton>
     </Container>

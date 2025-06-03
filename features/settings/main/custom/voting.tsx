@@ -3,9 +3,9 @@ import { FC, useMemo } from 'react';
 import { useMainSettingsData } from '../contexts';
 
 import { RadioSelector } from './radio-selector';
-import { VotingBlock } from './voting-form.styles';
+import { VotingBlock } from './styles';
 
-export const VotingForm: FC = () => {
+export const Voting: FC = () => {
   const mainSettingsData = useMainSettingsData();
 
   const nodeOperatorFeeBP = useMemo(() => {
@@ -17,7 +17,7 @@ export const VotingForm: FC = () => {
   }, [mainSettingsData]);
 
   return (
-    <div>
+    <article>
       <VotingBlock>
         <RadioSelector
           data={nodeOperatorFeeBP}
@@ -32,6 +32,6 @@ export const VotingForm: FC = () => {
           title="Confirmation Lifetime"
         />
       </VotingBlock>
-    </div>
+    </article>
   );
 };

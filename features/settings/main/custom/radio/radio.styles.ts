@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+export const RadioInputSelector = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
 export const RadioInputStyled = styled.input`
   opacity: 0;
   position: absolute;
@@ -7,13 +14,10 @@ export const RadioInputStyled = styled.input`
   left: 0;
   width: 100%;
   height: 100%;
-`;
 
-export const RadioInputSelector = styled.div`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  &:disabled + ${RadioInputSelector} {
+    display: none;
+  }
 `;
 
 export const Content = styled.div`
