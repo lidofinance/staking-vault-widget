@@ -94,25 +94,17 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const {
-          nodeOperatorFeeBP,
-          nodeOperatorFeeBPCustom,
-          nodeOperatorFeeBPDefault,
-        } = payload;
-        const isOtherFee = nodeOperatorFeeBP === 'other';
-        const feeValue = isOtherFee
-          ? nodeOperatorFeeBPCustom
-          : Number(nodeOperatorFeeBP);
-        const feeChanged = isOtherFee
-          ? Boolean(feeValue)
-          : feeValue !== nodeOperatorFeeBPDefault;
+        const { nodeOperatorFeeBP } = payload;
+        const feeValue = Number(nodeOperatorFeeBP);
+        const currentFee = activeVault
+          ? Number(
+              (activeVault.nodeOperatorFeeBP * 100n) /
+                BigInt(VAULT_TOTAL_BASIS_POINTS),
+            )
+          : 0;
+        const isFeeValueChanged = feeValue !== currentFee;
 
-        if (feeChanged && feeValue) {
-          invariant(
-            !isOtherFee || nodeOperatorFeeBPCustom,
-            '[useEditMainSettings] Invalid nodeOperatorFeeBPCustom',
-          );
-
+        if (isFeeValueChanged) {
           const newFee = Math.floor(
             (feeValue * VAULT_TOTAL_BASIS_POINTS) / 100,
           );
@@ -131,22 +123,15 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { confirmExpiry, confirmExpiryCustom, confirmExpiryDefault } =
-          payload;
-        const isOtherExpiry = confirmExpiry === 'other';
-        const expiryValue = isOtherExpiry ? confirmExpiryCustom : confirmExpiry;
-        const expiryChanged = isOtherExpiry
-          ? Boolean(expiryValue)
-          : expiryValue !== confirmExpiryDefault;
+        const { confirmExpiry } = payload;
+        const expiryValue = Number(confirmExpiry);
+        const currentExpiry = activeVault
+          ? Number(activeVault.confirmExpiry / (60n * 60n))
+          : 0;
+        const isExpiryValueChanged = expiryValue !== currentExpiry;
 
-        if (expiryChanged) {
-          invariant(
-            !isOtherExpiry || confirmExpiryCustom,
-            '[useEditMainSettings] Invalid confirmExpiryCustom',
-          );
-
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const newConfirmExpiry = BigInt(Math.floor(expiryValue! * 3600));
+        if (isExpiryValueChanged) {
+          const newConfirmExpiry = BigInt(Math.floor(expiryValue * 3600));
 
           transactions.push({
             to: owner,
@@ -177,11 +162,12 @@ export const useEditMainSettings = () => {
         return result;
       },
       [
-        hasBothConfirmingRoles,
         owner,
+        hasBothConfirmingRoles,
+        activeVault,
+        sendTX,
         refetchVaultInfo,
         refetchConfirmationsInfo,
-        sendTX,
       ],
     ),
     ...rest,

@@ -34,47 +34,72 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       return null;
     }
 
+    // Current values for voting
+    const currentConfirmExpiry = activeVault.confirmExpiry / (60n * 60n);
+    const currentNodeOperatorFeeBP = Number(
+      (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    );
+
     const confirmExpiry: VotingOptionType[] = [
       {
-        id: crypto.randomUUID(),
-        value: Number(activeVault.confirmExpiry / (60n * 60n)),
+        value: String(currentConfirmExpiry),
         type: 'current',
+        tags: ['Current'],
+        symbol: ' hours',
       },
     ];
-
     const nodeOperatorFeeBP: VotingOptionType[] = [
       {
-        id: crypto.randomUUID(),
-        value: Number(
-          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
-        ),
+        value: String(currentNodeOperatorFeeBP),
         type: 'current',
+        tags: ['Current'],
+        symbol: '%',
       },
     ];
 
     confirmationsList.map((confirmation) => {
-      const type = confirmation.member !== address ? 'to_me' : 'by_me';
+      const type =
+        confirmation.member !== address ? 'Proposed to me' : 'My proposal';
+      const expiry = (
+        (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
+        (60 * 60 * 1000)
+      ).toFixed(0);
 
       if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
         confirmExpiry.push({
-          id: crypto.randomUUID(),
-          value: Number(confirmation.decodedData.args[0] / (60n * 60n)),
-          expiryDate: confirmation.expiryDate,
+          value: String(confirmation.decodedData.args[0] / (60n * 60n)),
+          tags: [`${String(expiry)} hours`, type],
           type,
+          symbol: ' hours',
         });
       } else if (
         confirmation.decodedData.functionName === 'setNodeOperatorFeeBP'
       ) {
         nodeOperatorFeeBP.push({
-          id: crypto.randomUUID(),
-          value: Number(
-            (confirmation.decodedData.args[0] * 100n) /
-              VAULT_TOTAL_BASIS_POINTS_BN,
+          value: String(
+            Number(confirmation.decodedData.args[0] * 100n) / 10000,
           ),
-          expiryDate: confirmation.expiryDate,
+          tags: [`${String(expiry)} hours`, type],
           type,
+          symbol: '%',
         });
       }
+    });
+
+    // Custom values for voting
+    confirmExpiry.push({
+      value: '',
+      type: 'custom',
+      tags: [],
+      symbol: ' hours',
+      placeholder: 'Propose new, hours',
+    });
+    nodeOperatorFeeBP.push({
+      value: '',
+      type: 'custom',
+      tags: [],
+      symbol: '%',
+      placeholder: 'Propose new, %',
     });
 
     return {
@@ -88,8 +113,16 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         state: 'display',
         isGranted: true,
       })),
-      nodeOperatorFeeBP,
-      confirmExpiry,
+      nodeOperatorFeeBP: nodeOperatorFeeBP.sort((a, b) => {
+        if (a.type === 'My proposal') return 1;
+        if (b.type === 'My proposal') return -1;
+        return 0;
+      }),
+      confirmExpiry: confirmExpiry.sort((a, b) => {
+        if (a.type === 'My proposal') return 1;
+        if (b.type === 'My proposal') return -1;
+        return 0;
+      }),
     };
   }, [activeVault, confirmationsList, address]);
 

@@ -9,12 +9,14 @@ import { multipleDataFields } from 'features/settings/main/consts';
 import { shouldIncrementTxCounter } from 'features/settings/main/utils';
 
 import { Container } from './styled';
+import { useMainSettingsData } from '../../contexts';
 
 export const MainSettingsAction: FC = () => {
   const { watch, reset } = useFormContext();
   const { isValid, isDirty, isSubmitting, isValidating, disabled } =
     useFormState();
   const isClearDisabled = !isDirty;
+  const mainSettingsData = useMainSettingsData();
   const isSubmitDisabled = isSubmitting || disabled || isValidating;
 
   const formFields = watch();
@@ -40,20 +42,14 @@ export const MainSettingsAction: FC = () => {
         counter += Number(grant > 0) + Number(remove > 0);
       });
 
-      const {
-        nodeOperatorFeeBP,
-        nodeOperatorFeeBPCustom,
-        nodeOperatorFeeBPDefault,
-        confirmExpiry,
-        confirmExpiryCustom,
-        confirmExpiryDefault,
-      } = formFields;
+      const { nodeOperatorFeeBP, confirmExpiry } = formFields;
 
       if (
         shouldIncrementTxCounter(
           nodeOperatorFeeBP,
-          nodeOperatorFeeBPDefault,
-          nodeOperatorFeeBPCustom,
+          mainSettingsData?.nodeOperatorFeeBP.find(
+            (item) => item.type === 'current',
+          )?.value,
         )
       ) {
         counter++;
@@ -62,8 +58,9 @@ export const MainSettingsAction: FC = () => {
       if (
         shouldIncrementTxCounter(
           confirmExpiry,
-          confirmExpiryDefault,
-          confirmExpiryCustom,
+          mainSettingsData?.confirmExpiry.find(
+            (item) => item.type === 'current',
+          )?.value,
         )
       ) {
         counter++;
@@ -78,7 +75,12 @@ export const MainSettingsAction: FC = () => {
     }
 
     return ['No changes', counter];
-  }, [formFields, isValid]);
+  }, [
+    formFields,
+    isValid,
+    mainSettingsData?.confirmExpiry,
+    mainSettingsData?.nodeOperatorFeeBP,
+  ]);
 
   const hasChanges = counter > 0;
 

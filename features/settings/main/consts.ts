@@ -51,42 +51,20 @@ export const votingLifetimeSchema = z.coerce
   .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
   .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE);
 
-export const editMainSettingsSchema = z
-  .object({
-    nodeOperatorManagers: z.array(addressSchema),
-    defaultAdmins: z.array(addressSchema),
-    nodeOperatorFeeBPCustom: votingFeeSchema.optional(),
-    nodeOperatorFeeBPDefault: votingFeeSchema.optional(),
-    nodeOperatorFeeBP: z.union([votingFeeSchema, z.literal('other')]),
-    confirmExpiryCustom: votingLifetimeSchema.optional(),
-    confirmExpiryDefault: votingLifetimeSchema.optional(),
-    confirmExpiry: z.union([votingLifetimeSchema, z.literal('other')]),
-  })
-  .superRefine((data, ctx) => {
-    const {
-      confirmExpiry,
-      confirmExpiryCustom,
-      nodeOperatorFeeBP,
-      nodeOperatorFeeBPCustom,
-    } = data;
-
-    if (confirmExpiry === 'other' && confirmExpiryCustom == null) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Add value',
-        path: ['confirmExpiryCustom'],
-      });
-    } else if (
-      nodeOperatorFeeBP === 'other' &&
-      nodeOperatorFeeBPCustom == null
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Add value',
-        path: ['nodeOperatorFeeBPCustom'],
-      });
-    }
-  });
+export const editMainSettingsSchema = z.object({
+  nodeOperatorManagers: z.array(addressSchema),
+  defaultAdmins: z.array(addressSchema),
+  nodeOperatorFeeBP: z
+    .string()
+    .refine((val) => val !== '', { message: 'Value cannot be empty' })
+    .pipe(votingFeeSchema)
+    .transform((val) => String(val)),
+  confirmExpiry: z
+    .string()
+    .refine((val) => val !== '', { message: 'Value cannot be empty' })
+    .pipe(votingLifetimeSchema)
+    .transform((val) => String(val)),
+});
 
 export const indicatorsForRender: MainSettingsVoting[] = [
   {
