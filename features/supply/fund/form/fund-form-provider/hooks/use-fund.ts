@@ -68,7 +68,7 @@ export const useFund = () => {
           loadingActionText: vaultTexts.actions.supply.loading,
         });
 
-        // minting stETH requires
+        // minting stETH requires async data for report and minting capacity
         if (mintSteth) {
           prepareTransactions = async () => {
             isReportAvailable && calls.push(await prepareReportCall());
@@ -78,15 +78,15 @@ export const useFund = () => {
               publicClient,
             );
 
-            const maxMintableSteth =
+            const maxMintableShares =
               await dashboard.read.remainingMintingCapacity([amount]);
 
             calls.push({
               to: activeVault.owner,
               data: encodeFunctionData({
                 abi: dashboardAbi,
-                functionName: 'mintStETH',
-                args: [mintAddress, maxMintableSteth],
+                functionName: 'mintShares',
+                args: [mintAddress, maxMintableShares],
               }),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
             });
