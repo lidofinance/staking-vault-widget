@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const EditWrapper = styled.div`
+export const VotingBlock = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  gap: ${({ theme }) => theme.spaceMap.xl}px;
 `;

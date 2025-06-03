@@ -1,7 +1,7 @@
 import { useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 
-import { RadioSelector } from '../custom/radio-selector';
+import { RadioSelector } from '../components/controllers/radio-selector';
 import { useData } from './context/data-provider';
 
 export const RadioForm = () => {

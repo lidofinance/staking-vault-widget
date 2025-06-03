@@ -5,15 +5,14 @@ import { vaultTexts } from 'modules/vaults';
 import {
   MainSettingsAction,
   NodeOperator,
+  Admins,
+  Voting,
 } from 'features/settings/main/components';
 import { SectionContainer } from 'features/settings/main/styles';
 import {
   MainSettingsDataProvider,
   MainSettingsProvider,
 } from 'features/settings/main/contexts';
-
-import { Voting } from './custom';
-import { Admins } from './components';
 
 export const EditMainSettings = () => {
   return (

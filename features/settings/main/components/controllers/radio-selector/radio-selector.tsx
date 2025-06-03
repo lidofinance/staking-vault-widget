@@ -1,0 +1,88 @@
+import { FC } from 'react';
+import { useFormContext, useFormState } from 'react-hook-form';
+import { InlineLoader } from '@lidofinance/lido-ui';
+
+import { RadioInput, RadioWithInput } from 'shared/components';
+import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+import { VaultInfo } from 'types';
+
+import { ReadonlyView } from '../readonly-view';
+import {
+  RadioSelectorContainer,
+  RadioSelectorTitle,
+} from './radio-selector.styles';
+
+export type RadioFormData = {
+  type: string;
+  value: string;
+  tags: string[];
+  symbol: string;
+  placeholder?: string;
+};
+
+type VotingSelectorProps = {
+  data?: RadioFormData[];
+  radioType: keyof VaultInfo;
+  title: string;
+};
+
+export const RadioSelector: FC<VotingSelectorProps> = ({
+  data,
+  radioType,
+  title,
+}) => {
+  const { isLoading, errors, disabled } = useFormState();
+  const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission();
+  const { register, setValue } = useFormContext();
+  const inputError = errors[radioType];
+  const isEditable = !disabled && (hasConfirmingRole || hasPermission);
+
+  return (
+    <RadioSelectorContainer>
+      <RadioSelectorTitle>{title}</RadioSelectorTitle>
+      {isLoading && <InlineLoader />}
+      {isEditable && !isLoading ? (
+        <>
+          {data?.map(({ type, value, tags, symbol, placeholder }, index) => {
+            const key = `${radioType}-${type}-${index}-${value}`;
+            const isCustom = type === 'custom';
+            const isMy = type === 'My proposal';
+
+            if (isCustom)
+              return (
+                <RadioWithInput
+                  key={key}
+                  radioProps={{
+                    value: value,
+                    symbol: symbol,
+                    tags: tags,
+                    id: key,
+                    ...register(radioType),
+                  }}
+                  type={radioType}
+                  placeholder={placeholder}
+                  setRadioValue={setValue}
+                  error={inputError?.message as string}
+                />
+              );
+
+            return (
+              <RadioInput
+                key={key}
+                value={value}
+                tags={tags}
+                id={key}
+                symbol={symbol}
+                {...register(radioType)}
+                disabled={isMy}
+              />
+            );
+          })}
+        </>
+      ) : (
+        <ReadonlyView vaultKey={radioType} />
+      )}
+    </RadioSelectorContainer>
+  );
+};

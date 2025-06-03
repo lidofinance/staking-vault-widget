@@ -6,7 +6,7 @@ import {
   useContext,
 } from 'react';
 
-import { RadioFormData } from 'features/settings/main/custom/radio-selector';
+import { RadioFormData } from 'features/settings/main/components/controllers/radio-selector';
 
 const MOCK_DATA = {
   someValueData: [
