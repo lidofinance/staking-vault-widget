@@ -1,4 +1,3 @@
-export { useVaultData } from './use-vault-data';
 export {
   useVaultPermission,
   useVaultPermissions,

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import invariant from 'tiny-invariant';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
+  getStakingVaultContract,
   useVaultInfo,
   VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
   VAULT_SHOULD_REPORT_THRESHOLD,
@@ -146,5 +147,60 @@ export const useReportStatus = () => {
     isReportFresh,
     isReportAvailable,
     shouldApplyReport,
+  };
+};
+
+export const useReport = (vaultAddress?: Address) => {
+  const publicClient = usePublicClient();
+  const queryClient = useQueryClient();
+
+  const { queryKey, queryFn, getVaultReport } = useMemo(() => {
+    const queryKey = ['report-query', vaultAddress, publicClient?.chain.id];
+    const queryFn = async () => {
+      invariant(publicClient, 'publicClient is required');
+      invariant(vaultAddress, 'vaultAddress is required');
+
+      const hub = getVaultHubContract(publicClient);
+      const vault = getStakingVaultContract(vaultAddress, publicClient);
+
+      const [[vaultTimestamp, , reportCID], { timestamp }] =
+        await publicClient.multicall({
+          contracts: [
+            hub.encode.latestReportData(),
+            vault.encode.latestReport(),
+          ] as const,
+          allowFailure: false,
+        });
+
+      if (vaultTimestamp > timestamp) {
+        const report = await fetchReportMerkle(
+          publicClient.chain.id,
+          reportCID,
+          vaultAddress,
+        );
+
+        return { report };
+      }
+      return {
+        report: null,
+      };
+    };
+    return {
+      getVaultReport: () => queryClient.ensureQueryData({ queryKey, queryFn }),
+      queryFn,
+      queryKey,
+    };
+  }, [publicClient, queryClient, vaultAddress]);
+
+  const reportQuery = useQuery({
+    queryKey,
+    queryFn,
+    enabled: !!vaultAddress,
+    ...STRATEGY_EAGER,
+  });
+
+  return {
+    ...reportQuery,
+    getVaultReport,
   };
 };

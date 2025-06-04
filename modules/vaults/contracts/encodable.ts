@@ -34,7 +34,11 @@ type EncodableContract<
       functionName: K;
       args: Parameters<
         TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
-      >;
+      >[0] extends readonly unknown[]
+        ? Parameters<
+            TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
+          >[0]
+        : undefined;
     };
   };
 };

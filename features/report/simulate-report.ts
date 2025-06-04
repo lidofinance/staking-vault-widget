@@ -72,6 +72,7 @@ export const readWithReport = async <
     return parsedResults as MulticallReturnType<TContracts, false>;
   }
 
+  // fallback to eth_call with multicall when no reportCall is provided
   return publicClient.multicall({
     contracts: contracts as any,
     allowFailure: false,

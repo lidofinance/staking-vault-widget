@@ -51,8 +51,14 @@ const fetchIPFS = async <TResult>(cid: string): Promise<TResult> => {
   throw new Error('Could not fetch report from IPFS');
 };
 
+// This mid-lvl cache simplifies fetching IPFS reports between multiple vault queries
+// allowing us to not to rely on correct HTTP cache-headers for IPFS
+const REPORT_CACHE = new Map<string, IPFSReport>();
+
 const extractProofFromIPFS = async (cid: string, vault: Address) => {
-  const IPFSReportData = await fetchIPFS<IPFSReport>(cid);
+  const inCache = REPORT_CACHE.get(cid);
+  const IPFSReportData = inCache ?? (await fetchIPFS<IPFSReport>(cid));
+  !inCache && REPORT_CACHE.set(cid, IPFSReportData);
 
   const merkleTree = StandardMerkleTree.load({
     ...IPFSReportData,

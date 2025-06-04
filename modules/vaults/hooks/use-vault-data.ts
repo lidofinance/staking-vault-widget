@@ -56,9 +56,9 @@ const getVaultData = async ({
 
   const isReportAvailable = hubTime > vaultTime;
 
-  // okay for now due to HTML caching
   const report = isReportAvailable
-    ? await fetchReportMerkle(publicClient.chain.id, reportCID, vaultAddress)
+    ? // uses internal caching for IPFS data
+      await fetchReportMerkle(publicClient.chain.id, reportCID, vaultAddress)
     : undefined;
 
   const reportCall = report
@@ -183,42 +183,5 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
       return getVaultData({ publicClient, shares, vaultAddress });
     },
     ...STRATEGY_LAZY,
-  });
-};
-
-// TODO: find way to remove readonly
-export const useVaultData = (
-  vaultsAddressesList: readonly Address[] | undefined,
-) => {
-  const { shares } = useLidoSDK();
-  const publicClient = usePublicClient();
-
-  return useQuery({
-    queryKey: ['vault-data', { data: vaultsAddressesList }],
-    enabled: !!vaultsAddressesList?.length && !!publicClient,
-    ...STRATEGY_LAZY,
-
-    queryFn: async (): Promise<VaultInfo[]> => {
-      invariant(publicClient, 'PublicClient is not ready');
-
-      const vaults: VaultInfo[] = [];
-
-      if (vaultsAddressesList?.length && vaultsAddressesList.length === 0) {
-        return vaults;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      for (const vaultAddress of vaultsAddressesList!) {
-        vaults.push(
-          await getVaultData({
-            publicClient,
-            vaultAddress,
-            shares,
-          }),
-        );
-      }
-
-      return vaults;
-    },
   });
 };
