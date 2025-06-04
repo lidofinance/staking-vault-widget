@@ -3,6 +3,7 @@ import { getContract, PublicClient, WalletClient } from 'viem';
 import { VaultHubAbi } from 'abi/vault-hub';
 import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
+import { getEncodable } from './encodable';
 
 // TODO: move to lido-sdk
 export const getVaultHubContract = <TClient extends PublicClient>(
@@ -16,13 +17,15 @@ export const getVaultHubContract = <TClient extends PublicClient>(
   const address = getContractAddress(publicClient.chain.id, 'vaultHub');
 
   invariant(address, '[getVaultHubContract] vaultHub is not defined');
-  return getContract({
-    address,
-    abi: VaultHubAbi,
-    client: {
-      public: publicClient,
-    },
-  });
+  return getEncodable(
+    getContract({
+      address,
+      abi: VaultHubAbi,
+      client: {
+        public: publicClient,
+      },
+    }),
+  );
 };
 
 export const getWritableVaultHubContract = <

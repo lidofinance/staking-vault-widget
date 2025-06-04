@@ -1,20 +1,27 @@
+import type { PublicClient, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import { useLidoSDK } from 'modules/web3';
-
-import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
-import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
-import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { bigIntMax } from 'utils/bigint-math';
+import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
-import type { VaultInfo } from 'types';
-import type { PublicClient, Address } from 'viem';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+import { useLidoSDK } from 'modules/web3';
+import {
+  getVaultHubContract,
+  getStakingVaultContract,
+  getDashboardContract,
+} from 'modules/vaults';
+import { fetchReportMerkle } from 'features/report/ipfs';
+import { readWithReport } from 'features/report/simulate-report';
+
+import { Multicall3AbiUtils } from 'abi/multicall-abi';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { bigIntMax } from 'utils/bigint-math';
+
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
+
+import type { VaultInfo } from 'types';
 
 type VaultDataArgs = {
   publicClient: PublicClient;
@@ -27,22 +34,64 @@ const getVaultData = async ({
   vaultAddress,
   shares,
 }: VaultDataArgs): Promise<VaultInfo> => {
+  invariant(
+    publicClient.chain?.contracts?.multicall3,
+    `Multicall3 address is not defined for chain ${publicClient.chain?.id}`,
+  );
+
   const vaultHubContract = getVaultHubContract(publicClient);
   const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
 
-  const [owner, inOutDelta, nodeOperator, locked] = await Promise.all([
+  const [
+    owner,
+    nodeOperator,
+    { timestamp: vaultTime },
+    [hubTime, , reportCID],
+  ] = await Promise.all([
     vaultContract.read.owner(),
-    vaultContract.read.inOutDelta(),
     vaultContract.read.nodeOperator(),
-    vaultContract.read.locked(),
+    vaultContract.read.latestReport(),
+    vaultHubContract.read.latestReportData(),
   ]);
 
-  const balance = await publicClient.getBalance({
-    address: vaultContract.address,
-  });
+  const isReportAvailable = hubTime > vaultTime;
 
-  const { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest } =
-    await vaultHubContract.read.vaultSocket([vaultAddress]);
+  // okay for now due to HTML caching
+  const report = isReportAvailable
+    ? await fetchReportMerkle(publicClient.chain.id, reportCID, vaultAddress)
+    : undefined;
+
+  const reportCall = report
+    ? vaultHubContract.encode.updateVaultData([
+        vaultAddress,
+        report.totalValueWei,
+        report.inOutDelta,
+        report.fee,
+        report.liabilityShares,
+        report.proof,
+      ])
+    : undefined;
+
+  const [
+    inOutDelta,
+    locked,
+    { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest },
+    balance,
+  ] = await readWithReport({
+    publicClient,
+    reportCall,
+    contracts: [
+      vaultContract.encode.inOutDelta(),
+      vaultContract.encode.locked(),
+      vaultHubContract.encode.vaultSocket([vaultAddress]),
+      {
+        abi: Multicall3AbiUtils,
+        address: publicClient.chain.contracts.multicall3.address,
+        functionName: 'getEthBalance',
+        args: [vaultAddress],
+      },
+    ] as const,
+  });
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
@@ -50,17 +99,25 @@ const getVaultData = async ({
     totalValue,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
-    nodeOperatorFeeBP,
     totalMintingCapacity,
+  ] = await readWithReport({
+    publicClient,
+    reportCall: reportCall,
+    contracts: [
+      dashboardContract.encode.totalValue(),
+      dashboardContract.encode.nodeOperatorUnclaimedFee(),
+      dashboardContract.encode.withdrawableEther(),
+      dashboardContract.encode.totalMintingCapacity(),
+    ] as const,
+  });
+
+  const [
+    nodeOperatorFeeBP,
     defaultAdmins,
     nodeOperatorManagers,
     confirmExpiry,
   ] = await Promise.all([
-    dashboardContract.read.totalValue(),
-    dashboardContract.read.nodeOperatorUnclaimedFee(),
-    dashboardContract.read.withdrawableEther(),
     dashboardContract.read.nodeOperatorFeeBP(),
-    dashboardContract.read.totalMintingCapacity(),
     dashboardContract.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
     dashboardContract.read.getRoleMembers([
       VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,

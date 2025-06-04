@@ -1,6 +1,7 @@
 import { type Address, getContract, PublicClient, WalletClient } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
+import { getEncodable } from './encodable';
 
 // TODO: move to lido-sdk
 export const getDashboardContract = (
@@ -16,9 +17,11 @@ export const getDashboardContract = (
     client.wallet = walletClient;
   }
 
-  return getContract({
-    address,
-    abi: dashboardAbi,
-    client,
-  });
+  return getEncodable(
+    getContract({
+      address,
+      abi: dashboardAbi,
+      client,
+    }),
+  );
 };
