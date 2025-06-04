@@ -147,7 +147,7 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const result = withSuccess(
+        const promise = withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -155,6 +155,8 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
+
+        const result = await promise;
 
         // refetch anyway because some transactions may be successful
         await refetchVaultInfo();
