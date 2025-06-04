@@ -13,13 +13,19 @@ import {
 import { useVaultInfo, VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { useConfirmationsInfo } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
+import invariant from 'tiny-invariant';
 
-const MainSettingsDataContext =
-  createContext<MainSettingsDataContextValue | null>(null);
+const MainSettingsDataContext = createContext<
+  MainSettingsDataContextValue | undefined | null
+>(undefined);
 MainSettingsDataContext.displayName = 'MainSettingsDataContext';
 
 export const useMainSettingsData = () => {
-  return useContext(MainSettingsDataContext);
+  const context = useContext(MainSettingsDataContext);
+  if (context === undefined) {
+    invariant(context, 'Attempt to use `feature flag` outside of provider');
+  }
+  return context;
 };
 
 export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
@@ -35,7 +41,9 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     }
 
     // Current values for voting
-    const currentConfirmExpiry = Number(activeVault.confirmExpiry) / 3600;
+    const currentConfirmExpiry = Math.ceil(
+      Number(activeVault.confirmExpiry) / 3600,
+    );
     const currentNodeOperatorFeeBP = Number(
       (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
     );
