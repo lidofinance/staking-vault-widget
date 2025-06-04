@@ -70,14 +70,18 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     confirmationsList.map((confirmation) => {
       const type =
         confirmation.member !== address ? 'Proposed to me' : 'My proposal';
-      const expiry = (
-        (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
-        (60 * 60 * 1000)
-      ).toFixed(0);
+      const expiry = String(
+        roundToHundredths(
+          (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
+            (60 * 60 * 1000),
+        ),
+      );
 
       if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
         confirmExpiry.push({
-          value: String(confirmation.decodedData.args[0] / (60n * 60n)),
+          value: String(
+            roundToHundredths(Number(confirmation.decodedData.args[0]) / 3600),
+          ),
           tags: [`${String(expiry)} hours`, type],
           type,
           symbol: ' hours',
