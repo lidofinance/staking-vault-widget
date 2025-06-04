@@ -5,16 +5,17 @@ import {
   createContext,
   useContext,
 } from 'react';
+import invariant from 'tiny-invariant';
 
 import {
   MainSettingsDataContextValue,
   VotingOptionType,
 } from 'features/settings/main/types';
-import { useVaultInfo, VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import { useVaultInfo } from 'modules/vaults';
 import { useConfirmationsInfo } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
-import invariant from 'tiny-invariant';
-import { formatSecondsToHours } from '../utils';
+
+import { formatSecondsToHours, formatSettingsValues } from '../utils';
 
 const MainSettingsDataContext = createContext<
   MainSettingsDataContextValue | undefined | null
@@ -42,15 +43,16 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     }
 
     // Current values for voting
-    const currentConfirmExpiry = String(activeVault.confirmExpiry);
-
-    const currentNodeOperatorFeeBP = Number(
-      (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
-    );
+    const {
+      confirmExpiryValue,
+      nodeOperatorFeeBPValue,
+      defaultAdmins,
+      nodeOperatorManagers,
+    } = formatSettingsValues(activeVault);
 
     const confirmExpiry: VotingOptionType[] = [
       {
-        value: currentConfirmExpiry,
+        value: confirmExpiryValue,
         type: 'current',
         tags: ['Current'],
         format: formatSecondsToHours,
@@ -58,7 +60,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     ];
     const nodeOperatorFeeBP: VotingOptionType[] = [
       {
-        value: String(currentNodeOperatorFeeBP),
+        value: nodeOperatorFeeBPValue,
         type: 'current',
         tags: ['Current'],
         symbol: '%',
@@ -111,16 +113,8 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     });
 
     return {
-      defaultAdmins: activeVault.defaultAdmins.map((address) => ({
-        value: address,
-        state: 'display',
-        isGranted: true,
-      })),
-      nodeOperatorManagers: activeVault.nodeOperatorManagers.map((address) => ({
-        value: address,
-        state: 'display',
-        isGranted: true,
-      })),
+      defaultAdmins,
+      nodeOperatorManagers,
       nodeOperatorFeeBP: nodeOperatorFeeBP.sort((a, b) => {
         if (a.type === 'My proposal') return 1;
         if (b.type === 'My proposal') return -1;

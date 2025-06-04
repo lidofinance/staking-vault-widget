@@ -1,5 +1,8 @@
-import { MainSettingsDataContextValue } from './types';
 import invariant from 'tiny-invariant';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+
+import { MainSettingsDataContextValue } from './types';
+import { VaultInfo } from 'types';
 
 export const shouldIncrementTxCounter = (
   value: string,
@@ -88,4 +91,28 @@ export const formatSecondsToHours = (totalSeconds: number | string): string => {
   }
 
   return `${hours}h ${minutes}m`;
+};
+
+export const formatSettingsValues = (vaultInfo: VaultInfo) => {
+  const defaultAdmins = vaultInfo.defaultAdmins.map((address) => ({
+    value: address,
+    state: 'display' as const,
+    isGranted: true,
+  }));
+  const nodeOperatorManagers = vaultInfo.nodeOperatorManagers.map(
+    (address) => ({
+      value: address,
+      state: 'display' as const,
+      isGranted: true,
+    }),
+  );
+
+  return {
+    defaultAdmins,
+    nodeOperatorManagers,
+    confirmExpiryValue: String(vaultInfo.confirmExpiry),
+    nodeOperatorFeeBPValue: String(
+      (vaultInfo.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    ),
+  };
 };

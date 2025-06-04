@@ -11,7 +11,8 @@ import { useMainSettingsData } from './main-settings-data-provider';
 
 import { editMainSettingsSchema } from 'features/settings/main/consts';
 import { EditMainSettingsSchema } from 'features/settings/main/types';
-import { prepareDefaultValues } from '../utils';
+import { prepareDefaultValues, formatSettingsValues } from '../utils';
+import { VaultInfo } from 'types';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
@@ -28,24 +29,37 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   });
   const reset = formObject.reset;
 
-  const onSubmit = useCallback(
-    async (data: EditMainSettingsSchema): Promise<boolean> => {
-      const { result, vaultInfo } = await editMainSettings(data);
+  const resetFields = useCallback(
+    (data: EditMainSettingsSchema, vaultInfo: VaultInfo) => {
+      const {
+        confirmExpiryValue,
+        nodeOperatorFeeBPValue,
+        defaultAdmins,
+        nodeOperatorManagers,
+      } = formatSettingsValues(vaultInfo);
 
       const resetFields = {
         ...data,
-        confirmExpiry: String(vaultInfo.data?.confirmExpiry),
-        nodeOperatorFeeBP: vaultInfo.data?.nodeOperatorFeeBP
-          ? String((vaultInfo.data?.nodeOperatorFeeBP * 100n) / 10000n)
-          : data.nodeOperatorFeeBP,
+        defaultAdmins,
+        nodeOperatorManagers,
+        confirmExpiry: confirmExpiryValue,
+        nodeOperatorFeeBP: nodeOperatorFeeBPValue,
       };
 
       // TODO: think about moving reset to the form controller
       reset(resetFields);
+    },
+    [reset],
+  );
+
+  const onSubmit = useCallback(
+    async (data: EditMainSettingsSchema): Promise<boolean> => {
+      const { result, vaultInfo } = await editMainSettings(data);
+      if (vaultInfo.data) resetFields(data, vaultInfo.data);
 
       return result.success;
     },
-    [editMainSettings, reset],
+    [editMainSettings, resetFields],
   );
 
   return (
