@@ -70,35 +70,35 @@ export const useConfirmationsInfo = () => {
         strict: true,
       });
 
-      const dataObject: LogsData = logs
+      const dataObject: Record<Hex, ConfirmationsInfo> = logs
         .map((log) => log.args)
         .sort((a, b) => Number(a.expiryTimestamp - b.expiryTimestamp))
-        .reduce<LogsData>((acc, args) => {
+        .reduce<Record<Hex, ConfirmationsInfo>>((acc, args) => {
           const decoded = decodeFunctionData({
             abi: dashboardAbi,
             data: args.data,
-          });
+          }) as DecodedData;
 
-          acc.push({
+          acc[args.data] = {
             member: args.member,
             role: args.role,
             expiryTimestamp: args.expiryTimestamp,
             expiryDate: new Date(Number(args.expiryTimestamp) * 1000),
             data: args.data,
-            // @ts-expect-error list of decoded types is not compatible to functions: FunctionName
             decodedData: decoded,
-          });
+          };
+
           return acc;
-        }, []);
+        }, {});
 
       const voting = await Promise.all(
-        dataObject.map(async (log) => {
-          const { role, data } = log;
+        Object.entries(dataObject).map(async ([data, log]) => {
+          const { role } = log;
           const confirmations = await publicClient.readContract({
             address: dashboardAddress,
             abi: dashboardAbi,
             functionName: 'confirmations',
-            args: [data, role],
+            args: [data as Hex, role],
           });
 
           if (confirmations === 0n) return null;

@@ -155,9 +155,13 @@ export const useEditMainSettings = () => {
         const result = await promise;
 
         // refetch anyway because some transactions may be successful
-        await refetchVaultInfo();
-        await refetchConfirmationsInfo();
-        return result;
+        const vaultInfo = await refetchVaultInfo();
+        const confirmations = await refetchConfirmationsInfo();
+        return {
+          result,
+          confirmations,
+          vaultInfo,
+        };
       },
       [
         owner,
