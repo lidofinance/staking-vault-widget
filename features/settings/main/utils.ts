@@ -41,8 +41,9 @@ export const formatInputValue = (
   value: string,
   symbol: string | undefined,
   isFocused: boolean,
+  hasError: boolean,
 ) => {
-  if (symbol && value) {
+  if (symbol && value && !hasError) {
     return isFocused ? value : `${value}${symbol}`;
   }
 
