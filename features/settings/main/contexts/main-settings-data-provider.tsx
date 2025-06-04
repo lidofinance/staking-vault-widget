@@ -14,6 +14,7 @@ import { useVaultInfo, VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { useConfirmationsInfo } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
 import invariant from 'tiny-invariant';
+import { roundToHundredths } from '../utils';
 
 const MainSettingsDataContext = createContext<
   MainSettingsDataContextValue | undefined | null
@@ -41,9 +42,10 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     }
 
     // Current values for voting
-    const currentConfirmExpiry = Math.ceil(
+    const currentConfirmExpiry = roundToHundredths(
       Number(activeVault.confirmExpiry) / 3600,
     );
+
     const currentNodeOperatorFeeBP = Number(
       (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
     );

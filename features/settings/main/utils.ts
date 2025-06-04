@@ -49,3 +49,11 @@ export const formatInputValue = (
 
   return value;
 };
+
+export const roundToHundredths = (num: number) => {
+  if (Math.floor(num) !== num) {
+    return Math.round(num * 100) / 100;
+  }
+
+  return num;
+};
