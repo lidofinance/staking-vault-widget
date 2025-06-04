@@ -43,7 +43,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
     <RadioSelectorContainer>
       <RadioSelectorTitle>{title}</RadioSelectorTitle>
       {isLoading && <InlineLoader />}
-      {isEditable && !isLoading ? (
+      {isEditable && !isLoading && (
         <>
           {data?.map(
             ({ type, value, tags, symbol, format, placeholder }, index) => {
@@ -89,9 +89,8 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
             },
           )}
         </>
-      ) : (
-        <ReadonlyView vaultKey={vaultKey} />
       )}
+      {!isEditable && !isLoading && <ReadonlyView vaultKey={vaultKey} />}
     </RadioSelectorContainer>
   );
 };
