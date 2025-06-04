@@ -5,6 +5,7 @@ import {
   ChangeEvent,
   useCallback,
   useMemo,
+  useEffect,
 } from 'react';
 import { UseFormSetValue, FieldValues } from 'react-hook-form';
 import { mergeRefs } from 'utils';
@@ -20,11 +21,19 @@ type RadioWithInputProps = Omit<InputProps, 'type'> & {
   radioProps: RadioInputProps;
   setRadioValue: UseFormSetValue<FieldValues>;
   type: string;
+  shouldClearField?: boolean;
 };
 
 export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
   (props, ref) => {
-    const { radioProps, setRadioValue, type, error, ...rest } = props;
+    const {
+      radioProps,
+      setRadioValue,
+      shouldClearField,
+      type,
+      error,
+      ...rest
+    } = props;
 
     const [value, setValue] = useState<string>('');
     const [isFocused, setIsFocused] = useState(false);
@@ -80,6 +89,13 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
     const handleBlur = useCallback(() => {
       setIsFocused(false);
     }, []);
+
+    useEffect(() => {
+      if (shouldClearField) {
+        setValue('');
+        setDirty(false);
+      }
+    }, [shouldClearField]);
 
     return (
       <RadioInput
