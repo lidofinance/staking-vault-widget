@@ -74,22 +74,20 @@ export const formatValueView = (
   return value;
 };
 
-export const formatSecondsToHours = (totalSeconds: number | string): string => {
-  const seconds =
-    typeof totalSeconds === 'string' ? Number(totalSeconds) : totalSeconds;
-
-  if (isNaN(seconds)) {
-    return totalSeconds as string;
-  }
+export const formatSecondsToHours = (
+  totalSeconds: number | string,
+  isShort?: boolean,
+): string => {
+  const seconds = Number(totalSeconds);
+  if (isNaN(seconds)) return String(totalSeconds);
 
   const hours = Math.floor(seconds / 3600);
-  const remainingSeconds = seconds % 3600;
-  const minutes = Math.floor(remainingSeconds / 60);
+  const minutes = Math.floor((seconds % 3600) / 60);
 
-  if (minutes === 0) {
-    return `${hours} hours`;
-  }
-
+  if (hours === 0 && minutes === 0) return '~1 minute';
+  if (isShort) return `${hours}h`;
+  if (hours === 0) return `${minutes} minutes`;
+  if (minutes === 0) return `${hours} hours`;
   return `${hours}h ${minutes}m`;
 };
 

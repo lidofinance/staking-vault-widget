@@ -74,6 +74,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       const expiry = formatSecondsToHours(
         (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
           1000,
+        true,
       );
 
       if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
