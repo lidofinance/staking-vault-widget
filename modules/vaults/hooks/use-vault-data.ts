@@ -72,11 +72,17 @@ const getVaultData = async ({
       ])
     : undefined;
 
+  const dashboardContract = getDashboardContract(owner, publicClient);
+
   const [
     inOutDelta,
     locked,
     { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest },
     balance,
+    totalValue,
+    nodeOperatorUnclaimedFee,
+    withdrawableEther,
+    totalMintingCapacity,
   ] = await readWithReport({
     publicClient,
     reportCall,
@@ -90,20 +96,6 @@ const getVaultData = async ({
         functionName: 'getEthBalance',
         args: [vaultAddress],
       },
-    ] as const,
-  });
-
-  const dashboardContract = getDashboardContract(owner, publicClient);
-
-  const [
-    totalValue,
-    nodeOperatorUnclaimedFee,
-    withdrawableEther,
-    totalMintingCapacity,
-  ] = await readWithReport({
-    publicClient,
-    reportCall: reportCall,
-    contracts: [
       dashboardContract.encode.totalValue(),
       dashboardContract.encode.nodeOperatorUnclaimedFee(),
       dashboardContract.encode.withdrawableEther(),
