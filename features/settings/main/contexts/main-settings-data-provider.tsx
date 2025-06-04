@@ -56,6 +56,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         type: 'current',
         tags: ['Current'],
         format: formatSecondsToHours,
+        symbol: ' hours',
       },
     ];
     const nodeOperatorFeeBP: VotingOptionType[] = [
@@ -81,6 +82,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
           tags: [expiry, type],
           type,
           format: formatSecondsToHours,
+          symbol: ' hours',
         });
       } else if (
         confirmation.decodedData.functionName === 'setNodeOperatorFeeBP'
