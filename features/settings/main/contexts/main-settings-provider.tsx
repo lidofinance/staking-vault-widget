@@ -26,14 +26,26 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     resolver: zodResolver(editMainSettingsSchema),
     mode: 'all',
   });
+  const reset = formObject.reset;
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
-      const { success } = await editMainSettings(data);
+      const { result, vaultInfo } = await editMainSettings(data);
 
-      return success;
+      const resetFields = {
+        ...data,
+        confirmExpiry: String(vaultInfo.data?.confirmExpiry),
+        nodeOperatorFeeBP: vaultInfo.data?.nodeOperatorFeeBP
+          ? String((vaultInfo.data?.nodeOperatorFeeBP * 100n) / 10000n)
+          : data.nodeOperatorFeeBP,
+      };
+
+      // TODO: think about moving reset to the form controller
+      reset(resetFields);
+
+      return result.success;
     },
-    [editMainSettings],
+    [editMainSettings, reset],
   );
 
   return (
