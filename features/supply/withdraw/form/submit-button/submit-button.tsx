@@ -1,18 +1,18 @@
 import { PermissionedSubmitButton } from 'modules/vaults/components';
 
-import { useFormContext } from 'react-hook-form';
+import { useFormState } from 'react-hook-form';
 
 export const SubmitButton = () => {
-  const {
-    formState: { isValid, isSubmitting, isDirty },
-  } = useFormContext();
+  const { isValid, isSubmitting, isDirty } = useFormState();
   const disabled = isSubmitting || !isValid || !isDirty;
+
+  const isDisabled = isSubmitting || !isValid || !isDirty || disabled;
 
   return (
     <PermissionedSubmitButton
       type="submit"
       dashboardRole="withdrawer"
-      disabled={disabled}
+      disabled={isDisabled}
     >
       Withdraw
     </PermissionedSubmitButton>

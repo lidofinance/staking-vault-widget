@@ -5,7 +5,7 @@ import { Component } from 'types';
 import { FormatBalanceArgs, useFormattedBalance } from 'utils';
 
 export type FormatTokenProps = FormatBalanceArgs & {
-  symbol: string;
+  symbol?: string;
   amount?: bigint | null;
   approx?: boolean;
   showAmountTip?: boolean;
@@ -15,7 +15,7 @@ export type FormatTokenComponent = Component<'span', FormatTokenProps>;
 
 export const FormatToken: FormatTokenComponent = ({
   amount,
-  symbol,
+  symbol = '',
   approx,
   maxDecimalDigits = 4,
   maxTotalLength = 15,

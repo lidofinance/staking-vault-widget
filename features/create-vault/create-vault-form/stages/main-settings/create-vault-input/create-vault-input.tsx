@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Hint } from 'features/create-vault/shared/hint';
+import { Hint } from 'shared/components';
 
 import { GeneralInput, GeneralInputProps } from './general-input';
 import { AddressInput } from './address-input';
@@ -31,7 +31,7 @@ export const CreateVaultInput: FC<GeneralInputProps> = (props) => {
       {title && (
         <InputTitle>
           {title}
-          <Hint hint={hint} />
+          <Hint text={hint} />
         </InputTitle>
       )}
       <Input {...props} />

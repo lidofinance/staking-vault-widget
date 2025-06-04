@@ -6,15 +6,16 @@ import {
   createContext,
   useContext,
 } from 'react';
+import type { Address } from 'viem';
 import { FormProvider, useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useVaultInfo } from 'modules/vaults';
-import { useMint } from 'features/adjustment/mint/hooks';
+import { useDappStatus } from 'modules/web3';
 
 import { FormController } from 'shared/hook-form/form-controller';
+import { useMint } from 'features/adjustment/mint/hooks';
 import { MintFormSchema } from 'features/adjustment/mint/types';
-import { Address } from 'viem';
 
 type MintDataContextValue = {
   mintableStETH: bigint;
@@ -36,12 +37,14 @@ export const useMintFormData = () => {
 };
 
 export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { isDappActive } = useDappStatus();
   const formObject = useForm<MintFormSchema>({
     defaultValues: {
       amount: undefined,
       token: 'stETH',
       recipient: '' as Address,
     },
+    disabled: !isDappActive,
     mode: 'all',
     // TODO: validation
     reValidateMode: 'onChange',
@@ -68,6 +71,10 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       invariant(recipient, '[MintFormProvider] recipient is undefined');
       invariant(amount, '[MintFormProvider] amount is undefined');
       invariant(token, '[MintFormProvider] token is undefined');
+      invariant(
+        token === 'stETH' || token === 'wstETH',
+        '[MintFormProvider] token is invalid',
+      );
 
       return await mint(recipient, amount, token);
     },

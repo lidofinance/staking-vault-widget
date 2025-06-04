@@ -1,20 +1,19 @@
 import { FC, useMemo } from 'react';
+import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
-import { Container } from './styled';
 
-import { useFormContext } from 'react-hook-form';
-import { RoleFieldSchema } from 'features/settings/main/types';
-import { multipleDataFields } from 'features/settings/main/consts';
 import { ConnectWalletButton } from 'shared/wallet';
 
+import { RoleFieldSchema } from 'features/settings/main/types';
+import { multipleDataFields } from 'features/settings/main/consts';
+
+import { Container } from './styled';
+
 export const MainSettingsAction: FC = () => {
-  const {
-    watch,
-    setValue,
-    formState: { isValid, isDirty, isSubmitting },
-  } = useFormContext();
+  const { watch, setValue } = useFormContext();
+  const { isValid, isDirty, isSubmitting, disabled } = useFormState();
   const isClearDisabled = !isDirty;
-  const isSubmitDisabled = !isValid || !isDirty || isSubmitting;
+  const isSubmitDisabled = !isValid || !isDirty || isSubmitting || disabled;
   const formFields = watch();
 
   const handleClearMainForm = () => {

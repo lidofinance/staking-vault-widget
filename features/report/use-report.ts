@@ -8,6 +8,7 @@ import {
   useVaultInfo,
   VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
   VAULT_SHOULD_REPORT_THRESHOLD,
+  vaultTexts,
 } from 'modules/vaults';
 
 import { getVaultHubContract } from '../../modules/vaults/contracts/vault-hub';
@@ -121,7 +122,7 @@ export const useReportStatus = () => {
     );
 
     return {
-      loadingActionText: 'Applying oracle report',
+      loadingActionText: vaultTexts.actions.report.loading,
       to: hub.address,
       data: encodeFunctionData({
         abi: hub.abi,

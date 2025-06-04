@@ -1,1 +1,1 @@
-export * from './all-vaults';
+export { AllVaultsPage } from './all-vaults-page';

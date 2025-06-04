@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useMemo,
-  useCallback,
 } from 'react';
 import { Address } from 'viem';
 import invariant from 'tiny-invariant';
@@ -13,9 +12,27 @@ import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-ove
 import { formatBalance, formatPercent } from 'utils';
 
 import { useVaultInfo } from 'modules/vaults/vault-context';
-import { VAULT_TOTAL_BASIS_POINTS, VAULTS_ALL_ROLES } from 'modules/vaults';
+import {
+  VAULT_TOTAL_BASIS_POINTS,
+  VAULTS_ALL_ROLES,
+  vaultTexts,
+} from 'modules/vaults';
 
-export interface VaultOverviewContextType {
+export type SectionData = {
+  key: VaultOverviewContextKeys;
+  actionRole?: VAULTS_ALL_ROLES;
+  actionLink?: (vaultAddress: Address) => string;
+};
+
+export type SectionPayload = SectionData & {
+  title: string;
+  hint?: string;
+  action?: string;
+  isLoading?: boolean;
+  payload: string | Address | number;
+};
+
+export type VaultOverviewContextType = {
   values: {
     address: Address;
     nodeOperator: Address;
@@ -37,27 +54,32 @@ export interface VaultOverviewContextType {
     pendingUnlockEth: string;
   };
   isLoadingVault?: boolean;
-  getVaultDataToRender: (
-    payload: SectionPayload[],
-  ) => (SectionPayload & { payload: string | Address | number })[];
-}
+  getVaultDataToRender: (payload: SectionData) => SectionPayload;
+};
 
 export type VaultOverviewContextKeys = keyof VaultOverviewContextType['values'];
-export type SectionPayload = {
+
+type MetricText = {
   title: string;
-  key: VaultOverviewContextKeys;
-  actionText?: string;
-  actionRole?: VAULTS_ALL_ROLES;
-  actionLink?: (vaultAddress: Address) => string;
-  isLoading?: boolean;
+  hint?: string;
+  action?: string;
 };
 
 const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
   null,
 );
+VaultOverviewContext.displayName = 'VaultOverviewContext';
 
 const toEthValue = (value: bigint) => `${formatBalance(value).trimmed} ETH`;
 const toStethValue = (value: bigint) => `${formatBalance(value).trimmed} stETH`;
+
+const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
+  const metric = vaultTexts.metrics[
+    key as keyof typeof vaultTexts.metrics
+  ] as MetricText;
+  invariant(metric, `Metric text for ${key} not found`);
+  return metric;
+};
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   const { activeVault, isLoadingVault } = useVaultInfo();
@@ -147,21 +169,20 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     return {} as VaultOverviewContextType['values'];
   }, [activeVault, isLoadingVault]);
 
-  const getVaultDataToRender = useCallback(
-    (sectionPayloadList: SectionPayload[]) => {
-      return sectionPayloadList.map((item) => {
-        return {
-          ...item,
-          payload: values[item.key],
-          isLoading: isLoadingVault,
-        };
-      });
-    },
-    [values, isLoadingVault],
-  );
+  const value = useMemo(() => {
+    return {
+      values,
+      getVaultDataToRender: (sectionEntry: SectionData) => ({
+        ...sectionEntry,
+        ...getMetricTexts(sectionEntry.key),
+        payload: values[sectionEntry.key],
+        isLoading: isLoadingVault,
+      }),
+    };
+  }, [isLoadingVault, values]);
 
   return (
-    <VaultOverviewContext.Provider value={{ values, getVaultDataToRender }}>
+    <VaultOverviewContext.Provider value={value}>
       {children}
     </VaultOverviewContext.Provider>
   );

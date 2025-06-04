@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import { Layout } from 'shared/components';
 import { CreateVaultForm } from './create-vault-form';
+import { CreateVaultFaq } from './create-vault-faq';
 import { PageWrapper } from './styles';
 
 export const CreateVaultPage: FC = () => {
@@ -17,6 +18,7 @@ export const CreateVaultPage: FC = () => {
       </Head>
       <PageWrapper>
         <CreateVaultForm />
+        <CreateVaultFaq />
       </PageWrapper>
     </Layout>
   );

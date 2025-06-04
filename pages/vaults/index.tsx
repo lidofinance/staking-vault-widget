@@ -1,22 +1,8 @@
-import Head from 'next/head';
-
-import { Layout } from 'shared/components';
-import { PageWrapper } from 'features/home/styles';
-import { AllVaults } from 'features/home/all-vaults';
 import { appPaths } from 'consts/routing';
 import { getDefaultStaticProps } from 'utilsApi/get-default-static-props';
 
-export default () => {
-  return (
-    <Layout containerSize="content">
-      <Head>
-        <title>Vault | Lido</title>
-      </Head>
-      <PageWrapper>
-        <AllVaults />
-      </PageWrapper>
-    </Layout>
-  );
-};
+import { AllVaultsPage } from 'features/home';
+
+export default AllVaultsPage;
 
 export const getStaticProps = getDefaultStaticProps(appPaths.vaults.all);

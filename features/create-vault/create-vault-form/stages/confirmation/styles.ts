@@ -67,4 +67,8 @@ export const ConfirmationLabel = styled.span`
   grid-row: 1 / 2;
   display: inline-flex;
   align-items: center;
+
+  & > svg {
+    align-self: center;
+  }
 `;

@@ -1,7 +1,11 @@
 import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import type { Address } from 'viem';
 import { useForm, FormProvider } from 'react-hook-form';
 
+import { useDappStatus } from 'modules/web3';
+import { useVaultInfo } from 'modules/vaults';
 import { FormController } from 'shared/hook-form/form-controller';
+import { validateFormWithZod } from 'utils/validate-form-value';
 
 import {
   EditMainSettingsSchema,
@@ -9,16 +13,14 @@ import {
   RoleFieldSchema,
 } from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
-import { validateFormWithZod } from 'utils/validate-form-value';
 import {
   editMainSettingsSchema,
   multipleDataFields,
 } from 'features/settings/main/consts';
-import { useVaultInfo } from 'modules/vaults';
-import { Address } from 'viem';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, refetch, isRefetching } = useVaultInfo();
+  const { activeVault, isRefetching } = useVaultInfo();
+  const { isDappActive } = useDappStatus();
   const { editMainSettings, retryEvent } = useEditMainSettings();
 
   const formObject = useForm<EditMainSettingsSchema>({
@@ -28,6 +30,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       confirmExpiry: [],
       defaultAdmins: [],
     },
+    disabled: !isDappActive,
     resolver: validateFormWithZod(editMainSettingsSchema),
     mode: 'all',
   });
@@ -54,13 +57,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       const { success } = await editMainSettings(data);
 
-      // refetch even when error because some transactions may be successful
-      // or reverted due to state change
-      await refetch({ cancelRefetch: true, throwOnError: true });
-
       return success;
     },
-    [editMainSettings, refetch],
+    [editMainSettings],
   );
 
   return (

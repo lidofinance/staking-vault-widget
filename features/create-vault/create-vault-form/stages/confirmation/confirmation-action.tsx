@@ -21,13 +21,15 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
   isConnected,
 }) => {
   const {
-    formState: { isValid, isSubmitting },
+    formState: { isValid, isSubmitting, disabled },
     setValue,
   } = useFormContext<CreateVaultSchema>();
 
   const handleSetPrevStep = () => {
     setValue('step', CREATE_VAULT_FORM_STEPS.main);
   };
+
+  const isSubmitDisabled = isDisabled || disabled || isSubmitting || !isValid;
 
   return (
     <ActionButtonContainer>
@@ -42,7 +44,7 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
       {isConnected ? (
         <ActionButton
           loading={isSubmitting}
-          disabled={isDisabled || !isValid}
+          disabled={isSubmitDisabled}
           type="submit"
           fullwidth
         >

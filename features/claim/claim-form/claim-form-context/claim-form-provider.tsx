@@ -6,18 +6,18 @@ import {
   createContext,
   useContext,
 } from 'react';
+import invariant from 'tiny-invariant';
 import { isAddress, ReadContractErrorType } from 'viem';
 import { useReadContract } from 'wagmi';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { useClaim } from 'features/claim/claim-form/hooks';
+import { useDappStatus } from 'modules/web3';
 import { useVaultInfo } from 'modules/vaults';
-
+import { dashboardAbi } from 'abi/dashboard-abi';
 import { FormController } from 'shared/hook-form/form-controller';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
+import { useClaim } from 'features/claim/claim-form/hooks';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
-import invariant from 'tiny-invariant';
 
 type ClaimDataContextValue = {
   availableToClaim: bigint | undefined;
@@ -43,11 +43,12 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { activeVault } = useVaultInfo();
-
+  const { isDappActive } = useDappStatus();
   const formObject = useForm<ClaimFormSchema>({
     defaultValues: {
       recipient: '',
     },
+    disabled: !isDappActive,
     mode: 'all',
     // TODO: validation
     reValidateMode: 'onChange',

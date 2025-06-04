@@ -1,13 +1,14 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 
-import { SomeFaqItem, AnotherFaqItem } from './list';
-import { Wrapper } from './styles';
+import { FAQ } from 'shared/components/faq';
+
+import { FeeStructure, Roles } from './items';
 
 export const CreateVaultFaq: FC = () => {
   return (
-    <Wrapper title="FAQ">
-      <SomeFaqItem />
-      <AnotherFaqItem />
-    </Wrapper>
+    <FAQ.List>
+      <Roles defaultExpanded />
+      <FeeStructure />
+    </FAQ.List>
   );
 };

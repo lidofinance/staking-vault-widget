@@ -35,6 +35,10 @@ export const InpageNavigationProvider: FC<PropsWithChildren> = ({
     if (config.ipfsMode) return; // Hash is reserved in ipfs mode, ignored here
     const hash = asPath.split('#')[1];
     setHash(hash);
+    if (!hash) return;
+    document.getElementById(hash)?.scrollIntoView({
+      behavior: 'smooth',
+    });
   }, [asPath]);
 
   const navigateInpageAnchor = useCallback(

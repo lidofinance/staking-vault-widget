@@ -6,7 +6,7 @@ import { type Address, encodeFunctionData } from 'viem';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
 
@@ -14,17 +14,17 @@ import { useReportStatus } from 'features/report';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 export const useMint = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     mint: useCallback(
-      async (recipient: Address, amount: bigint, token: string) => {
+      async (recipient: Address, amount: bigint, token: 'stETH' | 'wstETH') => {
         invariant(activeVault?.owner, '[useMint] owner is undefined');
 
-        const loadingActionText = `Minting ${token} backed by vault`;
-        const mainActionCompleteText = `Minted ${token} backed by vault`;
+        const loadingActionText = vaultTexts.actions.mint.loading(token);
+        const mainActionCompleteText = vaultTexts.actions.mint.completed(token);
 
         const mintCall = {
           to: activeVault.owner,
@@ -53,9 +53,19 @@ export const useMint = () => {
           }),
         );
 
+        if (success) {
+          await refetchVaultInfo();
+        }
+
         return success;
       },
-      [activeVault?.owner, prepareReportCall, sendTX, isReportAvailable],
+      [
+        activeVault?.owner,
+        refetchVaultInfo,
+        prepareReportCall,
+        sendTX,
+        isReportAvailable,
+      ],
     ),
     ...rest,
   };
