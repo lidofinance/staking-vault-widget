@@ -9,6 +9,8 @@ import {
   Content,
 } from './radio.styles';
 
+import { formatValueView } from 'features/settings/main/utils';
+
 export type RadioInputProps = PropsWithChildren<
   HTMLAttributes<HTMLInputElement>
 > & {
@@ -16,16 +18,25 @@ export type RadioInputProps = PropsWithChildren<
   id: string;
   name: string;
   value: string;
-  symbol: string;
+  symbol?: string;
+  format?: (arg: string) => string;
   hasError?: boolean;
   disabled?: boolean;
 };
 
 export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
   (props, ref) => {
-    const { value, tags, children, symbol, hasError, disabled, ...rest } =
-      props;
-    const valueToDisplay = value ? `${value}${symbol}` : '';
+    const {
+      value,
+      tags,
+      children,
+      format,
+      symbol,
+      hasError,
+      disabled,
+      ...rest
+    } = props;
+    const valueToDisplay = formatValueView(value, symbol, format);
 
     return (
       <RadioInputLabel

@@ -42,9 +42,10 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
     const hasError = !!error && isDirty;
     const displayValue = formatInputValue(
       value,
-      radioProps.symbol,
       isFocused,
       hasError,
+      radioProps.symbol,
+      radioProps.format,
     );
 
     const displayError = useMemo(() => {
@@ -69,12 +70,12 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
           setDirty(true);
         }
 
-        const value = e.target.value.replace(radioProps.symbol, '');
+        const value = e.target.value;
         setValue(value);
         updateRadioValue(value);
         radioRef.current?.click();
       },
-      [radioProps.symbol, updateRadioValue, isDirty],
+      [updateRadioValue, isDirty],
     );
 
     const onClick = useCallback(() => {

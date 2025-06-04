@@ -124,25 +124,21 @@ export const useEditMainSettings = () => {
         }
 
         const { confirmExpiry } = payload;
-        const expiryValue = Number(confirmExpiry);
-        const currentExpiry = activeVault
-          ? Number(activeVault.confirmExpiry / (60n * 60n))
-          : 0;
+        const expiryValue = BigInt(confirmExpiry);
+        const currentExpiry = activeVault ? activeVault.confirmExpiry : 0n;
         const isExpiryValueChanged = expiryValue !== currentExpiry;
 
         if (isExpiryValueChanged) {
-          const newConfirmExpiry = BigInt(Math.floor(expiryValue * 3600));
-
           transactions.push({
             to: owner,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'setConfirmExpiry',
-              args: [newConfirmExpiry],
+              args: [expiryValue],
             }),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
               confirmingRoleAction,
-              Number(expiryValue),
+              Number(expiryValue / 3600n),
             ),
           });
         }

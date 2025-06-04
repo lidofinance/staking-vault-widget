@@ -14,7 +14,8 @@ export type VotingOptionType = {
   value: string;
   type: 'current' | 'Proposed to me' | 'My proposal' | 'custom';
   tags: string[];
-  symbol: string;
+  symbol?: string;
+  format?: (seconds: number | string) => string;
   placeholder?: string;
 };
 

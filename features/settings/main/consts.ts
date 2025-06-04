@@ -11,7 +11,9 @@ import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
+  MAX_CONFIRM_EXPIRY_SECONDS,
   MIN_CONFIRM_EXPIRY,
+  MIN_CONFIRM_EXPIRY_SECONDS,
   vaultTexts,
 } from 'modules/vaults';
 import { getAddress, isAddress } from 'viem';
@@ -48,8 +50,8 @@ export const votingFeeSchema = z.coerce
 
 export const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-  .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-  .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE);
+  .min(MIN_CONFIRM_EXPIRY_SECONDS, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
+  .max(MAX_CONFIRM_EXPIRY_SECONDS, INVALID_NUMBER_EXPIRY_MAX_MESSAGE);
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManagers: z.array(addressSchema),

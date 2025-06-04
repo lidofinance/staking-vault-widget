@@ -39,21 +39,53 @@ export const prepareDefaultValues = (
 
 export const formatInputValue = (
   value: string,
-  symbol: string | undefined,
   isFocused: boolean,
   hasError: boolean,
+  symbol?: string | undefined,
+  format?: (arg: string) => string,
 ) => {
-  if (symbol && value && !hasError) {
-    return isFocused ? value : `${value}${symbol}`;
+  if (isFocused || hasError) {
+    return value;
+  }
+
+  return formatValueView(value, symbol, format);
+};
+
+export const formatValueView = (
+  value: string,
+  symbol?: string,
+  formatter?: (arg: string) => string,
+) => {
+  if (!value) {
+    return '';
+  }
+
+  if (formatter) {
+    return formatter(value);
+  }
+
+  if (symbol) {
+    return `${value}${symbol}`;
   }
 
   return value;
 };
 
-export const roundToHundredths = (num: number) => {
-  if (Math.floor(num) !== num) {
-    return Math.round(num * 100) / 100;
+export const formatSecondsToHours = (totalSeconds: number | string): string => {
+  const seconds =
+    typeof totalSeconds === 'string' ? Number(totalSeconds) : totalSeconds;
+
+  if (isNaN(seconds)) {
+    return totalSeconds as string;
   }
 
-  return num;
+  const hours = Math.floor(seconds / 3600);
+  const remainingSeconds = seconds % 3600;
+  const minutes = Math.floor(remainingSeconds / 60);
+
+  if (minutes === 0) {
+    return `${hours} hours`;
+  }
+
+  return `${hours}h ${minutes}m`;
 };

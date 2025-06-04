@@ -14,7 +14,7 @@ import { useVaultInfo, VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { useConfirmationsInfo } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
 import invariant from 'tiny-invariant';
-import { roundToHundredths } from '../utils';
+import { formatSecondsToHours } from '../utils';
 
 const MainSettingsDataContext = createContext<
   MainSettingsDataContextValue | undefined | null
@@ -42,9 +42,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     }
 
     // Current values for voting
-    const currentConfirmExpiry = roundToHundredths(
-      Number(activeVault.confirmExpiry) / 3600,
-    );
+    const currentConfirmExpiry = String(activeVault.confirmExpiry);
 
     const currentNodeOperatorFeeBP = Number(
       (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
@@ -52,10 +50,10 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
 
     const confirmExpiry: VotingOptionType[] = [
       {
-        value: String(currentConfirmExpiry),
+        value: currentConfirmExpiry,
         type: 'current',
         tags: ['Current'],
-        symbol: ' hours',
+        format: formatSecondsToHours,
       },
     ];
     const nodeOperatorFeeBP: VotingOptionType[] = [
@@ -70,21 +68,17 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     confirmationsList.map((confirmation) => {
       const type =
         confirmation.member !== address ? 'Proposed to me' : 'My proposal';
-      const expiry = String(
-        roundToHundredths(
-          (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
-            (60 * 60 * 1000),
-        ),
+      const expiry = formatSecondsToHours(
+        (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
+          1000,
       );
 
       if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
         confirmExpiry.push({
-          value: String(
-            roundToHundredths(Number(confirmation.decodedData.args[0]) / 3600),
-          ),
-          tags: [`${String(expiry)} hours`, type],
+          value: String(Number(confirmation.decodedData.args[0])),
+          tags: [expiry, type],
           type,
-          symbol: ' hours',
+          format: formatSecondsToHours,
         });
       } else if (
         confirmation.decodedData.functionName === 'setNodeOperatorFeeBP'
@@ -93,7 +87,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
           value: String(
             Number(confirmation.decodedData.args[0] * 100n) / 10000,
           ),
-          tags: [`${String(expiry)} hours`, type],
+          tags: [expiry, type],
           type,
           symbol: '%',
         });

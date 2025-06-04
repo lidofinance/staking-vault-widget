@@ -16,7 +16,8 @@ export type RadioFormData = {
   type: string;
   value: string;
   tags: string[];
-  symbol: string;
+  symbol?: string;
+  format?: (arg: string) => string;
   placeholder?: string;
 };
 
@@ -44,42 +45,49 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
       {isLoading && <InlineLoader />}
       {isEditable && !isLoading ? (
         <>
-          {data?.map(({ type, value, tags, symbol, placeholder }, index) => {
-            const key = `${vaultKey}-${type}-${index}-${value}`;
-            const isCustom = type === 'custom';
-            const isMy = type === 'My proposal';
+          {data?.map(
+            ({ type, value, tags, symbol, format, placeholder }, index) => {
+              const key = `${vaultKey}-${type}-${index}-${value}`;
+              const isCustom = type === 'custom';
+              const isMy = type === 'My proposal';
 
-            if (isCustom)
+              if (isCustom)
+                return (
+                  <RadioWithInput
+                    key={key}
+                    radioProps={{
+                      value: value,
+                      symbol: symbol,
+                      format: format,
+                      tags: tags,
+                      id: key,
+                      ...register(vaultKey),
+                    }}
+                    type={vaultKey}
+                    placeholder={placeholder}
+                    setRadioValue={(type, value, options) => {
+                      // @ts-expect-error form types
+                      setValue(type, String(parseFloat(value) * 3600), options);
+                    }}
+                    error={inputError?.message as string}
+                    shouldClearField={isSubmitSuccessful}
+                  />
+                );
+
               return (
-                <RadioWithInput
+                <RadioInput
                   key={key}
-                  radioProps={{
-                    value: value,
-                    symbol: symbol,
-                    tags: tags,
-                    id: key,
-                    ...register(vaultKey),
-                  }}
-                  type={vaultKey}
-                  placeholder={placeholder}
-                  setRadioValue={setValue}
-                  error={inputError?.message as string}
-                  shouldClearField={isSubmitSuccessful}
+                  value={value}
+                  tags={tags}
+                  id={key}
+                  symbol={symbol}
+                  format={format}
+                  {...register(vaultKey)}
+                  disabled={isMy}
                 />
               );
-
-            return (
-              <RadioInput
-                key={key}
-                value={value}
-                tags={tags}
-                id={key}
-                symbol={symbol}
-                {...register(vaultKey)}
-                disabled={isMy}
-              />
-            );
-          })}
+            },
+          )}
         </>
       ) : (
         <ReadonlyView vaultKey={vaultKey} />
