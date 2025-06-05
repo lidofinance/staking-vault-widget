@@ -40,7 +40,9 @@ export const useMyVaultsList = () => {
             publicClient,
             vaultAddress,
             shares,
-          }),
+          }).catch(() => ({
+            address: vaultAddress,
+          })),
         ),
       );
 

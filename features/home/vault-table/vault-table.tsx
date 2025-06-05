@@ -16,11 +16,16 @@ import {
   SpacerRow,
   TableCell,
 } from './styles';
-import { isAddress, zeroAddress } from 'viem';
+import { Address, isAddress, zeroAddress } from 'viem';
 import { FormatToken } from 'shared/formatters';
 import { useRouter } from 'next/router';
 import { appPaths } from 'consts/routing';
 import { AddressBadge } from 'shared/components';
+import { DATA_UNAVAILABLE } from 'consts/text';
+
+type VaultTableInfoErroable =
+  | VaultTableInfo
+  | (Partial<VaultTableInfo> & { address: Address });
 
 export type VaultTableProps = {
   title: string;
@@ -28,7 +33,7 @@ export type VaultTableProps = {
   page?: number;
   setPage?: (page: number) => void;
   pagesCount?: number;
-  vaults?: VaultTableInfo[];
+  vaults?: VaultTableInfoErroable[];
   isLoading?: boolean;
   vaultsCount?: number;
   isError?: boolean;
@@ -64,7 +69,7 @@ const PLACEHOLDER_VAULT: VaultTableInfo = {
 };
 
 type VaultTableRowProps = {
-  vault: VaultTableInfo;
+  vault: VaultTableInfoErroable;
 };
 
 const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
@@ -83,13 +88,17 @@ const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
         <FormatToken amount={vault.totalValue} />
       </TableCell>
       <TableCell align="right">
-        <FormatToken amount={vault.liabilityStETH} />
+        <FormatToken amount={vault?.liabilityStETH} />
       </TableCell>
       <TableCell align="right">
-        <PercentCell
-          value={vault.healthScore}
-          color={getHealthFactorColor(vault.healthScore)}
-        />
+        {typeof vault.healthScore != 'undefined' ? (
+          <PercentCell
+            value={vault.healthScore}
+            color={getHealthFactorColor(vault.healthScore)}
+          />
+        ) : (
+          DATA_UNAVAILABLE
+        )}
       </TableCell>
     </>
   );
