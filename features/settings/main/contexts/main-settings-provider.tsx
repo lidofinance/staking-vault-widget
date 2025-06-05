@@ -30,7 +30,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const reset = formObject.reset;
 
   const resetFields = useCallback(
-    (data: EditMainSettingsSchema, vaultInfo: VaultInfo) => {
+    (vaultInfo: VaultInfo) => {
       const {
         confirmExpiryValue,
         nodeOperatorFeeBPValue,
@@ -39,7 +39,6 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       } = formatSettingsValues(vaultInfo);
 
       const resetFields = {
-        ...data,
         defaultAdmins,
         nodeOperatorManagers,
         confirmExpiry: confirmExpiryValue,
@@ -55,7 +54,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       const { result, vaultInfo } = await editMainSettings(data);
-      if (vaultInfo.data) resetFields(data, vaultInfo.data);
+      if (vaultInfo.data) resetFields(vaultInfo.data);
 
       return result.success;
     },
