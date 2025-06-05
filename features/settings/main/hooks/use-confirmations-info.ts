@@ -66,9 +66,9 @@ export const useConfirmationsInfo = () => {
       });
 
       const dataObject: Record<Hex, ConfirmationsInfo> = logs
-        .map((log) => log.args)
-        .sort((a, b) => Number(a.expiryTimestamp - b.expiryTimestamp))
-        .reduce<Record<Hex, ConfirmationsInfo>>((acc, args) => {
+        .sort((a, b) => Number(a.blockNumber) - Number(b.blockNumber))
+        .reduce<Record<Hex, ConfirmationsInfo>>((acc, log) => {
+          const args = log.args;
           const decoded = decodeFunctionData({
             abi: dashboardAbi,
             data: args.data,

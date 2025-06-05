@@ -72,7 +72,8 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       const type =
         confirmation.member !== address ? 'Proposed to me' : 'My proposal';
       const expiry = formatSecondsToHours(
-        (new Date(confirmation.expiryDate).getTime() - new Date().getTime()) /
+        (new Date(Number(confirmation.expiryTimestamp) * 1000).getTime() -
+          new Date().getTime()) /
           1000,
         true,
       );
