@@ -96,12 +96,10 @@ export const useEditMainSettings = () => {
 
         const { nodeOperatorFeeBP } = payload;
         const feeValue = Number(nodeOperatorFeeBP);
-        const currentFee = activeVault
-          ? Number(
-              (activeVault.nodeOperatorFeeBP * 100n) /
-                BigInt(VAULT_TOTAL_BASIS_POINTS),
-            )
-          : 0;
+        const currentFee = Number(
+          (activeVault.nodeOperatorFeeBP * 100n) /
+            BigInt(VAULT_TOTAL_BASIS_POINTS),
+        );
         const isFeeValueChanged = feeValue !== currentFee;
 
         if (isFeeValueChanged) {
@@ -125,7 +123,7 @@ export const useEditMainSettings = () => {
 
         const { confirmExpiry } = payload;
         const expiryValue = BigInt(confirmExpiry);
-        const currentExpiry = activeVault ? activeVault.confirmExpiry : 0n;
+        const currentExpiry = activeVault.confirmExpiry;
         const isExpiryValueChanged = expiryValue !== currentExpiry;
 
         if (isExpiryValueChanged) {
@@ -143,7 +141,7 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const promise = withSuccess(
+        const result = await withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -152,11 +150,12 @@ export const useEditMainSettings = () => {
           }),
         );
 
-        const result = await promise;
-
         // refetch anyway because some transactions may be successful
-        const vaultInfo = await refetchVaultInfo();
-        const confirmations = await refetchConfirmationsInfo();
+        const [vaultInfo, confirmations] = await Promise.all([
+          refetchVaultInfo(),
+          refetchConfirmationsInfo(),
+        ]);
+
         return {
           result,
           confirmations,
