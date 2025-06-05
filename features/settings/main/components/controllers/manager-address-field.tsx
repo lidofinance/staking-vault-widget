@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { InlineLoader, Text } from '@lidofinance/lido-ui';
+import { Text } from '@lidofinance/lido-ui';
 import { useFormState } from 'react-hook-form';
 
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
@@ -8,6 +8,7 @@ import { Hint } from 'shared/components';
 import { EditPropertyAddress } from './edit-property-address';
 import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
+import { Skeleton } from 'features/settings/main/styles';
 
 import type {
   MainSettingsOverview,
@@ -40,7 +41,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
         {title}
         <Hint text={hint} />
       </Text>
-      {isLoading && <InlineLoader />}
+      {isLoading && <Skeleton />}
       <DisplayAddress isEditable={isEditable} vaultKey={vaultKey} />
       {isEditable && (
         <EditPropertyAddress

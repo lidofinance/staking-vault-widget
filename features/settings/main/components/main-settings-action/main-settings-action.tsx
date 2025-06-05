@@ -3,7 +3,7 @@ import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 
 import { ConnectWalletButton } from 'shared/wallet';
-import { vaultTexts } from 'modules/vaults';
+import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { RoleFieldSchema } from 'features/settings/main/types';
 import { multipleDataFields } from 'features/settings/main/consts';
@@ -19,6 +19,10 @@ export const MainSettingsAction: FC = () => {
   const isClearDisabled = !isDirty;
   const mainSettingsData = useMainSettingsData();
   const isSubmitDisabled = isSubmitting || disabled || isValidating;
+  const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
+    useVaultConfirmingRoles();
+  const showActionButtons =
+    hasConfirmingRole || hasAdmin || hasNodeOperatorManager;
 
   const formFields = watch();
 
@@ -77,6 +81,10 @@ export const MainSettingsAction: FC = () => {
   ]);
 
   const hasChanges = counter > 0;
+
+  if (!showActionButtons) {
+    return null;
+  }
 
   return (
     <Container>

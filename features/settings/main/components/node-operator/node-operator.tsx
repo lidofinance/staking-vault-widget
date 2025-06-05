@@ -1,12 +1,12 @@
 import { FC } from 'react';
-
-import { InlineLoader, Text } from '@lidofinance/lido-ui';
-import { AddressBadge } from 'shared/components';
-
-import { Wrapper } from './styles';
-
 import { useVaultInfo, vaultTexts } from 'modules/vaults';
 import { useFormState } from 'react-hook-form';
+import { Text } from '@lidofinance/lido-ui';
+
+import { AddressBadge } from 'shared/components';
+import { Skeleton } from 'features/settings/main/styles';
+
+import { Wrapper } from './styles';
 
 const texts = vaultTexts.actions.settings.fields.nodeOperator;
 
@@ -20,7 +20,7 @@ export const NodeOperator: FC = () => {
         {texts.title}
       </Text>
       {isLoading ? (
-        <InlineLoader />
+        <Skeleton />
       ) : (
         <AddressBadge
           weight={400}

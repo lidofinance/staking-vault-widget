@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useFormContext, useFormState } from 'react-hook-form';
-import { InlineLoader } from '@lidofinance/lido-ui';
 
 import { RadioInput, RadioWithInput } from 'shared/components';
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
@@ -11,6 +10,7 @@ import {
   RadioSelectorContainer,
   RadioSelectorTitle,
 } from './radio-selector.styles';
+import { Skeleton } from 'features/settings/main/styles';
 
 export type RadioFormData = {
   type: string;
@@ -42,7 +42,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   return (
     <RadioSelectorContainer>
       <RadioSelectorTitle>{title}</RadioSelectorTitle>
-      {isLoading && <InlineLoader />}
+      {isLoading && <Skeleton />}
       {isEditable && !isLoading && (
         <>
           {data?.map(
