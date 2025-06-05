@@ -41,6 +41,10 @@ export const useEditMainSettings = () => {
     editMainSettings: useCallback(
       async (payload: EditMainSettingsSchema) => {
         invariant(owner, '[useEditMainSettings] owner is undefined');
+        invariant(
+          activeVault,
+          '[useEditMainSettings] activeVault is undefined',
+        );
 
         const transactions: TransactionEntry[] = [];
 
@@ -125,7 +129,7 @@ export const useEditMainSettings = () => {
 
         const { confirmExpiry } = payload;
         const expiryValue = BigInt(confirmExpiry);
-        const currentExpiry = activeVault ? activeVault.confirmExpiry : 0n;
+        const currentExpiry = activeVault.confirmExpiry;
         const isExpiryValueChanged = expiryValue !== currentExpiry;
 
         if (isExpiryValueChanged) {
@@ -143,7 +147,7 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const promise = withSuccess(
+        const result = await withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -151,12 +155,12 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
-
-        const result = await promise;
-
         // refetch anyway because some transactions may be successful
-        const vaultInfo = await refetchVaultInfo();
-        const confirmations = await refetchConfirmationsInfo();
+        const [vaultInfo, confirmations] = await Promise.all([
+          refetchVaultInfo(),
+          refetchConfirmationsInfo(),
+        ]);
+
         return {
           result,
           confirmations,
