@@ -100,12 +100,10 @@ export const useEditMainSettings = () => {
 
         const { nodeOperatorFeeBP } = payload;
         const feeValue = Number(nodeOperatorFeeBP);
-        const currentFee = activeVault
-          ? Number(
-              (activeVault.nodeOperatorFeeBP * 100n) /
-                BigInt(VAULT_TOTAL_BASIS_POINTS),
-            )
-          : 0;
+        const currentFee = Number(
+          (activeVault.nodeOperatorFeeBP * 100n) /
+            BigInt(VAULT_TOTAL_BASIS_POINTS),
+        );
         const isFeeValueChanged = feeValue !== currentFee;
 
         if (isFeeValueChanged) {

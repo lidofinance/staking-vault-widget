@@ -1,10 +1,6 @@
 import { usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-import {
-  decodeFunctionData,
-  DecodeFunctionDataReturnType,
-  parseAbiItem,
-} from 'viem';
+import { decodeFunctionData, DecodeFunctionDataReturnType } from 'viem';
 import invariant from 'tiny-invariant';
 import type { Address, Hex } from 'viem';
 
@@ -60,11 +56,10 @@ export const useConfirmationsInfo = () => {
       const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
       const fromBlock = currentBlock - confirmExpireInBlocks;
 
-      const logs = await publicClient.getLogs({
+      const logs = await publicClient.getContractEvents({
         address: dashboardAddress,
-        event: parseAbiItem(
-          'event RoleMemberConfirmed(address indexed member, bytes32 indexed role, uint256 expiryTimestamp, bytes data)',
-        ),
+        abi: dashboardAbi,
+        eventName: 'RoleMemberConfirmed',
         fromBlock,
         toBlock: currentBlock,
         strict: true,
