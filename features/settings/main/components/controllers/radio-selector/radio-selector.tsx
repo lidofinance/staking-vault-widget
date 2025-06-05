@@ -50,42 +50,37 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
               const key = `${vaultKey}-${type}-${index}-${value}`;
               const isCustom = type === 'custom';
               const isMy = type === 'My proposal';
+              const isHour = symbol?.includes('hours');
+              const multiplier = isHour ? 3600 : 1;
+              const radioProps = {
+                value: value,
+                symbol: symbol,
+                format: format,
+                tags: tags,
+                id: key,
+                ...register(vaultKey),
+              };
 
               if (isCustom)
                 return (
                   <RadioWithInput
                     key={key}
-                    radioProps={{
-                      value: value,
-                      symbol: symbol,
-                      format: format,
-                      tags: tags,
-                      id: key,
-                      ...register(vaultKey),
-                    }}
+                    radioProps={radioProps}
                     type={vaultKey}
                     placeholder={placeholder}
                     setRadioValue={(type, value, options) => {
-                      // @ts-expect-error form types
-                      setValue(type, String(parseFloat(value) * 3600), options);
+                      setValue(
+                        type as keyof VaultInfo,
+                        String(parseFloat(value) * multiplier),
+                        options,
+                      );
                     }}
                     error={inputError?.message as string}
                     shouldClearField={isSubmitSuccessful}
                   />
                 );
 
-              return (
-                <RadioInput
-                  key={key}
-                  value={value}
-                  tags={tags}
-                  id={key}
-                  symbol={symbol}
-                  format={format}
-                  {...register(vaultKey)}
-                  disabled={isMy}
-                />
-              );
+              return <RadioInput key={key} {...radioProps} disabled={isMy} />;
             },
           )}
         </>

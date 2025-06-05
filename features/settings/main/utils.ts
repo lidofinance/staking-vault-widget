@@ -1,5 +1,8 @@
-import { MainSettingsDataContextValue } from './types';
 import invariant from 'tiny-invariant';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+
+import { MainSettingsDataContextValue } from './types';
+import { VaultInfo } from 'types';
 
 export const shouldIncrementTxCounter = (
   value: string,
@@ -71,21 +74,43 @@ export const formatValueView = (
   return value;
 };
 
-export const formatSecondsToHours = (totalSeconds: number | string): string => {
-  const seconds =
-    typeof totalSeconds === 'string' ? Number(totalSeconds) : totalSeconds;
-
-  if (isNaN(seconds)) {
-    return totalSeconds as string;
-  }
+export const formatSecondsToHours = (
+  totalSeconds: number | string,
+  isShort?: boolean,
+): string => {
+  const seconds = Number(totalSeconds);
+  if (isNaN(seconds)) return String(totalSeconds);
 
   const hours = Math.floor(seconds / 3600);
-  const remainingSeconds = seconds % 3600;
-  const minutes = Math.floor(remainingSeconds / 60);
+  const minutes = Math.floor((seconds % 3600) / 60);
 
-  if (minutes === 0) {
-    return `${hours} hours`;
-  }
-
+  if (hours === 0 && minutes === 0) return '~1 minute';
+  if (isShort) return `${hours}h`;
+  if (hours === 0) return `${minutes} minutes`;
+  if (minutes === 0) return `${hours} hours`;
   return `${hours}h ${minutes}m`;
+};
+
+export const formatSettingsValues = (vaultInfo: VaultInfo) => {
+  const defaultAdmins = vaultInfo.defaultAdmins.map((address) => ({
+    value: address,
+    state: 'display' as const,
+    isGranted: true,
+  }));
+  const nodeOperatorManagers = vaultInfo.nodeOperatorManagers.map(
+    (address) => ({
+      value: address,
+      state: 'display' as const,
+      isGranted: true,
+    }),
+  );
+
+  return {
+    defaultAdmins,
+    nodeOperatorManagers,
+    confirmExpiryValue: String(vaultInfo.confirmExpiry),
+    nodeOperatorFeeBPValue: String(
+      (vaultInfo.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    ),
+  };
 };
