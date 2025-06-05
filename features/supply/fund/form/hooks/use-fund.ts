@@ -14,14 +14,15 @@ import {
   useVaultInfo,
   useVaultPermission,
   vaultTexts,
+  GoToVault,
 } from 'modules/vaults';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
-
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { FundFormValidatedValues } from '../types';
-import { getContractAddress } from 'config';
-import { WethABI } from 'abi/weth-abi';
 import { useReportStatus } from 'features/report';
+
+import { getContractAddress } from 'config';
+import { dashboardAbi } from 'abi/dashboard-abi';
+import { WethABI } from 'abi/weth-abi';
+
+import { FundFormValidatedValues } from '../types';
 
 export const useFund = () => {
   const chainId = useChainId();
