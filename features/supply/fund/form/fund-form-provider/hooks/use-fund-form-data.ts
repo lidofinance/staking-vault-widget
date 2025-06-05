@@ -1,23 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import { useReadContract } from 'wagmi';
-import { parseEther } from 'viem';
 import type { RefetchOptions } from '@tanstack/react-query';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'modules/vaults';
-import { useEthereumBalance, useWethBalance } from 'modules/web3';
+import { useEthereumBalance, useWethBalance, ONE_ETH } from 'modules/web3';
 
-import { FundFormSchemaType } from '../../types';
+import type { FundFormFieldValues } from 'features/supply/fund/form/types';
 import { useMaxMintableSteth } from '.';
 
-const ONE_ETH = parseEther('1');
-
-export type FundFormData = ReturnType<typeof useFundFormData>;
-
 export const useFundFormData = (
-  token: FundFormSchemaType['token'],
-  mintSteth: FundFormSchemaType['mintSteth'],
-  amount: FundFormSchemaType['amount'],
+  token: FundFormFieldValues['token'],
+  mintSteth: FundFormFieldValues['mintSteth'],
+  amount: FundFormFieldValues['amount'],
 ) => {
   const { activeVault, refetchVaultInfo } = useVaultInfo();
   const ethBalanceQuery = useEthereumBalance();

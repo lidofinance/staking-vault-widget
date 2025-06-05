@@ -134,8 +134,14 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
       queryKey,
       enabled: !!vaultAddress && !!publicClient,
       queryFn: async (): Promise<VaultInfo> => {
-        invariant(publicClient, 'PublicClient is not defined');
-        invariant(vaultAddress, 'vaultAddress is not defined');
+        invariant(
+          publicClient,
+          '[useSingleVaultData] PublicClient is not defined',
+        );
+        invariant(
+          vaultAddress,
+          '[useSingleVaultData] vaultAddress is not defined',
+        );
 
         return getVaultData({ publicClient, shares, vaultAddress });
       },

@@ -4,13 +4,13 @@ import { useFormState, useWatch } from 'react-hook-form';
 
 import { vaultTexts, MultiplePermissionedSubmitButton } from 'modules/vaults';
 
-import { FundFormSchemaType } from '../types';
+import { FundFormValidatedValues } from '../types';
 
 const FUND_ROLES = ['supplier'] as const;
 const FUND_MINT_ROLES = ['supplier', 'minter'] as const;
 
 export const SubmitButton = () => {
-  const { mintSteth, token } = useWatch<FundFormSchemaType>();
+  const { mintSteth, token } = useWatch<FundFormValidatedValues>();
   const { isSubmitting, disabled } = useFormState();
 
   const isDisabled = isSubmitting || disabled;

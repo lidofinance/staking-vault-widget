@@ -4,12 +4,12 @@ import { Loader, Text } from '@lidofinance/lido-ui';
 import { FormatToken } from 'shared/formatters';
 
 import { useFundForm } from '../fund-form-provider';
-import type { FundFormSchemaType } from '../types';
+import type { FundFormValidatedValues } from '../types';
 
 import { Wrapper, InfoRow } from './styles';
 
 export const TxInfo = () => {
-  const { watch } = useFormContext<FundFormSchemaType>();
+  const { watch } = useFormContext<FundFormValidatedValues>();
   const {
     data: maxMintableSteth,
     isLoading,

@@ -1,29 +1,30 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useAccount, useEstimateGas, usePublicClient } from 'wagmi';
+import { useAccount, useChainId, useEstimateGas, usePublicClient } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
-
-import { getContractAddress } from 'config';
-import { WethABI } from 'abi/weth-abi';
-import { dashboardAbi } from 'abi/dashboard-abi';
 
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
+
 import {
   getDashboardContract,
   useVaultInfo,
   useVaultPermission,
   vaultTexts,
-  GoToVault,
 } from 'modules/vaults';
+import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
+import { dashboardAbi } from 'abi/dashboard-abi';
+import { FundFormValidatedValues } from '../types';
+import { getContractAddress } from 'config';
+import { WethABI } from 'abi/weth-abi';
 import { useReportStatus } from 'features/report';
-import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
 
 export const useFund = () => {
+  const chainId = useChainId();
   const publicClient = usePublicClient();
   const { activeVault } = useVaultInfo();
 
@@ -38,9 +39,10 @@ export const useFund = () => {
         token,
         mintAddress,
       }: FundFormValidatedValues) => {
-        invariant(publicClient?.chain, '[useFund] publicClient is undefined');
+        const wethAddress = getContractAddress(chainId, 'weth');
+
+        invariant(publicClient, '[useFund] publicClient is undefined');
         invariant(activeVault?.owner, '[useFund] owner is undefined');
-        const wethAddress = getContractAddress(publicClient.chain.id, 'weth');
         invariant(wethAddress, '[useFund] WETH address is undefined');
 
         let prepareTransactions: () => Promise<TransactionEntry[]> = () =>
@@ -56,7 +58,7 @@ export const useFund = () => {
               functionName: 'withdraw',
               args: [amount],
             }),
-            loadingActionText: 'Unwrapping wETH',
+            loadingActionText: vaultTexts.actions.supply.loadingWeth,
           });
         }
 
@@ -70,7 +72,7 @@ export const useFund = () => {
           loadingActionText: vaultTexts.actions.supply.loading,
         });
 
-        // minting stETH requires async data for report and minting capacity
+        // minting stETH requires
         if (mintSteth) {
           prepareTransactions = async () => {
             isReportAvailable && calls.push(await prepareReportCall());
@@ -80,15 +82,15 @@ export const useFund = () => {
               publicClient,
             );
 
-            const maxMintableShares =
+            const maxMintableSteth =
               await dashboard.read.remainingMintingCapacity([amount]);
 
             calls.push({
               to: activeVault.owner,
               data: encodeFunctionData({
                 abi: dashboardAbi,
-                functionName: 'mintShares',
-                args: [mintAddress, maxMintableShares],
+                functionName: 'mintStETH',
+                args: [mintAddress, maxMintableSteth],
               }),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
             });
@@ -110,6 +112,7 @@ export const useFund = () => {
       },
       [
         activeVault?.owner,
+        chainId,
         isReportAvailable,
         prepareReportCall,
         publicClient,

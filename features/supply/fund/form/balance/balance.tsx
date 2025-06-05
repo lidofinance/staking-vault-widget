@@ -5,12 +5,12 @@ import { formatBalance } from 'utils';
 import { vaultTexts } from 'modules/vaults';
 
 import { useFundForm } from '../fund-form-provider';
-import type { FundFormSchemaType } from '../types';
+import type { FundFormValidatedValues } from '../types';
 
 import { AmountInfo, InfoRow, Wrapper } from './styles';
 
 export const Balance = () => {
-  const { token } = useWatch<FundFormSchemaType>();
+  const { token } = useWatch<FundFormValidatedValues>();
   const { data, isLoading, isSuccess, isError } = useFundForm().balanceQuery;
 
   return (

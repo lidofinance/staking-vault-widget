@@ -12,19 +12,20 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
-import {
-  FundFormDataValidationContext,
-  FundFormResolver,
-  FundFormSchemaType,
-} from './validation';
+import { FundFormResolver } from './validation';
 
 import {
   useFund,
   useFundFormValidationContext,
-  FundFormData,
   useFundFormData,
 } from './hooks';
 import { FormControllerStyled } from './styles';
+import {
+  FundFormData,
+  FundFormDataAwaitableValidationContext,
+  FundFormFieldValues,
+  FundFormValidatedValues,
+} from '../types';
 
 // Context for sharing relevant form data
 const FundFormDataContext = createContext<FundFormData | null>(null);
@@ -45,12 +46,15 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { fund, retryEvent } = useFund();
 
   const formObject = useForm<
-    FundFormSchemaType,
-    Promise<FundFormDataValidationContext>
+    FundFormFieldValues,
+    FundFormDataAwaitableValidationContext,
+    FundFormValidatedValues
   >({
     defaultValues: {
       token: 'ETH',
+      amount: null,
       mintSteth: false,
+      mintAddress: '',
     },
     mode: 'onTouched',
     disabled: !isDappActive,
@@ -59,9 +63,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   });
 
   const { watch, resetField } = formObject;
-  const mintSteth = watch('mintSteth');
-  const amount = watch('amount');
-  const token = watch('token');
+  const [mintSteth, amount, token] = watch(['mintSteth', 'amount', 'token']);
 
   const fundFormData = useFundFormData(token, mintSteth, amount);
   const invalidateFundFormData = fundFormData.invalidateFundFormData;
@@ -79,7 +81,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [isStethMintable, mintSteth, resetField]);
 
   const onSubmit = useCallback(
-    async (values: FundFormSchemaType) => {
+    async (values: FundFormValidatedValues) => {
       const result = await fund(values);
       // revalidate form data because some TXs may have changed the state
       await invalidateFundFormData();

@@ -10,7 +10,7 @@ import {
 } from 'shared/hook-form/controls';
 
 import { useFundForm } from '../fund-form-provider/fund-form-provider';
-import type { FundFormSchemaType } from '../types';
+import type { FundFormValidatedValues } from '../types';
 
 import { CheckMint } from './styles';
 import { vaultTexts } from 'modules/vaults';
@@ -29,9 +29,8 @@ const options: TokenOption[] = [
 export const Inputs = () => {
   const [inputInFocus, setInputInFocus] = useState(false);
   const { balanceQuery, isStethMintableQuery } = useFundForm();
-  const { register, watch } = useFormContext<FundFormSchemaType>();
-  const mintSteth = watch('mintSteth');
-  const token = watch('token');
+  const { register, watch } = useFormContext<FundFormValidatedValues>();
+  const [mintSteth, token] = watch(['mintSteth', 'token']);
 
   const isStethMintable = isStethMintableQuery.data === true;
   const maxValue = balanceQuery.data;

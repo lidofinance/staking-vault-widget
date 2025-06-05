@@ -5,7 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { getDashboardContract, useVaultInfo } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
-export const useMaxMintableSteth = (amount: bigint | undefined) => {
+export const useMaxMintableSteth = (amount?: bigint | null) => {
   const publicClient = usePublicClient();
   const { shares } = useLidoSDK();
   const { activeVault } = useVaultInfo();
@@ -20,8 +20,14 @@ export const useMaxMintableSteth = (amount: bigint | undefined) => {
     ],
     enabled: enabled,
     queryFn: async () => {
-      invariant(publicClient, 'Public client is not defined');
-      invariant(activeVault?.owner, 'Active vault owner is not defined');
+      invariant(
+        publicClient,
+        '[useMaxMintableSteth] Public client is not defined',
+      );
+      invariant(
+        activeVault?.owner,
+        '[useMaxMintableSteth] Active vault owner is not defined',
+      );
 
       const dashboard = getDashboardContract(activeVault.owner, publicClient);
       const mintableShares = await dashboard.read.remainingMintingCapacity([
