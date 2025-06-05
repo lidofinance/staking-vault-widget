@@ -41,6 +41,10 @@ export const useEditMainSettings = () => {
     editMainSettings: useCallback(
       async (payload: EditMainSettingsSchema) => {
         invariant(owner, '[useEditMainSettings] owner is undefined');
+        invariant(
+          activeVault,
+          '[useEditMainSettings] activeVault is undefined',
+        );
 
         const transactions: TransactionEntry[] = [];
 
@@ -149,7 +153,6 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
-
         // refetch anyway because some transactions may be successful
         const [vaultInfo, confirmations] = await Promise.all([
           refetchVaultInfo(),
