@@ -1,18 +1,17 @@
 import styled from 'styled-components';
 import { useFormState } from 'react-hook-form';
 import { InputGroup } from '@lidofinance/lido-ui';
-import { isValidationErrorTypeValidate } from 'shared/hook-form/validation/validation-error';
 
 type InputGroupProps = React.ComponentProps<typeof InputGroup>;
 
 type InputGroupHookFormProps = InputGroupProps & {
   errorField: string;
+  showErrorMessage?: boolean;
 };
 
 const InputGroupStyled = styled(InputGroup)<{
   success?: InputGroupProps['success'];
 }>`
-  margin-bottom: ${({ theme }) => theme.spaceMap.md}px;
   z-index: 2;
   span:nth-of-type(2) {
     white-space: ${({ success }) => !!success && 'unset'};
@@ -21,13 +20,12 @@ const InputGroupStyled = styled(InputGroup)<{
 
 export const InputGroupHookForm: React.FC<InputGroupHookFormProps> = ({
   errorField,
+  showErrorMessage = true,
   ...props
 }) => {
   const { errors } = useFormState<Record<string, unknown>>({
     name: errorField,
   });
-  const errorMessage =
-    isValidationErrorTypeValidate(errors[errorField]?.type) &&
-    errors[errorField]?.message;
+  const errorMessage = showErrorMessage && errors[errorField]?.message;
   return <InputGroupStyled fullwidth error={errorMessage} {...props} />;
 };

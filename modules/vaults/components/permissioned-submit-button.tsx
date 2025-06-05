@@ -43,7 +43,7 @@ export const PermissionedSubmitButton = forwardRef<
 });
 
 type MultiplePermissionedSubmitProps = {
-  dashboardRoles: VAULTS_ALL_ROLES[];
+  dashboardRoles: readonly VAULTS_ALL_ROLES[];
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<

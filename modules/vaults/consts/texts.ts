@@ -1,4 +1,6 @@
-type Token = 'stETH' | 'wstETH';
+type LidoToken = 'stETH' | 'wstETH';
+
+type ExternalToken = 'ETH' | 'wETH';
 
 type ConfirmAction = 'Setting' | 'Proposing';
 
@@ -8,7 +10,7 @@ export const vaultTexts = {
   // configuration for transactions and forms
   actions: {
     approve: {
-      loading: (token: Token) => `Approving ${token}` as const,
+      loading: (token: LidoToken) => `Approving ${token}` as const,
     },
     createVault: {
       loading: 'Creating vault',
@@ -50,14 +52,25 @@ export const vaultTexts = {
       },
     },
     mint: {
-      loading: (token: Token) => `Minting ${token}` as const,
-      completed: (token: Token) => `${token} minted` as const,
+      loading: (token: LidoToken) => `Minting ${token}` as const,
+      completed: (token: LidoToken) => `${token} minted` as const,
     },
     repay: {
-      loading: (token: Token) => `Repaying ${token}` as const,
-      completed: (token: Token) => `Repaid ${token} ` as const,
+      loading: (token: LidoToken) => `Repaying ${token}` as const,
+      completed: (token: LidoToken) => `Repaid ${token} ` as const,
     },
     supply: {
+      available: `Available to supply`,
+      mint: {
+        isMint: 'Mint max available stETH',
+        mintTo: 'Mint to address',
+      },
+      submit: {
+        supply: (token: ExternalToken) => `Supply ${token}` as const,
+        supplyMint: (token: ExternalToken) =>
+          `Supply ${token} & Mint stETH` as const,
+      },
+      loadingWeth: 'Unwrapping wETH',
       loading: 'Supplying ETH into the vault',
       completed: 'ETH supplied',
     },
@@ -292,6 +305,14 @@ export const vaultTexts = {
   // common texts like errors, warnings, etc.
   common: {
     errors: {
+      amount: {
+        required: 'Amount is required',
+        min: (min: bigint) => `Amount must be greater than ${min}` as const,
+        overBalance: (token: ExternalToken | LidoToken) =>
+          `Amount exceeds ${token} balance` as const,
+      },
+      address: { invalid: 'Invalid ethereum address' },
+
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
     },

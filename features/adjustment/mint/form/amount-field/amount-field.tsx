@@ -1,11 +1,12 @@
 import { InputGroup } from '@lidofinance/lido-ui';
+import { useController, useFormContext } from 'react-hook-form';
 import { InputAmount } from 'shared/components';
+
 import {
   TokenSelectHookForm,
   TokenOption,
 } from 'shared/hook-form/controls/token-select-hook-form/token-select-hook-form';
-import { TOKENS_TO_MINT } from 'features/supply/const';
-import { useController, useFormContext } from 'react-hook-form';
+import { TOKENS_TO_MINT } from 'features/adjustment/const';
 import { useMintFormData } from 'features/adjustment/mint/mint-form-context';
 
 const OPTIONS: TokenOption[] = [

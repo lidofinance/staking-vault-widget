@@ -8,6 +8,7 @@ import { Withdraw } from './withdraw';
 import { Switch } from 'shared/components/switch';
 import { appPaths } from 'consts/routing';
 import { zeroAddress } from 'viem';
+
 export type SupplyTabProps = {
   mode: 'supply' | 'withdraw';
 };

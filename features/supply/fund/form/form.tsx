@@ -1,18 +1,16 @@
 import { Balance } from './balance';
-import { FormInput } from './form-input';
-// import { MintStETH } from './mint-steth';
+import { Inputs } from './inputs';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
-import { FormContainer } from './styles';
+import { TxInfo } from './tx-info';
+import { FundFormProvider } from './fund-form-provider';
 
 export const FundForm = () => {
   return (
-    <FormContainer>
+    <FundFormProvider>
       <Balance />
-      <FormInput />
-      {/* <MintStETH /> */}
+      <Inputs />
       <SubmitButton />
-      <FeatureTxInfo />
-    </FormContainer>
+      <TxInfo />
+    </FundFormProvider>
   );
 };

@@ -4,7 +4,7 @@ import {
   TokenSelectHookForm,
   TokenOption,
 } from 'shared/hook-form/controls/token-select-hook-form/token-select-hook-form';
-import { TOKENS_TO_MINT } from 'features/supply/const';
+import { TOKENS_TO_MINT } from 'features/adjustment/const';
 import { useController, useFormContext } from 'react-hook-form';
 import { useRepayFormData } from '../../repay-form-context';
 

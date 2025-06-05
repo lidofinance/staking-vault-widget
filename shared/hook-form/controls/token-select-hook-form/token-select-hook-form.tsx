@@ -10,7 +10,6 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { getTokenDisplayName } from 'utils/getTokenDisplayName';
-import { isValidationErrorTypeValidate } from 'shared/hook-form/validation/validation-error';
 import { SelectIconStyle } from './styles';
 import { TOKENS } from '../../validation/validate-ether-amount';
 
@@ -60,7 +59,7 @@ export const TokenSelectHookForm = ({
       disabled={disabled}
       warning={warning}
       icon={iconsMap[field.value]}
-      error={isValidationErrorTypeValidate(errors[errorField]?.type)}
+      error={!!errors[errorField]}
       onChange={(value: OptionValue) => {
         setValue(fieldName, value, {
           shouldDirty: false,

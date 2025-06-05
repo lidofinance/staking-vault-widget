@@ -40,7 +40,6 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const formObject = useForm<MintFormSchema>({
     defaultValues: {
-      amount: undefined,
       token: 'stETH',
       recipient: '' as Address,
     },
