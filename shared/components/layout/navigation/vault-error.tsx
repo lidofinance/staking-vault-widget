@@ -12,14 +12,14 @@ export const VaultError = () => {
   const { error, refetchVaultInfo } = useVaultInfo();
   if (!error) return null;
 
-  const GoToAll = (
+  const goToAll = (
     <ButtonLink href={appPaths.vaults.all}>{texts.links.goToAll}</ButtonLink>
   );
 
   if (error instanceof VaultAddressError) {
     return (
       <Modal title={texts.errors.vaultAddress} center open>
-        {GoToAll}
+        {goToAll}
       </Modal>
     );
   }
@@ -30,7 +30,7 @@ export const VaultError = () => {
         <Button variant="outlined" onClick={() => refetchVaultInfo()}>
           Try Again
         </Button>
-        {GoToAll}
+        {goToAll}
       </ErrorModalContent>
     </Modal>
   );

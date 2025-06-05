@@ -35,8 +35,8 @@ export class VaultAddressError extends Error {
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
-  const sanitizedVaultAddress = isAddress(vaultAddress.toLocaleLowerCase())
-    ? (vaultAddress.toLocaleLowerCase() as Address)
+  const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
+    ? (vaultAddress.toLowerCase() as Address)
     : undefined;
   const { data, error, refetch, isPending, isRefetching } = useSingleVaultData(
     sanitizedVaultAddress,
