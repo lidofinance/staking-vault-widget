@@ -18,6 +18,9 @@ export const useFundFormData = (
   const ethBalanceQuery = useEthereumBalance();
   const wethBalanceQuery = useWethBalance();
 
+  // checks if any amount of ETH is supplied can vault mint more stETH
+  // as vault can be limited by both ETH supply and outside factors like tiers and lido tvl
+  // any amount can be used but single weis might be caught in rounding
   const isStethMintableQuery = useReadContract({
     address: activeVault?.owner,
     abi: dashboardAbi,
