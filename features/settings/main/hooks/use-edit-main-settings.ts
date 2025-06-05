@@ -158,7 +158,10 @@ export const useEditMainSettings = () => {
         // refetch anyway because some transactions may be successful
         const [vaultInfo, confirmations] = await Promise.all([
           refetchVaultInfo(),
-          refetchConfirmationsInfo(),
+          refetchConfirmationsInfo({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
         ]);
 
         return {
