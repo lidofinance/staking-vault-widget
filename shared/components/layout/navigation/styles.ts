@@ -122,3 +122,11 @@ export const SelectedVaultWrapper = styled.div`
   background-color: var(--lido-color-background);
   overflow: clip;
 `;
+
+// Error modal
+
+export const ErrorModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;

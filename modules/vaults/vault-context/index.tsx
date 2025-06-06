@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant';
 import {
   FC,
   createContext,
@@ -8,10 +9,11 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
-import invariant from 'tiny-invariant';
+import type { QueryObserverResult } from '@tanstack/react-query';
+
 import { useSingleVaultData } from 'modules/vaults/hooks/use-vault-data';
-import { VaultInfo } from 'types';
-import { QueryObserverResult } from '@tanstack/react-query';
+
+import type { VaultInfo } from 'types';
 
 type VaultContextType = {
   vaultAddress: Address | undefined;
@@ -23,11 +25,18 @@ type VaultContextType = {
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';
 
+export class VaultAddressError extends Error {
+  constructor(vaultAddress: string) {
+    super(`Vault address is not valid: ${vaultAddress}`);
+    this.name = 'VaultAddressError';
+  }
+}
+
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
-  const sanitizedVaultAddress = isAddress(vaultAddress)
-    ? vaultAddress
+  const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
+    ? (vaultAddress.toLowerCase() as Address)
     : undefined;
   const { data, error, refetch, isPending, isRefetching } = useSingleVaultData(
     sanitizedVaultAddress,
@@ -43,12 +52,26 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       vaultAddress: sanitizedVaultAddress,
       activeVault: data,
       isLoadingVault: isPending,
-      error: error,
+
+      error:
+        error ||
+        (vaultAddress &&
+          !sanitizedVaultAddress &&
+          new VaultAddressError(vaultAddress)) ||
+        null,
       refetchVaultInfo: () =>
         refetch({ cancelRefetch: true, throwOnError: false }),
       isRefetching: isRefetching,
     };
-  }, [sanitizedVaultAddress, data, isPending, error, isRefetching, refetch]);
+  }, [
+    sanitizedVaultAddress,
+    data,
+    isPending,
+    error,
+    vaultAddress,
+    isRefetching,
+    refetch,
+  ]);
 
   return (
     <VaultContext.Provider value={contextValue}>
