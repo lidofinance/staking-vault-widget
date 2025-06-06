@@ -1,18 +1,16 @@
-import { Balance } from './balance';
-import { AmountField } from './amount-field';
+import { WithdrawFormProvider } from './withdraw-form-context';
+import { Withdrawable } from './withdrawable';
+import { WithdrawFormInputs } from './inputs';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
-import { AddressField } from './address-field';
-import { FormContainer } from './styles';
+import { TxInfo } from './tx-info';
 
 export const WithdrawForm = () => {
   return (
-    <FormContainer>
-      <Balance />
-      <AmountField />
-      <AddressField />
+    <WithdrawFormProvider>
+      <Withdrawable />
+      <WithdrawFormInputs />
       <SubmitButton />
-      <FeatureTxInfo />
-    </FormContainer>
+      <TxInfo />
+    </WithdrawFormProvider>
   );
 };

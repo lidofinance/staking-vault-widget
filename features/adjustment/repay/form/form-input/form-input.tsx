@@ -1,17 +1,10 @@
 import { InputGroup } from '@lidofinance/lido-ui';
 import { InputAmount } from 'shared/components';
-import {
-  TokenSelectHookForm,
-  TokenOption,
-} from 'shared/hook-form/controls/token-select-hook-form/token-select-hook-form';
-import { TOKENS_TO_MINT } from 'features/adjustment/const';
+import { TokenSelectHookForm } from 'shared/hook-form/controls';
+
 import { useController, useFormContext } from 'react-hook-form';
 import { useRepayFormData } from '../../repay-form-context';
-
-const OPTIONS: TokenOption[] = [
-  { token: TOKENS_TO_MINT.stETH },
-  { token: TOKENS_TO_MINT.wstETH },
-];
+import { VAULT_MINT_TOKENS } from 'modules/vaults';
 
 export const FormInput = () => {
   const { field: amountField } = useController({ name: 'amount' });
@@ -24,7 +17,7 @@ export const FormInput = () => {
   // TODO: add error message
   return (
     <InputGroup>
-      <TokenSelectHookForm options={OPTIONS} />
+      <TokenSelectHookForm options={VAULT_MINT_TOKENS} />
       <InputAmount
         maxValue={maxValue}
         label={`${token} amount`}

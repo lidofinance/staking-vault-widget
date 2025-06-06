@@ -59,7 +59,7 @@ export const useFund = () => {
               functionName: 'withdraw',
               args: [amount],
             }),
-            loadingActionText: vaultTexts.actions.supply.loadingWeth,
+            loadingActionText: vaultTexts.actions.weth.loadingUnwrap,
           });
         }
 

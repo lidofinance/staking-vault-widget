@@ -1,3 +1,5 @@
+import { formatBalance } from 'utils';
+
 type LidoToken = 'stETH' | 'wstETH';
 
 type ExternalToken = 'ETH' | 'wETH';
@@ -70,7 +72,6 @@ export const vaultTexts = {
         supplyMint: (token: ExternalToken) =>
           `Supply ${token} & Mint stETH` as const,
       },
-      loadingWeth: 'Unwrapping wETH',
       loading: 'Supplying ETH into the vault',
       completed: 'ETH supplied',
     },
@@ -85,6 +86,11 @@ export const vaultTexts = {
     report: {
       loading: 'Applying oracle report',
     },
+    weth: {
+      loadingUnwrap: 'Unwrapping wETH',
+      loadingWrap: 'Wrapping ETH to wETH',
+    },
+
     settings: {
       rolesGrantLoading: (roleCount: number) =>
         `Granting ${roleCount} roles` as const,
@@ -307,14 +313,23 @@ export const vaultTexts = {
     errors: {
       amount: {
         required: 'Amount is required',
-        min: (min: bigint) => `Amount must be greater than ${min}` as const,
+        min: (min: bigint) =>
+          `Amount must be greater than ${formatBalance(min).trimmed}` as const,
         overBalance: (token: ExternalToken | LidoToken) =>
           `Amount exceeds ${token} balance` as const,
+        max: (max: bigint) =>
+          `Amount must be less than  ${formatBalance(max).trimmed}` as const,
       },
       address: { invalid: 'Invalid ethereum address' },
 
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
+    },
+    tokens: {
+      ETH: 'ETH',
+      wETH: 'wETH',
+      stETH: 'stETH',
+      wstETH: 'wstETH',
     },
   },
 } as const;
