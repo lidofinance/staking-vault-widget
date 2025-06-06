@@ -1,32 +1,49 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useEstimateGas } from 'wagmi';
+import { useChainId, useEstimateGas } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
-import { useSendTransaction, withSuccess, useDappStatus } from 'modules/web3';
+import {
+  useVaultInfo,
+  useVaultPermission,
+  vaultTexts,
+  GoToVault,
+} from 'modules/vaults';
+import {
+  useSendTransaction,
+  withSuccess,
+  useDappStatus,
+  TransactionEntry,
+} from 'modules/web3';
 import { useReportStatus } from 'features/report';
-import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { dashboardAbi } from 'abi/dashboard-abi';
 
-type WithdrawArgs = {
-  recipient: Address;
-  amount: bigint;
-};
+import type { WithdrawFormValidatedValues } from '../types';
+import { getContractAddress } from 'config';
+import { WethABI } from 'abi/weth-abi';
 
 export const useWithdraw = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
+  const chainId = useChainId();
   const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
   const { isReportAvailable, prepareReportCall } = useReportStatus();
 
   const withdraw = useCallback(
-    async ({ amount, recipient }: WithdrawArgs) => {
+    async ({ amount, recipient, token }: WithdrawFormValidatedValues) => {
       invariant(vaultOwner, '[useWithdraw] vaultOwner is undefined');
+      const wethAddress = getContractAddress(chainId, 'weth');
+      invariant(
+        wethAddress,
+        `[useWithdraw] WETH address is undefined for chain:${chainId}`,
+      );
 
-      const withdrawCall = {
+      const calls: TransactionEntry[] = [];
+
+      // withdraw call
+      calls.push({
         loadingActionText: vaultTexts.actions.withdraw.loading,
         to: vaultOwner,
         data: encodeFunctionData({
@@ -34,12 +51,24 @@ export const useWithdraw = () => {
           functionName: 'withdraw',
           args: [recipient, amount],
         }),
-      };
+      });
+
+      // eth->weth wrap call
+      if (token === 'wETH') {
+        calls.push({
+          loadingActionText: vaultTexts.actions.weth.loadingWrap,
+          to: wethAddress,
+          data: encodeFunctionData({
+            abi: WethABI,
+            functionName: 'deposit',
+          }),
+        });
+      }
 
       // if we have to post report, there will be extra modal due to async fetch
       const transactions = isReportAvailable
-        ? async () => [await prepareReportCall(), withdrawCall]
-        : [withdrawCall];
+        ? async () => [await prepareReportCall(), ...calls]
+        : calls;
 
       const { success } = await withSuccess(
         sendTX({
@@ -51,19 +80,9 @@ export const useWithdraw = () => {
         }),
       );
 
-      if (success) {
-        await refetchVaultInfo();
-      }
-
       return success;
     },
-    [
-      vaultOwner,
-      isReportAvailable,
-      refetchVaultInfo,
-      sendTX,
-      prepareReportCall,
-    ],
+    [vaultOwner, isReportAvailable, sendTX, prepareReportCall, chainId],
   );
 
   return {

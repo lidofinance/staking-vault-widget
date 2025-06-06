@@ -1,20 +1,12 @@
 import { InputGroup } from '@lidofinance/lido-ui';
+import { VAULT_MINT_TOKENS } from 'modules/vaults';
 import { InputAmount } from 'shared/components';
-import {
-  TokenSelectHookForm,
-  TokenOption,
-} from 'shared/hook-form/controls/token-select-hook-form/token-select-hook-form';
-import { TOKENS_TO_MINT } from 'features/adjustment/const';
-
-const OPTIONS: TokenOption[] = [
-  { token: TOKENS_TO_MINT.stETH },
-  { token: TOKENS_TO_MINT.wstETH },
-];
+import { TokenSelectHookForm } from 'shared/hook-form/controls';
 
 export const FormInput = () => {
   return (
     <InputGroup>
-      <TokenSelectHookForm options={OPTIONS} />
+      <TokenSelectHookForm options={VAULT_MINT_TOKENS} />
       <InputAmount label="ETH amount" />
     </InputGroup>
   );

@@ -4,7 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { addressSchema } from 'utils/validate-form-value';
+import {
+  addressSchema,
+  amountSchema,
+  supplyTokenSchema,
+} from 'utils/validate-form-value';
 import { vaultTexts } from 'modules/vaults';
 
 import type {
@@ -26,10 +30,8 @@ const mintSchema = z.discriminatedUnion('mintSteth', [
 
 export const FundFormSchema = z.intersection(
   z.object({
-    amount: z
-      .bigint({ message: vaultTexts.common.errors.amount.required })
-      .min(1n, vaultTexts.common.errors.amount.min(0n)),
-    token: z.enum(['ETH', 'wETH']),
+    amount: amountSchema,
+    token: supplyTokenSchema,
   }),
   mintSchema,
 );

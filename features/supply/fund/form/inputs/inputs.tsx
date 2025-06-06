@@ -2,29 +2,17 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import {
-  type TokenOption,
   TokenAmountInputHookForm,
   AddressInputHookForm,
   TokenSelectHookForm,
   InputGroupHookForm,
 } from 'shared/hook-form/controls';
+import { VAULT_SUPPLY_TOKENS, vaultTexts } from 'modules/vaults';
 
 import { useFundForm } from '../fund-form-provider/fund-form-provider';
 import type { FundFormValidatedValues } from '../types';
 
 import { CheckMint } from './styles';
-import { vaultTexts } from 'modules/vaults';
-
-const options: TokenOption[] = [
-  {
-    token: 'ETH',
-    label: 'ETH',
-  },
-  {
-    token: 'wETH',
-    label: 'wETH',
-  },
-];
 
 export const Inputs = () => {
   const [inputInFocus, setInputInFocus] = useState(false);
@@ -41,7 +29,7 @@ export const Inputs = () => {
         <TokenSelectHookForm
           errorField="amount"
           fieldName="token"
-          options={options}
+          options={VAULT_SUPPLY_TOKENS}
         />
         <TokenAmountInputHookForm
           token={token}

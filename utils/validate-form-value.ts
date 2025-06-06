@@ -90,3 +90,11 @@ export const addressSchema = z
     message: vaultTexts.common.errors.address.invalid,
   })
   .transform((value) => value.toLocaleLowerCase() as Address);
+
+export const amountSchema = z
+  .bigint({ message: vaultTexts.common.errors.amount.required })
+  .min(1n, vaultTexts.common.errors.amount.min(0n));
+
+export const supplyTokenSchema = z.enum(['ETH', 'wETH']);
+
+export const mintTokenSchema = z.enum(['ETH', 'wETH']);
