@@ -33,7 +33,7 @@ export const PermissionedSubmitButton = forwardRef<
 
   return (
     <ConnectWalletButton>
-      <Button disabled={shouldDisable} ref={ref} {...rest}>
+      <Button disabled={shouldDisable} ref={ref} type="submit" {...rest}>
         {shouldShowPermissionError
           ? vaultTexts.common.errors.noRoles([roleTitle])
           : children}

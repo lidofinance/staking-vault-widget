@@ -7,7 +7,7 @@ import type { EventSubsciption } from 'utils/event-subsciption';
 type FormControllerProps<F extends FieldValues = any> = {
   onSubmit: (args: F) => Promise<boolean>;
   retryEvent: EventSubsciption;
-  afterSubmitResetOptions?: Parameters<UseFormReset<any>>[1];
+  afterSubmitResetOptions?: Parameters<UseFormReset<any>>[1] | false;
 } & Omit<React.ComponentProps<'form'>, 'onSubmit'>;
 
 export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
@@ -20,13 +20,23 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   const { isDappActive } = useDappStatus();
   const { handleSubmit, reset: resetDefault } = useFormContext();
 
+  const shouldReset =
+    typeof afterSubmitResetOptions == 'boolean' && !afterSubmitResetOptions;
+
   // Bind submit action
   const doSubmit = useMemo(() => {
     return handleSubmit(async (args) => {
       const success = await onSubmit(args);
-      if (success) resetDefault(undefined, afterSubmitResetOptions);
+      if (success && shouldReset)
+        resetDefault(undefined, afterSubmitResetOptions || undefined);
     });
-  }, [afterSubmitResetOptions, handleSubmit, onSubmit, resetDefault]);
+  }, [
+    afterSubmitResetOptions,
+    handleSubmit,
+    onSubmit,
+    resetDefault,
+    shouldReset,
+  ]);
 
   // Bind retry callback
   useEffect(() => {

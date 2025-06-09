@@ -1,5 +1,5 @@
 import { WithdrawFormProvider } from './withdraw-form-context';
-import { Withdrawable } from './withdrawable';
+import { Withdrawable } from './withdrawble';
 import { WithdrawFormInputs } from './inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
