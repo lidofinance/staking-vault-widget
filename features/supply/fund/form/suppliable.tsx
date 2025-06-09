@@ -7,7 +7,7 @@ import type { FundFormValidatedValues } from './types';
 
 import { InfoRowAmount } from 'shared/components/form';
 
-export const Balance = () => {
+export const Suppliable = () => {
   const { token } = useWatch<FundFormValidatedValues>();
   const { data, isLoading } = useFundForm().balanceQuery;
 

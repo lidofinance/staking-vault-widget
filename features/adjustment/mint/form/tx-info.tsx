@@ -11,7 +11,7 @@ export const TxInfo = () => {
     <InfoRowAmount
       label="You will receive"
       amount={amount}
-      tokenSymbol={token}
+      token={token}
       noDataLabel="-"
     />
   );

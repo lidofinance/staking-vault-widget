@@ -10,7 +10,7 @@ export const Withdrawable = () => {
     <InfoRowAmount
       amount={data}
       isLoading={isLoading}
-      tokenSymbol="ETH"
+      token="ETH"
       label="Available to withdraw"
     />
   );

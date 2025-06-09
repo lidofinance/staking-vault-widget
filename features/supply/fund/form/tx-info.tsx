@@ -17,7 +17,7 @@ export const TxInfo = () => {
     <InfoRowAmount
       label="You will receive"
       amount={maxMintableSteth}
-      tokenSymbol="stETH"
+      token="stETH"
       isLoading={isLoading}
       noDataLabel="-"
     />

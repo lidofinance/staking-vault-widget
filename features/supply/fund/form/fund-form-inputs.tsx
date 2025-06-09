@@ -2,18 +2,17 @@ import { useFormContext } from 'react-hook-form';
 
 import {
   AddressInputHookForm,
+  CheckboxHookForm,
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
 import { VAULT_SUPPLY_TOKENS, vaultTexts } from 'modules/vaults';
 
-import { useFundForm } from '../fund-form-provider/fund-form-provider';
-import type { FundFormValidatedValues } from '../types';
+import { useFundForm } from './fund-form-provider/fund-form-provider';
+import type { FundFormValidatedValues } from './types';
 
-import { CheckMint } from './styles';
-
-export const Inputs = () => {
+export const FundFormInputs = () => {
   const { balanceQuery, isStethMintableQuery } = useFundForm();
-  const { register, watch } = useFormContext<FundFormValidatedValues>();
+  const { watch } = useFormContext<FundFormValidatedValues>();
   const mintSteth = watch('mintSteth');
 
   const isStethMintable = isStethMintableQuery.data === true;
@@ -27,9 +26,10 @@ export const Inputs = () => {
         tokenOptions={VAULT_SUPPLY_TOKENS}
         maxAmount={maxValue}
       />
-      <CheckMint
-        {...register('mintSteth', { disabled: !isStethMintable })}
+      <CheckboxHookForm
+        fieldName="mintSteth"
         label={vaultTexts.actions.supply.mint.isMint}
+        disabled={!isStethMintable}
       />
       <AddressInputHookForm
         hidden={!mintSteth}

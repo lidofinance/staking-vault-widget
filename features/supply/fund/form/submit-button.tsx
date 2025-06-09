@@ -4,7 +4,7 @@ import { useFormState, useWatch } from 'react-hook-form';
 
 import { vaultTexts, MultiplePermissionedSubmitButton } from 'modules/vaults';
 
-import { FundFormValidatedValues } from '../types';
+import { FundFormValidatedValues } from './types';
 
 const FUND_ROLES = ['supplier'] as const;
 const FUND_MINT_ROLES = ['supplier', 'minter'] as const;
