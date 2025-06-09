@@ -57,7 +57,7 @@ const buildBgColorMap = (
     ? getColorTransparency('var(--lido-color-textDark)', '12%')
     : getColorTransparency('var(--lido-color-textDark)', '6%'),
   transparent: 'transparent',
-  error: getColorTransparency(colors.error, isHover ? '30%' : '20%'),
+  error: getColorTransparency(colors.error, isHover ? '30%' : '10%'),
   success: getColorTransparency(colors.success, isHover ? '40%' : '30%'),
   active: getColorTransparency(
     'var(--lido-color-textDark)',

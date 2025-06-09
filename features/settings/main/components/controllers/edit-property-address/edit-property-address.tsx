@@ -1,91 +1,92 @@
-import { FC, useEffect } from 'react';
-import type { Address } from 'viem';
-import {
-  useFieldArray,
-  useForm,
-  useFormContext,
-  useFormState,
-} from 'react-hook-form';
+import { FC, FocusEvent, KeyboardEvent, useState } from 'react';
+import { UseFieldArrayAppend, useFormContext } from 'react-hook-form';
+import { Input, Plus } from '@lidofinance/lido-ui';
 
-import { Plus } from '@lidofinance/lido-ui';
-import { useVaultInfo } from 'modules/vaults';
+import { ButtonClose } from 'shared/components';
 
-import {
-  ManagersKeys,
-  ManagersNewAddresses,
-} from 'features/settings/main/types';
-import { validateManagers } from 'features/settings/main/consts';
-import { InputItem } from './input-item';
+import { useAddressValidation } from 'features/settings/main/hooks';
+
 import { ButtonContainer, EditWrapper } from './styles';
+
+import {
+  EditMainSettingsSchema,
+  ManagersKeys,
+  RoleFieldSchema,
+} from 'features/settings/main/types';
 
 type EditPropertyAddressProps = {
   name: ManagersKeys;
   editLabel: string;
+  fields: (Record<'id', string> & RoleFieldSchema)[];
+  append: UseFieldArrayAppend<EditMainSettingsSchema>;
 };
 
 export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
   name,
   editLabel,
+  fields,
+  append,
 }) => {
-  const { isRefetching } = useVaultInfo();
-  const { getValues } = useFormContext();
-  const { disabled } = useFormState();
+  const [showInput, setInputVisibility] = useState(false);
   const {
-    control,
-    register,
-    trigger,
-    watch,
-    formState: { errors },
-    getFieldState,
-  } = useForm<ManagersNewAddresses>({
-    defaultValues: {
-      addresses: {
-        [name]: [],
-      },
-    },
-    disabled,
-    resolver: validateManagers(getValues),
-    mode: 'all',
-  });
-  const { append, fields, remove } = useFieldArray({
-    control,
-    name: `addresses.${name}`,
-  });
+    formState: { isLoading },
+  } = useFormContext();
 
-  useEffect(() => {
-    if (isRefetching) {
-      remove();
+  const { inputError, resetError, validateInputValue } =
+    useAddressValidation(fields);
+
+  const handleInputEvent = (
+    e: KeyboardEvent<HTMLInputElement> | FocusEvent<HTMLInputElement>,
+  ) => {
+    const isEnterKey = e.type === 'keydown' && 'key' in e && e.key === 'Enter';
+    const isBlur = e.type === 'blur';
+
+    if (!isEnterKey && !isBlur) return;
+
+    const value = e.currentTarget.value.trim();
+    if (!validateInputValue(value)) return;
+
+    if (isEnterKey) {
+      e.stopPropagation();
+      e.preventDefault();
     }
-  }, [remove, isRefetching]);
+
+    append({ value, state: 'grant' });
+    hideInputField();
+  };
+
+  const hideInputField = () => {
+    setInputVisibility(false);
+    resetError();
+  };
 
   return (
     <EditWrapper>
-      {fields.map((field, index) => {
-        return (
-          <InputItem
+      {showInput && (
+        <>
+          <Input
             name={name}
-            editLabel={editLabel}
-            key={field.id}
-            register={register}
-            remove={remove}
-            trigger={trigger}
-            watch={watch}
-            error={errors.addresses?.[name]}
-            index={index}
-            getFieldState={getFieldState}
+            label={editLabel}
+            onKeyDown={handleInputEvent}
+            onBlur={handleInputEvent}
+            error={inputError}
+            autoFocus
           />
-        );
-      })}
-      <ButtonContainer
-        color="primary"
-        icon={<Plus />}
-        size="md"
-        variant="ghost"
-        type="button"
-        onClick={() => append({ value: '' as Address, state: 'grant' })}
-      >
-        Add new address
-      </ButtonContainer>
+          <ButtonClose onClick={hideInputField} />
+        </>
+      )}
+      {!showInput && !isLoading && (
+        <ButtonContainer
+          color="primary"
+          icon={<Plus />}
+          size="md"
+          variant="ghost"
+          type="button"
+          onClick={() => setInputVisibility(true)}
+        >
+          Add new address
+        </ButtonContainer>
+      )}
     </EditWrapper>
   );
 };

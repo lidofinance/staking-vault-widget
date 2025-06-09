@@ -1,6 +1,6 @@
 import { ManagerAddressField } from '../controllers';
 
-import { adminsForRender } from '../../consts';
+import { adminsForRender } from 'features/settings/main/consts';
 
 export const Admins = () => {
   return (

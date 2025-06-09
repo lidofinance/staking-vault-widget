@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import {
   useVaultInfo,
+  useVaultPermission,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
@@ -33,6 +34,12 @@ export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
+  const { refetch: refetchNOMPermission } = useVaultPermission(
+    'nodeOperatorManager',
+  );
+  const { refetch: refetchAdminPermission } =
+    useVaultPermission('defaultAdmin');
+
   const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
@@ -160,6 +167,14 @@ export const useEditMainSettings = () => {
             cancelRefetch: true,
             throwOnError: false,
           }),
+          refetchNOMPermission({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
+          refetchAdminPermission({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
         ]);
 
         return {
@@ -175,6 +190,8 @@ export const useEditMainSettings = () => {
         sendTX,
         refetchVaultInfo,
         refetchConfirmationsInfo,
+        refetchNOMPermission,
+        refetchAdminPermission,
       ],
     ),
     ...rest,

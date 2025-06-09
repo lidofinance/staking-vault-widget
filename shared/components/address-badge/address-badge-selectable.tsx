@@ -1,7 +1,8 @@
 import { ChangeEvent, useId, forwardRef } from 'react';
-import { AddressBadge, AddressBadgeProps } from 'shared/components/index';
 import { Close } from '@lidofinance/lido-ui';
 import { ReactComponent as RestoreIcon } from 'assets/icons/restore.svg';
+
+import { AddressBadge, AddressBadgeProps } from './address-badge';
 
 import { SelectableWrapper, HiddenCheckbox, Label } from './styles';
 

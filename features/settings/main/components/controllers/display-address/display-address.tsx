@@ -1,34 +1,53 @@
 import { FC } from 'react';
+import { UseFieldArrayRemove, UseFieldArrayUpdate } from 'react-hook-form';
 
-import { VaultInfo } from 'types';
 import { RoleAddress } from './role-address';
-import { RoleFieldSchema } from '../../../types';
-import { useFormContext } from 'react-hook-form';
+
+import {
+  RoleFieldSchema,
+  EditMainSettingsSchema,
+} from 'features/settings/main/types';
 
 interface DisplayAddressProps {
-  vaultKey: keyof VaultInfo;
   isEditable: boolean;
+  fields: (Record<'id', string> & RoleFieldSchema)[];
+  remove: UseFieldArrayRemove;
+  update: UseFieldArrayUpdate<EditMainSettingsSchema>;
 }
 
 export const DisplayAddress: FC<DisplayAddressProps> = ({
   isEditable,
-  vaultKey,
+  fields,
+  remove,
+  update,
 }) => {
-  const { watch } = useFormContext();
-  const roles = watch(vaultKey) as RoleFieldSchema[];
+  const onRemove = (index: number) => {
+    remove(index);
+  };
+
+  const onUpdate = (index: number, field: RoleFieldSchema) => {
+    update(index, field);
+  };
+
+  const isLastField =
+    fields.filter((field) => field.state === 'display').length === 1;
+  const isSomeFields = fields.length > 1;
 
   return (
     <>
-      {!!roles &&
-        roles.map((role, index) => {
+      {!!fields &&
+        fields.map((field, index) => {
+          const { id, ...fieldData } = field;
           return (
             <RoleAddress
-              key={role.value}
-              role={role}
-              roles={roles}
+              key={id}
+              field={fieldData}
+              isLastField={isLastField}
+              isSomeFields={isSomeFields}
               index={index}
-              vaultKey={vaultKey}
               isEditable={isEditable}
+              onRemove={onRemove}
+              onUpdate={onUpdate}
             />
           );
         })}

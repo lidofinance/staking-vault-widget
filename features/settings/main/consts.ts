@@ -20,13 +20,14 @@ import { getAddress, isAddress } from 'viem';
 import { Resolver, UseFormGetValues } from 'react-hook-form';
 import { isValidEns } from 'utils/ens';
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
+export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
-const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
+const INVALID_NUMBER_MAX_MESSAGE = `Cannot exceed ${MAX_FEE_VALUE}%`;
 const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
-const INVALID_EMPTY_STRING = 'Value cannot be empty';
+const INVALID_EMPTY_STRING = 'Missing value';
 
 export const accountSchema = z
   .string()

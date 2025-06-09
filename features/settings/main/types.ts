@@ -10,6 +10,7 @@ export type GrantOrRevokeRole = {
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
+export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type VotingOptionType = {
   value: string;
   type: 'current' | 'Proposed to me' | 'My proposal' | 'custom';
@@ -27,7 +28,7 @@ export type InputDataType =
   | 'number';
 
 export type MainSettingsOverview = {
-  name: string;
+  name: ManagersKeys;
   title: string;
   editLabel: string;
   hint?: string;
@@ -44,7 +45,6 @@ export type TxData = {
   nodeOperatorFeeBP?: bigint;
 };
 
-export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
 export type ManagersNewAddresses = {
   addresses: Record<ManagersKeys, RoleFieldSchema[]>;

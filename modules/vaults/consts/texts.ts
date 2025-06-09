@@ -74,10 +74,14 @@ export const vaultTexts = {
     },
     settings: {
       title: 'Main settings',
-      rolesGrantLoading: (roleCount: number) =>
-        `Granting ${roleCount} roles` as const,
-      rolesRevokeLoading: (roleCount: number) =>
-        `Revoking ${roleCount} roles` as const,
+      rolesGrantLoading: (roleCount: number) => {
+        const suffix = roleCount > 1 ? 's' : '';
+        return `Granting ${roleCount} role${suffix}` as const;
+      },
+      rolesRevokeLoading: (roleCount: number) => {
+        const suffix = roleCount > 1 ? 's' : '';
+        return `Revoking ${roleCount} role${suffix}` as const;
+      },
       confirmNoFee: (action: ConfirmAction, feePercent: number) =>
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
