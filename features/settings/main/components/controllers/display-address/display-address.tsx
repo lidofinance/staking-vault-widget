@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { UseFieldArrayRemove, UseFieldArrayUpdate } from 'react-hook-form';
 
 import { RoleAddress } from './role-address';
@@ -21,13 +21,19 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
   remove,
   update,
 }) => {
-  const onRemove = (index: number) => {
-    remove(index);
-  };
+  const onRemove = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove],
+  );
 
-  const onUpdate = (index: number, field: RoleFieldSchema) => {
-    update(index, field);
-  };
+  const onUpdate = useCallback(
+    (index: number, field: RoleFieldSchema) => {
+      update(index, field);
+    },
+    [update],
+  );
 
   const isLastField =
     fields.filter((field) => field.state === 'display').length === 1;
@@ -35,22 +41,21 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
 
   return (
     <>
-      {!!fields &&
-        fields.map((field, index) => {
-          const { id, ...fieldData } = field;
-          return (
-            <RoleAddress
-              key={id}
-              field={fieldData}
-              isLastField={isLastField}
-              isSomeFields={isSomeFields}
-              index={index}
-              isEditable={isEditable}
-              onRemove={onRemove}
-              onUpdate={onUpdate}
-            />
-          );
-        })}
+      {fields.map((field, index) => {
+        const { id, ...fieldData } = field;
+        return (
+          <RoleAddress
+            key={id}
+            index={index}
+            field={fieldData}
+            isLastField={isLastField}
+            isSomeFields={isSomeFields}
+            isEditable={isEditable}
+            onRemove={onRemove}
+            onUpdate={onUpdate}
+          />
+        );
+      })}
     </>
   );
 };
