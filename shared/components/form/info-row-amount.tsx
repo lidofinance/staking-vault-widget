@@ -1,14 +1,15 @@
 import { ComponentProps } from 'react';
 
-import { InfoRow } from './info-row';
 import { FormatToken } from 'shared/formatters';
 import { DATA_UNAVAILABLE } from 'consts/text';
+
+import { DataTableRowStyled } from './styles';
 
 type InfoRowAmountProps = {
   amount?: bigint | null;
   token?: string;
   noDataLabel?: string;
-} & ComponentProps<typeof InfoRow>;
+} & ComponentProps<typeof DataTableRowStyled>;
 
 export const InfoRowAmount = ({
   amount,
@@ -17,8 +18,8 @@ export const InfoRowAmount = ({
   ...props
 }: InfoRowAmountProps) => {
   return (
-    <InfoRow {...props}>
+    <DataTableRowStyled {...props}>
       <FormatToken amount={amount} symbol={token} fallback={noDataLabel} />
-    </InfoRow>
+    </DataTableRowStyled>
   );
 };

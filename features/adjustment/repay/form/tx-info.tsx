@@ -1,13 +1,16 @@
-import { Wrapper } from './styles';
 import { useFormContext } from 'react-hook-form';
-import { AllowanceDataTableRow } from 'shared/components/allowance-data-table-row';
-import { useAllowance } from 'modules/web3';
+
 import { useTokenAddress } from 'shared/hooks/use-token-address';
+import { InfoRowAllowance } from 'shared/components/form';
+
+import { useAA, useAllowance } from 'modules/web3';
 import { useVaultInfo } from 'modules/vaults';
 
-export const FeatureTxInfo = () => {
+export const TxInfo = () => {
+  const { isAA } = useAA();
   const { watch } = useFormContext();
   const { activeVault } = useVaultInfo();
+
   const [token] = watch(['token']);
   const tokenAddress = useTokenAddress(token);
 
@@ -16,9 +19,7 @@ export const FeatureTxInfo = () => {
     spender: activeVault?.owner,
   });
 
-  return (
-    <Wrapper>
-      <AllowanceDataTableRow token={token} allowance={data} />
-    </Wrapper>
-  );
+  if (isAA) return null;
+
+  return <InfoRowAllowance token={token} allowance={data} />;
 };

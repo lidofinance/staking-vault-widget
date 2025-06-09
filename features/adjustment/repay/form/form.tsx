@@ -3,7 +3,7 @@ import { RepayFormProvider } from './repay-form-context';
 import { Balance } from './balance';
 import { FormInput } from './form-input';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
+import { TxInfo } from './tx-info';
 
 export const RepayForm = () => {
   return (
@@ -11,7 +11,7 @@ export const RepayForm = () => {
       <Balance />
       <FormInput />
       <SubmitButton />
-      <FeatureTxInfo />
+      <TxInfo />
     </RepayFormProvider>
   );
 };

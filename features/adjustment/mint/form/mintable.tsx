@@ -18,7 +18,8 @@ export const Mintable = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.actions.mint.available}
+      title={vaultTexts.actions.mint.available}
+      loading={mintableQuery.isLoading}
       amount={mintableAmount}
       token={token}
     />

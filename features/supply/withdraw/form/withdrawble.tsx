@@ -10,9 +10,9 @@ export const Withdrawable = () => {
   return (
     <InfoRowAmount
       amount={data}
-      isLoading={isLoading}
+      loading={isLoading}
       token="ETH"
-      label={vaultTexts.actions.withdraw.available}
+      title={vaultTexts.actions.withdraw.available}
     />
   );
 };

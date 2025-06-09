@@ -16,10 +16,10 @@ export const TxInfo = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.common.form.willReceiveLabel}
+      title={vaultTexts.common.form.willReceiveLabel}
       amount={maxMintableSteth}
       token="stETH"
-      isLoading={isLoading}
+      loading={isLoading}
       noDataLabel="-"
     />
   );

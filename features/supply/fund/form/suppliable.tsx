@@ -13,9 +13,9 @@ export const Suppliable = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.actions.supply.available}
+      title={vaultTexts.actions.supply.available}
       amount={data}
-      isLoading={isLoading}
+      loading={isLoading}
       token={token}
     />
   );

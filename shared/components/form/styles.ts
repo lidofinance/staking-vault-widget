@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 
 import { FormController } from 'shared/hook-form/form-controller';
-
-export const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+import { DataTableRow } from '@lidofinance/lido-ui';
 
 type FormControllerType = typeof FormController;
 
@@ -24,4 +20,8 @@ export const FormControllerStyled: FormControllerType = styled(FormController)`
   box-shadow: none;
   background: var(--lido-color-foreground);
   color: var(--lido-color-textSecondary);
+`;
+
+export const DataTableRowStyled: typeof DataTableRow = styled(DataTableRow)`
+  margin: 0;
 `;

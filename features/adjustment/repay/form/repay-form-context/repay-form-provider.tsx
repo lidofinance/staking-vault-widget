@@ -11,7 +11,7 @@ import invariant from 'tiny-invariant';
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { useRepay } from './use-repay';
-import { RepayFormSchema } from 'features/adjustment/repay/types';
+import { RepayFormSchema } from 'features/adjustment/repay/form/types';
 import { FormControllerStyled } from 'shared/components/form';
 
 type RepayDataContextValue = {

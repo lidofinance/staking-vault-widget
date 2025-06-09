@@ -25,10 +25,10 @@ export const Balance = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.actions.repay.available}
+      title={vaultTexts.actions.repay.available}
       amount={availableToRepay}
       token={token}
-      isLoading={isLoading}
+      loading={isLoading}
     />
   );
 };
