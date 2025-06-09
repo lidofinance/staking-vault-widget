@@ -1,6 +1,7 @@
-import { useWithdrawFormData } from 'features/supply/withdraw/form/withdraw-form-context';
-
+import { vaultTexts } from 'modules/vaults';
 import { InfoRowAmount } from 'shared/components/form';
+
+import { useWithdrawFormData } from './withdraw-form-context';
 
 export const Withdrawable = () => {
   const { withdrawableEtherQuery } = useWithdrawFormData();
@@ -11,7 +12,7 @@ export const Withdrawable = () => {
       amount={data}
       isLoading={isLoading}
       token="ETH"
-      label="Available to withdraw"
+      label={vaultTexts.actions.withdraw.available}
     />
   );
 };

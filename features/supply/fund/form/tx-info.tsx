@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { InfoRowAmount } from 'shared/components/form';
+import { vaultTexts } from 'modules/vaults';
 
 import { useFundForm } from './fund-form-provider';
 import type { FundFormValidatedValues } from './types';
@@ -15,7 +16,7 @@ export const TxInfo = () => {
 
   return (
     <InfoRowAmount
-      label="You will receive"
+      label={vaultTexts.common.form.willReceiveLabel}
       amount={maxMintableSteth}
       token="stETH"
       isLoading={isLoading}

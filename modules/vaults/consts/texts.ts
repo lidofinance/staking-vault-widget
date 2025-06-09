@@ -54,10 +54,12 @@ export const vaultTexts = {
       },
     },
     mint: {
+      available: `Available to mint`,
       loading: (token: LidoToken) => `Minting ${token}` as const,
       completed: (token: LidoToken) => `${token} minted` as const,
     },
     repay: {
+      available: `Available to repay`,
       loading: (token: LidoToken) => `Repaying ${token}` as const,
       completed: (token: LidoToken) => `Repaid ${token} ` as const,
     },
@@ -76,10 +78,12 @@ export const vaultTexts = {
       completed: 'ETH supplied',
     },
     withdraw: {
+      available: `Available to withdraw`,
       loading: ' Withdrawing ETH from the vault',
       completed: 'ETH withdrawn',
     },
     claim: {
+      available: `Available to claim`,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },
@@ -326,6 +330,9 @@ export const vaultTexts = {
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
       loadingVault: 'Error loading stVault',
       vaultAddress: 'Invalid stVault address',
+    },
+    form: {
+      willReceiveLabel: 'You will receive',
     },
     links: {
       goToAll: 'To All Vaults',

@@ -1,6 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { InfoRowAmount } from 'shared/components/form';
+import { vaultTexts } from 'modules/vaults';
 
 import { useMintFormData } from './mint-form-context';
 
@@ -17,7 +18,7 @@ export const Mintable = () => {
 
   return (
     <InfoRowAmount
-      label="Available to mint"
+      label={vaultTexts.actions.mint.available}
       amount={mintableAmount}
       token={token}
     />
