@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useDappStatus } from 'modules/web3';
 import { useVaultInfo } from 'modules/vaults';
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { FormController } from 'shared/hook-form/form-controller';
+import { FormControllerStyled } from 'shared/components/form';
 
 import { useClaim } from 'features/claim/claim-form/hooks';
 import { ClaimFormSchema } from 'features/claim/claim-form/types';
@@ -91,13 +91,13 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
 
   return (
     <ClaimDataContext.Provider value={claimInfo}>
-      <FormController
+      <FormControllerStyled
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
       >
         {children}
-      </FormController>
+      </FormControllerStyled>
     </ClaimDataContext.Provider>
   );
 };

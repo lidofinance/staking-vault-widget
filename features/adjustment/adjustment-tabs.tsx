@@ -6,7 +6,7 @@ import { Switch } from 'shared/components/switch';
 
 import { Mint } from './mint';
 import { Repay } from './repay';
-import { FormBlock, PageWrapper } from './styles';
+import { PageWrapper } from './styles';
 
 type AdjustmentTabsProps = {
   isMintTab: boolean;
@@ -29,7 +29,7 @@ export const AdjustmentTabs = ({ isMintTab }: AdjustmentTabsProps) => {
   return (
     <PageWrapper>
       <Switch checked={!isMintTab} routes={mintRoutes} />
-      <FormBlock>{isMintTab ? <Mint /> : <Repay />}</FormBlock>
+      {isMintTab ? <Mint /> : <Repay />}
     </PageWrapper>
   );
 };

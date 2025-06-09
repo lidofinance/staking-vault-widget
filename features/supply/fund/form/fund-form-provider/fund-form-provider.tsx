@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { FormControllerStyled } from 'shared/components/form';
 
 import { FundFormResolver } from './validation';
 
@@ -19,7 +20,6 @@ import {
   useFundFormValidationContext,
   useFundFormData,
 } from './hooks';
-import { FormControllerStyled } from './styles';
 import {
   FundFormData,
   FundFormDataAwaitableValidationContext,

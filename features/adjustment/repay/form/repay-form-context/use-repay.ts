@@ -14,7 +14,7 @@ import {
 } from 'modules/web3';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 
-export const useBurn = () => {
+export const useRepay = () => {
   const { activeVault, refetchVaultInfo } = useVaultInfo();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();

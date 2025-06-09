@@ -1,5 +1,5 @@
 import { useFormContext } from 'react-hook-form';
-import { useRepayFormData } from 'features/adjustment/repay/repay-form-context';
+import { useRepayFormData } from 'features/adjustment/repay/form/repay-form-context';
 import { useVaultInfo, vaultTexts } from 'modules/vaults';
 import { bigIntMin } from 'utils/bigint-math';
 import { InfoRowAmount } from 'shared/components/form';

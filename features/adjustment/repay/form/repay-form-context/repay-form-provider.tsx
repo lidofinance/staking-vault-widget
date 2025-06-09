@@ -9,10 +9,10 @@ import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
-import { FormController } from 'shared/hook-form/form-controller';
 
-import { useBurn } from 'features/adjustment/repay/hooks';
+import { useRepay } from './use-repay';
 import { RepayFormSchema } from 'features/adjustment/repay/types';
+import { FormControllerStyled } from 'shared/components/form';
 
 type RepayDataContextValue = {
   stEthBalance: bigint | undefined;
@@ -50,7 +50,7 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
     // TODO: validation
     reValidateMode: 'onChange',
   });
-  const { burn, retryEvent } = useBurn();
+  const { burn, retryEvent } = useRepay();
   const { address } = useDappStatus();
   const {
     data: stEthBalance,
@@ -106,13 +106,13 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <RepayDataContext.Provider value={repayData}>
-      <FormController
+      <FormControllerStyled
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
       >
         {children}
-      </FormController>
+      </FormControllerStyled>
     </RepayDataContext.Provider>
   );
 };

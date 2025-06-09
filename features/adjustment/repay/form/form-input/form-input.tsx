@@ -3,7 +3,7 @@ import { InputAmount } from 'shared/components';
 import { TokenSelectHookForm } from 'shared/hook-form/controls';
 
 import { useController, useFormContext } from 'react-hook-form';
-import { useRepayFormData } from '../../repay-form-context';
+import { useRepayFormData } from '../repay-form-context';
 import { VAULT_MINT_TOKENS } from 'modules/vaults';
 
 export const FormInput = () => {

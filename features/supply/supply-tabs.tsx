@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useVaultInfo } from 'modules/vaults';
 
-import { FormBlock, PageWrapper } from './styles';
+import { PageWrapper } from './styles';
 import { Fund } from './fund';
 import { Withdraw } from './withdraw';
 
@@ -32,7 +32,7 @@ export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
     <PageWrapper>
       <Switch checked={!isFundTab} routes={supplyRoutes} />
 
-      <FormBlock>{isFundTab ? <Fund /> : <Withdraw />}</FormBlock>
+      {isFundTab ? <Fund /> : <Withdraw />}
     </PageWrapper>
   );
 };
