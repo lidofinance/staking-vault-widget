@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import type { Address } from 'viem';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { useVaultInfo } from 'modules/vaults';
@@ -63,10 +63,12 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <FormProvider {...formObject}>
-      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
-        {children}
-      </FormController>
-    </FormProvider>
+    <FormController
+      formObject={formObject}
+      onSubmit={onSubmit}
+      retryEvent={retryEvent}
+    >
+      {children}
+    </FormController>
   );
 };

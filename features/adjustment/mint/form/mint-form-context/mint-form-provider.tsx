@@ -6,7 +6,7 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
@@ -78,11 +78,13 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     <MintFormDataContext.Provider
       value={useMemo(() => ({ mintableQuery }), [mintableQuery])}
     >
-      <FormProvider {...formObject}>
-        <FormControllerStyled onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormControllerStyled>
-      </FormProvider>
+      <FormControllerStyled
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
+        {children}
+      </FormControllerStyled>
     </MintFormDataContext.Provider>
   );
 };

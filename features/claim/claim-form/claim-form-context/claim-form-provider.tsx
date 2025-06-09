@@ -9,7 +9,7 @@ import {
 import invariant from 'tiny-invariant';
 import { isAddress, ReadContractErrorType } from 'viem';
 import { useReadContract } from 'wagmi';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { useVaultInfo } from 'modules/vaults';
@@ -91,11 +91,13 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
 
   return (
     <ClaimDataContext.Provider value={claimInfo}>
-      <FormProvider {...formObject}>
-        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormController>
-      </FormProvider>
+      <FormController
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
+        {children}
+      </FormController>
     </ClaimDataContext.Provider>
   );
 };

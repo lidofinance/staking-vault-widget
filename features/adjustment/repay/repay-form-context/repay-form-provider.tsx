@@ -5,7 +5,7 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
@@ -106,11 +106,13 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <RepayDataContext.Provider value={repayData}>
-      <FormProvider {...formObject}>
-        <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormController>
-      </FormProvider>
+      <FormController
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
+        {children}
+      </FormController>
     </RepayDataContext.Provider>
   );
 };
