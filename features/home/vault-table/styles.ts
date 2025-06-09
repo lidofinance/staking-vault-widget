@@ -50,6 +50,8 @@ export const TableHeaderCell = styled(Th)`
   text-align: right;
   border-top: 0;
 
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+
   &:first-child {
     text-align: left;
   }
@@ -63,7 +65,7 @@ export const TableRow = styled(Tr)`
 
   &:before,
   &:after {
-    border: 0 !important;
+    border-top: 0 !important;
   }
 
   ${({ onClick, theme }) =>
