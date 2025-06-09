@@ -37,7 +37,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
 
   const isLastField =
     fields.filter((field) => field.state === 'display').length === 1;
-  const isSomeFields = fields.length > 1;
+  const hasMultipleValues = fields.length > 1;
 
   return (
     <>
@@ -49,7 +49,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
             index={index}
             field={fieldData}
             isLastField={isLastField}
-            isSomeFields={isSomeFields}
+            hasMultipleValues={hasMultipleValues}
             isEditable={isEditable}
             onRemove={onRemove}
             onUpdate={onUpdate}

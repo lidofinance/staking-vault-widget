@@ -51,6 +51,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
               const isCustom = type === 'custom';
               const isMy = type === 'My proposal';
               const isHour = symbol?.includes('hours');
+              // TODO: refactor leak logic abstraction
               const multiplier = isHour ? 3600 : 1;
               const radioProps = {
                 value: value,

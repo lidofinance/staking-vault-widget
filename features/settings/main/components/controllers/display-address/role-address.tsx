@@ -11,7 +11,7 @@ interface RoleAddressProps {
   isEditable: boolean;
   field: RoleFieldSchema;
   isLastField: boolean;
-  isSomeFields: boolean;
+  hasMultipleValues: boolean;
   onRemove: (index: number) => void;
   onUpdate: (index: number, field: RoleFieldSchema) => void;
 }
@@ -21,14 +21,14 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   isEditable,
   field,
   isLastField,
-  isSomeFields,
+  hasMultipleValues,
   onRemove,
   onUpdate,
 }) => {
   const { state } = field;
   const toRemove = state === 'remove';
   const toGrant = state === 'grant';
-  const canToggle = (isSomeFields && !isLastField) || toRemove || toGrant;
+  const canToggle = (hasMultipleValues && !isLastField) || toRemove || toGrant;
 
   const onToggle = () => {
     if (toGrant) {
