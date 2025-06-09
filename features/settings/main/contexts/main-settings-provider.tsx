@@ -54,7 +54,8 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
       const { result, vaultInfo } = await editMainSettings(data);
-      if (vaultInfo.data) resetFields(vaultInfo.data);
+
+      if (result.success && vaultInfo.data) resetFields(vaultInfo.data);
 
       return result.success;
     },
