@@ -1,32 +1,57 @@
-import { FC, PropsWithChildren, useEffect, useMemo } from 'react';
-import { FieldValues, useFormContext, UseFormReset } from 'react-hook-form';
+import { useEffect, useMemo } from 'react';
+import {
+  FieldValues,
+  FormProvider,
+  UseFormReset,
+  UseFormReturn,
+} from 'react-hook-form';
 import { useWagmiConnectionChangedCallback } from 'shared/hooks/use-wagmi-connection-changed-callback';
 import { useDappStatus } from 'modules/web3';
 import type { EventSubsciption } from 'utils/event-subsciption';
 
-type FormControllerProps<F extends FieldValues = any> = {
-  onSubmit: (args: F) => Promise<boolean>;
+type FormControllerProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTransformedValues = TFieldValues,
+> = {
+  formObject: UseFormReturn<TFieldValues, TContext, TTransformedValues>;
+  onSubmit: (values: TTransformedValues) => Promise<boolean>;
   retryEvent: EventSubsciption;
-  afterSubmitResetOptions?: Parameters<UseFormReset<any>>[1];
+  afterSubmitResetOptions?: Parameters<UseFormReset<any>>[1] | false;
 } & Omit<React.ComponentProps<'form'>, 'onSubmit'>;
 
-export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
+export const FormController = <
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTransformedValues = TFieldValues,
+>({
   children,
   onSubmit,
   retryEvent,
+  formObject,
   afterSubmitResetOptions,
   ...props
-}) => {
+}: FormControllerProps<TFieldValues, TContext, TTransformedValues>) => {
   const { isDappActive } = useDappStatus();
-  const { handleSubmit, reset: resetDefault } = useFormContext();
+  const { handleSubmit, reset: resetDefault } = formObject;
+
+  const shouldReset =
+    typeof afterSubmitResetOptions == 'boolean' && !afterSubmitResetOptions;
 
   // Bind submit action
   const doSubmit = useMemo(() => {
     return handleSubmit(async (args) => {
       const success = await onSubmit(args);
-      if (success) resetDefault(undefined, afterSubmitResetOptions);
+      if (success && shouldReset)
+        resetDefault(undefined, afterSubmitResetOptions || undefined);
     });
-  }, [afterSubmitResetOptions, handleSubmit, onSubmit, resetDefault]);
+  }, [
+    afterSubmitResetOptions,
+    handleSubmit,
+    onSubmit,
+    resetDefault,
+    shouldReset,
+  ]);
 
   // Bind retry callback
   useEffect(() => {
@@ -45,13 +70,15 @@ export const FormController: FC<PropsWithChildren<FormControllerProps>> = ({
   useWagmiConnectionChangedCallback(resetDefault);
 
   return (
-    <form
-      autoComplete="off"
-      onSubmit={doSubmit}
-      style={{ width: '100%' }}
-      {...props}
-    >
-      {children}
-    </form>
+    <FormProvider {...formObject}>
+      <form
+        autoComplete="off"
+        onSubmit={doSubmit}
+        style={{ width: '100%' }}
+        {...props}
+      >
+        {children}
+      </form>
+    </FormProvider>
   );
 };

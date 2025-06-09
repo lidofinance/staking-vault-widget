@@ -1,28 +1,16 @@
-import { Loader, Text } from '@lidofinance/lido-ui';
-import { AmountInfo, InfoRow, Wrapper } from './styles';
-
 import { useClaimFormData } from 'features/claim/claim-form/claim-form-context';
-import { formatBalance } from 'utils';
+import { InfoRowAmount } from 'shared/components/form';
+import { vaultTexts } from 'modules/vaults';
 
 export const Balance = () => {
-  const { isLoadingClaimInfo, availableToClaim, isErrorClaimInfo } =
-    useClaimFormData();
-
-  const isAvailableToClaim = typeof availableToClaim === 'bigint';
-  const isLoading =
-    (!isErrorClaimInfo && !isAvailableToClaim) || isLoadingClaimInfo;
+  const { isLoadingClaimInfo, availableToClaim } = useClaimFormData();
 
   return (
-    <Wrapper>
-      <InfoRow>
-        <Text size="xxs" color="secondary">
-          Available to claim
-        </Text>
-        {isLoading && <Loader size="small" />}
-        {isAvailableToClaim && (
-          <AmountInfo>{formatBalance(availableToClaim).trimmed} ETH</AmountInfo>
-        )}
-      </InfoRow>
-    </Wrapper>
+    <InfoRowAmount
+      label={vaultTexts.actions.claim.available}
+      amount={availableToClaim}
+      token="ETH"
+      isLoading={isLoadingClaimInfo}
+    />
   );
 };

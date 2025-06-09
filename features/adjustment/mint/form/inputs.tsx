@@ -1,0 +1,33 @@
+import { useFormContext } from 'react-hook-form';
+import {
+  AddressInputHookForm,
+  TokenAmountInputGroup,
+} from 'shared/hook-form/controls';
+
+import { VAULT_MINT_TOKENS } from 'modules/vaults';
+
+import { useMintFormData } from './mint-form-context';
+import { MintFormFieldValues } from './types';
+
+export const MintFormInputs = () => {
+  const { mintableQuery } = useMintFormData();
+  const { watch } = useFormContext<MintFormFieldValues>();
+  const token = watch('token');
+
+  const maxValue =
+    token === 'stETH'
+      ? mintableQuery.data?.mintableStETH
+      : mintableQuery.data?.mintableWstETH;
+
+  return (
+    <>
+      <TokenAmountInputGroup
+        amountFieldName="amount"
+        tokenFieldName="token"
+        tokenOptions={VAULT_MINT_TOKENS}
+        maxAmount={maxValue}
+      />
+      <AddressInputHookForm label={'Mint to address'} fieldName="recipient" />
+    </>
+  );
+};

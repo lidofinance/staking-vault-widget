@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -61,11 +61,15 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   );
 
   return (
-    <FormProvider {...formObject}>
-      <FormController onSubmit={onSubmit} retryEvent={retryEvent}>
+    <>
+      <FormController
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
         {children}
       </FormController>
       <FormBackdrop open={formObject.formState.isLoading} />
-    </FormProvider>
+    </>
   );
 };

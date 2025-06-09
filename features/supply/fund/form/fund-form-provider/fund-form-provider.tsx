@@ -7,7 +7,7 @@ import {
   useEffect,
 } from 'react';
 import invariant from 'tiny-invariant';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -76,7 +76,7 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }
     // reset mintAddress when mintSteth=false
     if (!mintSteth) {
-      resetField('mintAddress', { defaultValue: '' });
+      resetField('mintAddress');
     }
   }, [isStethMintable, mintSteth, resetField]);
 
@@ -92,12 +92,14 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   );
 
   return (
-    <FormProvider {...formObject}>
-      <FundFormDataContext.Provider value={fundFormData}>
-        <FormControllerStyled onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormControllerStyled>
-      </FundFormDataContext.Provider>
-    </FormProvider>
+    <FundFormDataContext.Provider value={fundFormData}>
+      <FormControllerStyled
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
+        {children}
+      </FormControllerStyled>
+    </FundFormDataContext.Provider>
   );
 };

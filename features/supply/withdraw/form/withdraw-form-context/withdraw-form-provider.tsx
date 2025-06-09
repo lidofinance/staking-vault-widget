@@ -6,7 +6,7 @@ import {
   createContext,
   useContext,
 } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
@@ -81,11 +81,13 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
 
   return (
     <WithdrawDataContext.Provider value={withdrawDataContextValue}>
-      <FormProvider {...formObject}>
-        <FormControllerStyled onSubmit={onSubmit} retryEvent={retryEvent}>
-          {children}
-        </FormControllerStyled>
-      </FormProvider>
+      <FormControllerStyled
+        formObject={formObject}
+        onSubmit={onSubmit}
+        retryEvent={retryEvent}
+      >
+        {children}
+      </FormControllerStyled>
     </WithdrawDataContext.Provider>
   );
 };

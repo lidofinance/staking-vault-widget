@@ -97,4 +97,4 @@ export const amountSchema = z
 
 export const supplyTokenSchema = z.enum(['ETH', 'wETH']);
 
-export const mintTokenSchema = z.enum(['ETH', 'wETH']);
+export const mintTokenSchema = z.enum(['stETH', 'wstETH']);
