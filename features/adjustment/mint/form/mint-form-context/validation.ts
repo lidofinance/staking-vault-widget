@@ -49,12 +49,12 @@ export const mintFormResolver: Resolver<
 
   // validate context-dependent fields manually
   invariant(context, '[MintFormResolver] context is undefined');
-  const { mintableSteth, mintableWsteth } = await awaitWithTimeout(
+  const { mintableWstETH, mintableStETH } = await awaitWithTimeout(
     context,
     4000,
   );
 
-  const maxAmount = token === 'stETH' ? mintableSteth : mintableWsteth;
+  const maxAmount = token === 'stETH' ? mintableStETH : mintableWstETH;
 
   if (amount > maxAmount) {
     return {
