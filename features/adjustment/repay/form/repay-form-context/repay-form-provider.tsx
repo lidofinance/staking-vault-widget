@@ -1,111 +1,87 @@
+import invariant from 'tiny-invariant';
 import {
-  ReactNode,
-  useMemo,
   useCallback,
   createContext,
   useContext,
+  PropsWithChildren,
+  useMemo,
 } from 'react';
 import { useForm } from 'react-hook-form';
-import invariant from 'tiny-invariant';
 
-import { useDappStatus, useStethBalance, useWstethBalance } from 'modules/web3';
-
-import { useRepay } from './use-repay';
-import { RepayFormSchema } from 'features/adjustment/repay/form/types';
+import { useDappStatus } from 'modules/web3';
 import { FormControllerStyled } from 'shared/components/form';
 
-type RepayDataContextValue = {
-  stEthBalance: bigint | undefined;
-  isStEthLoading: boolean;
-  isStEthSuccess: boolean;
-  isStEthError: boolean;
-  wstEthBalance: bigint | undefined;
-  isWstEthLoading: boolean;
-  isWstEthSuccess: boolean;
-  isWstEthError: boolean;
-};
+import { useRepay } from './use-repay';
+import { repayFormResolver } from './validation';
+import { useRepayFormData } from './use-repay-form-data';
 
-const RepayDataContext = createContext<RepayDataContextValue | null>(null);
-RepayDataContext.displayName = 'RepayDataContext';
+import type {
+  RepayFormContextValue,
+  RepayFormFieldValues,
+  RepayFormValidatedValues,
+  RepayFormValidationContextAwaitable,
+} from '../types';
 
-export const useRepayFormData = () => {
-  const value = useContext(RepayDataContext);
+const RepayFormContext = createContext<RepayFormContextValue | null>(null);
+RepayFormContext.displayName = 'RepayFormContext';
+
+export const useRepayForm = () => {
+  const value = useContext(RepayFormContext);
   invariant(
     value,
-    'useRepayFormData was used outside the RepayDataContext provider',
+    'useRepayFormData was used outside the RepayFormContext provider',
   );
 
   return value;
 };
 
-export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
+export const RepayFormProvider = ({ children }: PropsWithChildren) => {
+  const {
+    invalidateRepayFormData,
+    validationContext,
+    isMaxRepayableLoading,
+    maxRepayableStETH,
+    maxRepayableWstETH,
+  } = useRepayFormData();
   const { isDappActive } = useDappStatus();
-  const formObject = useForm<RepayFormSchema>({
+  const { burn, retryEvent } = useRepay();
+
+  const formObject = useForm<
+    RepayFormFieldValues,
+    RepayFormValidationContextAwaitable,
+    RepayFormValidatedValues
+  >({
     defaultValues: {
-      amount: undefined,
+      amount: null,
       token: 'stETH',
     },
-    mode: 'all',
+    mode: 'onTouched',
+    context: validationContext,
+    resolver: repayFormResolver,
     disabled: !isDappActive,
-    // TODO: validation
-    reValidateMode: 'onChange',
   });
-  const { burn, retryEvent } = useRepay();
-  const { address } = useDappStatus();
-  const {
-    data: stEthBalance,
-    isLoading: isStEthLoading,
-    isSuccess: isStEthSuccess,
-    isError: isStEthError,
-  } = useStethBalance({ account: address });
-  const {
-    data: wstEthBalance,
-    isLoading: isWstEthLoading,
-    isSuccess: isWstEthSuccess,
-    isError: isWstEthError,
-  } = useWstethBalance({ account: address });
 
-  const repayData = useMemo(
-    () => ({
-      stEthBalance,
-      isStEthLoading,
-      isStEthSuccess,
-      isStEthError,
-      wstEthBalance,
-      isWstEthLoading,
-      isWstEthSuccess,
-      isWstEthError,
-    }),
-    [
-      stEthBalance,
-      isStEthLoading,
-      isStEthSuccess,
-      isStEthError,
-      wstEthBalance,
-      isWstEthLoading,
-      isWstEthSuccess,
-      isWstEthError,
-    ],
-  );
+  const token = formObject.watch('token');
 
   const onSubmit = useCallback(
-    async ({ amount, token }: RepayFormSchema) => {
-      // TODO: add validation, remove stub
-      if (!amount || !token) return false;
-
-      invariant(amount, '[RepayFormProvider] amount is undefined');
-      invariant(
-        token === 'stETH' || token === 'wstETH',
-        '[RepayFormProvider] token is invalid',
-      );
-
-      return await burn(amount, token);
+    async (values: RepayFormValidatedValues) => {
+      const success = await burn(values);
+      await invalidateRepayFormData();
+      return success;
     },
-    [burn],
+    [burn, invalidateRepayFormData],
+  );
+
+  const repayContextValue: RepayFormContextValue = useMemo(
+    () => ({
+      isMaxRepayableLoading,
+      maxRepayable: token === 'stETH' ? maxRepayableStETH : maxRepayableWstETH,
+    }),
+    [isMaxRepayableLoading, maxRepayableStETH, maxRepayableWstETH, token],
   );
 
   return (
-    <RepayDataContext.Provider value={repayData}>
+    <RepayFormContext.Provider value={repayContextValue}>
       <FormControllerStyled
         formObject={formObject}
         onSubmit={onSubmit}
@@ -113,6 +89,6 @@ export const RepayFormProvider = ({ children }: { children: ReactNode }) => {
       >
         {children}
       </FormControllerStyled>
-    </RepayDataContext.Provider>
+    </RepayFormContext.Provider>
   );
 };

@@ -1,18 +1,23 @@
-import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
+import { useCallback } from 'react';
 import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
-
+import {
+  useVaultInfo,
+  useVaultPermission,
+  vaultTexts,
+  GoToVault,
+} from 'modules/vaults';
 import {
   TransactionEntry,
   useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+
+import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
   const { activeVault, refetchVaultInfo } = useVaultInfo();
@@ -21,7 +26,7 @@ export const useRepay = () => {
 
   return {
     burn: useCallback(
-      async (amount: bigint, token: 'stETH' | 'wstETH') => {
+      async ({ amount, token }: RepayFormValidatedValues) => {
         invariant(activeVault?.owner, '[useMint] owner is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
@@ -88,7 +93,7 @@ type EstimateGasBurnProps = {
   allowance?: bigint;
 };
 
-export const useEstimateGasBurn = ({
+export const useEstimateGasRepay = ({
   token,
   amount,
   allowance,
