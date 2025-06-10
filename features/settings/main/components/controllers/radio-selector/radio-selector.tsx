@@ -33,10 +33,9 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   title,
 }) => {
   const { isLoading, errors, disabled, isSubmitSuccessful } = useFormState();
-  const { watch } = useFormContext();
+  const { watch, register } = useFormContext();
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission();
-  const { register } = useFormContext();
 
   const selectedValue = watch(vaultKey);
   const isCustomSelected = selectedValue === 'custom';
