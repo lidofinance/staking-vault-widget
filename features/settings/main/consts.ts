@@ -100,7 +100,10 @@ export const adminsForRender: MainSettingsOverview[] = [
   },
 ];
 
-export const multipleDataFields = ['defaultAdmins', 'nodeOperatorManagers'];
+export const multipleDataFields = [
+  'defaultAdmins',
+  'nodeOperatorManagers',
+] as const;
 
 const baseValidation = zodResolver<
   EditMainSettingsValues,

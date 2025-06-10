@@ -5,15 +5,18 @@ import { Button } from '@lidofinance/lido-ui';
 import { ConnectWalletButton } from 'shared/wallet';
 import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
-import { RoleFieldSchema } from 'features/settings/main/types';
-import { multipleDataFields } from 'features/settings/main/consts';
-import { shouldIncrementTxCounter } from 'features/settings/main/utils';
+import {
+  shouldIncrementTxCounterByVoting,
+  shouldIncrementTxCounterByAddresses,
+} from 'features/settings/main/utils';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 
 import { Container } from './styled';
 
+import { EditMainSettingsSchema } from 'features/settings/main/types';
+
 export const MainSettingsAction: FC = () => {
-  const { watch, reset } = useFormContext();
+  const { watch, reset } = useFormContext<EditMainSettingsSchema>();
   const { isValid, isDirty, isSubmitting, isValidating, disabled } =
     useFormState();
   const isClearDisabled = !isDirty;
@@ -34,18 +37,7 @@ export const MainSettingsAction: FC = () => {
     let counter = 0;
 
     if (isValid) {
-      multipleDataFields.forEach((key) => {
-        const fields = formFields[key];
-        const [grant, remove] = fields.reduce(
-          (acc: [number, number], field: RoleFieldSchema) => {
-            acc[0] += Number(field.state === 'grant');
-            acc[1] += Number(field.state === 'remove');
-            return acc;
-          },
-          [0, 0],
-        );
-        counter += Number(grant > 0) + Number(remove > 0);
-      });
+      counter += shouldIncrementTxCounterByAddresses(formFields);
 
       const {
         nodeOperatorFeeBP,
@@ -61,7 +53,7 @@ export const MainSettingsAction: FC = () => {
         confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
       if (
-        shouldIncrementTxCounter(
+        shouldIncrementTxCounterByVoting(
           currentNodeOperatorFeeBP,
           mainSettingsData?.nodeOperatorFeeBP.find(
             (item) => item.type === 'current',
@@ -72,7 +64,7 @@ export const MainSettingsAction: FC = () => {
       }
 
       if (
-        shouldIncrementTxCounter(
+        shouldIncrementTxCounterByVoting(
           currentConfirmExpiry,
           mainSettingsData?.confirmExpiry.find(
             (item) => item.type === 'current',

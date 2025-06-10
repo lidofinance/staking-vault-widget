@@ -51,7 +51,6 @@ export const useConfirmationsInfo = () => {
 
       const dashboardAddress = activeVault?.owner;
       const confirmExpiry = activeVault?.confirmExpiry;
-
       const currentBlock = await publicClient.getBlockNumber();
       const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
       const fromBlock = currentBlock - confirmExpireInBlocks;
@@ -66,6 +65,10 @@ export const useConfirmationsInfo = () => {
       });
 
       const dataObject: Record<Hex, ConfirmationsInfo> = logs
+        .filter(
+          ({ args }) =>
+            Number(args.expiryTimestamp) * 1000 - new Date().getTime() > 0,
+        )
         .sort((a, b) => Number(a.blockNumber) - Number(b.blockNumber))
         .reduce<Record<Hex, ConfirmationsInfo>>((acc, log) => {
           const args = log.args;
