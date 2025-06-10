@@ -1,16 +1,15 @@
-import { Balance } from './balance';
+import { ClaimFormProvider } from './claim-form-context';
+
+import { Claimable } from './claimable';
+import { ClaimInputs } from './claim-inputs';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
-import { FormContainer } from './styles';
-import { AddressField } from './address-field';
 
 export const ClaimForm = () => {
   return (
-    <FormContainer>
-      <Balance />
-      <AddressField />
+    <ClaimFormProvider>
+      <Claimable />
+      <ClaimInputs />
       <SubmitButton />
-      <FeatureTxInfo />
-    </FormContainer>
+    </ClaimFormProvider>
   );
 };

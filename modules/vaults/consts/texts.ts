@@ -84,6 +84,13 @@ export const vaultTexts = {
     },
     claim: {
       available: `Available to claim`,
+      addressLabel: `Rewards address`,
+      claimButton: (claimableAmount?: bigint | null) =>
+        `Claim${
+          claimableAmount
+            ? ` ${formatBalance(claimableAmount).trimmed} ETH`
+            : ''
+        }` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },

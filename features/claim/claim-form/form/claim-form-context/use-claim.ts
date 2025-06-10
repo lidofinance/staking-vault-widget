@@ -3,20 +3,26 @@ import { useEstimateGas, useAccount } from 'wagmi';
 import { Address, encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
+import {
+  useVaultInfo,
+  useVaultPermission,
+  vaultTexts,
+  GoToVault,
+} from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import {} from 'modules/vaults/components/go-to-vault';
+import { ClaimFormValidatedValues } from '../types';
 
 export const useClaim = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     claim: useCallback(
-      async (recipient: Address) => {
+      async ({ recipient }: ClaimFormValidatedValues) => {
         invariant(owner, '[useClaim] owner is undefined');
 
         const loadingActionText = vaultTexts.actions.claim.loading;
@@ -41,13 +47,9 @@ export const useClaim = () => {
           }),
         );
 
-        if (success) {
-          await refetchVaultInfo();
-        }
-
         return success;
       },
-      [owner, refetchVaultInfo, sendTX],
+      [owner, sendTX],
     ),
     ...rest,
   };
