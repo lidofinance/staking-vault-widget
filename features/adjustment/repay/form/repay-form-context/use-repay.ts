@@ -20,7 +20,7 @@ import {
 import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -75,13 +75,9 @@ export const useRepay = () => {
           }),
         );
 
-        if (success) {
-          await refetchVaultInfo();
-        }
-
         return success;
       },
-      [activeVault?.owner, refetchVaultInfo, sendTX, stETH, wstETH],
+      [activeVault?.owner, sendTX, stETH, wstETH],
     ),
     ...rest,
   };
