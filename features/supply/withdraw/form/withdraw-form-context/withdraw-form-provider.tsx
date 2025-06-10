@@ -11,10 +11,10 @@ import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
 
+import { FormControllerStyled } from 'shared/components/form';
 import { useWithdraw } from 'features/supply/withdraw/form/hooks';
 
 import { withdrawFormResolver } from './validation';
-import { FormControllerStyled } from '../styles';
 
 import type {
   WithdrawFormData,

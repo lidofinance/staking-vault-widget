@@ -7,10 +7,10 @@ export const Balance = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.actions.claim.available}
+      title={vaultTexts.actions.claim.available}
       amount={availableToClaim}
       token="ETH"
-      isLoading={isLoadingClaimInfo}
+      loading={isLoadingClaimInfo}
     />
   );
 };

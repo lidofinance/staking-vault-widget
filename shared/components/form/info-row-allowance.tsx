@@ -2,33 +2,36 @@ import { ReactNode, useMemo } from 'react';
 import { maxUint256 } from 'viem';
 import { DataTableRow } from '@lidofinance/lido-ui';
 
-import { LIDO_TOKENS_VALUES } from 'consts/tokens';
 import { FormatToken } from 'shared/formatters';
-import { getTokenDisplayName } from 'utils/getTokenDisplayName';
+import {
+  getTokenDisplayName,
+  TOKEN_DISPLAY_NAMES,
+} from 'utils/getTokenDisplayName';
+import { DataTableRowStyled } from './styles';
 
-export type AllowanceDataTableRowProps = Omit<
+export type InfoRowAllowanceProps = Omit<
   React.ComponentProps<typeof DataTableRow>,
   'title'
 > & {
   title?: ReactNode;
-  token: LIDO_TOKENS_VALUES;
+  token: TOKEN_DISPLAY_NAMES;
   allowance?: bigint;
   loading?: boolean;
   isBlank?: boolean;
 };
 
-export const AllowanceDataTableRow = ({
+export const InfoRowAllowance = ({
   token,
   allowance,
   isBlank,
   title = 'Allowance',
   ...rest
-}: AllowanceDataTableRowProps) => {
+}: InfoRowAllowanceProps) => {
   const isInfiniteAllowance = useMemo(() => {
     return allowance === maxUint256;
   }, [allowance]);
   return (
-    <DataTableRow title={title} {...rest}>
+    <DataTableRowStyled title={title} {...rest}>
       {isBlank || allowance == null ? (
         '-'
       ) : isInfiniteAllowance ? (
@@ -39,6 +42,6 @@ export const AllowanceDataTableRow = ({
           symbol={getTokenDisplayName(token)}
         />
       )}
-    </DataTableRow>
+    </DataTableRowStyled>
   );
 };

@@ -11,11 +11,11 @@ import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
 
+import { FormControllerStyled } from 'shared/components/form';
+
 import { mintFormResolver } from './validation';
 import { useMintData } from './use-mint-data';
 import { useMint } from './use-mint';
-
-import { FormControllerStyled } from '../styles';
 
 import type {
   MintFormFieldValues,

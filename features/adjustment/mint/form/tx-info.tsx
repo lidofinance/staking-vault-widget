@@ -12,7 +12,7 @@ export const TxInfo = () => {
 
   return (
     <InfoRowAmount
-      label={vaultTexts.common.form.willReceiveLabel}
+      title={vaultTexts.common.form.willReceiveLabel}
       amount={amount}
       token={token}
       noDataLabel="-"

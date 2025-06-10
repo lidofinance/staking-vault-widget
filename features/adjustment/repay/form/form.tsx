@@ -1,16 +1,17 @@
-import { Balance } from './balance';
-import { FormInput } from './form-input';
+import { RepayFormProvider } from './repay-form-context';
+
+import { Repayable } from './repayable';
+import { RepayFormInputs } from './repay-form-inputs';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
-import { FormContainer } from './styles';
+import { TxInfo } from './tx-info';
 
 export const RepayForm = () => {
   return (
-    <FormContainer>
-      <Balance />
-      <FormInput />
+    <RepayFormProvider>
+      <Repayable />
+      <RepayFormInputs />
       <SubmitButton />
-      <FeatureTxInfo />
-    </FormContainer>
+      <TxInfo />
+    </RepayFormProvider>
   );
 };
