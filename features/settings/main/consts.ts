@@ -1,12 +1,11 @@
 import { z } from 'zod';
+import { getAddress } from 'viem';
+import { Resolver } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import invariant from 'tiny-invariant';
+
 import { isValidAnyAddress } from 'utils/address-validation';
-import {
-  MainSettingsOverview,
-  ManagersKeys,
-  ManagersNewAddresses,
-  RoleFieldSchema,
-  TxData,
-} from './types';
+
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
@@ -16,9 +15,13 @@ import {
   MIN_CONFIRM_EXPIRY_SECONDS,
   vaultTexts,
 } from 'modules/vaults';
-import { getAddress, isAddress } from 'viem';
-import { Resolver, UseFormGetValues } from 'react-hook-form';
-import { isValidEns } from 'utils/ens';
+
+import {
+  EditMainSettingsSchema,
+  EditMainSettingsValues,
+  MainSettingsDataContextValue,
+  MainSettingsOverview,
+} from './types';
 
 export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
@@ -86,69 +89,53 @@ export const adminsForRender: MainSettingsOverview[] = [
   },
 ];
 
-export const dashboardFunctionsNamesMap: Record<
-  keyof TxData,
-  'grantRoles' | 'revokeRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
-> = {
-  grantRoles: 'grantRoles',
-  revokeRoles: 'revokeRoles',
-  confirmExpiry: 'setConfirmExpiry',
-  nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
-};
-
 export const multipleDataFields = ['defaultAdmins', 'nodeOperatorManagers'];
 
-export const validateManagers = (
-  getValues: UseFormGetValues<Record<string, any>>,
-): Resolver<ManagersNewAddresses> => {
-  return async (values) => {
-    const addresses = values.addresses;
-    const errors = { addresses: {} } as {
-      addresses: Record<
-        ManagersKeys,
-        Record<number, { value: { message: string } }>
-      >;
-    };
+const baseValidation = zodResolver<
+  EditMainSettingsValues,
+  unknown,
+  EditMainSettingsSchema
+>(
+  // TODO: find a way how to handle zod address type
+  // @ts-expect-error zod Address type is not incompatible to string
+  editMainSettingsSchema,
+  { async: false },
+  {
+    mode: 'sync',
+    raw: false,
+  },
+);
 
-    const keysList = Object.keys(addresses) as ManagersKeys[];
+export const mainSettingsFormResolver: Resolver<
+  EditMainSettingsValues,
+  MainSettingsDataContextValue,
+  EditMainSettingsSchema
+> = async (values, context, options) => {
+  const baseResult = await baseValidation(values, context, options as any);
 
-    keysList.forEach((key: ManagersKeys) => {
-      const payload = addresses[key] ?? [];
-      errors.addresses[key] = {};
+  if (Object.keys(baseResult.errors).length > 0) return baseResult;
+  invariant(context, '[mainSettingsFormResolver] context is undefined');
 
-      payload.forEach((field, index) => {
-        const { value: currentValue } = field;
+  const { nodeOperatorFeeBP } = baseResult.values as EditMainSettingsSchema;
+  const alreadyNoFeeExistsValue = context.nodeOperatorFeeBP.some(
+    (noFeeValue) =>
+      !!noFeeValue.value && noFeeValue.value === nodeOperatorFeeBP,
+  );
 
-        if (!isAddress(currentValue)) {
-          const isValid = isValidEns(currentValue);
-
-          if (!isValid) {
-            errors.addresses[key][index] = {
-              value: {
-                message: 'Invalid ethereum address',
-              },
-            };
-          }
-        }
-
-        const mainFormValues = getValues(key) as RoleFieldSchema[];
-        const filtered = (mainFormValues ?? []).filter(
-          (item) => item.value === currentValue,
-        );
-
-        if (filtered.length > 0) {
-          errors.addresses[key][index] = {
-            value: {
-              message: 'Address already added',
-            },
-          };
-        }
-      });
-    });
-
+  if (alreadyNoFeeExistsValue) {
     return {
-      values,
-      errors,
+      values: {},
+      errors: {
+        nodeOperatorFeeBP: {
+          type: 'validate',
+          message: vaultTexts.common.errors.duplicate,
+        },
+      },
     };
+  }
+
+  return {
+    values: baseResult.values,
+    errors: {},
   };
 };

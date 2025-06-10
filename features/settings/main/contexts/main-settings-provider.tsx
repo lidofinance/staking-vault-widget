@@ -1,6 +1,5 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
@@ -9,7 +8,7 @@ import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useEditMainSettings } from 'features/settings/main/hooks';
 import { useMainSettingsData } from './main-settings-data-provider';
 
-import { editMainSettingsSchema } from 'features/settings/main/consts';
+import { mainSettingsFormResolver } from 'features/settings/main/consts';
 import { EditMainSettingsSchema } from 'features/settings/main/types';
 import { prepareDefaultValues, formatSettingsValues } from '../utils';
 import { VaultInfo } from 'types';
@@ -24,7 +23,8 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     defaultValues: prepareDefaultValues(promisedSettingsData.awaiter),
     disabled: !isDappActive,
     // @ts-expect-error TODO: fix zod Address validation type
-    resolver: zodResolver(editMainSettingsSchema),
+    resolver: mainSettingsFormResolver,
+    context: settingsData,
     mode: 'all',
   });
   const reset = formObject.reset;

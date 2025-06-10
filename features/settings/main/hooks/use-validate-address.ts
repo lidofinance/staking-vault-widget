@@ -25,7 +25,9 @@ export const useAddressValidation = (
         return false;
       }
 
-      const alreadyExists = fields.some((field) => field.value === trimmed);
+      const alreadyExists = fields.some(
+        (field) => field.value.toLowerCase() === trimmed.toLowerCase(),
+      );
       if (alreadyExists) {
         setInputError(DUPLICATED_ADDRESS_MESSAGE);
         return false;
