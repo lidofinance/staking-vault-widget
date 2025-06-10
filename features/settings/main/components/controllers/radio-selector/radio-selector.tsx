@@ -33,10 +33,15 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   title,
 }) => {
   const { isLoading, errors, disabled, isSubmitSuccessful } = useFormState();
+  const { watch } = useFormContext();
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission();
-  const { register, setValue } = useFormContext();
-  const inputError = errors[vaultKey];
+  const { register } = useFormContext();
+
+  const selectedValue = watch(vaultKey);
+  const isCustomSelected = selectedValue === 'custom';
+  const inputKey = `${vaultKey}Custom`;
+  const inputError = isCustomSelected ? errors[inputKey] : undefined;
   const isEditable = !disabled && (hasConfirmingRole || hasPermission);
 
   return (
@@ -50,9 +55,6 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
               const key = `${vaultKey}-${type}-${index}-${value}`;
               const isCustom = type === 'custom';
               const isMy = type === 'My proposal';
-              const isHour = symbol?.includes('hours');
-              // TODO: refactor leak logic abstraction
-              const multiplier = isHour ? 3600 : 1;
               const radioProps = {
                 value: value,
                 symbol: symbol,
@@ -69,15 +71,9 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                     radioProps={radioProps}
                     type={vaultKey}
                     placeholder={placeholder}
-                    setRadioValue={(type, value, options) => {
-                      setValue(
-                        type as keyof VaultInfo,
-                        String(parseFloat(value) * multiplier),
-                        options,
-                      );
-                    }}
                     error={inputError?.message as string}
                     shouldClearField={isSubmitSuccessful}
+                    {...register(inputKey)}
                   />
                 );
 

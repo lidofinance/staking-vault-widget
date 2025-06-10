@@ -47,11 +47,22 @@ export const MainSettingsAction: FC = () => {
         counter += Number(grant > 0) + Number(remove > 0);
       });
 
-      const { nodeOperatorFeeBP, confirmExpiry } = formFields;
+      const {
+        nodeOperatorFeeBP,
+        confirmExpiry,
+        nodeOperatorFeeBPCustom,
+        confirmExpiryCustom,
+      } = formFields;
+      const currentNodeOperatorFeeBP =
+        nodeOperatorFeeBP === 'custom'
+          ? nodeOperatorFeeBPCustom
+          : nodeOperatorFeeBP;
+      const currentConfirmExpiry =
+        confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
       if (
         shouldIncrementTxCounter(
-          nodeOperatorFeeBP,
+          currentNodeOperatorFeeBP,
           mainSettingsData?.nodeOperatorFeeBP.find(
             (item) => item.type === 'current',
           )?.value,
@@ -62,7 +73,7 @@ export const MainSettingsAction: FC = () => {
 
       if (
         shouldIncrementTxCounter(
-          confirmExpiry,
+          currentConfirmExpiry,
           mainSettingsData?.confirmExpiry.find(
             (item) => item.type === 'current',
           )?.value,

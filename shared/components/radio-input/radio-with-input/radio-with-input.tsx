@@ -7,7 +7,6 @@ import {
   useMemo,
   useEffect,
 } from 'react';
-import { UseFormSetValue, FieldValues } from 'react-hook-form';
 import { mergeRefs } from 'utils';
 import { InputProps } from '@lidofinance/lido-ui';
 
@@ -19,69 +18,36 @@ import { formatInputValue } from 'features/settings/main/utils';
 
 type RadioWithInputProps = Omit<InputProps, 'type'> & {
   radioProps: RadioInputProps;
-  setRadioValue: UseFormSetValue<FieldValues>;
   type: string;
   shouldClearField?: boolean;
 };
 
 export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
   (props, ref) => {
-    const {
-      radioProps,
-      setRadioValue,
-      shouldClearField,
-      type,
-      error,
-      ...rest
-    } = props;
+    const { radioProps, shouldClearField, type, error, ...rest } = props;
 
     const [value, setValue] = useState<string>('');
     const [isFocused, setIsFocused] = useState(false);
     const [isDirty, setDirty] = useState(false);
     const radioRef = useRef<HTMLInputElement>(null);
     const hasError = !!error && isDirty;
-    const displayValue = formatInputValue(
-      value,
-      isFocused,
-      hasError,
-      radioProps.symbol,
-      radioProps.format,
-    );
+    const valueToDisplay =
+      formatInputValue(
+        value,
+        isFocused,
+        hasError,
+        radioProps.symbol,
+        radioProps.format,
+      ) || '';
 
     const displayError = useMemo(() => {
       if (hasError) return error;
       return '';
     }, [error, hasError]);
 
-    const updateRadioValue = useCallback(
-      (value: string) => {
-        setRadioValue(type, String(value), {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true,
-        });
-      },
-      [setRadioValue, type],
-    );
-
-    const onChange = useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        if (!isDirty) {
-          setDirty(true);
-        }
-
-        const value = e.target.value;
-        setValue(value);
-        updateRadioValue(value);
-        radioRef.current?.click();
-      },
-      [updateRadioValue, isDirty],
-    );
-
     const onClick = useCallback(() => {
-      updateRadioValue(value);
       radioRef.current?.click();
-    }, [updateRadioValue, value]);
+    }, []);
 
     const handleFocus = useCallback(() => {
       setIsFocused(true);
@@ -93,25 +59,35 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
 
     useEffect(() => {
       if (shouldClearField) {
-        setValue('');
         setDirty(false);
       }
     }, [shouldClearField]);
 
+    const onChange = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        props.onChange?.(e);
+        setValue(e.target.value);
+        setDirty(true);
+      },
+      [props],
+    );
+
     return (
       <RadioInput
         {...radioProps}
-        ref={mergeRefs(ref, radioRef)}
+        ref={mergeRefs(radioProps.ref, radioRef)}
         hasError={hasError}
+        value="custom"
+        valueToDisplay={valueToDisplay}
       >
         <InputStyled
           {...rest}
-          value={displayValue}
           error={displayError}
-          onChange={onChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onClick={onClick}
+          onChange={onChange}
+          ref={ref}
         />
       </RadioInput>
     );

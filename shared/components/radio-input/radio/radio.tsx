@@ -1,4 +1,4 @@
-import { PropsWithChildren, HTMLAttributes, forwardRef } from 'react';
+import { PropsWithChildren, HTMLAttributes, forwardRef, Ref } from 'react';
 
 import {
   RadioInputStyled,
@@ -22,6 +22,8 @@ export type RadioInputProps = PropsWithChildren<
   format?: (arg: string) => string;
   hasError?: boolean;
   disabled?: boolean;
+  ref?: Ref<HTMLInputElement>;
+  valueToDisplay?: string;
 };
 
 export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
@@ -36,7 +38,8 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
       disabled,
       ...rest
     } = props;
-    const valueToDisplay = formatValueView(value, symbol, format);
+    const valueToDisplay =
+      rest.valueToDisplay || formatValueView(value, symbol, format);
 
     return (
       <RadioInputLabel

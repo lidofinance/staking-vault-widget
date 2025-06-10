@@ -28,6 +28,7 @@ export const RadioInputLabel = styled.label<{
   hasError?: boolean;
   disabled?: boolean;
 }>`
+  min-height: 56px;
   display: flex;
   align-items: center;
   padding: ${({ theme }) => theme.spaceMap.md}px;
