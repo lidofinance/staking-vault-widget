@@ -1,14 +1,36 @@
 import invariant from 'tiny-invariant';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
-import { MainSettingsDataContextValue } from './types';
+import {
+  MainSettingsDataContextValue,
+  RoleFieldSchema,
+  EditMainSettingsSchema,
+} from './types';
 import { VaultInfo } from 'types';
+import { multipleDataFields } from './consts';
 
-export const shouldIncrementTxCounter = (
+export const shouldIncrementTxCounterByVoting = (
   value: string,
   defaultValue: string | undefined,
 ) => {
   return value !== defaultValue;
+};
+
+export const shouldIncrementTxCounterByAddresses = (
+  formFields: EditMainSettingsSchema,
+) => {
+  let grant = 0;
+  let remove = 0;
+
+  multipleDataFields.forEach((key) => {
+    const fields = formFields[key];
+    fields.forEach((field: RoleFieldSchema) => {
+      grant += Number(field.state === 'grant');
+      remove += Number(field.state === 'remove');
+    });
+  });
+
+  return Number(grant > 0) + Number(remove > 0);
 };
 
 export const prepareDefaultValues = (
