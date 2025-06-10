@@ -68,7 +68,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       },
     ];
 
-    confirmationsList.map((confirmation) => {
+    confirmationsList.forEach((confirmation) => {
       const type =
         confirmation.member !== address ? 'Proposed to me' : 'My proposal';
       const expiry = formatSecondsToHours(

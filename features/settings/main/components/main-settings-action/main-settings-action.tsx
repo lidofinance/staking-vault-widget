@@ -39,11 +39,22 @@ export const MainSettingsAction: FC = () => {
     if (isValid) {
       counter += shouldIncrementTxCounterByAddresses(formFields);
 
-      const { nodeOperatorFeeBP, confirmExpiry } = formFields;
+      const {
+        nodeOperatorFeeBP,
+        confirmExpiry,
+        nodeOperatorFeeBPCustom,
+        confirmExpiryCustom,
+      } = formFields;
+      const currentNodeOperatorFeeBP =
+        nodeOperatorFeeBP === 'custom'
+          ? nodeOperatorFeeBPCustom
+          : nodeOperatorFeeBP;
+      const currentConfirmExpiry =
+        confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
       if (
         shouldIncrementTxCounterByVoting(
-          nodeOperatorFeeBP,
+          currentNodeOperatorFeeBP,
           mainSettingsData?.nodeOperatorFeeBP.find(
             (item) => item.type === 'current',
           )?.value,
@@ -54,7 +65,7 @@ export const MainSettingsAction: FC = () => {
 
       if (
         shouldIncrementTxCounterByVoting(
-          confirmExpiry,
+          currentConfirmExpiry,
           mainSettingsData?.confirmExpiry.find(
             (item) => item.type === 'current',
           )?.value,

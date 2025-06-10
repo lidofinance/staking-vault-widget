@@ -10,7 +10,7 @@ import { VaultInfo } from 'types';
 import { multipleDataFields } from './consts';
 
 export const shouldIncrementTxCounterByVoting = (
-  value: string,
+  value: string | undefined,
   defaultValue: string | undefined,
 ) => {
   return value !== defaultValue;
@@ -57,7 +57,9 @@ export const prepareDefaultValues = (
       defaultAdmins,
       nodeOperatorManagers,
       confirmExpiry: String(confirmExpiryCurrent),
+      confirmExpiryCustom: '',
       nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
+      nodeOperatorFeeBPCustom: '',
     };
   };
 };
@@ -81,7 +83,7 @@ export const formatValueView = (
   symbol?: string,
   formatter?: (arg: string) => string,
 ) => {
-  if (!value) {
+  if (!value || value === 'custom') {
     return '';
   }
 

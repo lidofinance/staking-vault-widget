@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { getAddress } from 'viem';
-import { Resolver } from 'react-hook-form';
+import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
 
@@ -31,6 +31,7 @@ const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or abov
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 const INVALID_EMPTY_STRING = 'Missing value';
+const DUPLICATE_VALUE = 'Duplicate value';
 
 export const accountSchema = z
   .string()
@@ -54,22 +55,32 @@ export const votingFeeSchema = z.coerce
 
 export const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-  .min(MIN_CONFIRM_EXPIRY_SECONDS, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-  .max(MAX_CONFIRM_EXPIRY_SECONDS, INVALID_NUMBER_EXPIRY_MAX_MESSAGE);
+  .transform((val) => Number(val) * 3600)
+  .refine(
+    (seconds) => seconds >= MIN_CONFIRM_EXPIRY_SECONDS,
+    INVALID_NUMBER_EXPIRY_MIN_MESSAGE,
+  )
+  .refine(
+    (seconds) => seconds <= MAX_CONFIRM_EXPIRY_SECONDS,
+    INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
+  );
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManagers: z.array(addressSchema),
   defaultAdmins: z.array(addressSchema),
-  nodeOperatorFeeBP: z
+  nodeOperatorFeeBP: z.string(),
+  nodeOperatorFeeBPCustom: z
     .string()
-    .refine((val) => val !== '', { message: INVALID_EMPTY_STRING })
     .pipe(votingFeeSchema)
-    .transform((val) => String(val)),
-  confirmExpiry: z
+    .transform((val) => String(val))
+    .optional(),
+
+  confirmExpiry: z.string(),
+  confirmExpiryCustom: z
     .string()
-    .refine((val) => val !== '', { message: INVALID_EMPTY_STRING })
     .pipe(votingLifetimeSchema)
-    .transform((val) => String(val)),
+    .transform((val) => String(val))
+    .optional(),
 });
 
 export const adminsForRender: MainSettingsOverview[] = [
@@ -116,29 +127,93 @@ export const mainSettingsFormResolver: Resolver<
 > = async (values, context, options) => {
   const baseResult = await baseValidation(values, context, options as any);
 
-  if (Object.keys(baseResult.errors).length > 0) return baseResult;
-  invariant(context, '[mainSettingsFormResolver] context is undefined');
+  const errors: FieldErrors<EditMainSettingsSchema> = { ...baseResult.errors };
 
-  const { nodeOperatorFeeBP } = baseResult.values as EditMainSettingsSchema;
-  const alreadyNoFeeExistsValue = context.nodeOperatorFeeBP.some(
-    (noFeeValue) =>
-      !!noFeeValue.value && noFeeValue.value === nodeOperatorFeeBP,
-  );
+  handleCustomFieldErrors(baseResult.errors, errors, values);
 
-  if (alreadyNoFeeExistsValue) {
+  if (Object.keys(baseResult.errors).length > 0) {
     return {
-      values: {},
-      errors: {
-        nodeOperatorFeeBP: {
-          type: 'validate',
-          message: vaultTexts.common.errors.duplicate,
-        },
-      },
+      values: baseResult.values,
+      errors,
     };
   }
+  invariant(context, '[mainSettingsFormResolver] context is undefined');
+
+  checkForDuplicateValues(context, values, errors);
 
   return {
     values: baseResult.values,
-    errors: {},
+    errors,
   };
+};
+
+const handleCustomFieldErrors = (
+  baseResultErrors: FieldErrors<EditMainSettingsValues>,
+  errors: FieldErrors<EditMainSettingsSchema>,
+  values: EditMainSettingsValues,
+) => {
+  const isNodeOperatorFeeBPCustom = values.nodeOperatorFeeBP === 'custom';
+  const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
+  const isNodeOperatorFeeBPEmpty = values.nodeOperatorFeeBPCustom === '';
+  const isConfirmExpiryEmpty = values.confirmExpiryCustom === '';
+
+  if (isNodeOperatorFeeBPCustom && baseResultErrors.nodeOperatorFeeBPCustom) {
+    errors.nodeOperatorFeeBPCustom = baseResultErrors.nodeOperatorFeeBPCustom;
+  } else {
+    delete errors.nodeOperatorFeeBPCustom;
+  }
+
+  if (isConfirmExpiryCustom && baseResultErrors.confirmExpiryCustom) {
+    errors.confirmExpiryCustom = baseResultErrors.confirmExpiryCustom;
+  } else {
+    delete errors.confirmExpiryCustom;
+  }
+
+  if (isNodeOperatorFeeBPCustom && isNodeOperatorFeeBPEmpty) {
+    errors.nodeOperatorFeeBPCustom = {
+      type: 'custom',
+      message: INVALID_EMPTY_STRING,
+    };
+  }
+  if (isConfirmExpiryCustom && isConfirmExpiryEmpty) {
+    errors.confirmExpiryCustom = {
+      type: 'custom',
+      message: INVALID_EMPTY_STRING,
+    };
+  }
+};
+
+const checkForDuplicateValues = (
+  context: MainSettingsDataContextValue,
+  values: EditMainSettingsValues,
+  errors: FieldErrors<EditMainSettingsSchema>,
+) => {
+  const { nodeOperatorFeeBP, confirmExpiry } = context;
+
+  const uniqueNodeOperatorFeeBP = nodeOperatorFeeBP
+    .filter((item) => item.type !== 'custom')
+    .map((item) => item.value);
+  const uniqueConfirmExpiry = confirmExpiry
+    .filter((item) => item.type !== 'custom')
+    .map((item) => Number(item.value));
+
+  const isNodeOperatorFeeBPDuplicate = uniqueNodeOperatorFeeBP.includes(
+    values.nodeOperatorFeeBPCustom ?? '',
+  );
+  const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
+    Number(values.confirmExpiryCustom ?? '') * 3600,
+  );
+
+  if (isNodeOperatorFeeBPDuplicate) {
+    errors.nodeOperatorFeeBPCustom = {
+      type: 'custom',
+      message: DUPLICATE_VALUE,
+    };
+  }
+  if (isConfirmExpiryDuplicate) {
+    errors.confirmExpiryCustom = {
+      type: 'custom',
+      message: DUPLICATE_VALUE,
+    };
+  }
 };
