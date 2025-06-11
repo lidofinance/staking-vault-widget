@@ -67,7 +67,7 @@ export const useConfirmationsInfo = () => {
       const dataObject: Record<Hex, ConfirmationsInfo> = logs
         .filter(
           ({ args }) =>
-            Number(args.expiryTimestamp) * 1000 - new Date().getTime() > 0,
+            Number(args.expiryTimestamp) * 1000 - new Date().getTime() > 0, // TODO: upgrade to when we will have block time new Date().getTime() / 1000 - log.block.time <= activeVault.confirmExpiry
         )
         .sort((a, b) => Number(a.blockNumber) - Number(b.blockNumber))
         .reduce<Record<Hex, ConfirmationsInfo>>((acc, log) => {
