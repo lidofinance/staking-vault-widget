@@ -32,7 +32,8 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   vaultKey,
   title,
 }) => {
-  const { isLoading, errors, disabled, isSubmitSuccessful } = useFormState();
+  const { isLoading, errors, disabled, isSubmitSuccessful, isDirty } =
+    useFormState();
   const { watch, register } = useFormContext();
   const { hasConfirmingRole } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission();
@@ -71,7 +72,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                     type={vaultKey}
                     placeholder={placeholder}
                     error={inputError?.message as string}
-                    shouldClearField={isSubmitSuccessful}
+                    shouldClearField={isSubmitSuccessful || !isDirty}
                     {...register(inputKey)}
                   />
                 );

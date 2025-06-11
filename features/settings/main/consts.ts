@@ -131,7 +131,7 @@ export const mainSettingsFormResolver: Resolver<
 
   handleCustomFieldErrors(baseResult.errors, errors, values);
 
-  if (Object.keys(baseResult.errors).length > 0) {
+  if (Object.keys(errors).length > 0) {
     return {
       values: baseResult.values,
       errors,
@@ -142,7 +142,7 @@ export const mainSettingsFormResolver: Resolver<
   checkForDuplicateValues(context, values, errors);
 
   return {
-    values: baseResult.values,
+    values,
     errors,
   };
 };
