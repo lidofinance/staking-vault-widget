@@ -1,62 +1,70 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 
 import { AddressBadge, AddressBadgeSelectable } from 'shared/components';
+
 import { AddressWrapper } from './styles';
+
 import { RoleFieldSchema } from 'features/settings/main/types';
-import { useFormContext } from 'react-hook-form';
-import { VaultInfo } from 'types';
 
 interface RoleAddressProps {
-  vaultKey: keyof VaultInfo;
   index: number;
   isEditable: boolean;
-  role: RoleFieldSchema;
-  roles: RoleFieldSchema[];
+  field: RoleFieldSchema;
+  isLastField: boolean;
+  hasMultipleValues: boolean;
+  onRemove: (index: number) => void;
+  onUpdate: (index: number, field: RoleFieldSchema) => void;
 }
 
 export const RoleAddress: FC<RoleAddressProps> = ({
-  vaultKey,
   index,
   isEditable,
-  role,
-  roles,
+  field,
+  isLastField,
+  hasMultipleValues,
+  onRemove,
+  onUpdate,
 }) => {
-  const { getValues, setValue } = useFormContext();
-  const itemFormKey = `${vaultKey}.${index}`;
-  if (!('isGranted' in role)) {
-    return null;
-  }
+  const { state } = field;
+  const toRemove = state === 'remove';
+  const toGrant = state === 'grant';
+  const canToggle = (hasMultipleValues && !isLastField) || toRemove || toGrant;
 
-  const toRemove = role.state === 'remove';
-  const isLast = roles.filter((role) => role.state === 'display').length === 1;
-  const canToggle = (roles.length > 1 && !isLast) || toRemove;
   const onToggle = () => {
-    const { state, ...rest } = getValues(itemFormKey) as RoleFieldSchema;
-    const updatedItem = {
-      ...rest,
-      state: state === 'display' ? 'remove' : 'display',
-    };
+    if (toGrant) {
+      onRemove(index);
+      return;
+    }
 
-    setValue(itemFormKey, updatedItem, { shouldDirty: true });
+    onUpdate(index, {
+      ...field,
+      state: state === 'display' ? 'remove' : 'display',
+    });
   };
+
+  const bgColor = useMemo(() => {
+    if (toRemove) return 'error';
+    if (state === 'grant') return 'success';
+    return 'default';
+  }, [toRemove, state]);
 
   return (
     <AddressWrapper>
       {canToggle && isEditable ? (
         <AddressBadgeSelectable
           weight={400}
-          address={role.value}
+          address={field.value}
           checked={toRemove}
-          defaultBg="default"
+          defaultBg={bgColor}
           onCheckedChange={onToggle}
           symbols={21}
         />
       ) : (
         <AddressBadge
           weight={400}
-          address={role.value}
+          address={field.value}
           crossed={toRemove}
-          bgColor="default"
+          bgColor={bgColor}
           symbols={21}
         />
       )}

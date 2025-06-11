@@ -10,6 +10,23 @@ export type GrantOrRevokeRole = {
 };
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
+export type EditMainSettingsValues = {
+  nodeOperatorManagers: EditMainSettingsSchema['nodeOperatorManagers'] | null;
+  defaultAdmins: EditMainSettingsSchema['defaultAdmins'] | null;
+  nodeOperatorFeeBP: EditMainSettingsSchema['nodeOperatorFeeBP'];
+  nodeOperatorFeeBPCustom: EditMainSettingsSchema['nodeOperatorFeeBPCustom'];
+  confirmExpiry: EditMainSettingsSchema['confirmExpiry'];
+  confirmExpiryCustom: EditMainSettingsSchema['confirmExpiryCustom'];
+};
+export type RoleFieldSchema = z.infer<typeof addressSchema>;
+export type VotingOptionType = {
+  value: string;
+  type: 'current' | 'Proposed to me' | 'My proposal' | 'custom';
+  tags: string[];
+  symbol?: string;
+  format?: (seconds: number | string) => string;
+  placeholder?: string;
+};
 
 export type InputDataType =
   | 'address'
@@ -19,9 +36,8 @@ export type InputDataType =
   | 'number';
 
 export type MainSettingsOverview = {
-  name: string;
+  name: ManagersKeys;
   title: string;
-  label: string;
   editLabel: string;
   hint?: string;
   dataType: InputDataType;
@@ -30,15 +46,11 @@ export type MainSettingsOverview = {
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
 
-export type TxData = {
-  grantRoles?: GrantOrRevokeRole[];
-  revokeRoles?: GrantOrRevokeRole[];
-  confirmExpiry?: bigint;
-  nodeOperatorFeeBP?: bigint;
-};
-
-export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
-export type ManagersNewAddresses = {
-  addresses: Record<ManagersKeys, RoleFieldSchema[]>;
+
+export type MainSettingsDataContextValue = {
+  defaultAdmins: RoleFieldSchema[];
+  nodeOperatorManagers: RoleFieldSchema[];
+  nodeOperatorFeeBP: VotingOptionType[];
+  confirmExpiry: VotingOptionType[];
 };

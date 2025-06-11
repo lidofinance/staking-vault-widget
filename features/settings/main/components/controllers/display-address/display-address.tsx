@@ -1,37 +1,61 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
+import { UseFieldArrayRemove, UseFieldArrayUpdate } from 'react-hook-form';
 
-import { VaultInfo } from 'types';
 import { RoleAddress } from './role-address';
-import { RoleFieldSchema } from '../../../types';
-import { useFormContext } from 'react-hook-form';
+
+import {
+  RoleFieldSchema,
+  EditMainSettingsSchema,
+} from 'features/settings/main/types';
 
 interface DisplayAddressProps {
-  vaultKey: keyof VaultInfo;
   isEditable: boolean;
+  fields: (Record<'id', string> & RoleFieldSchema)[];
+  remove: UseFieldArrayRemove;
+  update: UseFieldArrayUpdate<EditMainSettingsSchema>;
 }
 
 export const DisplayAddress: FC<DisplayAddressProps> = ({
   isEditable,
-  vaultKey,
+  fields,
+  remove,
+  update,
 }) => {
-  const { watch } = useFormContext();
-  const roles = watch(vaultKey) as RoleFieldSchema[];
+  const onRemove = useCallback(
+    (index: number) => {
+      remove(index);
+    },
+    [remove],
+  );
+
+  const onUpdate = useCallback(
+    (index: number, field: RoleFieldSchema) => {
+      update(index, field);
+    },
+    [update],
+  );
+
+  const isLastField =
+    fields.filter((field) => field.state === 'display').length === 1;
+  const hasMultipleValues = fields.length > 1;
 
   return (
     <>
-      {!!roles &&
-        roles.map((role, index) => {
-          return (
-            <RoleAddress
-              key={role.value}
-              role={role}
-              roles={roles}
-              index={index}
-              vaultKey={vaultKey}
-              isEditable={isEditable}
-            />
-          );
-        })}
+      {fields.map((field, index) => {
+        const { id, ...fieldData } = field;
+        return (
+          <RoleAddress
+            key={id}
+            index={index}
+            field={fieldData}
+            isLastField={isLastField}
+            hasMultipleValues={hasMultipleValues}
+            isEditable={isEditable}
+            onRemove={onRemove}
+            onUpdate={onUpdate}
+          />
+        );
+      })}
     </>
   );
 };
