@@ -38,5 +38,9 @@ export const withdrawFormResolver: Resolver<
 
   const schema = WithdrawFormSchema(contextValue);
 
-  return zodResolver(schema)(values, contextValue, options);
+  return zodResolver<
+    WithdrawFormFieldValues,
+    unknown,
+    WithdrawFormValidatedValues
+  >(schema)(values, contextValue, options);
 };
