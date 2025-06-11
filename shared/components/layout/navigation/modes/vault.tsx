@@ -1,4 +1,4 @@
-import { Stake, Withdraw, Wrap } from '@lidofinance/lido-ui';
+import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
 import { appPaths } from 'consts/routing';
 import { type Address } from 'viem';
 import { NavList, SelectedVaultWrapper } from '../styles';
@@ -32,7 +32,7 @@ const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   {
     title: 'Validators',
     path: 'https://hoodi.beaconcha.in/validators/deposits?q=',
-    icon: <Wrap />,
+    icon: <External />,
     exact: true,
     external: true,
   },
