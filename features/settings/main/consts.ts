@@ -192,13 +192,13 @@ const checkForDuplicateValues = (
 
   const uniqueNodeOperatorFeeBP = nodeOperatorFeeBP
     .filter((item) => item.type !== 'custom')
-    .map((item) => item.value);
+    .map((item) => Number(item.value));
   const uniqueConfirmExpiry = confirmExpiry
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
 
   const isNodeOperatorFeeBPDuplicate = uniqueNodeOperatorFeeBP.includes(
-    values.nodeOperatorFeeBPCustom ?? '',
+    Number(values.nodeOperatorFeeBPCustom),
   );
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,
