@@ -14,8 +14,13 @@ import { FormControllerStyled } from 'shared/components/form';
 
 import { useClaim } from './use-claim';
 import { useClaimData } from './use-claim-data';
+import { claimFormResolver } from './validation';
 
-import type { ClaimFormFieldValues, ClaimFormValidatedValues } from '../types';
+import type {
+  ClaimFormFieldValues,
+  ClaimFormValidatedValues,
+  ClaimFormValidationContextAwaitable,
+} from '../types';
 
 type ClaimFormContextValue = {
   claimableFeeQuery: ReturnType<typeof useClaimData>['claimableFeeQuery'];
@@ -38,12 +43,13 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { claim, retryEvent } = useClaim();
-  const { claimableFeeQuery, invalidateClaimData } = useClaimData();
+  const { claimableFeeQuery, invalidateClaimData, validationContext } =
+    useClaimData();
   const { isDappActive } = useDappStatus();
 
   const formObject = useForm<
     ClaimFormFieldValues,
-    unknown,
+    ClaimFormValidationContextAwaitable,
     ClaimFormValidatedValues
   >({
     defaultValues: {
@@ -51,6 +57,8 @@ export const ClaimFormProvider: FC<{ children: ReactNode }> = ({
     },
     disabled: !isDappActive,
     mode: 'onTouched',
+    context: validationContext,
+    resolver: claimFormResolver,
   });
 
   const onSubmit = useCallback(

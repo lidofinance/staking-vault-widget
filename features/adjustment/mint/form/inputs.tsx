@@ -4,7 +4,7 @@ import {
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
 
-import { VAULT_MINT_TOKENS } from 'modules/vaults';
+import { VAULT_MINT_TOKENS, vaultTexts } from 'modules/vaults';
 
 import { useMintFormData } from './mint-form-context';
 import { MintFormFieldValues } from './types';
@@ -27,7 +27,10 @@ export const MintFormInputs = () => {
         tokenOptions={VAULT_MINT_TOKENS}
         maxAmount={maxValue}
       />
-      <AddressInputHookForm label={'Mint to address'} fieldName="recipient" />
+      <AddressInputHookForm
+        label={vaultTexts.actions.mint.recipientLabel}
+        fieldName="recipient"
+      />
     </>
   );
 };

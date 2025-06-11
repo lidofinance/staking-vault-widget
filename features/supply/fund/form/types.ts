@@ -1,16 +1,20 @@
 import type { z } from 'zod';
-import type { FundFormSchema } from './fund-form-provider/validation';
+import type { fundFormSchema } from './fund-form-provider/validation';
 import type { useFundFormData } from './fund-form-provider/hooks';
+import type { ValidateRecipientArgs } from 'utils/validate-form-value';
 
 export type FundFormDataValidationContext = {
   ethBalance: bigint;
   wethBalance: bigint;
+  validateRecipientArgs: ValidateRecipientArgs;
 };
 
 export type FundFormDataAwaitableValidationContext =
   Promise<FundFormDataValidationContext>;
 
-export type FundFormValidatedValues = z.infer<typeof FundFormSchema>;
+export type FundFormValidatedValues = z.infer<
+  ReturnType<typeof fundFormSchema>
+>;
 
 export type FundFormFieldValues = {
   // booleans as is

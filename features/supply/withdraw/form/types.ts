@@ -1,8 +1,11 @@
 import type { z } from 'zod';
 import type { WithdrawFormSchema } from './withdraw-form-context/validation';
 import type { useWithdrawable } from './hooks';
+import type { ValidateRecipientArgs } from 'utils/validate-form-value';
 
-export type WithdrawFormValidatedValues = z.infer<typeof WithdrawFormSchema>;
+export type WithdrawFormValidatedValues = z.infer<
+  ReturnType<typeof WithdrawFormSchema>
+>;
 
 export type WithdrawFormFieldValues = {
   amount: WithdrawFormValidatedValues['amount'] | null;
@@ -13,6 +16,7 @@ export type WithdrawFormFieldValues = {
 
 export type WithdrawFormValidationContext = {
   withdrawableEther: bigint;
+  validateRecipientArgs: ValidateRecipientArgs;
 };
 
 export type WithdrawFormValidationContextAwaitable =
