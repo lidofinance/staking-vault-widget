@@ -1,9 +1,15 @@
-import { PermissionedSubmitButton } from 'modules/vaults/components';
+import { useFormContext, useFormState } from 'react-hook-form';
 
-import { useFormState } from 'react-hook-form';
+import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
+
+import type { WithdrawFormFieldValues } from '../types';
 
 export const SubmitButton = () => {
   const { isSubmitting, disabled } = useFormState();
+  const [amount, token] = useFormContext<WithdrawFormFieldValues>().watch([
+    'amount',
+    'token',
+  ]);
 
   const isDisabled = isSubmitting || disabled;
 
@@ -13,7 +19,7 @@ export const SubmitButton = () => {
       dashboardRole="withdrawer"
       disabled={isDisabled}
     >
-      Withdraw
+      {vaultTexts.actions.withdraw.submit(token, amount)}
     </PermissionedSubmitButton>
   );
 };

@@ -1,23 +1,34 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import { useFormState, useWatch } from 'react-hook-form';
+import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, MultiplePermissionedSubmitButton } from 'modules/vaults';
 
-import { FundFormValidatedValues } from './types';
+import { useFundForm } from './fund-form-provider';
+
+import type { FundFormFieldValues } from './types';
 
 const FUND_ROLES = ['supplier'] as const;
 const FUND_MINT_ROLES = ['supplier', 'minter'] as const;
 
 export const SubmitButton = () => {
-  const { mintSteth, token } = useWatch<FundFormValidatedValues>();
+  const [amount, token, mintSteth] =
+    useFormContext<FundFormFieldValues>().watch([
+      'amount',
+      'token',
+      'mintSteth',
+    ]);
+
   const { isSubmitting, disabled } = useFormState();
+  const { maxMintableStethQuery } = useFundForm();
 
   const isDisabled = isSubmitting || disabled;
 
   const submitText = mintSteth
-    ? vaultTexts.actions.supply.submit.supplyMint
-    : vaultTexts.actions.supply.submit.supply;
+    ? vaultTexts.actions.supply.submit.supplyMint(
+        token,
+        amount,
+        maxMintableStethQuery.data,
+      )
+    : vaultTexts.actions.supply.submit.supply(token, amount);
 
   return (
     <MultiplePermissionedSubmitButton
@@ -26,7 +37,7 @@ export const SubmitButton = () => {
       loading={isSubmitting}
       disabled={isDisabled}
     >
-      {submitText(token!)}
+      {submitText}
     </MultiplePermissionedSubmitButton>
   );
 };
