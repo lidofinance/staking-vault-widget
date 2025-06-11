@@ -6,6 +6,9 @@ type ExternalToken = 'ETH' | 'wETH';
 
 type ConfirmAction = 'Setting' | 'Proposing';
 
+const balance = (amount?: bigint | null, fallback = '') =>
+  amount ? formatBalance(amount).trimmed + ' ' : fallback;
+
 // This structure contains texts related to vault functionality
 // such texts for actions, metrics, roles and etc
 export const vaultTexts = {
@@ -57,11 +60,15 @@ export const vaultTexts = {
       available: `Available to mint`,
       loading: (token: LidoToken) => `Minting ${token}` as const,
       completed: (token: LidoToken) => `${token} minted` as const,
+      submit: (token: LidoToken, amount?: bigint | null) =>
+        `Mint ${balance(amount)}${token}` as const,
     },
     repay: {
       available: `Available to repay`,
       loading: (token: LidoToken) => `Repaying ${token}` as const,
       completed: (token: LidoToken) => `Repaid ${token} ` as const,
+      submit: (token: LidoToken, amount?: bigint | null) =>
+        `Repay ${balance(amount)}${token}` as const,
     },
     supply: {
       available: `Available to supply`,
@@ -70,9 +77,14 @@ export const vaultTexts = {
         mintTo: 'Mint to address',
       },
       submit: {
-        supply: (token: ExternalToken) => `Supply ${token}` as const,
-        supplyMint: (token: ExternalToken) =>
-          `Supply ${token} & Mint stETH` as const,
+        supply: (token: ExternalToken, amount?: bigint | null) =>
+          `Supply ${balance(amount)}${token}` as const,
+        supplyMint: (
+          token: ExternalToken,
+          amount?: bigint | null,
+          amountSteth?: bigint | null,
+        ) =>
+          `Supply ${balance(amount)}${token} & Mint ${balance(amountSteth)}stETH` as const,
       },
       loading: 'Supplying ETH into the vault',
       completed: 'ETH supplied',
@@ -81,16 +93,14 @@ export const vaultTexts = {
       available: `Available to withdraw`,
       loading: ' Withdrawing ETH from the vault',
       completed: 'ETH withdrawn',
+      submit: (token: ExternalToken, amount?: bigint | null) =>
+        `Withdraw ${balance(amount)}${token}` as const,
     },
     claim: {
       available: `Available to claim`,
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
-        `Claim${
-          claimableAmount
-            ? ` ${formatBalance(claimableAmount).trimmed} ETH`
-            : ''
-        }` as const,
+        `Claim ${balance(claimableAmount)}ETH` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },
