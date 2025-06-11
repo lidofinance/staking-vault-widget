@@ -343,6 +343,7 @@ export const vaultTexts = {
           `Amount must be less than  ${formatBalance(max).trimmed}` as const,
       },
       address: {
+        required: 'Address is required',
         invalid: 'Invalid ethereum address',
         vault: 'Recipient cannot be stVault',
         dashboard: 'Recipient cannot be stVault Dashboard',

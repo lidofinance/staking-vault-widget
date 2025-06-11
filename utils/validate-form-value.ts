@@ -5,6 +5,7 @@ import { appendErrors, FieldError, Resolver } from 'react-hook-form';
 import { isZodError } from 'utils/errors';
 import { vaultTexts } from 'modules/vaults';
 
+// TODO: remove
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
   validateAllFieldCriteria: boolean,
@@ -85,11 +86,14 @@ const validateAddress = (value: string | null) => !!(value && isAddress(value));
 
 export const addressSchema = z
   .string()
+  .nonempty({
+    message: vaultTexts.common.errors.address.required,
+  })
   .trim()
+  .transform((value) => value.toLocaleLowerCase() as Address)
   .refine(validateAddress, {
     message: vaultTexts.common.errors.address.invalid,
-  })
-  .transform((value) => value.toLocaleLowerCase() as Address);
+  });
 
 export const amountSchema = z
   .bigint({ message: vaultTexts.common.errors.amount.required })
