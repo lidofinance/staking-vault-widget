@@ -60,6 +60,7 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
     useEffect(() => {
       if (shouldClearField) {
         setDirty(false);
+        setValue('');
       }
     }, [shouldClearField]);
 

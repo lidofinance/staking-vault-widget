@@ -4,6 +4,7 @@ import {
   useVaultInfo,
   useVaultPermission,
   VAULT_TOTAL_BASIS_POINTS,
+  VAULT_TOTAL_BASIS_POINTS_BN,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
 } from 'modules/vaults';
@@ -105,11 +106,15 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { nodeOperatorFeeBP } = payload;
-        const feeValue = Number(nodeOperatorFeeBP);
+        const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const feeValue = Number(
+          nodeOperatorFeeBP !== 'custom'
+            ? nodeOperatorFeeBP
+            : nodeOperatorFeeBPCustom,
+        );
         const currentFee = Number(
-          (activeVault.nodeOperatorFeeBP * 100n) /
-            BigInt(VAULT_TOTAL_BASIS_POINTS),
+          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
         );
         const isFeeValueChanged = feeValue !== currentFee;
 
@@ -132,8 +137,11 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { confirmExpiry } = payload;
-        const expiryValue = BigInt(confirmExpiry);
+        const { confirmExpiry, confirmExpiryCustom } = payload;
+        const expiryValue =
+          confirmExpiry === 'custom' && confirmExpiryCustom
+            ? BigInt(confirmExpiryCustom) * 3600n
+            : BigInt(confirmExpiry);
         const currentExpiry = activeVault.confirmExpiry;
         const isExpiryValueChanged = expiryValue !== currentExpiry;
 
