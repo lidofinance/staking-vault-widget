@@ -1,4 +1,4 @@
-import { Stake, Withdraw, Wrap } from '@lidofinance/lido-ui';
+import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
 import { appPaths } from 'consts/routing';
 import { type Address } from 'viem';
 import { NavList, SelectedVaultWrapper } from '../styles';
@@ -31,9 +31,10 @@ const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   },
   {
     title: 'Validators',
-    path: appPaths.vaults.vault(vaultAddress).validators,
-    icon: <Wrap />,
+    path: 'https://hoodi.beaconcha.in/validators/deposits?q=',
+    icon: <External />,
     exact: true,
+    external: true,
   },
   {
     title: 'Claim Fees',
@@ -54,7 +55,7 @@ const vaultPathnames = vaultRoutes('[vaultAddress]' as any, '[mode]').map(
 );
 
 export const VaultNavigation = () => {
-  const { vaultAddress } = useVaultInfo();
+  const { vaultAddress, activeVault } = useVaultInfo();
 
   const availableRoutes = useMemo(
     () => (vaultAddress ? vaultRoutes(vaultAddress) : []),
@@ -72,15 +73,24 @@ export const VaultNavigation = () => {
         />
       </SelectedVaultWrapper>
       <NavList>
-        {availableRoutes.map(({ title, path, icon }, index) => (
-          <NavigationLink
-            icon={icon}
-            title={title}
-            path={path}
-            key={path}
-            customPathname={vaultPathnames[index]}
-          />
-        ))}
+        {availableRoutes.map(({ title, path, icon, external }, index) => {
+          const isValidatorsLink = title === 'Validators';
+          const validatorsPath =
+            isValidatorsLink && activeVault
+              ? `${path}${activeVault?.withdrawalCredentials}`
+              : path;
+
+          return (
+            <NavigationLink
+              icon={icon}
+              title={title}
+              path={validatorsPath}
+              key={path}
+              customPathname={vaultPathnames[index]}
+              external={external}
+            />
+          );
+        })}
       </NavList>
     </>
   );
