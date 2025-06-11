@@ -61,7 +61,6 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },
     disabled: !isDappActive,
     mode: 'onTouched',
-    shouldFocusError: true,
     resolver: mintFormResolver,
     context: validationContext,
   });
