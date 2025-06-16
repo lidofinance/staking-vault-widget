@@ -1,0 +1,17 @@
+{
+  "contracts": {
+    "lidoLocator": "",
+    "stakingRouter": "",
+    "withdrawalQueue": "",
+    "lido": "",
+    "wsteth": "",
+    "weth": "0x2387fD72C1DA19f6486B843F5da562679FbB4057",
+    "predepositGuarantee": "",
+    "vaultFactory": "",
+    "vaultHub": "",
+    "vaultViewer": "",
+    "lazyOracle": "",
+    "operatorGrid": ""
+  },
+  "api": {}
+}

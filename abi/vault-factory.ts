@@ -74,6 +74,12 @@ export const VaultFactoryAbi = [
       {
         indexed: true,
         internalType: 'address',
+        name: 'vault',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'admin',
         type: 'address',
       },
@@ -88,12 +94,6 @@ export const VaultFactoryAbi = [
         indexed: true,
         internalType: 'address',
         name: 'vault',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'owner',
         type: 'address',
       },
     ],
@@ -183,11 +183,6 @@ export const VaultFactoryAbi = [
         name: '_roleAssignments',
         type: 'tuple[]',
       },
-      {
-        internalType: 'bytes',
-        name: '_extraParams',
-        type: 'bytes',
-      },
     ],
     name: 'createVaultWithDashboard',
     outputs: [
@@ -205,21 +200,65 @@ export const VaultFactoryAbi = [
     stateMutability: 'payable',
     type: 'function',
   },
-  // Added for better decoding of errors
   {
     inputs: [
       {
         internalType: 'address',
-        name: 'account',
+        name: '_defaultAdmin',
         type: 'address',
       },
       {
-        internalType: 'bytes32',
-        name: 'neededRole',
-        type: 'bytes32',
+        internalType: 'address',
+        name: '_nodeOperator',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_nodeOperatorManager',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_nodeOperatorFeeBP',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_confirmExpiry',
+        type: 'uint256',
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'account',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes32',
+            name: 'role',
+            type: 'bytes32',
+          },
+        ],
+        internalType: 'struct Permissions.RoleAssignment[]',
+        name: '_roleAssignments',
+        type: 'tuple[]',
       },
     ],
-    name: 'AccessControlUnauthorizedAccount',
-    type: 'error',
+    name: 'createVaultWithDashboardWithoutConnectingToVaultHub',
+    outputs: [
+      {
+        internalType: 'contract IStakingVault',
+        name: 'vault',
+        type: 'address',
+      },
+      {
+        internalType: 'contract Dashboard',
+        name: 'dashboard',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
   },
 ] as const;

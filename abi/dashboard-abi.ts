@@ -16,6 +16,11 @@ export const dashboardAbi = [
         name: '_vaultHub',
         type: 'address',
       },
+      {
+        internalType: 'address',
+        name: '_lidoLocator',
+        type: 'address',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -43,12 +48,32 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'AdjustmentNotReported',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'AdjustmentNotSettled',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'AlreadyInitialized',
     type: 'error',
   },
   {
     inputs: [],
     name: 'ConfirmExpiryOutOfBounds',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ConnectedToVaultHub',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'DashboardNotAllowed',
     type: 'error',
   },
   {
@@ -65,6 +90,38 @@ export const dashboardAbi = [
       },
     ],
     name: 'EthTransferFailed',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'requestedShares',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'remainingShares',
+        type: 'uint256',
+      },
+    ],
+    name: 'ExceedsMintingCapacity',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'withdrawableValue',
+        type: 'uint256',
+      },
+    ],
+    name: 'ExceedsWithdrawable',
     type: 'error',
   },
   {
@@ -94,34 +151,13 @@ export const dashboardAbi = [
     type: 'error',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'locked',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'mintableValue',
-        type: 'uint256',
-      },
-    ],
-    name: 'MintingCapacityExceeded',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NoUnclaimedFee',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NodeOperatorFeeUnclaimed',
-    type: 'error',
-  },
-  {
     inputs: [],
     name: 'NonProxyCallsForbidden',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ReportStale',
     type: 'error',
   },
   {
@@ -142,33 +178,31 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'SameRecipient',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'SenderNotMember',
     type: 'error',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'unreserved',
-        type: 'uint256',
-      },
-    ],
-    name: 'WithdrawalAmountExceedsUnreserved',
+    inputs: [],
+    name: 'TierChangeNotConfirmed',
     type: 'error',
   },
   {
-    inputs: [
-      {
-        internalType: 'string',
-        name: 'argument',
-        type: 'string',
-      },
-    ],
+    inputs: [],
+    name: 'VaultQuarantined',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ZeroAddress',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'ZeroArgument',
     type: 'error',
   },
@@ -176,25 +210,6 @@ export const dashboardAbi = [
     inputs: [],
     name: 'ZeroConfirmingRoles',
     type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'newAdjustment',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'oldAdjustment',
-        type: 'uint256',
-      },
-    ],
-    name: 'AccruedRewardsAdjustmentSet',
-    type: 'event',
   },
   {
     anonymous: false,
@@ -289,17 +304,80 @@ export const dashboardAbi = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'oldNodeOperatorFeeBP',
+        name: 'fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'NodeOperatorFeeDisbursed',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldNodeOperatorFeeRate',
         type: 'uint256',
       },
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'newNodeOperatorFeeBP',
+        name: 'newNodeOperatorFeeRate',
         type: 'uint256',
       },
     ],
-    name: 'NodeOperatorFeeBPSet',
+    name: 'NodeOperatorFeeRateSet',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'sender',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'oldNodeOperatorFeeRecipient',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'newNodeOperatorFeeRecipient',
+        type: 'address',
+      },
+    ],
+    name: 'NodeOperatorFeeRecipientSet',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newAdjustment',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldAdjustment',
+        type: 'uint256',
+      },
+    ],
+    name: 'RewardsAdjustmentSet',
     type: 'event',
   },
   {
@@ -370,6 +448,12 @@ export const dashboardAbi = [
       {
         indexed: false,
         internalType: 'uint256',
+        name: 'confirmTimestamp',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
         name: 'expiryTimestamp',
         type: 'uint256',
       },
@@ -418,24 +502,37 @@ export const dashboardAbi = [
         type: 'address',
       },
       {
-        indexed: true,
-        internalType: 'bytes',
-        name: 'pubkey',
-        type: 'bytes',
+        indexed: false,
+        internalType: 'uint256',
+        name: 'deposits',
+        type: 'uint256',
       },
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'amount',
+        name: 'totalAmount',
         type: 'uint256',
       },
     ],
-    name: 'UnguaranteedDeposit',
+    name: 'UnguaranteedDeposits',
     type: 'event',
   },
   {
     inputs: [],
     name: 'BURN_ROLE',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'CHANGE_TIER_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -487,12 +584,12 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'LIDO_VAULTHUB_AUTHORIZATION_ROLE',
+    name: 'LIDO_LOCATOR',
     outputs: [
       {
-        internalType: 'bytes32',
+        internalType: 'contract ILidoLocator',
         name: '',
-        type: 'bytes32',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -500,38 +597,12 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'LIDO_VAULTHUB_DEAUTHORIZATION_ROLE',
+    name: 'MANUAL_REWARDS_ADJUSTMENT_LIMIT',
     outputs: [
       {
-        internalType: 'bytes32',
+        internalType: 'uint128',
         name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'LOCK_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'MANUAL_ACCRUED_REWARDS_ADJUSTMENT_LIMIT',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        type: 'uint128',
       },
     ],
     stateMutability: 'view',
@@ -578,19 +649,6 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'NODE_OPERATOR_FEE_CLAIM_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'NODE_OPERATOR_MANAGER_ROLE',
     outputs: [
       {
@@ -605,19 +663,6 @@ export const dashboardAbi = [
   {
     inputs: [],
     name: 'NODE_OPERATOR_REWARDS_ADJUST_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'OSSIFY_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -695,19 +740,6 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'REQUEST_TIER_CHANGE_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'REQUEST_VALIDATOR_EXIT_ROLE',
     outputs: [
       {
@@ -721,33 +753,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'RESET_LOCKED_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'RESUME_BEACON_CHAIN_DEPOSITS_ROLE',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'SET_DEPOSITOR_ROLE',
     outputs: [
       {
         internalType: 'bytes32',
@@ -850,21 +856,14 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'accruedRewardsAdjustment',
-    outputs: [
+    inputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        internalType: 'address',
+        name: '_newOwner',
+        type: 'address',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'authorizeLidoVaultHub',
+    name: 'abandonDashboard',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -911,13 +910,24 @@ export const dashboardAbi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_recipient',
-        type: 'address',
+        internalType: 'uint256',
+        name: '_tierId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_requestedShareLimit',
+        type: 'uint256',
       },
     ],
-    name: 'claimNodeOperatorFee',
-    outputs: [],
+    name: 'changeTier',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -943,20 +953,20 @@ export const dashboardAbi = [
     inputs: [
       {
         internalType: 'bytes',
-        name: 'callData',
+        name: '_callData',
         type: 'bytes',
       },
       {
         internalType: 'bytes32',
-        name: 'role',
+        name: '_role',
         type: 'bytes32',
       },
     ],
-    name: 'confirmations',
+    name: 'confirmation',
     outputs: [
       {
         internalType: 'uint256',
-        name: 'expiryTimestamp',
+        name: '',
         type: 'uint256',
       },
     ],
@@ -977,10 +987,53 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_tierId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_requestedShareLimit',
+        type: 'uint256',
+      },
+    ],
+    name: 'connectAndAcceptTier',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
     inputs: [],
-    name: 'deauthorizeLidoVaultHub',
+    name: 'connectToVaultHub',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'disburseNodeOperatorFee',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'feePeriodStartReport',
+    outputs: [
+      {
+        internalType: 'uint128',
+        name: 'totalValue',
+        type: 'uint128',
+      },
+      {
+        internalType: 'int112',
+        name: 'inOutDelta',
+        type: 'int112',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1172,9 +1225,22 @@ export const dashboardAbi = [
         type: 'uint256',
       },
     ],
-    name: 'increaseAccruedRewardsAdjustment',
+    name: 'increaseRewardsAdjustment',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'infraFeeBP',
+    outputs: [
+      {
+        internalType: 'uint16',
+        name: '',
+        type: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1220,28 +1286,79 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'liabilityShares',
+    name: 'latestReport',
     outputs: [
       {
-        internalType: 'uint96',
+        components: [
+          {
+            internalType: 'uint128',
+            name: 'totalValue',
+            type: 'uint128',
+          },
+          {
+            internalType: 'int112',
+            name: 'inOutDelta',
+            type: 'int112',
+          },
+        ],
+        internalType: 'struct VaultHub.Report',
         name: '',
-        type: 'uint96',
+        type: 'tuple',
       },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'liabilityShares',
+    outputs: [
       {
         internalType: 'uint256',
-        name: '_amount',
+        name: '',
         type: 'uint256',
       },
     ],
-    name: 'lock',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'liquidityFeeBP',
+    outputs: [
+      {
+        internalType: 'uint16',
+        name: '',
+        type: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'locked',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'maxLockableValue',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1300,7 +1417,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'nodeOperatorFeeBP',
+    name: 'nodeOperatorDisbursableFee',
     outputs: [
       {
         internalType: 'uint256',
@@ -1313,30 +1430,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'nodeOperatorFeeClaimedReport',
-    outputs: [
-      {
-        internalType: 'uint128',
-        name: 'totalValue',
-        type: 'uint128',
-      },
-      {
-        internalType: 'int128',
-        name: 'inOutDelta',
-        type: 'int128',
-      },
-      {
-        internalType: 'uint64',
-        name: 'timestamp',
-        type: 'uint64',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'nodeOperatorUnclaimedFee',
+    name: 'nodeOperatorFeeRate',
     outputs: [
       {
         internalType: 'uint256',
@@ -1349,9 +1443,15 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'ossifyStakingVault',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    name: 'nodeOperatorFeeRecipient',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1385,6 +1485,16 @@ export const dashboardAbi = [
             name: 'childBlockTimestamp',
             type: 'uint64',
           },
+          {
+            internalType: 'uint64',
+            name: 'slot',
+            type: 'uint64',
+          },
+          {
+            internalType: 'uint64',
+            name: 'proposerIndex',
+            type: 'uint64',
+          },
         ],
         internalType: 'struct IPredepositGuarantee.ValidatorWitness[]',
         name: '_witnesses',
@@ -1407,6 +1517,13 @@ export const dashboardAbi = [
     name: 'rebalanceVault',
     outputs: [],
     stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'reconnectToVaultHub',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1463,7 +1580,7 @@ export const dashboardAbi = [
         type: 'uint256',
       },
     ],
-    name: 'remainingMintingCapacity',
+    name: 'remainingMintingCapacityShares',
     outputs: [
       {
         internalType: 'uint256',
@@ -1495,19 +1612,6 @@ export const dashboardAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_tierId',
-        type: 'uint256',
-      },
-    ],
-    name: 'requestTierChange',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'bytes',
         name: '_pubkeys',
         type: 'bytes',
@@ -1516,6 +1620,19 @@ export const dashboardAbi = [
     name: 'requestValidatorExit',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'reservationFeeBP',
+    outputs: [
+      {
+        internalType: 'uint16',
+        name: '',
+        type: 'uint16',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1529,13 +1646,6 @@ export const dashboardAbi = [
       },
     ],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'resetLocked',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -1589,21 +1699,21 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'rewardsAdjustment',
+    outputs: [
       {
-        internalType: 'uint256',
-        name: '_newAdjustment',
-        type: 'uint256',
+        internalType: 'uint128',
+        name: 'amount',
+        type: 'uint128',
       },
       {
-        internalType: 'uint256',
-        name: '_currentAdjustment',
-        type: 'uint256',
+        internalType: 'uint64',
+        name: 'latestTimestamp',
+        type: 'uint64',
       },
     ],
-    name: 'setAccruedRewardsAdjustment',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1615,7 +1725,32 @@ export const dashboardAbi = [
       },
     ],
     name: 'setConfirmExpiry',
-    outputs: [],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_newNodeOperatorFeeRate',
+        type: 'uint256',
+      },
+    ],
+    name: 'setNodeOperatorFeeRate',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -1623,11 +1758,11 @@ export const dashboardAbi = [
     inputs: [
       {
         internalType: 'address',
-        name: '_depositor',
+        name: '_newNodeOperatorFeeRecipient',
         type: 'address',
       },
     ],
-    name: 'setDepositor',
+    name: 'setNodeOperatorFeeRecipient',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -1636,12 +1771,23 @@ export const dashboardAbi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_newNodeOperatorFeeBP',
+        name: '_proposedAdjustment',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_expectedAdjustment',
         type: 'uint256',
       },
     ],
-    name: 'setNodeOperatorFeeBP',
-    outputs: [],
+    name: 'setRewardsAdjustment',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -1650,9 +1796,9 @@ export const dashboardAbi = [
     name: 'shareLimit',
     outputs: [
       {
-        internalType: 'uint96',
+        internalType: 'uint256',
         name: '',
-        type: 'uint96',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -1692,7 +1838,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'totalMintingCapacity',
+    name: 'totalMintingCapacityShares',
     outputs: [
       {
         internalType: 'uint256',
@@ -1724,22 +1870,9 @@ export const dashboardAbi = [
         type: 'address',
       },
     ],
-    name: 'transferStakingVaultOwnership',
+    name: 'transferVaultOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'treasuryFeeBP',
-    outputs: [
-      {
-        internalType: 'uint16',
-        name: '',
-        type: 'uint16',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1760,7 +1893,7 @@ export const dashboardAbi = [
         type: 'address',
       },
     ],
-    name: 'triggerValidatorWithdrawal',
+    name: 'triggerValidatorWithdrawals',
     outputs: [],
     stateMutability: 'payable',
     type: 'function',
@@ -1790,7 +1923,7 @@ export const dashboardAbi = [
             type: 'bytes32',
           },
         ],
-        internalType: 'struct StakingVaultDeposit[]',
+        internalType: 'struct IStakingVault.Deposit[]',
         name: '_deposits',
         type: 'tuple[]',
       },
@@ -1808,7 +1941,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'unreserved',
+    name: 'unsettledObligations',
     outputs: [
       {
         internalType: 'uint256',
@@ -1821,24 +1954,29 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'vaultSocket',
+    name: 'vaultConnection',
     outputs: [
       {
         components: [
           {
             internalType: 'address',
-            name: 'vault',
+            name: 'owner',
             type: 'address',
-          },
-          {
-            internalType: 'uint96',
-            name: 'liabilityShares',
-            type: 'uint96',
           },
           {
             internalType: 'uint96',
             name: 'shareLimit',
             type: 'uint96',
+          },
+          {
+            internalType: 'uint96',
+            name: 'vaultIndex',
+            type: 'uint96',
+          },
+          {
+            internalType: 'bool',
+            name: 'pendingDisconnect',
+            type: 'bool',
           },
           {
             internalType: 'uint16',
@@ -1852,21 +1990,26 @@ export const dashboardAbi = [
           },
           {
             internalType: 'uint16',
-            name: 'treasuryFeeBP',
+            name: 'infraFeeBP',
+            type: 'uint16',
+          },
+          {
+            internalType: 'uint16',
+            name: 'liquidityFeeBP',
+            type: 'uint16',
+          },
+          {
+            internalType: 'uint16',
+            name: 'reservationFeeBP',
             type: 'uint16',
           },
           {
             internalType: 'bool',
-            name: 'pendingDisconnect',
+            name: 'isBeaconDepositsManuallyPaused',
             type: 'bool',
           },
-          {
-            internalType: 'uint96',
-            name: 'feeSharesCharged',
-            type: 'uint96',
-          },
         ],
-        internalType: 'struct VaultHub.VaultSocket',
+        internalType: 'struct VaultHub.VaultConnection',
         name: '',
         type: 'tuple',
       },
@@ -1901,7 +2044,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'withdrawableEther',
+    name: 'withdrawableValue',
     outputs: [
       {
         internalType: 'uint256',

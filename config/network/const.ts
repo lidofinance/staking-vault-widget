@@ -14,6 +14,7 @@ const CONTRACT_LIST = [
   'predepositGuarantee',
   'vaultHub',
   'vaultFactory',
+  'lazyOracle',
   'vaultViewer',
   'operatorGrid',
   'weth',
