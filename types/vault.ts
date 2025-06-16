@@ -24,6 +24,7 @@ export type VaultInfo = VaultSocket & {
   balance: bigint;
   nodeOperatorFeeBP: bigint;
   confirmExpiry: bigint;
+  withdrawalCredentials: Address;
 };
 
 export type VaultSocket = ReadContractReturnType<

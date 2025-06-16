@@ -1,65 +1,73 @@
-import { FC, PropsWithChildren, useCallback, useEffect } from 'react';
-import type { Address } from 'viem';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
-import { useVaultInfo } from 'modules/vaults';
 import { FormController } from 'shared/hook-form/form-controller';
-import { validateFormWithZod } from 'utils/validate-form-value';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
 
-import {
-  EditMainSettingsSchema,
-  ManagersKeys,
-  RoleFieldSchema,
-} from 'features/settings/main/types';
 import { useEditMainSettings } from 'features/settings/main/hooks';
-import {
-  editMainSettingsSchema,
-  multipleDataFields,
-} from 'features/settings/main/consts';
+import { useMainSettingsData } from './main-settings-data-provider';
+
+import { mainSettingsFormResolver } from 'features/settings/main/consts';
+
+import { prepareDefaultValues, formatSettingsValues } from '../utils';
+import type {
+  EditMainSettingsSchema,
+  MainSettingsDataContextValue,
+} from 'features/settings/main/types';
+import type { VaultInfo } from 'types';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, isRefetching } = useVaultInfo();
   const { isDappActive } = useDappStatus();
   const { editMainSettings, retryEvent } = useEditMainSettings();
+  const settingsData = useMainSettingsData();
+  const promisedSettingsData = useAwaiter(settingsData);
 
-  const formObject = useForm<EditMainSettingsSchema>({
-    defaultValues: {
-      nodeOperatorManagers: [],
-      nodeOperatorFeeBP: [],
-      confirmExpiry: [],
-      defaultAdmins: [],
-    },
+  const formObject = useForm<
+    EditMainSettingsSchema,
+    MainSettingsDataContextValue | null,
+    EditMainSettingsSchema
+  >({
+    defaultValues: prepareDefaultValues(promisedSettingsData.awaiter),
     disabled: !isDappActive,
-    resolver: validateFormWithZod(editMainSettingsSchema),
+    // @ts-expect-error TODO: fix zod Address validation type
+    resolver: mainSettingsFormResolver,
+    context: settingsData,
     mode: 'all',
   });
+  const reset = formObject.reset;
 
-  useEffect(() => {
-    if (!isRefetching) {
-      (multipleDataFields as ManagersKeys[]).map((key) => {
-        const managersAddresses = activeVault?.[key];
-        if (managersAddresses && managersAddresses.length > 0) {
-          managersAddresses.forEach((address: Address, index: number) => {
-            const value = {
-              value: address,
-              state: 'display',
-              isGranted: true,
-            } as unknown as RoleFieldSchema;
-            formObject.setValue(`${key}.${index}` as const, value);
-          });
-        }
-      });
-    }
-  }, [formObject, activeVault, isRefetching]);
+  const resetFields = useCallback(
+    (vaultInfo: VaultInfo) => {
+      const {
+        confirmExpiryValue,
+        nodeOperatorFeeBPValue,
+        defaultAdmins,
+        nodeOperatorManagers,
+      } = formatSettingsValues(vaultInfo);
+
+      const resetFields = {
+        defaultAdmins,
+        nodeOperatorManagers,
+        confirmExpiry: confirmExpiryValue,
+        nodeOperatorFeeBP: nodeOperatorFeeBPValue,
+      };
+
+      // TODO: think about moving reset to the form controller
+      reset(resetFields);
+    },
+    [reset],
+  );
 
   const onSubmit = useCallback(
     async (data: EditMainSettingsSchema): Promise<boolean> => {
-      const { success } = await editMainSettings(data);
+      const { result, vaultInfo } = await editMainSettings(data);
 
-      return success;
+      if (result.success && vaultInfo.data) resetFields(vaultInfo.data);
+
+      return result.success;
     },
-    [editMainSettings],
+    [editMainSettings, resetFields],
   );
 
   return (

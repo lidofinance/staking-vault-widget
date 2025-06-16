@@ -2,7 +2,9 @@ import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import {
   useVaultInfo,
+  useVaultPermission,
   VAULT_TOTAL_BASIS_POINTS,
+  VAULT_TOTAL_BASIS_POINTS_BN,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
 } from 'modules/vaults';
@@ -16,6 +18,7 @@ import { encodeFunctionData, Hash } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import { useConfirmationsInfo } from './use-confirmations-info';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -31,6 +34,13 @@ const toMethodArg =
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
+  const { refetch: refetchNOMPermission } = useVaultPermission(
+    'nodeOperatorManager',
+  );
+  const { refetch: refetchAdminPermission } =
+    useVaultPermission('defaultAdmin');
+
   const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
@@ -39,6 +49,10 @@ export const useEditMainSettings = () => {
     editMainSettings: useCallback(
       async (payload: EditMainSettingsSchema) => {
         invariant(owner, '[useEditMainSettings] owner is undefined');
+        invariant(
+          activeVault,
+          '[useEditMainSettings] activeVault is undefined',
+        );
 
         const transactions: TransactionEntry[] = [];
 
@@ -92,13 +106,21 @@ export const useEditMainSettings = () => {
           });
         }
 
-        if (payload.nodeOperatorFeeBP.length > 0) {
-          invariant(
-            payload.nodeOperatorFeeBP.length == 1,
-            '[useEditMainSettings] Invalid nodeOperatorFeeBP length',
-          );
+        const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const feeValue = Number(
+          nodeOperatorFeeBP !== 'custom'
+            ? nodeOperatorFeeBP
+            : nodeOperatorFeeBPCustom,
+        );
+        const currentFee = Number(
+          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+        );
+        const isFeeValueChanged = feeValue !== currentFee;
+
+        if (isFeeValueChanged) {
           const newFee = Math.floor(
-            payload.nodeOperatorFeeBP[0].value * VAULT_TOTAL_BASIS_POINTS,
+            (feeValue * VAULT_TOTAL_BASIS_POINTS) / 100,
           );
 
           transactions.push({
@@ -110,35 +132,35 @@ export const useEditMainSettings = () => {
             }),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
               confirmingRoleAction,
-              newFee / VAULT_TOTAL_BASIS_POINTS,
+              feeValue,
             ),
           });
         }
 
-        if (payload.confirmExpiry.length > 0) {
-          invariant(
-            payload.confirmExpiry.length == 1,
-            '[useEditMainSettings] Invalid confirmExpiry length',
-          );
-          const newConfirmExpiry = BigInt(
-            Math.floor(payload.confirmExpiry[0].value * 86400),
-          );
+        const { confirmExpiry, confirmExpiryCustom } = payload;
+        const expiryValue =
+          confirmExpiry === 'custom' && confirmExpiryCustom
+            ? BigInt(confirmExpiryCustom) * 3600n
+            : BigInt(confirmExpiry);
+        const currentExpiry = activeVault.confirmExpiry;
+        const isExpiryValueChanged = expiryValue !== currentExpiry;
 
+        if (isExpiryValueChanged) {
           transactions.push({
             to: owner,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'setConfirmExpiry',
-              args: [newConfirmExpiry],
+              args: [expiryValue],
             }),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
               confirmingRoleAction,
-              Number(newConfirmExpiry),
+              Number(expiryValue / 3600n),
             ),
           });
         }
 
-        const result = withSuccess(
+        const result = await withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault settings',
@@ -146,13 +168,39 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
-
         // refetch anyway because some transactions may be successful
-        await refetchVaultInfo();
+        const [vaultInfo, confirmations] = await Promise.all([
+          refetchVaultInfo(),
+          refetchConfirmationsInfo({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
+          refetchNOMPermission({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
+          refetchAdminPermission({
+            cancelRefetch: true,
+            throwOnError: false,
+          }),
+        ]);
 
-        return result;
+        return {
+          result,
+          confirmations,
+          vaultInfo,
+        };
       },
-      [hasBothConfirmingRoles, owner, refetchVaultInfo, sendTX],
+      [
+        owner,
+        hasBothConfirmingRoles,
+        activeVault,
+        sendTX,
+        refetchVaultInfo,
+        refetchConfirmationsInfo,
+        refetchNOMPermission,
+        refetchAdminPermission,
+      ],
     ),
     ...rest,
   };

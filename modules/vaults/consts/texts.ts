@@ -114,14 +114,24 @@ export const vaultTexts = {
     },
 
     settings: {
-      rolesGrantLoading: (roleCount: number) =>
-        `Granting ${roleCount} roles` as const,
-      rolesRevokeLoading: (roleCount: number) =>
-        `Revoking ${roleCount} roles` as const,
+      title: 'Main settings',
+      rolesGrantLoading: (roleCount: number) => {
+        const suffix = roleCount > 1 ? 's' : '';
+        return `Granting ${roleCount} role${suffix}` as const;
+      },
+      rolesRevokeLoading: (roleCount: number) => {
+        const suffix = roleCount > 1 ? 's' : '';
+        return `Revoking ${roleCount} role${suffix}` as const;
+      },
       confirmNoFee: (action: ConfirmAction, feePercent: number) =>
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      submit: (counter: number) => {
+        if (counter > 0)
+          return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
+        return 'No changes';
+      },
       fields: {
         nodeOperator: {
           title: 'Node Operator',
@@ -130,19 +140,19 @@ export const vaultTexts = {
         nodeOperatorFee: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
-          editLabel: 'Propose new Node Operator fee, %',
+          editLabel: 'Propose new, %',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
         },
         confirmationLifetime: {
           title: 'Confirmation Lifetime',
           label: 'Confirmation Lifetime, hours',
-          editLabel: 'Propose new Confirmation Lifetime, hours',
+          editLabel: 'Propose new, hours',
           hint: 'The main parameter of the “Multi-role confirmation” mechanism. This mechanism is used for editing some of the stVault parameters via finding consensus between two representatives of the stVault: the Vault Owner and the Node Operator Manager.\nMandatory parameter, hours [24h .. 720h (30 days)].\nIn this mechanism, the first representative initiates changing the parameter, and another representative confirms the change within the period of time equal to the Confirmation Lifetime value.\nUsed for:\n- Node Operator Fee\n- Confirmation Lifetime',
         },
         vaultManager: {
-          title: 'Vault Manager',
-          label: 'Vault Manager address',
-          editLabel: 'Vault Manager address',
+          title: 'Vault Owner',
+          label: 'Vault Owner address',
+          editLabel: 'Vault Owner address',
           actionText: 'Add new address',
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Vault Owner (Staker) perspective.\nMultiple addresses supported.',
         },
@@ -154,6 +164,7 @@ export const vaultTexts = {
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
         },
       },
+      clearChanges: 'Clear changes',
     },
   },
   // configuration for vault metrics as seen in overview page
@@ -349,6 +360,7 @@ export const vaultTexts = {
         dashboard: 'Recipient cannot be stVault Dashboard',
       },
 
+      duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
       loadingVault: 'Error loading stVault',

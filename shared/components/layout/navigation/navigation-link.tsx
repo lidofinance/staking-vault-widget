@@ -7,6 +7,7 @@ export type NavigationLinkProps = {
   path: string;
   customPathname?: string;
   icon: JSX.Element;
+  external?: boolean;
 };
 
 export const NavigationLink = ({
@@ -14,6 +15,7 @@ export const NavigationLink = ({
   icon,
   path,
   customPathname,
+  external,
 }: NavigationLinkProps) => {
   const { pathname } = useRouter();
 
@@ -21,7 +23,7 @@ export const NavigationLink = ({
 
   return (
     <ListItem key={path}>
-      <Link href={path}>
+      <Link href={path} target={external ? '_blank' : undefined}>
         <NavLink active={isActive}>
           {icon}
           <span>{title}</span>

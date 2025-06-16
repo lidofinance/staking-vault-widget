@@ -1,34 +1,42 @@
 import { z } from 'zod';
+import { getAddress } from 'viem';
+import { FieldErrors, Resolver } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import invariant from 'tiny-invariant';
+
 import { isValidAnyAddress } from 'utils/address-validation';
-import {
-  MainSettingsOverview,
-  ManagersKeys,
-  ManagersNewAddresses,
-  RoleFieldSchema,
-  TxData,
-} from './types';
+
 import {
   MIN_FEE_VALUE,
   MAX_FEE_VALUE,
   MAX_CONFIRM_EXPIRY,
+  MAX_CONFIRM_EXPIRY_SECONDS,
   MIN_CONFIRM_EXPIRY,
+  MIN_CONFIRM_EXPIRY_SECONDS,
   vaultTexts,
 } from 'modules/vaults';
-import { Address, isAddress } from 'viem';
-import { Resolver, UseFormGetValues } from 'react-hook-form';
-import { isValidEns } from 'utils/ens';
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
+import {
+  EditMainSettingsSchema,
+  EditMainSettingsValues,
+  MainSettingsDataContextValue,
+  MainSettingsOverview,
+} from './types';
+
+export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
+export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
-const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;
+const INVALID_NUMBER_MAX_MESSAGE = `Cannot exceed ${MAX_FEE_VALUE}%`;
 const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
+const INVALID_EMPTY_STRING = 'Missing value';
+const DUPLICATE_VALUE = 'Duplicate value';
 
-const accountSchema = z
+export const accountSchema = z
   .string()
   .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value as Address);
+  .transform((val) => getAddress(val));
 
 export const addressSchema = z.object({
   isGranted: z.boolean().optional(),
@@ -40,43 +48,40 @@ export const addressSchema = z.object({
   value: accountSchema,
 });
 
+export const votingFeeSchema = z.coerce
+  .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+  .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
+  .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE);
+
+export const votingLifetimeSchema = z.coerce
+  .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+  .transform((val) => Number(val) * 3600)
+  .refine(
+    (seconds) => seconds >= MIN_CONFIRM_EXPIRY_SECONDS,
+    INVALID_NUMBER_EXPIRY_MIN_MESSAGE,
+  )
+  .refine(
+    (seconds) => seconds <= MAX_CONFIRM_EXPIRY_SECONDS,
+    INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
+  );
+
 export const editMainSettingsSchema = z.object({
   nodeOperatorManagers: z.array(addressSchema),
-  nodeOperatorFeeBP: z.array(
-    z.object({
-      value: z.coerce
-        .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-        .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-        .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE),
-    }),
-  ),
-  confirmExpiry: z.array(
-    z.object({
-      value: z.coerce
-        .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
-        .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
-        .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
-    }),
-  ),
   defaultAdmins: z.array(addressSchema),
-});
+  nodeOperatorFeeBP: z.string(),
+  nodeOperatorFeeBPCustom: z
+    .string()
+    .pipe(votingFeeSchema)
+    .transform((val) => String(val))
+    .optional(),
 
-export const indicatorsForRender: MainSettingsOverview[] = [
-  {
-    name: 'nodeOperatorFeeBP',
-    dataType: 'percent',
-    vaultKey: 'nodeOperatorFeeBP',
-    canEditRole: 'confirmingRoles',
-    ...vaultTexts.actions.settings.fields.nodeOperatorFee,
-  },
-  {
-    name: 'confirmExpiry',
-    dataType: 'time',
-    vaultKey: 'confirmExpiry',
-    canEditRole: 'confirmingRoles',
-    ...vaultTexts.actions.settings.fields.confirmationLifetime,
-  },
-];
+  confirmExpiry: z.string(),
+  confirmExpiryCustom: z
+    .string()
+    .pipe(votingLifetimeSchema)
+    .transform((val) => String(val))
+    .optional(),
+});
 
 export const adminsForRender: MainSettingsOverview[] = [
   {
@@ -95,69 +100,120 @@ export const adminsForRender: MainSettingsOverview[] = [
   },
 ];
 
-export const dashboardFunctionsNamesMap: Record<
-  keyof TxData,
-  'grantRoles' | 'revokeRoles' | 'setConfirmExpiry' | 'setNodeOperatorFeeBP'
-> = {
-  grantRoles: 'grantRoles',
-  revokeRoles: 'revokeRoles',
-  confirmExpiry: 'setConfirmExpiry',
-  nodeOperatorFeeBP: 'setNodeOperatorFeeBP',
-};
+export const multipleDataFields = [
+  'defaultAdmins',
+  'nodeOperatorManagers',
+] as const;
 
-export const multipleDataFields = ['defaultAdmins', 'nodeOperatorManagers'];
+const baseValidation = zodResolver<
+  EditMainSettingsValues,
+  unknown,
+  EditMainSettingsSchema
+>(
+  // TODO: find a way how to handle zod address type
+  // @ts-expect-error zod Address type is not incompatible to string
+  editMainSettingsSchema,
+  { async: false },
+  {
+    mode: 'sync',
+    raw: false,
+  },
+);
 
-export const validateManagers = (
-  getValues: UseFormGetValues<Record<string, any>>,
-): Resolver<ManagersNewAddresses> => {
-  return async (values) => {
-    const addresses = values.addresses;
-    const errors = { addresses: {} } as {
-      addresses: Record<
-        ManagersKeys,
-        Record<number, { value: { message: string } }>
-      >;
-    };
+export const mainSettingsFormResolver: Resolver<
+  EditMainSettingsValues,
+  MainSettingsDataContextValue,
+  EditMainSettingsSchema
+> = async (values, context, options) => {
+  const baseResult = await baseValidation(values, context, options as any);
 
-    const keysList = Object.keys(addresses) as ManagersKeys[];
+  const errors: FieldErrors<EditMainSettingsSchema> = { ...baseResult.errors };
 
-    keysList.forEach((key: ManagersKeys) => {
-      const payload = addresses[key] ?? [];
-      errors.addresses[key] = {};
+  handleCustomFieldErrors(baseResult.errors, errors, values);
 
-      payload.forEach((field, index) => {
-        const { value: currentValue } = field;
-
-        if (!isAddress(currentValue)) {
-          const isValid = isValidEns(currentValue);
-
-          if (!isValid) {
-            errors.addresses[key][index] = {
-              value: {
-                message: 'Invalid ethereum address',
-              },
-            };
-          }
-        }
-
-        const mainFormValues = getValues(key) as RoleFieldSchema[];
-        const filtered = (mainFormValues ?? []).filter(
-          (item) => item.value === currentValue,
-        );
-
-        if (filtered.length > 0) {
-          errors.addresses[key][index] = {
-            value: {
-              message: 'Address already added',
-            },
-          };
-        }
-      });
-    });
-
+  if (Object.keys(errors).length > 0) {
     return {
-      values,
+      values: baseResult.values,
       errors,
     };
+  }
+  invariant(context, '[mainSettingsFormResolver] context is undefined');
+
+  checkForDuplicateValues(context, values, errors);
+
+  return {
+    values,
+    errors,
   };
+};
+
+const handleCustomFieldErrors = (
+  baseResultErrors: FieldErrors<EditMainSettingsValues>,
+  errors: FieldErrors<EditMainSettingsSchema>,
+  values: EditMainSettingsValues,
+) => {
+  const isNodeOperatorFeeBPCustom = values.nodeOperatorFeeBP === 'custom';
+  const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
+  const isNodeOperatorFeeBPEmpty = values.nodeOperatorFeeBPCustom === '';
+  const isConfirmExpiryEmpty = values.confirmExpiryCustom === '';
+
+  if (isNodeOperatorFeeBPCustom && baseResultErrors.nodeOperatorFeeBPCustom) {
+    errors.nodeOperatorFeeBPCustom = baseResultErrors.nodeOperatorFeeBPCustom;
+  } else {
+    delete errors.nodeOperatorFeeBPCustom;
+  }
+
+  if (isConfirmExpiryCustom && baseResultErrors.confirmExpiryCustom) {
+    errors.confirmExpiryCustom = baseResultErrors.confirmExpiryCustom;
+  } else {
+    delete errors.confirmExpiryCustom;
+  }
+
+  if (isNodeOperatorFeeBPCustom && isNodeOperatorFeeBPEmpty) {
+    errors.nodeOperatorFeeBPCustom = {
+      type: 'custom',
+      message: INVALID_EMPTY_STRING,
+    };
+  }
+  if (isConfirmExpiryCustom && isConfirmExpiryEmpty) {
+    errors.confirmExpiryCustom = {
+      type: 'custom',
+      message: INVALID_EMPTY_STRING,
+    };
+  }
+};
+
+const checkForDuplicateValues = (
+  context: MainSettingsDataContextValue,
+  values: EditMainSettingsValues,
+  errors: FieldErrors<EditMainSettingsSchema>,
+) => {
+  const { nodeOperatorFeeBP, confirmExpiry } = context;
+
+  const uniqueNodeOperatorFeeBP = nodeOperatorFeeBP
+    .filter((item) => item.type !== 'custom')
+    .map((item) => Number(item.value));
+  const uniqueConfirmExpiry = confirmExpiry
+    .filter((item) => item.type !== 'custom')
+    .map((item) => Number(item.value));
+
+  const isNodeOperatorFeeBPDuplicate = uniqueNodeOperatorFeeBP.includes(
+    Number(values.nodeOperatorFeeBPCustom),
+  );
+  const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
+    Number(values.confirmExpiryCustom ?? '') * 3600,
+  );
+
+  if (isNodeOperatorFeeBPDuplicate) {
+    errors.nodeOperatorFeeBPCustom = {
+      type: 'custom',
+      message: DUPLICATE_VALUE,
+    };
+  }
+  if (isConfirmExpiryDuplicate) {
+    errors.confirmExpiryCustom = {
+      type: 'custom',
+      message: DUPLICATE_VALUE,
+    };
+  }
 };

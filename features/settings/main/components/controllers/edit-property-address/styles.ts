@@ -3,8 +3,12 @@ import { ButtonIcon } from '@lidofinance/lido-ui';
 
 export const EditWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
+
+  & > label {
+    width: 100%;
+  }
 `;
 
 export const ButtonContainer = styled(ButtonIcon)`

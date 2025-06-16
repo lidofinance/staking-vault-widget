@@ -15,6 +15,8 @@ export const VAULT_SHOULD_REPORT_THRESHOLD = 0.9; // 90% of time until report is
 
 // forms validation values
 export const MIN_FEE_VALUE = 0;
-export const MAX_FEE_VALUE = 99.99;
+export const MAX_FEE_VALUE = 100;
 export const MIN_CONFIRM_EXPIRY = 24;
+export const MIN_CONFIRM_EXPIRY_SECONDS = 24 * 3600;
 export const MAX_CONFIRM_EXPIRY = 24 * 30;
+export const MAX_CONFIRM_EXPIRY_SECONDS = 24 * 30 * 3600;

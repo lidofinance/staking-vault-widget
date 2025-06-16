@@ -8,3 +8,4 @@ export * from './shortenTokenValue';
 export * from './format-number';
 export * from './sleep';
 export * from './overview-colors';
+export * from './mergeRefs';

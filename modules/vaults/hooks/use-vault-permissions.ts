@@ -78,7 +78,7 @@ export const useVaultConfirmingRoles = () => {
   return {
     hasConfirmingRole: hasAtLeastOne,
     hasAdmin: roleAdmin.hasPermission,
-    hasNodeOperatporManager: roleNOM.hasPermission,
+    hasNodeOperatorManager: roleNOM.hasPermission,
     hasBothConfirmingRoles: roleAdmin.hasPermission && roleNOM.hasPermission,
     isLoading: !hasAtLeastOne && (roleAdmin.isLoading || roleNOM.isLoading),
     error: roleAdmin.error || roleNOM.error,

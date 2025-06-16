@@ -1,123 +1,140 @@
+import invariant from 'tiny-invariant';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+
 import {
-  Address,
-  encodeFunctionData,
-  PublicClient,
-  getContract,
-  Hex,
-} from 'viem';
-import {
-  VAULT_TOTAL_BASIS_POINTS,
-  VAULTS_ROOT_ROLES_MAP,
-} from 'modules/vaults/consts';
-import {
-  EditMainSettingsSchema,
-  TxData,
-  GrantOrRevokeRole,
+  MainSettingsDataContextValue,
   RoleFieldSchema,
+  EditMainSettingsSchema,
 } from './types';
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { dashboardFunctionsNamesMap } from 'features/settings/main/consts';
+import { VaultInfo } from 'types';
+import { multipleDataFields } from './consts';
 
-export const prepareMainTxData = (data: EditMainSettingsSchema) => {
-  const {
-    confirmExpiry,
-    defaultAdmins,
-    nodeOperatorFeeBP,
-    nodeOperatorManagers,
-  } = data;
-  const txData: TxData = {};
+export const shouldIncrementTxCounterByVoting = (
+  value: string | undefined,
+  defaultValue: string | undefined,
+) => {
+  return value !== defaultValue;
+};
 
-  const roleProcessors = [
-    { fields: defaultAdmins, role: VAULTS_ROOT_ROLES_MAP.defaultAdmin },
-    {
-      fields: nodeOperatorManagers,
-      role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
-    },
-  ];
+export const shouldIncrementTxCounterByAddresses = (
+  formFields: EditMainSettingsSchema,
+) => {
+  let grant = 0;
+  let remove = 0;
 
-  roleProcessors.forEach(({ fields, role }) => {
-    if (fields.length === 0) return;
-    const [grantList, revokeList] = processRoleFields(fields, role);
-
-    if (grantList.length > 0) {
-      if (!txData.grantRoles) txData.grantRoles = [];
-      txData.grantRoles.push(...grantList);
-    }
-
-    if (revokeList.length > 0) {
-      if (!txData.revokeRoles) txData.revokeRoles = [];
-      txData.revokeRoles.push(...revokeList);
-    }
+  multipleDataFields.forEach((key) => {
+    const fields = formFields[key];
+    fields.forEach((field: RoleFieldSchema) => {
+      grant += Number(field.state === 'grant');
+      remove += Number(field.state === 'remove');
+    });
   });
 
-  if (confirmExpiry.length > 0) {
-    txData.confirmExpiry = BigInt(confirmExpiry[0].value * 60 * 60);
-  }
-
-  if (nodeOperatorFeeBP.length > 0) {
-    txData.nodeOperatorFeeBP = BigInt(
-      (nodeOperatorFeeBP[0].value * VAULT_TOTAL_BASIS_POINTS) / 100,
-    );
-  }
-
-  return txData;
+  return Number(grant > 0) + Number(remove > 0);
 };
 
-const processRoleFields = (
-  fields: RoleFieldSchema[],
-  role: Hex,
-): [GrantOrRevokeRole[], GrantOrRevokeRole[]] => {
-  return fields.reduce(
-    ([grant, revoke], field) => {
-      const item = { account: field.value, role };
-      field.state === 'grant' && grant.push(item);
-      field.state === 'remove' && revoke.push(item);
-      return [grant, revoke];
-    },
-    [[], []] as [GrantOrRevokeRole[], GrantOrRevokeRole[]],
-  );
-};
+export const prepareDefaultValues = (
+  promisifiedSettingsData: Promise<MainSettingsDataContextValue | null>,
+) => {
+  return async () => {
+    const settingsData = await promisifiedSettingsData;
+    invariant(settingsData, '[prepareDefaultValues] settings data is empty.');
 
-export const generateMainAATxData = async ({
-  txData,
-  address,
-  account,
-  publicClient,
-}: {
-  txData: TxData;
-  address: Address;
-  account: Address;
-  publicClient: PublicClient;
-}) => {
-  const keys = Object.keys(txData) as (keyof TxData)[];
-
-  const aaPayload = keys.map(async (key) => {
-    const functionName = dashboardFunctionsNamesMap[key];
-    const data = encodeFunctionData({
-      abi: dashboardAbi,
-      functionName,
-      // @ts-expect-error find out how to setup right types
-      args: [txData[key]],
-    });
-
-    const contract = getContract({
-      address,
-      abi: dashboardAbi,
-      client: {
-        public: publicClient,
-      },
-    });
-
-    // @ts-expect-error types
-    const gas = await contract.estimateGas[functionName]([txData[key]]);
+    const {
+      confirmExpiry,
+      defaultAdmins,
+      nodeOperatorFeeBP,
+      nodeOperatorManagers,
+    } = settingsData;
+    const confirmExpiryCurrent = confirmExpiry.find(
+      (item) => item.type === 'current',
+    )?.value;
+    const nodeOperatorFeeBPCurrent = nodeOperatorFeeBP.find(
+      (item) => item.type === 'current',
+    )?.value;
 
     return {
-      to: address,
-      from: account,
-      gas,
-      data,
+      defaultAdmins,
+      nodeOperatorManagers,
+      confirmExpiry: String(confirmExpiryCurrent),
+      confirmExpiryCustom: '',
+      nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
+      nodeOperatorFeeBPCustom: '',
     };
-  });
+  };
+};
 
-  return await Promise.all(aaPayload);
+export const formatInputValue = (
+  value: string,
+  isFocused: boolean,
+  hasError: boolean,
+  symbol?: string | undefined,
+  format?: (arg: string) => string,
+) => {
+  if (isFocused || hasError) {
+    return value;
+  }
+
+  return formatValueView(value, symbol, format);
+};
+
+export const formatValueView = (
+  value: string,
+  symbol?: string,
+  formatter?: (arg: string) => string,
+) => {
+  if (!value || value === 'custom') {
+    return '';
+  }
+
+  if (formatter) {
+    return formatter(value);
+  }
+
+  if (symbol) {
+    return `${value}${symbol}`;
+  }
+
+  return value;
+};
+
+export const formatSecondsToHours = (
+  totalSeconds: number | string,
+  isShort?: boolean,
+): string => {
+  const seconds = Number(totalSeconds);
+  if (isNaN(seconds)) return String(totalSeconds);
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  if (hours === 0 && minutes === 0) return '~1 minute';
+  if (isShort) return `${hours}h`;
+  if (hours === 0) return `${minutes} minutes`;
+  if (minutes === 0) return `${hours} hours`;
+  return `${hours}h ${minutes}m`;
+};
+
+export const formatSettingsValues = (vaultInfo: VaultInfo) => {
+  const defaultAdmins = vaultInfo.defaultAdmins.map((address) => ({
+    value: address,
+    state: 'display' as const,
+    isGranted: true,
+  }));
+  const nodeOperatorManagers = vaultInfo.nodeOperatorManagers.map(
+    (address) => ({
+      value: address,
+      state: 'display' as const,
+      isGranted: true,
+    }),
+  );
+
+  return {
+    defaultAdmins,
+    nodeOperatorManagers,
+    confirmExpiryValue: String(vaultInfo.confirmExpiry),
+    nodeOperatorFeeBPValue: String(
+      (vaultInfo.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    ),
+  };
 };

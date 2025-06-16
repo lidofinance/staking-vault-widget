@@ -31,12 +31,14 @@ const getVaultData = async ({
   const vaultHubContract = getVaultHubContract(publicClient);
   const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
 
-  const [owner, inOutDelta, nodeOperator, locked] = await Promise.all([
-    vaultContract.read.owner(),
-    vaultContract.read.inOutDelta(),
-    vaultContract.read.nodeOperator(),
-    vaultContract.read.locked(),
-  ]);
+  const [owner, inOutDelta, nodeOperator, locked, withdrawalCredentials] =
+    await Promise.all([
+      vaultContract.read.owner(),
+      vaultContract.read.inOutDelta(),
+      vaultContract.read.nodeOperator(),
+      vaultContract.read.locked(),
+      vaultContract.read.withdrawalCredentials(),
+    ]);
 
   const balance = await publicClient.getBalance({
     address: vaultContract.address,
@@ -117,6 +119,7 @@ const getVaultData = async ({
     shareLimit,
     forcedRebalanceThresholdBP,
     liabilityShares,
+    withdrawalCredentials,
     ...rest,
   };
 };
