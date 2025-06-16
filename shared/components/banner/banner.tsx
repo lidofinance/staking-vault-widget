@@ -6,8 +6,8 @@ export const MigrationBannerTestnetV2 = () => {
   return (
     <BannerWrapper>
       <TextWhite>
-        Heads-up! All Testnet data will be erased on 23 Jun 2025 as a part of
-        the the Web UI migration to the&nbsp;
+        All Testnet data will not be available via Web UI on 23 Jun 2025 as part
+        of migration to the&nbsp;
         <Link
           target="_blank"
           rel="noopener noreferrer"
