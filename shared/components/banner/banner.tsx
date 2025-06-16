@@ -13,9 +13,9 @@ export const MigrationBannerTestnetV2 = () => {
           rel="noopener noreferrer"
           href="https://docs.lido.fi/deployed-contracts/hoodi-lidov3"
         >
-          stVaults Testnet-2
+          stVaults Testnet-2 contracts.
         </Link>
-        &nbsp;contracts. Back up anything important.
+        &nbsp;Back up anything important.
       </TextWhite>
     </BannerWrapper>
   );
