@@ -60,6 +60,7 @@ export const vaultTexts = {
       available: `Available to mint`,
       loading: (token: LidoToken) => `Minting ${token}` as const,
       completed: (token: LidoToken) => `${token} minted` as const,
+      recipientLabel: 'Mint to address',
       submit: (token: LidoToken, amount?: bigint | null) =>
         `Mint ${balance(amount)}${token}` as const,
     },
@@ -341,7 +342,12 @@ export const vaultTexts = {
         max: (max: bigint) =>
           `Amount must be less than  ${formatBalance(max).trimmed}` as const,
       },
-      address: { invalid: 'Invalid ethereum address' },
+      address: {
+        required: 'Address is required',
+        invalid: 'Invalid ethereum address',
+        vault: 'Recipient cannot be stVault',
+        dashboard: 'Recipient cannot be stVault Dashboard',
+      },
 
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,

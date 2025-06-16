@@ -1,11 +1,13 @@
 import { useReadContract } from 'wagmi';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo } from 'modules/vaults';
+import { useValidateRecipientArgs, useVaultInfo } from 'modules/vaults';
 import { useCallback } from 'react';
+import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const useClaimData = () => {
   const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
   const claimableFeeQuery = useReadContract({
     abi: dashboardAbi,
@@ -27,6 +29,7 @@ export const useClaimData = () => {
 
   return {
     claimableFeeQuery,
+    validationContext,
     invalidateClaimData,
   };
 };

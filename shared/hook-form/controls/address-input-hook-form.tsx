@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
+import { useFormContext, useFormState } from 'react-hook-form';
 import { Button, Input } from '@lidofinance/lido-ui';
 
 import { useDappStatus } from 'modules/web3';
+import { useInFocus } from 'shared/hooks/use-in-focus';
 
 type TokenAmountInputHookFormProps = Partial<
   React.ComponentProps<typeof Input>
@@ -20,21 +20,20 @@ const safeIsAddressEqual = (a: string, b: string) => {
 export const AddressInputHookForm = ({
   fieldName,
   showErrorMessage = true,
-  error: errorProp,
   onBlur: onBlurProp,
+  onFocus: onFocusProp,
   disabled,
   ...props
 }: TokenAmountInputHookFormProps) => {
-  const [inFocus, setInFocus] = useState(false);
+  const { inFocus, onBlur, onFocus } = useInFocus();
   const { address } = useDappStatus();
-  const {
-    field,
-    fieldState: { error },
-  } = useController({ name: fieldName });
-  const { setValue } = useFormContext();
+  const error = useFormState().errors[fieldName];
+
+  const { setValue, register, watch } = useFormContext();
+  const fieldValue = watch(fieldName);
 
   const shouldShowErrorMessage = showErrorMessage && inFocus && !!error;
-  const errorMessage = error?.message;
+  const errorMessage = error?.message as string;
 
   const rightDecorator = (
     <Button
@@ -42,15 +41,13 @@ export const AddressInputHookForm = ({
       variant="translucent"
       onClick={() => {
         address &&
-          setValue(field.name, address, {
+          setValue(fieldName, address, {
             shouldValidate: true,
             shouldDirty: true,
             shouldTouch: true,
           });
       }}
-      disabled={
-        field.disabled || !address || safeIsAddressEqual(field.value, address)
-      }
+      disabled={disabled || !address || safeIsAddressEqual(fieldValue, address)}
     >
       Current address
     </Button>
@@ -58,15 +55,18 @@ export const AddressInputHookForm = ({
 
   return (
     <Input
-      {...field}
-      onFocus={() => setInFocus(true)}
-      onBlur={(e) => {
-        setInFocus(false);
-        field.onBlur();
-        onBlurProp?.(e);
+      {...register(fieldName, {
+        onBlur: (e) => {
+          onBlur();
+          onBlurProp?.(e);
+        },
+        disabled,
+      })}
+      onFocus={(e) => {
+        onFocus();
+        onFocusProp?.(e);
       }}
       style={{ display: props.hidden ? 'none' : undefined }}
-      disabled={field.disabled}
       error={shouldShowErrorMessage ? errorMessage : !!error}
       fullwidth
       rightDecorator={rightDecorator}

@@ -2,13 +2,19 @@ import invariant from 'tiny-invariant';
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { getDashboardContract, useVaultInfo } from 'modules/vaults';
+import {
+  getDashboardContract,
+  useValidateRecipientArgs,
+  useVaultInfo,
+} from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
-import { MintFormValidationContext } from '../types';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
+import { MintFormValidationContext } from '../types';
+
 export const useMintData = () => {
+  const validateRecipientArgs = useValidateRecipientArgs();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
 
   const { shares } = useLidoSDK();
@@ -39,7 +45,7 @@ export const useMintData = () => {
 
   const validationContextValue = useMemo(() => {
     if (
-      [data?.mintableStETH, data?.mintableWstETH].some(
+      [data?.mintableStETH, data?.mintableWstETH, validateRecipientArgs].some(
         (value) => typeof value === 'undefined',
       )
     ) {
@@ -49,8 +55,9 @@ export const useMintData = () => {
     return {
       mintableStETH: data?.mintableStETH,
       mintableWstETH: data?.mintableWstETH,
+      validateRecipientArgs,
     } as MintFormValidationContext;
-  }, [data?.mintableStETH, data?.mintableWstETH]);
+  }, [validateRecipientArgs, data?.mintableStETH, data?.mintableWstETH]);
 
   const validationContext = useAwaiter(validationContextValue).awaiter;
 

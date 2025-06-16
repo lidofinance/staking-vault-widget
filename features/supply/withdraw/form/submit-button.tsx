@@ -2,7 +2,7 @@ import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
 
-import type { WithdrawFormFieldValues } from '../types';
+import type { WithdrawFormFieldValues } from './types';
 
 export const SubmitButton = () => {
   const { isSubmitting, disabled } = useFormState();

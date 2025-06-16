@@ -4,68 +4,43 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import {
-  addressSchema,
-  amountSchema,
+  maxAmountSchema,
   supplyTokenSchema,
+  validateRecipientSchema,
 } from 'utils/validate-form-value';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
-
-import { vaultTexts } from 'modules/vaults';
 
 import type {
   WithdrawFormFieldValues,
   WithdrawFormValidatedValues,
+  WithdrawFormValidationContext,
   WithdrawFormValidationContextAwaitable,
 } from '../types';
 
-export const WithdrawFormSchema = z.object({
-  amount: amountSchema,
-  token: supplyTokenSchema,
-  recipient: addressSchema,
-});
-
-const baseValidation = zodResolver<
-  WithdrawFormFieldValues,
-  unknown,
-  WithdrawFormValidatedValues
->(
-  WithdrawFormSchema,
-  { async: false },
-  {
-    mode: 'sync',
-    raw: false,
-  },
-);
+export const WithdrawFormSchema = ({
+  validateRecipientArgs,
+  withdrawableEther,
+}: WithdrawFormValidationContext) => {
+  return z.object({
+    amount: maxAmountSchema(withdrawableEther),
+    token: supplyTokenSchema,
+    recipient: validateRecipientSchema(validateRecipientArgs),
+  });
+};
 
 export const withdrawFormResolver: Resolver<
   WithdrawFormFieldValues,
   WithdrawFormValidationContextAwaitable,
   WithdrawFormValidatedValues
 > = async (values, context, options) => {
-  // validate base schema that does not require context
-  const baseResult = await baseValidation(values, context, options as any);
-  if (Object.keys(baseResult.errors).length > 0) return baseResult;
-  // errors are empty, so we can safely cast values to validated type
-  const { amount } = baseResult.values as WithdrawFormValidatedValues;
-
-  // validate context-dependent fields manually
   invariant(context, '[WithdrawFormResolver] context is undefined');
-  const { withdrawableEther } = await awaitWithTimeout(context, 4000);
+  const contextValue = await awaitWithTimeout(context, 4000);
 
-  if (amount > withdrawableEther) {
-    return {
-      values: {},
-      errors: {
-        amount: {
-          type: 'max',
-          message: vaultTexts.common.errors.amount.max(withdrawableEther),
-        },
-      },
-    };
-  }
+  const schema = WithdrawFormSchema(contextValue);
 
-  return {
-    values: baseResult.values,
-    errors: {},
-  };
+  return zodResolver<
+    WithdrawFormFieldValues,
+    unknown,
+    WithdrawFormValidatedValues
+  >(schema)(values, contextValue, options);
 };
