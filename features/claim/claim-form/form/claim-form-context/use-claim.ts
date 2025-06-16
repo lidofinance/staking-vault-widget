@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useEstimateGas, useAccount } from 'wagmi';
-import { Address, encodeFunctionData } from 'viem';
+import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import {
@@ -10,7 +10,6 @@ import {
   GoToVault,
 } from 'modules/vaults';
 import invariant from 'tiny-invariant';
-import { fallbackedAddress } from 'utils/fallbacked-address';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 import {} from 'modules/vaults/components/go-to-vault';
 import { ClaimFormValidatedValues } from '../types';
@@ -22,6 +21,8 @@ export const useClaim = () => {
 
   return {
     claim: useCallback(
+      // TODO: FIX for testnet 2.0
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       async ({ recipient }: ClaimFormValidatedValues) => {
         invariant(owner, '[useClaim] owner is undefined');
 
@@ -32,8 +33,8 @@ export const useClaim = () => {
           to: owner,
           data: encodeFunctionData({
             abi: dashboardAbi,
-            functionName: 'claimNodeOperatorFee',
-            args: [recipient],
+            // TODO: redo to not use recipient
+            functionName: 'disburseNodeOperatorFee',
           }),
           loadingActionText,
         };
@@ -55,7 +56,7 @@ export const useClaim = () => {
   };
 };
 
-export const useEstimateClaim = (recipient?: Address) => {
+export const useEstimateClaim = () => {
   const { address } = useAccount();
   const { hasPermission } = useVaultPermission('nodeOperatorFeeClaimer');
   const { activeVault } = useVaultInfo();
@@ -72,8 +73,7 @@ export const useEstimateClaim = (recipient?: Address) => {
     account: address,
     data: encodeFunctionData({
       abi: dashboardAbi,
-      functionName: 'claimNodeOperatorFee',
-      args: [fallbackedAddress(recipient || address)],
+      functionName: 'disburseNodeOperatorFee',
     }),
     query: {
       enabled,

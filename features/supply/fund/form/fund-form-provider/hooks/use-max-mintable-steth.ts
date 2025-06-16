@@ -30,9 +30,8 @@ export const useMaxMintableSteth = (amount?: bigint | null) => {
       );
 
       const dashboard = getDashboardContract(activeVault.owner, publicClient);
-      const mintableShares = await dashboard.read.remainingMintingCapacity([
-        amount ?? 0n,
-      ]);
+      const mintableShares =
+        await dashboard.read.remainingMintingCapacityShares([amount ?? 0n]);
       const steth = await shares.convertToSteth(mintableShares);
 
       return steth;

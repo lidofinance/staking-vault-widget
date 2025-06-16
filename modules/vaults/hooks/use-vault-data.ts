@@ -31,21 +31,31 @@ const getVaultData = async ({
   const vaultHubContract = getVaultHubContract(publicClient);
   const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
 
-  const [owner, inOutDelta, nodeOperator, locked, withdrawalCredentials] =
-    await Promise.all([
-      vaultContract.read.owner(),
-      vaultContract.read.inOutDelta(),
-      vaultContract.read.nodeOperator(),
-      vaultContract.read.locked(),
-      vaultContract.read.withdrawalCredentials(),
-    ]);
+  const [
+    connection,
+    record,
+    obligations,
+    nodeOperator,
+    withdrawalCredentials,
+    balance,
+  ] = await Promise.all([
+    vaultHubContract.read.vaultConnection([vaultAddress]),
+    vaultHubContract.read.vaultRecord([vaultAddress]),
+    vaultHubContract.read.vaultObligations([vaultAddress]),
+    vaultContract.read.nodeOperator(),
+    vaultContract.read.withdrawalCredentials(),
+    publicClient.getBalance({
+      address: vaultContract.address,
+    }),
+  ]);
 
-  const balance = await publicClient.getBalance({
-    address: vaultContract.address,
-  });
+  const {
+    liabilityShares,
+    inOutDelta: { value: inOutDelta },
+    locked,
+  } = record;
 
-  const { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest } =
-    await vaultHubContract.read.vaultSocket([vaultAddress]);
+  const { owner, forcedRebalanceThresholdBP, shareLimit, ...rest } = connection;
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
@@ -60,10 +70,10 @@ const getVaultData = async ({
     confirmExpiry,
   ] = await Promise.all([
     dashboardContract.read.totalValue(),
-    dashboardContract.read.nodeOperatorUnclaimedFee(),
-    dashboardContract.read.withdrawableEther(),
-    dashboardContract.read.nodeOperatorFeeBP(),
-    dashboardContract.read.totalMintingCapacity(),
+    dashboardContract.read.nodeOperatorDisbursableFee(),
+    dashboardContract.read.withdrawableValue(),
+    dashboardContract.read.nodeOperatorFeeRate(),
+    dashboardContract.read.totalMintingCapacityShares(),
     dashboardContract.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
     dashboardContract.read.getRoleMembers([
       VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
@@ -120,6 +130,7 @@ const getVaultData = async ({
     forcedRebalanceThresholdBP,
     liabilityShares,
     withdrawalCredentials,
+    obligations,
     ...rest,
   };
 };

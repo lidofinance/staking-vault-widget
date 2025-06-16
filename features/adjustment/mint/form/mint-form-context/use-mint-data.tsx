@@ -28,9 +28,8 @@ export const useMintData = () => {
       const publicClient = shares.core.rpcProvider;
       const dashboard = getDashboardContract(activeVault?.owner, publicClient);
 
-      const mintableShares = await dashboard.read.remainingMintingCapacity([
-        0n,
-      ]);
+      const mintableShares =
+        await dashboard.read.remainingMintingCapacityShares([0n]);
       const mintableStETH =
         mintableShares > 0n ? await shares.convertToSteth(mintableShares) : 0n;
 

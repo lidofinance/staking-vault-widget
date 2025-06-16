@@ -86,7 +86,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
           symbol: ' hours',
         });
       } else if (
-        confirmation.decodedData.functionName === 'setNodeOperatorFeeBP'
+        confirmation.decodedData.functionName === 'setNodeOperatorFeeRate'
       ) {
         nodeOperatorFeeBP.push({
           value: String(

@@ -81,7 +81,7 @@ export const useFund = () => {
             );
 
             const maxMintableShares =
-              await dashboard.read.remainingMintingCapacity([amount]);
+              await dashboard.read.remainingMintingCapacityShares([amount]);
 
             calls.push({
               to: activeVault.owner,

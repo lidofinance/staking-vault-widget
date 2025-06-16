@@ -12,7 +12,7 @@ export const useClaimData = () => {
   const claimableFeeQuery = useReadContract({
     abi: dashboardAbi,
     address: activeVault?.owner,
-    functionName: 'nodeOperatorUnclaimedFee',
+    functionName: 'nodeOperatorDisbursableFee',
     query: {
       enabled: !!activeVault?.owner,
     },
