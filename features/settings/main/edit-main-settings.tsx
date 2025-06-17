@@ -5,6 +5,7 @@ import { vaultTexts } from 'modules/vaults';
 import {
   MainSettingsAction,
   NodeOperator,
+  NodeOperatorFeeRecipient,
   Admins,
   Voting,
 } from 'features/settings/main/components';
@@ -24,6 +25,7 @@ export const EditMainSettings = () => {
               {vaultTexts.actions.settings.title}
             </Text>
             <NodeOperator />
+            <NodeOperatorFeeRecipient />
             <Admins />
             <Voting />
             <MainSettingsAction />
