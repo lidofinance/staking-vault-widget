@@ -102,11 +102,11 @@ export const useReportStatus = () => {
   // optimistically say the report is fresh if we don't have data just yet
   const isReportFresh =
     shouldSkipCheck ||
-    time - Number(vaultReport.data.reportTimestamp) < reportFreshnessDelta;
+    time - Number(vaultReport.data.report.timestamp) < reportFreshnessDelta;
 
   const isReportAvailable =
     vaultReport.data && vaultHubReport.data
-      ? vaultReport.data.reportTimestamp < vaultHubReport.data[0]
+      ? vaultReport.data.report.timestamp < vaultHubReport.data[0]
       : false;
 
   // when new report is available but old is still fresh
@@ -115,7 +115,7 @@ export const useReportStatus = () => {
     isReportAvailable &&
     time &&
     vaultReport.data &&
-    (time - Number(vaultReport.data.reportTimestamp)) / reportFreshnessDelta >=
+    (time - Number(vaultReport.data.report.timestamp)) / reportFreshnessDelta >=
       VAULT_SHOULD_REPORT_THRESHOLD
   );
 
