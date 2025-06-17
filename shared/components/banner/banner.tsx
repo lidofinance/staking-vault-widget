@@ -6,7 +6,7 @@ export const MigrationBannerTestnetV2 = () => {
   return (
     <BannerWrapper>
       <TextWhite>
-        All Testnet data will not be available via Web UI on 23 Jun 2025 as part
+        All Testnet data will not be available via Web UI on 25 Jun 2025 as part
         of migration to the&nbsp;
         <Link
           target="_blank"
