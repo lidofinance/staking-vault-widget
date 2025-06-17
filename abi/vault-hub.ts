@@ -74,6 +74,27 @@ export const VaultHubAbi = [
     type: 'error',
   },
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'vault',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'withdrawable',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'requested',
+        type: 'uint256',
+      },
+    ],
+    name: 'AmountExceedsWithdrawableValue',
+    type: 'error',
+  },
+  {
     inputs: [],
     name: 'BadDebtSocializationNotAllowed',
     type: 'error',
@@ -102,22 +123,6 @@ export const VaultHubAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'balance',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'expectedBalance',
-        type: 'uint256',
-      },
-    ],
-    name: 'InsufficientBalance',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: 'vault',
         type: 'address',
@@ -129,22 +134,6 @@ export const VaultHubAbi = [
       },
     ],
     name: 'InsufficientSharesToBurn',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'unlocked',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'expectedUnlocked',
-        type: 'uint256',
-      },
-    ],
-    name: 'InsufficientUnlocked',
     type: 'error',
   },
   {
@@ -354,27 +343,6 @@ export const VaultHubAbi = [
         name: 'vault',
         type: 'address',
       },
-      {
-        internalType: 'uint256',
-        name: 'reserveShares',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amountOfSharesToSocialize',
-        type: 'uint256',
-      },
-    ],
-    name: 'SocializeIsLimitedByReserve',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
-      },
     ],
     name: 'UnhealthyVaultCannotDeposit',
     type: 'error',
@@ -430,27 +398,6 @@ export const VaultHubAbi = [
       },
     ],
     name: 'VaultInsufficientBalance',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'withdrawable',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'requested',
-        type: 'uint256',
-      },
-    ],
-    name: 'VaultInsufficientWithdrawableValue',
     type: 'error',
   },
   {
@@ -1414,9 +1361,9 @@ export const VaultHubAbi = [
         type: 'address',
       },
       {
-        internalType: 'uint64',
+        internalType: 'uint256',
         name: '_reportTimestamp',
-        type: 'uint64',
+        type: 'uint256',
       },
       {
         internalType: 'uint256',
@@ -1866,38 +1813,24 @@ export const VaultHubAbi = [
       {
         components: [
           {
-            internalType: 'uint128',
+            internalType: 'uint112',
             name: 'totalValue',
-            type: 'uint128',
+            type: 'uint112',
           },
           {
             internalType: 'int112',
             name: 'inOutDelta',
             type: 'int112',
           },
+          {
+            internalType: 'uint32',
+            name: 'timestamp',
+            type: 'uint32',
+          },
         ],
         internalType: 'struct VaultHub.Report',
         name: '',
         type: 'tuple',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_vault',
-        type: 'address',
-      },
-    ],
-    name: 'latestVaultReportTimestamp',
-    outputs: [
-      {
-        internalType: 'uint64',
-        name: '',
-        type: 'uint64',
       },
     ],
     stateMutability: 'view',
@@ -2081,7 +2014,7 @@ export const VaultHubAbi = [
       },
       {
         internalType: 'uint256',
-        name: '_ether',
+        name: '_shares',
         type: 'uint256',
       },
     ],
@@ -2587,14 +2520,19 @@ export const VaultHubAbi = [
           {
             components: [
               {
-                internalType: 'uint128',
+                internalType: 'uint112',
                 name: 'totalValue',
-                type: 'uint128',
+                type: 'uint112',
               },
               {
                 internalType: 'int112',
                 name: 'inOutDelta',
                 type: 'int112',
+              },
+              {
+                internalType: 'uint32',
+                name: 'timestamp',
+                type: 'uint32',
               },
             ],
             internalType: 'struct VaultHub.Report',
@@ -2632,11 +2570,6 @@ export const VaultHubAbi = [
             internalType: 'struct RefSlotCache.Int112WithRefSlotCache',
             name: 'inOutDelta',
             type: 'tuple',
-          },
-          {
-            internalType: 'uint64',
-            name: 'reportTimestamp',
-            type: 'uint64',
           },
         ],
         internalType: 'struct VaultHub.VaultRecord',

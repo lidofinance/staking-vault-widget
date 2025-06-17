@@ -770,7 +770,7 @@ export const LazyOracleAbi = [
             type: 'uint256',
           },
         ],
-        internalType: 'struct ILazyOracle.QuarantineInfo',
+        internalType: 'struct LazyOracle.QuarantineInfo',
         name: '',
         type: 'tuple',
       },
