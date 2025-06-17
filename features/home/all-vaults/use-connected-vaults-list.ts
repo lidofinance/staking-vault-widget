@@ -29,7 +29,7 @@ export const useConnectedVaultsList = () => {
             publicClient,
             vaultAddress,
             shares,
-          }),
+          }).catch(() => ({ address: vaultAddress, error: true })),
         ),
       );
       const totalVaultsCount =

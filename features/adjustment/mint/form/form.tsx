@@ -1,18 +1,17 @@
-import { Balance } from './balance';
-import { AmountField } from './amount-field';
-import { AddressField } from './address-field';
+import { MintFormProvider } from './mint-form-context';
+
+import { Mintable } from './mintable';
+import { MintFormInputs } from './inputs';
 import { SubmitButton } from './submit-button';
-import { FeatureTxInfo } from './feature-tx-info';
-import { FormContainer } from './styles';
+import { TxInfo } from './tx-info';
 
 export const MintForm = () => {
   return (
-    <FormContainer>
-      <Balance />
-      <AmountField />
-      <AddressField />
+    <MintFormProvider>
+      <Mintable />
+      <MintFormInputs />
       <SubmitButton />
-      <FeatureTxInfo />
-    </FormContainer>
+      <TxInfo />
+    </MintFormProvider>
   );
 };

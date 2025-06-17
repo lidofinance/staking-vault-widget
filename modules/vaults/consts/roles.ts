@@ -14,7 +14,6 @@ export const VAULTS_ROOT_ROLES_MAP = {
 export const VAULTS_OWNER_ROLES_MAP = {
   supplier: toRoleHash('vaults.Permissions.Fund'),
   withdrawer: toRoleHash('vaults.Permissions.Withdraw'),
-  locker: toRoleHash('vaults.Permissions.Lock'),
   minter: toRoleHash('vaults.Permissions.Mint'),
   repayer: toRoleHash('vaults.Permissions.Burn'),
   rebalancer: toRoleHash('vaults.Permissions.Rebalance'),
@@ -30,16 +29,7 @@ export const VAULTS_OWNER_ROLES_MAP = {
   unguaranteedDepositor: toRoleHash(
     'vaults.Permissions.UnguaranteedBeaconChainDeposit',
   ),
-  vaultHubDeathorizer: toRoleHash(
-    'vaults.Permissions.LidoVaultHubDeauthorization',
-  ),
-  vaultHubAuthorizer: toRoleHash(
-    'vaults.Permissions.LidoVaultHubAuthorization',
-  ),
-  ossifyer: toRoleHash('vaults.Permissions.Ossify'),
-  depositorSetter: toRoleHash('vaults.Permissions.SetDepositor'),
-  lockResetter: toRoleHash('vaults.Permissions.ResetLocked'),
-  tierChangeRequester: toRoleHash('vaults.Permissions.RequestTierChange'),
+  tierChangeRequester: toRoleHash('vaults.Permissions.ChangeTier'),
   assetRecoverer: toRoleHash('vaults.Dashboard.RecoverAssets'),
 } as const;
 
@@ -80,16 +70,10 @@ export const VAULT_MANAGER_PERMISSIONS_LIST: VAULT_OWNER_ROLES[] = [
   'rebalancer',
   'volunataryDisconnecter',
   'assetRecoverer',
-  'depositorSetter',
-  'locker',
-  'lockResetter',
-  'ossifyer',
   'pdgCompensater',
   'pdgProver',
   'unguaranteedDepositor',
   'tierChangeRequester',
-  'vaultHubAuthorizer',
-  'vaultHubDeathorizer',
 ] as const;
 
 export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [

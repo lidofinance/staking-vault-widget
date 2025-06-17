@@ -127,7 +127,7 @@ export const useEditMainSettings = () => {
             to: owner,
             data: encodeFunctionData({
               abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeBP',
+              functionName: 'setNodeOperatorFeeRate',
               args: [BigInt(newFee)],
             }),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(

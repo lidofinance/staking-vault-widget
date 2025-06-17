@@ -15,6 +15,7 @@ import type { VaultInfo } from 'types';
 import type { PublicClient, Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
+import { useMemo } from 'react';
 
 type VaultDataArgs = {
   publicClient: PublicClient;
@@ -30,21 +31,31 @@ const getVaultData = async ({
   const vaultHubContract = getVaultHubContract(publicClient);
   const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
 
-  const [owner, inOutDelta, nodeOperator, locked, withdrawalCredentials] =
-    await Promise.all([
-      vaultContract.read.owner(),
-      vaultContract.read.inOutDelta(),
-      vaultContract.read.nodeOperator(),
-      vaultContract.read.locked(),
-      vaultContract.read.withdrawalCredentials(),
-    ]);
+  const [
+    connection,
+    record,
+    obligations,
+    nodeOperator,
+    withdrawalCredentials,
+    balance,
+  ] = await Promise.all([
+    vaultHubContract.read.vaultConnection([vaultAddress]),
+    vaultHubContract.read.vaultRecord([vaultAddress]),
+    vaultHubContract.read.vaultObligations([vaultAddress]),
+    vaultContract.read.nodeOperator(),
+    vaultContract.read.withdrawalCredentials(),
+    publicClient.getBalance({
+      address: vaultContract.address,
+    }),
+  ]);
 
-  const balance = await publicClient.getBalance({
-    address: vaultContract.address,
-  });
+  const {
+    liabilityShares,
+    inOutDelta: { value: inOutDelta },
+    locked,
+  } = record;
 
-  const { shareLimit, forcedRebalanceThresholdBP, liabilityShares, ...rest } =
-    await vaultHubContract.read.vaultSocket([vaultAddress]);
+  const { owner, forcedRebalanceThresholdBP, shareLimit, ...rest } = connection;
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
@@ -59,10 +70,10 @@ const getVaultData = async ({
     confirmExpiry,
   ] = await Promise.all([
     dashboardContract.read.totalValue(),
-    dashboardContract.read.nodeOperatorUnclaimedFee(),
-    dashboardContract.read.withdrawableEther(),
-    dashboardContract.read.nodeOperatorFeeBP(),
-    dashboardContract.read.totalMintingCapacity(),
+    dashboardContract.read.nodeOperatorDisbursableFee(),
+    dashboardContract.read.withdrawableValue(),
+    dashboardContract.read.nodeOperatorFeeRate(),
+    dashboardContract.read.totalMintingCapacityShares(),
     dashboardContract.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
     dashboardContract.read.getRoleMembers([
       VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
@@ -119,6 +130,7 @@ const getVaultData = async ({
     forcedRebalanceThresholdBP,
     liabilityShares,
     withdrawalCredentials,
+    obligations,
     ...rest,
   };
 };
@@ -127,52 +139,28 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
   const { shares } = useLidoSDK();
   const publicClient = usePublicClient();
 
-  return useQuery({
-    queryKey: ['single-vault-data', publicClient?.chain.id, vaultAddress],
-    enabled: !!vaultAddress && !!publicClient,
-    queryFn: async (): Promise<VaultInfo> => {
-      invariant(publicClient, 'PublicClient is not defined');
-      invariant(vaultAddress, 'vaultAddress is not defined');
+  const queryKey = useMemo(() => {
+    return ['single-vault-data', publicClient?.chain.id, vaultAddress] as const;
+  }, [publicClient?.chain.id, vaultAddress]);
 
-      return getVaultData({ publicClient, shares, vaultAddress });
-    },
-    ...STRATEGY_LAZY,
-  });
-};
-
-// TODO: find way to remove readonly
-export const useVaultData = (
-  vaultsAddressesList: readonly Address[] | undefined,
-) => {
-  const { shares } = useLidoSDK();
-  const publicClient = usePublicClient();
-
-  return useQuery({
-    queryKey: ['vault-data', { data: vaultsAddressesList }],
-    enabled: !!vaultsAddressesList?.length && !!publicClient,
-    ...STRATEGY_LAZY,
-
-    queryFn: async (): Promise<VaultInfo[]> => {
-      invariant(publicClient, 'PublicClient is not ready');
-
-      const vaults: VaultInfo[] = [];
-
-      if (vaultsAddressesList?.length && vaultsAddressesList.length === 0) {
-        return vaults;
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      for (const vaultAddress of vaultsAddressesList!) {
-        vaults.push(
-          await getVaultData({
-            publicClient,
-            vaultAddress,
-            shares,
-          }),
+  return {
+    ...useQuery({
+      queryKey,
+      enabled: !!vaultAddress && !!publicClient,
+      queryFn: async (): Promise<VaultInfo> => {
+        invariant(
+          publicClient,
+          '[useSingleVaultData] PublicClient is not defined',
         );
-      }
+        invariant(
+          vaultAddress,
+          '[useSingleVaultData] vaultAddress is not defined',
+        );
 
-      return vaults;
-    },
-  });
+        return getVaultData({ publicClient, shares, vaultAddress });
+      },
+      ...STRATEGY_LAZY,
+    }),
+    queryKey,
+  };
 };

@@ -1,10 +1,11 @@
 import { z, ZodSchema } from 'zod';
-import { type Address, isAddress } from 'viem';
+import { type Address, isAddress, isAddressEqual } from 'viem';
 import { appendErrors, FieldError, Resolver } from 'react-hook-form';
+
 import { isZodError } from 'utils/errors';
+import { vaultTexts } from 'modules/vaults';
 
-const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
-
+// TODO: remove
 export const parseZodErrorSchema = (
   zodErrors: z.ZodIssue[],
   validateAllFieldCriteria: boolean,
@@ -85,6 +86,43 @@ const validateAddress = (value: string | null) => !!(value && isAddress(value));
 
 export const addressSchema = z
   .string()
+  .nonempty({
+    message: vaultTexts.common.errors.address.required,
+  })
   .trim()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value.toLocaleLowerCase() as Address);
+  .transform((value) => value.toLocaleLowerCase() as Address)
+  .refine(validateAddress, {
+    message: vaultTexts.common.errors.address.invalid,
+  });
+
+export const amountSchema = z
+  .bigint({ message: vaultTexts.common.errors.amount.required })
+  .min(1n, vaultTexts.common.errors.amount.min(0n));
+
+export const supplyTokenSchema = z.enum(['ETH', 'wETH']);
+
+export const mintTokenSchema = z.enum(['stETH', 'wstETH']);
+
+export const maxAmountSchema = (maxAmount: bigint) =>
+  amountSchema.lte(maxAmount, vaultTexts.common.errors.amount.max(maxAmount));
+
+export type ValidateRecipientArgs = {
+  vaultAddress: Address;
+  dashboardAddress: Address;
+};
+
+export const validateRecipientSchema = ({
+  dashboardAddress,
+  vaultAddress,
+}: ValidateRecipientArgs) =>
+  addressSchema.pipe(
+    z
+      .string()
+      .transform((value) => value as Address)
+      .refine((val) => !isAddressEqual(val, vaultAddress), {
+        message: vaultTexts.common.errors.address.vault,
+      })
+      .refine((val) => !isAddressEqual(val, dashboardAddress), {
+        message: vaultTexts.common.errors.address.dashboard,
+      }),
+  );

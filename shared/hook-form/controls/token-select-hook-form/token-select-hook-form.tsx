@@ -10,14 +10,10 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { getTokenDisplayName } from 'utils/getTokenDisplayName';
-import { isValidationErrorTypeValidate } from 'shared/hook-form/validation/validation-error';
 import { SelectIconStyle } from './styles';
 import { TOKENS } from '../../validation/validate-ether-amount';
 
-export type TokenOption = {
-  label?: string;
-  token: TOKENS;
-};
+export type TokenOption = TOKENS;
 
 const iconsMap = {
   [TOKENS.ETH]: <Eth />,
@@ -27,7 +23,7 @@ const iconsMap = {
 } as const;
 
 type TokenSelectHookFormProps = {
-  options: TokenOption[];
+  options: readonly TokenOption[];
   fieldName?: string;
   resetField?: string;
   errorField?: string;
@@ -60,7 +56,7 @@ export const TokenSelectHookForm = ({
       disabled={disabled}
       warning={warning}
       icon={iconsMap[field.value]}
-      error={isValidationErrorTypeValidate(errors[errorField]?.type)}
+      error={!!errors[errorField]}
       onChange={(value: OptionValue) => {
         setValue(fieldName, value, {
           shouldDirty: false,
@@ -76,14 +72,14 @@ export const TokenSelectHookForm = ({
         onChange?.(value as TOKENS);
       }}
     >
-      {options.map(({ label, token }) => (
+      {options.map((token) => (
         <Option
           key={token}
           leftDecorator={iconsMap[token]}
           value={token}
           data-testid={token}
         >
-          {label || getTokenDisplayName(token)}
+          {getTokenDisplayName(token)}
         </Option>
       ))}
     </SelectIconStyle>

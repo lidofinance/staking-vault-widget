@@ -47,7 +47,6 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
         nodeOperatorFeeBPFormatted,
         confirmExpiryFormatted,
         roles,
-        '0x',
       ],
     }),
     value: VAULTS_CONNECT_DEPOSIT,
