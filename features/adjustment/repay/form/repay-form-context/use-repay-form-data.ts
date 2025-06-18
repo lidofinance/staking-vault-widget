@@ -22,12 +22,12 @@ export const useRepayFormData = () => {
     liabilityQuery.isLoading;
 
   const maxRepayableStETH =
-    stethBalanceQuery.data && liabilityQuery.data
+    stethBalanceQuery.data !== undefined && liabilityQuery.data
       ? bigIntMin(stethBalanceQuery.data, liabilityQuery.data.liabilitySteth)
       : undefined;
 
   const maxRepayableWstETH =
-    wstethBalanceQuery.data && liabilityQuery.data
+    wstethBalanceQuery.data !== undefined && liabilityQuery.data
       ? bigIntMin(wstethBalanceQuery.data, liabilityQuery.data.liabilityWsteth)
       : undefined;
 
