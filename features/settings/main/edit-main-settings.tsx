@@ -25,8 +25,8 @@ export const EditMainSettings = () => {
               {vaultTexts.actions.settings.title}
             </Text>
             <NodeOperator />
-            <NodeOperatorFeeRecipient />
             <Admins />
+            <NodeOperatorFeeRecipient />
             <Voting />
             <MainSettingsAction />
           </SectionContainer>
