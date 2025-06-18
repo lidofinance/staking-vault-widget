@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useState, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
@@ -37,7 +36,6 @@ const useReportFreshnessDelta = () => {
     placeholderData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     initialData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     queryFn: async () => {
-      invariant(publicClient, 'publicClient is required');
       const hub = getVaultHubContract(publicClient);
       const delta = await hub.read.REPORT_FRESHNESS_DELTA();
       if (delta != VAULT_DEFAULT_REPORT_FRESHNESS_DELTA) {
@@ -70,13 +68,10 @@ export const useReportStatus = () => {
 
   const { activeVault } = useVaultInfo();
   const publicClient = usePublicClient();
-  const vaultHubAddress = getContractAddress(
-    publicClient!.chain.id,
-    'vaultHub',
-  );
+  const vaultHubAddress = getContractAddress(publicClient.chain.id, 'vaultHub');
 
   const lazyOracleAddress = getContractAddress(
-    publicClient!.chain.id,
+    publicClient.chain.id,
     'lazyOracle',
   );
 
@@ -86,6 +81,7 @@ export const useReportStatus = () => {
     address: vaultHubAddress,
     abi: VaultHubAbi,
     functionName: 'vaultRecord',
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     args: [activeVault!.address],
     query: { ...STRATEGY_EAGER, enabled: !!activeVault && !!publicClient },
   });
@@ -120,7 +116,6 @@ export const useReportStatus = () => {
   );
 
   const prepareReportCall = useCallback(async () => {
-    invariant(publicClient, 'publicClient is required');
     invariant(activeVault, 'activeVault is required');
 
     const lazyOracle = getLazyOracleContract(publicClient);

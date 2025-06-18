@@ -121,7 +121,7 @@ const runtimeMutableTransport = (
 
 // returns Viem transport map that uses browser wallet RPC provider when available fallbacked by our RPC and default RPCs
 export const useWeb3Transport = (
-  supportedChains: Chain[],
+  supportedChains: readonly Chain[],
   backendRpcMap: Record<number, string>,
 ) => {
   const { transportMap, setTransportMap } = useMemo(() => {

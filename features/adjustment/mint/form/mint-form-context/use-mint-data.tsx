@@ -17,7 +17,7 @@ export const useMintData = () => {
   const validateRecipientArgs = useValidateRecipientArgs();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
 
-  const { shares } = useLidoSDK();
+  const { shares, publicClient } = useLidoSDK();
   const mintableQuery = useQuery({
     queryKey: ['maxMintable', activeVault?.address],
     queryFn: async () => {
@@ -25,7 +25,6 @@ export const useMintData = () => {
         activeVault?.address,
         '[useMintData] activeVault address is undefined',
       );
-      const publicClient = shares.core.rpcProvider;
       const dashboard = getDashboardContract(activeVault?.owner, publicClient);
 
       const mintableShares =

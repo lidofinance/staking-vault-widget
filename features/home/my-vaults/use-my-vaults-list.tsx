@@ -11,12 +11,11 @@ import invariant from 'tiny-invariant';
 
 export const useMyVaultsList = () => {
   const { address } = useDappStatus();
-  const { shares, core } = useLidoSDK();
+  const { shares, publicClient } = useLidoSDK();
   const [page, setPage] = useState(1);
-  const publicClient = core.rpcProvider;
 
   const query = useQuery({
-    queryKey: ['user-vaults-connected', publicClient?.chain?.id, address, page],
+    queryKey: ['user-vaults-connected', publicClient.chain.id, address, page],
     enabled: !!address,
     placeholderData: (prevData) => {
       if (!address) return undefined;

@@ -1,12 +1,13 @@
-import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
-import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
-import type { PublicClient, Address } from 'viem';
+import { getStakingVaultContract, getDashboardContract } from 'modules/vaults';
+
+import type { Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+import type { RegisteredPublicClient } from 'modules/web3';
 
 type VaultDataArgs = {
-  publicClient: PublicClient;
+  publicClient: RegisteredPublicClient;
   vaultAddress: Address;
   shares: LidoSDKShares;
 };

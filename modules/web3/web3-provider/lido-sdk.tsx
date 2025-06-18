@@ -18,11 +18,14 @@ import { LidoSDKWrap } from '@lidofinance/lido-ethereum-sdk/wrap';
 import { LidoSDKWithdraw } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { LidoSDKStatistics } from '@lidofinance/lido-ethereum-sdk/statistics';
 import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
+// EXTRA MODULE
+import { LidoSDKwETH } from 'modules/vaults/contracts/weth';
 
 import { config, getContractAddress } from 'config';
-import { useTokenTransferSubscription } from 'modules/web3/hooks/use-balance';
+
+import { useTokenTransferSubscription } from '../hooks';
 import { useDappChain } from './dapp-chain';
-import { LidoSDKwETH } from 'modules/vaults/contracts/weth';
+import type { RegisteredPublicClient, RegisteredWalletClient } from '../types';
 
 type LidoSDKContextValue = {
   chainId: CHAINS;
@@ -35,6 +38,8 @@ type LidoSDKContextValue = {
   wrap: LidoSDKWrap;
   withdraw: LidoSDKWithdraw;
   statistics: LidoSDKStatistics;
+  publicClient: RegisteredPublicClient;
+  walletClient?: RegisteredWalletClient;
   subscribeToTokenUpdates: ReturnType<typeof useTokenTransferSubscription>;
 };
 
@@ -53,7 +58,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
   // will only have
   const { chainId } = useDappChain();
   const { data: walletClient } = useWalletClient({ chainId });
-  const publicClient = usePublicClient({ chainId });
+  const publicClient = usePublicClient({ chainId: chainId as CHAINS });
   // reset internal wagmi state after disconnect
   const { isConnected } = useAccount();
 
@@ -66,7 +71,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
         // protecs from side effect double run
         if (!wagmiConfig.state.current) {
           switchChain({
-            chainId: config.defaultChain,
+            chainId: config.defaultChain as CHAINS,
           });
         }
       };
@@ -80,11 +85,10 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       customLidoLocatorAddress,
       '[LidoSDKProvider] lidoLocator is not defined',
     );
-
-    // @ts-expect-error: typing (viem + LidoSDK)
     const core = new LidoSDKCore({
       chainId,
       logMode: 'none',
+      // @ts-expect-error mistype between sdk and wagmi
       rpcProvider: publicClient,
       web3Provider: walletClient,
       customLidoLocatorAddress,
@@ -110,6 +114,8 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       wrap,
       withdraw,
       statistics,
+      publicClient,
+      walletClient,
       subscribeToTokenUpdates: subscribe,
     };
   }, [chainId, publicClient, subscribe, walletClient]);

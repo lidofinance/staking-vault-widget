@@ -7,16 +7,9 @@ import {
   useMemo,
 } from 'react';
 import invariant from 'tiny-invariant';
-import { http, type PublicClient } from 'viem';
-import {
-  WagmiProvider,
-  createConfig,
-  useConnections,
-  usePublicClient,
-  fallback,
-  type Config,
-} from 'wagmi';
-import * as wagmiChains from 'wagmi/chains';
+import { http, publicActions } from 'viem';
+import { WagmiProvider, createConfig, useConnections, fallback } from 'wagmi';
+import * as WagmiChains from 'wagmi/chains';
 
 import { ReefKnotProvider, getDefaultConfig } from 'reef-knot/core-react';
 import {
@@ -36,24 +29,29 @@ import { walletMetricProps } from 'consts/matomo-wallets-events';
 import { SupportL1Chains } from './dapp-chain';
 import { useWeb3Transport } from './use-web3-transport';
 
-type ChainsList = [wagmiChains.Chain, ...wagmiChains.Chain[]];
+import type {
+  ChainsList,
+  MainnetConfig,
+  MainnetPublicClient,
+  RegisteredConfig,
+} from '../types';
 
 const WALLETS_PINNED: WalletIdsEthereum[] = [
   'binanceWallet',
   'browserExtension',
 ];
 
-export const wagmiChainMap = Object.values(wagmiChains).reduce(
+export const wagmiChainMap = Object.values(WagmiChains).reduce(
   (acc, chain) => {
     acc[chain.id] = chain;
     return acc;
   },
-  {} as Record<number, wagmiChains.Chain>,
+  {} as Record<number, WagmiChains.Chain>,
 );
 
 type Web3ProviderContextValue = {
-  mainnetConfig: Config;
-  publicClientMainnet: PublicClient;
+  mainnetConfig: MainnetConfig;
+  publicClientMainnet: MainnetPublicClient;
 };
 
 const Web3ProviderContext = createContext<Web3ProviderContextValue | null>(
@@ -80,9 +78,15 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
     // must preserve order of supportedChainIds
     const supportedChains = supportedChainIds
       .map((id) => wagmiChainMap[id])
-      .filter((chain) => chain) as ChainsList;
+      .filter((chain) => chain) as unknown as ChainsList;
 
     const defaultChain = wagmiChainMap[defaultChainId] || supportedChains[0];
+
+    invariant(
+      defaultChain.id === supportedChains[0].id,
+      'Default chain must be the first in supported chains',
+    );
+
     return {
       supportedChains,
       defaultChain,
@@ -104,7 +108,8 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
     backendRPC,
   );
 
-  const mainnetConfig = useMemo(() => {
+  // Separate wagmi config for readonly Mainnet (powers USD feeds, ENS and etc)
+  const web3ProviderContextValue = useMemo(() => {
     const batchConfig = {
       wait: config.PROVIDER_BATCH_TIME,
       batchSize: config.PROVIDER_MAX_BATCH,
@@ -112,8 +117,8 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
 
     const rpcUrlMainnet = getRpcUrlByChainId(CHAINS.Mainnet);
 
-    return createConfig({
-      chains: [wagmiChains.mainnet],
+    const mainnetConfig = createConfig({
+      chains: [WagmiChains.mainnet],
       ssr: true,
       connectors: [],
       batch: {
@@ -121,7 +126,7 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
       },
       pollingInterval: config.PROVIDER_POLLING_INTERVAL,
       transports: {
-        [wagmiChains.mainnet.id]: fallback([
+        [WagmiChains.mainnet.id]: fallback([
           // api/rpc
           http(rpcUrlMainnet, {
             batch: batchConfig,
@@ -135,11 +140,15 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
         ]),
       },
     });
-  }, [getRpcUrlByChainId]);
 
-  const publicClientMainnet = usePublicClient({
-    config: mainnetConfig,
-  });
+    const publicClientMainnet = mainnetConfig
+      .getClient({
+        chainId: CHAINS.Mainnet,
+      })
+      .extend(publicActions) as MainnetPublicClient;
+
+    return { mainnetConfig, publicClientMainnet };
+  }, [getRpcUrlByChainId]);
 
   const { wagmiConfig, reefKnotConfig, walletsModalConfig } = useMemo(() => {
     return getDefaultConfig({
@@ -180,11 +189,12 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
   }, [activeConnection, onActiveConnection]);
 
   return (
-    <Web3ProviderContext.Provider
-      value={{ mainnetConfig, publicClientMainnet }}
-    >
+    <Web3ProviderContext.Provider value={web3ProviderContextValue}>
       {/* default wagmi autoConnect, MUST be false in our case, because we use custom autoConnect from Reef Knot */}
-      <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
+      <WagmiProvider
+        config={wagmiConfig as RegisteredConfig}
+        reconnectOnMount={false}
+      >
         <ReefKnotProvider config={reefKnotConfig}>
           <ReefKnotWalletsModal
             config={walletsModalConfig}
