@@ -6,7 +6,7 @@ import { useDappStatus } from 'modules/web3';
 import { useClaim, useClaimData } from './hooks';
 
 export const SubmitButton = () => {
-  const { isWalletConnected, isDappActive } = useDappStatus();
+  const { isDappActive } = useDappStatus();
   const { claim, isSubmitting } = useClaim();
   const { claimableFeeQuery, invalidateClaimData } = useClaimData();
 
@@ -19,8 +19,7 @@ export const SubmitButton = () => {
     isSubmitting ||
     isDappActive ||
     claimableFeeQuery.isLoading ||
-    !claimableFeeQuery.data ||
-    isWalletConnected;
+    !claimableFeeQuery.data;
 
   return (
     <Button disabled={isDisabled} onClick={handleClaim}>

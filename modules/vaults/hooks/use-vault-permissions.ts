@@ -33,7 +33,6 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
-  activeVault?.defaultAdmins;
   const contracts = useMemo(
     () =>
       roles.map((role) => {
