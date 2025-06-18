@@ -1,11 +1,16 @@
 import invariant from 'tiny-invariant';
-import { getContract, PublicClient, WalletClient } from 'viem';
+import { getContract } from 'viem';
 
 import { getContractAddress } from 'config';
 
 import { LazyOracleAbi } from 'abi/lazy-oracle';
 
-export const getLazyOracleContract = <TClient extends PublicClient>(
+import type {
+  RegisteredPublicClient,
+  RegisteredWalletClient,
+} from 'modules/web3';
+
+export const getLazyOracleContract = <TClient extends RegisteredPublicClient>(
   publicClient: TClient,
 ) => {
   invariant(
@@ -26,8 +31,8 @@ export const getLazyOracleContract = <TClient extends PublicClient>(
 };
 
 export const getWritableLazyOracleContract = <
-  TClient extends PublicClient,
-  TWallet extends WalletClient,
+  TClient extends RegisteredPublicClient,
+  TWallet extends RegisteredWalletClient,
 >(
   publicClient: TClient,
   walletClient: TWallet,

@@ -6,6 +6,7 @@ import { config } from 'config';
 
 import { wagmiChainMap } from './web3-provider';
 import { LidoSDKProvider } from './lido-sdk';
+import type { SupportedChainIds } from '../types';
 
 type DappChainContextValue = {
   supportedChainIds: number[];
@@ -17,7 +18,7 @@ export type SupportedChainLabels = {
 };
 
 type UseDappChainValue = {
-  chainId: number;
+  chainId: SupportedChainIds;
   isSupportedChain: boolean;
   supportedChainLabels: SupportedChainLabels;
 } & DappChainContextValue;
@@ -46,10 +47,9 @@ export const useDappChain = (): UseDappChainValue => {
 
     return {
       ...context,
-      chainId:
-        walletChain && context.supportedChainIds.includes(walletChain)
-          ? walletChain
-          : config.defaultChain,
+      chainId: (walletChain && context.supportedChainIds.includes(walletChain)
+        ? walletChain
+        : config.defaultChain) as SupportedChainIds,
       isSupportedChain: walletChain
         ? context.supportedChainIds.includes(walletChain)
         : true,

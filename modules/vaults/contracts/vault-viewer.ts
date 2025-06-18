@@ -1,16 +1,15 @@
-import { getContract, PublicClient } from 'viem';
+import { getContract } from 'viem';
 
 import { VaultViewerAbi } from 'abi/vault-viewer';
 import { getContractAddress } from 'config';
 import invariant from 'tiny-invariant';
 
-// TODO: move to lido-sdk
-export const getVaultViewerContract = (publicClient: PublicClient) => {
-  invariant(
-    publicClient.chain?.id,
-    '[getVaultViewerContract] chainId is not defined',
-  );
+import type { RegisteredPublicClient } from 'modules/web3';
 
+// TODO: move to lido-sdk
+export const getVaultViewerContract = (
+  publicClient: RegisteredPublicClient,
+) => {
   const address = getContractAddress(publicClient.chain.id, 'vaultViewer');
 
   invariant(address, '[getVaultViewerContract] vaultViewer is not defined');
