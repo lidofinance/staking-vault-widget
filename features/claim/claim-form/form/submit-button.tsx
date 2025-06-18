@@ -17,7 +17,6 @@ export const SubmitButton = () => {
   return (
     <PermissionedSubmitButton
       dashboardRole="nodeOperatorFeeClaimer"
-      type="submit"
       disabled={isDisabled}
     >
       {vaultTexts.actions.claim.claimButton(claimableFeeQuery.data)}

@@ -6,26 +6,28 @@ import { CID_TO_GATEWAY } from './ipfs-gateways';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
 
 type IPFSReport = {
-  blockNumber: bigint;
-  format: 'standard-v1';
-  refSlot: bigint;
-  timestamp: bigint;
-  leafEncoding: ['address', 'uint256', 'uint256', 'uint256', 'uint256'];
-  leafIndexToData: {
-    0: 'vault_address';
-    1: 'total_value_wei';
-    2: 'in_out_delta';
-    3: 'fee';
-    4: 'liability_shares';
-  };
-  merkleTreeRoot: Hex;
+  blockNumber: number;
+  refSlot: number;
+  timestamp: number;
+
   prevTreeCID: string;
   proofsCID: string;
-  tree: string[];
+
+  merkleTreeRoot: Hex;
+  tree: Hex[];
   values: {
     treeIndex: bigint;
-    value: [Address, bigint, bigint, bigint, bigint];
+    value: [Address, string, string, string, string];
   }[];
+  format: 'standard-v1';
+  leafEncoding: ['address', 'uint256', 'uint256', 'uint256', 'int256'];
+  leafIndexToData: {
+    '0': 'vault_address';
+    '1': 'total_value_wei';
+    '2': 'fee';
+    '3': 'liability_shares';
+    '4': 'slashing_reserve';
+  };
 };
 
 const fetchIPFS = async <TResult>(cid: string): Promise<TResult> => {
@@ -78,10 +80,10 @@ const extractProofFromIPFS = async (cid: string, vault: Address) => {
 
   return {
     vault: vaultEntry.value[0],
-    totalValueWei: vaultEntry.value[1],
-    inOutDelta: vaultEntry.value[2],
-    fee: vaultEntry.value[3],
-    liabilityShares: vaultEntry.value[4],
+    totalValueWei: BigInt(vaultEntry.value[1]),
+    fee: BigInt(vaultEntry.value[2]),
+    liabilityShares: BigInt(vaultEntry.value[3]),
+    slashingReserve: BigInt(vaultEntry.value[4]),
     proof: merkleTree.getProof(vaultIndex) as Hex[],
   };
 };
