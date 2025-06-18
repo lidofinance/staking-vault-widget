@@ -34,7 +34,6 @@ export const VAULTS_OWNER_ROLES_MAP = {
 } as const;
 
 export const VAULTS_NO_ROLES_MAP = {
-  nodeOperatorFeeClaimer: toRoleHash('vaults.NodeOperatorFee.FeeClaimRole'),
   nodeOperatorRewardsAdjuster: toRoleHash(
     'vaults.NodeOperatorFee.RewardsAdjustRole',
   ),
@@ -77,6 +76,5 @@ export const VAULT_MANAGER_PERMISSIONS_LIST: VAULT_OWNER_ROLES[] = [
 ] as const;
 
 export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [
-  'nodeOperatorFeeClaimer',
   'nodeOperatorRewardsAdjuster',
 ] as const;

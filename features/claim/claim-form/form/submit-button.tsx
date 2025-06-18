@@ -1,26 +1,30 @@
-import { useFormState } from 'react-hook-form';
+import { Button } from '@lidofinance/lido-ui';
 
-import { PermissionedSubmitButton } from 'modules/vaults/components';
-import { useClaimForm } from './claim-form-context';
 import { vaultTexts } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
+
+import { useClaim, useClaimData } from './hooks';
 
 export const SubmitButton = () => {
-  const { claimableFeeQuery } = useClaimForm();
-  const { isSubmitting, disabled } = useFormState();
+  const { isWalletConnected, isDappActive } = useDappStatus();
+  const { claim, isSubmitting } = useClaim();
+  const { claimableFeeQuery, invalidateClaimData } = useClaimData();
+
+  const handleClaim = async () => {
+    await claim();
+    await invalidateClaimData();
+  };
 
   const isDisabled =
     isSubmitting ||
-    disabled ||
+    isDappActive ||
     claimableFeeQuery.isLoading ||
-    !claimableFeeQuery.data;
+    !claimableFeeQuery.data ||
+    isWalletConnected;
 
   return (
-    <PermissionedSubmitButton
-      dashboardRole="nodeOperatorFeeClaimer"
-      type="submit"
-      disabled={isDisabled}
-    >
+    <Button disabled={isDisabled} onClick={handleClaim}>
       {vaultTexts.actions.claim.claimButton(claimableFeeQuery.data)}
-    </PermissionedSubmitButton>
+    </Button>
   );
 };
