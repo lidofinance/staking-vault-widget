@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useState, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { Address, encodeFunctionData } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
@@ -20,7 +20,6 @@ import {
 import { getContractAddress } from 'config';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import { encodeFunctionData } from 'viem';
 import { fetchReportMerkle } from './ipfs';
 import { LazyOracleAbi } from 'abi/lazy-oracle';
 
@@ -37,7 +36,6 @@ const useReportFreshnessDelta = () => {
     placeholderData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     initialData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     queryFn: async () => {
-      invariant(publicClient, 'publicClient is required');
       const hub = getVaultHubContract(publicClient);
       const delta = await hub.read.REPORT_FRESHNESS_DELTA();
       if (delta != VAULT_DEFAULT_REPORT_FRESHNESS_DELTA) {
@@ -70,13 +68,10 @@ export const useReportStatus = () => {
 
   const { activeVault } = useVaultInfo();
   const publicClient = usePublicClient();
-  const vaultHubAddress = getContractAddress(
-    publicClient!.chain.id,
-    'vaultHub',
-  );
+  const vaultHubAddress = getContractAddress(publicClient.chain.id, 'vaultHub');
 
   const lazyOracleAddress = getContractAddress(
-    publicClient!.chain.id,
+    publicClient.chain.id,
     'lazyOracle',
   );
 
@@ -86,7 +81,7 @@ export const useReportStatus = () => {
     address: vaultHubAddress,
     abi: VaultHubAbi,
     functionName: 'vaultRecord',
-    args: [activeVault!.address],
+    args: [activeVault?.address as Address],
     query: { ...STRATEGY_EAGER, enabled: !!activeVault && !!publicClient },
   });
 
@@ -120,7 +115,6 @@ export const useReportStatus = () => {
   );
 
   const prepareReportCall = useCallback(async () => {
-    invariant(publicClient, 'publicClient is required');
     invariant(activeVault, 'activeVault is required');
 
     const lazyOracle = getLazyOracleContract(publicClient);

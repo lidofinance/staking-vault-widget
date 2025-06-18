@@ -2,7 +2,7 @@ import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import { useLidoSDK } from 'modules/web3';
+import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 
 import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
 import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
@@ -12,13 +12,13 @@ import { bigIntMax } from 'utils/bigint-math';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
 import type { VaultInfo } from 'types';
-import type { PublicClient, Address } from 'viem';
+import type { Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
 import { useMemo } from 'react';
 
 type VaultDataArgs = {
-  publicClient: PublicClient;
+  publicClient: RegisteredPublicClient;
   vaultAddress: Address;
   shares: LidoSDKShares;
 };

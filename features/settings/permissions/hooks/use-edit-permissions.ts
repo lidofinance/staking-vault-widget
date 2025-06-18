@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, encodeFunctionData, PublicClient } from 'viem';
+import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo, vaultTexts } from 'modules/vaults';
@@ -68,47 +68,4 @@ export const useEditPermissions = () => {
     ),
     ...rest,
   };
-};
-
-type SimulateEditPermissions = {
-  publicClient: PublicClient;
-  delegationAddress: Address;
-  account: Address;
-  payload: { toRevoke: GrantRole[]; toGrant: GrantRole[] };
-};
-
-export const simulateEditPermissionsWithDashboard = async ({
-  publicClient,
-  delegationAddress,
-  account,
-  payload,
-}: SimulateEditPermissions) => {
-  const { toRevoke, toGrant } = payload;
-  const simulationList = [];
-
-  if (toRevoke.length > 0) {
-    simulationList.push(
-      publicClient.simulateContract({
-        address: delegationAddress,
-        abi: dashboardAbi,
-        functionName: 'revokeRoles',
-        args: [toRevoke],
-        account,
-      }),
-    );
-  }
-
-  if (toGrant.length > 0) {
-    simulationList.push(
-      publicClient.simulateContract({
-        address: delegationAddress,
-        abi: dashboardAbi,
-        functionName: 'grantRoles',
-        args: [toGrant],
-        account,
-      }),
-    );
-  }
-
-  return await Promise.all(simulationList);
 };
