@@ -53,14 +53,20 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
     batchSize: 3,
     query: {
       select: (data) => {
-        const result = data.map((item, index) => ({
+        const rolesResult = data.map((item, index) => ({
           role: roles[index],
           hasRole: !!item,
         }));
+
+        const adminsResult = activeVault?.defaultAdmins.some(
+          (admin) => admin.toLowerCase() === address?.toLowerCase(),
+        );
+
         return {
-          result,
-          hasPermissions: result.every((item) => item.hasRole),
-          missingRoles: result
+          result: rolesResult,
+          hasPermissions:
+            rolesResult.every((item) => item.hasRole) || adminsResult,
+          missingRoles: rolesResult
             .filter((item) => !item.hasRole)
             .map((item) => item.role),
         };
