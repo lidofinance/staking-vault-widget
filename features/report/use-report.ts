@@ -20,7 +20,7 @@ import {
 import { getContractAddress } from 'config';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import { encodeFunctionData } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 import { fetchReportMerkle } from './ipfs';
 import { LazyOracleAbi } from 'abi/lazy-oracle';
 
@@ -86,8 +86,11 @@ export const useReportStatus = () => {
     address: vaultHubAddress,
     abi: VaultHubAbi,
     functionName: 'vaultRecord',
-    args: [activeVault!.address],
-    query: { ...STRATEGY_EAGER, enabled: !!activeVault && !!publicClient },
+    args: [activeVault?.address as Address],
+    query: {
+      ...STRATEGY_EAGER,
+      enabled: !!activeVault?.address && !!publicClient,
+    },
   });
 
   const vaultHubReport = useReadContract({

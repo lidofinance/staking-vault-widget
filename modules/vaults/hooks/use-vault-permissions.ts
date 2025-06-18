@@ -1,5 +1,9 @@
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
-import { useVaultInfo } from 'modules/vaults';
+import {
+  NO_MANAGER_PERMISSION_LIST,
+  useVaultInfo,
+  VAULT_MANAGER_PERMISSIONS_LIST,
+} from 'modules/vaults';
 import { VAULTS_ALL_ROLES, VAULTS_ALL_ROLES_MAP } from '../consts';
 import { dashboardAbi } from 'abi/dashboard-abi';
 
@@ -29,13 +33,38 @@ export const useVaultPermission = (role?: VAULTS_ALL_ROLES) => {
   };
 };
 
+const saturatePermissions = (
+  roles: readonly VAULTS_ALL_ROLES[],
+): readonly VAULTS_ALL_ROLES[] => {
+  const adminsList = new Set(VAULT_MANAGER_PERMISSIONS_LIST);
+  const noList = new Set(NO_MANAGER_PERMISSION_LIST);
+  const saturateRoles: VAULTS_ALL_ROLES[] = [...roles];
+
+  // @ts-expect-error list types
+  const hasAdminsPermissions = roles.some((role) => adminsList.has(role));
+  // @ts-expect-error list types
+  const hasNoPermissions = roles.some((role) => noList.has(role));
+
+  if (hasAdminsPermissions && !roles.includes('defaultAdmin')) {
+    saturateRoles.push('defaultAdmin');
+  }
+
+  if (hasNoPermissions && !roles.includes('nodeOperatorManager')) {
+    saturateRoles.push('nodeOperatorManager');
+  }
+
+  return saturateRoles;
+};
+
 export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
+  const saturatedRoles = saturatePermissions(roles);
+
   const contracts = useMemo(
     () =>
-      roles.map((role) => {
+      saturatedRoles.map((role) => {
         const roleHash = VAULTS_ALL_ROLES_MAP[role];
         return {
           abi: dashboardAbi,
@@ -44,7 +73,7 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
           args: [roleHash, address] as [Hash, Address],
         };
       }),
-    [activeVault?.owner, address, roles],
+    [activeVault?.owner, address, saturatedRoles],
   );
 
   return useReadContracts({
@@ -54,18 +83,15 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
     query: {
       select: (data) => {
         const rolesResult = data.map((item, index) => ({
-          role: roles[index],
+          role: saturatedRoles[index],
           hasRole: !!item,
         }));
 
-        const adminsResult = activeVault?.defaultAdmins.some(
-          (admin) => admin.toLowerCase() === address?.toLowerCase(),
-        );
-
         return {
           result: rolesResult,
-          hasPermissions:
-            rolesResult.every((item) => item.hasRole) || adminsResult,
+          hasPermissions: rolesResult.some((item) => item.hasRole),
+          hasDefaultAdminsPermissions: false,
+          hasNodeOperatorPermissions: false,
           missingRoles: rolesResult
             .filter((item) => !item.hasRole)
             .map((item) => item.role),
