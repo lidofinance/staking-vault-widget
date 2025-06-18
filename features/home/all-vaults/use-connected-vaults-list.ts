@@ -28,7 +28,15 @@ export const useConnectedVaultsList = () => {
             publicClient,
             vaultAddress,
             shares,
-          }).catch(() => ({ address: vaultAddress, error: true })),
+          }).catch((e) => {
+            console.warn(
+              `[useMyVaultsList] Failed to fetch vault data for ${vaultAddress}:`,
+              e,
+            );
+            return {
+              address: vaultAddress,
+            };
+          }),
         ),
       );
       const totalVaultsCount =

@@ -1,8 +1,8 @@
+import { isAddressEqual, zeroAddress, type Address } from 'viem';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
-import { getStakingVaultContract, getDashboardContract } from 'modules/vaults';
+import { getDashboardContract, getVaultHubContract } from 'modules/vaults';
 
-import type { Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import type { RegisteredPublicClient } from 'modules/web3';
 
@@ -27,8 +27,15 @@ export const getVaultDataTable = async ({
   vaultAddress,
   shares,
 }: VaultDataArgs): Promise<VaultTableInfo> => {
-  const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
-  const owner = await vaultContract.read.owner();
+  const vaultHub = getVaultHubContract(publicClient);
+  const { owner } = await vaultHub.read.vaultConnection([vaultAddress]);
+
+  if (isAddressEqual(zeroAddress, owner)) {
+    throw new Error(
+      `[getVaultDataTable ] no such vault connected: ${vaultAddress}`,
+    );
+  }
+
   const dashboardContract = getDashboardContract(owner, publicClient);
 
   const [totalValue, liabilityShares, forcedRebalanceThresholdBP] =

@@ -39,9 +39,15 @@ export const useMyVaultsList = () => {
             publicClient,
             vaultAddress,
             shares,
-          }).catch(() => ({
-            address: vaultAddress,
-          })),
+          }).catch((e) => {
+            console.warn(
+              `[useMyVaultsList] Failed to fetch vault data for ${vaultAddress}:`,
+              e,
+            );
+            return {
+              address: vaultAddress,
+            };
+          }),
         ),
       );
 
