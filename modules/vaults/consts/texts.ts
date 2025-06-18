@@ -132,10 +132,16 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
+      nodeOperatorFeeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
+        },
+        nodeOperatorFeeRecipient: {
+          title: 'Node Operator Fee Recipient',
+          editLabel: 'Propose new, address',
+          hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
         },
         nodeOperatorFee: {
           title: 'Node Operator Fee',

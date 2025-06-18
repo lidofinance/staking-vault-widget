@@ -118,6 +118,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     return {
       defaultAdmins,
       nodeOperatorManagers,
+      nodeOperatorFeeRecipient: activeVault.nodeOperatorFeeRecipient,
       nodeOperatorFeeBP: nodeOperatorFeeBP.sort((a, b) => {
         if (a.type === 'My proposal') return 1;
         if (b.type === 'My proposal') return -1;

@@ -8,6 +8,7 @@ export type VaultInfo = VaultSocket &
     nodeOperator: Address;
     defaultAdmins: readonly Address[];
     nodeOperatorManagers: readonly Address[];
+    nodeOperatorFeeRecipient: Address;
     totalValue: bigint;
     liabilityShares: bigint;
     liabilityStETH: bigint;

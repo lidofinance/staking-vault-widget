@@ -106,6 +106,22 @@ export const useEditMainSettings = () => {
           });
         }
 
+        if (
+          payload.nodeOperatorFeeRecipient !==
+          activeVault.nodeOperatorFeeRecipient
+        ) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'setNodeOperatorFeeRecipient',
+              args: [payload.nodeOperatorFeeRecipient],
+            }),
+            loadingActionText:
+              vaultTexts.actions.settings.nodeOperatorFeeRecipient,
+          });
+        }
+
         const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(

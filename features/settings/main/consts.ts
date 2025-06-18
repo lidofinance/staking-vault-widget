@@ -67,6 +67,7 @@ export const votingLifetimeSchema = z.coerce
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManagers: z.array(addressSchema),
+  nodeOperatorFeeRecipient: accountSchema,
   defaultAdmins: z.array(addressSchema),
   nodeOperatorFeeBP: z.string(),
   nodeOperatorFeeBPCustom: z
