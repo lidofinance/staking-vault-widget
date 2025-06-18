@@ -135,9 +135,9 @@ export const useReportStatus = () => {
         args: [
           activeVault.address,
           report.totalValueWei,
-          report.inOutDelta,
           report.fee,
           report.liabilityShares,
+          report.slashingReserve,
           report.proof,
         ],
       }),
