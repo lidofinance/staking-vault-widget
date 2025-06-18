@@ -26,9 +26,8 @@ export const NodeOperatorFeeRecipient: FC = () => {
         {texts.title}
       </Text>
       {isLoading && <Skeleton />}
-      {hasPermission && !isLoading ? (
-        <EditRecipient />
-      ) : (
+      {hasPermission && !isLoading && <EditRecipient />}
+      {!hasPermission && !isLoading && (
         <AddressBadge
           weight={400}
           address={activeVault?.nodeOperatorFeeRecipient}

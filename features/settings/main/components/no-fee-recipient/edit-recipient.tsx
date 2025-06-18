@@ -1,7 +1,8 @@
 import { useController } from 'react-hook-form';
-import { Input } from '@lidofinance/lido-ui';
+import { Input, Identicon } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import { isAddress } from 'viem';
 
 const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
 
@@ -14,7 +15,10 @@ export const EditRecipient = () => {
   return (
     <Input
       {...field}
-      placeholder={texts.editLabel}
+      leftDecorator={
+        isAddress(field.value) ? <Identicon address={field.value} /> : null
+      }
+      label={texts.editLabel}
       error={error?.message}
       fullwidth
     />
