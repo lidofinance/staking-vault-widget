@@ -140,7 +140,7 @@ export const vaultTexts = {
         },
         nodeOperatorFeeRecipient: {
           title: 'Node Operator Fee Recipient',
-          editLabel: 'Propose new, address',
+          editLabel: 'Set new address',
           hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
         },
         nodeOperatorFee: {
