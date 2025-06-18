@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { Address, encodeFunctionData } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
@@ -19,7 +20,6 @@ import {
 import { getContractAddress } from 'config';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import { encodeFunctionData } from 'viem';
 import { fetchReportMerkle } from './ipfs';
 import { LazyOracleAbi } from 'abi/lazy-oracle';
 
@@ -81,8 +81,7 @@ export const useReportStatus = () => {
     address: vaultHubAddress,
     abi: VaultHubAbi,
     functionName: 'vaultRecord',
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    args: [activeVault!.address],
+    args: [activeVault?.address as Address],
     query: { ...STRATEGY_EAGER, enabled: !!activeVault && !!publicClient },
   });
 
