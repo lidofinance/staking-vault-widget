@@ -67,6 +67,7 @@ const getVaultData = async ({
     totalMintingCapacity,
     defaultAdmins,
     nodeOperatorManagers,
+    nodeOperatorFeeRecipient,
     confirmExpiry,
   ] = await Promise.all([
     dashboardContract.read.totalValue(),
@@ -78,6 +79,7 @@ const getVaultData = async ({
     dashboardContract.read.getRoleMembers([
       VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
     ]),
+    dashboardContract.read.nodeOperatorFeeRecipient(),
     dashboardContract.read.getConfirmExpiry(),
   ]);
 
@@ -109,6 +111,7 @@ const getVaultData = async ({
     nodeOperator,
     defaultAdmins,
     nodeOperatorManagers,
+    nodeOperatorFeeRecipient,
     totalValue,
     liabilityStETH,
     mintableStETH,

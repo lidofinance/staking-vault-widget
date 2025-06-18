@@ -45,6 +45,7 @@ export const prepareDefaultValues = (
       defaultAdmins,
       nodeOperatorFeeBP,
       nodeOperatorManagers,
+      nodeOperatorFeeRecipient,
     } = settingsData;
     const confirmExpiryCurrent = confirmExpiry.find(
       (item) => item.type === 'current',
@@ -56,6 +57,7 @@ export const prepareDefaultValues = (
     return {
       defaultAdmins,
       nodeOperatorManagers,
+      nodeOperatorFeeRecipient,
       confirmExpiry: String(confirmExpiryCurrent),
       confirmExpiryCustom: '',
       nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),

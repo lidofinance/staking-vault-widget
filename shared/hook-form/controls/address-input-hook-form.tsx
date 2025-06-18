@@ -9,6 +9,7 @@ type TokenAmountInputHookFormProps = Partial<
 > & {
   fieldName: string;
   showErrorMessage?: boolean;
+  showRightDecorator?: boolean;
 };
 
 const safeIsAddressEqual = (a: string, b: string) => {
@@ -20,6 +21,7 @@ const safeIsAddressEqual = (a: string, b: string) => {
 export const AddressInputHookForm = ({
   fieldName,
   showErrorMessage = true,
+  showRightDecorator = true,
   onBlur: onBlurProp,
   onFocus: onFocusProp,
   disabled,
@@ -35,7 +37,7 @@ export const AddressInputHookForm = ({
   const shouldShowErrorMessage = showErrorMessage && inFocus && !!error;
   const errorMessage = error?.message as string;
 
-  const rightDecorator = (
+  const rightDecorator = showRightDecorator ? (
     <Button
       size="xxs"
       variant="translucent"
@@ -51,7 +53,7 @@ export const AddressInputHookForm = ({
     >
       Current address
     </Button>
-  );
+  ) : null;
 
   return (
     <Input
