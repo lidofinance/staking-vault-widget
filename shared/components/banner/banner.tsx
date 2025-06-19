@@ -1,7 +1,10 @@
 import Link from 'next/link';
 import { BannerWrapper, TextWhite } from './styles';
 
+const DISABLE_DATE = new Date('2025-07-09T00:00:00Z');
+
 export const MigrationBannerTestnetV2 = () => {
+  if (new Date() > DISABLE_DATE) return null;
   return (
     <BannerWrapper>
       <TextWhite>
