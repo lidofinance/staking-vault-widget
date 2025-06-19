@@ -45,11 +45,11 @@ export const blogOrigin = process.env.BLOG_ORIGIN || 'https://blog.lido.fi';
 
 // Keep fallback as in 'config/get-secret-config.ts'
 /** @type number */
-export const defaultChain = parseInt(process.env.DEFAULT_CHAIN, 10) || 11155111;
+export const defaultChain = parseInt(process.env.DEFAULT_CHAIN, 10) || 560048;
 /** @type number[] */
 export const supportedChains = process.env?.SUPPORTED_CHAINS?.split(',').map(
   (chainId) => parseInt(chainId, 10),
-) ?? [11155111];
+) ?? [560048];
 
 /** @type Record<string,string[]> */
 export const prefillUnsafeElRpcUrls = supportedChains.reduce((acc, chain) => {

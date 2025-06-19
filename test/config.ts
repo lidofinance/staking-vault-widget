@@ -6,7 +6,7 @@ const STAND_CONFIGS = new Map<string, StandConfig>([
   [
     'testnet',
     {
-      chainId: 11155111,
+      chainId: 560048,
     },
   ],
   [
