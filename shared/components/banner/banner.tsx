@@ -1,12 +1,19 @@
+import Link from 'next/link';
 import { BannerWrapper, TextWhite } from './styles';
 
 export const MigrationBannerTestnetV2 = () => {
   return (
     <BannerWrapper>
       <TextWhite>
-        All Testnet data will not be available via Web UI on 25 Jun 2025 as part
-        of migration to the stVaults Testnet-2 contracts. Back up anything
-        important.
+        ✅ stVaults Testnet-2 is live! The Web UI is now connected to the new
+        contracts. Happy testing!{' '}
+        <Link
+          target="_blank"
+          href="https://docs.lido.fi/deployed-contracts/hoodi-lidov3/"
+        >
+          Deployed contracts
+        </Link>
+        .
       </TextWhite>
     </BannerWrapper>
   );
