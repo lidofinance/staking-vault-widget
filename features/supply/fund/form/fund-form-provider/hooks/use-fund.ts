@@ -38,7 +38,6 @@ export const useFund = () => {
         token,
         mintAddress,
       }: FundFormValidatedValues) => {
-        invariant(publicClient?.chain, '[useFund] publicClient is undefined');
         invariant(activeVault?.owner, '[useFund] owner is undefined');
         const wethAddress = getContractAddress(publicClient.chain.id, 'weth');
         invariant(wethAddress, '[useFund] WETH address is undefined');
@@ -81,7 +80,7 @@ export const useFund = () => {
             );
 
             const maxMintableShares =
-              await dashboard.read.remainingMintingCapacity([amount]);
+              await dashboard.read.remainingMintingCapacityShares([amount]);
 
             calls.push({
               to: activeVault.owner,

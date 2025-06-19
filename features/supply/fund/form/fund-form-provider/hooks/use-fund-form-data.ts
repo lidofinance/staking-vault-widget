@@ -24,7 +24,7 @@ export const useFundFormData = (
   const isStethMintableQuery = useReadContract({
     address: activeVault?.owner,
     abi: dashboardAbi,
-    functionName: 'remainingMintingCapacity',
+    functionName: 'remainingMintingCapacityShares',
     args: [ONE_ETH],
     query: {
       enabled: !!activeVault?.owner,

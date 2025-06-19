@@ -2,6 +2,7 @@ import { useFeeHistory } from 'wagmi';
 import type { GetFeeHistoryReturnType } from 'viem';
 
 import { useDappStatus } from './use-dapp-status';
+import type { SupportedChainIds } from '../types';
 
 const REWARD_PERCENTILES = [25];
 
@@ -20,7 +21,7 @@ const feeHistoryToMaxFee = ({
   return lastBaseFeePerGas * 2n + maxPriorityFeePerGas;
 };
 
-export const useMaxGasPrice = (chainId?: number) => {
+export const useMaxGasPrice = (chainId?: SupportedChainIds) => {
   const { chainId: dappChainId } = useDappStatus();
 
   const { data, isLoading, error, isFetching, refetch } = useFeeHistory({

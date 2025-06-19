@@ -4,7 +4,7 @@ import { Button } from '@lidofinance/lido-ui';
 import { useDappStatus } from 'modules/web3';
 import { ConnectWalletButton } from 'shared/wallet';
 
-import { useVaultPermissions } from '../hooks/use-vault-permissions';
+import { useVaultPermissions } from '../hooks';
 
 import { VAULTS_ALL_ROLES, vaultTexts } from '../consts';
 
@@ -32,7 +32,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
 
   return (
     <ConnectWalletButton>
-      <Button disabled={shouldDisable} ref={ref} {...rest}>
+      <Button type="submit" disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
           ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}

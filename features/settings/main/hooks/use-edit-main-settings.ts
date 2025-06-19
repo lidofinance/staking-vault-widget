@@ -106,15 +106,32 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
+        if (
+          payload.nodeOperatorFeeRecipient !==
+          activeVault.nodeOperatorFeeRecipient
+        ) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'setNodeOperatorFeeRecipient',
+              args: [payload.nodeOperatorFeeRecipient],
+            }),
+            loadingActionText:
+              vaultTexts.actions.settings.nodeOperatorFeeRecipient,
+          });
+        }
+
+        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = payload;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
-          nodeOperatorFeeBP !== 'custom'
-            ? nodeOperatorFeeBP
-            : nodeOperatorFeeBPCustom,
+          nodeOperatorFeeRate !== 'custom'
+            ? nodeOperatorFeeRate
+            : nodeOperatorFeeRateCustom,
         );
         const currentFee = Number(
-          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+          (activeVault.nodeOperatorFeeRate * 100n) /
+            VAULT_TOTAL_BASIS_POINTS_BN,
         );
         const isFeeValueChanged = feeValue !== currentFee;
 
@@ -127,7 +144,7 @@ export const useEditMainSettings = () => {
             to: owner,
             data: encodeFunctionData({
               abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeBP',
+              functionName: 'setNodeOperatorFeeRate',
               args: [BigInt(newFee)],
             }),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(

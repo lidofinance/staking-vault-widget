@@ -41,7 +41,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     (vaultInfo: VaultInfo) => {
       const {
         confirmExpiryValue,
-        nodeOperatorFeeBPValue,
+        nodeOperatorFeeRateValue,
         defaultAdmins,
         nodeOperatorManagers,
       } = formatSettingsValues(vaultInfo);
@@ -50,7 +50,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         defaultAdmins,
         nodeOperatorManagers,
         confirmExpiry: confirmExpiryValue,
-        nodeOperatorFeeBP: nodeOperatorFeeBPValue,
+        nodeOperatorFeeRate: nodeOperatorFeeRateValue,
       };
 
       // TODO: think about moving reset to the form controller

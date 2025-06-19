@@ -1,15 +1,9 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionData, useVaultOverview } from 'features/overview/contexts';
-import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionData[] = [
   {
-    key: 'nodeOperatorFee',
-  },
-  {
-    key: 'accumulatedFee',
-    actionLink: (vault) => appPaths.vaults.vault(vault).claim,
-    actionRole: 'nodeOperatorFeeClaimer',
+    key: 'nodeOperatorFeeRate',
   },
 ];
 

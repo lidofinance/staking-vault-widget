@@ -38,7 +38,7 @@ export const WalletCardBalanceStyle = styled.div`
   flex-basis: 50%;
   flex-grow: 1;
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
-  line-height: 1.6em;
+  line-height: 20px;
 
   :last-child {
     margin-right: 0;

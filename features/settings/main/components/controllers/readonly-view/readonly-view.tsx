@@ -20,7 +20,7 @@ export const ReadonlyView: FC<ReadonlyViewProps> = ({ vaultKey }) => {
         value = `${(value as bigint) / (60n * 60n)} hours`;
       }
 
-      if (vaultKey === 'nodeOperatorFeeBP') {
+      if (vaultKey === 'nodeOperatorFeeRate') {
         value = `${(value as bigint) / 100n}%`;
       }
 

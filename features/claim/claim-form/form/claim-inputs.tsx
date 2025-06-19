@@ -1,11 +1,19 @@
-import { vaultTexts } from 'modules/vaults';
-import { AddressInputHookForm } from 'shared/hook-form/controls';
+import { Input, Loader } from '@lidofinance/lido-ui';
+
+import { useVaultInfo, vaultTexts } from 'modules/vaults';
+
+const label = vaultTexts.actions.claim.addressLabel;
 
 export const ClaimInputs = () => {
+  const { activeVault, isLoadingVault } = useVaultInfo();
+
   return (
-    <AddressInputHookForm
-      label={vaultTexts.actions.claim.addressLabel}
-      fieldName="recipient"
+    <Input
+      leftDecorator={isLoadingVault ? <Loader /> : null}
+      label={label}
+      value={activeVault?.nodeOperatorFeeRecipient}
+      readOnly
+      disabled
     />
   );
 };

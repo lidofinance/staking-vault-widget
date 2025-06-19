@@ -43,23 +43,25 @@ export const prepareDefaultValues = (
     const {
       confirmExpiry,
       defaultAdmins,
-      nodeOperatorFeeBP,
+      nodeOperatorFeeRate,
       nodeOperatorManagers,
+      nodeOperatorFeeRecipient,
     } = settingsData;
     const confirmExpiryCurrent = confirmExpiry.find(
       (item) => item.type === 'current',
     )?.value;
-    const nodeOperatorFeeBPCurrent = nodeOperatorFeeBP.find(
+    const nodeOperatorFeeRateCurrent = nodeOperatorFeeRate.find(
       (item) => item.type === 'current',
     )?.value;
 
     return {
       defaultAdmins,
       nodeOperatorManagers,
+      nodeOperatorFeeRecipient,
       confirmExpiry: String(confirmExpiryCurrent),
       confirmExpiryCustom: '',
-      nodeOperatorFeeBP: String(nodeOperatorFeeBPCurrent),
-      nodeOperatorFeeBPCustom: '',
+      nodeOperatorFeeRate: String(nodeOperatorFeeRateCurrent),
+      nodeOperatorFeeRateCustom: '',
     };
   };
 };
@@ -133,8 +135,8 @@ export const formatSettingsValues = (vaultInfo: VaultInfo) => {
     defaultAdmins,
     nodeOperatorManagers,
     confirmExpiryValue: String(vaultInfo.confirmExpiry),
-    nodeOperatorFeeBPValue: String(
-      (vaultInfo.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    nodeOperatorFeeRateValue: String(
+      (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
     ),
   };
 };

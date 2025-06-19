@@ -10,7 +10,7 @@ export const useWithdrawable = () => {
   return useReadContract({
     abi: dashboardAbi,
     address: owner,
-    functionName: 'withdrawableEther',
+    functionName: 'withdrawableValue',
     query: {
       enabled: !!owner,
     },

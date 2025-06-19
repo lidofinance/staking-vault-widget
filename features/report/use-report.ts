@@ -1,10 +1,11 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useEffect, useState, useCallback } from 'react';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { Address, encodeFunctionData } from 'viem';
 import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
+  getLazyOracleContract,
   useVaultInfo,
   VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
   VAULT_SHOULD_REPORT_THRESHOLD,
@@ -17,11 +18,10 @@ import {
   STRATEGY_IMMUTABLE,
 } from 'consts/react-query-strategies';
 import { getContractAddress } from 'config';
-import { StakingVaultAbi } from 'abi/vault';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import { encodeFunctionData, type Address } from 'viem';
 import { fetchReportMerkle } from './ipfs';
+import { LazyOracleAbi } from 'abi/lazy-oracle';
 
 const UI_UPDATE_INTERVAL = 5000; // 5 second
 
@@ -36,7 +36,6 @@ const useReportFreshnessDelta = () => {
     placeholderData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     initialData: VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
     queryFn: async () => {
-      invariant(publicClient, 'publicClient is required');
       const hub = getVaultHubContract(publicClient);
       const delta = await hub.read.REPORT_FRESHNESS_DELTA();
       if (delta != VAULT_DEFAULT_REPORT_FRESHNESS_DELTA) {
@@ -69,19 +68,26 @@ export const useReportStatus = () => {
 
   const { activeVault } = useVaultInfo();
   const publicClient = usePublicClient();
+  const vaultHubAddress = getContractAddress(publicClient.chain.id, 'vaultHub');
+
+  const lazyOracleAddress = getContractAddress(
+    publicClient.chain.id,
+    'lazyOracle',
+  );
 
   const reportFreshnessDelta = useReportFreshnessDelta();
 
   const vaultReport = useReadContract({
-    address: activeVault?.address as Address,
-    abi: StakingVaultAbi,
-    functionName: 'latestReport',
+    address: vaultHubAddress,
+    abi: VaultHubAbi,
+    functionName: 'vaultRecord',
+    args: [activeVault?.address as Address],
     query: { ...STRATEGY_EAGER, enabled: !!activeVault && !!publicClient },
   });
 
   const vaultHubReport = useReadContract({
-    address: getContractAddress(publicClient!.chain.id, 'vaultHub'),
-    abi: VaultHubAbi,
+    address: lazyOracleAddress,
+    abi: LazyOracleAbi,
     functionName: 'latestReportData',
     query: { ...STRATEGY_EAGER },
   });
@@ -91,11 +97,11 @@ export const useReportStatus = () => {
   // optimistically say the report is fresh if we don't have data just yet
   const isReportFresh =
     shouldSkipCheck ||
-    time - Number(vaultReport.data.timestamp) < reportFreshnessDelta;
+    time - Number(vaultReport.data.report.timestamp) < reportFreshnessDelta;
 
   const isReportAvailable =
     vaultReport.data && vaultHubReport.data
-      ? vaultReport.data.timestamp < vaultHubReport.data[0]
+      ? vaultReport.data.report.timestamp < vaultHubReport.data[0]
       : false;
 
   // when new report is available but old is still fresh
@@ -104,16 +110,15 @@ export const useReportStatus = () => {
     isReportAvailable &&
     time &&
     vaultReport.data &&
-    (time - Number(vaultReport.data.timestamp)) / reportFreshnessDelta >=
+    (time - Number(vaultReport.data.report.timestamp)) / reportFreshnessDelta >=
       VAULT_SHOULD_REPORT_THRESHOLD
   );
 
   const prepareReportCall = useCallback(async () => {
-    invariant(publicClient, 'publicClient is required');
     invariant(activeVault, 'activeVault is required');
 
-    const hub = getVaultHubContract(publicClient);
-    const reportCid = (await hub.read.latestReportData())[2];
+    const lazyOracle = getLazyOracleContract(publicClient);
+    const reportCid = (await lazyOracle.read.latestReportData())[2];
 
     const report = await fetchReportMerkle(
       publicClient.chain.id,
@@ -123,16 +128,16 @@ export const useReportStatus = () => {
 
     return {
       loadingActionText: vaultTexts.actions.report.loading,
-      to: hub.address,
+      to: lazyOracle.address,
       data: encodeFunctionData({
-        abi: hub.abi,
+        abi: lazyOracle.abi,
         functionName: 'updateVaultData',
         args: [
           activeVault.address,
           report.totalValueWei,
-          report.inOutDelta,
           report.fee,
           report.liabilityShares,
+          report.slashingReserve,
           report.proof,
         ],
       }),

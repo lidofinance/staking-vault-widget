@@ -1,10 +1,10 @@
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults/consts';
-import { VaultSocket } from 'types';
+import { VaultInfo } from 'types';
 
 // TODO: get function from CLI package
 export const getHealthScore = (
   valuation: bigint,
-  vaultHubSocket: VaultSocket,
+  vaultHubSocket: VaultInfo,
 ): number => {
   const { liabilityShares, forcedRebalanceThresholdBP } = vaultHubSocket;
   if (liabilityShares === 0n) {

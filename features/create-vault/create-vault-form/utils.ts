@@ -3,7 +3,6 @@ import { encodeFunctionData, parseEventLogs } from 'viem';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import {
   VAULT_TOTAL_BASIS_POINTS,
-  VAULTS_OWNER_ROLES_MAP,
   VAULTS_CONNECT_DEPOSIT,
 } from 'modules/vaults';
 
@@ -15,26 +14,17 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
   const {
     confirmExpiry,
-    nodeOperatorFeeBP,
+    nodeOperatorFeeRate,
     nodeOperator,
     nodeOperatorManager,
   } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
-  const nodeOperatorFeeBPFormatted = BigInt(
-    Math.floor((nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100),
+  const nodeOperatorFeeRateFormatted = BigInt(
+    Math.floor((nodeOperatorFeeRate * VAULT_TOTAL_BASIS_POINTS) / 100),
   );
 
   // first manager goes to factory as direct argument
   const [defaultAdmin] = values.vaultManager;
-
-  // For now we populate all VaultManagers to all their roles
-  // will be changed for next contract version
-  const roles = Object.values(VAULTS_OWNER_ROLES_MAP).flatMap((role) => {
-    return values.vaultManager.map((admin) => ({
-      role,
-      account: admin.value,
-    }));
-  });
 
   return {
     data: encodeFunctionData({
@@ -44,10 +34,9 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
         defaultAdmin.value,
         nodeOperator,
         nodeOperatorManager,
-        nodeOperatorFeeBPFormatted,
+        nodeOperatorFeeRateFormatted,
         confirmExpiryFormatted,
-        roles,
-        '0x',
+        [],
       ],
     }),
     value: VAULTS_CONNECT_DEPOSIT,

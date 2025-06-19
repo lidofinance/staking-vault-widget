@@ -29,7 +29,7 @@ export const vaultTexts = {
             'Node Operator address cannot be changed after the vault is created',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
@@ -132,12 +132,18 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
+      nodeOperatorFeeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRecipient: {
+          title: 'Node Operator Fee Recipient',
+          editLabel: 'Set new address',
+          hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
+        },
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           editLabel: 'Propose new, %',
@@ -222,7 +228,7 @@ export const vaultTexts = {
       title: 'Pending unlock',
       hint: 'The amount of ETH that should be unlocked because of repaid stETH but waiting for the confirmation from the upcoming Oracle report.  ',
     },
-    nodeOperatorFee: {
+    nodeOperatorFeeRate: {
       title: 'Node Operator Fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
     },
@@ -279,31 +285,9 @@ export const vaultTexts = {
       title: 'Repay stETH',
       hint: 'Allows Repaying stETH',
     },
-    vaultHubAuthorizer: {
-      title: 'Authorize for connection to Lido Vault Hub',
-      hint: 'Authorize the stVault to be connected to the Lido Vault Hub',
-    },
-    vaultHubDeathorizer: {
-      title: 'De-authorize for connection to Lido Vault Hub',
-      hint: 'De-authorize the stVault to be connected to the Lido Vault Hub.',
-    },
     volunataryDisconnecter: {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
-    },
-    depositorSetter: {
-      title:
-        'Set depositor for the stVault disconnected from the Lido Vault Hub',
-      hint: 'Set depositor for the stVault disconnected from the Lido Vault Hub.',
-    },
-    ossifyer: {
-      title: 'Ossify vault',
-      // TODO: support bold
-      hint: 'Permission for ossifying the stVault: irreversible forbid to be connected to the Lido Vault Hub.',
-    },
-    lockResetter: {
-      title: 'Reset locked amount of ETH on the disconnected stVault',
-      hint: 'Permission for resetting locked amount on the disconnected stVault.',
     },
     pdgProver: {
       title: 'Prove the validator to PDG',
@@ -333,12 +317,6 @@ export const vaultTexts = {
     nodeOperatorRewardsAdjuster: {
       title: 'Adjust rewards on the validators',
       hint: 'ETH added outside stVaults mechanisms is treated as rewards and subject to Node Operator Fee unless marked as deposit.',
-    },
-
-    // NOT IN THE DOC AND WILL BE DELETED IN CONTRACTS
-    locker: {
-      title: 'Increase lock amount in vault',
-      hint: 'Allows to increase locked ETH amount on stVault to allow stETH minting',
     },
   },
   // common texts like errors, warnings, etc.
