@@ -82,11 +82,6 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
 
     const defaultChain = wagmiChainMap[defaultChainId] || supportedChains[0];
 
-    invariant(
-      defaultChain.id === supportedChains[0].id,
-      'Default chain must be the first in supported chains',
-    );
-
     return {
       supportedChains,
       defaultChain,
