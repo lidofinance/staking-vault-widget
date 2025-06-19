@@ -1,10 +1,10 @@
+import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
 import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
-import invariant from 'tiny-invariant';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 export const useClaim = () => {
