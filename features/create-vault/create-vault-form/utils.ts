@@ -3,7 +3,6 @@ import { encodeFunctionData, parseEventLogs } from 'viem';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import {
   VAULT_TOTAL_BASIS_POINTS,
-  VAULTS_OWNER_ROLES_MAP,
   VAULTS_CONNECT_DEPOSIT,
 } from 'modules/vaults';
 
@@ -27,15 +26,6 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   // first manager goes to factory as direct argument
   const [defaultAdmin] = values.vaultManager;
 
-  // For now we populate all VaultManagers to all their roles
-  // will be changed for next contract version
-  const roles = Object.values(VAULTS_OWNER_ROLES_MAP).flatMap((role) => {
-    return values.vaultManager.map((admin) => ({
-      role,
-      account: admin.value,
-    }));
-  });
-
   return {
     data: encodeFunctionData({
       abi: VaultFactoryAbi,
@@ -46,7 +36,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
         nodeOperatorManager,
         nodeOperatorFeeBPFormatted,
         confirmExpiryFormatted,
-        roles,
+        [],
       ],
     }),
     value: VAULTS_CONNECT_DEPOSIT,

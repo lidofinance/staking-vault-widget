@@ -1,9 +1,10 @@
-import { useClaimForm } from 'features/claim/claim-form/form/claim-form-context';
 import { InfoRowAmount } from 'shared/components/form';
 import { vaultTexts } from 'modules/vaults';
 
+import { useClaimData } from './hooks';
+
 export const Claimable = () => {
-  const { claimableFeeQuery } = useClaimForm();
+  const { claimableFeeQuery } = useClaimData();
 
   return (
     <InfoRowAmount
