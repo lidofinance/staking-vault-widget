@@ -16,7 +16,7 @@ type IPFSReport = {
   merkleTreeRoot: Hex;
   tree: Hex[];
   values: {
-    treeIndex: bigint;
+    treeIndex: number;
     value: [Address, string, string, string, string];
   }[];
   format: 'standard-v1';
