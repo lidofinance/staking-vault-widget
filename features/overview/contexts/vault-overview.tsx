@@ -49,7 +49,7 @@ export type VaultOverviewContextType = {
     withdrawableEth: string;
     balanceEth: string;
     accumulatedFee: string;
-    nodeOperatorFee: string;
+    nodeOperatorFeeRate: string;
     collateral: string;
     pendingUnlockEth: string;
   };
@@ -95,7 +95,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorUnclaimedFee,
         withdrawableEther,
         balance,
-        nodeOperatorFeeBP,
+        nodeOperatorFeeRate: nodeOperatorFee,
         nodeOperator,
       } = activeVault;
 
@@ -134,8 +134,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         activeVault.totalMintingCapacityStETH,
       );
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
-      const nodeOperatorFee = formatPercent.format(
-        Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+      const nodeOperatorFeeRate = formatPercent.format(
+        Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
       );
       const collateral = toEthValue(overview.collateral);
       const pendingUnlock = overview.PendingUnlock;
@@ -159,7 +159,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         withdrawableEth,
         balanceEth,
         accumulatedFee,
-        nodeOperatorFee,
+        nodeOperatorFeeRate,
         collateral,
         pendingUnlockEth,
         isLoadingVault,

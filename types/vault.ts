@@ -25,7 +25,7 @@ export type VaultInfo = VaultSocket &
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
     balance: bigint;
-    nodeOperatorFeeBP: bigint;
+    nodeOperatorFeeRate: bigint;
     confirmExpiry: bigint;
     withdrawalCredentials: Address;
   };

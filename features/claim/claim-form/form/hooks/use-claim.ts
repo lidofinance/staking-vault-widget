@@ -6,7 +6,6 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
 import invariant from 'tiny-invariant';
 import { useSendTransaction, withSuccess } from 'modules/web3';
-import {} from 'modules/vaults/components/go-to-vault';
 
 export const useClaim = () => {
   const [isSubmitting, setSubmitting] = useState(false);

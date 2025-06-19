@@ -29,7 +29,7 @@ export const vaultTexts = {
             'Node Operator address cannot be changed after the vault is created',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
@@ -143,7 +143,7 @@ export const vaultTexts = {
           editLabel: 'Set new address',
           hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           editLabel: 'Propose new, %',
@@ -228,7 +228,7 @@ export const vaultTexts = {
       title: 'Pending unlock',
       hint: 'The amount of ETH that should be unlocked because of repaid stETH but waiting for the confirmation from the upcoming Oracle report.  ',
     },
-    nodeOperatorFee: {
+    nodeOperatorFeeRate: {
       title: 'Node Operator Fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
     },

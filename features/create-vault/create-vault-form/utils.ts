@@ -14,13 +14,13 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
   const {
     confirmExpiry,
-    nodeOperatorFeeBP,
+    nodeOperatorFeeRate,
     nodeOperator,
     nodeOperatorManager,
   } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
-  const nodeOperatorFeeBPFormatted = BigInt(
-    Math.floor((nodeOperatorFeeBP * VAULT_TOTAL_BASIS_POINTS) / 100),
+  const nodeOperatorFeeRateFormatted = BigInt(
+    Math.floor((nodeOperatorFeeRate * VAULT_TOTAL_BASIS_POINTS) / 100),
   );
 
   // first manager goes to factory as direct argument
@@ -34,7 +34,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
         defaultAdmin.value,
         nodeOperator,
         nodeOperatorManager,
-        nodeOperatorFeeBPFormatted,
+        nodeOperatorFeeRateFormatted,
         confirmExpiryFormatted,
         [],
       ],

@@ -33,7 +33,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
       nodeOperator: '' as Address,
       vaultManager: [{ value: '' as Address }],
       nodeOperatorManager: '' as Address,
-      nodeOperatorFeeBP: undefined,
+      nodeOperatorFeeRate: undefined,
       confirmExpiry: '36',
       acceptTerms: false,
       roles: {},

@@ -45,7 +45,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
     // Current values for voting
     const {
       confirmExpiryValue,
-      nodeOperatorFeeBPValue,
+      nodeOperatorFeeRateValue,
       defaultAdmins,
       nodeOperatorManagers,
     } = formatSettingsValues(activeVault);
@@ -59,9 +59,9 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         symbol: ' hours',
       },
     ];
-    const nodeOperatorFeeBP: VotingOptionType[] = [
+    const nodeOperatorFeeRate: VotingOptionType[] = [
       {
-        value: nodeOperatorFeeBPValue,
+        value: nodeOperatorFeeRateValue,
         type: 'current',
         tags: ['Current'],
         symbol: '%',
@@ -88,7 +88,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       } else if (
         confirmation.decodedData.functionName === 'setNodeOperatorFeeRate'
       ) {
-        nodeOperatorFeeBP.push({
+        nodeOperatorFeeRate.push({
           value: String(
             Number(confirmation.decodedData.args[0] * 100n) / 10000,
           ),
@@ -107,7 +107,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       symbol: ' hours',
       placeholder: 'Propose new, hours',
     });
-    nodeOperatorFeeBP.push({
+    nodeOperatorFeeRate.push({
       value: '',
       type: 'custom',
       tags: [],
@@ -119,7 +119,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       defaultAdmins,
       nodeOperatorManagers,
       nodeOperatorFeeRecipient: activeVault.nodeOperatorFeeRecipient,
-      nodeOperatorFeeBP: nodeOperatorFeeBP.sort((a, b) => {
+      nodeOperatorFeeRate: nodeOperatorFeeRate.sort((a, b) => {
         if (a.type === 'My proposal') return 1;
         if (b.type === 'My proposal') return -1;
         return 0;

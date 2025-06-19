@@ -9,9 +9,9 @@ import { VotingBlock } from './styles';
 export const Voting: FC = () => {
   const mainSettingsData = useMainSettingsData();
 
-  const [nodeOperatorFeeBP, confirmExpiry] = useMemo(() => {
+  const [nodeOperatorFeeRate, confirmExpiry] = useMemo(() => {
     return [
-      mainSettingsData?.nodeOperatorFeeBP,
+      mainSettingsData?.nodeOperatorFeeRate,
       mainSettingsData?.confirmExpiry,
     ];
   }, [mainSettingsData]);
@@ -19,9 +19,9 @@ export const Voting: FC = () => {
   return (
     <VotingBlock>
       <RadioSelector
-        data={nodeOperatorFeeBP}
-        vaultKey="nodeOperatorFeeBP"
-        title={vaultTexts.actions.settings.fields.nodeOperatorFee.title}
+        data={nodeOperatorFeeRate}
+        vaultKey="nodeOperatorFeeRate"
+        title={vaultTexts.actions.settings.fields.nodeOperatorFeeRate.title}
       />
       <RadioSelector
         data={confirmExpiry}

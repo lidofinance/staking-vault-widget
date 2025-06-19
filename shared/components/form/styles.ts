@@ -13,7 +13,7 @@ export const FormControllerStyled: FormControllerType = styled(FormController)`
   // styles from Block
   font-weight: 400;
   font-size: 12px;
-  line-height: 1.6em;
+  line-height: 20px;
   border-radius: 20px;
   margin: 0;
   padding: 32px;

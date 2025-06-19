@@ -122,15 +122,16 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
+        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = payload;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
-          nodeOperatorFeeBP !== 'custom'
-            ? nodeOperatorFeeBP
-            : nodeOperatorFeeBPCustom,
+          nodeOperatorFeeRate !== 'custom'
+            ? nodeOperatorFeeRate
+            : nodeOperatorFeeRateCustom,
         );
         const currentFee = Number(
-          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+          (activeVault.nodeOperatorFeeRate * 100n) /
+            VAULT_TOTAL_BASIS_POINTS_BN,
         );
         const isFeeValueChanged = feeValue !== currentFee;
 

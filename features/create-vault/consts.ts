@@ -27,10 +27,10 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     ...texts.nodeOperator,
   },
   {
-    name: 'nodeOperatorFeeBP',
+    name: 'nodeOperatorFeeRate',
     dataType: 'percent',
     type: 'number',
-    ...texts.nodeOperatorFee,
+    ...texts.nodeOperatorFeeRate,
   },
   {
     name: 'confirmExpiry',

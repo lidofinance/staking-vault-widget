@@ -3,7 +3,7 @@ import { SectionData, useVaultOverview } from 'features/overview/contexts';
 
 const sectionPayloadList: SectionData[] = [
   {
-    key: 'nodeOperatorFee',
+    key: 'nodeOperatorFeeRate',
   },
 ];
 

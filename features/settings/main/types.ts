@@ -8,8 +8,8 @@ export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type EditMainSettingsValues = {
   nodeOperatorManagers: EditMainSettingsSchema['nodeOperatorManagers'] | null;
   defaultAdmins: EditMainSettingsSchema['defaultAdmins'] | null;
-  nodeOperatorFeeBP: EditMainSettingsSchema['nodeOperatorFeeBP'];
-  nodeOperatorFeeBPCustom: EditMainSettingsSchema['nodeOperatorFeeBPCustom'];
+  nodeOperatorFeeRate: EditMainSettingsSchema['nodeOperatorFeeRate'];
+  nodeOperatorFeeRateCustom: EditMainSettingsSchema['nodeOperatorFeeRateCustom'];
   confirmExpiry: EditMainSettingsSchema['confirmExpiry'];
   confirmExpiryCustom: EditMainSettingsSchema['confirmExpiryCustom'];
 };
@@ -47,6 +47,6 @@ export type MainSettingsDataContextValue = {
   defaultAdmins: RoleFieldSchema[];
   nodeOperatorManagers: RoleFieldSchema[];
   nodeOperatorFeeRecipient: Address;
-  nodeOperatorFeeBP: VotingOptionType[];
+  nodeOperatorFeeRate: VotingOptionType[];
   confirmExpiry: VotingOptionType[];
 };
