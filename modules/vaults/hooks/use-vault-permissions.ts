@@ -1,70 +1,71 @@
-import { useAccount, useReadContract, useReadContracts } from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
+import { useVaultInfo } from 'modules/vaults';
 import {
-  NO_MANAGER_PERMISSION_LIST,
-  useVaultInfo,
-  VAULT_MANAGER_PERMISSIONS_LIST,
-} from 'modules/vaults';
-import { VAULTS_ALL_ROLES, VAULTS_ALL_ROLES_MAP } from '../consts';
+  VAULTS_ALL_ROLES,
+  VAULTS_ALL_ROLES_MAP,
+  VAULTS_NO_ROLES_MAP,
+  VAULTS_OWNER_ROLES_MAP,
+} from '../consts';
 import { dashboardAbi } from 'abi/dashboard-abi';
 
 import type { Address, Hash } from 'viem';
 import { useMemo } from 'react';
 
-export const useVaultPermission = (role?: VAULTS_ALL_ROLES) => {
-  const { activeVault } = useVaultInfo();
-  const { address } = useAccount();
+// adds defaultAdmin and nodeOperatorManager roles to the list of roles
+// if any roles are admined by them
+// rolesOffset is used to track how many roles were added
+const saturateRoles = (roles: readonly VAULTS_ALL_ROLES[]) => {
+  let shouldFetchAdmin = false;
+  let shouldFetchNOM = false;
+  let rolesOffset = 0;
 
-  const roleHash = role && VAULTS_ALL_ROLES_MAP[role];
+  const saturatedRoles = roles.map((role) => {
+    const isAdminRole = role in VAULTS_OWNER_ROLES_MAP;
+    const isNOMRole = role in VAULTS_NO_ROLES_MAP;
+    shouldFetchAdmin ||= isAdminRole;
+    shouldFetchNOM ||= isNOMRole;
 
-  const query = useReadContract({
-    abi: dashboardAbi,
-    address: activeVault?.owner as Address,
-    functionName: 'hasRole',
-    args: [roleHash, address] as [Hash, Address],
-
-    query: {
-      enabled: !!(activeVault?.owner && roleHash && address),
-    },
+    return {
+      role,
+      isAdminRole,
+      isNOMRole,
+    };
   });
 
+  if (shouldFetchAdmin) {
+    rolesOffset += 1;
+    saturatedRoles.unshift({
+      role: 'defaultAdmin',
+      isAdminRole: false,
+      isNOMRole: false,
+    });
+  }
+  if (shouldFetchNOM) {
+    rolesOffset += 1;
+    saturatedRoles.unshift({
+      role: 'nodeOperatorManager',
+      isAdminRole: false,
+      isNOMRole: false,
+    });
+  }
+
   return {
-    hasPermission: !!query.data,
-    ...query,
+    saturatedRoles,
+    rolesOffset,
   };
-};
-
-const saturatePermissions = (
-  roles: readonly VAULTS_ALL_ROLES[],
-): readonly VAULTS_ALL_ROLES[] => {
-  const adminsList = new Set(VAULT_MANAGER_PERMISSIONS_LIST);
-  const noList = new Set(NO_MANAGER_PERMISSION_LIST);
-  const saturateRoles: VAULTS_ALL_ROLES[] = [...roles];
-
-  // @ts-expect-error list types
-  const hasAdminsPermissions = roles.some((role) => adminsList.has(role));
-  // @ts-expect-error list types
-  const hasNoPermissions = roles.some((role) => noList.has(role));
-
-  if (hasAdminsPermissions && !roles.includes('defaultAdmin')) {
-    saturateRoles.push('defaultAdmin');
-  }
-
-  if (hasNoPermissions && !roles.includes('nodeOperatorManager')) {
-    saturateRoles.push('nodeOperatorManager');
-  }
-
-  return saturateRoles;
 };
 
 export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { activeVault } = useVaultInfo();
   const { address } = useAccount();
 
-  const saturatedRoles = saturatePermissions(roles);
+  const { contracts, rolesOffset, saturatedRoles } = useMemo(() => {
+    const { saturatedRoles, rolesOffset } = saturateRoles(roles);
 
-  const contracts = useMemo(
-    () =>
-      saturatedRoles.map((role) => {
+    return {
+      rolesOffset,
+      saturatedRoles,
+      contracts: saturatedRoles.map(({ role }) => {
         const roleHash = VAULTS_ALL_ROLES_MAP[role];
         return {
           abi: dashboardAbi,
@@ -73,25 +74,46 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
           args: [roleHash, address] as [Hash, Address],
         };
       }),
-    [activeVault?.owner, address, saturatedRoles],
-  );
+    };
+  }, [activeVault?.owner, address, roles]);
 
-  return useReadContracts({
+  const query = useReadContracts({
     contracts,
     allowFailure: false,
-    batchSize: 3,
+    batchSize: 5,
     query: {
       select: (data) => {
-        const rolesResult = data.map((item, index) => ({
-          role: saturatedRoles[index],
-          hasRole: !!item,
-        }));
+        // Remove optional first service elements from array
+        let isAdmin = false;
+        let isNOM = false;
+        if (rolesOffset > 0) {
+          isAdmin = !!data.shift();
+        }
+        if (rolesOffset > 1) {
+          isNOM = !!data.shift();
+        }
+
+        const rolesResult = data.map((item, index) => {
+          const saturateRole = saturatedRoles[index];
+          isAdmin ||= saturateRole.role === 'defaultAdmin' && !!item;
+          isNOM ||= saturateRole.role === 'nodeOperatorManager' && !!item;
+          return {
+            role: saturateRole.role,
+            // user can have role if
+            hasRole:
+              // 1. roles is set directly
+              !!item ||
+              // 2. user is admin over this role
+              (saturateRole.isAdminRole && isAdmin) ||
+              (saturateRole.isNOMRole && isNOM),
+          };
+        });
 
         return {
           result: rolesResult,
-          hasPermissions: rolesResult.some((item) => item.hasRole),
-          hasDefaultAdminsPermissions: false,
-          hasNodeOperatorPermissions: false,
+          hasPermissions: rolesResult.every((item) => item.hasRole),
+          hasDefaultAdminsPermissions: isAdmin,
+          hasNodeOperatorPermissions: isNOM,
           missingRoles: rolesResult
             .filter((item) => !item.hasRole)
             .map((item) => item.role),
@@ -99,20 +121,36 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
       },
     },
   });
+
+  return {
+    hasPermissions: query.data?.hasPermissions ?? false,
+    ...query,
+  };
 };
 
-export const useVaultConfirmingRoles = () => {
-  // TODO: multicall/useReadContracts
-  const roleAdmin = useVaultPermission('defaultAdmin');
-  const roleNOM = useVaultPermission('nodeOperatorManager');
+export const useVaultPermission = (role?: VAULTS_ALL_ROLES) => {
+  const query = useVaultPermissions(
+    useMemo(() => (role ? [role] : []), [role]),
+  );
+  return {
+    ...query,
+    hasPermission: query.data?.hasPermissions ?? false,
+  };
+};
 
-  const hasAtLeastOne = roleAdmin.hasPermission || roleNOM.hasPermission;
+const adminRoles = ['defaultAdmin', 'nodeOperatorManager'] as const;
+
+export const useVaultConfirmingRoles = () => {
+  const { data, ...query } = useVaultPermissions(adminRoles);
+
+  const hasAtLeastOne =
+    data?.hasDefaultAdminsPermissions || data?.hasNodeOperatorPermissions;
   return {
     hasConfirmingRole: hasAtLeastOne,
-    hasAdmin: roleAdmin.hasPermission,
-    hasNodeOperatorManager: roleNOM.hasPermission,
-    hasBothConfirmingRoles: roleAdmin.hasPermission && roleNOM.hasPermission,
-    isLoading: !hasAtLeastOne && (roleAdmin.isLoading || roleNOM.isLoading),
-    error: roleAdmin.error || roleNOM.error,
+    hasAdmin: data?.hasDefaultAdminsPermissions,
+    hasNodeOperatorManager: data?.hasNodeOperatorPermissions,
+    hasBothConfirmingRoles:
+      data?.hasDefaultAdminsPermissions && data?.hasNodeOperatorPermissions,
+    ...query,
   };
 };
