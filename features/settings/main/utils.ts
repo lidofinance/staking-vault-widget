@@ -138,5 +138,6 @@ export const formatSettingsValues = (vaultInfo: VaultInfo) => {
     nodeOperatorFeeRateValue: String(
       (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
     ),
+    nodeOperatorFeeRecipient: vaultInfo.nodeOperatorFeeRecipient,
   };
 };
