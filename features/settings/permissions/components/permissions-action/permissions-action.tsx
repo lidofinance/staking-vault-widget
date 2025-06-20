@@ -13,11 +13,14 @@ export const PermissionsAction: FC = () => {
   const { isValid, isSubmitting, isDirty, disabled } = useFormState();
   const { rolesList } = usePermissionsData();
   const isClearDisabled = isSubmitting;
-  const isSubmitDisabled = !isValid || !isDirty || isClearDisabled || disabled;
+
+  const isSubmitDisabled =
+    !isValid || !isDirty || isClearDisabled || disabled || !rolesList;
 
   const handleResetFields = () => {
     if (rolesList) {
-      reset(rolesList, { keepDirtyValues: false, keepDirty: false });
+      // bug in RHF, if keepIsValid is not set true, isDirty is not updated after reset and append
+      reset(rolesList, { keepIsValid: true });
     }
   };
 
