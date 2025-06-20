@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Modal, Button } from '@lidofinance/lido-ui';
 
 import { useVaultInfo, VaultAddressError, vaultTexts } from 'modules/vaults';
@@ -10,7 +11,13 @@ const texts = vaultTexts.common;
 
 export const VaultError = () => {
   const { error, refetchVaultInfo } = useVaultInfo();
-  if (!error) return null;
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // TODO: fix lido-ui, modal opened in SSR causes error on server
+  if (!isMounted || !error) return null;
 
   const goToAll = (
     <ButtonLink href={appPaths.vaults.all}>{texts.links.goToAll}</ButtonLink>
