@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { Address } from 'viem';
 import invariant from 'tiny-invariant';
-import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-overview';
+import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-overview-v2';
 
 import { formatBalance, formatPercent } from 'utils';
 
@@ -99,16 +99,18 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperator,
       } = activeVault;
 
-      const overview = calculateOverview({
+      const overview = calculateOverviewV2({
         totalValue: activeVault.totalValue,
         reserveRatioBP: activeVault.reserveRatioBP,
         liabilitySharesInStethWei: activeVault.liabilityStETH,
+        liabilitySharesInWei: activeVault.liabilityShares,
         forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
         withdrawableEther: activeVault.withdrawableEther,
         balance: activeVault.balance,
         locked: activeVault.locked,
         nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
         totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
+        totalMintingCapacitySharesInWei: activeVault.totalMintingCapacity,
       });
 
       const totalValue = toEthValue(activeVault.totalValue);
