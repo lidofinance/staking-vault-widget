@@ -13,6 +13,7 @@ import { formatBalance, formatPercent } from 'utils';
 
 import { useVaultInfo } from 'modules/vaults/vault-context';
 import {
+  useSingleVaultData,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ALL_ROLES,
   vaultTexts,
@@ -82,10 +83,16 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, isLoadingVault } = useVaultInfo();
+  const { activeVault, isLoadingVault: isLoadingVaultCore } = useVaultInfo();
+
+  const { data: vaultData, isLoading: isLoadingVaultData } = useSingleVaultData(
+    activeVault?.address,
+  );
+
+  const isLoadingVault = isLoadingVaultCore || isLoadingVaultData;
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
-    if (activeVault) {
+    if (vaultData) {
       const {
         address,
         healthScore,
@@ -97,25 +104,25 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         balance,
         nodeOperatorFeeRate: nodeOperatorFee,
         nodeOperator,
-      } = activeVault;
+      } = vaultData;
 
       const overview = calculateOverviewV2({
-        totalValue: activeVault.totalValue,
-        reserveRatioBP: activeVault.reserveRatioBP,
-        liabilitySharesInStethWei: activeVault.liabilityStETH,
-        liabilitySharesInWei: activeVault.liabilityShares,
-        forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
-        withdrawableEther: activeVault.withdrawableEther,
-        balance: activeVault.balance,
-        locked: activeVault.locked,
-        nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
-        totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
-        totalMintingCapacitySharesInWei: activeVault.totalMintingCapacity,
+        totalValue: vaultData.totalValue,
+        reserveRatioBP: vaultData.reserveRatioBP,
+        liabilitySharesInStethWei: vaultData.liabilityStETH,
+        liabilitySharesInWei: vaultData.liabilityShares,
+        forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
+        withdrawableEther: vaultData.withdrawableEther,
+        balance: vaultData.balance,
+        locked: vaultData.locked,
+        nodeOperatorUnclaimedFee: vaultData.nodeOperatorUnclaimedFee,
+        totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
+        totalMintingCapacitySharesInWei: vaultData.totalMintingCapacity,
       });
 
-      const totalValue = toEthValue(activeVault.totalValue);
+      const totalValue = toEthValue(vaultData.totalValue);
       const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
-      const liabilityStETH = toStethValue(activeVault.liabilityStETH);
+      const liabilityStETH = toStethValue(vaultData.liabilityStETH);
       const withdrawableEth = toEthValue(withdrawableEther);
       const balanceEth = toEthValue(balance);
       const reserveRatio = formatPercent.format(
@@ -133,7 +140,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         overview.totalMintingCapacityStethWei,
       );
       const totalMintingCapacityStETH = toStethValue(
-        activeVault.totalMintingCapacityStETH,
+        vaultData.totalMintingCapacityStETH,
       );
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFeeRate = formatPercent.format(
@@ -169,7 +176,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     }
 
     return {} as VaultOverviewContextType['values'];
-  }, [activeVault, isLoadingVault]);
+  }, [vaultData, isLoadingVault]);
 
   const value = useMemo(() => {
     return {

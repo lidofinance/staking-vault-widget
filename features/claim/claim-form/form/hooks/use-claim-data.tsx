@@ -6,8 +6,17 @@ import { useCallback } from 'react';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const useClaimData = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
+
+  const recipientQuery = useReadContract({
+    abi: dashboardAbi,
+    address: activeVault?.dashboard.address,
+    functionName: 'nodeOperatorFeeRecipient',
+    query: {
+      enabled: !!activeVault?.owner,
+    },
+  });
 
   const claimableFeeQuery = useReadContract({
     abi: dashboardAbi,
@@ -20,14 +29,13 @@ export const useClaimData = () => {
 
   const invalidateClaimData = useCallback(
     () =>
-      Promise.all([
-        refetchVaultInfo(),
-        claimableFeeQuery.refetch({ cancelRefetch: true, throwOnError: false }),
-      ]),
-    [claimableFeeQuery, refetchVaultInfo],
+      claimableFeeQuery.refetch({ cancelRefetch: true, throwOnError: false }),
+
+    [claimableFeeQuery],
   );
 
   return {
+    recipientQuery,
     claimableFeeQuery,
     validationContext,
     invalidateClaimData,

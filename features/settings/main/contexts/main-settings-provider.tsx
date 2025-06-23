@@ -14,11 +14,12 @@ import { prepareDefaultValues, formatSettingsValues } from '../utils';
 import type {
   EditMainSettingsSchema,
   MainSettingsDataContextValue,
+  VaultMainSettingsData,
 } from 'features/settings/main/types';
-import type { VaultInfo } from 'types';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
+
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const settingsData = useMainSettingsData();
   const promisedSettingsData = useAwaiter(settingsData);
@@ -38,7 +39,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const reset = formObject.reset;
 
   const resetFields = useCallback(
-    (vaultInfo: VaultInfo) => {
+    (vaultInfo: VaultMainSettingsData) => {
       const {
         confirmExpiryValue,
         nodeOperatorFeeRateValue,

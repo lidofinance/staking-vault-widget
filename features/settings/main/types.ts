@@ -1,8 +1,7 @@
 import { Address } from 'viem';
 import { addressSchema, editMainSettingsSchema } from './consts';
 import { z } from 'zod';
-import { VaultInfo } from 'types';
-import { VAULT_ROOT_ROLES } from 'modules/vaults';
+import type { VAULT_ROOT_ROLES, VaultInfo } from 'modules/vaults';
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type EditMainSettingsValues = {
@@ -13,6 +12,15 @@ export type EditMainSettingsValues = {
   confirmExpiry: EditMainSettingsSchema['confirmExpiry'];
   confirmExpiryCustom: EditMainSettingsSchema['confirmExpiryCustom'];
 };
+
+export type VaultMainSettingsData = {
+  defaultAdmins: readonly Address[];
+  nodeOperatorManagers: readonly Address[];
+  nodeOperatorFeeRate: bigint;
+  confirmExpiry: bigint;
+  nodeOperatorFeeRecipient: Address;
+};
+
 export type RoleFieldSchema = z.infer<typeof addressSchema>;
 export type VotingOptionType = {
   value: string;

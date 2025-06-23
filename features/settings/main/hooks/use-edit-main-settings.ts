@@ -20,6 +20,7 @@ import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissi
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { useConfirmationsInfo } from './use-confirmations-info';
 import { useReportStatus } from 'features/report';
+import { UseVaultSettingsInfo } from './use-vault-settings-info';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -34,9 +35,11 @@ const toMethodArg =
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { activeVault } = useVaultInfo();
   const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
+  const { refetch: refetchVaultSettingsInfo, data: vaultSettings } =
+    UseVaultSettingsInfo();
   const { refetch: refetchNOMPermission } = useVaultPermission(
     'nodeOperatorManager',
   );
@@ -50,6 +53,10 @@ export const useEditMainSettings = () => {
   return {
     editMainSettings: useCallback(
       async (payload: EditMainSettingsSchema) => {
+        invariant(
+          vaultSettings,
+          '[useEditMainSettings] vaultSettings is undefined',
+        );
         invariant(owner, '[useEditMainSettings] owner is undefined');
         invariant(
           activeVault,
@@ -110,7 +117,7 @@ export const useEditMainSettings = () => {
 
         if (
           payload.nodeOperatorFeeRecipient !==
-          activeVault.nodeOperatorFeeRecipient
+          vaultSettings.nodeOperatorFeeRecipient
         ) {
           transactions.push({
             to: owner,
@@ -132,7 +139,7 @@ export const useEditMainSettings = () => {
             : nodeOperatorFeeRateCustom,
         );
         const currentFee = Number(
-          (activeVault.nodeOperatorFeeRate * 100n) /
+          (vaultSettings.nodeOperatorFeeRate * 100n) /
             VAULT_TOTAL_BASIS_POINTS_BN,
         );
         const isFeeValueChanged = feeValue !== currentFee;
@@ -161,7 +168,7 @@ export const useEditMainSettings = () => {
           confirmExpiry === 'custom' && confirmExpiryCustom
             ? BigInt(confirmExpiryCustom) * 3600n
             : BigInt(confirmExpiry);
-        const currentExpiry = activeVault.confirmExpiry;
+        const currentExpiry = vaultSettings.confirmExpiry;
         const isExpiryValueChanged = expiryValue !== currentExpiry;
 
         if (isExpiryValueChanged) {
@@ -192,7 +199,7 @@ export const useEditMainSettings = () => {
         );
         // refetch anyway because some transactions may be successful
         const [vaultInfo, confirmations] = await Promise.all([
-          refetchVaultInfo(),
+          refetchVaultSettingsInfo(),
           refetchConfirmationsInfo({
             cancelRefetch: true,
             throwOnError: false,
@@ -214,12 +221,13 @@ export const useEditMainSettings = () => {
         };
       },
       [
+        vaultSettings,
         owner,
         activeVault,
         hasBothConfirmingRoles,
         sendTX,
         isReportAvailable,
-        refetchVaultInfo,
+        refetchVaultSettingsInfo,
         refetchConfirmationsInfo,
         refetchNOMPermission,
         refetchAdminPermission,

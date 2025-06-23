@@ -2,19 +2,20 @@ import { FC } from 'react';
 import { useFormState } from 'react-hook-form';
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, useVaultPermission, vaultTexts } from 'modules/vaults';
+import { useVaultPermission, vaultTexts } from 'modules/vaults';
 import { AddressBadge } from 'shared/components';
 
 import { Skeleton } from 'features/settings/main/styles';
 
 import { Wrapper } from './styles';
 import { EditRecipient } from './edit-recipient';
+import { useMainSettingsData } from '../../contexts';
 
 const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
 
 export const NodeOperatorFeeRecipient: FC = () => {
+  const data = useMainSettingsData();
   const { isLoading: isFormLoading } = useFormState();
-  const { activeVault } = useVaultInfo();
   const { hasPermission, isLoading: isPermissionLoading } = useVaultPermission(
     'nodeOperatorManager',
   );
@@ -30,7 +31,7 @@ export const NodeOperatorFeeRecipient: FC = () => {
       {!hasPermission && !isLoading && (
         <AddressBadge
           weight={400}
-          address={activeVault?.nodeOperatorFeeRecipient}
+          address={data?.nodeOperatorFeeRecipient}
           symbols={21}
         />
       )}

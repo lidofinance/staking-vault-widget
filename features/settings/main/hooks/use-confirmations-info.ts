@@ -7,6 +7,7 @@ import type { Address, Hex } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo } from 'modules/vaults';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { UseVaultSettingsInfo } from './use-vault-settings-info';
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
@@ -28,6 +29,7 @@ export type LogsData = ConfirmationsInfo[];
 export const useConfirmationsInfo = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVaultInfo();
+  const { data: vaultSettings } = UseVaultSettingsInfo();
 
   return useQuery<LogsData>({
     queryKey: [
@@ -36,7 +38,8 @@ export const useConfirmationsInfo = () => {
       publicClient?.chain.id,
     ],
     ...STRATEGY_LAZY,
-    enabled: !!activeVault?.owner && !!publicClient?.chain.id,
+    enabled:
+      !!activeVault?.owner && !!publicClient?.chain.id && !!vaultSettings,
     queryFn: async () => {
       invariant(
         publicClient,
@@ -46,9 +49,13 @@ export const useConfirmationsInfo = () => {
         activeVault?.owner,
         '[useConfirmationsInfo] owner is not defined',
       );
+      invariant(
+        vaultSettings,
+        '[useConfirmationsInfo] vaultSettings is not defined',
+      );
 
       const dashboardAddress = activeVault?.owner;
-      const confirmExpiry = activeVault?.confirmExpiry;
+      const confirmExpiry = vaultSettings?.confirmExpiry;
       const currentBlock = await publicClient.getBlockNumber();
       const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
       const fromBlock = currentBlock - confirmExpireInBlocks;

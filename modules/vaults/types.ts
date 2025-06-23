@@ -1,7 +1,25 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
-import type { Address, ReadContractReturnType } from 'viem';
+import type { Address, Hex, ReadContractReturnType } from 'viem';
+import type {
+  getDashboardContract,
+  getStakingVaultContract,
+} from './contracts';
 
-export type VaultInfo = VaultSocket &
+type VaultConnection = ReadContractReturnType<
+  typeof VaultHubAbi,
+  'vaultConnection',
+  [Address]
+>;
+
+type VaultObligations = {
+  obligations: ReadContractReturnType<
+    typeof VaultHubAbi,
+    'vaultObligations',
+    [Address]
+  >;
+};
+
+export type VaultInfo = VaultConnection &
   VaultObligations & {
     address: Address;
     owner: Address;
@@ -30,16 +48,10 @@ export type VaultInfo = VaultSocket &
     withdrawalCredentials: Address;
   };
 
-export type VaultSocket = ReadContractReturnType<
-  typeof VaultHubAbi,
-  'vaultConnection',
-  [Address]
->;
-
-export type VaultObligations = {
-  obligations: ReadContractReturnType<
-    typeof VaultHubAbi,
-    'vaultObligations',
-    [Address]
-  >;
-};
+export type VaultBaseInfo = {
+  address: Address;
+  vault: ReturnType<typeof getStakingVaultContract>;
+  dashboard: ReturnType<typeof getDashboardContract>;
+  nodeOperator: Address;
+  withdrawalCredentials: Hex;
+} & VaultConnection;

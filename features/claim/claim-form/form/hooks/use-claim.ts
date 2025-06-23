@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
-import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -45,27 +44,4 @@ export const useClaim = () => {
     isSubmitting,
     ...rest,
   };
-};
-
-export const useEstimateClaim = () => {
-  const { address } = useAccount();
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
-  const enabled = !!(
-    owner &&
-    address &&
-    activeVault.nodeOperatorUnclaimedFee > 0n
-  );
-
-  return useEstimateGas({
-    to: owner,
-    account: address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName: 'disburseNodeOperatorFee',
-    }),
-    query: {
-      enabled,
-    },
-  });
 };

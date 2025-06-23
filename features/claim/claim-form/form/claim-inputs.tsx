@@ -1,17 +1,18 @@
 import { Input, Loader } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, vaultTexts } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults';
+import { useClaimData } from './hooks';
 
 const label = vaultTexts.actions.claim.addressLabel;
 
 export const ClaimInputs = () => {
-  const { activeVault, isLoadingVault } = useVaultInfo();
+  const { recipientQuery } = useClaimData();
 
   return (
     <Input
-      leftDecorator={isLoadingVault ? <Loader /> : null}
+      leftDecorator={recipientQuery.isLoading ? <Loader /> : null}
       label={label}
-      value={activeVault?.nodeOperatorFeeRecipient}
+      value={recipientQuery.data}
       readOnly
       disabled
     />

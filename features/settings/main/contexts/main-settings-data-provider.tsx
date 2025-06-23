@@ -11,11 +11,11 @@ import {
   MainSettingsDataContextValue,
   VotingOptionType,
 } from 'features/settings/main/types';
-import { useVaultInfo } from 'modules/vaults';
 import { useConfirmationsInfo } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
 
 import { formatSecondsToHours, formatSettingsValues } from '../utils';
+import { UseVaultSettingsInfo } from '../hooks/use-vault-settings-info';
 
 const MainSettingsDataContext = createContext<
   MainSettingsDataContextValue | undefined | null
@@ -34,11 +34,11 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const { address } = useDappStatus();
-  const { activeVault } = useVaultInfo();
+  const { data: vaultSettings } = UseVaultSettingsInfo();
   const { data: confirmationsList } = useConfirmationsInfo();
 
   const values: MainSettingsDataContextValue | null = useMemo(() => {
-    if (!activeVault || !confirmationsList) {
+    if (!vaultSettings || !confirmationsList) {
       return null;
     }
 
@@ -49,7 +49,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       defaultAdmins,
       nodeOperatorManagers,
       nodeOperatorFeeRecipient,
-    } = formatSettingsValues(activeVault);
+    } = formatSettingsValues(vaultSettings);
 
     const confirmExpiry: VotingOptionType[] = [
       {
@@ -131,7 +131,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         return 0;
       }),
     };
-  }, [activeVault, confirmationsList, address]);
+  }, [vaultSettings, confirmationsList, address]);
 
   return (
     <MainSettingsDataContext.Provider value={values}>

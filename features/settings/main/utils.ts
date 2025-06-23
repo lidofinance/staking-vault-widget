@@ -5,8 +5,8 @@ import {
   MainSettingsDataContextValue,
   RoleFieldSchema,
   EditMainSettingsSchema,
+  VaultMainSettingsData,
 } from './types';
-import { VaultInfo } from 'types';
 import { multipleDataFields } from './consts';
 
 export const shouldIncrementTxCounterByVoting = (
@@ -117,7 +117,7 @@ export const formatSecondsToHours = (
   return `${hours}h ${minutes}m`;
 };
 
-export const formatSettingsValues = (vaultInfo: VaultInfo) => {
+export const formatSettingsValues = (vaultInfo: VaultMainSettingsData) => {
   const defaultAdmins = vaultInfo.defaultAdmins.map((address) => ({
     value: address,
     state: 'display' as const,

@@ -4,3 +4,4 @@ export * from './utils';
 export * from './contracts';
 export * from './vault-context';
 export * from './components';
+export * from './types';

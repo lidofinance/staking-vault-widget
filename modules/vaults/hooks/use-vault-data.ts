@@ -1,21 +1,20 @@
-import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
+import { useMemo } from 'react';
+import { usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-
-import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
-
-import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
-import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
-import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { bigIntMax } from 'utils/bigint-math';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
-
-import type { VaultInfo } from 'types';
 import type { Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+
+import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { bigIntMax } from 'utils/bigint-math';
+
+import { getVaultHubContract } from '../contracts/vault-hub';
+import { getStakingVaultContract } from '../contracts/staking-vault';
+import { getDashboardContract } from '../contracts/dashboard';
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
-import { useMemo } from 'react';
+import type { VaultBaseInfo, VaultInfo } from '../types';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -166,4 +165,39 @@ export const useSingleVaultData = (vaultAddress: Address | undefined) => {
     }),
     queryKey,
   };
+};
+
+export const useBaseVaultData = (vaultAddress: Address | undefined) => {
+  const { publicClient } = useLidoSDK();
+  return useQuery<VaultBaseInfo>({
+    queryKey: ['base-vault-data', vaultAddress],
+    enabled: !!vaultAddress,
+    queryFn: async () => {
+      invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
+
+      const hub = getVaultHubContract(publicClient);
+      const vault = getStakingVaultContract(vaultAddress, publicClient);
+
+      const [connection, nodeOperator, withdrawalCredentials] =
+        await Promise.all([
+          hub.read.vaultConnection([vaultAddress]),
+          vault.read.nodeOperator(),
+          vault.read.withdrawalCredentials(),
+        ]);
+      // TODO:
+      // - check if dashboard is dashboard
+      // - fetch report
+
+      const dashboard = getDashboardContract(connection.owner, publicClient);
+
+      return {
+        address: vaultAddress,
+        vault,
+        dashboard,
+        nodeOperator,
+        withdrawalCredentials,
+        ...connection,
+      };
+    },
+  });
 };
