@@ -17,8 +17,8 @@ export const SubmitButton = () => {
   };
 
   const isDisabled =
+    !isDappActive ||
     isSubmitting ||
-    isDappActive ||
     claimableFeeQuery.isLoading ||
     !claimableFeeQuery.data;
 
