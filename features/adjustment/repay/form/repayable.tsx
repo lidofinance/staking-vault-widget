@@ -7,7 +7,7 @@ import { useRepayForm } from './repay-form-context';
 import type { RepayFormFieldValues } from './types';
 
 export const Repayable = () => {
-  const { watch } = useFormContext<RepayFormFieldValues>();
+  const { watch, formState } = useFormContext<RepayFormFieldValues>();
   const { isMaxRepayableLoading, maxRepayable } = useRepayForm();
   const token = watch('token');
 
@@ -17,6 +17,7 @@ export const Repayable = () => {
       amount={maxRepayable}
       token={token}
       loading={isMaxRepayableLoading}
+      disabled={formState.disabled}
     />
   );
 };

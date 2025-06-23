@@ -2,6 +2,7 @@ import { Button } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { useClaim, useClaimData } from './hooks';
 
@@ -22,8 +23,10 @@ export const SubmitButton = () => {
     !claimableFeeQuery.data;
 
   return (
-    <Button disabled={isDisabled} onClick={handleClaim}>
-      {vaultTexts.actions.claim.claimButton(claimableFeeQuery.data)}
-    </Button>
+    <ConnectWalletButton>
+      <Button disabled={isDisabled} onClick={handleClaim}>
+        {vaultTexts.actions.claim.claimButton(claimableFeeQuery.data)}
+      </Button>
+    </ConnectWalletButton>
   );
 };

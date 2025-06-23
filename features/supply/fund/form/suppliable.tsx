@@ -1,4 +1,4 @@
-import { useWatch } from 'react-hook-form';
+import { useFormState, useWatch } from 'react-hook-form';
 
 import { vaultTexts } from 'modules/vaults';
 
@@ -9,6 +9,7 @@ import { InfoRowAmount } from 'shared/components/form';
 
 export const Suppliable = () => {
   const { token } = useWatch<FundFormValidatedValues>();
+  const { disabled } = useFormState();
   const { data, isLoading } = useFundForm().balanceQuery;
 
   return (
@@ -17,6 +18,7 @@ export const Suppliable = () => {
       amount={data}
       loading={isLoading}
       token={token}
+      disabled={disabled}
     />
   );
 };
