@@ -44,6 +44,7 @@ export const MainSettingsAction: FC = () => {
         confirmExpiry,
         nodeOperatorFeeRateCustom,
         confirmExpiryCustom,
+        nodeOperatorFeeRecipient,
       } = formFields;
       const currentnodeOperatorFeeRate =
         nodeOperatorFeeRate === 'custom'
@@ -51,6 +52,12 @@ export const MainSettingsAction: FC = () => {
           : nodeOperatorFeeRate;
       const currentConfirmExpiry =
         confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
+
+      if (
+        nodeOperatorFeeRecipient != mainSettingsData?.nodeOperatorFeeRecipient
+      ) {
+        counter++;
+      }
 
       if (
         shouldIncrementTxCounterByVoting(
@@ -81,6 +88,7 @@ export const MainSettingsAction: FC = () => {
     isValid,
     mainSettingsData?.confirmExpiry,
     mainSettingsData?.nodeOperatorFeeRate,
+    mainSettingsData?.nodeOperatorFeeRecipient,
   ]);
 
   const hasChanges = counter > 0;

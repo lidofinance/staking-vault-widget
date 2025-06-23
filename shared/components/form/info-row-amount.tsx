@@ -9,12 +9,14 @@ type InfoRowAmountProps = {
   amount?: bigint | null;
   token?: string;
   noDataLabel?: string;
+  disabled?: boolean;
 } & ComponentProps<typeof DataTableRowStyled>;
 
 export const InfoRowAmount = ({
   amount,
   token,
-  noDataLabel = DATA_UNAVAILABLE,
+  disabled = false,
+  noDataLabel = disabled ? '-' : DATA_UNAVAILABLE,
   ...props
 }: InfoRowAmountProps) => {
   return (
