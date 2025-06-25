@@ -3,6 +3,7 @@ import type { Address, Hex, ReadContractReturnType } from 'viem';
 import type {
   getDashboardContract,
   getStakingVaultContract,
+  getVaultHubContract,
 } from './contracts';
 
 type VaultConnection = ReadContractReturnType<
@@ -57,10 +58,12 @@ export type VaultReportType = {
 export type VaultBaseInfo = {
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
+  hub: ReturnType<typeof getVaultHubContract>;
   dashboard: ReturnType<typeof getDashboardContract>;
   nodeOperator: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
+  isReportMissing: boolean;
   reportCID: string;
   report: VaultReportType | null;
 } & VaultConnection;

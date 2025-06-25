@@ -58,12 +58,15 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
           ).catch(() => null)
         : null;
 
+      const isReportMissing = !report && !isReportFresh;
+
       const dashboard = getDashboardContract(connection.owner, publicClient);
 
       return {
         address: vaultAddress,
         vault,
         dashboard,
+        hub,
         nodeOperator,
         withdrawalCredentials,
         report: report && {
@@ -72,6 +75,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         },
         reportCID: latestHubReport[2],
         isReportFresh,
+        isReportMissing,
         ...connection,
       };
     },
