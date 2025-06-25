@@ -10,9 +10,8 @@ import {
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 export const useConnectedVaultsList = () => {
-  const { shares, core } = useLidoSDK();
+  const { shares, publicClient } = useLidoSDK();
   const [page, setPage] = useState(1);
-  const publicClient = core.rpcProvider;
 
   const query = useQuery({
     queryKey: ['vaults-connected', publicClient?.chain?.id, page],
@@ -29,6 +28,14 @@ export const useConnectedVaultsList = () => {
             publicClient,
             vaultAddress,
             shares,
+          }).catch((e) => {
+            console.warn(
+              `[useMyVaultsList] Failed to fetch vault data for ${vaultAddress}:`,
+              e,
+            );
+            return {
+              address: vaultAddress,
+            };
           }),
         ),
       );

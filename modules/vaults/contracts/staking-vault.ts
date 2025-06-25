@@ -1,11 +1,12 @@
-import { type Address, getContract, PublicClient } from 'viem';
+import { type Address, getContract } from 'viem';
 
 import { StakingVaultAbi } from 'abi/vault';
+import { RegisteredPublicClient } from 'modules/web3';
 
 // TODO: move to lido-sdk
 export const getStakingVaultContract = (
   address: Address,
-  publicClient: PublicClient,
+  publicClient: RegisteredPublicClient,
 ) => {
   return getContract({
     address,

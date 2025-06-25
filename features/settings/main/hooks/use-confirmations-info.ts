@@ -10,11 +10,9 @@ import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
-type FunctionName = 'setConfirmExpiry' | 'setNodeOperatorFeeBP';
-
 type DecodedData = DecodeFunctionDataReturnType<
   typeof dashboardAbi,
-  FunctionName
+  'setConfirmExpiry' | 'setNodeOperatorFeeRate'
 >;
 
 type ConfirmationsInfo = {
@@ -95,7 +93,7 @@ export const useConfirmationsInfo = () => {
           const confirmations = await publicClient.readContract({
             address: dashboardAddress,
             abi: dashboardAbi,
-            functionName: 'confirmations',
+            functionName: 'confirmation',
             args: [data as Hex, role],
           });
 

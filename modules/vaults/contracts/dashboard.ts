@@ -1,14 +1,21 @@
-import { type Address, getContract, PublicClient, WalletClient } from 'viem';
+import { type Address, getContract } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
+import type {
+  RegisteredPublicClient,
+  RegisteredWalletClient,
+} from 'modules/web3';
 
 // TODO: move to lido-sdk
 export const getDashboardContract = (
   address: Address,
-  publicClient: PublicClient,
-  walletClient?: WalletClient,
+  publicClient: RegisteredPublicClient,
+  walletClient?: RegisteredWalletClient,
 ) => {
-  const client: { public: PublicClient; wallet?: WalletClient } = {
+  const client: {
+    public: RegisteredPublicClient;
+    wallet?: RegisteredWalletClient;
+  } = {
     public: publicClient,
   };
 

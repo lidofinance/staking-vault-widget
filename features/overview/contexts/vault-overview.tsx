@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { Address } from 'viem';
 import invariant from 'tiny-invariant';
-import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-overview';
+import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-overview-v2';
 
 import { formatBalance, formatPercent } from 'utils';
 
@@ -49,7 +49,7 @@ export type VaultOverviewContextType = {
     withdrawableEth: string;
     balanceEth: string;
     accumulatedFee: string;
-    nodeOperatorFee: string;
+    nodeOperatorFeeRate: string;
     collateral: string;
     pendingUnlockEth: string;
   };
@@ -95,20 +95,22 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorUnclaimedFee,
         withdrawableEther,
         balance,
-        nodeOperatorFeeBP,
+        nodeOperatorFeeRate: nodeOperatorFee,
         nodeOperator,
       } = activeVault;
 
-      const overview = calculateOverview({
+      const overview = calculateOverviewV2({
         totalValue: activeVault.totalValue,
         reserveRatioBP: activeVault.reserveRatioBP,
         liabilitySharesInStethWei: activeVault.liabilityStETH,
+        liabilitySharesInWei: activeVault.liabilityShares,
         forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
         withdrawableEther: activeVault.withdrawableEther,
         balance: activeVault.balance,
         locked: activeVault.locked,
         nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
         totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
+        totalMintingCapacitySharesInWei: activeVault.totalMintingCapacity,
       });
 
       const totalValue = toEthValue(activeVault.totalValue);
@@ -134,8 +136,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         activeVault.totalMintingCapacityStETH,
       );
       const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
-      const nodeOperatorFee = formatPercent.format(
-        Number(nodeOperatorFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+      const nodeOperatorFeeRate = formatPercent.format(
+        Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
       );
       const collateral = toEthValue(overview.collateral);
       const pendingUnlock = overview.PendingUnlock;
@@ -159,7 +161,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         withdrawableEth,
         balanceEth,
         accumulatedFee,
-        nodeOperatorFee,
+        nodeOperatorFeeRate,
         collateral,
         pendingUnlockEth,
         isLoadingVault,

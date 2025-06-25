@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 
-import { useMaxGasPrice } from 'modules/web3';
+import { type SupportedChainIds, useMaxGasPrice } from 'modules/web3';
 import { useEthUsd } from './use-eth-usd';
 
-export const useTxCostInUsd = (gasLimit?: bigint, chainId?: number) => {
+export const useTxCostInUsd = (
+  gasLimit?: bigint,
+  chainId?: SupportedChainIds,
+) => {
   const { maxGasPrice, ...maxGasPriceState } = useMaxGasPrice(chainId);
 
   const ethAmount = useMemo(

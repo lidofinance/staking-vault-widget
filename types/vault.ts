@@ -1,34 +1,45 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
-import { Address, ReadContractReturnType } from 'viem';
+import type { Address, ReadContractReturnType } from 'viem';
 
-export type VaultInfo = VaultSocket & {
-  address: Address;
-  owner: Address;
-  nodeOperator: Address;
-  defaultAdmins: readonly Address[];
-  nodeOperatorManagers: readonly Address[];
-  totalValue: bigint;
-  liabilityStETH: bigint;
-  mintableStETH: bigint;
-  mintableShares: bigint;
-  stETHLimit: bigint;
-  apr: null;
-  healthScore: number;
-  totalMintingCapacity: bigint;
-  totalMintingCapacityStETH: bigint;
-  inOutDelta: bigint;
-  locked: bigint;
-  lockedShares: bigint;
-  nodeOperatorUnclaimedFee: bigint;
-  withdrawableEther: bigint;
-  balance: bigint;
-  nodeOperatorFeeBP: bigint;
-  confirmExpiry: bigint;
-  withdrawalCredentials: Address;
-};
+export type VaultInfo = VaultSocket &
+  VaultObligations & {
+    address: Address;
+    owner: Address;
+    nodeOperator: Address;
+    defaultAdmins: readonly Address[];
+    nodeOperatorManagers: readonly Address[];
+    nodeOperatorFeeRecipient: Address;
+    totalValue: bigint;
+    liabilityShares: bigint;
+    liabilityStETH: bigint;
+    mintableStETH: bigint;
+    mintableShares: bigint;
+    stETHLimit: bigint;
+    apr: null;
+    healthScore: number;
+    totalMintingCapacity: bigint;
+    totalMintingCapacityStETH: bigint;
+    inOutDelta: bigint;
+    locked: bigint;
+    lockedShares: bigint;
+    nodeOperatorUnclaimedFee: bigint;
+    withdrawableEther: bigint;
+    balance: bigint;
+    nodeOperatorFeeRate: bigint;
+    confirmExpiry: bigint;
+    withdrawalCredentials: Address;
+  };
 
 export type VaultSocket = ReadContractReturnType<
   typeof VaultHubAbi,
-  'vaultSocket',
+  'vaultConnection',
   [Address]
 >;
+
+export type VaultObligations = {
+  obligations: ReadContractReturnType<
+    typeof VaultHubAbi,
+    'vaultObligations',
+    [Address]
+  >;
+};

@@ -20,7 +20,7 @@ export const ButtonLink: FC<PropsWithChildren<CloseButtonProps>> = ({
   );
 
   if (href) {
-    <Link href={href}>{content}</Link>;
+    return <Link href={href}>{content}</Link>;
   }
 
   return content;

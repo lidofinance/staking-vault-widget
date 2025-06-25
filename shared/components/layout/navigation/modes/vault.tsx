@@ -1,14 +1,18 @@
-import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
-import { appPaths } from 'consts/routing';
+import { useMemo } from 'react';
 import { type Address } from 'viem';
-import { NavList, SelectedVaultWrapper } from '../styles';
+import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
+
 import { useVaultInfo } from 'modules/vaults';
 import { AddressBadge } from 'shared/components/address-badge';
-import { useMemo } from 'react';
-import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
-import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
+import { appPaths } from 'consts/routing';
+
 import { NavigationLink } from '../navigation-link';
 import { BackAllVaults } from '../back-all-vaults';
+import { NavList, SelectedVaultWrapper } from '../styles';
+
+import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
+import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
+import { VaultError } from '../vault-error';
 
 const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   {
@@ -92,6 +96,7 @@ export const VaultNavigation = () => {
           );
         })}
       </NavList>
+      <VaultError />
     </>
   );
 };

@@ -1,20 +1,15 @@
-import { Address, Hex } from 'viem';
+import { Address } from 'viem';
 import { addressSchema, editMainSettingsSchema } from './consts';
 import { z } from 'zod';
 import { VaultInfo } from 'types';
 import { VAULT_ROOT_ROLES } from 'modules/vaults';
 
-export type GrantOrRevokeRole = {
-  account: Address;
-  role: Hex;
-};
-
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type EditMainSettingsValues = {
   nodeOperatorManagers: EditMainSettingsSchema['nodeOperatorManagers'] | null;
   defaultAdmins: EditMainSettingsSchema['defaultAdmins'] | null;
-  nodeOperatorFeeBP: EditMainSettingsSchema['nodeOperatorFeeBP'];
-  nodeOperatorFeeBPCustom: EditMainSettingsSchema['nodeOperatorFeeBPCustom'];
+  nodeOperatorFeeRate: EditMainSettingsSchema['nodeOperatorFeeRate'];
+  nodeOperatorFeeRateCustom: EditMainSettingsSchema['nodeOperatorFeeRateCustom'];
   confirmExpiry: EditMainSettingsSchema['confirmExpiry'];
   confirmExpiryCustom: EditMainSettingsSchema['confirmExpiryCustom'];
 };
@@ -51,6 +46,7 @@ export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
 export type MainSettingsDataContextValue = {
   defaultAdmins: RoleFieldSchema[];
   nodeOperatorManagers: RoleFieldSchema[];
-  nodeOperatorFeeBP: VotingOptionType[];
+  nodeOperatorFeeRecipient: Address;
+  nodeOperatorFeeRate: VotingOptionType[];
   confirmExpiry: VotingOptionType[];
 };

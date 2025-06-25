@@ -1,6 +1,13 @@
-type Token = 'stETH' | 'wstETH';
+import { formatBalance } from 'utils';
+
+type LidoToken = 'stETH' | 'wstETH';
+
+type ExternalToken = 'ETH' | 'wETH';
 
 type ConfirmAction = 'Setting' | 'Proposing';
+
+const balance = (amount?: bigint | null, fallback = '') =>
+  amount ? formatBalance(amount).trimmed + ' ' : fallback;
 
 // This structure contains texts related to vault functionality
 // such texts for actions, metrics, roles and etc
@@ -8,7 +15,7 @@ export const vaultTexts = {
   // configuration for transactions and forms
   actions: {
     approve: {
-      loading: (token: Token) => `Approving ${token}` as const,
+      loading: (token: LidoToken) => `Approving ${token}` as const,
     },
     createVault: {
       loading: 'Creating vault',
@@ -22,7 +29,7 @@ export const vaultTexts = {
             'Node Operator address cannot be changed after the vault is created',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
@@ -50,28 +57,62 @@ export const vaultTexts = {
       },
     },
     mint: {
-      loading: (token: Token) => `Minting ${token}` as const,
-      completed: (token: Token) => `${token} minted` as const,
+      available: `Available to mint`,
+      loading: (token: LidoToken) => `Minting ${token}` as const,
+      completed: (token: LidoToken) => `${token} minted` as const,
+      recipientLabel: 'Mint to address',
+      submit: (token: LidoToken, amount?: bigint | null) =>
+        `Mint ${balance(amount)}${token}` as const,
     },
     repay: {
-      loading: (token: Token) => `Repaying ${token}` as const,
-      completed: (token: Token) => `Repaid ${token} ` as const,
+      available: `Available to repay`,
+      loading: (token: LidoToken) => `Repaying ${token}` as const,
+      completed: (token: LidoToken) => `Repaid ${token} ` as const,
+      submit: (token: LidoToken, amount?: bigint | null) =>
+        `Repay ${balance(amount)}${token}` as const,
     },
     supply: {
+      available: `Available to supply`,
+      mint: {
+        isMint: 'Mint max available stETH',
+        mintTo: 'Mint to address',
+      },
+      submit: {
+        supply: (token: ExternalToken, amount?: bigint | null) =>
+          `Supply ${balance(amount)}${token}` as const,
+        supplyMint: (
+          token: ExternalToken,
+          amount?: bigint | null,
+          amountSteth?: bigint | null,
+        ) =>
+          `Supply ${balance(amount)}${token} & Mint ${balance(amountSteth)}stETH` as const,
+      },
       loading: 'Supplying ETH into the vault',
       completed: 'ETH supplied',
     },
     withdraw: {
+      available: `Available to withdraw`,
       loading: ' Withdrawing ETH from the vault',
       completed: 'ETH withdrawn',
+      submit: (token: ExternalToken, amount?: bigint | null) =>
+        `Withdraw ${balance(amount)}${token}` as const,
     },
     claim: {
+      available: `Available to claim`,
+      addressLabel: `Rewards address`,
+      claimButton: (claimableAmount?: bigint | null) =>
+        `Claim ${balance(claimableAmount)}ETH` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },
     report: {
       loading: 'Applying oracle report',
     },
+    weth: {
+      loadingUnwrap: 'Unwrapping wETH',
+      loadingWrap: 'Wrapping ETH to wETH',
+    },
+
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -91,12 +132,18 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
+      nodeOperatorFeeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFee: {
+        nodeOperatorFeeRecipient: {
+          title: 'Node Operator Fee Recipient',
+          editLabel: 'Set new address',
+          hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
+        },
+        nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           editLabel: 'Propose new, %',
@@ -181,7 +228,7 @@ export const vaultTexts = {
       title: 'Pending unlock',
       hint: 'The amount of ETH that should be unlocked because of repaid stETH but waiting for the confirmation from the upcoming Oracle report.  ',
     },
-    nodeOperatorFee: {
+    nodeOperatorFeeRate: {
       title: 'Node Operator Fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
     },
@@ -238,31 +285,9 @@ export const vaultTexts = {
       title: 'Repay stETH',
       hint: 'Allows Repaying stETH',
     },
-    vaultHubAuthorizer: {
-      title: 'Authorize for connection to Lido Vault Hub',
-      hint: 'Authorize the stVault to be connected to the Lido Vault Hub',
-    },
-    vaultHubDeathorizer: {
-      title: 'De-authorize for connection to Lido Vault Hub',
-      hint: 'De-authorize the stVault to be connected to the Lido Vault Hub.',
-    },
     volunataryDisconnecter: {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
-    },
-    depositorSetter: {
-      title:
-        'Set depositor for the stVault disconnected from the Lido Vault Hub',
-      hint: 'Set depositor for the stVault disconnected from the Lido Vault Hub.',
-    },
-    ossifyer: {
-      title: 'Ossify vault',
-      // TODO: support bold
-      hint: 'Permission for ossifying the stVault: irreversible forbid to be connected to the Lido Vault Hub.',
-    },
-    lockResetter: {
-      title: 'Reset locked amount of ETH on the disconnected stVault',
-      hint: 'Permission for resetting locked amount on the disconnected stVault.',
     },
     pdgProver: {
       title: 'Prove the validator to PDG',
@@ -293,19 +318,43 @@ export const vaultTexts = {
       title: 'Adjust rewards on the validators',
       hint: 'ETH added outside stVaults mechanisms is treated as rewards and subject to Node Operator Fee unless marked as deposit.',
     },
-
-    // NOT IN THE DOC AND WILL BE DELETED IN CONTRACTS
-    locker: {
-      title: 'Increase lock amount in vault',
-      hint: 'Allows to increase locked ETH amount on stVault to allow stETH minting',
-    },
   },
   // common texts like errors, warnings, etc.
   common: {
     errors: {
+      amount: {
+        required: 'Amount is required',
+        min: (min: bigint) =>
+          `Amount must be greater than ${formatBalance(min).trimmed}` as const,
+        overBalance: (token: ExternalToken | LidoToken) =>
+          `Amount exceeds ${token} balance` as const,
+        max: (max: bigint) =>
+          `Amount must be less than  ${formatBalance(max).trimmed}` as const,
+      },
+      address: {
+        required: 'Address is required',
+        invalid: 'Invalid ethereum address',
+        vault: 'Recipient cannot be stVault',
+        dashboard: 'Recipient cannot be stVault Dashboard',
+      },
+
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
+      loadingVault: 'Error loading stVault',
+      vaultAddress: 'Invalid stVault address',
+    },
+    form: {
+      willReceiveLabel: 'You will receive',
+    },
+    links: {
+      goToAll: 'To All Vaults',
+    },
+    tokens: {
+      ETH: 'ETH',
+      wETH: 'wETH',
+      stETH: 'stETH',
+      wstETH: 'wstETH',
     },
   },
 } as const;

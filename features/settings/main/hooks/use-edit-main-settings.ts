@@ -19,6 +19,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { useConfirmationsInfo } from './use-confirmations-info';
+import { useReportStatus } from 'features/report';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -34,6 +35,7 @@ const toMethodArg =
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
   const { refetch: refetchNOMPermission } = useVaultPermission(
     'nodeOperatorManager',
@@ -106,15 +108,32 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { nodeOperatorFeeBP, nodeOperatorFeeBPCustom } = payload;
+        if (
+          payload.nodeOperatorFeeRecipient !==
+          activeVault.nodeOperatorFeeRecipient
+        ) {
+          transactions.push({
+            to: owner,
+            data: encodeFunctionData({
+              abi: dashboardAbi,
+              functionName: 'setNodeOperatorFeeRecipient',
+              args: [payload.nodeOperatorFeeRecipient],
+            }),
+            loadingActionText:
+              vaultTexts.actions.settings.nodeOperatorFeeRecipient,
+          });
+        }
+
+        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = payload;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
-          nodeOperatorFeeBP !== 'custom'
-            ? nodeOperatorFeeBP
-            : nodeOperatorFeeBPCustom,
+          nodeOperatorFeeRate !== 'custom'
+            ? nodeOperatorFeeRate
+            : nodeOperatorFeeRateCustom,
         );
         const currentFee = Number(
-          (activeVault.nodeOperatorFeeBP * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+          (activeVault.nodeOperatorFeeRate * 100n) /
+            VAULT_TOTAL_BASIS_POINTS_BN,
         );
         const isFeeValueChanged = feeValue !== currentFee;
 
@@ -127,7 +146,7 @@ export const useEditMainSettings = () => {
             to: owner,
             data: encodeFunctionData({
               abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeBP',
+              functionName: 'setNodeOperatorFeeRate',
               args: [BigInt(newFee)],
             }),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
@@ -162,7 +181,10 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions,
+            transactions:
+              isFeeValueChanged && isReportAvailable
+                ? async () => [await prepareReportCall(), ...transactions]
+                : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
@@ -193,13 +215,15 @@ export const useEditMainSettings = () => {
       },
       [
         owner,
-        hasBothConfirmingRoles,
         activeVault,
+        hasBothConfirmingRoles,
         sendTX,
+        isReportAvailable,
         refetchVaultInfo,
         refetchConfirmationsInfo,
         refetchNOMPermission,
         refetchAdminPermission,
+        prepareReportCall,
       ],
     ),
     ...rest,

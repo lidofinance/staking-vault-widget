@@ -37,7 +37,7 @@ export const RadioInputLabel = styled.label<{
   position: relative;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
-  color: ${({ theme }) => theme.colors.textDark};
+  color: ${({ theme }) => theme.colors.text};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   background: ${({ disabled }) => (disabled ? '#F5F5F7' : 'transparent')};

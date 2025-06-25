@@ -33,7 +33,7 @@ export const getSecretConfig = (): SecretConfigType => {
   return {
     ...serverRuntimeConfig,
 
-    defaultChain: Number(serverRuntimeConfig.defaultChain) || 11155111,
+    defaultChain: Number(serverRuntimeConfig.defaultChain) || 560048,
     supportedChains,
 
     // map dynamic rpc url envs per supported chains (with mainnet included)

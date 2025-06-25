@@ -4,12 +4,11 @@ import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionData[] = [
   {
-    key: 'nodeOperatorFee',
+    key: 'nodeOperatorFeeRate',
   },
   {
     key: 'accumulatedFee',
     actionLink: (vault) => appPaths.vaults.vault(vault).claim,
-    actionRole: 'nodeOperatorFeeClaimer',
   },
 ];
 

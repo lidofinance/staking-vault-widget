@@ -67,9 +67,10 @@ export const votingLifetimeSchema = z.coerce
 
 export const editMainSettingsSchema = z.object({
   nodeOperatorManagers: z.array(addressSchema),
+  nodeOperatorFeeRecipient: accountSchema,
   defaultAdmins: z.array(addressSchema),
-  nodeOperatorFeeBP: z.string(),
-  nodeOperatorFeeBPCustom: z
+  nodeOperatorFeeRate: z.string(),
+  nodeOperatorFeeRateCustom: z
     .string()
     .pipe(votingFeeSchema)
     .transform((val) => String(val))
@@ -152,15 +153,19 @@ const handleCustomFieldErrors = (
   errors: FieldErrors<EditMainSettingsSchema>,
   values: EditMainSettingsValues,
 ) => {
-  const isNodeOperatorFeeBPCustom = values.nodeOperatorFeeBP === 'custom';
+  const isnodeOperatorFeeRateCustom = values.nodeOperatorFeeRate === 'custom';
   const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
-  const isNodeOperatorFeeBPEmpty = values.nodeOperatorFeeBPCustom === '';
+  const isnodeOperatorFeeRateEmpty = values.nodeOperatorFeeRateCustom === '';
   const isConfirmExpiryEmpty = values.confirmExpiryCustom === '';
 
-  if (isNodeOperatorFeeBPCustom && baseResultErrors.nodeOperatorFeeBPCustom) {
-    errors.nodeOperatorFeeBPCustom = baseResultErrors.nodeOperatorFeeBPCustom;
+  if (
+    isnodeOperatorFeeRateCustom &&
+    baseResultErrors.nodeOperatorFeeRateCustom
+  ) {
+    errors.nodeOperatorFeeRateCustom =
+      baseResultErrors.nodeOperatorFeeRateCustom;
   } else {
-    delete errors.nodeOperatorFeeBPCustom;
+    delete errors.nodeOperatorFeeRateCustom;
   }
 
   if (isConfirmExpiryCustom && baseResultErrors.confirmExpiryCustom) {
@@ -169,8 +174,8 @@ const handleCustomFieldErrors = (
     delete errors.confirmExpiryCustom;
   }
 
-  if (isNodeOperatorFeeBPCustom && isNodeOperatorFeeBPEmpty) {
-    errors.nodeOperatorFeeBPCustom = {
+  if (isnodeOperatorFeeRateCustom && isnodeOperatorFeeRateEmpty) {
+    errors.nodeOperatorFeeRateCustom = {
       type: 'custom',
       message: INVALID_EMPTY_STRING,
     };
@@ -188,24 +193,24 @@ const checkForDuplicateValues = (
   values: EditMainSettingsValues,
   errors: FieldErrors<EditMainSettingsSchema>,
 ) => {
-  const { nodeOperatorFeeBP, confirmExpiry } = context;
+  const { nodeOperatorFeeRate, confirmExpiry } = context;
 
-  const uniqueNodeOperatorFeeBP = nodeOperatorFeeBP
+  const uniquenodeOperatorFeeRate = nodeOperatorFeeRate
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
   const uniqueConfirmExpiry = confirmExpiry
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
 
-  const isNodeOperatorFeeBPDuplicate = uniqueNodeOperatorFeeBP.includes(
-    Number(values.nodeOperatorFeeBPCustom),
+  const isnodeOperatorFeeRateDuplicate = uniquenodeOperatorFeeRate.includes(
+    Number(values.nodeOperatorFeeRateCustom),
   );
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,
   );
 
-  if (isNodeOperatorFeeBPDuplicate) {
-    errors.nodeOperatorFeeBPCustom = {
+  if (isnodeOperatorFeeRateDuplicate) {
+    errors.nodeOperatorFeeRateCustom = {
       type: 'custom',
       message: DUPLICATE_VALUE,
     };

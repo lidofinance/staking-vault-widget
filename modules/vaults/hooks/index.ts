@@ -1,4 +1,5 @@
-export { useVaultData } from './use-vault-data';
+export { useSingleVaultData } from './use-vault-data';
+export { useValidateRecipientArgs } from './use-validate-recipient';
 export {
   useVaultPermission,
   useVaultPermissions,

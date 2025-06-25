@@ -1,19 +1,20 @@
-import { useAdjustment } from 'features/adjustment/contexts/adjustment-provider';
-import { useVaultInfo } from 'modules/vaults';
+import { zeroAddress } from 'viem';
 
+import { useVaultInfo } from 'modules/vaults';
+import { appPaths } from 'consts/routing';
 import { Switch } from 'shared/components/switch';
 
 import { Mint } from './mint';
 import { Repay } from './repay';
-import { FormBlock, PageWrapper } from './styles';
-import { appPaths } from 'consts/routing';
-import { zeroAddress } from 'viem';
+import { PageWrapper } from './styles';
 
-export const AdjustmentTabs = () => {
-  const { isMintTab } = useAdjustment();
+type AdjustmentTabsProps = {
+  isMintTab: boolean;
+};
+
+export const AdjustmentTabs = ({ isMintTab }: AdjustmentTabsProps) => {
   const { vaultAddress } = useVaultInfo();
 
-  // TODO: improve creation of the path
   const mintRoutes = [
     {
       path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).steth('mint'),
@@ -28,7 +29,7 @@ export const AdjustmentTabs = () => {
   return (
     <PageWrapper>
       <Switch checked={!isMintTab} routes={mintRoutes} />
-      <FormBlock>{isMintTab ? <Mint /> : <Repay />}</FormBlock>
+      {isMintTab ? <Mint /> : <Repay />}
     </PageWrapper>
   );
 };

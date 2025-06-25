@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import type { Address } from 'viem';
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useDappStatus } from 'modules/web3';
@@ -33,7 +33,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
       nodeOperator: '' as Address,
       vaultManager: [{ value: '' as Address }],
       nodeOperatorManager: '' as Address,
-      nodeOperatorFeeBP: undefined,
+      nodeOperatorFeeRate: undefined,
       confirmExpiry: '36',
       acceptTerms: false,
       roles: {},
@@ -58,30 +58,27 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const step = formObject.watch('step');
 
   return (
-    <FormProvider {...formObject}>
-      <FormController
-        onSubmit={onSubmit}
-        retryEvent={retryEvent}
-        // this allows not to reset values and display ResultOverview
-        afterSubmitResetOptions={AFTER_SUBMIT_RESET_OPTIONS}
-      >
-        <FormBlock>
-          {mutation.isSuccess ? (
-            <ResultOverview transactionResult={mutation.data} />
-          ) : (
-            <>
-              <FormSubtitle>
-                Step {step} of {CREATE_VAULT_STEPS}
-              </FormSubtitle>
-              <FormTitle> {SECTION_NAMES_BY_STEP[step]}</FormTitle>
-              <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
-              <Confirmation
-                isShown={step === CREATE_VAULT_FORM_STEPS.confirm}
-              />
-            </>
-          )}
-        </FormBlock>
-      </FormController>
-    </FormProvider>
+    <FormController
+      formObject={formObject}
+      onSubmit={onSubmit}
+      retryEvent={retryEvent}
+      // this allows not to reset values and display ResultOverview
+      afterSubmitResetOptions={AFTER_SUBMIT_RESET_OPTIONS}
+    >
+      <FormBlock>
+        {mutation.isSuccess ? (
+          <ResultOverview transactionResult={mutation.data} />
+        ) : (
+          <>
+            <FormSubtitle>
+              Step {step} of {CREATE_VAULT_STEPS}
+            </FormSubtitle>
+            <FormTitle> {SECTION_NAMES_BY_STEP[step]}</FormTitle>
+            <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
+            <Confirmation isShown={step === CREATE_VAULT_FORM_STEPS.confirm} />
+          </>
+        )}
+      </FormBlock>
+    </FormController>
   );
 };
