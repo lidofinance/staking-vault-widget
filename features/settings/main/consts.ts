@@ -16,10 +16,10 @@ import {
   vaultTexts,
 } from 'modules/vaults';
 
-import {
+import type {
   EditMainSettingsSchema,
   EditMainSettingsValues,
-  MainSettingsDataContextValue,
+  MainSettingsFormData,
   MainSettingsOverview,
 } from './types';
 
@@ -121,7 +121,7 @@ const baseValidation = zodResolver<
 
 export const mainSettingsFormResolver: Resolver<
   EditMainSettingsValues,
-  MainSettingsDataContextValue,
+  MainSettingsFormData | null,
   EditMainSettingsSchema
 > = async (values, context, options) => {
   const baseResult = await baseValidation(values, context, options as any);
@@ -187,7 +187,7 @@ const handleCustomFieldErrors = (
 };
 
 const checkForDuplicateValues = (
-  context: MainSettingsDataContextValue,
+  context: MainSettingsFormData,
   values: EditMainSettingsValues,
   errors: FieldErrors<EditMainSettingsSchema>,
 ) => {

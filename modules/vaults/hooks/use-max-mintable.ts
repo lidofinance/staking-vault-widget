@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
 
-import { useVaultInfo } from '../vault-context';
+import { useVault } from '../vault-context';
 import { readWithReport } from '../report';
 
 export type MaxMintableResult = {
@@ -13,15 +13,15 @@ export type MaxMintableResult = {
 
 export const useMaxMintable = (amount?: bigint | null) => {
   const { shares, publicClient } = useLidoSDK();
-  const { activeVault } = useVaultInfo();
+  const { activeVault, queryKeys } = useVault();
 
   const enabled = !!activeVault && typeof amount === 'bigint';
 
   return useQuery<MaxMintableResult>({
     queryKey: [
+      ...queryKeys.state,
       'max-mintable-steth-with-supply',
-      activeVault?.owner,
-      amount?.toString(),
+      { supply: amount?.toString() },
     ],
     enabled: enabled,
     queryFn: async () => {

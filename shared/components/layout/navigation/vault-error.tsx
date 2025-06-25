@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Button } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, VaultAddressError, vaultTexts } from 'modules/vaults';
+import { useVault, VaultAddressError, vaultTexts } from 'modules/vaults';
 import { ButtonLink } from 'shared/components/button-link';
 import { appPaths } from 'consts/routing';
 
@@ -10,7 +10,7 @@ import { ErrorModalContent } from './styles';
 const texts = vaultTexts.common;
 
 export const VaultError = () => {
-  const { error, refetchVaultInfo } = useVaultInfo();
+  const { error, refetch } = useVault();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -34,7 +34,10 @@ export const VaultError = () => {
   return (
     <Modal title={texts.errors.loadingVault} center open>
       <ErrorModalContent>
-        <Button variant="outlined" onClick={() => refetchVaultInfo()}>
+        <Button
+          variant="outlined"
+          onClick={() => refetch({ cancelRefetch: true, throwOnError: false })}
+        >
           Try Again
         </Button>
         {goToAll}

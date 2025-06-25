@@ -1,8 +1,12 @@
-import { useReadDashboard, useValidateRecipientArgs } from 'modules/vaults';
-import { useCallback } from 'react';
+import {
+  useReadDashboard,
+  useValidateRecipientArgs,
+  useVault,
+} from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const useClaimData = () => {
+  const { invalidateVaultState } = useVault();
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
   const recipientQuery = useReadDashboard({
@@ -14,17 +18,10 @@ export const useClaimData = () => {
     applyReport: true,
   });
 
-  const invalidateClaimData = useCallback(
-    () =>
-      claimableFeeQuery.refetch({ cancelRefetch: true, throwOnError: false }),
-
-    [claimableFeeQuery],
-  );
-
   return {
     recipientQuery,
     claimableFeeQuery,
     validationContext,
-    invalidateClaimData,
+    invalidateClaimData: invalidateVaultState,
   };
 };

@@ -8,8 +8,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 import {
-  useVaultInfo,
-  useVaultPermission,
+  useVault,
   VAULT_TOTAL_BASIS_POINTS,
   VAULT_TOTAL_BASIS_POINTS_BN,
   VAULTS_ROOT_ROLES_MAP,
@@ -36,15 +35,9 @@ const toMethodArg =
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
-  const { refetch: refetchConfirmationsInfo, data: vaultSettings } =
-    useVaultSettings();
-  const { refetch: refetchNOMPermission } = useVaultPermission(
-    'nodeOperatorManager',
-  );
-  const { refetch: refetchAdminPermission } =
-    useVaultPermission('defaultAdmin');
+  const { data: vaultSettings } = useVaultSettings();
 
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -172,26 +165,10 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
           }),
         );
-        // refetch anyway because some transactions may be successful
-        const [vaultInfo, confirmations] = await Promise.all([
-          refetchConfirmationsInfo({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-          refetchNOMPermission({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-          refetchAdminPermission({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-        ]);
 
         return {
           result,
-          confirmations,
-          vaultInfo,
+          isStateChanged: isFeeValueChanged,
         };
       },
       [
@@ -200,9 +177,6 @@ export const useEditMainSettings = () => {
         hasBothConfirmingRoles,
         sendTX,
         prepareReportCalls,
-        refetchConfirmationsInfo,
-        refetchNOMPermission,
-        refetchAdminPermission,
       ],
     ),
     ...rest,

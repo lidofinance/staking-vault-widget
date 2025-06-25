@@ -7,14 +7,11 @@ import { RadioSelector } from '../controllers/radio-selector';
 import { VotingBlock } from './styles';
 
 export const Voting: FC = () => {
-  const mainSettingsData = useMainSettingsData();
+  const { values } = useMainSettingsData();
 
   const [nodeOperatorFeeRate, confirmExpiry] = useMemo(() => {
-    return [
-      mainSettingsData?.nodeOperatorFeeRate,
-      mainSettingsData?.confirmExpiry,
-    ];
-  }, [mainSettingsData]);
+    return [values?.nodeOperatorFeeRate, values?.confirmExpiry];
+  }, [values]);
 
   return (
     <VotingBlock>

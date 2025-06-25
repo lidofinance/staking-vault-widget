@@ -16,7 +16,7 @@ import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 
 import type { dashboardAbi } from 'abi/dashboard-abi';
 import { getLazyOracleContract } from '../contracts';
-import { useVaultInfo } from '../vault-context';
+import { useVault } from '../vault-context';
 import type { VaultReportType } from '../types';
 
 const encodeCall = <
@@ -124,50 +124,6 @@ export const readWithReport = async <
   }) as unknown as MulticallReturnType<TContracts, false>;
 };
 
-export const useReadWithVaultReport = <
-  TContracts extends readonly (
-    | (ContractFunctionParameters & {
-        from?: Address;
-      })
-    | undefined
-  )[],
->(
-  contracts: TContracts,
-) => {
-  const { publicClient } = useLidoSDK();
-  const { activeVault } = useVaultInfo();
-  const query = useQuery<MulticallReturnType<Required<TContracts>, false>>({
-    meta: { contracts },
-    queryKey: [
-      'read-with-report',
-      activeVault?.address,
-      activeVault?.reportCID,
-      contracts,
-    ] as const,
-    enabled:
-      !!activeVault && contracts.length > 0 && !contracts.some((c) => !c),
-    queryFn: async ({ meta }) => {
-      invariant(
-        activeVault,
-        '[useReadWithVaultReport] activeVault is not defined',
-      );
-      invariant(
-        meta?.contracts,
-        '[useReadWithVaultReport] contracts are not defined',
-      );
-      const contracts = meta.contracts as Required<TContracts>;
-
-      return readWithReport({
-        publicClient,
-        contracts,
-        report: activeVault.report,
-      });
-    },
-  });
-
-  return query;
-};
-
 export const useReadDashboard = <
   TMutability extends 'pure' | 'view' | 'nonpayable' | 'payable',
   TFunctionName extends ContractFunctionName<
@@ -202,12 +158,11 @@ export const useReadDashboard = <
   applyReport?: boolean;
 } & ([] extends TArgs ? { args?: undefined } : { args: TArgs })) => {
   const { publicClient } = useLidoSDK();
-  const { activeVault } = useVaultInfo();
+  const { activeVault, queryKeys } = useVault();
   const query = useQuery({
     queryKey: [
+      ...queryKeys.state,
       'read-with-report',
-      activeVault?.address,
-      activeVault?.reportCID,
       functionName,
       stringifyArgs(args),
     ] as const,

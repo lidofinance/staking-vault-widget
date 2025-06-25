@@ -2,31 +2,24 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
+import { useVault } from 'modules/vaults';
+
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
 import { validateFormWithZod } from 'utils/validate-form-value';
 
-import { editPermissionsSchema } from 'features/settings/permissions/consts';
-import {
-  EditPermissionsSchema,
-  FieldSchema,
-  PermissionKeys,
-} from 'features/settings/permissions/types';
-import { useEditPermissions } from 'features/settings/permissions/hooks';
-import {
-  collectFormValuesToRpc,
-  collectRolesToFormValues,
-  formatRawPermissions,
-} from 'features/settings/permissions/utils';
-import { usePermissionsData } from './permissions-data-provider';
-
+import { editPermissionsSchema } from '../consts';
+import { EditPermissionsSchema, FieldSchema, PermissionKeys } from '../types';
+import { useEditPermissions, usePermissionsFormData } from '../hooks';
+import { collectFormValuesToRpc } from '../utils';
 import { FormBackdrop } from '../components';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
+  const { invalidateVaultConfig } = useVault();
   const { isDappActive } = useDappStatus();
-  const { rolesList, refetch } = usePermissionsData();
+  const { data: rolesList, refetch } = usePermissionsFormData();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
 
@@ -43,21 +36,19 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const onSubmit = useCallback(
     async (data: EditPermissionsSchema): Promise<boolean> => {
       const { success } = await editPermissions(collectFormValuesToRpc(data));
-      const { data: refetchData } = await refetch({
-        cancelRefetch: true,
-        throwOnError: false,
-      });
+      const [{ data: newData }] = await Promise.all([
+        refetch({
+          cancelRefetch: true,
+          throwOnError: false,
+        }),
+        invalidateVaultConfig('roles'),
+      ]);
 
-      const newDefaultValues = collectRolesToFormValues(
-        formatRawPermissions(refetchData as []),
-      );
-      if (newDefaultValues) {
-        reset(newDefaultValues);
-      }
+      reset(newData || undefined);
 
       return success;
     },
-    [editPermissions, refetch, reset],
+    [editPermissions, invalidateVaultConfig, refetch, reset],
   );
 
   return (
@@ -66,6 +57,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
+        afterSubmitResetOptions={false}
       >
         {children}
       </FormController>

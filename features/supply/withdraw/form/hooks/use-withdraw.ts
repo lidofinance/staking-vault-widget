@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 
 import {
-  useVaultInfo,
+  useVault,
   vaultTexts,
   GoToVault,
   getWethContract,
@@ -18,7 +18,7 @@ import {
 import type { WithdrawFormValidatedValues } from '../types';
 
 export const useWithdraw = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const { publicClient } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();

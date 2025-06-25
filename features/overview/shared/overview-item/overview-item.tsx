@@ -3,7 +3,7 @@ import type { Address } from 'viem';
 import { useRouter } from 'next/router';
 import { Text, Button } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVault, useVaultPermission } from 'modules/vaults';
 
 import { OverviewItemValue } from './overview-item-value';
 import { ItemWrapper, Title } from './styles';
@@ -26,7 +26,7 @@ export const OverviewItem: FC<ItemProps> = ({
   isLoading,
   color,
 }) => {
-  const { vaultAddress } = useVaultInfo();
+  const { vaultAddress } = useVault();
   const { hasPermission } = useVaultPermission(actionRole);
 
   // show action if

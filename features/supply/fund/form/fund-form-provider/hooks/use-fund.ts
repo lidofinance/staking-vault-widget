@@ -8,7 +8,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 import {
-  useVaultInfo,
+  useVault,
   vaultTexts,
   GoToVault,
   getWethContract,
@@ -19,7 +19,7 @@ import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
 
 export const useFund = () => {
   const publicClient = usePublicClient();
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
 
   const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();

@@ -12,11 +12,13 @@ import {
   getVaultHubContract,
 } from '../contracts';
 import type { VaultBaseInfo } from '../types';
+import { vaultQueryKeys } from '../consts';
 
 export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   const { publicClient } = useLidoSDK();
+  const base = vaultQueryKeys(vaultAddress).stateBase;
   return useQuery<VaultBaseInfo>({
-    queryKey: ['base-vault-data', vaultAddress] as const,
+    queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');

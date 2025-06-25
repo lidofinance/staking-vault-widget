@@ -1,5 +1,5 @@
-import { useAccount, useReadContracts } from 'wagmi';
-import { useVaultInfo } from 'modules/vaults';
+import { useAccount } from 'wagmi';
+import { useVault } from 'modules/vaults';
 import {
   VAULTS_ALL_ROLES,
   VAULTS_ALL_ROLES_MAP,
@@ -7,7 +7,10 @@ import {
   VAULTS_OWNER_ROLES_MAP,
 } from '../consts';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useLidoSDK } from 'modules/web3';
+import invariant from 'tiny-invariant';
 
 // adds defaultAdmin and nodeOperatorManager roles to the list of roles
 // if any roles are admined by them
@@ -54,29 +57,28 @@ const saturateRoles = (roles: readonly VAULTS_ALL_ROLES[]) => {
 };
 
 export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault, queryKeys } = useVault();
+  const { publicClient } = useLidoSDK();
   const { address } = useAccount();
 
-  const { contracts, rolesOffset, saturatedRoles } = useMemo(() => {
-    const { saturatedRoles, rolesOffset } = saturateRoles(roles);
+  const query = useQuery({
+    queryKey: [...queryKeys.config('roles'), 'hasRole', { roles }],
+    enabled: !!activeVault && !!address && roles.length > 0,
+    queryFn: async () => {
+      invariant(activeVault, 'Active vault is not defined');
+      invariant(address, 'User address is not defined');
+      const { saturatedRoles, rolesOffset } = saturateRoles(roles);
 
-    return {
-      rolesOffset,
-      saturatedRoles,
-      contracts:
-        activeVault && address
-          ? saturatedRoles.map(({ role }) => {
-              const roleHash = VAULTS_ALL_ROLES_MAP[role];
-              return activeVault.dashboard.prepare.hasRole([roleHash, address]);
-            })
-          : undefined,
-    };
-  }, [activeVault, address, roles]);
+      const result = await publicClient.multicall({
+        allowFailure: false,
+        contracts: saturatedRoles.map(({ role }) => {
+          const roleHash = VAULTS_ALL_ROLES_MAP[role];
+          return activeVault.dashboard.prepare.hasRole([roleHash, address]);
+        }),
+      });
 
-  // stabilized select function to avoid unnecessary re-renders
-  const selectFn = useCallback(
-    (queryData: boolean[]) => {
-      const data = [...queryData];
+      // avoid any internal cache pollution
+      const data = [...result];
 
       // Remove optional first service elements from array
       let isAdmin = false;
@@ -113,17 +115,6 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
           .filter((item) => !item.hasRole)
           .map((item) => item.role),
       };
-    },
-    [rolesOffset, saturatedRoles],
-  );
-
-  const query = useReadContracts({
-    contracts,
-    allowFailure: false,
-    batchSize: 5,
-    query: {
-      select: selectFn,
-      enabled: Boolean(activeVault?.owner && address && roles.length > 0),
     },
   });
 

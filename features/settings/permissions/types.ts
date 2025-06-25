@@ -3,12 +3,12 @@ import {
   editPermissionsSchema,
   SubmitPermissionsStepEnum,
   ToggleValue,
-  EDITABLE_ROLES_MAP,
+  EDITABLE_ROLES_LIST,
 } from './consts';
 import { z } from 'zod';
 import type { UseQueryResult } from '@tanstack/react-query';
 
-export type PermissionKeys = keyof typeof EDITABLE_ROLES_MAP;
+export type PermissionKeys = (typeof EDITABLE_ROLES_LIST)[number];
 
 export type SubmitPermissionsStep =
   | keyof typeof SubmitPermissionsStepEnum

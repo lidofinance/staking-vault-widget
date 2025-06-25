@@ -4,6 +4,7 @@ import {
   VAULTS_PER_PAGE,
   getVaultViewerContract,
   getVaultDataTable,
+  vaultListQueryKeys,
 } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { useState } from 'react';
@@ -15,7 +16,11 @@ export const useMyVaultsList = () => {
   const [page, setPage] = useState(1);
 
   const query = useQuery({
-    queryKey: ['user-vaults-connected', publicClient.chain.id, address, page],
+    queryKey: [
+      ...vaultListQueryKeys(publicClient.chain.id).myVaults,
+      address,
+      { page },
+    ],
     enabled: !!address,
     placeholderData: (prevData) => {
       if (!address) return undefined;

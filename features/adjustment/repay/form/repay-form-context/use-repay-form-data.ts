@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { useCallback, useMemo } from 'react';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVault } from 'modules/vaults';
 import { useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { bigIntMin } from 'utils/bigint-math';
@@ -11,7 +11,7 @@ import { useLiability } from './use-liability';
 import type { RepayFormValidationContext } from '../types';
 
 export const useRepayFormData = () => {
-  const { refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState } = useVault();
   const liabilityQuery = useLiability();
   const stethBalanceQuery = useStethBalance();
   const wstethBalanceQuery = useWstethBalance();
@@ -52,12 +52,11 @@ export const useRepayFormData = () => {
   const invalidateRepayFormData = useCallback(async () => {
     const options = { cancelRefetch: true, throwOnError: false };
     return Promise.all([
-      refetchVaultInfo(),
-      liabilityQuery.refetch(options),
+      invalidateVaultState(),
       stethBalanceQuery.refetch(options),
       wstethBalanceQuery.refetch(options),
     ]);
-  }, [liabilityQuery, refetchVaultInfo, stethBalanceQuery, wstethBalanceQuery]);
+  }, [invalidateVaultState, stethBalanceQuery, wstethBalanceQuery]);
 
   return {
     validationContext,

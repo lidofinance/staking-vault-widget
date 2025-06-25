@@ -2,14 +2,14 @@ import { useCallback, useMemo } from 'react';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
-import { useValidateRecipientArgs, useVaultInfo } from 'modules/vaults';
+import { useValidateRecipientArgs, useVault } from 'modules/vaults';
 
 import { useWithdrawable } from '../hooks';
 
 import type { WithdrawFormValidationContext } from '../types';
 
 export const useWithdrawValidationContext = () => {
-  const { refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState } = useVault();
   const validateRecipientArgs = useValidateRecipientArgs();
   const withdrawableEtherQuery = useWithdrawable();
 
@@ -36,9 +36,9 @@ export const useWithdrawValidationContext = () => {
     () =>
       Promise.all([
         refetchWithdrawableEther({ cancelRefetch: true, throwOnError: false }),
-        refetchVaultInfo(),
+        invalidateVaultState(),
       ]),
-    [refetchWithdrawableEther, refetchVaultInfo],
+    [refetchWithdrawableEther, invalidateVaultState],
   );
 
   return {

@@ -11,7 +11,6 @@ import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-o
 
 import { formatBalance, formatPercent } from 'utils';
 
-import { useVaultInfo } from 'modules/vaults/vault-context';
 import {
   useVaultOverviewData,
   VAULT_TOTAL_BASIS_POINTS,
@@ -83,12 +82,7 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { isLoadingVault: isLoadingVaultCore } = useVaultInfo();
-
-  const { data: vaultData, isLoading: isLoadingVaultData } =
-    useVaultOverviewData();
-
-  const isLoadingVault = isLoadingVaultCore || isLoadingVaultData;
+  const { data: vaultData, isPending: isLoadingVault } = useVaultOverviewData();
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
     if (vaultData) {

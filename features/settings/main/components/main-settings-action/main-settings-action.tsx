@@ -20,7 +20,7 @@ export const MainSettingsAction: FC = () => {
   const { isValid, isDirty, isSubmitting, isValidating, disabled } =
     useFormState();
   const isClearDisabled = !isDirty;
-  const mainSettingsData = useMainSettingsData();
+  const { values: mainSettingsData } = useMainSettingsData();
   const isSubmitDisabled = isSubmitting || disabled || isValidating;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();

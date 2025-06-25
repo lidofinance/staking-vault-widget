@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
 
 import {
-  useVaultInfo,
+  useVault,
   vaultTexts,
   GoToVault,
   useReportCalls,
@@ -11,7 +11,7 @@ import { useSendTransaction, withSuccess } from 'modules/web3';
 
 export const useClaim = () => {
   const [isSubmitting, setSubmitting] = useState(false);
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();

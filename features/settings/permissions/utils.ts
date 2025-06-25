@@ -5,14 +5,15 @@ import {
   PermissionAccounts,
   PermissionKeys,
 } from 'features/settings/permissions/types';
-import { EDITABLE_ROLES_LIST, EDITABLE_ROLES_MAP } from './consts';
+import { EDITABLE_ROLES_LIST } from './consts';
 import invariant from 'tiny-invariant';
 import { Address } from 'viem';
+import { VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
 
 export const collectFormValuesToRpc = (formData: EditPermissionsSchema) => {
   return Object.entries(formData).reduce(
     (acc, [key, fieldList]) => {
-      const role = EDITABLE_ROLES_MAP[key as PermissionKeys];
+      const role = VAULTS_ALL_ROLES_MAP[key as PermissionKeys];
       invariant(role, '[collectFormValuesToRpc] role not found');
       const { toRevoke, toGrant } = acc;
       fieldList?.forEach((field) => {

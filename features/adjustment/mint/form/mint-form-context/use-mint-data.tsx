@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import {
   useMaxMintable,
   useValidateRecipientArgs,
-  useVaultInfo,
+  useVault,
 } from 'modules/vaults';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -12,7 +12,7 @@ import { MintFormValidationContext } from '../types';
 
 export const useMintData = () => {
   const validateRecipientArgs = useValidateRecipientArgs();
-  const { refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState } = useVault();
 
   const mintableQuery = useMaxMintable(0n);
 
@@ -41,10 +41,10 @@ export const useMintData = () => {
   const invalidateMintData = useCallback(
     async () =>
       Promise.all([
-        refetchVaultInfo(),
+        invalidateVaultState(),
         refetchMintable({ cancelRefetch: true, throwOnError: false }),
       ]),
-    [refetchVaultInfo, refetchMintable],
+    [invalidateVaultState, refetchMintable],
   );
 
   return {

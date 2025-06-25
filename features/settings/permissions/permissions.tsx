@@ -13,7 +13,7 @@ import {
 } from './styles';
 import { SectionContainer } from 'features/settings/permissions/styles';
 
-import { PermissionsDataProvider, PermissionsFormProvider } from './contexts';
+import { PermissionsFormProvider } from './contexts';
 import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
@@ -73,15 +73,13 @@ const PermissionsSection = (props: PermissionSectionEntry) => {
 
 export const PermissionsSettings = () => {
   return (
-    <PermissionsDataProvider>
-      <PermissionsFormProvider>
-        <SectionContainer>
-          {renderPermissionsList.map((section) => (
-            <PermissionsSection key={section.permissionsTitle} {...section} />
-          ))}
-          <PermissionsAction />
-        </SectionContainer>
-      </PermissionsFormProvider>
-    </PermissionsDataProvider>
+    <PermissionsFormProvider>
+      <SectionContainer>
+        {renderPermissionsList.map((section) => (
+          <PermissionsSection key={section.permissionsTitle} {...section} />
+        ))}
+        <PermissionsAction />
+      </SectionContainer>
+    </PermissionsFormProvider>
   );
 };

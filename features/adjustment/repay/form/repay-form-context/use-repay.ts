@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
 import {
   TransactionEntry,
   useLidoSDK,
@@ -12,7 +12,7 @@ import {
 import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
 

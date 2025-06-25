@@ -1,11 +1,11 @@
 import invariant from 'tiny-invariant';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
-import {
-  MainSettingsDataContextValue,
+import type {
   RoleFieldSchema,
   EditMainSettingsSchema,
   VaultMainSettingsData,
+  MainSettingsFormData,
 } from './types';
 import { multipleDataFields } from './consts';
 
@@ -34,7 +34,7 @@ export const shouldIncrementTxCounterByAddresses = (
 };
 
 export const prepareDefaultValues = (
-  promisifiedSettingsData: Promise<MainSettingsDataContextValue | null>,
+  promisifiedSettingsData: Promise<MainSettingsFormData | null>,
 ) => {
   return async () => {
     const settingsData = await promisifiedSettingsData;

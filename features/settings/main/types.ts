@@ -2,6 +2,7 @@ import type { Address } from 'viem';
 import type { addressSchema, editMainSettingsSchema } from './consts';
 import type { z } from 'zod';
 import type { VAULT_ROOT_ROLES } from 'modules/vaults';
+import type { useVaultSettings } from './hooks';
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type EditMainSettingsValues = {
@@ -50,10 +51,16 @@ export type MainSettingsOverview = {
 
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
 
-export type MainSettingsDataContextValue = {
+export type MainSettingsFormData = {
   defaultAdmins: RoleFieldSchema[];
   nodeOperatorManagers: RoleFieldSchema[];
   nodeOperatorFeeRecipient: Address;
   nodeOperatorFeeRate: VotingOptionType[];
   confirmExpiry: VotingOptionType[];
+};
+
+export type MainSettingsDataContextValue = ReturnType<
+  typeof useVaultSettings
+> & {
+  values: MainSettingsFormData | null;
 };

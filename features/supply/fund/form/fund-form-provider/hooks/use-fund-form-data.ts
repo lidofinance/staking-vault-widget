@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import type { RefetchOptions } from '@tanstack/react-query';
+import { type RefetchOptions } from '@tanstack/react-query';
 
-import { useMaxMintable, useReadDashboard, useVaultInfo } from 'modules/vaults';
+import { useMaxMintable, useReadDashboard, useVault } from 'modules/vaults';
 import { useEthereumBalance, useWethBalance, ONE_ETH } from 'modules/web3';
 
 import type { FundFormFieldValues } from 'features/supply/fund/form/types';
@@ -11,7 +11,7 @@ export const useFundFormData = (
   mintSteth: FundFormFieldValues['mintSteth'],
   amount: FundFormFieldValues['amount'],
 ) => {
-  const { refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState } = useVault();
   const ethBalanceQuery = useEthereumBalance();
   const wethBalanceQuery = useWethBalance();
 
@@ -33,20 +33,11 @@ export const useFundFormData = (
       throwOnError: false,
     };
     return Promise.all([
-      refetchVaultInfo(),
+      invalidateVaultState(),
       ethBalanceQuery.refetch(options),
       wethBalanceQuery.refetch(options),
-      isStethMintableQuery.refetch(options),
-      maxMintableStethQuery.refetch(options),
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    refetchVaultInfo,
-    ethBalanceQuery.refetch,
-    wethBalanceQuery.refetch,
-    isStethMintableQuery.refetch,
-    maxMintableStethQuery.refetch,
-  ]);
+  }, [invalidateVaultState, ethBalanceQuery, wethBalanceQuery]);
 
   const balanceQuery = token === 'ETH' ? ethBalanceQuery : wethBalanceQuery;
 

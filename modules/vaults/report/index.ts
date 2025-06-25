@@ -2,7 +2,6 @@ export * from './use-report';
 export { fetchReportMerkle } from './ipfs';
 export {
   readWithReport,
-  useReadWithVaultReport,
   useReadDashboard,
   encodeReportCall,
 } from './read-with-report';

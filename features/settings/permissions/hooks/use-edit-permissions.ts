@@ -6,7 +6,7 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
 
 import { GrantRole } from '../types';
 
@@ -16,13 +16,16 @@ type EditPermissionsArgs = {
 };
 
 export const useEditPermissions = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     editPermissions: useCallback(
       async ({ toGrant, toRevoke }: EditPermissionsArgs) => {
-        invariant(activeVault, '[useEditPermissions] owner is not defined');
+        invariant(
+          activeVault,
+          '[useEditPermissions] activeVault is not defined',
+        );
         const transactions: TransactionEntry[] = [];
         if (toGrant.length > 0) {
           transactions.push({

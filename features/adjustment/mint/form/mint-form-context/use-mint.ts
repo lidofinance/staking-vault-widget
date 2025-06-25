@@ -3,13 +3,13 @@ import { useCallback } from 'react';
 
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
-import { useReportCalls, useVaultInfo, vaultTexts } from 'modules/vaults';
+import { useReportCalls, useVault, vaultTexts } from 'modules/vaults';
 
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { MintFormValidatedValues } from '../types';
 
 export const useMint = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
 

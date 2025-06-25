@@ -7,25 +7,19 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
-import {
-  MainSettingsDataContextValue,
-  VotingOptionType,
-} from 'features/settings/main/types';
-import { useVaultSettings } from 'features/settings/main/hooks';
+import type { MainSettingsDataContextValue, VotingOptionType } from '../types';
+import { useVaultSettings } from '../hooks';
 import { useDappStatus } from 'modules/web3';
 
 import { formatSecondsToHours, formatSettingsValues } from '../utils';
 
-const MainSettingsDataContext = createContext<
-  MainSettingsDataContextValue | undefined | null
->(undefined);
+const MainSettingsDataContext =
+  createContext<MainSettingsDataContextValue | null>(null);
 MainSettingsDataContext.displayName = 'MainSettingsDataContext';
 
 export const useMainSettingsData = () => {
   const context = useContext(MainSettingsDataContext);
-  if (context === undefined) {
-    invariant(context, 'Attempt to use `feature flag` outside of provider');
-  }
+  invariant(context, '[useMainSettingsData] context is not defined');
   return context;
 };
 
@@ -33,9 +27,10 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const { address } = useDappStatus();
-  const { data: vaultSettingsData } = useVaultSettings();
+  const query = useVaultSettings();
+  const { data: vaultSettingsData } = query;
 
-  const values: MainSettingsDataContextValue | null = useMemo(() => {
+  const values = useMemo(() => {
     if (!vaultSettingsData) {
       return null;
     }
@@ -134,7 +129,9 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
   }, [vaultSettingsData, address]);
 
   return (
-    <MainSettingsDataContext.Provider value={values}>
+    <MainSettingsDataContext.Provider
+      value={useMemo(() => ({ ...query, values }), [values, query])}
+    >
       {children}
     </MainSettingsDataContext.Provider>
   );

@@ -9,17 +9,21 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
-import type { QueryObserverResult } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { useBaseVaultData } from './use-base-vault-data';
+import { VaultConfigScopes, vaultQueryKeys } from '../consts';
 import type { VaultBaseInfo } from '../types';
 
 type VaultContextType = {
-  vaultAddress: Address | undefined;
+  vaultAddress?: Address;
   activeVault?: VaultBaseInfo;
-  refetchVaultInfo: () => Promise<QueryObserverResult<VaultBaseInfo, Error>>;
-  isLoadingVault: boolean;
-} & Pick<ReturnType<typeof useBaseVaultData>, 'isRefetching' | 'error'>;
+  queryKeys: ReturnType<typeof vaultQueryKeys>;
+  invalidateVaultState: () => Promise<void>;
+  invalidateVaultConfig: (scope?: VaultConfigScopes) => Promise<void>;
+  invalidateVault: () => Promise<void>;
+  error: VaultAddressError | Error | null;
+} & Omit<ReturnType<typeof useBaseVaultData>, 'error'>;
 
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';
@@ -33,44 +37,45 @@ export class VaultAddressError extends Error {
 
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
   const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
     ? (vaultAddress.toLowerCase() as Address)
     : undefined;
-  const { data, error, refetch, isPending, isRefetching } = useBaseVaultData(
-    sanitizedVaultAddress,
-  );
+  const query = useBaseVaultData(sanitizedVaultAddress);
 
   useEffect(() => {
-    if (error)
-      console.error(`[VaultProvider] error fetching ${vaultAddress}`, error);
-  }, [error, vaultAddress]);
+    if (query.error)
+      console.error(
+        `[VaultProvider] error fetching ${vaultAddress}`,
+        query.error,
+      );
+  }, [query.error, vaultAddress]);
 
   const contextValue = useMemo<VaultContextType>(() => {
+    const queryKeys = vaultQueryKeys(
+      sanitizedVaultAddress,
+      query.data?.hub.chain.id,
+      query.data?.reportCID,
+    );
     return {
+      ...query,
       vaultAddress: sanitizedVaultAddress,
-      activeVault: data,
-      isLoadingVault: isPending,
-
+      activeVault: query.data,
+      queryKeys,
       error:
-        error ||
         (vaultAddress &&
           !sanitizedVaultAddress &&
           new VaultAddressError(vaultAddress)) ||
-        null,
-      refetchVaultInfo: () =>
-        refetch({ cancelRefetch: true, throwOnError: false }),
-      isRefetching: isRefetching,
+        query.error,
+      invalidateVaultState: () =>
+        queryClient.invalidateQueries({ queryKey: queryKeys.stateBase }),
+      invalidateVaultConfig: (scope?: VaultConfigScopes) =>
+        queryClient.invalidateQueries({ queryKey: queryKeys.config(scope) }),
+      invalidateVault: () =>
+        queryClient.invalidateQueries({ queryKey: queryKeys.base }),
     };
-  }, [
-    sanitizedVaultAddress,
-    data,
-    isPending,
-    error,
-    vaultAddress,
-    isRefetching,
-    refetch,
-  ]);
+  }, [sanitizedVaultAddress, query, vaultAddress, queryClient]);
 
   return (
     <VaultContext.Provider value={contextValue}>
@@ -79,8 +84,8 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const useVaultInfo = (): VaultContextType => {
+export const useVault = (): VaultContextType => {
   const context = useContext(VaultContext);
-  invariant(context, 'useVaultInfo must be used within an VaultProvider');
+  invariant(context, 'useVault must be used within an VaultProvider');
   return context;
 };

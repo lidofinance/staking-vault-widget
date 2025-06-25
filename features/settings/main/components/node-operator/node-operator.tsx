@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useVaultInfo, vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 import { useFormState } from 'react-hook-form';
 import { Text } from '@lidofinance/lido-ui';
 
@@ -12,7 +12,7 @@ const texts = vaultTexts.actions.settings.fields.nodeOperator;
 
 export const NodeOperator: FC = () => {
   const { isLoading } = useFormState();
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
 
   return (
     <Wrapper>

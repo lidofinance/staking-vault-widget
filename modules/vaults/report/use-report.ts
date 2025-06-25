@@ -6,7 +6,7 @@ import { usePublicClient, useReadContract } from 'wagmi';
 
 import {
   getLazyOracleContract,
-  useVaultInfo,
+  useVault,
   VAULT_DEFAULT_REPORT_FRESHNESS_DELTA,
   VAULT_SHOULD_REPORT_THRESHOLD,
   vaultTexts,
@@ -66,7 +66,7 @@ export const useReportStatus = () => {
     };
   }, []);
 
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const publicClient = usePublicClient();
   const vaultHubAddress = getContractAddress(publicClient.chain.id, 'vaultHub');
 

@@ -1,5 +1,4 @@
 import invariant from 'tiny-invariant';
-import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
@@ -10,7 +9,7 @@ import { bigIntMax } from 'utils/bigint-math';
 import { readWithReport } from 'modules/vaults/report';
 
 import { getVaultHubContract } from '../contracts';
-import { useVaultInfo } from '../vault-context';
+import { useVault } from '../vault-context';
 import type { VaultBaseInfo, VaultInfo } from '../types';
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
 
@@ -128,19 +127,11 @@ const getVaultData = async ({
 
 export const useVaultOverviewData = () => {
   const { shares, publicClient } = useLidoSDK();
-  const { activeVault } = useVaultInfo();
-
-  const queryKey = useMemo(() => {
-    return [
-      'single-vault-data',
-      publicClient?.chain.id,
-      activeVault?.address,
-    ] as const;
-  }, [publicClient?.chain.id, activeVault?.address]);
+  const { activeVault, queryKeys } = useVault();
 
   return {
     ...useQuery({
-      queryKey,
+      queryKey: [...queryKeys.base, 'vault-overview-data'],
       enabled: !!activeVault,
       queryFn: async (): Promise<VaultInfo> => {
         invariant(
@@ -152,6 +143,5 @@ export const useVaultOverviewData = () => {
       },
       ...STRATEGY_LAZY,
     }),
-    queryKey,
   };
 };

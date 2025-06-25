@@ -2,6 +2,7 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import type { Address } from 'viem';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
@@ -21,6 +22,7 @@ import { Confirmation } from './stages/confirmation';
 import { ResultOverview } from './stages/result-overview';
 
 import { FormTitle, FormBlock, FormSubtitle } from './styles';
+import { vaultListQueryKeys } from 'modules/vaults';
 
 const AFTER_SUBMIT_RESET_OPTIONS = {
   keepValues: true,
@@ -28,6 +30,7 @@ const AFTER_SUBMIT_RESET_OPTIONS = {
 
 export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const { isDappActive } = useDappStatus();
+  const queryClient = useQueryClient();
   const formObject = useForm({
     defaultValues: {
       nodeOperator: '' as Address,
@@ -50,9 +53,13 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const onSubmit = useCallback(
     async (data: CreateVaultSchema): Promise<boolean> => {
       const { success } = await createVault(data);
+      await queryClient.invalidateQueries(
+        { queryKey: vaultListQueryKeys().vaultsListBase },
+        { cancelRefetch: true, throwOnError: false },
+      );
       return success;
     },
-    [createVault],
+    [createVault, queryClient],
   );
 
   const step = formObject.watch('step');

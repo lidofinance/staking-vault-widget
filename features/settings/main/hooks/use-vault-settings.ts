@@ -1,11 +1,11 @@
-import { usePublicClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { decodeFunctionData, DecodeFunctionDataReturnType } from 'viem';
 import invariant from 'tiny-invariant';
 import type { Address, Hex } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
+import { useVault, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const AVG_BLOCK_TIME_SEC = 12n;
@@ -34,16 +34,16 @@ export type VaultSettings = {
 
 export const useVaultSettings = () => {
   const publicClient = usePublicClient();
-  const { activeVault } = useVaultInfo();
+  const { address } = useAccount();
+  const { activeVault, queryKeys } = useVault();
 
   return useQuery<VaultSettings>({
     queryKey: [
-      'confirmations-info',
-      activeVault?.owner,
-      publicClient?.chain.id,
+      ...queryKeys.config(),
+      'vault-main-settings',
+      { userAddress: address },
     ],
-    ...STRATEGY_LAZY,
-    enabled: !!activeVault,
+    enabled: !!activeVault && !!address,
     queryFn: async () => {
       invariant(activeVault, '[useConfirmationsInfo] owner is not defined');
 
@@ -129,5 +129,6 @@ export const useVaultSettings = () => {
           .filter((vote) => vote.confirmations > 0n),
       };
     },
+    ...STRATEGY_LAZY,
   });
 };
