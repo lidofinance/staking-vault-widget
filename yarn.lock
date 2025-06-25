@@ -2542,15 +2542,16 @@
     ua-parser-js "^1.0.35"
     use-callback-ref "1.2.5"
 
-"@lidofinance/lsv-cli@1.0.0-alpha.54":
-  version "1.0.0-alpha.54"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lsv-cli/-/lsv-cli-1.0.0-alpha.54.tgz#b4bf25bdbc98a2def291a0481b5ef92503a03c02"
-  integrity sha512-7HE1XmCzPgg3sVFugM9N7n21Jr7bu4B2KBdj10H3eRkq4b9qOK3/GetCvR4FwIU2FXC0Kp6eXakVXslLkmSDMA==
+"@lidofinance/lsv-cli@1.0.0-alpha.56":
+  version "1.0.0-alpha.56"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lsv-cli/-/lsv-cli-1.0.0-alpha.56.tgz#f5bf7a25b1272f06e560edebc0f5a37ac107f5bb"
+  integrity sha512-krH3ufUffM2yvatbDYvWsveRi/s+aqKu6aKtLL6hxLQdA7T0hQ4RF5n6AKh6cXwciD/3B2Buc4nHynVFb1s0Xg==
   dependencies:
     "@chainsafe/blst" "^2.2.0"
     "@chainsafe/persistent-merkle-tree" "^1.0.1"
     "@chainsafe/ssz" "^1.0.2"
     "@lodestar/types" "^1.27.1"
+    "@openzeppelin/merkle-tree" "^1.0.8"
     blessed "^0.1.81"
     blessed-contrib "^4.11.0"
     blockstore-core "^5.0.2"

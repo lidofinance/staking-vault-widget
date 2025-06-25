@@ -58,6 +58,7 @@ export const useWithdraw = () => {
         calls.push({
           loadingActionText: vaultTexts.actions.weth.loadingWrap,
           to: wethAddress,
+          value: amount,
           data: encodeFunctionData({
             abi: WethABI,
             functionName: 'deposit',
