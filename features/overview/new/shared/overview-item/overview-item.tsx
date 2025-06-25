@@ -44,12 +44,12 @@ export const OverviewItem: FC<ItemProps> = ({
   const router = useRouter();
 
   return (
-    <ItemWrapper>
+    <ItemWrapper filled>
       <Title>
         <Text color="secondary" size="xxs">
           {title}
-          <Hint text={hint} />
         </Text>
+        <Hint text={hint} />
       </Title>
       <OverviewItemValue
         content={payload}

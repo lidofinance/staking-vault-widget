@@ -26,7 +26,7 @@ export const Health = () => {
         const { key, payload, ...item } = getVaultDataToRender(sectionEntry);
         const isHealthFactor = key === 'healthFactorNumber';
         const color = isHealthFactor
-          ? getHealthFactorColor(payload)
+          ? getHealthFactorColor(payload as string | number)
           : undefined;
         const formattedPayload = isHealthFactor
           ? formatPercent.format(Number(payload) / 100)

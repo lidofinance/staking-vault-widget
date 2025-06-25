@@ -112,7 +112,6 @@ export const vaultTexts = {
       loadingUnwrap: 'Unwrapping wETH',
       loadingWrap: 'Wrapping ETH to wETH',
     },
-
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -176,6 +175,28 @@ export const vaultTexts = {
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
   metrics: {
+    connectVault: {
+      title: 'Connect stVault to Lido VaultHub',
+      description:
+        'This stVault is requested to connect to Lido VaultHub to enable stETH minting and accounting, with pre-selected stETH minting terms and Lido fees.',
+      listTitle: 'By signing this transaction, you agree to:',
+      list: [
+        '1. Approve connection to Lido VaultHub;',
+        '2. Enable Tier 1 terms and fees;',
+        '3. Supply 1 ETH as collateral (refundable if disconnected from Lido VaultHub)',
+      ],
+      action: 'Approve and supply 1 ETH',
+    },
+    general: {
+      nodeOperator: 'Node operator',
+      nodeOperatorFeeRate: 'Node operator fee',
+      reserveRatio: 'reserve ratio',
+      tier: {
+        connected: 'Tier',
+        notConnected: 'Not connected',
+      },
+      action: 'Request to change',
+    },
     totalValue: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',

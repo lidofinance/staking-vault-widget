@@ -33,6 +33,7 @@ const getVaultData = async ({
 
   const [
     connection,
+    isVaultConnected,
     record,
     obligations,
     nodeOperator,
@@ -40,6 +41,7 @@ const getVaultData = async ({
     balance,
   ] = await Promise.all([
     vaultHubContract.read.vaultConnection([vaultAddress]),
+    vaultHubContract.read.isVaultConnected([vaultAddress]),
     vaultHubContract.read.vaultRecord([vaultAddress]),
     vaultHubContract.read.vaultObligations([vaultAddress]),
     vaultContract.read.nodeOperator(),
@@ -107,6 +109,7 @@ const getVaultData = async ({
 
   return {
     address: vaultAddress,
+    isVaultConnected,
     owner,
     nodeOperator,
     defaultAdmins,

@@ -29,7 +29,7 @@ export type SectionPayload = SectionData & {
   hint?: string;
   action?: string;
   isLoading?: boolean;
-  payload: string | Address | number;
+  payload: string | Address | number | boolean;
 };
 
 export type VaultOverviewContextType = {
@@ -52,6 +52,7 @@ export type VaultOverviewContextType = {
     nodeOperatorFeeRate: string;
     collateral: string;
     pendingUnlockEth: string;
+    isVaultConnected: boolean;
   };
   isLoadingVault?: boolean;
   getVaultDataToRender: (payload: SectionData) => SectionPayload;
@@ -77,8 +78,8 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
   const metric = vaultTexts.metrics[
     key as keyof typeof vaultTexts.metrics
   ] as MetricText;
-  invariant(metric, `Metric text for ${key} not found`);
-  return metric;
+
+  return metric ?? {};
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
@@ -97,6 +98,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         balance,
         nodeOperatorFeeRate: nodeOperatorFee,
         nodeOperator,
+        isVaultConnected,
       } = activeVault;
 
       const overview = calculateOverview({
@@ -163,6 +165,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         collateral,
         pendingUnlockEth,
         isLoadingVault,
+        isVaultConnected,
       };
     }
 
@@ -172,6 +175,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   const value = useMemo(() => {
     return {
       values,
+      isLoadingVault,
       getVaultDataToRender: (sectionEntry: SectionData) => ({
         ...sectionEntry,
         ...getMetricTexts(sectionEntry.key),

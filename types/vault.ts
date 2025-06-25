@@ -4,6 +4,7 @@ import type { Address, ReadContractReturnType } from 'viem';
 export type VaultInfo = VaultSocket &
   VaultObligations & {
     address: Address;
+    isVaultConnected: boolean;
     owner: Address;
     nodeOperator: Address;
     defaultAdmins: readonly Address[];
