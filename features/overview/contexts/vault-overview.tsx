@@ -83,10 +83,10 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, isLoadingVault: isLoadingVaultCore } = useVaultInfo();
+  const { isLoadingVault: isLoadingVaultCore } = useVaultInfo();
 
   const { data: vaultData, isLoading: isLoadingVaultData } =
-    useVaultOverviewData(activeVault?.address);
+    useVaultOverviewData();
 
   const isLoadingVault = isLoadingVaultCore || isLoadingVaultData;
 

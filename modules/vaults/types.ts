@@ -24,9 +24,6 @@ export type VaultInfo = VaultConnection &
     address: Address;
     owner: Address;
     nodeOperator: Address;
-    defaultAdmins: readonly Address[];
-    nodeOperatorManagers: readonly Address[];
-    nodeOperatorFeeRecipient: Address;
     totalValue: bigint;
     liabilityShares: bigint;
     liabilityStETH: bigint;
@@ -44,7 +41,6 @@ export type VaultInfo = VaultConnection &
     withdrawableEther: bigint;
     balance: bigint;
     nodeOperatorFeeRate: bigint;
-    confirmExpiry: bigint;
     withdrawalCredentials: Address;
   };
 

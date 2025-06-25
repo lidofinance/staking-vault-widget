@@ -18,9 +18,8 @@ import { encodeFunctionData, Hash } from 'viem';
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
-import { useConfirmationsInfo } from './use-confirmations-info';
+import { useVaultSettings } from './use-vault-settings';
 import { useReportCalls } from 'modules/vaults/report';
-import { UseVaultSettingsInfo } from './use-vault-settings-info';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -37,16 +36,13 @@ export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault } = useVaultInfo();
   const prepareReportCalls = useReportCalls();
-  const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
-  const { refetch: refetchVaultSettingsInfo, data: vaultSettings } =
-    UseVaultSettingsInfo();
+  const { refetch: refetchConfirmationsInfo, data: vaultSettings } =
+    useVaultSettings();
   const { refetch: refetchNOMPermission } = useVaultPermission(
     'nodeOperatorManager',
   );
   const { refetch: refetchAdminPermission } =
     useVaultPermission('defaultAdmin');
-
-  const owner = activeVault?.owner;
 
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -57,7 +53,6 @@ export const useEditMainSettings = () => {
           vaultSettings,
           '[useEditMainSettings] vaultSettings is undefined',
         );
-        invariant(owner, '[useEditMainSettings] owner is undefined');
         invariant(
           activeVault,
           '[useEditMainSettings] activeVault is undefined',
@@ -76,7 +71,7 @@ export const useEditMainSettings = () => {
 
         if (grantRoles.length > 0) {
           transactions.push({
-            to: owner,
+            to: activeVault.dashboard.address,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'grantRoles',
@@ -103,7 +98,7 @@ export const useEditMainSettings = () => {
 
         if (revokeRoles.length > 0) {
           transactions.push({
-            to: owner,
+            to: activeVault.dashboard.address,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'revokeRoles',
@@ -120,7 +115,7 @@ export const useEditMainSettings = () => {
           vaultSettings.nodeOperatorFeeRecipient
         ) {
           transactions.push({
-            to: owner,
+            to: activeVault.dashboard.address,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'setNodeOperatorFeeRecipient',
@@ -150,7 +145,7 @@ export const useEditMainSettings = () => {
           );
 
           transactions.push({
-            to: owner,
+            to: activeVault.dashboard.address,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'setNodeOperatorFeeRate',
@@ -173,7 +168,7 @@ export const useEditMainSettings = () => {
 
         if (isExpiryValueChanged) {
           transactions.push({
-            to: owner,
+            to: activeVault.dashboard.address,
             data: encodeFunctionData({
               abi: dashboardAbi,
               functionName: 'setConfirmExpiry',
@@ -198,7 +193,6 @@ export const useEditMainSettings = () => {
         );
         // refetch anyway because some transactions may be successful
         const [vaultInfo, confirmations] = await Promise.all([
-          refetchVaultSettingsInfo(),
           refetchConfirmationsInfo({
             cancelRefetch: true,
             throwOnError: false,
@@ -221,12 +215,10 @@ export const useEditMainSettings = () => {
       },
       [
         vaultSettings,
-        owner,
         activeVault,
         hasBothConfirmingRoles,
         sendTX,
         prepareReportCalls,
-        refetchVaultSettingsInfo,
         refetchConfirmationsInfo,
         refetchNOMPermission,
         refetchAdminPermission,

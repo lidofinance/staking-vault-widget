@@ -11,11 +11,10 @@ import {
   MainSettingsDataContextValue,
   VotingOptionType,
 } from 'features/settings/main/types';
-import { useConfirmationsInfo } from 'features/settings/main/hooks';
+import { useVaultSettings } from 'features/settings/main/hooks';
 import { useDappStatus } from 'modules/web3';
 
 import { formatSecondsToHours, formatSettingsValues } from '../utils';
-import { UseVaultSettingsInfo } from '../hooks/use-vault-settings-info';
 
 const MainSettingsDataContext = createContext<
   MainSettingsDataContextValue | undefined | null
@@ -34,13 +33,14 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const { address } = useDappStatus();
-  const { data: vaultSettings } = UseVaultSettingsInfo();
-  const { data: confirmationsList } = useConfirmationsInfo();
+  const { data: vaultSettingsData } = useVaultSettings();
 
   const values: MainSettingsDataContextValue | null = useMemo(() => {
-    if (!vaultSettings || !confirmationsList) {
+    if (!vaultSettingsData) {
       return null;
     }
+
+    const { confirmations, ...vaultSettings } = vaultSettingsData;
 
     // Current values for voting
     const {
@@ -69,7 +69,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
       },
     ];
 
-    confirmationsList.forEach((confirmation) => {
+    confirmations.forEach((confirmation) => {
       const type =
         confirmation.member !== address ? 'Proposed to me' : 'My proposal';
       const expiry = formatSecondsToHours(
@@ -131,7 +131,7 @@ export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
         return 0;
       }),
     };
-  }, [vaultSettings, confirmationsList, address]);
+  }, [vaultSettingsData, address]);
 
   return (
     <MainSettingsDataContext.Provider value={values}>

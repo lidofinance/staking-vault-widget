@@ -11,9 +11,7 @@ export type MaxMintableResult = {
   maxMintableShares: bigint;
 };
 
-export const useMaxMintable = (
-  amount?: bigint | null,
-): UseQueryResult<MaxMintableResult> => {
+export const useMaxMintable = (amount?: bigint | null) => {
   const { shares, publicClient } = useLidoSDK();
   const { activeVault } = useVaultInfo();
 

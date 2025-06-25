@@ -1,7 +1,7 @@
-import { Address } from 'viem';
-import { addressSchema, editMainSettingsSchema } from './consts';
-import { z } from 'zod';
-import type { VAULT_ROOT_ROLES, VaultInfo } from 'modules/vaults';
+import type { Address } from 'viem';
+import type { addressSchema, editMainSettingsSchema } from './consts';
+import type { z } from 'zod';
+import type { VAULT_ROOT_ROLES } from 'modules/vaults';
 
 export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
 export type EditMainSettingsValues = {
@@ -45,7 +45,6 @@ export type MainSettingsOverview = {
   hint?: string;
   dataType: InputDataType;
   actionText?: string;
-  vaultKey: keyof VaultInfo;
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
 

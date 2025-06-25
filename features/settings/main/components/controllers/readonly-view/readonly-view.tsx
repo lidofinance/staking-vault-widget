@@ -16,11 +16,11 @@ export const ReadonlyView: FC<ReadonlyViewProps> = ({ vaultKey, value }) => {
     if (typeof displayValue !== 'undefined') {
       // TODO: make it pretty
       if (vaultKey === 'confirmExpiry') {
-        displayValue = `${(displayValue as bigint) / (60n * 60n)} hours`;
+        displayValue = `${BigInt(displayValue) / (60n * 60n)} hours`;
       }
 
       if (vaultKey === 'nodeOperatorFeeRate') {
-        displayValue = `${(displayValue as bigint) / 100n}%`;
+        displayValue = `${BigInt(displayValue) / 100n}%`;
       }
 
       return String(displayValue);

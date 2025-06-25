@@ -1,3 +1,4 @@
+import invariant from 'tiny-invariant';
 import {
   decodeFunctionResult,
   encodeFunctionData,
@@ -5,17 +6,18 @@ import {
   type Hex,
   type ContractFunctionParameters,
   type MulticallReturnType,
-  ContractFunctionName,
-  ContractFunctionReturnType,
-  ContractFunctionArgs,
+  type ContractFunctionName,
+  type ContractFunctionReturnType,
+  type ContractFunctionArgs,
 } from 'viem';
-import { useVaultInfo } from '../vault-context';
 import { useQuery } from '@tanstack/react-query';
+
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
-import invariant from 'tiny-invariant';
+
 import type { dashboardAbi } from 'abi/dashboard-abi';
 import { getLazyOracleContract } from '../contracts';
-import { VaultReportType } from '../types';
+import { useVaultInfo } from '../vault-context';
+import type { VaultReportType } from '../types';
 
 const encodeCall = <
   TContract extends ContractFunctionParameters & {
@@ -32,6 +34,12 @@ const encodeCall = <
   }),
   from: contract.from,
 });
+
+const stringifyArgs = (args: unknown): string => {
+  return JSON.stringify(args ?? [], (_, value) =>
+    typeof value === 'bigint' ? value.toString() : value,
+  );
+};
 
 type ReadWithReportArgs<
   TContracts extends
@@ -201,7 +209,7 @@ export const useReadDashboard = <
       activeVault?.address,
       activeVault?.reportCID,
       functionName,
-      args,
+      stringifyArgs(args),
     ] as const,
     enabled: !!activeVault && enabled,
     select,
@@ -214,11 +222,13 @@ export const useReadDashboard = <
       // @ts-expect-error cannot match types
       const contractData = activeVault.dashboard.encode[functionName](args);
 
-      return readWithReport({
-        publicClient,
-        contracts: [contractData],
-        report: applyReport ? activeVault.report : null,
-      }) as Promise<TResult>;
+      return (
+        await readWithReport({
+          publicClient,
+          contracts: [contractData],
+          report: applyReport ? activeVault.report : null,
+        })
+      )[0];
     },
   });
 
