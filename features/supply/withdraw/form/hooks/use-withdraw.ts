@@ -1,34 +1,32 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useChainId } from 'wagmi';
-import { encodeFunctionData } from 'viem';
 
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVaultInfo,
+  vaultTexts,
+  GoToVault,
+  getWethContract,
+  useReportCalls,
+} from 'modules/vaults';
 import {
   useSendTransaction,
   withSuccess,
   TransactionEntry,
+  useLidoSDK,
 } from 'modules/web3';
-import { useReportCalls } from 'modules/vaults/report';
 
 import type { WithdrawFormValidatedValues } from '../types';
-import { getContractAddress } from 'config';
-import { WethABI } from 'abi/weth-abi';
 
 export const useWithdraw = () => {
   const { activeVault } = useVaultInfo();
-  const chainId = useChainId();
+  const { publicClient } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
 
   const withdraw = useCallback(
     async ({ amount, recipient, token }: WithdrawFormValidatedValues) => {
       invariant(activeVault, '[useWithdraw] activeVault is undefined');
-      const wethAddress = getContractAddress(chainId, 'weth');
-      invariant(
-        wethAddress,
-        `[useWithdraw] WETH address is undefined for chain:${chainId}`,
-      );
+      const wethContract = getWethContract(publicClient);
 
       const calls: TransactionEntry[] = [];
 
@@ -41,12 +39,8 @@ export const useWithdraw = () => {
       // eth->weth wrap call
       if (token === 'wETH') {
         calls.push({
+          ...wethContract.encode.deposit({ value: amount }),
           loadingActionText: vaultTexts.actions.weth.loadingWrap,
-          to: wethAddress,
-          data: encodeFunctionData({
-            abi: WethABI,
-            functionName: 'deposit',
-          }),
         });
       }
 
@@ -64,7 +58,7 @@ export const useWithdraw = () => {
 
       return success;
     },
-    [activeVault, chainId, prepareReportCalls, sendTX],
+    [activeVault, publicClient, prepareReportCalls, sendTX],
   );
 
   return {

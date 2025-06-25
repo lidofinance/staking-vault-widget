@@ -1,17 +1,18 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
-import { encodeFunctionData } from 'viem';
-
-import { getContractAddress } from 'config';
-import { WethABI } from 'abi/weth-abi';
 
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVaultInfo,
+  vaultTexts,
+  GoToVault,
+  getWethContract,
+} from 'modules/vaults';
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
@@ -31,9 +32,8 @@ export const useFund = () => {
         token,
         mintAddress,
       }: FundFormValidatedValues) => {
-        invariant(activeVault, '[useFund] owner is undefined');
-        const wethAddress = getContractAddress(publicClient.chain.id, 'weth');
-        invariant(wethAddress, '[useFund] WETH address is undefined');
+        invariant(activeVault, '[useFund] activeVault is undefined');
+        const wethContract = getWethContract(publicClient);
 
         let prepareTransactions: () => Promise<TransactionEntry[]> = () =>
           Promise.reject(undefined);
@@ -42,12 +42,7 @@ export const useFund = () => {
 
         if (token === 'wETH') {
           calls.push({
-            to: wethAddress,
-            data: encodeFunctionData({
-              abi: WethABI,
-              functionName: 'withdraw',
-              args: [amount],
-            }),
+            ...wethContract.encode.withdraw([amount]),
             loadingActionText: 'Unwrapping wETH',
           });
         }
