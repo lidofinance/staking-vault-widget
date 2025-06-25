@@ -39,7 +39,9 @@ export const useMaxMintable = (amount?: bigint | null) => {
         publicClient,
         report: activeVault.report,
         contracts: [
-          activeVault.dashboard.encode.remainingMintingCapacityShares([amount]),
+          activeVault.dashboard.prepare.remainingMintingCapacityShares([
+            amount,
+          ]),
         ] as const,
       });
       const maxMintableStETH =

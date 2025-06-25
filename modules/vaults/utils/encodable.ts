@@ -1,4 +1,13 @@
-import type { Abi, Address } from 'viem';
+import { encodeFunctionData, type Abi, type Address, type Hex } from 'viem';
+
+// copy from view internals
+const getFunctionParameters = (values: unknown[]) => {
+  const hasArgs = values.length > 0 && Array.isArray(values[0]);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const args = (hasArgs ? values[0]! : []) as unknown[];
+  const options = ((hasArgs ? values[1] : values[0]) ?? {}) as any;
+  return { args, options };
+};
 
 type ContractType = {
   address: Address;
@@ -23,7 +32,7 @@ type EncodableContract<
   TMethods extends TSimulate & TRead = TSimulate & TRead,
   TFunctionName extends keyof TMethods = keyof TMethods,
 > = TContract & {
-  encode: {
+  prepare: {
     [K in TFunctionName]: (
       ...args: Parameters<
         TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
@@ -41,21 +50,52 @@ type EncodableContract<
         : undefined;
     };
   };
+  encode: {
+    [K in TFunctionName]: (
+      ...args: Parameters<
+        TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
+      >
+    ) => {
+      to: TContract['address'];
+      data: Hex;
+      value?: bigint;
+    };
+  };
 };
 
 export const getEncodable = <TContract extends ContractType>(
   contract: TContract,
 ) => {
+  (contract as any).prepare = new Proxy(
+    {},
+    {
+      get(_, functionName: string) {
+        return (...parameters: unknown[]) => {
+          const { args } = getFunctionParameters(parameters);
+          return {
+            address: contract.address,
+            abi: contract.abi,
+            functionName,
+            args,
+          };
+        };
+      },
+    },
+  );
   (contract as any).encode = new Proxy(
     {},
     {
       get(_, functionName: string) {
         return (...parameters: unknown[]) => {
+          const { args, options } = getFunctionParameters(parameters);
           return {
-            address: contract.address,
-            abi: contract.abi,
-            functionName,
-            args: parameters[0],
+            to: contract.address,
+            data: encodeFunctionData({
+              abi: contract.abi,
+              functionName,
+              args,
+            }),
+            value: options.value,
           };
         };
       },

@@ -1,5 +1,12 @@
-import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
+import { useCallback } from 'react';
+import type { Hash } from 'viem';
+
+import {
+  TransactionEntry,
+  useSendTransaction,
+  withSuccess,
+} from 'modules/web3';
 import {
   useVaultInfo,
   useVaultPermission,
@@ -7,19 +14,14 @@ import {
   VAULT_TOTAL_BASIS_POINTS_BN,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
+  GoToVault,
+  useReportCalls,
+  useVaultConfirmingRoles,
 } from 'modules/vaults';
-import {
-  TransactionEntry,
-  useSendTransaction,
-  withSuccess,
-} from 'modules/web3';
-import { EditMainSettingsSchema } from 'features/settings/main/types';
-import { encodeFunctionData, Hash } from 'viem';
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+
 import { useVaultSettings } from './use-vault-settings';
-import { useReportCalls } from 'modules/vaults/report';
+
+import type { EditMainSettingsSchema } from '../types';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -71,12 +73,7 @@ export const useEditMainSettings = () => {
 
         if (grantRoles.length > 0) {
           transactions.push({
-            to: activeVault.dashboard.address,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'grantRoles',
-              args: [grantRoles],
-            }),
+            ...activeVault.dashboard.encode.grantRoles([grantRoles]),
             loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
               grantRoles.length,
             ),
@@ -98,12 +95,7 @@ export const useEditMainSettings = () => {
 
         if (revokeRoles.length > 0) {
           transactions.push({
-            to: activeVault.dashboard.address,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'revokeRoles',
-              args: [revokeRoles],
-            }),
+            ...activeVault.dashboard.encode.revokeRoles([revokeRoles]),
             loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
               revokeRoles.length,
             ),
@@ -115,12 +107,9 @@ export const useEditMainSettings = () => {
           vaultSettings.nodeOperatorFeeRecipient
         ) {
           transactions.push({
-            to: activeVault.dashboard.address,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeRecipient',
-              args: [payload.nodeOperatorFeeRecipient],
-            }),
+            ...activeVault.dashboard.encode.setNodeOperatorFeeRecipient([
+              payload.nodeOperatorFeeRecipient,
+            ]),
             loadingActionText:
               vaultTexts.actions.settings.nodeOperatorFeeRecipient,
           });
@@ -145,12 +134,9 @@ export const useEditMainSettings = () => {
           );
 
           transactions.push({
-            to: activeVault.dashboard.address,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeRate',
-              args: [BigInt(newFee)],
-            }),
+            ...activeVault.dashboard.encode.setNodeOperatorFeeRate([
+              BigInt(newFee),
+            ]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
               confirmingRoleAction,
               feeValue,
@@ -168,12 +154,7 @@ export const useEditMainSettings = () => {
 
         if (isExpiryValueChanged) {
           transactions.push({
-            to: activeVault.dashboard.address,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setConfirmExpiry',
-              args: [expiryValue],
-            }),
+            ...activeVault.dashboard.encode.setConfirmExpiry([expiryValue]),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
               confirmingRoleAction,
               Number(expiryValue / 3600n),

@@ -1,8 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
 import {
   TransactionEntry,
@@ -21,7 +19,7 @@ export const useRepay = () => {
   return {
     burn: useCallback(
       async ({ amount, token }: RepayFormValidatedValues) => {
-        invariant(activeVault?.owner, '[useMint] owner is undefined');
+        invariant(activeVault?.dashboard, '[useMint] owner is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
         const mainActionCompleteText =
@@ -34,26 +32,23 @@ export const useRepay = () => {
           const tokenContract = isSteth ? stETH : wstETH;
 
           const allowance = await tokenContract.allowance({
-            to: activeVault.owner,
+            to: activeVault.dashboard.address,
           });
           const needsAllowance = allowance < amount;
           if (needsAllowance) {
             const approveCall = {
               ...(await tokenContract.populateApprove({
                 amount,
-                to: activeVault.owner,
+                to: activeVault.dashboard.address,
               })),
               loadingActionText: vaultTexts.actions.approve.loading(token),
             };
             calls.push(approveCall);
           }
           calls.push({
-            to: activeVault.owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
-              args: [amount],
-            }),
+            ...activeVault.dashboard.encode[
+              token === 'stETH' ? 'burnStETH' : 'burnWstETH'
+            ]([amount]),
             loadingActionText,
           });
           return calls;
@@ -71,7 +66,7 @@ export const useRepay = () => {
 
         return success;
       },
-      [activeVault?.owner, sendTX, stETH, wstETH],
+      [activeVault?.dashboard, sendTX, stETH, wstETH],
     ),
     ...rest,
   };

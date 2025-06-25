@@ -20,7 +20,7 @@ export const useLiability = () => {
       const [liabilityShares] = await readWithReport({
         publicClient,
         report: activeVault.report,
-        contracts: [activeVault.dashboard.encode.liabilityShares()] as const,
+        contracts: [activeVault.dashboard.prepare.liabilityShares()] as const,
       });
       const liabilitySteth = await shares.convertToSteth(liabilityShares);
 

@@ -1,10 +1,8 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { encodeFunctionData } from 'viem';
 
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import { useReportCalls, useVaultInfo, vaultTexts } from 'modules/vaults';
 
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
@@ -18,18 +16,15 @@ export const useMint = () => {
   return {
     mint: useCallback(
       async ({ amount, recipient, token }: MintFormValidatedValues) => {
-        invariant(activeVault?.owner, '[useMint] owner is undefined');
+        invariant(activeVault, '[useMint] owner is undefined');
 
         const loadingActionText = vaultTexts.actions.mint.loading(token);
         const mainActionCompleteText = vaultTexts.actions.mint.completed(token);
 
         const mintCall = {
-          to: activeVault.owner,
-          data: encodeFunctionData({
-            abi: dashboardAbi,
-            functionName: token === 'stETH' ? 'mintStETH' : 'mintWstETH',
-            args: [recipient, amount],
-          }),
+          ...activeVault.dashboard.encode[
+            token === 'stETH' ? 'mintStETH' : 'mintWstETH'
+          ]([recipient, amount]),
           loadingActionText,
         };
 
@@ -48,7 +43,7 @@ export const useMint = () => {
 
         return success;
       },
-      [activeVault?.owner, prepareReportCalls, sendTX],
+      [activeVault, prepareReportCalls, sendTX],
     ),
     ...rest,
   };

@@ -31,7 +31,7 @@ export const useReportCalls = () => {
         loadingActionText: vaultTexts.actions.report.loading,
         to: lazyOracle.address,
         data: encodeFunctionData({
-          ...lazyOracle.encode.updateVaultData([
+          ...lazyOracle.prepare.updateVaultData([
             report.vault,
             report.totalValueWei,
             report.fee,

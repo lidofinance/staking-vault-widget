@@ -59,7 +59,7 @@ export const encodeReportCall = (
   if (!report) return null;
 
   return encodeCall(
-    getLazyOracleContract(publicClient).encode.updateVaultData([
+    getLazyOracleContract(publicClient).prepare.updateVaultData([
       report.vault,
       report.totalValueWei,
       report.fee,
@@ -220,7 +220,7 @@ export const useReadDashboard = <
       );
 
       // @ts-expect-error cannot match types
-      const contractData = activeVault.dashboard.encode[functionName](args);
+      const contractData = activeVault.dashboard.prepare[functionName](args);
 
       return (
         await readWithReport({

@@ -1,8 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
-import { encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import {
   useVaultInfo,
   vaultTexts,
@@ -27,11 +25,7 @@ export const useClaim = () => {
       const mainActionCompleteText = vaultTexts.actions.claim.completed;
 
       const claimCall = {
-        to: owner,
-        data: encodeFunctionData({
-          abi: dashboardAbi,
-          functionName: 'disburseNodeOperatorFee',
-        }),
+        ...activeVault.dashboard.encode.disburseNodeOperatorFee(),
         loadingActionText,
       };
 
@@ -46,7 +40,7 @@ export const useClaim = () => {
 
       setSubmitting(false);
       return success;
-    }, [owner, prepareReportCalls, sendTX]),
+    }, [activeVault?.dashboard.encode, owner, prepareReportCalls, sendTX]),
     isSubmitting,
     ...rest,
   };

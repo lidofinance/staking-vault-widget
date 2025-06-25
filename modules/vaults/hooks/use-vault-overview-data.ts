@@ -51,8 +51,8 @@ const getVaultData = async ({
     publicClient,
     report: vault.report,
     contracts: [
-      hub.encode.vaultRecord([vault.address]),
-      hub.encode.vaultObligations([vault.address]),
+      hub.prepare.vaultRecord([vault.address]),
+      hub.prepare.vaultObligations([vault.address]),
 
       {
         abi: Multicall3AbiUtils,
@@ -60,11 +60,11 @@ const getVaultData = async ({
         functionName: 'getEthBalance',
         args: [address],
       },
-      dashboard.encode.totalValue(),
-      dashboard.encode.nodeOperatorDisbursableFee(),
-      dashboard.encode.withdrawableValue(),
-      dashboard.encode.nodeOperatorFeeRate(),
-      dashboard.encode.totalMintingCapacityShares(),
+      dashboard.prepare.totalValue(),
+      dashboard.prepare.nodeOperatorDisbursableFee(),
+      dashboard.prepare.withdrawableValue(),
+      dashboard.prepare.nodeOperatorFeeRate(),
+      dashboard.prepare.totalMintingCapacityShares(),
     ] as const,
   });
 

@@ -6,9 +6,7 @@ import {
   VAULTS_NO_ROLES_MAP,
   VAULTS_OWNER_ROLES_MAP,
 } from '../consts';
-import { dashboardAbi } from 'abi/dashboard-abi';
 
-import type { Address, Hash } from 'viem';
 import { useCallback, useMemo } from 'react';
 
 // adds defaultAdmin and nodeOperatorManager roles to the list of roles
@@ -65,17 +63,15 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
     return {
       rolesOffset,
       saturatedRoles,
-      contracts: saturatedRoles.map(({ role }) => {
-        const roleHash = VAULTS_ALL_ROLES_MAP[role];
-        return {
-          abi: dashboardAbi,
-          address: activeVault?.owner as Address,
-          functionName: 'hasRole' as const,
-          args: [roleHash, address] as [Hash, Address],
-        };
-      }),
+      contracts:
+        activeVault && address
+          ? saturatedRoles.map(({ role }) => {
+              const roleHash = VAULTS_ALL_ROLES_MAP[role];
+              return activeVault.dashboard.prepare.hasRole([roleHash, address]);
+            })
+          : undefined,
     };
-  }, [activeVault?.owner, address, roles]);
+  }, [activeVault, address, roles]);
 
   // stabilized select function to avoid unnecessary re-renders
   const selectFn = useCallback(

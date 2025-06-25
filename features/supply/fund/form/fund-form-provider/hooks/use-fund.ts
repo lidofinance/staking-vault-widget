@@ -1,23 +1,17 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useAccount, useEstimateGas, usePublicClient } from 'wagmi';
-import { Address, encodeFunctionData } from 'viem';
+import { usePublicClient } from 'wagmi';
+import { encodeFunctionData } from 'viem';
 
 import { getContractAddress } from 'config';
 import { WethABI } from 'abi/weth-abi';
-import { dashboardAbi } from 'abi/dashboard-abi';
 
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import {
-  useVaultInfo,
-  useVaultPermission,
-  vaultTexts,
-  GoToVault,
-} from 'modules/vaults';
+import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
@@ -37,7 +31,7 @@ export const useFund = () => {
         token,
         mintAddress,
       }: FundFormValidatedValues) => {
-        invariant(activeVault?.owner, '[useFund] owner is undefined');
+        invariant(activeVault, '[useFund] owner is undefined');
         const wethAddress = getContractAddress(publicClient.chain.id, 'weth');
         invariant(wethAddress, '[useFund] WETH address is undefined');
 
@@ -59,12 +53,7 @@ export const useFund = () => {
         }
 
         calls.push({
-          to: activeVault.owner,
-          data: encodeFunctionData({
-            abi: dashboardAbi,
-            functionName: 'fund',
-          }),
-          value: amount,
+          ...activeVault.dashboard.encode.fund({ value: amount }),
           loadingActionText: vaultTexts.actions.supply.loading,
         });
 
@@ -75,7 +64,7 @@ export const useFund = () => {
 
             const [maxMintableShares] = await readWithReport({
               contracts: [
-                activeVault.dashboard.encode.remainingMintingCapacityShares([
+                activeVault.dashboard.prepare.remainingMintingCapacityShares([
                   amount,
                 ]),
               ],
@@ -84,12 +73,10 @@ export const useFund = () => {
             });
 
             calls.push({
-              to: activeVault.owner,
-              data: encodeFunctionData({
-                abi: dashboardAbi,
-                functionName: 'mintShares',
-                args: [mintAddress, maxMintableShares],
-              }),
+              ...activeVault.dashboard.encode.mintShares([
+                mintAddress,
+                maxMintableShares,
+              ]),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
             });
 
@@ -108,41 +95,8 @@ export const useFund = () => {
 
         return success;
       },
-      [
-        activeVault?.dashboard.encode,
-        activeVault?.owner,
-        activeVault?.report,
-        prepareReportCalls,
-        publicClient,
-        sendTX,
-      ],
+      [activeVault, prepareReportCalls, publicClient, sendTX],
     ),
     ...rest,
   };
-};
-
-export type SimulationFundProps = {
-  address: Address | undefined;
-  amount: bigint;
-};
-
-export const useEstimateGasFund = ({
-  address,
-  amount,
-}: SimulationFundProps) => {
-  const { address: accountAddress } = useAccount();
-  const { hasPermission } = useVaultPermission('supplier');
-
-  return useEstimateGas({
-    to: address as Address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName: 'fund',
-    }),
-    account: accountAddress,
-    value: amount,
-    query: {
-      enabled: !!address && hasPermission && !!amount,
-    },
-  });
 };

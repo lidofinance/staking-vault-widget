@@ -112,7 +112,7 @@ export const useVaultSettings = () => {
       const confirmations = await publicClient.multicall({
         allowFailure: false,
         contracts: Object.entries(dataObject).map(([data, log]) =>
-          activeVault.dashboard.encode.confirmation([data as Hex, log.role]),
+          activeVault.dashboard.prepare.confirmation([data as Hex, log.role]),
         ),
       });
       return {
