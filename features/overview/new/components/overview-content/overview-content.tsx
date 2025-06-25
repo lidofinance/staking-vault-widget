@@ -13,6 +13,8 @@ import { useVaultOverview } from 'features/overview/contexts';
 import { SectionDivider } from 'features/overview/new/shared';
 
 import { OverviewWrapper } from './styles';
+import { CapacityExceeded } from '../capacity-exceeded';
+import { ThresholdExceeded } from '../threshold-exceeded';
 
 export const OverviewContent = () => {
   const {
@@ -29,6 +31,8 @@ export const OverviewContent = () => {
           <SectionDivider />
           <StakingMetrics />
           <Health />
+          <CapacityExceeded />
+          <ThresholdExceeded />
           <Capacity />
           <SectionDivider />
           <Balance />

@@ -175,6 +175,46 @@ export const vaultTexts = {
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
   metrics: {
+    capacityExceeded: {
+      title: 'stETH minting capacity exceeded',
+      description:
+        'The stVault stETH minting capacity constrained by the Reserve Ratio has exceeded, indicating imbalance in collaterization of stETH Liability. You are strongly recommended to take one of the following actions:',
+      note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
+      actions: {
+        supply: {
+          title: 'Increase Total Value',
+          action: (amount: string) => `Supply ${amount}`,
+        },
+        repay: {
+          title: 'Decrease stETH Liability',
+          action: (amount: string) => `Repay ${amount}`,
+        },
+        rebalance: {
+          title: 'Decrease Total Value and stETH Liability',
+          action: (amount: string) => `Rebalance ${amount}`,
+        },
+      },
+    },
+    thresholdExceeded: {
+      title: 'Forced rebalance threshold exceeded',
+      description:
+        "The stVault forced rebalance threshold exceeded, and the permissionless rebalance mechanism is activated for this stVault.  It means the stVault can be rebalanced at any moment in time. You can still restore the vault health factor by taking one of the following actions. There is no guarantee that the permissionless rebalancing won't be performed before your transaction.",
+      note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
+      actions: {
+        supply: {
+          title: 'Increase Total Value',
+          action: (amount: string) => `Supply ${amount}`,
+        },
+        repay: {
+          title: 'Decrease stETH Liability',
+          action: (amount: string) => `Repay ${amount}`,
+        },
+        rebalance: {
+          title: 'Decrease Total Value and stETH Liability',
+          action: (amount: string) => `Rebalance ${amount}`,
+        },
+      },
+    },
     connectVault: {
       title: 'Connect stVault to Lido VaultHub',
       description:

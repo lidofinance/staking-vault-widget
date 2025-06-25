@@ -29,7 +29,6 @@ export const Vault = () => {
       <VaultBaseInfo>
         <VaultAddressAndTier>
           <VaultAddress symbols={4} address={address} />
-          {/* TODO: Add Tier level */}
           {isVaultConnected ? (
             <Tier>
               {general.tier.connected} {1}

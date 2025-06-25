@@ -1,0 +1,31 @@
+import styled from 'styled-components';
+import { Heading, Theme } from '@lidofinance/lido-ui';
+
+type WrapperProps = {
+  type: 'warning' | 'error';
+  theme: Theme;
+};
+
+const getBackgroundColor = ({ type, theme }: WrapperProps) => {
+  return `color-mix(in display-p3, ${theme.colors[type]} 20%, transparent)`;
+};
+
+export const Wrapper = styled.div<WrapperProps>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  padding: ${({ theme }) => theme.spaceMap.md}px;
+  border-radius: 12px;
+  background-color: ${getBackgroundColor};
+`;
+
+export const Title = styled(Heading)`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.xs}px;
+  margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
+  font-size: ${({ theme }) => theme.fontSizesMap.sm}px;
+  line-height: 24px;
+  color: ${({ theme }) => theme.colors.text};
+`;

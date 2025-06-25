@@ -1,11 +1,11 @@
-import { InlineLoader } from '@lidofinance/lido-ui';
-
 import { OverviewSection } from 'features/overview/new/shared';
 import {
   useVaultOverview,
   SectionData,
 } from 'features/overview/contexts/vault-overview';
 import { VaultBaseInfo } from './vault-base-info';
+
+import { GeneralLoader } from './styles';
 
 const sectionPayloadList: SectionData[] = [
   {
@@ -27,7 +27,7 @@ export const General = () => {
 
   return (
     <OverviewSection>
-      {isLoading ? <InlineLoader /> : <VaultBaseInfo />}
+      {isLoading ? <GeneralLoader /> : <VaultBaseInfo />}
     </OverviewSection>
   );
 };
