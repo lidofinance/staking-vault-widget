@@ -44,17 +44,17 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorFeeRateValue,
         defaultAdmins,
         nodeOperatorManagers,
+        nodeOperatorFeeRecipient,
       } = formatSettingsValues(vaultInfo);
 
-      const resetFields = {
+      // TODO: think about moving reset to the form controller
+      reset({
         defaultAdmins,
         nodeOperatorManagers,
         confirmExpiry: confirmExpiryValue,
         nodeOperatorFeeRate: nodeOperatorFeeRateValue,
-      };
-
-      // TODO: think about moving reset to the form controller
-      reset(resetFields);
+        nodeOperatorFeeRecipient: nodeOperatorFeeRecipient,
+      });
     },
     [reset],
   );
@@ -75,6 +75,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       formObject={formObject}
       onSubmit={onSubmit}
       retryEvent={retryEvent}
+      afterSubmitResetOptions={false}
     >
       {children}
     </FormController>

@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { Address } from 'viem';
 import invariant from 'tiny-invariant';
-import { calculateOverview } from '@lidofinance/lsv-cli/dist/utils/calculate-overview';
+import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-overview-v2';
 
 import { formatBalance, formatPercent } from 'utils';
 
@@ -101,16 +101,17 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         isVaultConnected,
       } = activeVault;
 
-      const overview = calculateOverview({
+      const overview = calculateOverviewV2({
         totalValue: activeVault.totalValue,
-        reserveRatioBP: activeVault.reserveRatioBP,
+        reserveRatioBP: reserveRatioBP,
         liabilitySharesInStethWei: activeVault.liabilityStETH,
-        forceRebalanceThresholdBP: activeVault.forcedRebalanceThresholdBP,
+        forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
         withdrawableEther: activeVault.withdrawableEther,
         balance: activeVault.balance,
         locked: activeVault.locked,
-        nodeOperatorUnclaimedFee: activeVault.nodeOperatorUnclaimedFee,
+        nodeOperatorDisbursableFee: activeVault.nodeOperatorUnclaimedFee,
         totalMintingCapacityStethWei: activeVault.totalMintingCapacityStETH,
+        unsettledLidoFees: activeVault.obligations.unsettledLidoFees,
       });
 
       const totalValue = toEthValue(activeVault.totalValue);
@@ -140,7 +141,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
       );
       const collateral = toEthValue(overview.collateral);
-      const pendingUnlock = overview.PendingUnlock;
+      const pendingUnlock = overview.recentlyRepaid;
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
       );

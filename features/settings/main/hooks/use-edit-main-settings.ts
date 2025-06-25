@@ -19,6 +19,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { useConfirmationsInfo } from './use-confirmations-info';
+import { useReportStatus } from 'features/report';
 
 const onlyState =
   (state: 'grant' | 'remove') =>
@@ -34,6 +35,7 @@ const toMethodArg =
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { isReportAvailable, prepareReportCall } = useReportStatus();
   const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
   const { refetch: refetchNOMPermission } = useVaultPermission(
     'nodeOperatorManager',
@@ -179,7 +181,10 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions,
+            transactions:
+              isFeeValueChanged && isReportAvailable
+                ? async () => [await prepareReportCall(), ...transactions]
+                : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
@@ -210,13 +215,15 @@ export const useEditMainSettings = () => {
       },
       [
         owner,
-        hasBothConfirmingRoles,
         activeVault,
+        hasBothConfirmingRoles,
         sendTX,
+        isReportAvailable,
         refetchVaultInfo,
         refetchConfirmationsInfo,
         refetchNOMPermission,
         refetchAdminPermission,
+        prepareReportCall,
       ],
     ),
     ...rest,

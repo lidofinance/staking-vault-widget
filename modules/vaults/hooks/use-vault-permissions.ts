@@ -9,7 +9,7 @@ import {
 import { dashboardAbi } from 'abi/dashboard-abi';
 
 import type { Address, Hash } from 'viem';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // adds defaultAdmin and nodeOperatorManager roles to the list of roles
 // if any roles are admined by them
@@ -77,48 +77,57 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
     };
   }, [activeVault?.owner, address, roles]);
 
+  // stabilized select function to avoid unnecessary re-renders
+  const selectFn = useCallback(
+    (queryData: boolean[]) => {
+      const data = [...queryData];
+
+      // Remove optional first service elements from array
+      let isAdmin = false;
+      let isNOM = false;
+      if (rolesOffset > 0) {
+        isAdmin = !!data.shift();
+      }
+      if (rolesOffset > 1) {
+        isNOM = !!data.shift();
+      }
+
+      const rolesResult = data.map((item, index) => {
+        const saturateRole = saturatedRoles[index + rolesOffset];
+        isAdmin ||= saturateRole.role === 'defaultAdmin' && !!item;
+        isNOM ||= saturateRole.role === 'nodeOperatorManager' && !!item;
+        return {
+          role: saturateRole.role,
+          // user can have role if
+          hasRole:
+            // 1. roles is set directly
+            !!item ||
+            // 2. user is admin over this role
+            (saturateRole.isAdminRole && isAdmin) ||
+            (saturateRole.isNOMRole && isNOM),
+        };
+      });
+
+      return {
+        result: rolesResult,
+        hasPermissions: rolesResult.every((item) => item.hasRole),
+        hasDefaultAdminsPermissions: isAdmin,
+        hasNodeOperatorPermissions: isNOM,
+        missingRoles: rolesResult
+          .filter((item) => !item.hasRole)
+          .map((item) => item.role),
+      };
+    },
+    [rolesOffset, saturatedRoles],
+  );
+
   const query = useReadContracts({
     contracts,
     allowFailure: false,
     batchSize: 5,
     query: {
-      select: (data) => {
-        // Remove optional first service elements from array
-        let isAdmin = false;
-        let isNOM = false;
-        if (rolesOffset > 0) {
-          isAdmin = !!data.shift();
-        }
-        if (rolesOffset > 1) {
-          isNOM = !!data.shift();
-        }
-
-        const rolesResult = data.map((item, index) => {
-          const saturateRole = saturatedRoles[index];
-          isAdmin ||= saturateRole.role === 'defaultAdmin' && !!item;
-          isNOM ||= saturateRole.role === 'nodeOperatorManager' && !!item;
-          return {
-            role: saturateRole.role,
-            // user can have role if
-            hasRole:
-              // 1. roles is set directly
-              !!item ||
-              // 2. user is admin over this role
-              (saturateRole.isAdminRole && isAdmin) ||
-              (saturateRole.isNOMRole && isNOM),
-          };
-        });
-
-        return {
-          result: rolesResult,
-          hasPermissions: rolesResult.every((item) => item.hasRole),
-          hasDefaultAdminsPermissions: isAdmin,
-          hasNodeOperatorPermissions: isNOM,
-          missingRoles: rolesResult
-            .filter((item) => !item.hasRole)
-            .map((item) => item.role),
-        };
-      },
+      select: selectFn,
+      enabled: Boolean(activeVault?.owner && address && roles.length > 0),
     },
   });
 
