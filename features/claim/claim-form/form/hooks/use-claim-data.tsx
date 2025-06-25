@@ -1,30 +1,17 @@
-import { useReadContract } from 'wagmi';
-
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useValidateRecipientArgs, useVaultInfo } from 'modules/vaults';
+import { useReadDashboard, useValidateRecipientArgs } from 'modules/vaults';
 import { useCallback } from 'react';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
 export const useClaimData = () => {
-  const { activeVault } = useVaultInfo();
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
-  const recipientQuery = useReadContract({
-    abi: dashboardAbi,
-    address: activeVault?.dashboard.address,
+  const recipientQuery = useReadDashboard({
     functionName: 'nodeOperatorFeeRecipient',
-    query: {
-      enabled: !!activeVault?.owner,
-    },
   });
 
-  const claimableFeeQuery = useReadContract({
-    abi: dashboardAbi,
-    address: activeVault?.owner,
+  const claimableFeeQuery = useReadDashboard({
     functionName: 'nodeOperatorDisbursableFee',
-    query: {
-      enabled: !!activeVault?.owner,
-    },
+    applyReport: true,
   });
 
   const invalidateClaimData = useCallback(

@@ -13,21 +13,20 @@ import {
   withSuccess,
 } from 'modules/web3';
 import {
-  getDashboardContract,
   useVaultInfo,
   useVaultPermission,
   vaultTexts,
   GoToVault,
 } from 'modules/vaults';
 
-import { useReportStatus } from 'features/report';
+import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
 
 export const useFund = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVaultInfo();
 
-  const { isReportAvailable, prepareReportCall } = useReportStatus();
+  const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
@@ -72,15 +71,17 @@ export const useFund = () => {
         // minting stETH requires async data for report and minting capacity
         if (mintSteth) {
           prepareTransactions = async () => {
-            isReportAvailable && calls.push(await prepareReportCall());
+            calls.push(...prepareReportCalls());
 
-            const dashboard = getDashboardContract(
-              activeVault.owner,
+            const [maxMintableShares] = await readWithReport({
+              contracts: [
+                activeVault.dashboard.encode.remainingMintingCapacityShares([
+                  amount,
+                ]),
+              ],
               publicClient,
-            );
-
-            const maxMintableShares =
-              await dashboard.read.remainingMintingCapacityShares([amount]);
+              report: activeVault.report,
+            });
 
             calls.push({
               to: activeVault.owner,
@@ -108,9 +109,10 @@ export const useFund = () => {
         return success;
       },
       [
+        activeVault?.dashboard.encode,
         activeVault?.owner,
-        isReportAvailable,
-        prepareReportCall,
+        activeVault?.report,
+        prepareReportCalls,
         publicClient,
         sendTX,
       ],

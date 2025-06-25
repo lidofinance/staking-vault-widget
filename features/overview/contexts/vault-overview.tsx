@@ -13,7 +13,7 @@ import { formatBalance, formatPercent } from 'utils';
 
 import { useVaultInfo } from 'modules/vaults/vault-context';
 import {
-  useSingleVaultData,
+  useVaultOverviewData,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ALL_ROLES,
   vaultTexts,
@@ -85,9 +85,8 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   const { activeVault, isLoadingVault: isLoadingVaultCore } = useVaultInfo();
 
-  const { data: vaultData, isLoading: isLoadingVaultData } = useSingleVaultData(
-    activeVault?.address,
-  );
+  const { data: vaultData, isLoading: isLoadingVaultData } =
+    useVaultOverviewData(activeVault?.address);
 
   const isLoadingVault = isLoadingVaultCore || isLoadingVaultData;
 

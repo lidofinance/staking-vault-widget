@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import { getDashboardContract, useVaultInfo } from 'modules/vaults';
+import { readWithReport, useVaultInfo } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
 export const useLiability = () => {
@@ -13,11 +13,15 @@ export const useLiability = () => {
     enabled: !!activeVault?.address,
     queryFn: async () => {
       invariant(
-        activeVault?.address,
+        activeVault,
         '[useLiability]Active vault address is not available',
       );
-      const vault = getDashboardContract(activeVault?.owner, publicClient);
-      const liabilityShares = await vault.read.liabilityShares();
+
+      const [liabilityShares] = await readWithReport({
+        publicClient,
+        report: activeVault.report,
+        contracts: [activeVault.dashboard.encode.liabilityShares()] as const,
+      });
       const liabilitySteth = await shares.convertToSteth(liabilityShares);
 
       return {

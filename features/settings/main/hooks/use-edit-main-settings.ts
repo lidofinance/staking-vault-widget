@@ -19,7 +19,7 @@ import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
 import { GoToVault } from 'modules/vaults/components/go-to-vault';
 import { useConfirmationsInfo } from './use-confirmations-info';
-import { useReportStatus } from 'features/report';
+import { useReportCalls } from 'modules/vaults/report';
 import { UseVaultSettingsInfo } from './use-vault-settings-info';
 
 const onlyState =
@@ -36,7 +36,7 @@ const toMethodArg =
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault } = useVaultInfo();
-  const { isReportAvailable, prepareReportCall } = useReportStatus();
+  const prepareReportCalls = useReportCalls();
   const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
   const { refetch: refetchVaultSettingsInfo, data: vaultSettings } =
     UseVaultSettingsInfo();
@@ -188,10 +188,9 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions:
-              isFeeValueChanged && isReportAvailable
-                ? async () => [await prepareReportCall(), ...transactions]
-                : transactions,
+            transactions: isFeeValueChanged
+              ? [...prepareReportCalls(), ...transactions]
+              : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
@@ -226,12 +225,11 @@ export const useEditMainSettings = () => {
         activeVault,
         hasBothConfirmingRoles,
         sendTX,
-        isReportAvailable,
+        prepareReportCalls,
         refetchVaultSettingsInfo,
         refetchConfirmationsInfo,
         refetchNOMPermission,
         refetchAdminPermission,
-        prepareReportCall,
       ],
     ),
     ...rest,

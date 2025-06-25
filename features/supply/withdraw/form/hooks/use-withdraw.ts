@@ -15,7 +15,7 @@ import {
   useDappStatus,
   TransactionEntry,
 } from 'modules/web3';
-import { useReportStatus } from 'features/report';
+import { useReportCalls } from 'modules/vaults/report';
 
 import { fallbackedAddress } from 'utils/fallbacked-address';
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -29,7 +29,7 @@ export const useWithdraw = () => {
   const chainId = useChainId();
   const vaultOwner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
-  const { isReportAvailable, prepareReportCall } = useReportStatus();
+  const prepareReportCalls = useReportCalls();
 
   const withdraw = useCallback(
     async ({ amount, recipient, token }: WithdrawFormValidatedValues) => {
@@ -65,10 +65,7 @@ export const useWithdraw = () => {
         });
       }
 
-      // if we have to post report, there will be extra modal due to async fetch
-      const transactions = isReportAvailable
-        ? async () => [await prepareReportCall(), ...calls]
-        : calls;
+      const transactions = [...prepareReportCalls(), ...calls];
 
       const { success } = await withSuccess(
         sendTX({
@@ -82,7 +79,7 @@ export const useWithdraw = () => {
 
       return success;
     },
-    [vaultOwner, isReportAvailable, sendTX, prepareReportCall, chainId],
+    [vaultOwner, chainId, prepareReportCalls, sendTX],
   );
 
   return {

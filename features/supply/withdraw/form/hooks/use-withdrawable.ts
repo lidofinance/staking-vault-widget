@@ -1,18 +1,8 @@
-import { useVaultInfo } from 'modules/vaults';
-import { useReadContract } from 'wagmi';
-import { dashboardAbi } from 'abi/dashboard-abi';
+import { useReadDashboard } from 'modules/vaults';
 
-// TODO: apply report optimistically
 export const useWithdrawable = () => {
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
-
-  return useReadContract({
-    abi: dashboardAbi,
-    address: owner,
+  return useReadDashboard({
     functionName: 'withdrawableValue',
-    query: {
-      enabled: !!owner,
-    },
+    applyReport: true,
   });
 };

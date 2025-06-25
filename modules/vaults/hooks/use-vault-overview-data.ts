@@ -1,0 +1,157 @@
+import invariant from 'tiny-invariant';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
+import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+
+import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { bigIntMax } from 'utils/bigint-math';
+import { readWithReport } from 'modules/vaults/report';
+
+import { getVaultHubContract } from '../contracts';
+import { useVaultInfo } from '../vault-context';
+import type { VaultBaseInfo, VaultInfo } from '../types';
+import { Multicall3AbiUtils } from 'abi/multicall-abi';
+
+type VaultDataArgs = {
+  publicClient: RegisteredPublicClient;
+  vault: VaultBaseInfo;
+  shares: LidoSDKShares;
+};
+
+const getVaultData = async ({
+  publicClient,
+  vault,
+  shares,
+}: VaultDataArgs): Promise<VaultInfo> => {
+  const hub = getVaultHubContract(publicClient);
+
+  const {
+    address,
+    dashboard,
+    vault: vaultContract,
+    nodeOperator,
+    withdrawalCredentials,
+    forcedRebalanceThresholdBP,
+    shareLimit,
+    ...rest
+  } = vault;
+
+  const [
+    record,
+    obligations,
+    balance,
+    totalValue,
+    nodeOperatorUnclaimedFee,
+    withdrawableEther,
+    nodeOperatorFeeRate,
+    totalMintingCapacity,
+  ] = await readWithReport({
+    publicClient,
+    report: vault.report,
+    contracts: [
+      hub.encode.vaultRecord([vault.address]),
+      hub.encode.vaultObligations([vault.address]),
+
+      {
+        abi: Multicall3AbiUtils,
+        address: publicClient.chain.contracts.multicall3.address,
+        functionName: 'getEthBalance',
+        args: [address],
+      },
+      dashboard.encode.totalValue(),
+      dashboard.encode.nodeOperatorDisbursableFee(),
+      dashboard.encode.withdrawableValue(),
+      dashboard.encode.nodeOperatorFeeRate(),
+      dashboard.encode.totalMintingCapacityShares(),
+    ] as const,
+  });
+
+  const {
+    liabilityShares,
+    inOutDelta: { value: inOutDelta },
+    locked,
+  } = record;
+
+  const mintableShares = bigIntMax(totalMintingCapacity - liabilityShares, 0n);
+
+  const [
+    liabilityStETH,
+    mintableStETH,
+    stETHLimit,
+    lockedShares,
+    totalMintingCapacityStETH,
+  ] = await Promise.all([
+    shares.convertToSteth(liabilityShares),
+    shares.convertToSteth(mintableShares),
+    shares.convertToSteth(shareLimit),
+    shares.convertToShares(locked),
+    shares.convertToSteth(totalMintingCapacity),
+  ]);
+
+  const healthScore = calculateHealth({
+    totalValue,
+    liabilitySharesInStethWei: liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
+  });
+
+  return {
+    address,
+    nodeOperator,
+    totalValue,
+    liabilityStETH,
+    mintableStETH,
+    mintableShares,
+    stETHLimit,
+    apr: null,
+    healthScore: healthScore.healthRatio,
+    totalMintingCapacity,
+    totalMintingCapacityStETH,
+    inOutDelta,
+    locked,
+    lockedShares,
+    nodeOperatorUnclaimedFee,
+    withdrawableEther,
+    balance,
+    nodeOperatorFeeRate,
+
+    shareLimit,
+    forcedRebalanceThresholdBP,
+    liabilityShares,
+    withdrawalCredentials,
+    obligations,
+
+    ...rest,
+  };
+};
+
+export const useVaultOverviewData = () => {
+  const { shares, publicClient } = useLidoSDK();
+  const { activeVault } = useVaultInfo();
+
+  const queryKey = useMemo(() => {
+    return [
+      'single-vault-data',
+      publicClient?.chain.id,
+      activeVault?.address,
+    ] as const;
+  }, [publicClient?.chain.id, activeVault?.address]);
+
+  return {
+    ...useQuery({
+      queryKey,
+      enabled: !!activeVault,
+      queryFn: async (): Promise<VaultInfo> => {
+        invariant(
+          activeVault,
+          '[useSingleVaultData] activeVault is not defined',
+        );
+
+        return getVaultData({ publicClient, shares, vault: activeVault });
+      },
+      ...STRATEGY_LAZY,
+    }),
+    queryKey,
+  };
+};

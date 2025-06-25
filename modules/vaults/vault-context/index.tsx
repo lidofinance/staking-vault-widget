@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
 import type { QueryObserverResult } from '@tanstack/react-query';
 
-import { useBaseVaultData, useSingleVaultData } from '../hooks/use-vault-data';
+import { useBaseVaultData } from './use-base-vault-data';
 import type { VaultBaseInfo } from '../types';
 
 type VaultContextType = {
@@ -19,7 +19,7 @@ type VaultContextType = {
   activeVault?: VaultBaseInfo;
   refetchVaultInfo: () => Promise<QueryObserverResult<VaultBaseInfo, Error>>;
   isLoadingVault: boolean;
-} & Pick<ReturnType<typeof useSingleVaultData>, 'isRefetching' | 'error'>;
+} & Pick<ReturnType<typeof useBaseVaultData>, 'isRefetching' | 'error'>;
 
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';

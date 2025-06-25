@@ -3,12 +3,18 @@ import { useCallback, useState } from 'react';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVaultInfo,
+  vaultTexts,
+  GoToVault,
+  useReportCalls,
+} from 'modules/vaults';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 export const useClaim = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { activeVault } = useVaultInfo();
+  const prepareReportCalls = useReportCalls();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -31,7 +37,7 @@ export const useClaim = () => {
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: [claimCall],
+          transactions: [...prepareReportCalls(), claimCall],
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,
           renderSuccessContent: GoToVault,
@@ -40,7 +46,7 @@ export const useClaim = () => {
 
       setSubmitting(false);
       return success;
-    }, [owner, sendTX]),
+    }, [owner, prepareReportCalls, sendTX]),
     isSubmitting,
     ...rest,
   };

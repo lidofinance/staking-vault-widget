@@ -10,8 +10,8 @@ export const useValidateRecipientArgs = ():
   return useMemo(() => {
     if (!activeVault) return undefined;
     return {
-      vaultAddress: activeVault?.address,
-      dashboardAddress: activeVault?.owner,
+      vaultAddress: activeVault.address,
+      dashboardAddress: activeVault.dashboard.address,
     };
   }, [activeVault]);
 };

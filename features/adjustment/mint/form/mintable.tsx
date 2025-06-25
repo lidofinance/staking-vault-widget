@@ -13,8 +13,8 @@ export const Mintable = () => {
   const token = watch('token');
   const mintableAmount =
     token === 'stETH'
-      ? mintableQuery.data?.mintableStETH
-      : mintableQuery.data?.mintableWstETH;
+      ? mintableQuery.data?.maxMintableStETH
+      : mintableQuery.data?.maxMintableShares;
 
   return (
     <InfoRowAmount

@@ -29,6 +29,7 @@ const allowedLogsAddresses: Record<string, string[]> = Object.entries(
 const allowedRPCMethods = [
   'test',
   'eth_call',
+  'eth_simulateV1',
   'eth_gasPrice',
   'eth_getCode',
   'eth_estimateGas',
@@ -43,6 +44,7 @@ const allowedRPCMethods = [
   'eth_sendRawTransaction',
   'eth_getLogs',
   'eth_chainId',
+
   'net_version',
 ];
 

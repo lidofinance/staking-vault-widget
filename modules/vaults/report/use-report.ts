@@ -12,7 +12,7 @@ import {
   vaultTexts,
 } from 'modules/vaults';
 
-import { getVaultHubContract } from '../../modules/vaults/contracts/vault-hub';
+import { getVaultHubContract } from '../contracts/vault-hub';
 import {
   STRATEGY_EAGER,
   STRATEGY_IMMUTABLE,

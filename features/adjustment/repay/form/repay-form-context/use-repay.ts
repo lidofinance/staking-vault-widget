@@ -1,15 +1,9 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useEstimateGas, useAccount } from 'wagmi';
 import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
-import {
-  useVaultInfo,
-  useVaultPermission,
-  vaultTexts,
-  GoToVault,
-} from 'modules/vaults';
+import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
 import {
   TransactionEntry,
   useLidoSDK,
@@ -81,43 +75,4 @@ export const useRepay = () => {
     ),
     ...rest,
   };
-};
-
-type EstimateGasBurnProps = {
-  token: string;
-  amount?: bigint;
-  allowance?: bigint;
-};
-
-export const useEstimateGasRepay = ({
-  token,
-  amount,
-  allowance,
-}: EstimateGasBurnProps) => {
-  const { hasPermission } = useVaultPermission('repayer');
-  const { address } = useAccount();
-  const payload = [amount ?? 1n] as const;
-  const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
-
-  const enabled = !!(
-    hasPermission &&
-    allowance !== undefined &&
-    payload[0] <= allowance &&
-    address
-  );
-
-  return useEstimateGas({
-    to: owner,
-    account: address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName,
-      args: payload,
-    }),
-    query: {
-      enabled,
-    },
-  });
 };

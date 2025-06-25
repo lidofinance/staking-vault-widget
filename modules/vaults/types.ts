@@ -48,10 +48,23 @@ export type VaultInfo = VaultConnection &
     withdrawalCredentials: Address;
   };
 
+export type VaultReportType = {
+  vault: Address;
+  timestamp: bigint;
+  totalValueWei: bigint;
+  fee: bigint;
+  liabilityShares: bigint;
+  slashingReserve: bigint;
+  proof: Hex[];
+};
+
 export type VaultBaseInfo = {
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
   dashboard: ReturnType<typeof getDashboardContract>;
   nodeOperator: Address;
   withdrawalCredentials: Hex;
+  isReportFresh: boolean;
+  reportCID: string;
+  report: VaultReportType | null;
 } & VaultConnection;

@@ -22,9 +22,11 @@ import type {
   MintFormValidatedValues,
   MintFormValidationContextAwaitable,
 } from '../types';
+import type { MaxMintableResult } from 'modules/vaults';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 type MintFormDataContextValue = {
-  mintableQuery: ReturnType<typeof useMintData>['mintableQuery'];
+  mintableQuery: UseQueryResult<MaxMintableResult>;
 };
 
 const MintFormDataContext = createContext<MintFormDataContextValue | null>(
