@@ -11,9 +11,7 @@ import type {
 import { getEncodable } from '../utils/encodable';
 
 // TODO: move to lido-sdk
-export const getVaultHubContract = <TClient extends RegisteredPublicClient>(
-  publicClient: TClient,
-) => {
+export const getVaultHubContract = (publicClient: RegisteredPublicClient) => {
   const address = getContractAddress(publicClient.chain.id, 'vaultHub');
 
   invariant(address, '[getVaultHubContract] vaultHub is not defined');
@@ -28,12 +26,9 @@ export const getVaultHubContract = <TClient extends RegisteredPublicClient>(
   );
 };
 
-export const getWritableVaultHubContract = <
-  TClient extends RegisteredPublicClient,
-  TWallet extends RegisteredWalletClient,
->(
-  publicClient: TClient,
-  walletClient: TWallet,
+export const getWritableVaultHubContract = (
+  publicClient: RegisteredPublicClient,
+  walletClient: RegisteredWalletClient,
 ) => {
   const address = getContractAddress(publicClient.chain.id, 'vaultHub');
 

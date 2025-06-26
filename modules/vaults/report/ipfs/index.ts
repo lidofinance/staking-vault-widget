@@ -1,4 +1,3 @@
-import jsonBigint from 'json-bigint';
 import { Address, Hex } from 'viem';
 
 import { getApiURL } from 'config';
@@ -34,15 +33,7 @@ const fetchIPFS = async <TResult>(cid: string): Promise<TResult> => {
   for (const gateway of CID_TO_GATEWAY) {
     const url = gateway(cid);
     try {
-      const raw = await fetch(url).then((res) => res.text());
-
-      const parsed = jsonBigint({
-        alwaysParseAsBig: true,
-        strict: true,
-        useNativeBigInt: true,
-      }).parse(raw);
-
-      return parsed;
+      return fetch(url).then((res) => res.json());
     } catch (error) {
       console.warn(
         `Error fetching from IPFS gateway(${url}). Trying next...`,

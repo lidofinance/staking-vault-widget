@@ -69,7 +69,13 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
             publicClient.chain.id,
             latestHubReport[2],
             vaultAddress,
-          ).catch(() => null)
+          ).catch((e) => {
+            console.warn(
+              `[useBaseVaultData] Error fetching report for vault ${vaultAddress}`,
+              e,
+            );
+            return null;
+          })
         : null;
 
       const isReportMissing = !report && !isReportFresh;

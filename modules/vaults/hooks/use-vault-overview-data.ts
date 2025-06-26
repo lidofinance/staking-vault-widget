@@ -7,7 +7,6 @@ import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { bigIntMax } from 'utils/bigint-math';
 
-import { getVaultHubContract } from '../contracts';
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
 import type { VaultBaseInfo, VaultInfo } from '../types';
@@ -24,8 +23,6 @@ const getVaultData = async ({
   vault,
   shares,
 }: VaultDataArgs): Promise<VaultInfo> => {
-  const hub = getVaultHubContract(publicClient);
-
   const {
     address,
     dashboard,
@@ -34,6 +31,7 @@ const getVaultData = async ({
     withdrawalCredentials,
     forcedRebalanceThresholdBP,
     shareLimit,
+    hub,
     ...rest
   } = vault;
 
@@ -52,7 +50,6 @@ const getVaultData = async ({
     contracts: [
       hub.prepare.vaultRecord([vault.address]),
       hub.prepare.vaultObligations([vault.address]),
-
       {
         abi: Multicall3AbiUtils,
         address: publicClient.chain.contracts.multicall3.address,
@@ -131,7 +128,7 @@ export const useVaultOverviewData = () => {
 
   return {
     ...useQuery({
-      queryKey: [...queryKeys.base, 'vault-overview-data'],
+      queryKey: [...queryKeys.state, 'vault-overview-data'],
       enabled: !!activeVault,
       queryFn: async (): Promise<VaultInfo> => {
         invariant(

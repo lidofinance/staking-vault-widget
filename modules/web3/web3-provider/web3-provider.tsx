@@ -5,7 +5,9 @@ import {
   PropsWithChildren,
   useEffect,
   useMemo,
+  useState,
 } from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
 import { http, publicActions } from 'viem';
 import { WagmiProvider, createConfig, useConnections, fallback } from 'wagmi';
@@ -73,6 +75,21 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
     isWalletConnectionAllowed,
   } = useUserConfig();
   const { themeName } = useThemeToggle();
+
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60_000, // 1 minute
+            gcTime: 300_000, // 5 minutes
+            retry: 3,
+            refetchOnWindowFocus: true,
+            refetchOnReconnect: true,
+          },
+        },
+      }),
+  );
 
   const { supportedChains, defaultChain } = useMemo(() => {
     // must preserve order of supportedChainIds
@@ -184,20 +201,22 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
   }, [activeConnection, onActiveConnection]);
 
   return (
-    <Web3ProviderContext.Provider value={web3ProviderContextValue}>
-      {/* default wagmi autoConnect, MUST be false in our case, because we use custom autoConnect from Reef Knot */}
-      <WagmiProvider
-        config={wagmiConfig as RegisteredConfig}
-        reconnectOnMount={false}
-      >
-        <ReefKnotProvider config={reefKnotConfig}>
-          <ReefKnotWalletsModal
-            config={walletsModalConfig}
-            darkThemeEnabled={themeName === 'dark'}
-          />
-          <SupportL1Chains>{children}</SupportL1Chains>
-        </ReefKnotProvider>
-      </WagmiProvider>
-    </Web3ProviderContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <Web3ProviderContext.Provider value={web3ProviderContextValue}>
+        {/* default wagmi autoConnect, MUST be false in our case, because we use custom autoConnect from Reef Knot */}
+        <WagmiProvider
+          config={wagmiConfig as RegisteredConfig}
+          reconnectOnMount={false}
+        >
+          <ReefKnotProvider config={reefKnotConfig}>
+            <ReefKnotWalletsModal
+              config={walletsModalConfig}
+              darkThemeEnabled={themeName === 'dark'}
+            />
+            <SupportL1Chains>{children}</SupportL1Chains>
+          </ReefKnotProvider>
+        </WagmiProvider>
+      </Web3ProviderContext.Provider>
+    </QueryClientProvider>
   );
 };
