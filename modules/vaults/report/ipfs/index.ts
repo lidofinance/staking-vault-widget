@@ -56,15 +56,7 @@ const fetchIPFS = async <TResult>(cid: string): Promise<TResult> => {
 const extractProofFromIPFS = async (cid: string, vault: Address) => {
   const IPFSReportData = await fetchIPFS<IPFSReport>(cid);
 
-  const merkleTree = StandardMerkleTree.load({
-    ...IPFSReportData,
-    values: IPFSReportData.values.map(({ treeIndex, value }) => {
-      return {
-        value,
-        treeIndex: Number(treeIndex),
-      };
-    }),
-  });
+  const merkleTree = StandardMerkleTree.load(IPFSReportData);
 
   const vaultIndex = IPFSReportData.values.findIndex(
     ({ value }) => value[0].toLowerCase() === vault.toLowerCase(),
@@ -76,15 +68,17 @@ const extractProofFromIPFS = async (cid: string, vault: Address) => {
     );
   }
 
-  const vaultEntry = IPFSReportData.values[vaultIndex];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const vaultEntry = merkleTree.at(vaultIndex)!;
 
   return {
-    vault: vaultEntry.value[0],
-    totalValueWei: BigInt(vaultEntry.value[1]),
-    fee: BigInt(vaultEntry.value[2]),
-    liabilityShares: BigInt(vaultEntry.value[3]),
-    slashingReserve: BigInt(vaultEntry.value[4]),
+    vault: vaultEntry[0],
+    totalValueWei: BigInt(vaultEntry[1]),
+    fee: BigInt(vaultEntry[2]),
+    liabilityShares: BigInt(vaultEntry[3]),
+    slashingReserve: BigInt(vaultEntry[4]),
     proof: merkleTree.getProof(vaultIndex) as Hex[],
+    vaultLeftHash: merkleTree.leafHash(vaultEntry) as Hex,
   };
 };
 

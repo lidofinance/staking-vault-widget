@@ -3,6 +3,7 @@ import {
   PropsWithChildren,
   createContext,
   useContext,
+  useEffect,
   useMemo,
 } from 'react';
 import { Address } from 'viem';
@@ -82,7 +83,17 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { data: vaultData, isPending: isLoadingVault } = useVaultOverviewData();
+  const {
+    data: vaultData,
+    isPending: isLoadingVault,
+    error,
+  } = useVaultOverviewData();
+
+  useEffect(() => {
+    if (error) {
+      console.warn('Error fetching overview data:', error);
+    }
+  }, [error]);
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
     if (vaultData) {

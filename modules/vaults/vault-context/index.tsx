@@ -11,8 +11,14 @@ import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useLidoSDK } from 'modules/web3';
+
 import { useBaseVaultData } from './use-base-vault-data';
-import { VaultConfigScopes, vaultQueryKeys } from '../consts';
+import {
+  VaultAddressError,
+  VaultConfigScopes,
+  vaultQueryKeys,
+} from '../consts';
 import type { VaultBaseInfo } from '../types';
 
 type VaultContextType = {
@@ -22,21 +28,15 @@ type VaultContextType = {
   invalidateVaultState: () => Promise<void>;
   invalidateVaultConfig: (scope?: VaultConfigScopes) => Promise<void>;
   invalidateVault: () => Promise<void>;
-  error: VaultAddressError | Error | null;
+  error: Error | null;
 } & Omit<ReturnType<typeof useBaseVaultData>, 'error'>;
 
 const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';
 
-export class VaultAddressError extends Error {
-  constructor(vaultAddress: string) {
-    super(`Vault address is not valid: ${vaultAddress}`);
-    this.name = 'VaultAddressError';
-  }
-}
-
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
+  const { publicClient } = useLidoSDK();
   const queryClient = useQueryClient();
   const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
   const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
@@ -55,7 +55,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const contextValue = useMemo<VaultContextType>(() => {
     const queryKeys = vaultQueryKeys(
       sanitizedVaultAddress,
-      query.data?.hub.chain.id,
+      publicClient.chain.id,
       query.data?.reportCID,
     );
     return {
@@ -64,9 +64,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       activeVault: query.data,
       queryKeys,
       error:
-        (vaultAddress &&
-          !sanitizedVaultAddress &&
-          new VaultAddressError(vaultAddress)) ||
+        (vaultAddress && !sanitizedVaultAddress && new VaultAddressError()) ||
         query.error,
       invalidateVaultState: () =>
         queryClient.invalidateQueries({ queryKey: queryKeys.stateBase }),
@@ -75,7 +73,13 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       invalidateVault: () =>
         queryClient.invalidateQueries({ queryKey: queryKeys.base }),
     };
-  }, [sanitizedVaultAddress, query, vaultAddress, queryClient]);
+  }, [
+    sanitizedVaultAddress,
+    publicClient.chain.id,
+    query,
+    vaultAddress,
+    queryClient,
+  ]);
 
   return (
     <VaultContext.Provider value={contextValue}>

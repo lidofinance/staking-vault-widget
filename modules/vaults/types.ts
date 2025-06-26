@@ -47,12 +47,18 @@ export type VaultInfo = VaultConnection &
 
 export type VaultReportType = {
   vault: Address;
-  timestamp: bigint;
   totalValueWei: bigint;
   fee: bigint;
   liabilityShares: bigint;
   slashingReserve: bigint;
   proof: Hex[];
+  vaultLeftHash: Hex;
+};
+
+export type HubReportData = {
+  cid: string;
+  timestamp: bigint;
+  root: Hex;
 };
 
 export type VaultBaseInfo = {
@@ -64,6 +70,6 @@ export type VaultBaseInfo = {
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
-  reportCID: string;
+  hubReport: HubReportData;
   report: VaultReportType | null;
 } & VaultConnection;

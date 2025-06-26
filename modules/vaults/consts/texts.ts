@@ -341,8 +341,14 @@ export const vaultTexts = {
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
-      loadingVault: 'Error loading stVault',
-      vaultAddress: 'Invalid stVault address',
+
+      vault: {
+        loadingVault: 'Error loading stVault',
+        vaultAddress: 'Invalid stVault address',
+        notDashboard: 'stVault is not owned by Dashboard contract',
+        reportMissing:
+          'Report for your stVault is not available. Try again later.',
+      },
     },
     form: {
       willReceiveLabel: 'You will receive',

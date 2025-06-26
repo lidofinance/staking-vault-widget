@@ -11,8 +11,10 @@ import {
   getStakingVaultContract,
   getVaultHubContract,
 } from '../contracts';
+import { VaultNotDashboard, vaultQueryKeys } from '../consts';
+import { isDashboard } from '../utils/is-dashboard';
+
 import type { VaultBaseInfo } from '../types';
-import { vaultQueryKeys } from '../consts';
 
 export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   const { publicClient } = useLidoSDK();
@@ -37,7 +39,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportFresh,
         latestVaultReport,
         latestHubReport,
-        latestHubReportTimestamp,
       ] = await Promise.all([
         vault.read.nodeOperator(),
         vault.read.withdrawalCredentials(),
@@ -45,8 +46,13 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         hub.read.isReportFresh([vaultAddress]),
         hub.read.latestReport([vaultAddress]),
         lazyOracle.read.latestReportData(),
-        lazyOracle.read.latestReportTimestamp(),
       ]);
+
+      const [
+        latestHubReportTimestamp,
+        latestHubReportRoot,
+        latestHubReportCID,
+      ] = latestHubReport;
 
       const isReportAvailable =
         latestHubReportTimestamp > latestVaultReport.timestamp;
@@ -62,6 +68,10 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       const isReportMissing = !report && !isReportFresh;
 
+      if (!(await isDashboard(publicClient, connection.owner))) {
+        throw new VaultNotDashboard();
+      }
+
       const dashboard = getDashboardContract(connection.owner, publicClient);
 
       return {
@@ -71,11 +81,12 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         hub,
         nodeOperator,
         withdrawalCredentials,
-        report: report && {
-          ...report,
-          timestamp: BigInt(latestVaultReport.timestamp),
+        report,
+        hubReport: {
+          root: latestHubReportRoot,
+          cid: latestHubReportCID,
+          timestamp: latestHubReportTimestamp,
         },
-        reportCID: latestHubReport[2],
         isReportFresh,
         isReportMissing,
         ...connection,

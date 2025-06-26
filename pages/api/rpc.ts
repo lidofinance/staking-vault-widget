@@ -29,7 +29,7 @@ const allowedLogsAddresses: Record<string, string[]> = Object.entries(
 const allowedRPCMethods = [
   'test',
   'eth_call',
-  'eth_simulateV1',
+  //'eth_simulateV1', THIS METHOD MIGHT BE NEEDED FOR REPORT SIMULATION BUT DISABLED FOR SECURITY UNLESS REALLY NEEDED
   'eth_gasPrice',
   'eth_getCode',
   'eth_estimateGas',

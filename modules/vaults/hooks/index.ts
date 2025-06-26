@@ -6,3 +6,4 @@ export {
   useVaultPermissions,
   useVaultConfirmingRoles,
 } from './use-vault-permissions';
+export { useReadDashboard } from './use-read-dashboard';

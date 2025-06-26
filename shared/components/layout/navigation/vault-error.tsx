@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Button } from '@lidofinance/lido-ui';
 
-import { useVault, VaultAddressError, vaultTexts } from 'modules/vaults';
+import { DisplayableError, useVault, vaultTexts } from 'modules/vaults';
 import { ButtonLink } from 'shared/components/button-link';
 import { appPaths } from 'consts/routing';
 
@@ -19,28 +19,30 @@ export const VaultError = () => {
   // TODO: fix lido-ui, modal opened in SSR causes error on server
   if (!isMounted || !error) return null;
 
-  const goToAll = (
-    <ButtonLink href={appPaths.vaults.all}>{texts.links.goToAll}</ButtonLink>
-  );
+  let isRetryable = true;
+  let errorMessage: string = texts.errors.vault.loadingVault;
 
-  if (error instanceof VaultAddressError) {
-    return (
-      <Modal title={texts.errors.vaultAddress} center open>
-        {goToAll}
-      </Modal>
-    );
+  if (error instanceof DisplayableError) {
+    isRetryable = error.isRetryable;
+    errorMessage = error.message;
   }
 
   return (
-    <Modal title={texts.errors.loadingVault} center open>
+    <Modal title={errorMessage} center open>
       <ErrorModalContent>
-        <Button
-          variant="outlined"
-          onClick={() => refetch({ cancelRefetch: true, throwOnError: false })}
-        >
-          Try Again
-        </Button>
-        {goToAll}
+        {isRetryable && (
+          <Button
+            variant="outlined"
+            onClick={() =>
+              refetch({ cancelRefetch: true, throwOnError: false })
+            }
+          >
+            Try Again
+          </Button>
+        )}
+        <ButtonLink href={appPaths.vaults.all}>
+          {texts.links.goToAll}
+        </ButtonLink>
       </ErrorModalContent>
     </Modal>
   );
