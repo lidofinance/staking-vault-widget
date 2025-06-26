@@ -112,16 +112,15 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
 
       const overview = calculateOverviewV2({
         totalValue: vaultData.totalValue,
-        reserveRatioBP: vaultData.reserveRatioBP,
+        reserveRatioBP,
         liabilitySharesInStethWei: vaultData.liabilityStETH,
-        liabilitySharesInWei: vaultData.liabilityShares,
         forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
-        withdrawableEther: vaultData.withdrawableEther,
-        balance: vaultData.balance,
-        locked: vaultData.locked,
-        nodeOperatorUnclaimedFee: vaultData.nodeOperatorUnclaimedFee,
+        withdrawableEther,
+        balance,
+        locked,
+        nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
         totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
-        totalMintingCapacitySharesInWei: vaultData.totalMintingCapacity,
+        unsettledLidoFees: vaultData.obligations.unsettledLidoFees,
       });
 
       const totalValue = toEthValue(vaultData.totalValue);
@@ -151,7 +150,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
       );
       const collateral = toEthValue(overview.collateral);
-      const pendingUnlock = overview.PendingUnlock;
+      const pendingUnlock = overview.recentlyRepaid;
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
       );
