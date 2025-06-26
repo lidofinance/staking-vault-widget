@@ -11,7 +11,7 @@ import {
   getStakingVaultContract,
   getVaultHubContract,
 } from '../contracts';
-import { VaultNotDashboard, vaultQueryKeys } from '../consts';
+import { DisplayableError, VaultNotDashboard, vaultQueryKeys } from '../consts';
 import { isDashboard } from '../utils/is-dashboard';
 
 import type { VaultBaseInfo } from '../types';
@@ -24,6 +24,10 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
     enabled: !!vaultAddress,
     staleTime: 5 * 60_000, // cache available for 5 minutes,
     refetchInterval: 60_000, // refetch every minute,
+    retry(failureCount, error) {
+      // retry only if the error is not our custom error
+      return failureCount < 3 && !(error instanceof DisplayableError);
+    },
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
 
