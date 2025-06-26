@@ -22,6 +22,8 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
+    staleTime: 5 * 60_000, // cache available for 5 minutes,
+    refetchInterval: 60_000, // refetch every minute,
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
 
