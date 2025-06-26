@@ -56,7 +56,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
     const queryKeys = vaultQueryKeys(
       sanitizedVaultAddress,
       publicClient.chain.id,
-      query.data?.reportCID,
+      query.data?.hubReport.cid,
     );
     return {
       ...query,
