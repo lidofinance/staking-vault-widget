@@ -6,9 +6,9 @@ import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { bigIntMax } from 'utils/bigint-math';
-import { readWithReport } from 'modules/vaults/report';
 
 import { getVaultHubContract } from '../contracts';
+import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
 import type { VaultBaseInfo, VaultInfo } from '../types';
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
