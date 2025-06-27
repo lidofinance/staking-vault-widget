@@ -23,6 +23,7 @@ export const usePermissionsFormData = () => {
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
 
+      // TODO: can be changed to `VaultViewer.geRoleMembers`
       const result = await publicClient.multicall({
         allowFailure: false,
         contracts: EDITABLE_ROLES_LIST.map((role) =>

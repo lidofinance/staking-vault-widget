@@ -16,11 +16,8 @@ export const PermissionsAction: FC = () => {
     !isValid || !isDirty || isClearDisabled || disabled || isLoading;
 
   const handleResetFields = () => {
-    // if (rolesList) {
-    //   // bug in RHF, if keepIsValid is not set true, isDirty is not updated after reset and append
-    //   reset(rolesList, { keepIsValid: true });
-    // }
-    reset();
+    // bug in RHF, if keepIsValid is not set true, isDirty is not updated after reset and append
+    reset(undefined, { keepIsValid: true });
   };
 
   return (
