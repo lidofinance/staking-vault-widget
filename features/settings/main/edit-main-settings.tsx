@@ -17,21 +17,19 @@ import {
 
 export const EditMainSettings = () => {
   return (
-    <>
-      <MainSettingsDataProvider>
-        <MainSettingsProvider>
-          <SectionContainer>
-            <Text size="lg" strong>
-              {vaultTexts.actions.settings.title}
-            </Text>
-            <NodeOperator />
-            <Admins />
-            <NodeOperatorFeeRecipient />
-            <Voting />
-            <MainSettingsAction />
-          </SectionContainer>
-        </MainSettingsProvider>
-      </MainSettingsDataProvider>
-    </>
+    <MainSettingsDataProvider>
+      <MainSettingsProvider>
+        <SectionContainer>
+          <Text size="lg" strong>
+            {vaultTexts.actions.settings.title}
+          </Text>
+          <NodeOperator />
+          <Admins />
+          <NodeOperatorFeeRecipient />
+          <Voting />
+          <MainSettingsAction />
+        </SectionContainer>
+      </MainSettingsProvider>
+    </MainSettingsDataProvider>
   );
 };

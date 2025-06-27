@@ -10,7 +10,6 @@ import {
 import {
   useVault,
   VAULT_TOTAL_BASIS_POINTS,
-  VAULT_TOTAL_BASIS_POINTS_BN,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
   GoToVault,
@@ -18,32 +17,31 @@ import {
   useVaultConfirmingRoles,
 } from 'modules/vaults';
 
-import { useVaultSettings } from './use-vault-settings';
+import { useMainSettingsData } from '../contexts';
 
-import type { EditMainSettingsSchema } from '../types';
+import type { MainSettingsFormValidatedValues } from '../types';
 
-const onlyState =
-  (state: 'grant' | 'remove') =>
-  (value: EditMainSettingsSchema['defaultAdmins'][number]) =>
-    value.state === state;
+type RoleValueType = MainSettingsFormValidatedValues['defaultAdmins'][number];
 
-const toMethodArg =
-  (role: Hash) => (value: EditMainSettingsSchema['defaultAdmins'][number]) => ({
-    role,
-    account: value.value,
-  });
+const onlyState = (state: 'grant' | 'remove') => (value: RoleValueType) =>
+  value.state === state;
+
+const toMethodArg = (role: Hash) => (value: RoleValueType) => ({
+  role,
+  account: value.value,
+});
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
   const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
-  const { data: vaultSettings } = useVaultSettings();
+  const { data: vaultSettings } = useMainSettingsData();
 
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     editMainSettings: useCallback(
-      async (payload: EditMainSettingsSchema) => {
+      async (formValues: MainSettingsFormValidatedValues) => {
         invariant(
           vaultSettings,
           '[useEditMainSettings] vaultSettings is undefined',
@@ -56,10 +54,10 @@ export const useEditMainSettings = () => {
         const transactions: TransactionEntry[] = [];
 
         const grantRoles = [
-          ...payload.defaultAdmins
+          ...formValues.defaultAdmins
             .filter(onlyState('grant'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
+          ...formValues.nodeOperatorManagers
             .filter(onlyState('grant'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
         ];
@@ -74,10 +72,10 @@ export const useEditMainSettings = () => {
         }
 
         const revokeRoles = [
-          ...payload.defaultAdmins
+          ...formValues.defaultAdmins
             .filter(onlyState('remove'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
+          ...formValues.nodeOperatorManagers
             .filter(onlyState('remove'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
         ];
@@ -96,30 +94,28 @@ export const useEditMainSettings = () => {
         }
 
         if (
-          payload.nodeOperatorFeeRecipient !==
+          formValues.nodeOperatorFeeRecipient !==
           vaultSettings.nodeOperatorFeeRecipient
         ) {
           transactions.push({
             ...activeVault.dashboard.encode.setNodeOperatorFeeRecipient([
-              payload.nodeOperatorFeeRecipient,
+              formValues.nodeOperatorFeeRecipient,
             ]),
             loadingActionText:
               vaultTexts.actions.settings.nodeOperatorFeeRecipient,
           });
         }
 
-        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = payload;
+        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
           nodeOperatorFeeRate !== 'custom'
             ? nodeOperatorFeeRate
             : nodeOperatorFeeRateCustom,
         );
-        const currentFee = Number(
-          (vaultSettings.nodeOperatorFeeRate * 100n) /
-            VAULT_TOTAL_BASIS_POINTS_BN,
-        );
-        const isFeeValueChanged = feeValue !== currentFee;
+
+        const isFeeValueChanged =
+          feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
 
         if (isFeeValueChanged) {
           const newFee = Math.floor(
@@ -137,13 +133,13 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { confirmExpiry, confirmExpiryCustom } = payload;
+        const { confirmExpiry, confirmExpiryCustom } = formValues;
         const expiryValue =
           confirmExpiry === 'custom' && confirmExpiryCustom
             ? BigInt(confirmExpiryCustom) * 3600n
             : BigInt(confirmExpiry);
-        const currentExpiry = vaultSettings.confirmExpiry;
-        const isExpiryValueChanged = expiryValue !== currentExpiry;
+        const isExpiryValueChanged =
+          expiryValue !== BigInt(vaultSettings.confirmExpiryCurrent);
 
         if (isExpiryValueChanged) {
           transactions.push({

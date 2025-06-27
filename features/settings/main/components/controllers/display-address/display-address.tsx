@@ -5,14 +5,14 @@ import { RoleAddress } from './role-address';
 
 import {
   RoleFieldSchema,
-  EditMainSettingsSchema,
+  MainSettingsFormValidatedValues,
 } from 'features/settings/main/types';
 
 interface DisplayAddressProps {
   isEditable: boolean;
   fields: (Record<'id', string> & RoleFieldSchema)[];
   remove: UseFieldArrayRemove;
-  update: UseFieldArrayUpdate<EditMainSettingsSchema>;
+  update: UseFieldArrayUpdate<MainSettingsFormValidatedValues>;
 }
 
 export const DisplayAddress: FC<DisplayAddressProps> = ({

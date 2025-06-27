@@ -14,7 +14,7 @@ import { useMainSettingsData } from '../../contexts';
 const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
 
 export const NodeOperatorFeeRecipient: FC = () => {
-  const { values } = useMainSettingsData();
+  const { data: mainSettingsData } = useMainSettingsData();
   const { isLoading: isFormLoading } = useFormState();
   const { hasPermission, isLoading: isPermissionLoading } = useVaultPermission(
     'nodeOperatorManager',
@@ -31,7 +31,7 @@ export const NodeOperatorFeeRecipient: FC = () => {
       {!hasPermission && !isLoading && (
         <AddressBadge
           weight={400}
-          address={values?.nodeOperatorFeeRecipient}
+          address={mainSettingsData?.nodeOperatorFeeRecipient}
           symbols={21}
         />
       )}

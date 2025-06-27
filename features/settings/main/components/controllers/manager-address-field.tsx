@@ -11,7 +11,7 @@ import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
 
 import {
-  EditMainSettingsSchema,
+  MainSettingsFormValidatedValues,
   MainSettingsOverview,
   ManagersKeys,
 } from 'features/settings/main/types';
@@ -35,7 +35,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
   );
 
   const { fields, append, remove, update } =
-    useFieldArray<EditMainSettingsSchema>({ name });
+    useFieldArray<MainSettingsFormValidatedValues>({ name });
 
   const isEditable =
     !disabled && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
