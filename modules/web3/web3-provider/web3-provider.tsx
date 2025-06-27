@@ -37,6 +37,7 @@ import type {
   MainnetPublicClient,
   RegisteredConfig,
 } from '../types';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const WALLETS_PINNED: WalletIdsEthereum[] = [
   'binanceWallet',
@@ -81,11 +82,8 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60_000, // 1 minute
-            gcTime: 300_000, // 5 minutes
+            ...STRATEGY_LAZY,
             retry: 3,
-            refetchOnWindowFocus: true,
-            refetchOnReconnect: true,
           },
         },
       }),

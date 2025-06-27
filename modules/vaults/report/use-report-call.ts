@@ -5,7 +5,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import { useVault } from '../vault-context';
 import { getLazyOracleContract } from '../contracts';
-import { ReportMissing, vaultTexts } from '../consts';
+import { ReportMissingError, vaultTexts } from '../consts';
 
 export const useReportCalls = () => {
   const { publicClient } = useLidoSDK();
@@ -19,7 +19,7 @@ export const useReportCalls = () => {
 
     if (!report) {
       if (!isReportFresh) {
-        throw new ReportMissing();
+        throw new ReportMissingError();
       }
       return [];
     }

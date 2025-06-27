@@ -4,8 +4,6 @@ import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculat
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { bigIntMax } from 'utils/bigint-math';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
@@ -43,7 +41,8 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     nodeOperatorFeeRate,
-    totalMintingCapacity,
+    totalMintingCapacityShares,
+    mintableShares,
   ] = await readWithReport({
     publicClient,
     report: vault.report,
@@ -61,6 +60,7 @@ const getVaultData = async ({
       dashboard.prepare.withdrawableValue(),
       dashboard.prepare.nodeOperatorFeeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
+      dashboard.prepare.remainingMintingCapacityShares([0n]),
     ] as const,
   });
 
@@ -69,8 +69,6 @@ const getVaultData = async ({
     inOutDelta: { value: inOutDelta },
     locked,
   } = record;
-
-  const mintableShares = bigIntMax(totalMintingCapacity - liabilityShares, 0n);
 
   const [
     liabilityStETH,
@@ -83,7 +81,7 @@ const getVaultData = async ({
     shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
     shares.convertToShares(locked),
-    shares.convertToSteth(totalMintingCapacity),
+    shares.convertToSteth(totalMintingCapacityShares),
   ]);
 
   const healthScore = calculateHealth({
@@ -102,7 +100,7 @@ const getVaultData = async ({
     stETHLimit,
     apr: null,
     healthScore: healthScore.healthRatio,
-    totalMintingCapacity,
+    totalMintingCapacityShares,
     totalMintingCapacityStETH,
     inOutDelta,
     locked,
@@ -126,19 +124,13 @@ export const useVaultOverviewData = () => {
   const { shares, publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  return {
-    ...useQuery({
-      queryKey: [...queryKeys.state, 'vault-overview-data'],
-      enabled: !!activeVault,
-      queryFn: async (): Promise<VaultInfo> => {
-        invariant(
-          activeVault,
-          '[useSingleVaultData] activeVault is not defined',
-        );
+  return useQuery({
+    queryKey: [...queryKeys.state, 'vault-overview-data'],
+    enabled: !!activeVault,
+    queryFn: async (): Promise<VaultInfo> => {
+      invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 
-        return getVaultData({ publicClient, shares, vault: activeVault });
-      },
-      ...STRATEGY_LAZY,
-    }),
-  };
+      return getVaultData({ publicClient, shares, vault: activeVault });
+    },
+  });
 };

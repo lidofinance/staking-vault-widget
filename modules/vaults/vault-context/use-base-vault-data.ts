@@ -11,7 +11,12 @@ import {
   getStakingVaultContract,
   getVaultHubContract,
 } from '../contracts';
-import { DisplayableError, VaultNotDashboard, vaultQueryKeys } from '../consts';
+import {
+  DisplayableError,
+  VaultOwnerNotDashboardError,
+  vaultQueryKeys,
+  VAULT_REPORT_REFETCH_INTERVAL_MS,
+} from '../consts';
 import { isDashboard } from '../utils/is-dashboard';
 
 import type { VaultBaseInfo } from '../types';
@@ -22,17 +27,13 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
-    staleTime: 5 * 60_000, // cache available for 5 minutes,
-    refetchInterval: 60_000, // refetch every minute,
+    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS,
     retry(failureCount, error) {
       // retry only if the error is not our custom error
       return failureCount < 3 && !(error instanceof DisplayableError);
     },
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
-
-      // TODO:
-      // - check if dashboard is dashboard
 
       const hub = getVaultHubContract(publicClient);
       const lazyOracle = getLazyOracleContract(publicClient);
@@ -81,7 +82,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       const isReportMissing = !report && !isReportFresh;
 
       if (!(await isDashboard(publicClient, connection.owner))) {
-        throw new VaultNotDashboard();
+        throw new VaultOwnerNotDashboardError();
       }
 
       const dashboard = getDashboardContract(connection.owner, publicClient);

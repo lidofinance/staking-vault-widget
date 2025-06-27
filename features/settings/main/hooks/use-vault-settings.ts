@@ -6,7 +6,6 @@ import type { Address, Hex } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useVault, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
@@ -129,6 +128,5 @@ export const useVaultSettings = () => {
           .filter((vote) => vote.confirmations > 0n),
       };
     },
-    ...STRATEGY_LAZY,
   });
 };

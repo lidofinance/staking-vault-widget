@@ -27,14 +27,14 @@ export class VaultAddressError extends DisplayableError {
   }
 }
 
-export class VaultNotDashboard extends DisplayableError {
+export class VaultOwnerNotDashboardError extends DisplayableError {
   constructor() {
     super(errorTexts.notDashboard, false);
     this.name = 'VaultNotDashboard';
   }
 }
 
-export class ReportMissing extends DisplayableError {
+export class ReportMissingError extends DisplayableError {
   constructor() {
     super(errorTexts.reportMissing, false);
     this.name = 'ReportMissing';

@@ -45,7 +45,7 @@ export type VaultOverviewContextType = {
     healthFactorNumber: number;
     totalLocked: string;
     liabilityStETH: string;
-    totalMintingCapacity: string;
+    totalMintingCapacityShares: string;
     totalMintingCapacityStETH: string;
     withdrawableEth: string;
     balanceEth: string;
@@ -139,8 +139,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const utilizationRatio = formatPercent.format(
         overview.utilizationRatio / 100,
       );
-      const totalMintingCapacity = toStethValue(
-        overview.totalMintingCapacityStethWei,
+      const totalMintingCapacityShares = toStethValue(
+        vaultData.totalMintingCapacityShares,
       );
       const totalMintingCapacityStETH = toStethValue(
         vaultData.totalMintingCapacityStETH,
@@ -166,7 +166,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         healthFactorNumber,
         totalLocked,
         liabilityStETH,
-        totalMintingCapacity,
+        totalMintingCapacityShares,
         totalMintingCapacityStETH,
         withdrawableEth,
         balanceEth,
