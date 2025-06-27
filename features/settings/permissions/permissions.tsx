@@ -1,20 +1,6 @@
 import { useFormState } from 'react-hook-form';
 
 import {
-  RoleDescription,
-  PermissionsAction,
-  AddressBlock,
-} from 'features/settings/permissions/components';
-import {
-  PermissionBlock,
-  PermissionContainer,
-  PermissionGroupTitle,
-  PermissionRoleWrapper,
-} from './styles';
-import { SectionContainer } from 'features/settings/permissions/styles';
-
-import { PermissionsFormProvider } from './contexts';
-import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
   VAULT_ROOT_ROLES,
@@ -24,13 +10,23 @@ import {
   VAULT_OWNER_ROLES,
 } from 'modules/vaults';
 
+import { PermissionsFormProvider } from './permissions-form-provider';
+import { RoleDescription, PermissionsAction, AddressBlock } from './components';
+import {
+  PermissionBlock,
+  PermissionContainer,
+  PermissionGroupTitle,
+  PermissionRoleWrapper,
+} from './styles';
+import { SectionContainer } from './styles';
+
 type PermissionSectionEntry = {
   permissionsTitle: string;
   roles: (VAULTS_NO_ROLES | VAULT_OWNER_ROLES)[];
   canEditRole: VAULT_ROOT_ROLES;
 };
 
-const renderPermissionsList: PermissionSectionEntry[] = [
+const PERMISSIONS_SECTIONS: PermissionSectionEntry[] = [
   {
     permissionsTitle: 'Vault Manager Permissions',
     canEditRole: 'defaultAdmin',
@@ -41,19 +37,23 @@ const renderPermissionsList: PermissionSectionEntry[] = [
     canEditRole: 'nodeOperatorManager',
     roles: NO_MANAGER_PERMISSION_LIST,
   },
-];
+] as const;
 
-const PermissionsSection = (props: PermissionSectionEntry) => {
+const PermissionsSection = ({
+  canEditRole,
+  permissionsTitle,
+  roles,
+}: PermissionSectionEntry) => {
   const { disabled } = useFormState();
-  const { hasPermission } = useVaultPermission(props.canEditRole);
+  const { hasPermission } = useVaultPermission(canEditRole);
 
   const isReadonly = disabled || !hasPermission;
 
   return (
     <PermissionContainer>
-      <PermissionGroupTitle>{props.permissionsTitle}</PermissionGroupTitle>
+      <PermissionGroupTitle>{permissionsTitle}</PermissionGroupTitle>
       <PermissionBlock>
-        {props.roles.map((role) => {
+        {roles.map((role) => {
           const { title, hint } = vaultTexts.roles[role];
           return (
             <PermissionRoleWrapper key={role}>
@@ -75,7 +75,7 @@ export const PermissionsSettings = () => {
   return (
     <PermissionsFormProvider>
       <SectionContainer>
-        {renderPermissionsList.map((section) => (
+        {PERMISSIONS_SECTIONS.map((section) => (
           <PermissionsSection key={section.permissionsTitle} {...section} />
         ))}
         <PermissionsAction />

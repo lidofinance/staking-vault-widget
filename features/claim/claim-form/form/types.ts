@@ -1,3 +1,3 @@
-import type { ValidateRecipientArgs } from 'utils/validate-form-value';
+import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
 export type ClaimFormValidationContext = ValidateRecipientArgs;

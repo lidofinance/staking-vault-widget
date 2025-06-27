@@ -11,7 +11,7 @@ import { AddressLinkEtherscan } from 'shared/components';
 import { AddressInputWrapper, EtherScanLink } from './styles';
 
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
-import { addressSchema } from 'utils/validate-form-value';
+import { addressSchema } from 'utils/zod-validation';
 
 type AddressInputProps = Omit<UseFormRegisterReturn, 'ref'> &
   React.ComponentProps<typeof Input>;

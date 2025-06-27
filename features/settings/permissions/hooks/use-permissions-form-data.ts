@@ -1,12 +1,31 @@
 import invariant from 'tiny-invariant';
-import type { Address } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 
 import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
+import { useLidoSDK } from 'modules/web3';
 
 import { EDITABLE_ROLES_LIST } from '../consts';
-import { collectRolesToFormValues } from '../utils';
-import { useLidoSDK } from 'modules/web3';
+
+import type {
+  EditPermissionsSchema,
+  FieldSchema,
+  PermissionAccounts,
+} from '../types';
+
+const collectRolesToFormValues = (rolesList: PermissionAccounts[]) => {
+  return rolesList.reduce((acc, role) => {
+    const { addressList, permissionName } = role;
+    acc[permissionName] = addressList.map(
+      (address) =>
+        ({
+          account: address,
+          action: 'display',
+        }) as FieldSchema,
+    );
+
+    return acc;
+  }, {} as EditPermissionsSchema);
+};
 
 export const usePermissionsFormData = () => {
   const { publicClient } = useLidoSDK();
@@ -36,7 +55,7 @@ export const usePermissionsFormData = () => {
       return result.map((item, index) => {
         return {
           permissionName: EDITABLE_ROLES_LIST[index],
-          addressList: [...item] as Address[],
+          addressList: [...item],
         };
       });
     },
