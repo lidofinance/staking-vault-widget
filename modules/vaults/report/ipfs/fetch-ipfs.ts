@@ -1,8 +1,8 @@
 import { Address, Hex } from 'viem';
 
 import { getApiURL } from 'config';
-import { CID_TO_GATEWAY } from './ipfs-gateways';
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree';
+import { CID_TO_GATEWAY } from './ipfs-gateways';
 
 type IPFSReport = {
   blockNumber: number;

@@ -7,6 +7,7 @@ export const ReportStateContainer = styled.div`
   flex-direction: row;
   justify-content: flex-end;
   height: 21px;
+  gap: 8px;
 `;
 
 export const InlineLoaderStyled = styled(InlineLoader)`

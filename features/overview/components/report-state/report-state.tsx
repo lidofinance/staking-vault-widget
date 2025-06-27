@@ -1,6 +1,6 @@
-import { Text } from '@lidofinance/lido-ui';
+import { Link, Text } from '@lidofinance/lido-ui';
 
-import { useVault } from 'modules/vaults';
+import { CID_TO_GATEWAY, useVault } from 'modules/vaults';
 import { DATA_UNAVAILABLE } from 'consts/text';
 
 import { InlineLoaderStyled, ReportStateContainer } from './styles';
@@ -24,12 +24,22 @@ export const ReportState = () => {
 
   return (
     <ReportStateContainer>
-      <Text color="secondary" size="xs">
-        Last updated:{' '}
-        {data && formatCustomDate(Number(data.hubReport.timestamp))}
-        {error && DATA_UNAVAILABLE}
-      </Text>
-      {isPending && <InlineLoaderStyled />}
+      {isPending ? (
+        <InlineLoaderStyled />
+      ) : (
+        <>
+          <Text color="secondary" size="xs">
+            Last updated:{' '}
+            {data && formatCustomDate(Number(data.hubReport.timestamp))}
+            {error && DATA_UNAVAILABLE}
+          </Text>
+          {data && (
+            <Link target="_blank" href={CID_TO_GATEWAY[0](data.hubReport.cid)}>
+              View oracle report
+            </Link>
+          )}
+        </>
+      )}
     </ReportStateContainer>
   );
 };

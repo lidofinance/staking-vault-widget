@@ -20,7 +20,7 @@ import {
 import { getContractAddress } from 'config';
 import { VaultHubAbi } from 'abi/vault-hub';
 
-import { fetchReportMerkle } from './ipfs';
+import { fetchReportMerkle } from './ipfs/fetch-ipfs';
 import { LazyOracleAbi } from 'abi/lazy-oracle';
 
 const UI_UPDATE_INTERVAL = 5000; // 5 second
