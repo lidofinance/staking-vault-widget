@@ -84,6 +84,7 @@ export const readWithReport = async <
 
     const [, ...results] = await publicClient.multicall({
       contracts: [reportCall, ...contracts] as any,
+      batchSize: 0, // this forces to use single call batch for all calls
       allowFailure: false,
     });
 
