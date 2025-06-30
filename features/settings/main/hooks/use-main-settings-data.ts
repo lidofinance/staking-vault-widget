@@ -6,8 +6,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useDappStatus } from 'modules/web3';
 import { useVault, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-
 import { formatSettingsValues } from '../utils';
 import type { MainSettingsFormData, VaultMainSettingsData } from '../types';
 
@@ -122,6 +120,5 @@ export const useVaultSettingsData = () => {
         confirmExpiryConfirmations,
       };
     },
-    ...STRATEGY_LAZY,
   });
 };

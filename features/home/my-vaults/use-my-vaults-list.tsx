@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import {
   VAULTS_PER_PAGE,
   getVaultViewerContract,
@@ -62,7 +61,6 @@ export const useMyVaultsList = () => {
 
       return { vaults, totalVaultsCount, pagesCount };
     },
-    ...STRATEGY_LAZY,
   });
 
   return {

@@ -2,7 +2,6 @@ import { getEnsResolver, getEnsText } from 'viem/ens';
 import { useQuery } from '@tanstack/react-query';
 
 import { useConfig } from 'config';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { useMainnetOnlyWagmi } from 'modules/web3';
 
 type EnsHashCheckReturn = {
@@ -24,7 +23,6 @@ export const useRemoteVersion = () => {
   // otherwise there is no fetch
   const queryResult = useQuery<EnsHashCheckReturn>({
     queryKey: ['use-remote-version', externalConfigQueryReact.data],
-    ...STRATEGY_LAZY,
     enabled: !!(data || error),
     queryFn: async (): Promise<EnsHashCheckReturn> => {
       if (data?.ens) {

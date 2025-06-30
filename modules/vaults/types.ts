@@ -33,7 +33,7 @@ export type VaultInfo = VaultConnection &
     stETHLimit: bigint;
     apr: null;
     healthScore: number;
-    totalMintingCapacity: bigint;
+    totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
     locked: bigint;

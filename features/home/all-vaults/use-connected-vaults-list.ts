@@ -8,7 +8,6 @@ import {
   getVaultDataTable,
   vaultListQueryKeys,
 } from 'modules/vaults';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 export const useConnectedVaultsList = () => {
   const { shares, publicClient } = useLidoSDK();
@@ -46,7 +45,6 @@ export const useConnectedVaultsList = () => {
 
       return { vaults, totalVaultsCount, pagesCount };
     },
-    ...STRATEGY_LAZY,
   });
 
   return {

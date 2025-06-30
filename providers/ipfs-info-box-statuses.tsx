@@ -13,7 +13,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { config } from 'config';
 import { useGetRpcUrlByChainId } from 'config/rpc';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 import { useDappStatus, useContractAddress } from 'modules/web3';
 import { useCSPViolation } from 'features/ipfs/csp-violation-box/use-csp-violation';
@@ -61,7 +60,6 @@ export const IPFSInfoBoxStatusesProvider: FC<PropsWithChildren> = ({
   const rpcUrl = useGetRpcUrlByChainId()(chainId);
   const { data: isRPCAvailableRaw, isLoading } = useQuery({
     queryKey: ['rpc-url-check', rpcUrl, chainId, stethAddress],
-    ...STRATEGY_LAZY,
     enabled: !!config.ipfsMode,
     queryFn: () => checkRpcUrl(rpcUrl, chainId, stethAddress),
   });

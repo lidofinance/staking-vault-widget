@@ -39,7 +39,6 @@
     "cors": "^2.8.5",
     "fs-extra": "^10.1.0",
     "js-cookie": "^3.0.1",
-    "json-bigint": "^1.0.0",
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "ms": "^2.1.3",
