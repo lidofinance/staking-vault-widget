@@ -11,7 +11,7 @@ export const Claimable = () => {
       title={vaultTexts.actions.claim.available}
       amount={claimableFeeQuery.data}
       token="ETH"
-      loading={claimableFeeQuery.isLoading}
+      loading={claimableFeeQuery.isPending}
       noDataLabel="-"
     />
   );

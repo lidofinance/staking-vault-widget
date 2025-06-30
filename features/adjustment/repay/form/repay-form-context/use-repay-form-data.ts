@@ -17,9 +17,9 @@ export const useRepayFormData = () => {
   const wstethBalanceQuery = useWstethBalance();
 
   const isMaxRepayableLoading =
-    stethBalanceQuery.isLoading ||
-    wstethBalanceQuery.isLoading ||
-    liabilityQuery.isLoading;
+    stethBalanceQuery.isPending ||
+    wstethBalanceQuery.isPending ||
+    liabilityQuery.isPending;
 
   const maxRepayableStETH =
     stethBalanceQuery.data !== undefined && liabilityQuery.data

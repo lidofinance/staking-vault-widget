@@ -19,7 +19,7 @@ export const Mintable = () => {
   return (
     <InfoRowAmount
       title={vaultTexts.actions.mint.available}
-      loading={mintableQuery.isLoading}
+      loading={mintableQuery.isPending}
       amount={mintableAmount}
       token={token}
     />

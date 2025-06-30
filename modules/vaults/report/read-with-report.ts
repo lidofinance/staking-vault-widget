@@ -8,7 +8,6 @@ import { type RegisteredPublicClient } from 'modules/web3';
 
 import { getLazyOracleContract } from '../contracts';
 import type { VaultReportType } from '../types';
-import { LAZY_ORACLE_ROOT_HASH_SLOT } from '../consts';
 
 type ReadWithReportArgs<
   TContracts extends
@@ -52,10 +51,25 @@ export const readWithReport = async <
     // as  proof will gradually become larger
     // we need to find a way to bypass it in the future:
     //
-    // using now ->  1. calculate short-proof and fake root and state override lazyOracle merkle tree
-    //               2. eth_call/eth_simulateV1  stateOverride lazyOracle implementation with proof-less updateVaultData
-    //               3. eth_call from impersonate DAO agent or other owner of vault
-    //               4. ...
+    //      1. calculate short-proof and fake root and state override lazyOracle merkle tree
+    //      2. eth_call/eth_simulateV1  stateOverride lazyOracle implementation with proof-less updateVaultData
+    //      3. eth_call from impersonate DAO agent or other owner of vault
+    //
+    //  NB!: stateOverride(or smth with this approach) is buggy with eth_call and eth_simulateV1
+    //       causes to report not to apply and all views to use pre-report state
+    //
+    // EXAMPLE OF STATE OVERRIDE THAT ALLOWS FOR ZERO LENGTH PROOF
+    //     stateOverride: [
+    //   {
+    //     address: lazyOracle.address,
+    //     state: [
+    //       {
+    //         slot: LAZY_ORACLE_ROOT_HASH_SLOT,
+    //         value: report.vaultLeftHash,
+    //       },
+    //     ],
+    //   },
+    // ],
 
     const lazyOracle = getLazyOracleContract(publicClient);
 
@@ -65,23 +79,12 @@ export const readWithReport = async <
       report.fee,
       report.liabilityShares,
       report.slashingReserve,
-      [],
+      report.proof,
     ]);
 
     const [, ...results] = await publicClient.multicall({
       contracts: [reportCall, ...contracts] as any,
       allowFailure: false,
-      stateOverride: [
-        {
-          address: lazyOracle.address,
-          state: [
-            {
-              slot: LAZY_ORACLE_ROOT_HASH_SLOT,
-              value: report.vaultLeftHash,
-            },
-          ],
-        },
-      ],
     });
 
     return results as MulticallReturnType<TContracts, false>;

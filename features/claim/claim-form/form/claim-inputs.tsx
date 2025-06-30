@@ -10,7 +10,7 @@ export const ClaimInputs = () => {
 
   return (
     <Input
-      leftDecorator={recipientQuery.isLoading ? <Loader /> : null}
+      leftDecorator={recipientQuery.isPending ? <Loader /> : null}
       label={label}
       value={recipientQuery.data}
       readOnly
