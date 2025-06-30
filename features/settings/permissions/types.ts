@@ -1,35 +1,12 @@
-import { Address, Hash, Hex } from 'viem';
-import {
-  editPermissionsSchema,
-  SubmitPermissionsStepEnum,
-  ToggleValue,
-  EDITABLE_ROLES_LIST,
-} from './consts';
-import { z } from 'zod';
-import type { UseQueryResult } from '@tanstack/react-query';
+import type { Address, Hex } from 'viem';
+import type { editPermissionsSchema, EDITABLE_ROLES_LIST } from './consts';
+import type { z } from 'zod';
 
 export type PermissionKeys = (typeof EDITABLE_ROLES_LIST)[number];
-
-export type SubmitPermissionsStep =
-  | keyof typeof SubmitPermissionsStepEnum
-  | undefined;
-
-export type PermissionsSettingsContextValue = {
-  permissionsView: ToggleValue;
-  handleSetPermissionsView: (value: ToggleValue) => void;
-  rolesList: Record<PermissionKeys, FieldSchema[]> | null;
-  refetch: UseQueryResult['refetch'];
-};
 
 export type PermissionAccounts = {
   permissionName: PermissionKeys;
   addressList: Address[];
-};
-
-export type PermissionsSubmittingInfo = {
-  step: SubmitPermissionsStep;
-  address?: Address;
-  tx?: Hash;
 };
 
 export type EditPermissionsSchema = z.infer<typeof editPermissionsSchema>;

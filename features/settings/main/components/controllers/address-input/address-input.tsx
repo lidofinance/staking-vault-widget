@@ -9,11 +9,11 @@ import { AddressInputWrapper, EtherScanLink } from './styles';
 
 import {
   InputDataType,
-  EditMainSettingsSchema,
+  MainSettingsFormValidatedValues,
 } from 'features/settings/main/types';
 
 export interface AddressInputProps {
-  name: keyof EditMainSettingsSchema;
+  name: keyof MainSettingsFormValidatedValues;
   label?: string;
   type?: string;
   title: string;

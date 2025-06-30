@@ -7,130 +7,30 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
-import type { MainSettingsDataContextValue, VotingOptionType } from '../types';
-import { useVaultSettings } from '../hooks';
+import type { MainSettingsDataContextValue } from '../types';
+import { useVaultSettingsData } from '../hooks';
 import { useDappStatus } from 'modules/web3';
-
-import { formatSecondsToHours, formatSettingsValues } from '../utils';
 
 const MainSettingsDataContext =
   createContext<MainSettingsDataContextValue | null>(null);
 MainSettingsDataContext.displayName = 'MainSettingsDataContext';
 
-export const useMainSettingsData = () => {
+export const useMainSettingsFormData = () => {
   const context = useContext(MainSettingsDataContext);
   invariant(context, '[useMainSettingsData] context is not defined');
   return context;
 };
 
-export const MainSettingsDataProvider: FC<PropsWithChildren> = ({
+export const MainSettingsFormDataProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const { address } = useDappStatus();
-  const query = useVaultSettings();
-  const { data: vaultSettingsData } = query;
-
-  const values = useMemo(() => {
-    if (!vaultSettingsData) {
-      return null;
-    }
-
-    const { confirmations, ...vaultSettings } = vaultSettingsData;
-
-    // Current values for voting
-    const {
-      confirmExpiryValue,
-      nodeOperatorFeeRateValue,
-      defaultAdmins,
-      nodeOperatorManagers,
-      nodeOperatorFeeRecipient,
-    } = formatSettingsValues(vaultSettings);
-
-    const confirmExpiry: VotingOptionType[] = [
-      {
-        value: confirmExpiryValue,
-        type: 'current',
-        tags: ['Current'],
-        format: formatSecondsToHours,
-        symbol: ' hours',
-      },
-    ];
-    const nodeOperatorFeeRate: VotingOptionType[] = [
-      {
-        value: nodeOperatorFeeRateValue,
-        type: 'current',
-        tags: ['Current'],
-        symbol: '%',
-      },
-    ];
-
-    confirmations.forEach((confirmation) => {
-      const type =
-        confirmation.member !== address ? 'Proposed to me' : 'My proposal';
-      const expiry = formatSecondsToHours(
-        (Number(confirmation.expiryTimestamp) * 1000 - new Date().getTime()) /
-          1000,
-        true,
-      );
-
-      if (confirmation.decodedData.functionName === 'setConfirmExpiry') {
-        confirmExpiry.push({
-          value: String(Number(confirmation.decodedData.args[0])),
-          tags: [expiry, type],
-          type,
-          format: formatSecondsToHours,
-          symbol: ' hours',
-        });
-      } else if (
-        confirmation.decodedData.functionName === 'setNodeOperatorFeeRate'
-      ) {
-        nodeOperatorFeeRate.push({
-          value: String(
-            Number(confirmation.decodedData.args[0] * 100n) / 10000,
-          ),
-          tags: [expiry, type],
-          type,
-          symbol: '%',
-        });
-      }
-    });
-
-    // Custom values for voting
-    confirmExpiry.push({
-      value: '',
-      type: 'custom',
-      tags: [],
-      symbol: ' hours',
-      placeholder: 'Propose new, hours',
-    });
-    nodeOperatorFeeRate.push({
-      value: '',
-      type: 'custom',
-      tags: [],
-      symbol: '%',
-      placeholder: 'Propose new, %',
-    });
-
-    return {
-      defaultAdmins,
-      nodeOperatorManagers,
-      nodeOperatorFeeRecipient,
-      nodeOperatorFeeRate: nodeOperatorFeeRate.sort((a, b) => {
-        if (a.type === 'My proposal') return 1;
-        if (b.type === 'My proposal') return -1;
-        return 0;
-      }),
-      confirmExpiry: confirmExpiry.sort((a, b) => {
-        if (a.type === 'My proposal') return 1;
-        if (b.type === 'My proposal') return -1;
-        return 0;
-      }),
-    };
-  }, [vaultSettingsData, address]);
+  const query = useVaultSettingsData();
 
   return (
     <MainSettingsDataContext.Provider
-      value={useMemo(() => ({ ...query, values }), [values, query])}
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      value={useMemo(() => query, [query.data, address])}
     >
       {children}
     </MainSettingsDataContext.Provider>

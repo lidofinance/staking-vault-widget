@@ -1,18 +1,17 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useDappStatus } from 'modules/web3';
 import { useVault } from 'modules/vaults';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
-import { validateFormWithZod } from 'utils/validate-form-value';
 
-import { editPermissionsSchema } from '../consts';
-import { EditPermissionsSchema, FieldSchema, PermissionKeys } from '../types';
-import { useEditPermissions, usePermissionsFormData } from '../hooks';
-import { collectFormValuesToRpc } from '../utils';
-import { FormBackdrop } from '../components';
+import { editPermissionsSchema } from './consts';
+import { useEditPermissions, usePermissionsFormData } from './hooks';
+import { FormBackdrop } from './components';
+import type { EditPermissionsSchema } from './types';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
@@ -24,18 +23,17 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { editPermissions, retryEvent } = useEditPermissions();
 
   const formObject = useForm<EditPermissionsSchema>({
-    defaultValues: async () =>
-      (await asyncPermissions.awaiter) as Record<PermissionKeys, FieldSchema[]>,
-    resolver: validateFormWithZod(editPermissionsSchema),
+    defaultValues: async () => asyncPermissions.awaiter,
+    resolver: zodResolver(editPermissionsSchema),
     disabled: !isDappActive,
-    mode: 'onBlur',
+    mode: 'onTouched',
   });
 
   const reset = formObject.reset;
 
   const onSubmit = useCallback(
-    async (data: EditPermissionsSchema): Promise<boolean> => {
-      const { success } = await editPermissions(collectFormValuesToRpc(data));
+    async (values: EditPermissionsSchema): Promise<boolean> => {
+      const { success } = await editPermissions(values);
       const [{ data: newData }] = await Promise.all([
         refetch({
           cancelRefetch: true,

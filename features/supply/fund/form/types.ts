@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { fundFormSchema } from './fund-form-provider/validation';
 import type { useFundFormData } from './fund-form-provider/hooks';
-import type { ValidateRecipientArgs } from 'utils/validate-form-value';
+import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
 export type FundFormDataValidationContext = {
   ethBalance: bigint;

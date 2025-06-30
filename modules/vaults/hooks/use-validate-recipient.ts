@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useVault } from '../vault-context';
-import { ValidateRecipientArgs } from 'utils/validate-form-value';
+import { ValidateRecipientArgs } from 'utils/zod-validation';
 
 export const useValidateRecipientArgs = ():
   | ValidateRecipientArgs
