@@ -12,6 +12,24 @@ import type {
   MainSettingFormsValues,
 } from './types';
 
+const formatExpiry = (expiryTimestamp: bigint) =>
+  formatSecondsToHours(
+    (Number(expiryTimestamp) * 1000 - new Date().getTime()) / 1000,
+    true,
+  );
+
+const formatType = (
+  member: Address,
+  account: Address,
+): VotingOptionType['type'] =>
+  isAddressEqual(member, account) ? 'My proposal' : 'Proposed to me';
+
+const myProposalsLast = (a: VotingOptionType, b: VotingOptionType): number => {
+  if (a.type === 'My proposal') return 1;
+  if (b.type === 'My proposal') return -1;
+  return 0;
+};
+
 export const shouldIncrementTxCounterByAddresses = (
   formFields: MainSettingsFormValidatedValues,
 ) => {
@@ -33,15 +51,15 @@ export const formatSettingsValues = (
   vaultInfo: VaultMainSettingsData,
   account: Address,
 ): MainSettingsFormData => {
-  const confirmExpiryValue = String(vaultInfo.confirmExpiry);
-  const nodeOperatorFeeRateValue = String(
+  const confirmExpiryCurrent = String(vaultInfo.confirmExpiry);
+  const nodeOperatorFeeRateCurrent = String(
     (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
   );
   const nodeOperatorFeeRecipient = vaultInfo.nodeOperatorFeeRecipient;
 
   const confirmExpiry: VotingOptionType[] = [
     {
-      value: confirmExpiryValue,
+      value: confirmExpiryCurrent,
       type: 'current',
       tags: ['Current'],
       format: formatSecondsToHours,
@@ -50,30 +68,21 @@ export const formatSettingsValues = (
   ];
   const nodeOperatorFeeRate: VotingOptionType[] = [
     {
-      value: nodeOperatorFeeRateValue,
+      value: nodeOperatorFeeRateCurrent,
       type: 'current',
       tags: ['Current'],
       symbol: '%',
     },
   ];
 
-  const formatExpiry = (expiryTimestamp: bigint) =>
-    formatSecondsToHours(
-      (Number(expiryTimestamp) * 1000 - new Date().getTime()) / 1000,
-      true,
-    );
-
-  const formatType = (member: Address) =>
-    isAddressEqual(member, account) ? 'My proposal' : 'Proposed to me';
-
   confirmExpiry.push(
     ...vaultInfo.confirmExpiryConfirmations.map((confirmation) => ({
       value: String(Number(confirmation.decodedData.args[0])),
       tags: [
         formatExpiry(confirmation.expiryTimestamp),
-        formatType(confirmation.member),
+        formatType(confirmation.member, account),
       ],
-      type: formatType(confirmation.member) as VotingOptionType['type'],
+      type: formatType(confirmation.member, account),
       format: formatSecondsToHours,
       symbol: ' hours',
     })),
@@ -84,9 +93,9 @@ export const formatSettingsValues = (
       value: String(Number(confirmation.decodedData.args[0] * 100n) / 10000),
       tags: [
         formatExpiry(confirmation.expiryTimestamp),
-        formatType(confirmation.member),
+        formatType(confirmation.member, account),
       ],
-      type: formatType(confirmation.member) as VotingOptionType['type'],
+      type: formatType(confirmation.member, account),
       symbol: '%',
     })),
   );
@@ -107,24 +116,18 @@ export const formatSettingsValues = (
     placeholder: 'Propose new, %',
   });
 
+  // Sorting
+  confirmExpiry.sort(myProposalsLast);
+  nodeOperatorFeeRate.sort(myProposalsLast);
+
   return {
     defaultAdmins: vaultInfo.defaultAdmins,
     nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
     nodeOperatorFeeRecipient,
-
-    confirmExpiryCurrent: confirmExpiryValue,
-    confirmExpiry: confirmExpiry.sort((a, b) => {
-      if (a.type === 'My proposal') return 1;
-      if (b.type === 'My proposal') return -1;
-      return 0;
-    }),
-
-    nodeOperatorFeeRateCurrent: nodeOperatorFeeRateValue,
-    nodeOperatorFeeRate: nodeOperatorFeeRate.sort((a, b) => {
-      if (a.type === 'My proposal') return 1;
-      if (b.type === 'My proposal') return -1;
-      return 0;
-    }),
+    confirmExpiryCurrent,
+    confirmExpiry,
+    nodeOperatorFeeRateCurrent,
+    nodeOperatorFeeRate,
   };
 };
 

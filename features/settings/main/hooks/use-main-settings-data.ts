@@ -55,6 +55,7 @@ export const useVaultSettingsData = () => {
       const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
       const fromBlock = currentBlock - confirmExpireInBlocks;
 
+      // TODO: move confirmations fetching to separate util
       const logs = await activeVault.dashboard.getEvents.RoleMemberConfirmed(
         {
           role: [

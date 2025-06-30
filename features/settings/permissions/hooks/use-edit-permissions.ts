@@ -39,19 +39,11 @@ export const useEditPermissions = () => {
             const role = VAULTS_ALL_ROLES_MAP[key as PermissionKeys];
 
             fieldList?.forEach((field) => {
-              if (field.action === 'grant') {
-                toGrant.push({
-                  account: field.account,
-                  role,
-                });
-              }
-
-              if (field.action === 'revoke') {
-                toRevoke.push({
-                  account: field.account,
-                  role,
-                });
-              }
+              const array = field.action === 'grant' ? toGrant : toRevoke;
+              array.push({
+                account: field.account,
+                role,
+              });
             });
 
             return { toRevoke, toGrant };
