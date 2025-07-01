@@ -196,6 +196,7 @@ export const vaultTexts = {
     },
     liabilityStETH: {
       title: 'stETH liability',
+      action: 'Mint stETH',
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
     },
     rebalanceThreshold: {

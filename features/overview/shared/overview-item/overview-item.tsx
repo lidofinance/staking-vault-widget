@@ -8,8 +8,10 @@ import { useVault, useVaultPermission } from 'modules/vaults';
 import { OverviewItemValue } from './overview-item-value';
 import { ItemWrapper, Title } from './styles';
 
-import { Hint } from 'shared/components';
+import { Hint, TokenToWallet } from 'shared/components';
 import type { SectionPayload } from 'features/overview/contexts';
+import { getContractAddress } from 'config';
+import { useDappStatus } from 'modules/web3';
 
 export type ItemProps = {
   payload: string | Address | number;
@@ -25,7 +27,9 @@ export const OverviewItem: FC<ItemProps> = ({
   hint,
   isLoading,
   color,
+  addSteth = false,
 }) => {
+  const { chainId } = useDappStatus();
   const { vaultAddress } = useVault();
   const { hasPermission } = useVaultPermission(actionRole);
 
@@ -53,6 +57,12 @@ export const OverviewItem: FC<ItemProps> = ({
       </Title>
       <OverviewItemValue
         content={payload}
+        extraContent={
+          // TODO: rework this with overview refactor/redesign
+          addSteth ? (
+            <TokenToWallet address={getContractAddress(chainId, 'lido')} />
+          ) : undefined
+        }
         isLoading={isLoading}
         color={color}
       />

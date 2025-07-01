@@ -1,6 +1,7 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionData, useVaultOverview } from 'features/overview/contexts';
 import { formatPercent, getHealthFactorColor } from 'utils';
+import { appPaths } from 'consts/routing';
 
 const sectionPayloadList: SectionData[] = [
   {
@@ -11,6 +12,10 @@ const sectionPayloadList: SectionData[] = [
   },
   {
     key: 'liabilityStETH',
+    addSteth: true,
+    actionRole: 'minter',
+    actionLink: (vaultAddress) =>
+      appPaths.vaults.vault(vaultAddress).steth('mint'),
   },
   {
     key: 'rebalanceThreshold',
