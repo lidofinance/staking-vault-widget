@@ -1,4 +1,4 @@
-name: CI Dev Sepolia
+name: CI Dev Hoodi
 
 on:
   workflow_dispatch:
@@ -24,7 +24,7 @@ jobs:
           APP_ID: ${{ secrets.APP_ID }}
           APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
           TARGET_REPO: 'lidofinance/infra-mainnet'
-          TARGET_WORKFLOW: 'deploy_sepolia_testnet_staking_vault_widget.yaml'
+          TARGET_WORKFLOW: 'deploy_hoodi_testnet_staking_vault_widget.yaml'
           TARGET: 'develop'
 
   tests:
