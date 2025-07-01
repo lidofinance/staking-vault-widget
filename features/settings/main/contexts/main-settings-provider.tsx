@@ -43,13 +43,15 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
       const { result } = await editMainSettings(data);
 
-      const [vaultInfo] = await Promise.all([
-        refetch({ cancelRefetch: true, throwOnError: false }),
+      const [, vaultInfo] = await Promise.all([
         invalidateVaultConfig(),
+        refetch({ cancelRefetch: true, throwOnError: false }),
       ]);
 
-      if (result && vaultInfo.data) {
-        reset(prepareDefaultValues(vaultInfo.data));
+      // we reset form anyway because partial success is possible and will invalidate form state
+      if (vaultInfo.data) {
+        const newDefaultValues = prepareDefaultValues(vaultInfo.data);
+        reset(newDefaultValues);
       } else reset();
 
       return result.success;

@@ -28,12 +28,9 @@ export const useMint = () => {
           loadingActionText,
         };
 
-        // if we have to post report, there will be extra modal due to async fetch
-        const transactions = [...prepareReportCalls(), mintCall];
-
         const { success } = await withSuccess(
           sendTX({
-            transactions,
+            transactions: async () => [...prepareReportCalls(), mintCall],
             forceAtomic: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,

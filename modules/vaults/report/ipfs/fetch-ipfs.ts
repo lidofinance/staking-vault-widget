@@ -54,9 +54,7 @@ const extractProofFromIPFS = async (cid: string, vault: Address) => {
   );
 
   if (vaultIndex < 0) {
-    throw new Error(
-      `[extractProofFromIPFS]  Vault ${vault} not found in report`,
-    );
+    return null;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

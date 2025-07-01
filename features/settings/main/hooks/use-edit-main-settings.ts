@@ -154,7 +154,7 @@ export const useEditMainSettings = () => {
         const result = await withSuccess(
           sendTX({
             transactions: isFeeValueChanged
-              ? [...prepareReportCalls(), ...transactions]
+              ? async () => [...prepareReportCalls(), ...transactions]
               : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',

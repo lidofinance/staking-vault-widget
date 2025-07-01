@@ -1,7 +1,12 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
 
-import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  useReportCalls,
+} from 'modules/vaults';
 import {
   TransactionEntry,
   useLidoSDK,
@@ -15,6 +20,7 @@ export const useRepay = () => {
   const { activeVault } = useVault();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
+  const prepareReportCalls = useReportCalls();
 
   return {
     burn: useCallback(
@@ -26,7 +32,7 @@ export const useRepay = () => {
           vaultTexts.actions.repay.completed(token);
 
         const prepareTransactions = async () => {
-          const calls: TransactionEntry[] = [];
+          const calls: TransactionEntry[] = [...prepareReportCalls()];
 
           const isSteth = token === 'stETH';
           const tokenContract = isSteth ? stETH : wstETH;
@@ -45,6 +51,7 @@ export const useRepay = () => {
             };
             calls.push(approveCall);
           }
+          // TODO: convert stETH to shares with correct rounding and call burnShares
           calls.push({
             ...activeVault.dashboard.encode[
               token === 'stETH' ? 'burnStETH' : 'burnWstETH'
@@ -66,7 +73,7 @@ export const useRepay = () => {
 
         return success;
       },
-      [activeVault?.dashboard, sendTX, stETH, wstETH],
+      [activeVault?.dashboard, prepareReportCalls, sendTX, stETH, wstETH],
     ),
     ...rest,
   };

@@ -14,17 +14,6 @@ import {
   HttpMethod,
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
-import { METRIC_CONTRACT_EVENT_ADDRESSES } from 'utilsApi/contract-addresses-metrics';
-
-const allowedLogsAddresses: Record<string, string[]> = Object.entries(
-  METRIC_CONTRACT_EVENT_ADDRESSES,
-).reduce(
-  (acc, [chainId, addresses]) => {
-    acc[chainId] = Object.keys(addresses);
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
 
 const allowedRPCMethods = [
   'test',
@@ -68,7 +57,6 @@ const rpc = rpcFactory({
 
   validation: {
     allowedRPCMethods,
-    allowedLogsAddresses,
     maxBatchCount: config.PROVIDER_MAX_BATCH,
     blockEmptyAddressGetLogs: true,
     maxGetLogsRange: 20_000, // only 20k blocks size historical queries

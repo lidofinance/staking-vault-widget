@@ -34,12 +34,12 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const onSubmit = useCallback(
     async (values: EditPermissionsSchema): Promise<boolean> => {
       const { success } = await editPermissions(values);
-      const [{ data: newData }] = await Promise.all([
+      const [, { data: newData }] = await Promise.all([
+        invalidateVaultConfig('roles'),
         refetch({
           cancelRefetch: true,
           throwOnError: false,
         }),
-        invalidateVaultConfig('roles'),
       ]);
 
       reset(newData || undefined);

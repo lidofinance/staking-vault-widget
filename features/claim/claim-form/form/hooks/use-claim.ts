@@ -31,7 +31,7 @@ export const useClaim = () => {
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: [...prepareReportCalls(), claimCall],
+          transactions: async () => [...prepareReportCalls(), claimCall],
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,
           renderSuccessContent: GoToVault,

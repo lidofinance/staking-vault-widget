@@ -44,11 +44,9 @@ export const useWithdraw = () => {
         });
       }
 
-      const transactions = [...prepareReportCalls(), ...calls];
-
       const { success } = await withSuccess(
         sendTX({
-          transactions,
+          transactions: async () => [...prepareReportCalls(), ...calls],
           forceAtomic: true,
           mainActionLoadingText: vaultTexts.actions.withdraw.loading,
           mainActionCompleteText: vaultTexts.actions.withdraw.completed,
