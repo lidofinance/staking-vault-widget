@@ -21,7 +21,7 @@ import {
 
 export type SectionData = {
   key: VaultOverviewContextKeys;
-  addSteth?: boolean;
+  addStethToWallet?: boolean;
   actionRole?: VAULTS_ALL_ROLES;
   actionLink?: (vaultAddress: Address) => string;
 };

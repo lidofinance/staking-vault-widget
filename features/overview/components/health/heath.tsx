@@ -12,7 +12,7 @@ const sectionPayloadList: SectionData[] = [
   },
   {
     key: 'liabilityStETH',
-    addSteth: true,
+    addStethToWallet: true,
     actionRole: 'minter',
     actionLink: (vaultAddress) =>
       appPaths.vaults.vault(vaultAddress).steth('mint'),

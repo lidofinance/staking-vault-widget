@@ -27,7 +27,7 @@ export const OverviewItem: FC<ItemProps> = ({
   hint,
   isLoading,
   color,
-  addSteth = false,
+  addStethToWallet = false,
 }) => {
   const { chainId } = useDappStatus();
   const { vaultAddress } = useVault();
@@ -59,7 +59,7 @@ export const OverviewItem: FC<ItemProps> = ({
         content={payload}
         extraContent={
           // TODO: rework this with overview refactor/redesign
-          addSteth ? (
+          addStethToWallet ? (
             <TokenToWallet address={getContractAddress(chainId, 'lido')} />
           ) : undefined
         }
