@@ -19,7 +19,7 @@ import type {
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { invalidateVaultConfig } = useVault();
+  const { invalidateVaultConfig, invalidateVaultState } = useVault();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const { data, refetch } = useMainSettingsFormData();
 
@@ -41,9 +41,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
-      const { result } = await editMainSettings(data);
+      const { result, isStateChanged } = await editMainSettings(data);
 
-      const [, vaultInfo] = await Promise.all([
+      const [_, __, vaultInfo] = await Promise.all([
+        isStateChanged ? invalidateVaultState() : Promise.resolve(),
         invalidateVaultConfig(),
         refetch({ cancelRefetch: true, throwOnError: false }),
       ]);
@@ -56,7 +57,13 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
       return result.success;
     },
-    [editMainSettings, invalidateVaultConfig, refetch, reset],
+    [
+      editMainSettings,
+      invalidateVaultConfig,
+      invalidateVaultState,
+      refetch,
+      reset,
+    ],
   );
 
   return (
