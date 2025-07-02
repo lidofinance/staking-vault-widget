@@ -86,7 +86,7 @@ export const TokenToWallet: TokenToWalletComponent = ({ address, ...rest }) => {
   };
 
   return (
-    <Tooltip placement="bottomLeft" title="Add tokens to wallet">
+    <Tooltip placement="bottomLeft" title="Add token to wallet">
       <TokenToWalletStyle tabIndex={-1} onClick={onClickHandler} {...rest} />
     </Tooltip>
   );
