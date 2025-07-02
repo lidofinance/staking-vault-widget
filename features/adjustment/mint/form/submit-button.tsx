@@ -2,7 +2,7 @@ import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
 
-import type { MintFormFieldValues } from '../types';
+import type { MintFormFieldValues } from './types';
 
 export const SubmitButton = () => {
   const { isSubmitting, disabled } = useFormState();
@@ -11,10 +11,14 @@ export const SubmitButton = () => {
     'token',
   ]);
 
-  const isDisabled = isSubmitting && disabled;
+  const isDisabled = isSubmitting || disabled;
 
   return (
-    <PermissionedSubmitButton dashboardRole={'minter'} disabled={isDisabled}>
+    <PermissionedSubmitButton
+      loading={isSubmitting}
+      dashboardRole={'minter'}
+      disabled={isDisabled}
+    >
       {vaultTexts.actions.mint.submit(token, amount)}
     </PermissionedSubmitButton>
   );

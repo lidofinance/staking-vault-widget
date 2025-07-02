@@ -53,7 +53,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const onSubmit = useCallback(
     async (data: CreateVaultSchema): Promise<boolean> => {
       const { success } = await createVault(data);
-      await queryClient.invalidateQueries(
+      await queryClient.refetchQueries(
         { queryKey: vaultListQueryKeys().vaultsListBase },
         { cancelRefetch: true, throwOnError: false },
       );

@@ -31,7 +31,11 @@ export const SubmitButton = () => {
 
   return (
     <ConnectWalletButton>
-      <Button disabled={isDisabled} onClick={handleClaim}>
+      <Button
+        loading={isSubmitting}
+        disabled={isDisabled}
+        onClick={handleClaim}
+      >
         {isNotEnoughEther
           ? vaultTexts.actions.claim.notEnoughEther
           : vaultTexts.actions.claim.claimButton(claimableFeeQuery.data?.noFee)}

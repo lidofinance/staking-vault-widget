@@ -68,18 +68,18 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       error:
         (vaultAddress && !sanitizedVaultAddress && new VaultAddressError()) ||
         query.error,
+      // refetchQueries refetches all active queries with matching key
+      // vs invalidateQueries will trigger eventual refetch but still show data,
+      // resulting in old data being shown for a while or passed to sub-queries
       invalidateVaultState: () =>
-        queryClient.invalidateQueries(
-          { queryKey: queryKeys.stateBase },
-          options,
-        ),
+        queryClient.refetchQueries({ queryKey: queryKeys.stateBase }, options),
       invalidateVaultConfig: (scope?: VaultConfigScopes) =>
-        queryClient.invalidateQueries(
+        queryClient.refetchQueries(
           { queryKey: queryKeys.config(scope) },
           options,
         ),
       invalidateVault: () =>
-        queryClient.invalidateQueries({ queryKey: queryKeys.base }, options),
+        queryClient.refetchQueries({ queryKey: queryKeys.base }, options),
     };
   }, [
     sanitizedVaultAddress,
