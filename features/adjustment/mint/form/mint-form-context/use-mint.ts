@@ -16,7 +16,7 @@ export const useMint = () => {
   return {
     mint: useCallback(
       async ({ amount, recipient, token }: MintFormValidatedValues) => {
-        invariant(activeVault, '[useMint] owner is undefined');
+        invariant(activeVault, '[useMint] activeVault is undefined');
 
         const loadingActionText = vaultTexts.actions.mint.loading(token);
         const mainActionCompleteText = vaultTexts.actions.mint.completed(token);

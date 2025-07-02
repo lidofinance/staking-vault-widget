@@ -25,7 +25,7 @@ export const useClaimData = () => {
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
 
-      const [noFee, vaultBalance] = await readWithReport({
+      const [noFee, withdrawableValue] = await readWithReport({
         report: activeVault.report,
         publicClient,
         contracts: [
@@ -34,7 +34,11 @@ export const useClaimData = () => {
         ] as const,
       });
 
-      return { noFee, vaultBalance, isEnoughToClaim: vaultBalance >= noFee };
+      return {
+        noFee,
+        withdrawableValue,
+        isEnoughToClaim: withdrawableValue >= noFee,
+      };
     },
   });
 

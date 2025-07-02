@@ -25,7 +25,7 @@ export const useRepay = () => {
   return {
     burn: useCallback(
       async ({ amount, token }: RepayFormValidatedValues) => {
-        invariant(activeVault?.dashboard, '[useMint] owner is undefined');
+        invariant(activeVault, '[useRepay] activeVault is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
         const mainActionCompleteText =
@@ -73,7 +73,7 @@ export const useRepay = () => {
 
         return success;
       },
-      [activeVault?.dashboard, prepareReportCalls, sendTX, stETH, wstETH],
+      [activeVault, prepareReportCalls, sendTX, stETH, wstETH],
     ),
     ...rest,
   };

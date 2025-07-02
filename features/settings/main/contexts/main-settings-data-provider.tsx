@@ -27,11 +27,13 @@ export const MainSettingsFormDataProvider: FC<PropsWithChildren> = ({
   const { address } = useDappStatus();
   const query = useVaultSettingsData();
 
+  // TODO: remove address dependency and move logic to render
+  // extra dep check because address is part of query.select
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const contextValue = useMemo(() => query, [query.data, address]);
+
   return (
-    <MainSettingsDataContext.Provider
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      value={useMemo(() => query, [query.data, address])}
-    >
+    <MainSettingsDataContext.Provider value={contextValue}>
       {children}
     </MainSettingsDataContext.Provider>
   );

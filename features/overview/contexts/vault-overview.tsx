@@ -46,7 +46,6 @@ export type VaultOverviewContextType = {
     healthFactorNumber: number;
     totalLocked: string;
     liabilityStETH: string;
-    totalMintingCapacityShares: string;
     totalMintingCapacityStETH: string;
     withdrawableEth: string;
     balanceEth: string;
@@ -97,89 +96,84 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [error]);
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
-    if (vaultData) {
-      const {
-        address,
-        healthScore,
-        reserveRatioBP,
-        forcedRebalanceThresholdBP,
-        locked,
-        nodeOperatorUnclaimedFee,
-        withdrawableEther,
-        balance,
-        nodeOperatorFeeRate: nodeOperatorFee,
-        nodeOperator,
-      } = vaultData;
+    if (!vaultData) return {} as VaultOverviewContextType['values'];
 
-      const overview = calculateOverviewV2({
-        totalValue: vaultData.totalValue,
-        reserveRatioBP,
-        liabilitySharesInStethWei: vaultData.liabilityStETH,
-        forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
-        withdrawableEther,
-        balance,
-        locked,
-        nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
-        totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
-        unsettledLidoFees: vaultData.obligations.unsettledLidoFees,
-      });
+    const {
+      address,
+      healthScore,
+      reserveRatioBP,
+      forcedRebalanceThresholdBP,
+      locked,
+      nodeOperatorUnclaimedFee,
+      withdrawableEther,
+      balance,
+      nodeOperatorFeeRate: nodeOperatorFee,
+      nodeOperator,
+    } = vaultData;
 
-      const totalValue = toEthValue(vaultData.totalValue);
-      const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
-      const liabilityStETH = toStethValue(vaultData.liabilityStETH);
-      const withdrawableEth = toEthValue(withdrawableEther);
-      const balanceEth = toEthValue(balance);
-      const reserveRatio = formatPercent.format(
-        reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
-      );
-      const rebalanceThreshold = formatPercent.format(
-        forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
-      );
-      const healthFactor = formatPercent.format(healthScore / 100);
-      const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
-      const utilizationRatio = formatPercent.format(
-        overview.utilizationRatio / 100,
-      );
-      const totalMintingCapacityShares = toStethValue(
-        vaultData.totalMintingCapacityShares,
-      );
-      const totalMintingCapacityStETH = toStethValue(
-        vaultData.totalMintingCapacityStETH,
-      );
-      const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
-      const nodeOperatorFeeRate = formatPercent.format(
-        Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
-      );
-      const collateral = toEthValue(overview.collateral);
-      const pendingUnlock = overview.recentlyRepaid;
-      const pendingUnlockEth = toEthValue(
-        pendingUnlock > 0n ? pendingUnlock : 0n,
-      );
+    const overview = calculateOverviewV2({
+      totalValue: vaultData.totalValue,
+      reserveRatioBP,
+      liabilitySharesInStethWei: vaultData.liabilityStETH,
+      forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
+      withdrawableEther,
+      balance,
+      locked,
+      nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
+      totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
+      unsettledLidoFees: vaultData.obligations.unsettledLidoFees,
+    });
 
-      return {
-        address,
-        nodeOperator,
-        totalValue,
-        reserveRatio,
-        utilizationRatio,
-        rebalanceThreshold,
-        healthFactor,
-        healthFactorNumber,
-        totalLocked,
-        liabilityStETH,
-        totalMintingCapacityShares,
-        totalMintingCapacityStETH,
-        withdrawableEth,
-        balanceEth,
-        accumulatedFee,
-        nodeOperatorFeeRate,
-        collateral,
-        pendingUnlockEth,
-        isLoadingVault,
-      };
-    }
+    const totalValue = toEthValue(vaultData.totalValue);
+    const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
+    const liabilityStETH = toStethValue(vaultData.liabilityStETH);
+    const withdrawableEth = toEthValue(withdrawableEther);
+    const balanceEth = toEthValue(balance);
+    const reserveRatio = formatPercent.format(
+      reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
+    );
+    const rebalanceThreshold = formatPercent.format(
+      forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
+    );
+    const healthFactor = formatPercent.format(healthScore / 100);
+    const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
+    const utilizationRatio = formatPercent.format(
+      overview.utilizationRatio / 100,
+    );
 
-    return {} as VaultOverviewContextType['values'];
+    const totalMintingCapacityStETH = toStethValue(
+      vaultData.totalMintingCapacityStETH,
+    );
+    const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
+    const nodeOperatorFeeRate = formatPercent.format(
+      Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
+    );
+    const collateral = toEthValue(overview.collateral);
+    const pendingUnlock = overview.recentlyRepaid;
+    const pendingUnlockEth = toEthValue(
+      pendingUnlock > 0n ? pendingUnlock : 0n,
+    );
+
+    return {
+      address,
+      nodeOperator,
+      totalValue,
+      reserveRatio,
+      utilizationRatio,
+      rebalanceThreshold,
+      healthFactor,
+      healthFactorNumber,
+      totalLocked,
+      liabilityStETH,
+      totalMintingCapacityStETH,
+      withdrawableEth,
+      balanceEth,
+      accumulatedFee,
+      nodeOperatorFeeRate,
+      collateral,
+      pendingUnlockEth,
+      isLoadingVault,
+    };
   }, [vaultData, isLoadingVault]);
 
   const value = useMemo(() => {
