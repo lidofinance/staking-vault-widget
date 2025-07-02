@@ -9,7 +9,7 @@ export const Claimable = () => {
   return (
     <InfoRowAmount
       title={vaultTexts.actions.claim.available}
-      amount={claimableFeeQuery.data}
+      amount={claimableFeeQuery.data?.noFee}
       token="ETH"
       loading={claimableFeeQuery.isPending}
       noDataLabel="-"

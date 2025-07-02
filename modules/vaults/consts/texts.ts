@@ -102,6 +102,7 @@ export const vaultTexts = {
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
         `Claim ${balance(claimableAmount)}ETH` as const,
+      notEnoughEther: `Not enough unlocked ETH to claim` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },

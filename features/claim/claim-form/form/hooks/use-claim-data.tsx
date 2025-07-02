@@ -1,21 +1,41 @@
+import { useQuery } from '@tanstack/react-query';
+
 import {
+  readWithReport,
   useReadDashboard,
   useValidateRecipientArgs,
   useVault,
 } from 'modules/vaults';
+import { useLidoSDK } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import invariant from 'tiny-invariant';
 
 export const useClaimData = () => {
-  const { invalidateVaultState } = useVault();
+  const { invalidateVaultState, activeVault, queryKeys } = useVault();
+  const { publicClient } = useLidoSDK();
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
   const recipientQuery = useReadDashboard({
     functionName: 'nodeOperatorFeeRecipient',
   });
 
-  const claimableFeeQuery = useReadDashboard({
-    functionName: 'nodeOperatorDisbursableFee',
-    applyReport: true,
+  const claimableFeeQuery = useQuery({
+    queryKey: [...queryKeys.state, 'claimableFee'],
+    enabled: !!activeVault,
+    queryFn: async () => {
+      invariant(activeVault, 'Active vault is not defined');
+
+      const [noFee, vaultBalance] = await readWithReport({
+        report: activeVault.report,
+        publicClient,
+        contracts: [
+          activeVault.dashboard.prepare.nodeOperatorDisbursableFee(),
+          activeVault.hub.prepare.withdrawableValue([activeVault.address]),
+        ] as const,
+      });
+
+      return { noFee, vaultBalance, isEnoughToClaim: vaultBalance >= noFee };
+    },
   });
 
   return {
