@@ -58,6 +58,8 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       publicClient.chain.id,
       query.data?.hubReport.cid,
     );
+
+    const options = { cancelRefetch: true, throwOnError: false };
     return {
       ...query,
       vaultAddress: sanitizedVaultAddress,
@@ -67,11 +69,17 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
         (vaultAddress && !sanitizedVaultAddress && new VaultAddressError()) ||
         query.error,
       invalidateVaultState: () =>
-        queryClient.invalidateQueries({ queryKey: queryKeys.stateBase }),
+        queryClient.invalidateQueries(
+          { queryKey: queryKeys.stateBase },
+          options,
+        ),
       invalidateVaultConfig: (scope?: VaultConfigScopes) =>
-        queryClient.invalidateQueries({ queryKey: queryKeys.config(scope) }),
+        queryClient.invalidateQueries(
+          { queryKey: queryKeys.config(scope) },
+          options,
+        ),
       invalidateVault: () =>
-        queryClient.invalidateQueries({ queryKey: queryKeys.base }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.base }, options),
     };
   }, [
     sanitizedVaultAddress,

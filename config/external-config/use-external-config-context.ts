@@ -55,5 +55,6 @@ export const useExternalConfigContext = (
     const { config, ...rest } = queryResult.data ?? fallbackData;
     const cleanConfig = getBackwardCompatibleConfig(config);
     return { ...cleanConfig, ...rest, fetchMeta: queryResult };
-  }, [queryResult, fallbackData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryResult.data, fallbackData]);
 };
