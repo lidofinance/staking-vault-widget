@@ -62,7 +62,7 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { address } = useAccount();
 
   const query = useQuery({
-    queryKey: [...queryKeys.config('roles'), 'hasRole', { roles }],
+    queryKey: [...queryKeys.config('roles'), 'hasRole', { roles, address }],
     enabled: !!activeVault && !!address && roles.length > 0,
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');

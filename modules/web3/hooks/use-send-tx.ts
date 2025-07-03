@@ -37,6 +37,7 @@ export type SendTransactionArguments = {
   mainActionCompleteText: string;
   forceAtomic?: boolean;
   forceLegacy?: boolean;
+  allowRetry?: boolean;
 } & Pick<TransactionModalState['details'], 'renderSuccessContent'>;
 
 // TODO: wrapper around error with readable message
@@ -72,6 +73,7 @@ export const useSendTransaction = () => {
       mainActionLoadingText,
       forceAtomic,
       forceLegacy,
+      allowRetry = true,
       renderSuccessContent,
     }) => {
       const receipts: TransactionReceipt[] = [];
@@ -83,7 +85,7 @@ export const useSendTransaction = () => {
           isBatch: useSendCalls,
           isOpen: false,
           stage: 'none',
-          onRetry: retryFire,
+          onRetry: allowRetry ? retryFire : undefined,
           details: {
             actionCompleteText: mainActionCompleteText,
             actionLoadingText: mainActionLoadingText,
