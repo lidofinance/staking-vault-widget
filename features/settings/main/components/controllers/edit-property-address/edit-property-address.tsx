@@ -9,7 +9,7 @@ import { useAddressValidation } from 'features/settings/main/hooks';
 import { ButtonContainer, EditWrapper } from './styles';
 
 import {
-  EditMainSettingsSchema,
+  MainSettingsFormValidatedValues,
   ManagersKeys,
   RoleFieldSchema,
 } from 'features/settings/main/types';
@@ -18,7 +18,7 @@ type EditPropertyAddressProps = {
   name: ManagersKeys;
   editLabel: string;
   fields: (Record<'id', string> & RoleFieldSchema)[];
-  append: UseFieldArrayAppend<EditMainSettingsSchema>;
+  append: UseFieldArrayAppend<MainSettingsFormValidatedValues>;
 };
 
 export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({

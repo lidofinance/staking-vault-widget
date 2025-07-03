@@ -1,23 +1,37 @@
-import invariant from 'tiny-invariant';
+import { type Address, isAddressEqual } from 'viem';
+
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
-import {
-  MainSettingsDataContextValue,
-  RoleFieldSchema,
-  EditMainSettingsSchema,
-} from './types';
-import { VaultInfo } from 'types';
 import { multipleDataFields } from './consts';
+import type {
+  RoleFieldSchema,
+  MainSettingsFormValidatedValues,
+  VaultMainSettingsData,
+  MainSettingsFormData,
+  VotingOptionType,
+  MainSettingFormsValues,
+} from './types';
 
-export const shouldIncrementTxCounterByVoting = (
-  value: string | undefined,
-  defaultValue: string | undefined,
-) => {
-  return value !== defaultValue;
+const formatExpiry = (expiryTimestamp: bigint) =>
+  formatSecondsToHours(
+    (Number(expiryTimestamp) * 1000 - new Date().getTime()) / 1000,
+    true,
+  );
+
+const formatType = (
+  member: Address,
+  account: Address,
+): VotingOptionType['type'] =>
+  isAddressEqual(member, account) ? 'My proposal' : 'Proposed to me';
+
+const myProposalsLast = (a: VotingOptionType, b: VotingOptionType): number => {
+  if (a.type === 'My proposal') return 1;
+  if (b.type === 'My proposal') return -1;
+  return 0;
 };
 
 export const shouldIncrementTxCounterByAddresses = (
-  formFields: EditMainSettingsSchema,
+  formFields: MainSettingsFormValidatedValues,
 ) => {
   let grant = 0;
   let remove = 0;
@@ -33,36 +47,114 @@ export const shouldIncrementTxCounterByAddresses = (
   return Number(grant > 0) + Number(remove > 0);
 };
 
+export const formatSettingsValues = (
+  vaultInfo: VaultMainSettingsData,
+  account: Address,
+): MainSettingsFormData => {
+  const confirmExpiryCurrent = String(vaultInfo.confirmExpiry);
+  const nodeOperatorFeeRateCurrent = String(
+    (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+  );
+  const nodeOperatorFeeRecipient = vaultInfo.nodeOperatorFeeRecipient;
+
+  const confirmExpiry: VotingOptionType[] = [
+    {
+      value: confirmExpiryCurrent,
+      type: 'current',
+      tags: ['Current'],
+      format: formatSecondsToHours,
+      symbol: ' hours',
+    },
+  ];
+  const nodeOperatorFeeRate: VotingOptionType[] = [
+    {
+      value: nodeOperatorFeeRateCurrent,
+      type: 'current',
+      tags: ['Current'],
+      symbol: '%',
+    },
+  ];
+
+  confirmExpiry.push(
+    ...vaultInfo.confirmExpiryConfirmations.map((confirmation) => ({
+      value: String(Number(confirmation.decodedData.args[0])),
+      tags: [
+        formatExpiry(confirmation.expiryTimestamp),
+        formatType(confirmation.member, account),
+      ],
+      type: formatType(confirmation.member, account),
+      format: formatSecondsToHours,
+      symbol: ' hours',
+    })),
+  );
+
+  nodeOperatorFeeRate.push(
+    ...vaultInfo.nodeOperatorFeeConfirmations.map((confirmation) => ({
+      value: String(Number(confirmation.decodedData.args[0] * 100n) / 10000),
+      tags: [
+        formatExpiry(confirmation.expiryTimestamp),
+        formatType(confirmation.member, account),
+      ],
+      type: formatType(confirmation.member, account),
+      symbol: '%',
+    })),
+  );
+
+  // Custom values for voting
+  confirmExpiry.push({
+    value: '',
+    type: 'custom',
+    tags: [],
+    symbol: ' hours',
+    placeholder: 'Propose new, hours',
+  });
+  nodeOperatorFeeRate.push({
+    value: '',
+    type: 'custom',
+    tags: [],
+    symbol: '%',
+    placeholder: 'Propose new, %',
+  });
+
+  // Sorting
+  confirmExpiry.sort(myProposalsLast);
+  nodeOperatorFeeRate.sort(myProposalsLast);
+
+  return {
+    defaultAdmins: vaultInfo.defaultAdmins,
+    nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
+    nodeOperatorFeeRecipient,
+    confirmExpiryCurrent,
+    confirmExpiry,
+    nodeOperatorFeeRateCurrent,
+    nodeOperatorFeeRate,
+  };
+};
+
 export const prepareDefaultValues = (
-  promisifiedSettingsData: Promise<MainSettingsDataContextValue | null>,
-) => {
-  return async () => {
-    const settingsData = await promisifiedSettingsData;
-    invariant(settingsData, '[prepareDefaultValues] settings data is empty.');
+  data: MainSettingsFormData,
+): MainSettingFormsValues => {
+  const defaultAdmins = data.defaultAdmins.map((address) => ({
+    value: address,
+    state: 'display' as const,
+    isGranted: true,
+  }));
+  const nodeOperatorManagers = data.nodeOperatorManagers.map((address) => ({
+    value: address,
+    state: 'display' as const,
+    isGranted: true,
+  }));
 
-    const {
-      confirmExpiry,
-      defaultAdmins,
-      nodeOperatorFeeRate,
-      nodeOperatorManagers,
-      nodeOperatorFeeRecipient,
-    } = settingsData;
-    const confirmExpiryCurrent = confirmExpiry.find(
-      (item) => item.type === 'current',
-    )?.value;
-    const nodeOperatorFeeRateCurrent = nodeOperatorFeeRate.find(
-      (item) => item.type === 'current',
-    )?.value;
+  return {
+    defaultAdmins,
+    nodeOperatorManagers,
+    nodeOperatorFeeRecipient: data.nodeOperatorFeeRecipient,
 
-    return {
-      defaultAdmins,
-      nodeOperatorManagers,
-      nodeOperatorFeeRecipient,
-      confirmExpiry: String(confirmExpiryCurrent),
-      confirmExpiryCustom: '',
-      nodeOperatorFeeRate: String(nodeOperatorFeeRateCurrent),
-      nodeOperatorFeeRateCustom: '',
-    };
+    confirmExpiry: data.confirmExpiryCurrent,
+    confirmExpiryCustom: '',
+
+    nodeOperatorFeeRate: data.nodeOperatorFeeRateCurrent,
+    nodeOperatorFeeRateCustom: '',
   };
 };
 
@@ -115,29 +207,4 @@ export const formatSecondsToHours = (
   if (hours === 0) return `${minutes} minutes`;
   if (minutes === 0) return `${hours} hours`;
   return `${hours}h ${minutes}m`;
-};
-
-export const formatSettingsValues = (vaultInfo: VaultInfo) => {
-  const defaultAdmins = vaultInfo.defaultAdmins.map((address) => ({
-    value: address,
-    state: 'display' as const,
-    isGranted: true,
-  }));
-  const nodeOperatorManagers = vaultInfo.nodeOperatorManagers.map(
-    (address) => ({
-      value: address,
-      state: 'display' as const,
-      isGranted: true,
-    }),
-  );
-
-  return {
-    defaultAdmins,
-    nodeOperatorManagers,
-    confirmExpiryValue: String(vaultInfo.confirmExpiry),
-    nodeOperatorFeeRateValue: String(
-      (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
-    ),
-    nodeOperatorFeeRecipient: vaultInfo.nodeOperatorFeeRecipient,
-  };
 };

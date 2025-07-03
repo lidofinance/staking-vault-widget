@@ -1,6 +1,6 @@
 import type { z } from 'zod';
 import type { mintFormSchema } from './mint-form-context/validation';
-import type { ValidateRecipientArgs } from 'utils/validate-form-value';
+import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
 export type MintFormValidationContext = {
   mintableStETH: bigint;

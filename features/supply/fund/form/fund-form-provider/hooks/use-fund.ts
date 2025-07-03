@@ -1,11 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useAccount, useEstimateGas, usePublicClient } from 'wagmi';
-import { Address, encodeFunctionData } from 'viem';
-
-import { getContractAddress } from 'config';
-import { WethABI } from 'abi/weth-abi';
-import { dashboardAbi } from 'abi/dashboard-abi';
+import { usePublicClient } from 'wagmi';
 
 import {
   TransactionEntry,
@@ -13,21 +8,20 @@ import {
   withSuccess,
 } from 'modules/web3';
 import {
-  getDashboardContract,
-  useVaultInfo,
-  useVaultPermission,
+  useVault,
   vaultTexts,
   GoToVault,
+  getWethContract,
 } from 'modules/vaults';
 
-import { useReportStatus } from 'features/report';
+import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
 
 export const useFund = () => {
   const publicClient = usePublicClient();
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
 
-  const { isReportAvailable, prepareReportCall } = useReportStatus();
+  const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
@@ -38,9 +32,8 @@ export const useFund = () => {
         token,
         mintAddress,
       }: FundFormValidatedValues) => {
-        invariant(activeVault?.owner, '[useFund] owner is undefined');
-        const wethAddress = getContractAddress(publicClient.chain.id, 'weth');
-        invariant(wethAddress, '[useFund] WETH address is undefined');
+        invariant(activeVault, '[useFund] activeVault is undefined');
+        const wethContract = getWethContract(publicClient);
 
         let prepareTransactions: () => Promise<TransactionEntry[]> = () =>
           Promise.reject(undefined);
@@ -49,46 +42,36 @@ export const useFund = () => {
 
         if (token === 'wETH') {
           calls.push({
-            to: wethAddress,
-            data: encodeFunctionData({
-              abi: WethABI,
-              functionName: 'withdraw',
-              args: [amount],
-            }),
+            ...wethContract.encode.withdraw([amount]),
             loadingActionText: 'Unwrapping wETH',
           });
         }
 
         calls.push({
-          to: activeVault.owner,
-          data: encodeFunctionData({
-            abi: dashboardAbi,
-            functionName: 'fund',
-          }),
-          value: amount,
+          ...activeVault.dashboard.encode.fund({ value: amount }),
           loadingActionText: vaultTexts.actions.supply.loading,
         });
 
         // minting stETH requires async data for report and minting capacity
         if (mintSteth) {
           prepareTransactions = async () => {
-            isReportAvailable && calls.push(await prepareReportCall());
+            calls.push(...prepareReportCalls());
 
-            const dashboard = getDashboardContract(
-              activeVault.owner,
+            const [maxMintableShares] = await readWithReport({
+              contracts: [
+                activeVault.dashboard.prepare.remainingMintingCapacityShares([
+                  amount,
+                ]),
+              ],
               publicClient,
-            );
-
-            const maxMintableShares =
-              await dashboard.read.remainingMintingCapacityShares([amount]);
+              report: activeVault.report,
+            });
 
             calls.push({
-              to: activeVault.owner,
-              data: encodeFunctionData({
-                abi: dashboardAbi,
-                functionName: 'mintShares',
-                args: [mintAddress, maxMintableShares],
-              }),
+              ...activeVault.dashboard.encode.mintShares([
+                mintAddress,
+                maxMintableShares,
+              ]),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
             });
 
@@ -107,40 +90,8 @@ export const useFund = () => {
 
         return success;
       },
-      [
-        activeVault?.owner,
-        isReportAvailable,
-        prepareReportCall,
-        publicClient,
-        sendTX,
-      ],
+      [activeVault, prepareReportCalls, publicClient, sendTX],
     ),
     ...rest,
   };
-};
-
-export type SimulationFundProps = {
-  address: Address | undefined;
-  amount: bigint;
-};
-
-export const useEstimateGasFund = ({
-  address,
-  amount,
-}: SimulationFundProps) => {
-  const { address: accountAddress } = useAccount();
-  const { hasPermission } = useVaultPermission('supplier');
-
-  return useEstimateGas({
-    to: address as Address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName: 'fund',
-    }),
-    account: accountAddress,
-    value: amount,
-    query: {
-      enabled: !!address && hasPermission && !!amount,
-    },
-  });
 };

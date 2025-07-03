@@ -1,17 +1,21 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Text, InlineLoader } from '@lidofinance/lido-ui';
 
 import { LoaderWrapper, ValueWrapper } from './styles';
 
-export interface ItemValueProps {
+export type ItemValueProps = {
   content: string | number | undefined;
+  extraContent?: React.ReactNode;
   isLoading?: boolean;
   color?: string;
-}
+};
 
-export const OverviewItemValue: FC<ItemValueProps> = (props) => {
-  const { content, isLoading, color } = props;
-
+export const OverviewItemValue: FC<ItemValueProps> = ({
+  content,
+  extraContent,
+  isLoading,
+  color,
+}) => {
   return (
     <>
       {isLoading ? (
@@ -21,7 +25,14 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
       ) : (
         <ValueWrapper>
           <Text size="lg" style={{ color }} strong>
-            {content ?? '-'}
+            {content ? (
+              <>
+                {content}
+                {extraContent}
+              </>
+            ) : (
+              '-'
+            )}
           </Text>
         </ValueWrapper>
       )}

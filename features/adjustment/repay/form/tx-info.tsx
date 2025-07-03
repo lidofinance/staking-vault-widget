@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { useAA, useAllowance } from 'modules/web3';
-import { useVaultInfo } from 'modules/vaults';
+import { useVault } from 'modules/vaults';
 
 import { useTokenAddress } from 'shared/hooks/use-token-address';
 import { InfoRowAllowance } from 'shared/components/form';
@@ -9,7 +9,7 @@ import { InfoRowAllowance } from 'shared/components/form';
 export const TxInfo = () => {
   const { isAA } = useAA();
   const { watch } = useFormContext();
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
 
   const [token] = watch(['token']);
   const tokenAddress = useTokenAddress(token);

@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 import { Switch } from 'shared/components/switch';
 
@@ -13,7 +13,7 @@ type AdjustmentTabsProps = {
 };
 
 export const AdjustmentTabs = ({ isMintTab }: AdjustmentTabsProps) => {
-  const { vaultAddress } = useVaultInfo();
+  const { vaultAddress } = useVault();
 
   const mintRoutes = [
     {

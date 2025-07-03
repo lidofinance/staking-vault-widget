@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { isAddress, Address } from 'viem';
 import { DUPLICATED_ADDRESS_MESSAGE, INVALID_ADDRESS_MESSAGE } from '../consts';
-import { FieldSchema } from '../types';
+import type { FieldSchema } from '../types';
 
 export const useAddressValidation = (
   fields: (Record<'id', string> & FieldSchema)[],

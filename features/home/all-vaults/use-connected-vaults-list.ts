@@ -6,15 +6,15 @@ import {
   VAULTS_PER_PAGE,
   getVaultViewerContract,
   getVaultDataTable,
+  vaultListQueryKeys,
 } from 'modules/vaults';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 export const useConnectedVaultsList = () => {
   const { shares, publicClient } = useLidoSDK();
   const [page, setPage] = useState(1);
 
   const query = useQuery({
-    queryKey: ['vaults-connected', publicClient?.chain?.id, page],
+    queryKey: [...vaultListQueryKeys(publicClient.chain.id).AllVaults, page],
     placeholderData: keepPreviousData,
     queryFn: async () => {
       const vaultViewer = getVaultViewerContract(publicClient);
@@ -45,7 +45,6 @@ export const useConnectedVaultsList = () => {
 
       return { vaults, totalVaultsCount, pagesCount };
     },
-    ...STRATEGY_LAZY,
   });
 
   return {

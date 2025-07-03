@@ -7,7 +7,7 @@ import {
   maxAmountSchema,
   mintTokenSchema,
   validateRecipientSchema,
-} from 'utils/validate-form-value';
+} from 'utils/zod-validation';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import type {

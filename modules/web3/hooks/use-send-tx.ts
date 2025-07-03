@@ -22,6 +22,7 @@ import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
+import { DisplayableError } from 'modules/vaults';
 
 export type TransactionEntry = {
   to: Address;
@@ -201,7 +202,13 @@ export const useSendTransaction = () => {
 
         return transactionResult;
       } catch (error) {
-        dispatchModal({ type: 'stage', stage: 'error' });
+        const errorText =
+          error instanceof DisplayableError ? error.message : undefined;
+        dispatchModal({
+          type: 'stage',
+          stage: 'error',
+          details: { errorText },
+        });
         console.error(`[useSendTransaction] TX Error`, error);
         throw error;
       }

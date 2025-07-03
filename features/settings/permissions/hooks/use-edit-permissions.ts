@@ -1,40 +1,61 @@
-import { useCallback } from 'react';
-import { encodeFunctionData } from 'viem';
-
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, vaultTexts } from 'modules/vaults';
-import { GrantRole } from 'features/settings/permissions/types';
 import invariant from 'tiny-invariant';
+import { useCallback } from 'react';
+
 import {
-  TransactionEntry,
+  type TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  VAULTS_ALL_ROLES_MAP,
+} from 'modules/vaults';
 
-type EditPermissionsArgs = {
-  toRevoke: GrantRole[];
-  toGrant: GrantRole[];
-};
+import type {
+  EditPermissionsSchema,
+  GrantRole,
+  PermissionKeys,
+} from '../types';
 
 export const useEditPermissions = () => {
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
+  const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     editPermissions: useCallback(
-      async ({ toGrant, toRevoke }: EditPermissionsArgs) => {
-        invariant(owner, '[useEditPermissions] owner is not defined');
+      async (values: EditPermissionsSchema) => {
+        invariant(
+          activeVault,
+          '[useEditPermissions] activeVault is not defined',
+        );
+
+        const { toGrant, toRevoke } = Object.entries(values).reduce<{
+          toRevoke: GrantRole[];
+          toGrant: GrantRole[];
+        }>(
+          ({ toRevoke, toGrant }, [key, fieldList]) => {
+            const role = VAULTS_ALL_ROLES_MAP[key as PermissionKeys];
+
+            fieldList?.forEach((field) => {
+              const array = field.action === 'grant' ? toGrant : toRevoke;
+              array.push({
+                account: field.account,
+                role,
+              });
+            });
+
+            return { toRevoke, toGrant };
+          },
+          { toRevoke: [], toGrant: [] },
+        );
+
         const transactions: TransactionEntry[] = [];
+
         if (toGrant.length > 0) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'grantRoles',
-              args: [toGrant],
-            }),
+            ...activeVault.dashboard.encode.grantRoles([toGrant]),
             loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
               toGrant.length,
             ),
@@ -42,12 +63,7 @@ export const useEditPermissions = () => {
         }
         if (toRevoke.length > 0) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'revokeRoles',
-              args: [toRevoke],
-            }),
+            ...activeVault.dashboard.encode.revokeRoles([toRevoke]),
             loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
               toRevoke.length,
             ),
@@ -64,7 +80,7 @@ export const useEditPermissions = () => {
 
         return result;
       },
-      [owner, sendTX],
+      [activeVault, sendTX],
     ),
     ...rest,
   };

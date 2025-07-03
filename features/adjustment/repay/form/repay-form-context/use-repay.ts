@@ -1,14 +1,11 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useEstimateGas, useAccount } from 'wagmi';
-import { encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import {
-  useVaultInfo,
-  useVaultPermission,
+  useVault,
   vaultTexts,
   GoToVault,
+  useReportCalls,
 } from 'modules/vaults';
 import {
   TransactionEntry,
@@ -20,46 +17,45 @@ import {
 import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
   const { stETH, wstETH } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
+  const prepareReportCalls = useReportCalls();
 
   return {
     burn: useCallback(
       async ({ amount, token }: RepayFormValidatedValues) => {
-        invariant(activeVault?.owner, '[useMint] owner is undefined');
+        invariant(activeVault, '[useRepay] activeVault is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
         const mainActionCompleteText =
           vaultTexts.actions.repay.completed(token);
 
         const prepareTransactions = async () => {
-          const calls: TransactionEntry[] = [];
+          const calls: TransactionEntry[] = [...prepareReportCalls()];
 
           const isSteth = token === 'stETH';
           const tokenContract = isSteth ? stETH : wstETH;
 
           const allowance = await tokenContract.allowance({
-            to: activeVault.owner,
+            to: activeVault.dashboard.address,
           });
           const needsAllowance = allowance < amount;
           if (needsAllowance) {
             const approveCall = {
               ...(await tokenContract.populateApprove({
                 amount,
-                to: activeVault.owner,
+                to: activeVault.dashboard.address,
               })),
               loadingActionText: vaultTexts.actions.approve.loading(token),
             };
             calls.push(approveCall);
           }
+          // TODO: convert stETH to shares with correct rounding and call burnShares
           calls.push({
-            to: activeVault.owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: token === 'stETH' ? 'burnStETH' : 'burnWstETH',
-              args: [amount],
-            }),
+            ...activeVault.dashboard.encode[
+              token === 'stETH' ? 'burnStETH' : 'burnWstETH'
+            ]([amount]),
             loadingActionText,
           });
           return calls;
@@ -77,47 +73,8 @@ export const useRepay = () => {
 
         return success;
       },
-      [activeVault?.owner, sendTX, stETH, wstETH],
+      [activeVault, prepareReportCalls, sendTX, stETH, wstETH],
     ),
     ...rest,
   };
-};
-
-type EstimateGasBurnProps = {
-  token: string;
-  amount?: bigint;
-  allowance?: bigint;
-};
-
-export const useEstimateGasRepay = ({
-  token,
-  amount,
-  allowance,
-}: EstimateGasBurnProps) => {
-  const { hasPermission } = useVaultPermission('repayer');
-  const { address } = useAccount();
-  const payload = [amount ?? 1n] as const;
-  const functionName = token === 'stETH' ? 'burnStETH' : 'burnWstETH';
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
-
-  const enabled = !!(
-    hasPermission &&
-    allowance !== undefined &&
-    payload[0] <= allowance &&
-    address
-  );
-
-  return useEstimateGas({
-    to: owner,
-    account: address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName,
-      args: payload,
-    }),
-    query: {
-      enabled,
-    },
-  });
 };

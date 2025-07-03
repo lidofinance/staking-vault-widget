@@ -8,7 +8,7 @@ import {
   maxAmountSchema,
   validateRecipientSchema,
   supplyTokenSchema,
-} from 'utils/validate-form-value';
+} from 'utils/zod-validation';
 
 import type {
   FundFormDataAwaitableValidationContext,

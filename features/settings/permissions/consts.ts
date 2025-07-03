@@ -1,69 +1,39 @@
 import { z } from 'zod';
-import { isValidAnyAddress } from 'utils/address-validation';
 
-import { Address } from 'viem';
 import { VAULTS_NO_ROLES_MAP, VAULTS_OWNER_ROLES_MAP } from 'modules/vaults';
-import { PermissionKeys } from './types';
+import { addressSchema } from 'utils/zod-validation';
 
-export enum PermissionToggleEnum {
-  byPermission = 'by_permission',
-  byAddress = 'by_address',
-}
-
-export enum SubmitPermissionsStepEnum {
-  edit = 'edit',
-  initiate = 'initiate',
-  confirming = 'confirming',
-  reject = 'reject',
-  error = 'error',
-  submitting = 'submitting',
-  success = 'success',
-}
-
-export const permissionsToggleList = [
-  {
-    value: PermissionToggleEnum.byPermission,
-    label: 'by Permission',
-  },
-  {
-    value: PermissionToggleEnum.byAddress,
-    label: 'by address',
-  },
-];
-
-export type ToggleValue =
-  (typeof PermissionToggleEnum)[keyof typeof PermissionToggleEnum];
+import type { PermissionKeys } from './types';
 
 export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
-const validateAddress = (value: string) => isValidAnyAddress(value);
-const accountSchema = z
-  .string()
-  .refine(validateAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((value) => value as Address);
 
-const addressSchema = z.object({
+const addressEntrySchema = z.object({
   action: z.union([
     z.literal('display'),
     z.literal('revoke'),
     z.literal('grant'),
   ]),
-  account: accountSchema,
+  account: addressSchema,
 });
 
-export const EDITABLE_ROLES_MAP = {
+export const EDITABLE_ROLES_LIST = Object.keys({
   ...VAULTS_OWNER_ROLES_MAP,
   ...VAULTS_NO_ROLES_MAP,
-} as const;
-
-export const EDITABLE_ROLES_LIST = Object.keys(
-  EDITABLE_ROLES_MAP,
-) as (keyof typeof EDITABLE_ROLES_MAP)[];
+} as const) as (
+  | keyof typeof VAULTS_OWNER_ROLES_MAP
+  | keyof typeof VAULTS_NO_ROLES_MAP
+)[];
 
 export const editPermissionsSchema = z.object(
   Object.fromEntries(
-    EDITABLE_ROLES_LIST.map((key) => [key, z.array(addressSchema).optional()]),
-  ) as unknown as {
-    [key in PermissionKeys]: z.ZodOptional<z.ZodArray<typeof addressSchema>>;
+    EDITABLE_ROLES_LIST.map((key) => [
+      key,
+      z.array(addressEntrySchema).optional(),
+    ]),
+  ) as {
+    [key in PermissionKeys]: z.ZodOptional<
+      z.ZodArray<typeof addressEntrySchema>
+    >;
   },
 );

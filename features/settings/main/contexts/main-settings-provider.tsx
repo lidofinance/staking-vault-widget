@@ -3,71 +3,67 @@ import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
+import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
-import { useEditMainSettings } from 'features/settings/main/hooks';
-import { useMainSettingsData } from './main-settings-data-provider';
+import { useEditMainSettings } from '../hooks';
+import { useMainSettingsFormData } from './main-settings-data-provider';
+import { mainSettingsFormResolver } from '../consts';
+import { prepareDefaultValues } from '../utils';
 
-import { mainSettingsFormResolver } from 'features/settings/main/consts';
-
-import { prepareDefaultValues, formatSettingsValues } from '../utils';
 import type {
-  EditMainSettingsSchema,
-  MainSettingsDataContextValue,
-} from 'features/settings/main/types';
-import type { VaultInfo } from 'types';
+  MainSettingFormsValues,
+  MainSettingsFormValidatedValues,
+  MainSettingsFormData,
+} from '../types';
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
+  const { invalidateVaultConfig, invalidateVaultState } = useVault();
   const { editMainSettings, retryEvent } = useEditMainSettings();
-  const settingsData = useMainSettingsData();
-  const promisedSettingsData = useAwaiter(settingsData);
+  const { data, refetch } = useMainSettingsFormData();
+
+  const promisedSettingsData = useAwaiter(data).awaiter;
 
   const formObject = useForm<
-    EditMainSettingsSchema,
-    MainSettingsDataContextValue | null,
-    EditMainSettingsSchema
+    MainSettingFormsValues,
+    Promise<MainSettingsFormData>,
+    MainSettingsFormValidatedValues
   >({
-    defaultValues: prepareDefaultValues(promisedSettingsData.awaiter),
+    defaultValues: async () =>
+      await promisedSettingsData.then(prepareDefaultValues),
     disabled: !isDappActive,
-    // @ts-expect-error TODO: fix zod Address validation type
     resolver: mainSettingsFormResolver,
-    context: settingsData,
+    context: promisedSettingsData,
     mode: 'all',
   });
   const reset = formObject.reset;
 
-  const resetFields = useCallback(
-    (vaultInfo: VaultInfo) => {
-      const {
-        confirmExpiryValue,
-        nodeOperatorFeeRateValue,
-        defaultAdmins,
-        nodeOperatorManagers,
-        nodeOperatorFeeRecipient,
-      } = formatSettingsValues(vaultInfo);
-
-      // TODO: think about moving reset to the form controller
-      reset({
-        defaultAdmins,
-        nodeOperatorManagers,
-        confirmExpiry: confirmExpiryValue,
-        nodeOperatorFeeRate: nodeOperatorFeeRateValue,
-        nodeOperatorFeeRecipient: nodeOperatorFeeRecipient,
-      });
-    },
-    [reset],
-  );
-
   const onSubmit = useCallback(
-    async (data: EditMainSettingsSchema): Promise<boolean> => {
-      const { result, vaultInfo } = await editMainSettings(data);
+    async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
+      const { result, isStateChanged } = await editMainSettings(data);
 
-      if (result.success && vaultInfo.data) resetFields(vaultInfo.data);
+      const [_, __, vaultInfo] = await Promise.all([
+        isStateChanged ? invalidateVaultState() : Promise.resolve(),
+        invalidateVaultConfig(),
+        refetch({ cancelRefetch: true, throwOnError: false }),
+      ]);
+
+      // we reset form anyway because partial success is possible and will invalidate form state
+      if (vaultInfo.data) {
+        const newDefaultValues = prepareDefaultValues(vaultInfo.data);
+        reset(newDefaultValues);
+      } else reset();
 
       return result.success;
     },
-    [editMainSettings, resetFields],
+    [
+      editMainSettings,
+      invalidateVaultConfig,
+      invalidateVaultState,
+      refetch,
+      reset,
+    ],
   );
 
   return (

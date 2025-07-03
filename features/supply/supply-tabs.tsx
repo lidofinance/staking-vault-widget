@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useVaultInfo } from 'modules/vaults';
+import { useVault } from 'modules/vaults';
 
 import { PageWrapper } from './styles';
 import { Fund } from './fund';
@@ -15,7 +15,7 @@ export type SupplyTabProps = {
 
 export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
   const isFundTab = mode === 'supply';
-  const { vaultAddress } = useVaultInfo();
+  const { vaultAddress } = useVault();
 
   const supplyRoutes = [
     {

@@ -3,13 +3,15 @@ import type { Address } from 'viem';
 import { useRouter } from 'next/router';
 import { Text, Button } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
+import { useVault, useVaultPermission } from 'modules/vaults';
 
 import { OverviewItemValue } from './overview-item-value';
 import { ItemWrapper, Title } from './styles';
 
-import { Hint } from 'shared/components';
+import { Hint, TokenToWallet } from 'shared/components';
 import type { SectionPayload } from 'features/overview/contexts';
+import { getContractAddress } from 'config';
+import { useDappStatus } from 'modules/web3';
 
 export type ItemProps = {
   payload: string | Address | number;
@@ -25,8 +27,10 @@ export const OverviewItem: FC<ItemProps> = ({
   hint,
   isLoading,
   color,
+  addStethToWallet = false,
 }) => {
-  const { vaultAddress } = useVaultInfo();
+  const { chainId } = useDappStatus();
+  const { vaultAddress } = useVault();
   const { hasPermission } = useVaultPermission(actionRole);
 
   // show action if
@@ -53,6 +57,12 @@ export const OverviewItem: FC<ItemProps> = ({
       </Title>
       <OverviewItemValue
         content={payload}
+        extraContent={
+          // TODO: rework this with overview refactor/redesign
+          addStethToWallet ? (
+            <TokenToWallet address={getContractAddress(chainId, 'lido')} />
+          ) : undefined
+        }
         isLoading={isLoading}
         color={color}
       />

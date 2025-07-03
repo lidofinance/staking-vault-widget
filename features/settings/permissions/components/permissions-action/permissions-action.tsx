@@ -4,24 +4,20 @@ import { Button } from '@lidofinance/lido-ui';
 
 import { ConnectWalletButton } from 'shared/wallet';
 
-import { usePermissionsData } from 'features/settings/permissions/contexts';
-
 import { Container } from './styled';
 
 export const PermissionsAction: FC = () => {
   const { reset } = useFormContext();
-  const { isValid, isSubmitting, isDirty, disabled } = useFormState();
-  const { rolesList } = usePermissionsData();
+  const { isValid, isSubmitting, isDirty, disabled, isLoading } =
+    useFormState();
   const isClearDisabled = isSubmitting;
 
   const isSubmitDisabled =
-    !isValid || !isDirty || isClearDisabled || disabled || !rolesList;
+    !isValid || !isDirty || isClearDisabled || disabled || isLoading;
 
   const handleResetFields = () => {
-    if (rolesList) {
-      // bug in RHF, if keepIsValid is not set true, isDirty is not updated after reset and append
-      reset(rolesList, { keepIsValid: true });
-    }
+    // bug in RHF, if keepIsValid is not set true, isDirty is not updated after reset and append
+    reset(undefined, { keepIsValid: true });
   };
 
   return (

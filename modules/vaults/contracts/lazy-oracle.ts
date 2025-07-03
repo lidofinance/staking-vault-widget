@@ -9,6 +9,7 @@ import type {
   RegisteredPublicClient,
   RegisteredWalletClient,
 } from 'modules/web3';
+import { getEncodable } from '../utils/encodable';
 
 export const getLazyOracleContract = <TClient extends RegisteredPublicClient>(
   publicClient: TClient,
@@ -21,13 +22,15 @@ export const getLazyOracleContract = <TClient extends RegisteredPublicClient>(
   const address = getContractAddress(publicClient.chain.id, 'lazyOracle');
 
   invariant(address, '[getLazyOracleContract] lazyOracle is not defined');
-  return getContract({
-    address,
-    abi: LazyOracleAbi,
-    client: {
-      public: publicClient,
-    },
-  });
+  return getEncodable(
+    getContract({
+      address,
+      abi: LazyOracleAbi,
+      client: {
+        public: publicClient,
+      },
+    }),
+  );
 };
 
 export const getWritableLazyOracleContract = <

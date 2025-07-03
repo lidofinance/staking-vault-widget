@@ -18,6 +18,7 @@ import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
 import { VaultHubAbi } from 'abi/vault-hub';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import { WethABI } from 'abi/weth-abi';
+import { LazyOracleAbi } from 'abi/lazy-oracle';
 
 export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.lido]: StethAbi,
@@ -32,6 +33,7 @@ export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.vaultHub]: VaultHubAbi,
   [CONTRACTS.vaultFactory]: VaultFactoryAbi,
   [CONTRACTS.vaultViewer]: VaultViewerAbi,
+  [CONTRACTS.lazyOracle]: LazyOracleAbi,
 } as const;
 
 export type MetricContractName = CONTRACT_NAMES;

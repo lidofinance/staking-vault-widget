@@ -102,6 +102,7 @@ export const vaultTexts = {
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
         `Claim ${balance(claimableAmount)}ETH` as const,
+      notEnoughEther: `Not enough unlocked ETH to claim` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
     },
@@ -196,6 +197,7 @@ export const vaultTexts = {
     },
     liabilityStETH: {
       title: 'stETH liability',
+      action: 'Mint stETH',
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
     },
     rebalanceThreshold: {
@@ -341,8 +343,14 @@ export const vaultTexts = {
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
-      loadingVault: 'Error loading stVault',
-      vaultAddress: 'Invalid stVault address',
+
+      vault: {
+        loadingVault: 'Error loading stVault',
+        vaultAddress: 'Invalid stVault address',
+        notDashboard: 'stVault is not owned by Dashboard contract',
+        reportMissing:
+          'Report for your stVault is not available. Try again later.',
+      },
     },
     form: {
       willReceiveLabel: 'You will receive',

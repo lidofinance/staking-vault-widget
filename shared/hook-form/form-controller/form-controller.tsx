@@ -36,7 +36,9 @@ export const FormController = <
   const { handleSubmit, reset: resetDefault } = formObject;
 
   const shouldReset =
-    typeof afterSubmitResetOptions == 'boolean' && !afterSubmitResetOptions;
+    typeof afterSubmitResetOptions == 'boolean'
+      ? afterSubmitResetOptions
+      : true;
 
   // Bind submit action
   const doSubmit = useMemo(() => {

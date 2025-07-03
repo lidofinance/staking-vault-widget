@@ -6,12 +6,14 @@ export const VAULT_SUPPLY_TOKENS = ['ETH', 'wETH'] as const;
 export const VAULT_MINT_TOKENS = ['stETH', 'wstETH'] as const;
 
 export const VAULTS_CONNECT_DEPOSIT = parseEther('1');
+export const LAZY_ORACLE_ROOT_HASH_SLOT =
+  '0xe5459f2b48ec5df2407caac4ec464a5cb0f7f31a1f22f649728a9579b25c1d00';
+
+export const VAULT_REPORT_REFETCH_INTERVAL_MS = 60_000; // 1 minute
 
 // TOOD: remove in favor on bigint only calc
 export const VAULT_TOTAL_BASIS_POINTS = 10_000;
 export const VAULT_TOTAL_BASIS_POINTS_BN = 10_000n;
-export const VAULT_DEFAULT_REPORT_FRESHNESS_DELTA = 86400n; // 24 hours
-export const VAULT_SHOULD_REPORT_THRESHOLD = 0.9; // 90% of time until report is not fresh anymore has passed
 
 // forms validation values
 export const MIN_FEE_VALUE = 0;

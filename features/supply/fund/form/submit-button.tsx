@@ -26,7 +26,7 @@ export const SubmitButton = () => {
     ? vaultTexts.actions.supply.submit.supplyMint(
         token,
         amount,
-        maxMintableStethQuery.data,
+        maxMintableStethQuery.data?.maxMintableStETH,
       )
     : vaultTexts.actions.supply.submit.supply(token, amount);
 
