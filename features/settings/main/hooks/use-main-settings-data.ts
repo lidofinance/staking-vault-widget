@@ -96,6 +96,7 @@ export const useVaultSettingsData = () => {
           };
         });
 
+      // dedup proposals
       const dedupedMap = confirmations.reduce((dataMap, confirmation) => {
         const entry = dataMap.get(confirmation.data);
 
@@ -106,8 +107,25 @@ export const useVaultSettingsData = () => {
         return dataMap;
       }, new Map<string, (typeof confirmations)[number]>());
 
+      // sort by expiry timestamp
       confirmations = [...dedupedMap.values()].sort((a, b) =>
         Number(a.expiryTimestamp - b.expiryTimestamp),
+      );
+
+      // get how many are active
+      const confirmationsCount = await publicClient.multicall({
+        allowFailure: false,
+        contracts: confirmations.map((confirmation) =>
+          dashboard.prepare.confirmation([
+            confirmation.data,
+            confirmation.member,
+          ]),
+        ),
+      });
+
+      // filter out inactive confirmations
+      confirmations = confirmations.filter(
+        (_, index) => confirmationsCount[index] > 0,
       );
 
       // filter out votes that are already accepted
