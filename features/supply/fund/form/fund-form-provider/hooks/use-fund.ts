@@ -69,7 +69,7 @@ export const useFund = () => {
           loadingActionText: vaultTexts.actions.supply.loading,
         });
 
-        // minting stETH requires async data for report and minting capacity
+        // minting stETH requires async data for report and minting balance
         if (mintSteth) {
           prepareTransactions = async () => {
             isReportAvailable && calls.push(await prepareReportCall());

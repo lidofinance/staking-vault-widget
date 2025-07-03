@@ -5,3 +5,4 @@ export {
   useVaultPermissions,
   useVaultConfirmingRoles,
 } from './use-vault-permissions';
+export { useVaultLatestMetrics } from './use-latest-metrics';

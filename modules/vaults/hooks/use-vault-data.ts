@@ -1,21 +1,23 @@
+import { useMemo } from 'react';
 import { usePublicClient } from 'wagmi';
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-
-import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
-
-import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
-import { getStakingVaultContract } from 'modules/vaults/contracts/staking-vault';
-import { getDashboardContract } from 'modules/vaults/contracts/dashboard';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
-import { bigIntMax } from 'utils/bigint-math';
-import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
-
 import type { VaultInfo } from 'types';
 import type { Address } from 'viem';
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
+
+import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
+import { getVaultHubContract } from 'modules/vaults/contracts/vault-hub';
+import {
+  getOperatorGridContract,
+  getStakingVaultContract,
+  getDashboardContract,
+} from 'modules/vaults/contracts';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { bigIntMax } from 'utils/bigint-math';
+
 import { VAULTS_ROOT_ROLES_MAP } from '../consts';
-import { useMemo } from 'react';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -29,6 +31,7 @@ const getVaultData = async ({
   shares,
 }: VaultDataArgs): Promise<VaultInfo> => {
   const vaultHubContract = getVaultHubContract(publicClient);
+  const operatorGridContract = getOperatorGridContract(publicClient);
   const vaultContract = getStakingVaultContract(vaultAddress, publicClient);
 
   const [
@@ -36,6 +39,7 @@ const getVaultData = async ({
     isVaultConnected,
     record,
     obligations,
+    tier,
     nodeOperator,
     withdrawalCredentials,
     balance,
@@ -44,12 +48,16 @@ const getVaultData = async ({
     vaultHubContract.read.isVaultConnected([vaultAddress]),
     vaultHubContract.read.vaultRecord([vaultAddress]),
     vaultHubContract.read.vaultObligations([vaultAddress]),
+    operatorGridContract.read.vaultInfo([vaultAddress]),
     vaultContract.read.nodeOperator(),
     vaultContract.read.withdrawalCredentials(),
     publicClient.getBalance({
       address: vaultContract.address,
     }),
   ]);
+
+  const tierId = tier[1];
+  const tierShareLimit = tier[2];
 
   const {
     liabilityShares,
@@ -93,12 +101,14 @@ const getVaultData = async ({
     stETHLimit,
     lockedShares,
     totalMintingCapacityStETH,
+    tierStETHLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacity),
+    shares.convertToSteth(tierShareLimit),
   ]);
 
   const healthScore = calculateHealth({
@@ -137,6 +147,8 @@ const getVaultData = async ({
     liabilityShares,
     withdrawalCredentials,
     obligations,
+    tierStETHLimit,
+    tierId: tierId.toString(),
     ...rest,
   };
 };

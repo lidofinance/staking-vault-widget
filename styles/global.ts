@@ -1,9 +1,14 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { NAV_MOBILE_HEIGHT, NAV_MOBILE_MAX_WIDTH } from './constants';
+import {
+  NAV_MOBILE_HEIGHT,
+  NAV_MOBILE_MAX_WIDTH,
+  NAV_TABLET_MAX_WIDTH,
+} from './constants';
 import { ThemeName } from '@lidofinance/lido-ui';
 
 export const devicesHeaderMedia = {
+  tablet: `screen and (max-width: ${NAV_TABLET_MAX_WIDTH}px)`,
   mobile: `screen and (max-width: ${NAV_MOBILE_MAX_WIDTH}px)`,
 };
 

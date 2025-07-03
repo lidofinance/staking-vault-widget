@@ -1,17 +1,10 @@
 import { VaultOverviewProvider } from 'features/overview/contexts';
-import { General, Health, Capacity, Balance, NodeOperator } from './components';
-import { OverviewWrapper } from './styles';
+import { OverviewContent } from './components';
 
 export const OverviewPage = () => {
   return (
     <VaultOverviewProvider>
-      <OverviewWrapper>
-        <General />
-        <Health />
-        <Capacity />
-        <Balance />
-        <NodeOperator />
-      </OverviewWrapper>
+      <OverviewContent />
     </VaultOverviewProvider>
   );
 };

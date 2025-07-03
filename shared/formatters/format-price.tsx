@@ -9,6 +9,11 @@ export type FormatPriceComponent = Component<
   { amount: number | null | undefined; currency?: string }
 >;
 
+export const priceFormatter = new Intl.NumberFormat(config.LOCALE, {
+  style: 'currency',
+  currency: 'USD',
+});
+
 export const FormatPrice: FormatPriceComponent = (props) => {
   const { amount, currency = 'USD', ...rest } = props;
   const actual =

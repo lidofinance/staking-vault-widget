@@ -1,28 +1,33 @@
-import { OverviewItem, OverviewSection } from 'features/overview/shared';
-import { AddressSection } from 'features/overview/components/general/address-section';
+import { OverviewSection } from 'features/overview/shared';
 import {
   useVaultOverview,
   SectionData,
 } from 'features/overview/contexts/vault-overview';
+import { VaultBaseInfo } from './vault-base-info';
+
+import { GeneralLoader } from './styles';
 
 const sectionPayloadList: SectionData[] = [
   {
-    key: 'totalValue',
+    indicator: 'address',
   },
   {
-    key: 'reserveRatio',
+    indicator: 'nodeOperator',
+  },
+  {
+    indicator: 'nodeOperatorFeeRate',
   },
 ];
 
 export const General = () => {
   const { getVaultDataToRender } = useVaultOverview();
+  const isLoading = sectionPayloadList.some(
+    (item) => getVaultDataToRender(item).isLoading,
+  );
 
   return (
-    <OverviewSection titleContent={<AddressSection />}>
-      {sectionPayloadList.map((item) => {
-        const { key, ...rest } = getVaultDataToRender(item);
-        return <OverviewItem key={key} {...rest} />;
-      })}
+    <OverviewSection>
+      {isLoading ? <GeneralLoader /> : <VaultBaseInfo />}
     </OverviewSection>
   );
 };

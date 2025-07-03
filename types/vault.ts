@@ -29,6 +29,8 @@ export type VaultInfo = VaultSocket &
     nodeOperatorFeeRate: bigint;
     confirmExpiry: bigint;
     withdrawalCredentials: Address;
+    tierId: string;
+    tierStETHLimit: bigint;
   };
 
 export type VaultSocket = ReadContractReturnType<

@@ -1,20 +1,12 @@
 import styled from 'styled-components';
 
-export const Title = styled.div`
-  display: flex;
-  align-items: center;
-`;
+import { devicesHeaderMedia } from 'styles/global';
 
-export const ContentWrapper = styled.div`
+export const Section = styled.section`
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xxl}px;
-`;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
 
-export const Content = styled.section`
-  display: flex;
-  align-items: start;
-  flex-wrap: wrap;
-  column-gap: 52px;
-  row-gap: ${({ theme }) => theme.spaceMap.xxl}px;
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: column;
+  }
 `;

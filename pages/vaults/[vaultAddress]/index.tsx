@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { OverviewPage } from 'features/overview/new';
+import { OverviewPage } from 'features/overview';
 
 const Overview: FC = () => {
   return (

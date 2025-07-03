@@ -1,70 +1,80 @@
-import type { FC } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import type { Address } from 'viem';
-import { useRouter } from 'next/router';
-import { Text, Button } from '@lidofinance/lido-ui';
-
-import { useVaultInfo, useVaultPermission } from 'modules/vaults';
-
-import { OverviewItemValue } from './overview-item-value';
-import { ItemWrapper, Title } from './styles';
+import { Text } from '@lidofinance/lido-ui';
 
 import { Hint } from 'shared/components';
+
+import {
+  HealthFactorModal,
+  ImmediateWithdrawalModal,
+  TotalValueModal,
+  LidoFeeModal,
+  NetAprModal,
+  NodeOperatorFeeModal,
+  StethLiabilityModal,
+  VaultBalanceModal,
+} from 'features/overview/components/modals';
 import type { SectionPayload } from 'features/overview/contexts';
+import { useOverviewModal } from 'features/overview/hooks';
+import type { VaultOverviewModalKey } from 'features/overview/types';
+
+import { OverviewItemValue } from './overview-item-value';
+import { DefaultContent, ItemWrapper, Title } from './styles';
 
 export type ItemProps = {
   payload: string | Address | number | boolean;
+  indicator: VaultOverviewModalKey;
+  titleView?: 'column' | 'row';
   color?: string;
 } & Omit<SectionPayload, 'key'>;
 
-export const OverviewItem: FC<ItemProps> = ({
+const modalsMap: Record<VaultOverviewModalKey, FC> = {
+  totalValue: TotalValueModal,
+  healthFactorNumber: HealthFactorModal,
+  netApr: NetAprModal,
+  liabilityStETH: StethLiabilityModal,
+  balanceEth: VaultBalanceModal,
+  withdrawableEth: ImmediateWithdrawalModal,
+  undisbursedNodeOperatorFee: NodeOperatorFeeModal,
+  unsettledLidoFees: LidoFeeModal,
+};
+
+const getModalComponent = (name: VaultOverviewModalKey) => {
+  return modalsMap[name];
+};
+
+export const OverviewItem: FC<PropsWithChildren<ItemProps>> = ({
   title,
   payload,
-  actionLink,
-  actionRole,
-  action,
   hint,
   isLoading,
   color,
+  indicator,
+  titleView = 'column',
+  children,
+  ...rest
 }) => {
-  const { vaultAddress } = useVaultInfo();
-  const { hasPermission } = useVaultPermission(actionRole);
-
-  // show action if
-  const showAction = !!(
-    // 1. all data is provided
-    (
-      actionLink &&
-      action &&
-      vaultAddress &&
-      // 2. user has permission for it (if actionRole is provided)
-      (!actionRole || hasPermission)
-    )
-  );
-
-  const router = useRouter();
+  const { openModal } = useOverviewModal();
+  const ModalComponent = getModalComponent(indicator);
 
   return (
-    <ItemWrapper>
-      <Title>
-        <Text color="secondary" size="xxs">
-          {title}
+    <ItemWrapper onClick={() => openModal(indicator)}>
+      <DefaultContent titleView={titleView}>
+        <Title>
+          <Text color="secondary" size="xxs">
+            {title}
+          </Text>
           <Hint text={hint} />
-        </Text>
-      </Title>
-      <OverviewItemValue
-        content={payload}
-        isLoading={isLoading}
-        color={color}
-      />
-      {showAction && (
-        <Button
-          size="xs"
-          variant="translucent"
-          onClick={() => router.push(actionLink(vaultAddress))}
-        >
-          {action}
-        </Button>
-      )}
+        </Title>
+        <OverviewItemValue
+          content={payload}
+          isLoading={isLoading}
+          color={color}
+          {...rest}
+        />
+      </DefaultContent>
+      {children}
+      {!!ModalComponent && <ModalComponent />}
     </ItemWrapper>
   );
 };

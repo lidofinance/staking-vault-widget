@@ -12,6 +12,7 @@ import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-o
 import { formatBalance, formatPercent } from 'utils';
 
 import { useVaultInfo } from 'modules/vaults/vault-context';
+import { useVaultLatestMetrics } from 'modules/vaults/hooks';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ALL_ROLES,
@@ -19,15 +20,17 @@ import {
 } from 'modules/vaults';
 
 export type SectionData = {
-  key: VaultOverviewContextKeys;
+  indicator: VaultOverviewContextKeys;
   actionRole?: VAULTS_ALL_ROLES;
   actionLink?: (vaultAddress: Address) => string;
+  textSize?: 'lg' | 'xl';
 };
 
 export type SectionPayload = SectionData & {
   title: string;
+  learnMoreLink: string;
+  description?: string;
   hint?: string;
-  action?: string;
   isLoading?: boolean;
   payload: string | Address | number | boolean;
 };
@@ -48,11 +51,36 @@ export type VaultOverviewContextType = {
     totalMintingCapacityStETH: string;
     withdrawableEth: string;
     balanceEth: string;
-    accumulatedFee: string;
+    undisbursedNodeOperatorFee: string;
     nodeOperatorFeeRate: string;
     collateral: string;
     pendingUnlockEth: string;
+    netApr: string;
+    unsettledLidoFees: string;
     isVaultConnected: boolean;
+    remainingMintingCapacity: string;
+    tierId: string;
+    tierLimitStETH: string;
+    // TODO: re-check fee
+    feeObligationEth: string;
+
+    // TODO: replace
+    rebaseRewardEth: string;
+    grossStakingRewardsEth: string;
+    nodeOperatorRewardsEth: string;
+    dailyLidoFees: bigint;
+    netStakingRewardsEth: string;
+    grossStakingAPR: number;
+    grossStakingAprBps: number;
+    grossStakingAprPercent: number;
+    netStakingAPR: number;
+    netStakingAprBps: number;
+    bottomLineEth: string;
+    carrySpreadAPR: number;
+    carrySpreadAprBps: number;
+    carrySpreadApr: string;
+    isLoadingMetrics: boolean;
+    isLoading: boolean;
   };
   isLoadingVault?: boolean;
   getVaultDataToRender: (payload: SectionData) => SectionPayload;
@@ -62,8 +90,9 @@ export type VaultOverviewContextKeys = keyof VaultOverviewContextType['values'];
 
 type MetricText = {
   title: string;
+  learnMoreLink: string;
+  description?: string;
   hint?: string;
-  action?: string;
 };
 
 const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
@@ -71,8 +100,10 @@ const VaultOverviewContext = createContext<VaultOverviewContextType | null>(
 );
 VaultOverviewContext.displayName = 'VaultOverviewContext';
 
-const toEthValue = (value: bigint) => `${formatBalance(value).trimmed} ETH`;
-const toStethValue = (value: bigint) => `${formatBalance(value).trimmed} stETH`;
+const toEthValue = (value: bigint | undefined) =>
+  typeof value === 'bigint' ? `${formatBalance(value).trimmed} ETH` : '';
+const toStethValue = (value: bigint | undefined) =>
+  typeof value === 'bigint' ? `${formatBalance(value).trimmed} stETH` : '';
 
 const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
   const metric = vaultTexts.metrics[
@@ -83,7 +114,9 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeVault, isLoadingVault } = useVaultInfo();
+  const { activeVault, isLoadingVault, vaultAddress } = useVaultInfo();
+  const { data: vaultMetricsData, isLoadingMetrics } =
+    useVaultLatestMetrics(vaultAddress);
 
   const values: VaultOverviewContextType['values'] = useMemo(() => {
     if (activeVault) {
@@ -99,7 +132,29 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         nodeOperatorFeeRate: nodeOperatorFee,
         nodeOperator,
         isVaultConnected,
+        obligations,
+        mintableStETH,
+        tierId,
+        tierStETHLimit,
       } = activeVault;
+
+      const {
+        rebaseReward,
+        grossStakingRewards,
+        nodeOperatorRewards,
+        dailyLidoFees,
+        netStakingRewards,
+        grossStakingAPR,
+        grossStakingAprBps,
+        grossStakingAprPercent,
+        netStakingAPR,
+        netStakingAprBps,
+        netStakingAprPercent,
+        bottomLine,
+        carrySpreadAPR,
+        carrySpreadAprBps,
+        carrySpreadAprPercent,
+      } = vaultMetricsData;
 
       const overview = calculateOverviewV2({
         totalValue: activeVault.totalValue,
@@ -117,8 +172,10 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const totalValue = toEthValue(activeVault.totalValue);
       const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
       const liabilityStETH = toStethValue(activeVault.liabilityStETH);
+      const tierLimitStETH = toStethValue(tierStETHLimit);
       const withdrawableEth = toEthValue(withdrawableEther);
       const balanceEth = toEthValue(balance);
+      const remainingMintingCapacity = toStethValue(mintableStETH);
       const reserveRatio = formatPercent.format(
         reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
       );
@@ -136,7 +193,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const totalMintingCapacityStETH = toStethValue(
         activeVault.totalMintingCapacityStETH,
       );
-      const accumulatedFee = toEthValue(nodeOperatorUnclaimedFee);
+      const undisbursedNodeOperatorFee = toEthValue(nodeOperatorUnclaimedFee);
       const nodeOperatorFeeRate = formatPercent.format(
         Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
       );
@@ -144,6 +201,18 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const pendingUnlock = overview.recentlyRepaid;
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
+      );
+
+      // TODO: update fn's for undefined properties
+      const netApr =
+        netStakingAprPercent &&
+        formatPercent.format(netStakingAprPercent / 100);
+      const carrySpreadApr =
+        carrySpreadAprPercent &&
+        formatPercent.format(carrySpreadAprPercent / 100);
+      const unsettledLidoFees = toEthValue(obligations.unsettledLidoFees);
+      const feeObligationEth = toEthValue(
+        obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
       );
 
       return {
@@ -161,17 +230,41 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         totalMintingCapacityStETH,
         withdrawableEth,
         balanceEth,
-        accumulatedFee,
+        undisbursedNodeOperatorFee,
         nodeOperatorFeeRate,
         collateral,
         pendingUnlockEth,
         isLoadingVault,
+        isLoadingMetrics,
         isVaultConnected,
+        netApr,
+        unsettledLidoFees,
+        remainingMintingCapacity,
+        feeObligationEth,
+        tierId,
+        tierLimitStETH,
+
+        // TODO: replace by preparedData
+        rebaseRewardEth: toStethValue(rebaseReward),
+        grossStakingRewardsEth: toEthValue(grossStakingRewards),
+        nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
+        dailyLidoFees,
+        netStakingRewardsEth: toEthValue(netStakingRewards),
+        grossStakingAPR,
+        grossStakingAprBps,
+        grossStakingAprPercent,
+        netStakingAPR,
+        netStakingAprBps,
+        bottomLineEth: toEthValue(bottomLine),
+        carrySpreadAPR,
+        carrySpreadAprBps,
+        carrySpreadApr,
+        isLoading: isLoadingMetrics || isLoadingVault,
       };
     }
 
     return {} as VaultOverviewContextType['values'];
-  }, [activeVault, isLoadingVault]);
+  }, [activeVault, isLoadingVault, vaultMetricsData, isLoadingMetrics]);
 
   const value = useMemo(() => {
     return {
@@ -179,8 +272,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       isLoadingVault,
       getVaultDataToRender: (sectionEntry: SectionData) => ({
         ...sectionEntry,
-        ...getMetricTexts(sectionEntry.key),
-        payload: values[sectionEntry.key],
+        ...getMetricTexts(sectionEntry.indicator),
+        payload: values[sectionEntry.indicator],
         isLoading: isLoadingVault,
       }),
     };
