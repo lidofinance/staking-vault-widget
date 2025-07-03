@@ -24,8 +24,8 @@ export const vaultQueryKeys = (
     base,
     stateBase,
     state,
-    config: (scope: VaultConfigScopes = 'settings') =>
-      [...config, scope] as const,
+    config: (scope?: VaultConfigScopes) =>
+      [...config, ...(scope ? [scope] : [])] as const,
   } as const;
 };
 

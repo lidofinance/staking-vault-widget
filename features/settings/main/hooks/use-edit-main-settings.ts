@@ -159,6 +159,8 @@ export const useEditMainSettings = () => {
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
+            // because of complex state changes, we don't want to allow retry
+            allowRetry: false,
           }),
         );
 

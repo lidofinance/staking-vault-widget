@@ -70,15 +70,13 @@ export const useVaultSettingsData = () => {
         },
       );
 
-      const confirmations = logs
+      let confirmations = logs
         // filter out confirmations that are already expired
         .filter(
           ({ args }) =>
             args.confirmTimestamp &&
             args.confirmTimestamp + confirmExpiry > BigInt(Date.now()) / 1000n,
         )
-        // sort by block number
-        .sort((a, b) => Number(a.blockNumber - b.blockNumber))
         .map((log) => {
           const { confirmTimestamp, member, role, data } = log.args as Required<
             typeof log.args
@@ -97,6 +95,20 @@ export const useVaultSettingsData = () => {
             }) as VaultMainSettingsData['confirmExpiryConfirmations'][number]['decodedData'],
           };
         });
+
+      const dedupedMap = confirmations.reduce((dataMap, confirmation) => {
+        const entry = dataMap.get(confirmation.data);
+
+        if (!entry || entry.expiryTimestamp < confirmation.expiryTimestamp) {
+          dataMap.set(confirmation.data, confirmation);
+        }
+
+        return dataMap;
+      }, new Map<string, (typeof confirmations)[number]>());
+
+      confirmations = [...dedupedMap.values()].sort((a, b) =>
+        Number(a.expiryTimestamp - b.expiryTimestamp),
+      );
 
       // filter out votes that are already accepted
       const nodeOperatorFeeConfirmations = confirmations.filter(
