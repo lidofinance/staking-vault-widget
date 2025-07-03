@@ -118,7 +118,7 @@ export const useVaultSettingsData = () => {
         contracts: confirmations.map((confirmation) =>
           dashboard.prepare.confirmation([
             confirmation.data,
-            confirmation.member,
+            confirmation.role,
           ]),
         ),
       });
