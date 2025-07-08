@@ -5,8 +5,8 @@ import { Question, Tooltip } from '@lidofinance/lido-ui';
 import { Fragment } from 'react';
 
 const QuestionIcon = styled(Question)`
-  width: 20px;
-  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   fill: ${({ theme }) => theme.colors.textSecondary};
   align-self: baseline;
   vertical-align: text-bottom;

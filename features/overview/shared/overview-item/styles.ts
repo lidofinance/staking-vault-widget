@@ -27,6 +27,7 @@ export const ItemWrapper = styled.div`
 export const DefaultContent = styled.div<{ titleView: 'column' | 'row' }>`
   display: flex;
   flex-direction: ${({ titleView }) => titleView};
+  gap: ${({ theme }) => theme.spaceMap.lg}px;
   align-items: ${({ titleView }) =>
     titleView === 'column' ? 'start' : 'center'};
   justify-content: space-between;
@@ -36,6 +37,7 @@ export const DefaultContent = styled.div<{ titleView: 'column' | 'row' }>`
 export const Title = styled.div`
   display: flex;
   align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.xs}px;
 `;
 
 export const LoaderWrapper = styled.div`
@@ -44,6 +46,7 @@ export const LoaderWrapper = styled.div`
 `;
 
 export const ContentText = styled(Text)<TextProps>`
+  text-wrap: nowrap;
   @media ${devicesHeaderMedia.mobile} {
     font-size: ${({ size }) => (size === 'xl' ? 20 : 16)}px;
     line-height: ${({ size }) => (size === 'xl' ? 28 : 24)}px;

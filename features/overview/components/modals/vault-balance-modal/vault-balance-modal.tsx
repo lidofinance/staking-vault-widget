@@ -3,15 +3,19 @@ import {
   OverviewModal,
   SectionDivider,
 } from 'features/overview/shared';
+import { useVaultOverview } from 'features/overview/contexts';
 
 export const VaultBalanceModal = () => {
-  // TODO: get info about already staked eth
+  const {
+    values: { staked },
+  } = useVaultOverview();
+
   return (
     <OverviewModal name="balanceEth">
       <SectionDivider />
       <ModalSection
         title={'Staked'}
-        amount={'98.8115 ETH'}
+        amount={staked}
         description={
           'The amount of ETH deposited on validators and used for earning rewards.'
         }

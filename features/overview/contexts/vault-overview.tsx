@@ -61,6 +61,7 @@ export type VaultOverviewContextType = {
     remainingMintingCapacity: string;
     tierId: string;
     tierLimitStETH: string;
+    staked: string;
     // TODO: re-check fee
     feeObligationEth: string;
 
@@ -215,6 +216,9 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
       );
 
+      // TODO: update variable based on refslot data
+      const staked = toEthValue(activeVault.totalValue - balance);
+
       return {
         address,
         nodeOperator,
@@ -260,6 +264,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         carrySpreadAprBps,
         carrySpreadApr,
         isLoading: isLoadingMetrics || isLoadingVault,
+        staked,
       };
     }
 

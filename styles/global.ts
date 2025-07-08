@@ -35,6 +35,11 @@ const GlobalStyle = createGlobalStyle`
 
     --nav-transition-duration: 0.15s;
     --nav-transition-timing-function: ease-out;
+    
+    --chart-health-rebalance: #8A2D38;
+    --chart-health-danger: #D74758;
+    --chart-health-warning: #EB9925;
+    --chart-health-success: var(--lido-color-success);
   }
   * {
     margin: 0;

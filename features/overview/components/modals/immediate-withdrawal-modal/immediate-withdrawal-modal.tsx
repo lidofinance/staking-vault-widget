@@ -1,14 +1,24 @@
-import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
+import {
+  Text,
+  ChartLine,
+  ChartLineBorderType,
+  ChartLineThresholdType,
+} from '@lidofinance/lido-ui';
 
+import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import { useVaultOverview } from 'features/overview/contexts';
 import {
   ModalSection,
   OverviewModal,
   SectionDivider,
 } from 'features/overview/shared';
+import { useWithdrawChart } from 'features/overview/hooks';
+
+import { ChartHeading, List, ListItem } from './styles';
 
 export const ImmediateWithdrawalModal = () => {
   const {
+    isLoadingVault,
     values: {
       totalValue,
       balanceEth,
@@ -17,25 +27,57 @@ export const ImmediateWithdrawalModal = () => {
       feeObligationEth,
     },
   } = useVaultOverview();
+  const { chartData, notWithdrawableEthAmount } = useWithdrawChart();
 
   return (
     <OverviewModal name="withdrawableEth">
+      {!isLoadingVault && chartData && (
+        <div>
+          <ChartHeading>
+            <Text size="xxs">Total value:</Text>
+            <Text size="xxs" strong>
+              {totalValue}
+            </Text>
+          </ChartHeading>
+          <ChartLine
+            border={ChartLineBorderType.rounded}
+            thresholdType={ChartLineThresholdType.dash}
+            data={chartData}
+            height={24}
+            showLabels
+          />
+          <List>
+            <ListItem color="withdrawable">
+              <Text size="xxs" color="secondary">
+                Available for Immediate Withdrawal
+              </Text>
+              <Text size="xxs" strong>
+                {withdrawableEth}
+              </Text>
+            </ListItem>
+            <ListItem color="notWithdrawable">
+              <Text size="xxs" color="secondary">
+                Not withdrawable
+              </Text>
+              <Text size="xxs" strong>
+                {notWithdrawableEthAmount} ETH
+              </Text>
+            </ListItem>
+          </List>
+        </div>
+      )}
       <SectionDivider />
       <ModalSection
-        title={'Total Value'}
+        title="Total Value"
         amount={totalValue}
         description={
           'The amount of ETH deposited on validators and used for earning rewards.'
         }
       >
-        {/*TODO get repaid ~9.55420 stETH*/}
         <ModalSection
           title={'Locked by Collateral'}
           titleLeftDecorator={<NewLine />}
           amount={collateral}
-          description={
-            'Corresponding amount of ETH expecting to be unlocked with the upcoming Oracle report based on recently repaid ~9.55420 stETH.'
-          }
         />
         <ModalSection
           title={'Fee obligations'}

@@ -1,11 +1,21 @@
 import {
+  ChartProportion,
+  ChartProportionBorderSize,
+  ChartProportionBorderType,
+  MarginSize,
+} from '@lidofinance/lido-ui';
+
+import {
   Formula,
   ModalSection,
   OverviewModal,
   SectionDivider,
 } from 'features/overview/shared';
 import { FormulaItem } from 'features/overview/types';
-import { useVaultOverview } from '../../../contexts';
+import { useVaultOverview } from 'features/overview/contexts';
+import { useHealthChart } from 'features/overview/hooks';
+
+import { List, ListItem } from './styles';
 
 const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   carrySpread: [
@@ -76,16 +86,37 @@ const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
 
 export const HealthFactorModal = () => {
   const {
+    isLoadingVault,
     values: {
       carrySpreadApr,
       bottomLineEth,
       netStakingRewardsEth,
       rebaseRewardEth,
+      healthFactorNumber,
     },
   } = useVaultOverview();
+  const { chartData } = useHealthChart(healthFactorNumber);
 
   return (
     <OverviewModal name="healthFactorNumber">
+      {!isLoadingVault && (
+        <ModalSection>
+          <ChartProportion
+            height={24}
+            border={ChartProportionBorderType.rounded}
+            margin={MarginSize.md}
+            borderSize={ChartProportionBorderSize.md}
+            data={chartData}
+            showLabels
+          />
+          <List>
+            <ListItem color="rebalance">Forced rebalance</ListItem>
+            <ListItem color="danger">At risk</ListItem>
+            <ListItem color="warning">Needs attention</ListItem>
+            <ListItem color="success">Healthy</ListItem>
+          </List>
+        </ModalSection>
+      )}
       <ModalSection
         description={
           'The Health factor value equal to 100% is defined by the Forced rebalance threshold meaning that on the Health factor falling under 100% the vault becomes subject to forced rebalancing.'

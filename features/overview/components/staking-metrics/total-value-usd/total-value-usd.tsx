@@ -2,7 +2,7 @@ import { InlineLoader } from '@lidofinance/lido-ui';
 
 import { useVaultInfo } from 'modules/vaults';
 import { useEthUsd } from 'shared/hooks/use-eth-usd';
-import { priceFormatter } from 'shared/formatters';
+import { formatDollar } from 'utils/format-number';
 
 import { TextBlack } from './styles';
 
@@ -16,7 +16,7 @@ export const TotalValueUsd = () => {
         <InlineLoader />
       ) : (
         <TextBlack size="xxs" strong>
-          {priceFormatter.format(usdAmount as number)}
+          {formatDollar.format(usdAmount as number)}
         </TextBlack>
       )}
     </>

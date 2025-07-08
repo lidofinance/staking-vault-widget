@@ -7,13 +7,13 @@ import { TextWrapper } from '../../styles';
 export const RemainingMintingCapacity = () => {
   const {
     isLoadingVault,
-    values: { remainingMintingCapacity },
+    values: { isLoading, remainingMintingCapacity },
   } = useVaultOverview();
 
   // TODO: add capacity chart
   return (
     <>
-      {isLoadingVault ? (
+      {isLoadingVault || isLoading ? (
         <InlineLoader />
       ) : (
         <TextWrapper>

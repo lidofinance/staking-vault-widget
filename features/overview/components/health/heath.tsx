@@ -25,8 +25,9 @@ export const Health = () => {
       const color = isHealthFactor
         ? getHealthFactorColor(payload as string | number)
         : undefined;
+
       const formattedPayload = isHealthFactor
-        ? formatPercent.format(Number(payload))
+        ? formatPercent.format(Number(payload) / 100)
         : payload;
 
       return { payload: formattedPayload, indicator, color, ...item };

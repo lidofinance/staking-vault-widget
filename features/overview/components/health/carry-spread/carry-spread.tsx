@@ -1,28 +1,53 @@
-import { Text, InlineLoader } from '@lidofinance/lido-ui';
+import {
+  Text,
+  InlineLoader,
+  ChartProportion,
+  ChartProportionBorderType,
+  MarginSize,
+  ChartProportionBorderSize,
+} from '@lidofinance/lido-ui';
+
+import { getUtilizationRatioColor } from 'utils';
 
 import { useVaultOverview } from 'features/overview/contexts';
+import { useHealthChart } from 'features/overview/hooks';
 
 import { TextWrapper } from '../../styles';
+import { ContentWrapper } from './styles';
 
 export const CarrySpread = () => {
   const {
-    values: { isLoading, carrySpreadApr },
+    isLoadingVault,
+    values: { isLoading, carrySpreadApr, healthFactorNumber },
   } = useVaultOverview();
-  // TODO: add heath chart
+  const { chartData } = useHealthChart(healthFactorNumber);
+  const isDataLoading = isLoadingVault || isLoading;
+
+  if (isDataLoading) {
+    return <InlineLoader />;
+  }
+
   return (
-    <>
-      {isLoading ? (
-        <InlineLoader />
-      ) : (
-        <TextWrapper>
-          <Text size="xxs" color="secondary">
-            Carry Spread
-          </Text>
-          <Text size="xxs" strong style={{ color: '#53BA95' }}>
-            {carrySpreadApr || '-'}
-          </Text>
-        </TextWrapper>
-      )}
-    </>
+    <ContentWrapper>
+      <ChartProportion
+        height={8}
+        border={ChartProportionBorderType.rounded}
+        margin={MarginSize.md}
+        borderSize={ChartProportionBorderSize.md}
+        data={chartData}
+      />
+      <TextWrapper>
+        <Text size="xxs" color="secondary">
+          Carry Spread
+        </Text>
+        <Text
+          size="xxs"
+          strong
+          style={{ color: getUtilizationRatioColor(carrySpreadApr) }}
+        >
+          {carrySpreadApr ?? '-'}
+        </Text>
+      </TextWrapper>
+    </ContentWrapper>
   );
 };

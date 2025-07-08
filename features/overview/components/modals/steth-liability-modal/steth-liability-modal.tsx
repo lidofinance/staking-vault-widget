@@ -1,12 +1,21 @@
 import {
+  ChartLine,
+  ChartLineBorderType,
+  ChartLineThresholdType,
+} from '@lidofinance/lido-ui';
+
+import {
   ModalSection,
   OverviewModal,
   SectionDivider,
 } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/contexts';
+import { useStEthChart } from 'features/overview/hooks';
 
 export const StethLiabilityModal = () => {
+  const chartData = useStEthChart();
   const {
+    isLoadingVault,
     values: {
       utilizationRatio,
       totalMintingCapacityStETH,
@@ -19,6 +28,15 @@ export const StethLiabilityModal = () => {
 
   return (
     <OverviewModal name="liabilityStETH">
+      {!isLoadingVault && (
+        <ChartLine
+          border={ChartLineBorderType.rounded}
+          thresholdType={ChartLineThresholdType.flag}
+          data={chartData}
+          height={16}
+          showLabels
+        />
+      )}
       <SectionDivider />
       <ModalSection
         title={'Utilization ratio'}
