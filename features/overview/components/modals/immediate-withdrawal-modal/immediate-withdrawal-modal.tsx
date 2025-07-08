@@ -14,7 +14,7 @@ import {
 } from 'features/overview/shared';
 import { useWithdrawChart } from 'features/overview/hooks';
 
-import { ChartHeading, List, ListItem } from './styles';
+import { ChartContainer, ChartHeading, List, ListItem } from './styles';
 
 export const ImmediateWithdrawalModal = () => {
   const {
@@ -32,7 +32,7 @@ export const ImmediateWithdrawalModal = () => {
   return (
     <OverviewModal name="withdrawableEth">
       {!isLoadingVault && chartData && (
-        <div>
+        <ChartContainer>
           <ChartHeading>
             <Text size="xxs">Total value:</Text>
             <Text size="xxs" strong>
@@ -64,7 +64,7 @@ export const ImmediateWithdrawalModal = () => {
               </Text>
             </ListItem>
           </List>
-        </div>
+        </ChartContainer>
       )}
       <SectionDivider />
       <ModalSection

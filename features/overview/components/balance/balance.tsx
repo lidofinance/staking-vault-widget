@@ -1,6 +1,8 @@
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionData, useVaultOverview } from 'features/overview/contexts';
 
+import { WithdrawalChart } from './withdrawal-chart';
+
 const sectionPayloadList: SectionData[] = [
   {
     indicator: 'balanceEth',
@@ -16,14 +18,16 @@ const sectionPayloadList: SectionData[] = [
 
 export const Balance = () => {
   const { getVaultDataToRender } = useVaultOverview();
+  const [balanceData, withdrawableData] = sectionPayloadList.map(
+    (sectionItem) => getVaultDataToRender(sectionItem),
+  );
 
   return (
     <OverviewSection>
-      {sectionPayloadList.map((sectionItem) => {
-        const dataToRender = getVaultDataToRender(sectionItem);
-
-        return <OverviewItem key={dataToRender.indicator} {...dataToRender} />;
-      })}
+      <OverviewItem {...balanceData} />
+      <OverviewItem {...withdrawableData}>
+        <WithdrawalChart />
+      </OverviewItem>
     </OverviewSection>
   );
 };

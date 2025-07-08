@@ -24,6 +24,7 @@ export type SectionData = {
   actionRole?: VAULTS_ALL_ROLES;
   actionLink?: (vaultAddress: Address) => string;
   textSize?: 'lg' | 'xl';
+  titleView: 'row' | 'column';
 };
 
 export type SectionPayload = SectionData & {

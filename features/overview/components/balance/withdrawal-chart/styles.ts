@@ -11,16 +11,10 @@ const getColor = ({ color }: { color: WithdrawChartColor }) => {
   return healthChartColorMap[color];
 };
 
-export const ChartContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
-`;
-
 export const List = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
 `;
 
 export const ListItem = styled.div<{ color: WithdrawChartColor }>`
@@ -42,12 +36,4 @@ export const ListItem = styled.div<{ color: WithdrawChartColor }>`
     background-color: ${getColor};
     transform: translateY(-50%);
   }
-`;
-
-export const ChartHeading = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  text-align: left;
-  gap: ${({ theme }) => theme.spaceMap.xs}px;
 `;
