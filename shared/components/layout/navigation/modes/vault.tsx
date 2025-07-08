@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { type Address } from 'viem';
 import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVault } from 'modules/vaults';
 import { AddressBadge } from 'shared/components/address-badge';
 import { appPaths } from 'consts/routing';
 
@@ -59,7 +59,7 @@ const vaultPathnames = vaultRoutes('[vaultAddress]' as any, '[mode]').map(
 );
 
 export const VaultNavigation = () => {
-  const { vaultAddress, activeVault } = useVaultInfo();
+  const { vaultAddress, activeVault } = useVault();
 
   const availableRoutes = useMemo(
     () => (vaultAddress ? vaultRoutes(vaultAddress) : []),

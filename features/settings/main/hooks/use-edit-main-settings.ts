@@ -1,56 +1,51 @@
-import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import {
-  useVaultInfo,
-  useVaultPermission,
-  VAULT_TOTAL_BASIS_POINTS,
-  VAULT_TOTAL_BASIS_POINTS_BN,
-  VAULTS_ROOT_ROLES_MAP,
-  vaultTexts,
-} from 'modules/vaults';
+import { useCallback } from 'react';
+import type { Hash } from 'viem';
+
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { EditMainSettingsSchema } from 'features/settings/main/types';
-import { encodeFunctionData, Hash } from 'viem';
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultConfirmingRoles } from 'modules/vaults/hooks/use-vault-permissions';
-import { GoToVault } from 'modules/vaults/components/go-to-vault';
-import { useConfirmationsInfo } from './use-confirmations-info';
-import { useReportStatus } from 'features/report';
+import {
+  useVault,
+  VAULT_TOTAL_BASIS_POINTS,
+  VAULTS_ROOT_ROLES_MAP,
+  vaultTexts,
+  GoToVault,
+  useReportCalls,
+  useVaultConfirmingRoles,
+} from 'modules/vaults';
 
-const onlyState =
-  (state: 'grant' | 'remove') =>
-  (value: EditMainSettingsSchema['defaultAdmins'][number]) =>
-    value.state === state;
+import { useMainSettingsData } from '../contexts';
 
-const toMethodArg =
-  (role: Hash) => (value: EditMainSettingsSchema['defaultAdmins'][number]) => ({
-    role,
-    account: value.value,
-  });
+import type { MainSettingsFormValidatedValues } from '../types';
+
+type RoleValueType = MainSettingsFormValidatedValues['defaultAdmins'][number];
+
+const onlyState = (state: 'grant' | 'remove') => (value: RoleValueType) =>
+  value.state === state;
+
+const toMethodArg = (role: Hash) => (value: RoleValueType) => ({
+  role,
+  account: value.value,
+});
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
-  const { isReportAvailable, prepareReportCall } = useReportStatus();
-  const { refetch: refetchConfirmationsInfo } = useConfirmationsInfo();
-  const { refetch: refetchNOMPermission } = useVaultPermission(
-    'nodeOperatorManager',
-  );
-  const { refetch: refetchAdminPermission } =
-    useVaultPermission('defaultAdmin');
-
-  const owner = activeVault?.owner;
+  const { activeVault } = useVault();
+  const prepareReportCalls = useReportCalls();
+  const { data: vaultSettings } = useMainSettingsData();
 
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
     editMainSettings: useCallback(
-      async (payload: EditMainSettingsSchema) => {
-        invariant(owner, '[useEditMainSettings] owner is undefined');
+      async (formValues: MainSettingsFormValidatedValues) => {
+        invariant(
+          vaultSettings,
+          '[useEditMainSettings] vaultSettings is undefined',
+        );
         invariant(
           activeVault,
           '[useEditMainSettings] activeVault is undefined',
@@ -59,22 +54,17 @@ export const useEditMainSettings = () => {
         const transactions: TransactionEntry[] = [];
 
         const grantRoles = [
-          ...payload.defaultAdmins
+          ...formValues.defaultAdmins
             .filter(onlyState('grant'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
+          ...formValues.nodeOperatorManagers
             .filter(onlyState('grant'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
         ];
 
         if (grantRoles.length > 0) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'grantRoles',
-              args: [grantRoles],
-            }),
+            ...activeVault.dashboard.encode.grantRoles([grantRoles]),
             loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
               grantRoles.length,
             ),
@@ -82,10 +72,10 @@ export const useEditMainSettings = () => {
         }
 
         const revokeRoles = [
-          ...payload.defaultAdmins
+          ...formValues.defaultAdmins
             .filter(onlyState('remove'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['defaultAdmin'])),
-          ...payload.nodeOperatorManagers
+          ...formValues.nodeOperatorManagers
             .filter(onlyState('remove'))
             .map(toMethodArg(VAULTS_ROOT_ROLES_MAP['nodeOperatorManager'])),
         ];
@@ -96,12 +86,7 @@ export const useEditMainSettings = () => {
 
         if (revokeRoles.length > 0) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'revokeRoles',
-              args: [revokeRoles],
-            }),
+            ...activeVault.dashboard.encode.revokeRoles([revokeRoles]),
             loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
               revokeRoles.length,
             ),
@@ -109,33 +94,28 @@ export const useEditMainSettings = () => {
         }
 
         if (
-          payload.nodeOperatorFeeRecipient !==
-          activeVault.nodeOperatorFeeRecipient
+          formValues.nodeOperatorFeeRecipient !==
+          vaultSettings.nodeOperatorFeeRecipient
         ) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeRecipient',
-              args: [payload.nodeOperatorFeeRecipient],
-            }),
+            ...activeVault.dashboard.encode.setNodeOperatorFeeRecipient([
+              formValues.nodeOperatorFeeRecipient,
+            ]),
             loadingActionText:
               vaultTexts.actions.settings.nodeOperatorFeeRecipient,
           });
         }
 
-        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = payload;
+        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
           nodeOperatorFeeRate !== 'custom'
             ? nodeOperatorFeeRate
             : nodeOperatorFeeRateCustom,
         );
-        const currentFee = Number(
-          (activeVault.nodeOperatorFeeRate * 100n) /
-            VAULT_TOTAL_BASIS_POINTS_BN,
-        );
-        const isFeeValueChanged = feeValue !== currentFee;
+
+        const isFeeValueChanged =
+          feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
 
         if (isFeeValueChanged) {
           const newFee = Math.floor(
@@ -143,12 +123,9 @@ export const useEditMainSettings = () => {
           );
 
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setNodeOperatorFeeRate',
-              args: [BigInt(newFee)],
-            }),
+            ...activeVault.dashboard.encode.setNodeOperatorFeeRate([
+              BigInt(newFee),
+            ]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
               confirmingRoleAction,
               feeValue,
@@ -156,22 +133,17 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { confirmExpiry, confirmExpiryCustom } = payload;
+        const { confirmExpiry, confirmExpiryCustom } = formValues;
         const expiryValue =
           confirmExpiry === 'custom' && confirmExpiryCustom
             ? BigInt(confirmExpiryCustom) * 3600n
             : BigInt(confirmExpiry);
-        const currentExpiry = activeVault.confirmExpiry;
-        const isExpiryValueChanged = expiryValue !== currentExpiry;
+        const isExpiryValueChanged =
+          expiryValue !== BigInt(vaultSettings.confirmExpiryCurrent);
 
         if (isExpiryValueChanged) {
           transactions.push({
-            to: owner,
-            data: encodeFunctionData({
-              abi: dashboardAbi,
-              functionName: 'setConfirmExpiry',
-              args: [expiryValue],
-            }),
+            ...activeVault.dashboard.encode.setConfirmExpiry([expiryValue]),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
               confirmingRoleAction,
               Number(expiryValue / 3600n),
@@ -181,49 +153,28 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions:
-              isFeeValueChanged && isReportAvailable
-                ? async () => [await prepareReportCall(), ...transactions]
-                : transactions,
+            transactions: isFeeValueChanged
+              ? async () => [...prepareReportCalls(), ...transactions]
+              : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
+            // because of complex state changes, we don't want to allow retry
+            allowRetry: false,
           }),
         );
-        // refetch anyway because some transactions may be successful
-        const [vaultInfo, confirmations] = await Promise.all([
-          refetchVaultInfo(),
-          refetchConfirmationsInfo({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-          refetchNOMPermission({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-          refetchAdminPermission({
-            cancelRefetch: true,
-            throwOnError: false,
-          }),
-        ]);
 
         return {
           result,
-          confirmations,
-          vaultInfo,
+          isStateChanged: isFeeValueChanged,
         };
       },
       [
-        owner,
+        vaultSettings,
         activeVault,
         hasBothConfirmingRoles,
         sendTX,
-        isReportAvailable,
-        refetchVaultInfo,
-        refetchConfirmationsInfo,
-        refetchNOMPermission,
-        refetchAdminPermission,
-        prepareReportCall,
+        prepareReportCalls,
       ],
     ),
     ...rest,

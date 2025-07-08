@@ -1,19 +1,69 @@
-import { Address } from 'viem';
-import { addressSchema, editMainSettingsSchema } from './consts';
-import { z } from 'zod';
-import { VaultInfo } from 'types';
-import { VAULT_ROOT_ROLES } from 'modules/vaults';
+import type { Address, Hex, DecodeFunctionDataReturnType } from 'viem';
+import type { z } from 'zod';
 
-export type EditMainSettingsSchema = z.infer<typeof editMainSettingsSchema>;
-export type EditMainSettingsValues = {
-  nodeOperatorManagers: EditMainSettingsSchema['nodeOperatorManagers'] | null;
-  defaultAdmins: EditMainSettingsSchema['defaultAdmins'] | null;
-  nodeOperatorFeeRate: EditMainSettingsSchema['nodeOperatorFeeRate'];
-  nodeOperatorFeeRateCustom: EditMainSettingsSchema['nodeOperatorFeeRateCustom'];
-  confirmExpiry: EditMainSettingsSchema['confirmExpiry'];
-  confirmExpiryCustom: EditMainSettingsSchema['confirmExpiryCustom'];
+import type { VAULT_ROOT_ROLES } from 'modules/vaults';
+import type { dashboardAbi } from 'abi/dashboard-abi';
+
+import type { mainSettingsFormSchema } from './consts';
+import { UseQueryResult } from '@tanstack/react-query';
+
+export type MainSettingsFormValidatedValues = z.infer<
+  typeof mainSettingsFormSchema
+>;
+
+export type MainSettingFormsValues = MainSettingsFormValidatedValues & {
+  nodeOperatorFeeRecipient:
+    | MainSettingsFormValidatedValues['nodeOperatorFeeRecipient']
+    | string;
+  nodeOperatorManagers:
+    | MainSettingsFormValidatedValues['nodeOperatorManagers']
+    | null;
+  defaultAdmins: MainSettingsFormValidatedValues['defaultAdmins'] | null;
 };
-export type RoleFieldSchema = z.infer<typeof addressSchema>;
+
+type DecodedData = DecodeFunctionDataReturnType<
+  typeof dashboardAbi,
+  'setConfirmExpiry' | 'setNodeOperatorFeeRate'
+>;
+
+export type ConfirmationsData = {
+  member: Address;
+  role: Hex;
+  expiryTimestamp: bigint;
+  expiryDate: Date;
+  data: Hex;
+  decodedData: DecodedData;
+};
+
+export type VaultMainSettingsData = {
+  defaultAdmins: Address[];
+  nodeOperatorManagers: Address[];
+  nodeOperatorFeeRecipient: Address;
+
+  nodeOperatorFeeRate: bigint;
+  nodeOperatorFeeConfirmations: ConfirmationsData[];
+
+  confirmExpiry: bigint;
+  confirmExpiryConfirmations: ConfirmationsData[];
+};
+
+export type MainSettingsFormData = {
+  defaultAdmins: Address[];
+  nodeOperatorManagers: Address[];
+  nodeOperatorFeeRecipient: Address;
+
+  nodeOperatorFeeRate: VotingOptionType[];
+  nodeOperatorFeeRateCurrent: string;
+
+  confirmExpiry: VotingOptionType[];
+  confirmExpiryCurrent: string;
+};
+
+export type MainSettingsDataContextValue = UseQueryResult<MainSettingsFormData>;
+
+export type RoleFieldSchema =
+  MainSettingsFormValidatedValues['defaultAdmins'][number];
+
 export type VotingOptionType = {
   value: string;
   type: 'current' | 'Proposed to me' | 'My proposal' | 'custom';
@@ -37,16 +87,7 @@ export type MainSettingsOverview = {
   hint?: string;
   dataType: InputDataType;
   actionText?: string;
-  vaultKey: keyof VaultInfo;
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
 };
 
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
-
-export type MainSettingsDataContextValue = {
-  defaultAdmins: RoleFieldSchema[];
-  nodeOperatorManagers: RoleFieldSchema[];
-  nodeOperatorFeeRecipient: Address;
-  nodeOperatorFeeRate: VotingOptionType[];
-  confirmExpiry: VotingOptionType[];
-};

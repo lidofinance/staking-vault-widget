@@ -6,7 +6,7 @@ export const Admins = () => {
   return (
     <>
       {adminsForRender.map((field) => (
-        <ManagerAddressField key={field.vaultKey} {...field} />
+        <ManagerAddressField key={field.title} {...field} />
       ))}
     </>
   );

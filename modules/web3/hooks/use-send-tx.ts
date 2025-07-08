@@ -22,6 +22,7 @@ import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
+import { DisplayableError } from 'modules/vaults';
 
 export type TransactionEntry = {
   to: Address;
@@ -36,6 +37,7 @@ export type SendTransactionArguments = {
   mainActionCompleteText: string;
   forceAtomic?: boolean;
   forceLegacy?: boolean;
+  allowRetry?: boolean;
 } & Pick<TransactionModalState['details'], 'renderSuccessContent'>;
 
 // TODO: wrapper around error with readable message
@@ -71,6 +73,7 @@ export const useSendTransaction = () => {
       mainActionLoadingText,
       forceAtomic,
       forceLegacy,
+      allowRetry = true,
       renderSuccessContent,
     }) => {
       const receipts: TransactionReceipt[] = [];
@@ -82,7 +85,7 @@ export const useSendTransaction = () => {
           isBatch: useSendCalls,
           isOpen: false,
           stage: 'none',
-          onRetry: retryFire,
+          onRetry: allowRetry ? retryFire : undefined,
           details: {
             actionCompleteText: mainActionCompleteText,
             actionLoadingText: mainActionLoadingText,
@@ -201,7 +204,13 @@ export const useSendTransaction = () => {
 
         return transactionResult;
       } catch (error) {
-        dispatchModal({ type: 'stage', stage: 'error' });
+        const errorText =
+          error instanceof DisplayableError ? error.message : undefined;
+        dispatchModal({
+          type: 'stage',
+          stage: 'error',
+          details: { errorText },
+        });
         console.error(`[useSendTransaction] TX Error`, error);
         throw error;
       }

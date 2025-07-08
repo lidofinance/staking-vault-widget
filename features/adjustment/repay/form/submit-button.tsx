@@ -13,7 +13,11 @@ export const SubmitButton = () => {
   const isDisabled = isSubmitting || disabled;
 
   return (
-    <PermissionedSubmitButton dashboardRole="repayer" disabled={isDisabled}>
+    <PermissionedSubmitButton
+      loading={isSubmitting}
+      dashboardRole="repayer"
+      disabled={isDisabled}
+    >
       {vaultTexts.actions.repay.submit(token, amount)}
     </PermissionedSubmitButton>
   );

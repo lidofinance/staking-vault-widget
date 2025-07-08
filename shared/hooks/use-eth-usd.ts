@@ -5,7 +5,6 @@ import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { useQuery } from '@tanstack/react-query';
 
 import { AggregatorAbi } from 'abi/aggregator-abi';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { useMainnetOnlyWagmi } from 'modules/web3';
 import { getContractAddress } from 'config';
 
@@ -25,7 +24,6 @@ export const useEthUsd = (amount?: bigint) => {
   } = useQuery({
     queryKey: ['eth-usd-price', publicClientMainnet, address],
     enabled: !!(publicClientMainnet && address),
-    ...STRATEGY_LAZY,
     // the async is needed here because the decimals will be requested soon
     queryFn: async () => {
       invariant(address, '[useEthUsd] aggregator address is not defined');

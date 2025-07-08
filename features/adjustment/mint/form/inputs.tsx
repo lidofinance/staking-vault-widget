@@ -16,8 +16,8 @@ export const MintFormInputs = () => {
 
   const maxValue =
     token === 'stETH'
-      ? mintableQuery.data?.mintableStETH
-      : mintableQuery.data?.mintableWstETH;
+      ? mintableQuery.data?.maxMintableStETH
+      : mintableQuery.data?.maxMintableShares;
 
   return (
     <>

@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Resolver } from 'react-hook-form';
 
-import { maxAmountSchema, mintTokenSchema } from 'utils/validate-form-value';
+import { maxAmountSchema, mintTokenSchema } from 'utils/zod-validation';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import type {

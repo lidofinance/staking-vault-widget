@@ -14,7 +14,11 @@ export const SubmitButton = () => {
   const isDisabled = isSubmitting || disabled;
 
   return (
-    <PermissionedSubmitButton dashboardRole="withdrawer" disabled={isDisabled}>
+    <PermissionedSubmitButton
+      loading={isSubmitting}
+      dashboardRole="withdrawer"
+      disabled={isDisabled}
+    >
       {vaultTexts.actions.withdraw.submit(token, amount)}
     </PermissionedSubmitButton>
   );

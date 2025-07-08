@@ -6,6 +6,8 @@ import type {
   RegisteredWalletClient,
 } from 'modules/web3';
 
+import { getEncodable } from '../utils/encodable';
+
 // TODO: move to lido-sdk
 export const getDashboardContract = (
   address: Address,
@@ -23,9 +25,11 @@ export const getDashboardContract = (
     client.wallet = walletClient;
   }
 
-  return getContract({
-    address,
-    abi: dashboardAbi,
-    client,
-  });
+  return getEncodable(
+    getContract({
+      address,
+      abi: dashboardAbi,
+      client,
+    }),
+  );
 };

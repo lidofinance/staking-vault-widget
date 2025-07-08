@@ -22,7 +22,6 @@ const matchTabletMedia = () => {
 };
 
 export const Vault = () => {
-  // TODO: add tier level
   const {
     values: { address, reserveRatio, isVaultConnected },
   } = useVaultOverview();

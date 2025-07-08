@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 import { useFieldArray, useFormState } from 'react-hook-form';
 
-import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+import { useVaultPermission } from 'modules/vaults';
 import { Hint } from 'shared/components';
 
 import { Skeleton } from 'features/settings/main/styles';
@@ -11,10 +11,11 @@ import { DisplayAddress } from './display-address';
 import { GroupWrapper } from './styles';
 
 import {
-  EditMainSettingsSchema,
+  MainSettingsFormValidatedValues,
   MainSettingsOverview,
   ManagersKeys,
 } from 'features/settings/main/types';
+import invariant from 'tiny-invariant';
 
 type InputResolverProps = Omit<MainSettingsOverview, 'name'> & {
   name: ManagersKeys;
@@ -27,18 +28,18 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
   hint,
   canEditRole,
 }) => {
-  const { disabled, isLoading } = useFormState();
-  const isConfirmingRoles = canEditRole === 'confirmingRoles';
-  const { hasConfirmingRole } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission(
-    isConfirmingRoles ? undefined : canEditRole,
+  invariant(
+    canEditRole !== 'confirmingRoles',
+    'canEditRole cannot be "confirmingRoles" for this component',
   );
+  const { disabled, isLoading } = useFormState();
+
+  const { hasPermission } = useVaultPermission(canEditRole);
 
   const { fields, append, remove, update } =
-    useFieldArray<EditMainSettingsSchema>({ name });
+    useFieldArray<MainSettingsFormValidatedValues>({ name });
 
-  const isEditable =
-    !disabled && ((isConfirmingRoles && hasConfirmingRole) || hasPermission);
+  const isEditable = !disabled && hasPermission;
 
   return (
     <GroupWrapper>

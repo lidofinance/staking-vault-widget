@@ -1,13 +1,10 @@
-import invariant from 'tiny-invariant';
 import { useCallback, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
 
 import {
-  getDashboardContract,
+  useMaxMintable,
   useValidateRecipientArgs,
-  useVaultInfo,
+  useVault,
 } from 'modules/vaults';
-import { useLidoSDK } from 'modules/web3';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 
@@ -15,57 +12,39 @@ import { MintFormValidationContext } from '../types';
 
 export const useMintData = () => {
   const validateRecipientArgs = useValidateRecipientArgs();
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState } = useVault();
 
-  const { shares, publicClient } = useLidoSDK();
-  const mintableQuery = useQuery({
-    queryKey: ['maxMintable', activeVault?.address],
-    queryFn: async () => {
-      invariant(
-        activeVault?.address,
-        '[useMintData] activeVault address is undefined',
-      );
-      const dashboard = getDashboardContract(activeVault?.owner, publicClient);
-
-      const mintableShares =
-        await dashboard.read.remainingMintingCapacityShares([0n]);
-      const mintableStETH =
-        mintableShares > 0n ? await shares.convertToSteth(mintableShares) : 0n;
-
-      return {
-        mintableStETH,
-        mintableWstETH: mintableShares,
-      };
-    },
-  });
+  const mintableQuery = useMaxMintable(0n);
 
   const { data, refetch: refetchMintable } = mintableQuery;
 
   const validationContextValue = useMemo(() => {
     if (
-      [data?.mintableStETH, data?.mintableWstETH, validateRecipientArgs].some(
-        (value) => typeof value === 'undefined',
-      )
+      [
+        data?.maxMintableStETH,
+        data?.maxMintableShares,
+        validateRecipientArgs,
+      ].some((value) => typeof value === 'undefined')
     ) {
       return undefined;
     }
 
     return {
-      mintableStETH: data?.mintableStETH,
-      mintableWstETH: data?.mintableWstETH,
+      mintableStETH: data?.maxMintableStETH,
+      mintableWstETH: data?.maxMintableShares,
       validateRecipientArgs,
     } as MintFormValidationContext;
-  }, [validateRecipientArgs, data?.mintableStETH, data?.mintableWstETH]);
+  }, [validateRecipientArgs, data?.maxMintableStETH, data?.maxMintableShares]);
 
   const validationContext = useAwaiter(validationContextValue).awaiter;
 
   const invalidateMintData = useCallback(
     async () =>
       Promise.all([
-        refetchVaultInfo(),
+        invalidateVaultState(),
         refetchMintable({ cancelRefetch: true, throwOnError: false }),
       ]),
-    [refetchVaultInfo, refetchMintable],
+    [invalidateVaultState, refetchMintable],
   );
 
   return {

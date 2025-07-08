@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { LineData } from '@lidofinance/lido-ui';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultOverviewData } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
 export const useWithdrawChart = () => {
-  const { activeVault } = useVaultInfo();
+  const { data: activeVault } = useVaultOverviewData();
 
   return useMemo(() => {
     if (!activeVault) return {};

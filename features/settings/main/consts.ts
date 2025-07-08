@@ -1,10 +1,7 @@
 import { z } from 'zod';
-import { getAddress } from 'viem';
 import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
-
-import { isValidAnyAddress } from 'utils/address-validation';
 
 import {
   MIN_FEE_VALUE,
@@ -16,12 +13,14 @@ import {
   vaultTexts,
 } from 'modules/vaults';
 
-import {
-  EditMainSettingsSchema,
-  EditMainSettingsValues,
-  MainSettingsDataContextValue,
+import type {
+  MainSettingsFormValidatedValues,
+  MainSettingFormsValues,
+  MainSettingsFormData,
   MainSettingsOverview,
 } from './types';
+import { addressSchema } from 'utils/zod-validation';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
@@ -33,27 +32,22 @@ const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
 const INVALID_EMPTY_STRING = 'Missing value';
 const DUPLICATE_VALUE = 'Duplicate value';
 
-export const accountSchema = z
-  .string()
-  .refine(isValidAnyAddress, { message: INVALID_ADDRESS_MESSAGE })
-  .transform((val) => getAddress(val));
-
-export const addressSchema = z.object({
+const permissionSchema = z.object({
   isGranted: z.boolean().optional(),
   state: z.union([
     z.literal('remove'),
     z.literal('display'),
     z.literal('grant'),
   ]),
-  value: accountSchema,
+  value: addressSchema,
 });
 
-export const votingFeeSchema = z.coerce
+const votingFeeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
   .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
   .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE);
 
-export const votingLifetimeSchema = z.coerce
+const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
   .transform((val) => Number(val) * 3600)
   .refine(
@@ -65,10 +59,10 @@ export const votingLifetimeSchema = z.coerce
     INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
   );
 
-export const editMainSettingsSchema = z.object({
-  nodeOperatorManagers: z.array(addressSchema),
-  nodeOperatorFeeRecipient: accountSchema,
-  defaultAdmins: z.array(addressSchema),
+export const mainSettingsFormSchema = z.object({
+  nodeOperatorManagers: z.array(permissionSchema),
+  nodeOperatorFeeRecipient: addressSchema,
+  defaultAdmins: z.array(permissionSchema),
   nodeOperatorFeeRate: z.string(),
   nodeOperatorFeeRateCustom: z
     .string()
@@ -88,14 +82,12 @@ export const adminsForRender: MainSettingsOverview[] = [
   {
     name: 'defaultAdmins',
     dataType: 'address',
-    vaultKey: 'defaultAdmins',
     canEditRole: 'defaultAdmin',
     ...vaultTexts.actions.settings.fields.vaultManager,
   },
   {
     name: 'nodeOperatorManagers',
     dataType: 'address',
-    vaultKey: 'nodeOperatorManagers',
     canEditRole: 'nodeOperatorManager',
     ...vaultTexts.actions.settings.fields.nodeOperatorManager,
   },
@@ -107,13 +99,11 @@ export const multipleDataFields = [
 ] as const;
 
 const baseValidation = zodResolver<
-  EditMainSettingsValues,
+  MainSettingFormsValues,
   unknown,
-  EditMainSettingsSchema
+  MainSettingsFormValidatedValues
 >(
-  // TODO: find a way how to handle zod address type
-  // @ts-expect-error zod Address type is not incompatible to string
-  editMainSettingsSchema,
+  mainSettingsFormSchema,
   { async: false },
   {
     mode: 'sync',
@@ -122,13 +112,15 @@ const baseValidation = zodResolver<
 );
 
 export const mainSettingsFormResolver: Resolver<
-  EditMainSettingsValues,
-  MainSettingsDataContextValue,
-  EditMainSettingsSchema
-> = async (values, context, options) => {
-  const baseResult = await baseValidation(values, context, options as any);
+  MainSettingFormsValues,
+  Promise<MainSettingsFormData>,
+  MainSettingsFormValidatedValues
+> = async (values, awaitableContext, options) => {
+  const baseResult = await baseValidation(values, undefined, options);
 
-  const errors: FieldErrors<EditMainSettingsSchema> = { ...baseResult.errors };
+  const errors: FieldErrors<MainSettingsFormValidatedValues> = {
+    ...baseResult.errors,
+  };
 
   handleCustomFieldErrors(baseResult.errors, errors, values);
 
@@ -138,7 +130,11 @@ export const mainSettingsFormResolver: Resolver<
       errors,
     };
   }
-  invariant(context, '[mainSettingsFormResolver] context is undefined');
+  invariant(
+    awaitableContext,
+    '[mainSettingsFormResolver] context is undefined',
+  );
+  const context = await awaitWithTimeout(awaitableContext, 4000);
 
   checkForDuplicateValues(context, values, errors);
 
@@ -149,9 +145,9 @@ export const mainSettingsFormResolver: Resolver<
 };
 
 const handleCustomFieldErrors = (
-  baseResultErrors: FieldErrors<EditMainSettingsValues>,
-  errors: FieldErrors<EditMainSettingsSchema>,
-  values: EditMainSettingsValues,
+  baseResultErrors: FieldErrors<MainSettingFormsValues>,
+  errors: FieldErrors<MainSettingsFormValidatedValues>,
+  values: MainSettingFormsValues,
 ) => {
   const isnodeOperatorFeeRateCustom = values.nodeOperatorFeeRate === 'custom';
   const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
@@ -189,9 +185,9 @@ const handleCustomFieldErrors = (
 };
 
 const checkForDuplicateValues = (
-  context: MainSettingsDataContextValue,
-  values: EditMainSettingsValues,
-  errors: FieldErrors<EditMainSettingsSchema>,
+  context: MainSettingsFormData,
+  values: MainSettingFormsValues,
+  errors: FieldErrors<MainSettingsFormValidatedValues>,
 ) => {
   const { nodeOperatorFeeRate, confirmExpiry } = context;
 

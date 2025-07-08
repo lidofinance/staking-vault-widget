@@ -4,11 +4,11 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { RadioInput, RadioWithInput } from 'shared/components';
 import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
-import { VaultInfo } from 'types';
 
 import { ReadonlyView } from '../readonly-view';
 import { RadioSelectorContainer } from './radio-selector.styles';
 import { Skeleton } from 'features/settings/main/styles';
+import type { VaultMainSettingsData } from 'features/settings/main/types';
 
 export type RadioFormData = {
   type: string;
@@ -21,7 +21,7 @@ export type RadioFormData = {
 
 type VotingSelectorProps = {
   data?: RadioFormData[];
-  vaultKey: keyof VaultInfo;
+  vaultKey: keyof VaultMainSettingsData;
   title: string;
 };
 
@@ -82,7 +82,9 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
           )}
         </>
       )}
-      {!isEditable && !isLoading && <ReadonlyView vaultKey={vaultKey} />}
+      {!isEditable && !isLoading && (
+        <ReadonlyView value={selectedValue} vaultKey={vaultKey} />
+      )}
     </RadioSelectorContainer>
   );
 };

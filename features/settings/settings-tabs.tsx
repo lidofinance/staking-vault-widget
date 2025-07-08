@@ -1,25 +1,22 @@
-import { useSettings } from 'features/settings/contexts';
-
+import { useState } from 'react';
 import { ToggleSwitch } from 'shared/components/toggle';
-import { FormBlock, PageWrapper } from './styles';
+
 import { EditMainSettings } from './main';
 import { PermissionsSettings } from './permissions';
+import { FormBlock, PageWrapper } from './styles';
 
 import { SETTINGS_PATHS, SettingsPaths, settingsToggleList } from './const';
 
 export const SettingsTabs = () => {
-  const { isMainTab, setSettingsFormMode } = useSettings();
-
-  const handleToggleCb = (value: SettingsPaths) => {
-    setSettingsFormMode(value);
-  };
+  const [mode, setMode] = useState<SettingsPaths>(() => SETTINGS_PATHS.main);
+  const isMainTab = mode === SETTINGS_PATHS.main;
 
   return (
     <PageWrapper>
       <ToggleSwitch
         options={settingsToggleList}
-        defaultValue={SETTINGS_PATHS.main}
-        onToggle={({ value }) => handleToggleCb(value as SettingsPaths)}
+        defaultValue={mode}
+        onToggle={({ value }) => setMode(value as SettingsPaths)}
       />
       <FormBlock>
         {isMainTab ? <EditMainSettings /> : <PermissionsSettings />}

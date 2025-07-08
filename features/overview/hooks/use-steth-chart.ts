@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { LineData } from '@lidofinance/lido-ui';
 
-import { useVaultInfo, VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import { useVaultOverviewData, VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
 export const useStEthChart = (): LineData[] => {
-  const { activeVault } = useVaultInfo();
+  const { data: activeVault } = useVaultOverviewData();
 
   return useMemo(() => {
     if (!activeVault) return [];

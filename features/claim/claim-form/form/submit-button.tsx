@@ -17,15 +17,28 @@ export const SubmitButton = () => {
   };
 
   const isDisabled =
+    // state is not ready
     !isDappActive ||
     isSubmitting ||
-    claimableFeeQuery.isLoading ||
-    !claimableFeeQuery.data;
+    claimableFeeQuery.isPending ||
+    !claimableFeeQuery.data ||
+    // no fee or not enough to claim
+    !claimableFeeQuery.data.noFee ||
+    !claimableFeeQuery.data.isEnoughToClaim;
+
+  const isNotEnoughEther =
+    claimableFeeQuery.data && claimableFeeQuery.data.isEnoughToClaim === false;
 
   return (
     <ConnectWalletButton>
-      <Button disabled={isDisabled} onClick={handleClaim}>
-        {vaultTexts.actions.claim.claimButton(claimableFeeQuery.data)}
+      <Button
+        loading={isSubmitting}
+        disabled={isDisabled}
+        onClick={handleClaim}
+      >
+        {isNotEnoughEther
+          ? vaultTexts.actions.claim.notEnoughEther
+          : vaultTexts.actions.claim.claimButton(claimableFeeQuery.data?.noFee)}
       </Button>
     </ConnectWalletButton>
   );

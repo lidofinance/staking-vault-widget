@@ -7,3 +7,4 @@ export * from './threshold-exceeded';
 export * from './health';
 export * from './balance';
 export * from './fees';
+export { ReportState } from './report-state';

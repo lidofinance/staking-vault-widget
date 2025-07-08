@@ -8,21 +8,24 @@ import type {
   RegisteredPublicClient,
   RegisteredWalletClient,
 } from 'modules/web3';
+import { getEncodable } from 'modules/vaults/utils/encodable';
 
 // TODO: move to lido-sdk
-export const getOperatorGridContract = <TClient extends RegisteredPublicClient>(
-  publicClient: TClient,
+export const getOperatorGridContract = (
+  publicClient: RegisteredPublicClient,
 ) => {
   const address = getContractAddress(publicClient.chain.id, 'operatorGrid');
 
   invariant(address, '[getOperatorGridContract] operatorGrid is not defined');
-  return getContract({
-    address,
-    abi: OperatorGridAbi,
-    client: {
-      public: publicClient,
-    },
-  });
+  return getEncodable(
+    getContract({
+      address,
+      abi: OperatorGridAbi,
+      client: {
+        public: publicClient,
+      },
+    }),
+  );
 };
 
 export const getWritableOperatorGridContract = <

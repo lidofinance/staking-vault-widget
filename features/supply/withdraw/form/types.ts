@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { WithdrawFormSchema } from './withdraw-form-context/validation';
 import type { useWithdrawable } from './hooks';
-import type { ValidateRecipientArgs } from 'utils/validate-form-value';
+import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
 export type WithdrawFormValidatedValues = z.infer<
   ReturnType<typeof WithdrawFormSchema>

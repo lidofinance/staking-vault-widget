@@ -11,7 +11,7 @@ import {
 } from 'modules/vaults';
 
 import type { PermissionKeys } from 'features/create-vault/types';
-import { addressSchema } from 'utils/validate-form-value';
+import { addressSchema } from 'utils/zod-validation';
 
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
 const INVALID_NUMBER_MAX_MESSAGE = `Must be ${MAX_FEE_VALUE} or less`;

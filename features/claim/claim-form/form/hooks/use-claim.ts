@@ -1,15 +1,18 @@
 import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
-import { useEstimateGas, useAccount } from 'wagmi';
-import { encodeFunctionData } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useVaultInfo, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  useReportCalls,
+} from 'modules/vaults';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 export const useClaim = () => {
   const [isSubmitting, setSubmitting] = useState(false);
-  const { activeVault } = useVaultInfo();
+  const { activeVault } = useVault();
+  const prepareReportCalls = useReportCalls();
   const owner = activeVault?.owner;
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -22,17 +25,13 @@ export const useClaim = () => {
       const mainActionCompleteText = vaultTexts.actions.claim.completed;
 
       const claimCall = {
-        to: owner,
-        data: encodeFunctionData({
-          abi: dashboardAbi,
-          functionName: 'disburseNodeOperatorFee',
-        }),
+        ...activeVault.dashboard.encode.disburseNodeOperatorFee(),
         loadingActionText,
       };
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: [claimCall],
+          transactions: async () => [...prepareReportCalls(), claimCall],
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,
           renderSuccessContent: GoToVault,
@@ -41,31 +40,8 @@ export const useClaim = () => {
 
       setSubmitting(false);
       return success;
-    }, [owner, sendTX]),
+    }, [activeVault?.dashboard.encode, owner, prepareReportCalls, sendTX]),
     isSubmitting,
     ...rest,
   };
-};
-
-export const useEstimateClaim = () => {
-  const { address } = useAccount();
-  const { activeVault } = useVaultInfo();
-  const owner = activeVault?.owner;
-  const enabled = !!(
-    owner &&
-    address &&
-    activeVault.nodeOperatorUnclaimedFee > 0n
-  );
-
-  return useEstimateGas({
-    to: owner,
-    account: address,
-    data: encodeFunctionData({
-      abi: dashboardAbi,
-      functionName: 'disburseNodeOperatorFee',
-    }),
-    query: {
-      enabled,
-    },
-  });
 };

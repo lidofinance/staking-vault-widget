@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { Address } from 'viem';
 
 import { VaultApiMetrics } from 'types/vault-api';
+import { useVaultOverviewData } from './use-vault-overview-data';
 
 const BASE_URL = process.env.NEXT_PUBLIC_VAULTS_API_BASE_URL;
 
@@ -40,11 +41,12 @@ const fetchVaultLatestMetrics = async (
   };
 };
 
-export const useVaultLatestMetrics = (vaultAddress: Address | undefined) => {
+export const useVaultLatestMetrics = () => {
+  const { data: vaultData } = useVaultOverviewData();
   const { data, isLoading, ...rest } = useQuery<VaultApiMetrics, Error>({
-    queryKey: ['useVaultLatestMetrics', vaultAddress],
-    queryFn: () => fetchVaultLatestMetrics(vaultAddress as Address),
-    enabled: !!vaultAddress,
+    queryKey: ['useVaultLatestMetrics', vaultData?.address],
+    queryFn: () => fetchVaultLatestMetrics(vaultData?.address as Address),
+    enabled: !!vaultData?.address,
     staleTime: 1000 * 60 * 60,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

@@ -10,13 +10,13 @@ import { InfoRowAmount } from 'shared/components/form';
 export const Suppliable = () => {
   const { token } = useWatch<FundFormValidatedValues>();
   const { disabled } = useFormState();
-  const { data, isLoading } = useFundForm().balanceQuery;
+  const { data, isPending } = useFundForm().balanceQuery;
 
   return (
     <InfoRowAmount
       title={vaultTexts.actions.supply.available}
       amount={data}
-      loading={isLoading}
+      loading={isPending}
       token={token}
       disabled={disabled}
     />

@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultOverviewData } from 'modules/vaults';
 import { formatPercent } from 'utils';
 
 import { useVaultOverview } from 'features/overview/contexts';
@@ -22,7 +22,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   amountRightDecorator = null,
 }) => {
   const { closeModal, currentModal } = useOverviewModal();
-  const { isLoadingVault } = useVaultInfo();
+  const { isLoading: isLoadingVault } = useVaultOverviewData();
   const { getVaultDataToRender } = useVaultOverview();
   const { title, payload, hint, description, learnMoreLink } =
     getVaultDataToRender({ indicator: name });

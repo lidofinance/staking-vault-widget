@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { Address } from 'viem';
 
-import { useVaultInfo } from 'modules/vaults';
+import { useVaultOverviewData } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 
 import { OverviewModal } from 'features/overview/shared';
@@ -10,14 +9,14 @@ import { OverviewModal } from 'features/overview/shared';
 import { ButtonStyled } from './styles';
 
 export const NodeOperatorFeeModal = () => {
-  const { vaultAddress } = useVaultInfo();
+  const { data: vault } = useVaultOverviewData();
   const router = useRouter();
 
   const navigate = useCallback(() => {
-    void router.push(
-      appPaths.vaults.vault(vaultAddress as Address).eth('withdraw'),
-    );
-  }, [router, vaultAddress]);
+    if (!vault) return;
+
+    void router.push(appPaths.vaults.vault(vault.address).eth('withdraw'));
+  }, [router, vault]);
 
   return (
     <OverviewModal

@@ -1,35 +1,51 @@
-import { useReadContract } from 'wagmi';
+import { useQuery } from '@tanstack/react-query';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
-import { useValidateRecipientArgs, useVaultInfo } from 'modules/vaults';
-import { useCallback } from 'react';
+import {
+  readWithReport,
+  useReadDashboard,
+  useValidateRecipientArgs,
+  useVault,
+} from 'modules/vaults';
+import { useLidoSDK } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import invariant from 'tiny-invariant';
 
 export const useClaimData = () => {
-  const { activeVault, refetchVaultInfo } = useVaultInfo();
+  const { invalidateVaultState, activeVault, queryKeys } = useVault();
+  const { publicClient } = useLidoSDK();
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
-  const claimableFeeQuery = useReadContract({
-    abi: dashboardAbi,
-    address: activeVault?.owner,
-    functionName: 'nodeOperatorDisbursableFee',
-    query: {
-      enabled: !!activeVault?.owner,
+  const recipientQuery = useReadDashboard({
+    functionName: 'nodeOperatorFeeRecipient',
+  });
+
+  const claimableFeeQuery = useQuery({
+    queryKey: [...queryKeys.state, 'claimableFee'],
+    enabled: !!activeVault,
+    queryFn: async () => {
+      invariant(activeVault, 'Active vault is not defined');
+
+      const [noFee, withdrawableValue] = await readWithReport({
+        report: activeVault.report,
+        publicClient,
+        contracts: [
+          activeVault.dashboard.prepare.nodeOperatorDisbursableFee(),
+          activeVault.hub.prepare.withdrawableValue([activeVault.address]),
+        ] as const,
+      });
+
+      return {
+        noFee,
+        withdrawableValue,
+        isEnoughToClaim: withdrawableValue >= noFee,
+      };
     },
   });
 
-  const invalidateClaimData = useCallback(
-    () =>
-      Promise.all([
-        refetchVaultInfo(),
-        claimableFeeQuery.refetch({ cancelRefetch: true, throwOnError: false }),
-      ]),
-    [claimableFeeQuery, refetchVaultInfo],
-  );
-
   return {
+    recipientQuery,
     claimableFeeQuery,
     validationContext,
-    invalidateClaimData,
+    invalidateClaimData: invalidateVaultState,
   };
 };

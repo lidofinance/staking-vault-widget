@@ -18,6 +18,7 @@ import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
 import { VaultHubAbi } from 'abi/vault-hub';
 import { VaultFactoryAbi } from 'abi/vault-factory';
 import { WethABI } from 'abi/weth-abi';
+import { LazyOracleAbi } from 'abi/lazy-oracle';
 import { OperatorGridAbi } from 'abi/operator-grid';
 
 export const METRIC_CONTRACT_ABIS = {
@@ -33,6 +34,7 @@ export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.vaultHub]: VaultHubAbi,
   [CONTRACTS.vaultFactory]: VaultFactoryAbi,
   [CONTRACTS.vaultViewer]: VaultViewerAbi,
+  [CONTRACTS.lazyOracle]: LazyOracleAbi,
   [CONTRACTS.operatorGrid]: OperatorGridAbi,
 } as const;
 

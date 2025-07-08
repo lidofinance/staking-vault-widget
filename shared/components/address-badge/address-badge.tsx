@@ -9,7 +9,7 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { useSafeEnsName } from 'shared/hooks/use-safe-ens-name';
-import { addressSchema } from 'utils/validate-form-value';
+import { addressSchema } from 'utils/zod-validation';
 
 import { AddressAvatar } from './address-avatar';
 import { AddressPopover } from './address-popover';

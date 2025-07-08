@@ -5,22 +5,19 @@ import { Button } from '@lidofinance/lido-ui';
 import { ConnectWalletButton } from 'shared/wallet';
 import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
-import {
-  shouldIncrementTxCounterByVoting,
-  shouldIncrementTxCounterByAddresses,
-} from 'features/settings/main/utils';
+import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 
 import { Container } from './styled';
 
-import { EditMainSettingsSchema } from 'features/settings/main/types';
+import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 export const MainSettingsAction: FC = () => {
-  const { watch, reset } = useFormContext<EditMainSettingsSchema>();
+  const { watch, reset } = useFormContext<MainSettingsFormValidatedValues>();
   const { isValid, isDirty, isSubmitting, isValidating, disabled } =
     useFormState();
   const isClearDisabled = !isDirty;
-  const mainSettingsData = useMainSettingsData();
+  const { data: mainSettingsData } = useMainSettingsData();
   const isSubmitDisabled = isSubmitting || disabled || isValidating;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
@@ -46,38 +43,29 @@ export const MainSettingsAction: FC = () => {
         confirmExpiryCustom,
         nodeOperatorFeeRecipient,
       } = formFields;
-      const currentnodeOperatorFeeRate =
-        nodeOperatorFeeRate === 'custom'
-          ? nodeOperatorFeeRateCustom
-          : nodeOperatorFeeRate;
-      const currentConfirmExpiry =
+
+      const confirmExpiryFormValue =
         confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
       if (
-        nodeOperatorFeeRecipient != mainSettingsData?.nodeOperatorFeeRecipient
+        nodeOperatorFeeRecipient !== mainSettingsData?.nodeOperatorFeeRecipient
       ) {
         counter++;
       }
 
+      const nodeOperatorFeeRateFormValue =
+        nodeOperatorFeeRate === 'custom'
+          ? nodeOperatorFeeRateCustom
+          : nodeOperatorFeeRate;
+
       if (
-        shouldIncrementTxCounterByVoting(
-          currentnodeOperatorFeeRate,
-          mainSettingsData?.nodeOperatorFeeRate.find(
-            (item) => item.type === 'current',
-          )?.value,
-        )
+        nodeOperatorFeeRateFormValue !==
+        mainSettingsData?.nodeOperatorFeeRateCurrent
       ) {
         counter++;
       }
 
-      if (
-        shouldIncrementTxCounterByVoting(
-          currentConfirmExpiry,
-          mainSettingsData?.confirmExpiry.find(
-            (item) => item.type === 'current',
-          )?.value,
-        )
-      ) {
+      if (confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent) {
         counter++;
       }
     }
@@ -86,8 +74,8 @@ export const MainSettingsAction: FC = () => {
   }, [
     formFields,
     isValid,
-    mainSettingsData?.confirmExpiry,
-    mainSettingsData?.nodeOperatorFeeRate,
+    mainSettingsData?.confirmExpiryCurrent,
+    mainSettingsData?.nodeOperatorFeeRateCurrent,
     mainSettingsData?.nodeOperatorFeeRecipient,
   ]);
 

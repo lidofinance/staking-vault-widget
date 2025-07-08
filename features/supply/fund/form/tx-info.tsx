@@ -8,8 +8,7 @@ import type { FundFormValidatedValues } from './types';
 
 export const TxInfo = () => {
   const { watch } = useFormContext<FundFormValidatedValues>();
-  const { data: maxMintableSteth, isLoading } =
-    useFundForm().maxMintableStethQuery;
+  const { data, isLoading } = useFundForm().maxMintableStethQuery;
   const mintSteth = watch('mintSteth');
 
   if (!mintSteth) return null;
@@ -17,7 +16,7 @@ export const TxInfo = () => {
   return (
     <InfoRowAmount
       title={vaultTexts.common.form.willReceiveLabel}
-      amount={maxMintableSteth}
+      amount={data?.maxMintableStETH}
       token="stETH"
       loading={isLoading}
       noDataLabel="-"
