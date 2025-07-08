@@ -7,13 +7,13 @@ import { TextBlack } from './styles';
 
 export const NetStakingRewards = () => {
   const {
-    values: { netStakingRewards, isLoading },
+    isLoadingVault,
+    values: { netStakingRewardsEth, isLoading },
   } = useVaultOverview();
-  /* TODO get from API*/
 
   return (
     <>
-      {isLoading ? (
+      {isLoadingVault || isLoading ? (
         <InlineLoader />
       ) : (
         <TextWrapper>
@@ -21,7 +21,7 @@ export const NetStakingRewards = () => {
             Net staking rewards
           </Text>
           <TextBlack size="xxs" strong>
-            {netStakingRewards || '-'}
+            {netStakingRewardsEth || '-'}
           </TextBlack>
         </TextWrapper>
       )}

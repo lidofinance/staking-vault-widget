@@ -18,13 +18,14 @@ import {
   VAULTS_ALL_ROLES,
   vaultTexts,
 } from 'modules/vaults';
+import type { VaultOverviewModalKey } from '../types';
 
 export type SectionData = {
-  indicator: VaultOverviewContextKeys;
+  indicator: VaultOverviewModalKey;
   actionRole?: VAULTS_ALL_ROLES;
   actionLink?: (vaultAddress: Address) => string;
   textSize?: 'lg' | 'xl';
-  titleView: 'row' | 'column';
+  titleView?: 'row' | 'column';
 };
 
 export type SectionPayload = SectionData & {
@@ -62,7 +63,6 @@ export type VaultOverviewContextType = {
     remainingMintingCapacity: string;
     tierId: string;
     tierLimitStETH: string;
-    staked: string;
     // TODO: re-check fee
     feeObligationEth: string;
 
@@ -70,7 +70,6 @@ export type VaultOverviewContextType = {
     rebaseRewardEth: string;
     grossStakingRewardsEth: string;
     nodeOperatorRewardsEth: string;
-    dailyLidoFees: bigint;
     netStakingRewardsEth: string;
     grossStakingAPR: number;
     grossStakingAprBps: number;
@@ -144,7 +143,6 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         rebaseReward,
         grossStakingRewards,
         nodeOperatorRewards,
-        dailyLidoFees,
         netStakingRewards,
         grossStakingAPR,
         grossStakingAprBps,
@@ -204,21 +202,12 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       const pendingUnlockEth = toEthValue(
         pendingUnlock > 0n ? pendingUnlock : 0n,
       );
-
-      // TODO: update fn's for undefined properties
-      const netApr =
-        netStakingAprPercent &&
-        formatPercent.format(netStakingAprPercent / 100);
-      const carrySpreadApr =
-        carrySpreadAprPercent &&
-        formatPercent.format(carrySpreadAprPercent / 100);
+      const netApr = formatPercent.format(netStakingAprPercent / 100);
+      const carrySpreadApr = formatPercent.format(carrySpreadAprPercent / 100);
       const unsettledLidoFees = toEthValue(obligations.unsettledLidoFees);
       const feeObligationEth = toEthValue(
         obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
       );
-
-      // TODO: update variable based on refslot data
-      const staked = toEthValue(activeVault.totalValue - balance);
 
       return {
         address,
@@ -253,7 +242,6 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         rebaseRewardEth: toStethValue(rebaseReward),
         grossStakingRewardsEth: toEthValue(grossStakingRewards),
         nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
-        dailyLidoFees,
         netStakingRewardsEth: toEthValue(netStakingRewards),
         grossStakingAPR,
         grossStakingAprBps,
@@ -265,7 +253,6 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         carrySpreadAprBps,
         carrySpreadApr,
         isLoading: isLoadingMetrics || isLoadingVault,
-        staked,
       };
     }
 
