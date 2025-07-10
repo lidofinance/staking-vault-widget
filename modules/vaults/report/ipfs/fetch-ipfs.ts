@@ -76,7 +76,7 @@ export const fetchReportMerkle = async (
   cid: string,
   vault: Address,
 ) => {
-  const url = getApiURL(chain, 'vaultApi');
+  const url = getApiURL(chain, 'vaultsApi');
   if (url) {
     throw new Error('not implemented');
   }
