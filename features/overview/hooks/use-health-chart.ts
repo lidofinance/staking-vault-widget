@@ -1,22 +1,23 @@
 import { useMemo } from 'react';
+
 import {
-  HEALTH_REBALANCE_BP,
-  HEALTH_DANGER_BP,
-  HEALTH_WARNING_BP,
-  HEALTH_SUCCESS_BP,
-} from 'features/overview/consts';
+  VAULT_HEALTH_PERCENT_RED,
+  VAULT_HEALTH_PERCENT_YELLOW,
+  VAULT_HEALTH_PERCENT_GREEN,
+  VAULT_HEALTH_PERCENT_HEALTH,
+} from 'consts/threshold';
 
 const PERCENT = 100;
 
 const calculateHealthChart = (healthFactorNumber = 0) => {
   const rebalancePercent = Math.min(
-    (healthFactorNumber / HEALTH_REBALANCE_BP) * PERCENT,
+    (healthFactorNumber / VAULT_HEALTH_PERCENT_RED) * PERCENT,
     PERCENT,
   );
   const dangerPercent = Math.min(
     Math.max(
-      ((healthFactorNumber - HEALTH_REBALANCE_BP) /
-        (HEALTH_DANGER_BP - HEALTH_REBALANCE_BP)) *
+      ((healthFactorNumber - VAULT_HEALTH_PERCENT_RED) /
+        (VAULT_HEALTH_PERCENT_YELLOW - VAULT_HEALTH_PERCENT_RED)) *
         PERCENT,
       0,
     ),
@@ -24,8 +25,8 @@ const calculateHealthChart = (healthFactorNumber = 0) => {
   );
   const warningPercent = Math.min(
     Math.max(
-      ((healthFactorNumber - HEALTH_DANGER_BP) /
-        (HEALTH_WARNING_BP - HEALTH_DANGER_BP)) *
+      ((healthFactorNumber - VAULT_HEALTH_PERCENT_YELLOW) /
+        (VAULT_HEALTH_PERCENT_GREEN - VAULT_HEALTH_PERCENT_YELLOW)) *
         PERCENT,
       0,
     ),
@@ -33,8 +34,8 @@ const calculateHealthChart = (healthFactorNumber = 0) => {
   );
   const successPercent = Math.min(
     Math.max(
-      ((healthFactorNumber - HEALTH_WARNING_BP) /
-        (HEALTH_SUCCESS_BP - HEALTH_WARNING_BP)) *
+      ((healthFactorNumber - VAULT_HEALTH_PERCENT_GREEN) /
+        (VAULT_HEALTH_PERCENT_HEALTH - VAULT_HEALTH_PERCENT_GREEN)) *
         PERCENT,
       0,
     ),
@@ -44,27 +45,27 @@ const calculateHealthChart = (healthFactorNumber = 0) => {
   const chartData = [
     {
       color: 'var(--chart-health-rebalance)',
-      label: `${HEALTH_REBALANCE_BP}%`,
+      label: `${VAULT_HEALTH_PERCENT_RED}%`,
       progress: rebalancePercent,
-      value: HEALTH_REBALANCE_BP,
+      value: VAULT_HEALTH_PERCENT_RED,
     },
     {
       color: 'var(--chart-health-danger)',
-      label: `${HEALTH_DANGER_BP}%`,
+      label: `${VAULT_HEALTH_PERCENT_YELLOW}%`,
       progress: dangerPercent,
-      value: HEALTH_DANGER_BP,
+      value: VAULT_HEALTH_PERCENT_YELLOW,
     },
     {
       color: 'var(--chart-health-warning)',
-      label: `${HEALTH_WARNING_BP}%`,
+      label: `${VAULT_HEALTH_PERCENT_GREEN}%`,
       progress: warningPercent,
-      value: HEALTH_WARNING_BP,
+      value: VAULT_HEALTH_PERCENT_GREEN,
     },
     {
       color: 'var(--chart-health-success)',
-      label: `${HEALTH_SUCCESS_BP}%`,
+      label: `${VAULT_HEALTH_PERCENT_HEALTH}%`,
       progress: successPercent,
-      value: HEALTH_SUCCESS_BP,
+      value: VAULT_HEALTH_PERCENT_HEALTH,
     },
   ];
 

@@ -45,6 +45,12 @@ const NETWORKS_MAP = {
   [CHAINS.Hoodi]: hoodiSet,
 } as Record<string, NetworkConfig>;
 
+// Vault API root
+const API_MAP = {
+  [CHAINS.Mainnet]: 'https://',
+  [CHAINS.Hoodi]: 'https://vaults-api-hoodi-lidov3.testnet.fi/v1',
+} as Record<string, `https://${string}`>;
+
 export const getNetworkConfig = (chain: CHAINS): NetworkConfig | undefined => {
   const overridedSetName = DEVNET_OVERRIDES[chain];
 
@@ -75,4 +81,12 @@ export const getApiURL = (
   const networkConfig = getNetworkConfig(chain);
 
   return networkConfig?.api?.[apiName];
+};
+
+export const getVaultApiURL = (chain: CHAINS): string | undefined => {
+  const apiVaultUrl = API_MAP[chain];
+
+  invariant(apiVaultUrl, '[getVaultApiURL] Vaults API URL not found.');
+
+  return apiVaultUrl;
 };

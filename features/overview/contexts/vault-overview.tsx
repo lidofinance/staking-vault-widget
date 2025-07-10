@@ -63,22 +63,12 @@ export type VaultOverviewContextType = {
     remainingMintingCapacity: string;
     tierId: string;
     tierLimitStETH: string;
-    // TODO: re-check fee
     feeObligationEth: string;
-
-    // TODO: replace
     rebaseRewardEth: string;
     grossStakingRewardsEth: string;
     nodeOperatorRewardsEth: string;
     netStakingRewardsEth: string;
-    grossStakingAPR: number;
-    grossStakingAprBps: number;
-    grossStakingAprPercent: number;
-    netStakingAPR: number;
-    netStakingAprBps: number;
     bottomLineEth: string;
-    carrySpreadAPR: number;
-    carrySpreadAprBps: number;
     carrySpreadApr: string;
     isLoadingMetrics: boolean;
     isLoading: boolean;
@@ -115,7 +105,8 @@ const getMetricTexts = (key: VaultOverviewContextKeys): MetricText => {
 };
 
 export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { data: vaultMetricsData, isLoadingMetrics } = useVaultLatestMetrics();
+  const { data: vaultMetricsData, isLoading: isLoadingMetrics } =
+    useVaultLatestMetrics();
   const {
     data: vaultData,
     isPending: isLoadingVault,
@@ -124,7 +115,10 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (error) {
-      console.warn('Error fetching overview data:', error);
+      console.warn(
+        '[VaultOverviewProvider] Error fetching overview data:',
+        error,
+      );
     }
   }, [error]);
 
@@ -155,15 +149,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       grossStakingRewards,
       nodeOperatorRewards,
       netStakingRewards,
-      grossStakingAPR,
-      grossStakingAprBps,
-      grossStakingAprPercent,
-      netStakingAPR,
-      netStakingAprBps,
       netStakingAprPercent,
       bottomLine,
-      carrySpreadAPR,
-      carrySpreadAprBps,
       carrySpreadAprPercent,
     } = vaultMetricsData;
 
@@ -251,14 +238,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       grossStakingRewardsEth: toEthValue(grossStakingRewards),
       nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
       netStakingRewardsEth: toEthValue(netStakingRewards),
-      grossStakingAPR,
-      grossStakingAprBps,
-      grossStakingAprPercent,
-      netStakingAPR,
-      netStakingAprBps,
       bottomLineEth: toEthValue(bottomLine),
-      carrySpreadAPR,
-      carrySpreadAprBps,
       carrySpreadApr,
       isLoading: isLoadingMetrics || isLoadingVault,
     };
@@ -267,7 +247,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
   const value = useMemo(() => {
     return {
       values,
-      isLoadingVault,
+      isLoadingVault: isLoadingVault || isLoadingMetrics,
       getVaultDataToRender: (sectionEntry: SectionData) => ({
         ...sectionEntry,
         ...getMetricTexts(sectionEntry.indicator),
@@ -275,7 +255,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
         isLoading: isLoadingVault,
       }),
     };
-  }, [isLoadingVault, values]);
+  }, [isLoadingVault, isLoadingMetrics, values]);
 
   return (
     <VaultOverviewContext.Provider value={value}>

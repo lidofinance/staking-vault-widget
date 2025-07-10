@@ -8,7 +8,8 @@ import { NoticeContainer } from 'features/overview/shared';
 const {
   capacityExceeded: { title, description, note, actions },
 } = vaultTexts.metrics;
-const actionsFundsMap = {
+
+const actionsFundsMap_MOCK = {
   supply: {
     amount: '18.0034 ETH',
     path: '/vaults/0x70bc246439962111645cddaeab49e44154d02d22/eth/supply',
@@ -29,7 +30,7 @@ export const CapacityExceeded = () => {
   const viewActions = useMemo(
     () =>
       actions.map(({ name, getText, title }) => {
-        const event = actionsFundsMap[name];
+        const event = actionsFundsMap_MOCK[name];
         const buttonText = getText(event.amount);
         const navigate = () => router.push(event.path);
         return {

@@ -75,8 +75,7 @@ const getVaultData = async ({
     locked,
   } = record;
 
-  const tierId = tier[1];
-  const tierShareLimit = tier[2];
+  const [_, tierId, tierShareLimit] = tier;
 
   const [
     liabilityStETH,

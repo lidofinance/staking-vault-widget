@@ -17,7 +17,7 @@ export const WithdrawalChart = () => {
   if (isLoadingVault || !chartData) return null;
 
   return (
-    <div>
+    <>
       <ChartLine
         border={ChartLineBorderType.rounded}
         thresholdType={ChartLineThresholdType.dash}
@@ -37,6 +37,6 @@ export const WithdrawalChart = () => {
           </Text>
         </ListItem>
       </List>
-    </div>
+    </>
   );
 };

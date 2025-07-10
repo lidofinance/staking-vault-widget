@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { formatPercent, getHealthFactorColor } from 'utils';
 
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
@@ -17,21 +19,24 @@ const sectionPayloadList: SectionData[] = [
 
 export const Health = () => {
   const { getVaultDataToRender } = useVaultOverview();
-  const [healthFactorData, liabilityStETHData] = sectionPayloadList.map(
-    (sectionEntry) => {
-      const { indicator, payload, ...item } =
-        getVaultDataToRender(sectionEntry);
-      const isHealthFactor = indicator === 'healthFactorNumber';
-      const color = isHealthFactor
-        ? getHealthFactorColor(payload as string | number)
-        : undefined;
 
-      const formattedPayload = isHealthFactor
-        ? formatPercent.format(Number(payload) / 100)
-        : payload;
+  const [healthFactorData, liabilityStETHData] = useMemo(
+    () =>
+      sectionPayloadList.map((sectionEntry) => {
+        const { indicator, payload, ...item } =
+          getVaultDataToRender(sectionEntry);
+        const isHealthFactor = indicator === 'healthFactorNumber';
+        const color = isHealthFactor
+          ? getHealthFactorColor(payload as string | number)
+          : undefined;
 
-      return { payload: formattedPayload, indicator, color, ...item };
-    },
+        const formattedPayload = isHealthFactor
+          ? formatPercent.format(Number(payload) / 100)
+          : payload;
+
+        return { payload: formattedPayload, indicator, color, ...item };
+      }),
+    [getVaultDataToRender],
   );
 
   return (

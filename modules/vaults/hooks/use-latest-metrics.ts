@@ -2,17 +2,38 @@ import { useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
 import { Address } from 'viem';
 
-import { VaultApiMetrics } from 'types/vault-api';
+import type { RegisteredPublicClient } from 'modules/web3/types';
+import { getVaultApiURL } from 'config';
+import { useLidoSDK } from 'modules/web3';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+
 import { useVaultOverviewData } from './use-vault-overview-data';
 
-const BASE_URL = process.env.NEXT_PUBLIC_VAULTS_API_BASE_URL;
+export type VaultApiMetrics = {
+  rebaseReward: bigint;
+  grossStakingRewards: bigint;
+  nodeOperatorRewards: bigint;
+  dailyLidoFees: bigint;
+  netStakingRewards: bigint;
+  grossStakingAPR: number;
+  grossStakingAprBps: number;
+  grossStakingAprPercent: number;
+  netStakingAPR: number;
+  netStakingAprBps: number;
+  netStakingAprPercent: number;
+  bottomLine: bigint;
+  carrySpreadAPR: number;
+  carrySpreadAprBps: number;
+  carrySpreadAprPercent: number;
+  updatedAt: Date;
+};
 
 const fetchVaultLatestMetrics = async (
   vaultAddress: string,
+  publicClient: RegisteredPublicClient,
 ): Promise<VaultApiMetrics> => {
-  invariant(BASE_URL, '[fetchVaultLatestMetrics] BASE_URL is not defined');
-
-  const res = await fetch(`${BASE_URL}/vaults/${vaultAddress}/latest-metrics`);
+  const apiURL = getVaultApiURL(publicClient.chain.id);
+  const res = await fetch(`${apiURL}/vaults/${vaultAddress}/latest-metrics`);
 
   invariant(
     res.ok,
@@ -43,18 +64,15 @@ const fetchVaultLatestMetrics = async (
 
 export const useVaultLatestMetrics = () => {
   const { data: vaultData } = useVaultOverviewData();
-  const { data, isLoading, ...rest } = useQuery<VaultApiMetrics, Error>({
-    queryKey: ['useVaultLatestMetrics', vaultData?.address],
-    queryFn: () => fetchVaultLatestMetrics(vaultData?.address as Address),
-    enabled: !!vaultData?.address,
-    staleTime: 1000 * 60 * 60,
+  const { publicClient } = useLidoSDK();
+
+  return useQuery<VaultApiMetrics, Error>({
+    queryKey: ['vault-latest-metrics', vaultData?.address],
+    queryFn: () =>
+      fetchVaultLatestMetrics(vaultData?.address as Address, publicClient),
+    enabled: !!vaultData?.address && !!publicClient,
+    staleTime: STRATEGY_LAZY.staleTime,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
-
-  return {
-    data: data ?? ({} as VaultApiMetrics),
-    isLoadingMetrics: isLoading,
-    ...rest,
-  };
 };

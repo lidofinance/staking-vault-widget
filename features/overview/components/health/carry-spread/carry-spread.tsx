@@ -18,12 +18,11 @@ import { ContentWrapper } from './styles';
 export const CarrySpread = () => {
   const {
     isLoadingVault,
-    values: { isLoading, carrySpreadApr, healthFactorNumber },
+    values: { carrySpreadApr, healthFactorNumber },
   } = useVaultOverview();
   const { chartData } = useHealthChart(healthFactorNumber);
-  const isDataLoading = isLoadingVault || isLoading;
 
-  if (isDataLoading) {
+  if (isLoadingVault) {
     return <InlineLoader />;
   }
 

@@ -2,7 +2,6 @@ import { FC, PropsWithChildren, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
 import { formatPercent } from 'utils';
 
 import { useVaultOverview } from 'features/overview/contexts';
@@ -22,8 +21,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   amountRightDecorator = null,
 }) => {
   const { closeModal, currentModal } = useOverviewModal();
-  const { isLoading: isLoadingVault } = useVaultOverviewData();
-  const { getVaultDataToRender } = useVaultOverview();
+  const { isLoadingVault, getVaultDataToRender } = useVaultOverview();
   const { title, payload, hint, description, learnMoreLink } =
     getVaultDataToRender({ indicator: name });
   const isHealthFactor = name === 'healthFactorNumber';
@@ -35,6 +33,9 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
     '\n\n',
   );
 
+  // This approach is used for two main reasons:
+  // 1. The UI library returns an event argument when the close (cross) button is clicked, but its type definitions (.d.ts) do not declare this.
+  // 2. Stopping event propagation explicitly prevents unnecessary re-renders caused by router-dependent URL state changes.
   const onClose = useCallback(
     (...args: unknown[]) => {
       args.forEach((arg) => {

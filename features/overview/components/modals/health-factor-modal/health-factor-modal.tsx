@@ -5,6 +5,8 @@ import {
   MarginSize,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
+
 import {
   Formula,
   ModalSection,
@@ -84,6 +86,8 @@ const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   ],
 };
 
+const { health } = vaultTexts.metrics.modals;
+
 export const HealthFactorModal = () => {
   const {
     isLoadingVault,
@@ -99,64 +103,51 @@ export const HealthFactorModal = () => {
 
   return (
     <OverviewModal name="healthFactorNumber">
-      {!isLoadingVault && (
-        <ModalSection>
-          <ChartProportion
-            height={24}
-            border={ChartProportionBorderType.rounded}
-            margin={MarginSize.md}
-            borderSize={ChartProportionBorderSize.md}
-            data={chartData}
-            showLabels
-          />
-          <List>
-            <ListItem color="rebalance">Forced rebalance</ListItem>
-            <ListItem color="danger">At risk</ListItem>
-            <ListItem color="warning">Needs attention</ListItem>
-            <ListItem color="success">Healthy</ListItem>
-          </List>
-        </ModalSection>
-      )}
-      <ModalSection
-        description={
-          'The Health factor value equal to 100% is defined by the Forced rebalance threshold meaning that on the Health factor falling under 100% the vault becomes subject to forced rebalancing.'
-        }
-      />
+      <ModalSection>
+        <ChartProportion
+          loading={isLoadingVault}
+          height={24}
+          border={ChartProportionBorderType.rounded}
+          margin={MarginSize.md}
+          borderSize={ChartProportionBorderSize.md}
+          data={chartData}
+          showLabels
+        />
+        <List>
+          <ListItem color="rebalance">Forced rebalance</ListItem>
+          <ListItem color="danger">At risk</ListItem>
+          <ListItem color="warning">Needs attention</ListItem>
+          <ListItem color="success">Healthy</ListItem>
+        </List>
+      </ModalSection>
+      <ModalSection description={health.rebalanceThreshold.description} />
       <SectionDivider />
       <ModalSection
-        title={'Carry Spread'}
+        title={health.carrySpread.title}
         amount={carrySpreadApr}
-        description={
-          'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase.'
-        }
+        description={health.carrySpread.description}
       >
         <Formula list={formulasMap.carrySpread} />
       </ModalSection>
       <SectionDivider />
       <ModalSection
-        title={'stVault bottom line'}
+        title={health.bottomLine.title}
         amount={bottomLineEth}
-        description={
-          'The final amount of rewards earned by the vault owner in the vault perimeter.  Calculated as difference between the Net Staking Rewards and the stETH Liability growth:'
-        }
+        description={health.bottomLine.description}
       >
         <Formula list={formulasMap.bottomLine} />
       </ModalSection>
       <SectionDivider />
       <ModalSection
-        title={'Net staking rewards'}
+        title={health.netStakingRewards.title}
         amount={netStakingRewardsEth}
-        description={
-          'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.'
-        }
+        description={health.netStakingRewards.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'stETH Rebase'}
+        title={health.stethRebase.title}
         amount={rebaseRewardEth}
-        description={
-          'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.'
-        }
+        description={health.stethRebase.description}
       />
     </OverviewModal>
   );

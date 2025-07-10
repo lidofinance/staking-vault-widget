@@ -20,11 +20,9 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
           <InlineLoader />
         </LoaderWrapper>
       ) : (
-        <div>
-          <ContentText size={textSize} style={{ color }} strong>
-            {content || '-'}
-          </ContentText>
-        </div>
+        <ContentText size={textSize} style={{ color }} strong>
+          {content || '-'}
+        </ContentText>
       )}
     </>
   );

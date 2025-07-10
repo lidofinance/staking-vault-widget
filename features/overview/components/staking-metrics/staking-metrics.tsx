@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import {
   useVaultOverview,
@@ -19,8 +21,9 @@ const sectionPayloadList: SectionData[] = [
 export const StakingMetrics = () => {
   const { getVaultDataToRender } = useVaultOverview();
 
-  const [totalValueData, netAprData] = sectionPayloadList.map((item) =>
-    getVaultDataToRender(item),
+  const [totalValueData, netAprData] = useMemo(
+    () => sectionPayloadList.map((item) => getVaultDataToRender(item)),
+    [getVaultDataToRender],
   );
 
   return (

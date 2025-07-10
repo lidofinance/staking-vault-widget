@@ -28,15 +28,14 @@ export const StethLiabilityModal = () => {
 
   return (
     <OverviewModal name="liabilityStETH">
-      {!isLoadingVault && (
-        <ChartLine
-          border={ChartLineBorderType.rounded}
-          thresholdType={ChartLineThresholdType.flag}
-          data={chartData}
-          height={16}
-          showLabels
-        />
-      )}
+      <ChartLine
+        loading={isLoadingVault}
+        border={ChartLineBorderType.rounded}
+        thresholdType={ChartLineThresholdType.flag}
+        data={chartData}
+        height={16}
+        showLabels
+      />
       <SectionDivider />
       <ModalSection
         title={'Utilization ratio'}
