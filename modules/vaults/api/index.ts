@@ -5,3 +5,5 @@ export type {
   FetchVaultsResult,
   VaultEntry,
 } from './fetch-vaults';
+
+export { fetchReport } from './fetch-report';
