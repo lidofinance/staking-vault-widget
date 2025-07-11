@@ -35,14 +35,14 @@ export type SectionPayload = SectionData & {
   description?: string;
   hint?: string;
   isLoading?: boolean;
-  payload: string | Address | number | boolean;
+  payload: string | number | boolean | bigint;
 };
 
 export type VaultOverviewContextType = {
   values: {
     address: Address;
     nodeOperator: Address;
-    totalValue: string;
+    totalValueETH: string;
     reserveRatio: string;
     utilizationRatio: string;
     rebalanceThreshold: string;
@@ -60,7 +60,7 @@ export type VaultOverviewContextType = {
     netApr: string;
     unsettledLidoFees: string;
     isVaultConnected: boolean;
-    remainingMintingCapacity: string;
+    remainingMintingCapacityStETH: string;
     tierId: string;
     tierLimitStETH: string;
     feeObligationEth: string;
@@ -72,6 +72,10 @@ export type VaultOverviewContextType = {
     carrySpreadApr: string;
     isLoadingMetrics: boolean;
     isLoading: boolean;
+    mintableStETH: bigint;
+    totalValue: bigint;
+    vaultLiability: bigint;
+    forcedRebalanceThresholdBP: number;
   };
   isLoadingVault?: boolean;
   getVaultDataToRender: (payload: SectionData) => SectionPayload;
@@ -168,7 +172,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     });
 
     const tierLimitStETH = toStethValue(tierStETHLimit);
-    const remainingMintingCapacity = toStethValue(mintableStETH);
+    const remainingMintingCapacityStETH = toStethValue(mintableStETH);
     const undisbursedNodeOperatorFee = toEthValue(nodeOperatorUnclaimedFee);
     const netApr = formatPercent.format(netStakingAprPercent / 100);
     const carrySpreadApr = formatPercent.format(carrySpreadAprPercent / 100);
@@ -177,7 +181,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     const feeObligationEth = toEthValue(
       obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
     );
-    const totalValue = toEthValue(vaultData.totalValue);
+    const totalValueETH = toEthValue(vaultData.totalValue);
     const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
     const liabilityStETH = toStethValue(vaultData.liabilityStETH);
     const withdrawableEth = toEthValue(withdrawableEther);
@@ -209,7 +213,7 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
     return {
       address,
       nodeOperator,
-      totalValue,
+      totalValueETH,
       reserveRatio,
       utilizationRatio,
       rebalanceThreshold,
@@ -229,11 +233,14 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       isVaultConnected,
       netApr,
       unsettledLidoFees,
-      remainingMintingCapacity,
+      remainingMintingCapacityStETH,
       feeObligationEth,
       tierId: tierId.toString(),
       tierLimitStETH,
-
+      mintableStETH,
+      forcedRebalanceThresholdBP,
+      totalValue: vaultData.totalValue,
+      vaultLiability: vaultData.liabilityStETH,
       rebaseRewardEth: toStethValue(rebaseReward),
       grossStakingRewardsEth: toEthValue(grossStakingRewards),
       nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),

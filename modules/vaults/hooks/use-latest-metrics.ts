@@ -7,7 +7,7 @@ import { getVaultApiURL } from 'config';
 import { useLidoSDK } from 'modules/web3';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
-import { useVaultOverviewData } from './use-vault-overview-data';
+import { useVault } from '../vault-context';
 
 export type VaultApiMetrics = {
   rebaseReward: bigint;
@@ -63,14 +63,14 @@ const fetchVaultLatestMetrics = async (
 };
 
 export const useVaultLatestMetrics = () => {
-  const { data: vaultData } = useVaultOverviewData();
   const { publicClient } = useLidoSDK();
+  const { activeVault, queryKeys } = useVault();
 
   return useQuery<VaultApiMetrics, Error>({
-    queryKey: ['vault-latest-metrics', vaultData?.address],
+    queryKey: [...queryKeys.metrics, 'vault-latest-metrics'],
     queryFn: () =>
-      fetchVaultLatestMetrics(vaultData?.address as Address, publicClient),
-    enabled: !!vaultData?.address && !!publicClient,
+      fetchVaultLatestMetrics(activeVault?.address as Address, publicClient),
+    enabled: !!activeVault,
     staleTime: STRATEGY_LAZY.staleTime,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

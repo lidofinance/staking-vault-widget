@@ -244,7 +244,7 @@ export const vaultTexts = {
       },
       action: 'Request to change',
     },
-    totalValue: {
+    totalValueETH: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -353,13 +353,73 @@ export const vaultTexts = {
             'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
         },
       },
-      withdrawal: {},
-      lidoFee: {},
-      netApr: {},
-      noFee: {},
-      stethLiability: {},
-      totalValue: {},
-      vaultBalance: {},
+      withdrawal: {
+        totalValue: {
+          title: 'Total Value',
+          description:
+            'The amount of ETH deposited on validators and used for earning rewards.',
+        },
+        availableForWithdrawal: {
+          title: 'Available for Immediate Withdrawal',
+          description:
+            'Immediately available to withdraw ETH is limited by Collateral and Obligations, as well as current stVault Balance.',
+        },
+      },
+      netApr: {
+        netStakingRewards: {
+          title: 'Net staking rewards',
+          description:
+            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+        },
+        grossStakingRewards: {
+          title: 'Gross staking rewards',
+          description:
+            'The amount of rewards earned by the validators expressed as a percentage of the volt total value, before fees deductions.',
+        },
+        noFee: {
+          title: 'Node Operator Fee',
+          description:
+            'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
+        },
+        lidoFees: {
+          title: 'Lido fees',
+          description:
+            'The amount of accumulated but not yet claimed Lido fees. This amount of ETH increases the amount of total locked ETH.',
+        },
+      },
+      liabilityStETH: {
+        utilizationRatio: {
+          title: 'Utilization Ratio',
+          description:
+            'The share of the stETH minting capacity currently utilized by the vault owner.',
+        },
+        totalStethMintingCapacity: {
+          title: 'Total stETH minting capacity',
+          subTitle: 'constrained by Reserve Ratio',
+          description:
+            'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
+        },
+        stethMintingLimit: {
+          title: 'stETH minting limit',
+          description:
+            'Absolute maximum limit for the stETH minting capacity defined by the Tier the vaults belong to. It can be changed by changing the Tier.',
+        },
+        remainingCapacity: {
+          title: 'Remaining capacity',
+          description:
+            'The amount of stETH remaining mintable in the vault, based on the current Total stETH minting capacity and stETH Liability.',
+        },
+        reserveRatio: {
+          title: 'Reserve Ratio',
+          description:
+            'Defines amount of ETH that will be reserved as a part of collateral when the vault owner mints stETH in the vault.',
+        },
+        forcedRebalanceThreshold: {
+          title: 'Forced Rebalance Threshold',
+          description:
+            'Defines the minimum allowed ratio stETH Liability to Total Value. Exceeding this minimum threshold makes the vault subject to forced rebalancing.',
+        },
+      },
     },
   },
   // configuration for vault roles

@@ -6,7 +6,10 @@ import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionData, useVaultOverview } from 'features/overview/contexts';
 
 import { CarrySpread } from './carry-spread';
-import { RemainingMintingCapacity } from './remaining-minting-capacity';
+import {
+  RemainingMintingCapacity,
+  RemainingMintingCapacityChart,
+} from './remaining-minting-capacity';
 
 const sectionPayloadList: SectionData[] = [
   {
@@ -45,6 +48,7 @@ export const Health = () => {
         <CarrySpread />
       </OverviewItem>
       <OverviewItem {...liabilityStETHData}>
+        <RemainingMintingCapacityChart />
         <RemainingMintingCapacity />
       </OverviewItem>
     </OverviewSection>

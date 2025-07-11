@@ -1,5 +1,4 @@
 import type { FC, PropsWithChildren } from 'react';
-import type { Address } from 'viem';
 import { Text } from '@lidofinance/lido-ui';
 
 import { Hint } from 'shared/components';
@@ -22,14 +21,14 @@ import { OverviewItemValue } from './overview-item-value';
 import { DefaultContent, ItemWrapper, Title } from './styles';
 
 export type ItemProps = {
-  payload: string | Address | number | boolean;
+  payload: string | number | boolean | bigint;
   indicator: VaultOverviewModalKey;
   titleView?: 'column' | 'row';
   color?: string;
 } & Omit<SectionPayload, 'key'>;
 
 const modalsMap: Record<VaultOverviewModalKey, FC> = {
-  totalValue: TotalValueModal,
+  totalValueETH: TotalValueModal,
   healthFactorNumber: HealthFactorModal,
   netApr: NetAprModal,
   liabilityStETH: StethLiabilityModal,

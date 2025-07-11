@@ -4,6 +4,8 @@ import {
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
+
 import {
   ModalSection,
   OverviewModal,
@@ -12,6 +14,8 @@ import {
 import { useVaultOverview } from 'features/overview/contexts';
 import { useStEthChart } from 'features/overview/hooks';
 
+const { liabilityStETH } = vaultTexts.metrics.modals;
+
 export const StethLiabilityModal = () => {
   const chartData = useStEthChart();
   const {
@@ -19,7 +23,7 @@ export const StethLiabilityModal = () => {
     values: {
       utilizationRatio,
       totalMintingCapacityStETH,
-      remainingMintingCapacity,
+      remainingMintingCapacityStETH,
       reserveRatio,
       rebalanceThreshold,
       tierLimitStETH,
@@ -38,52 +42,40 @@ export const StethLiabilityModal = () => {
       />
       <SectionDivider />
       <ModalSection
-        title={'Utilization ratio'}
+        title={liabilityStETH.utilizationRatio.title}
         amount={utilizationRatio}
-        description={
-          'The share of the stETH minting capacity currently utilized by the vault owner.'
-        }
+        description={liabilityStETH.utilizationRatio.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Total stETH minting capacity'}
-        subTitle={'constrained by Reserve Ratio'}
+        title={liabilityStETH.totalStethMintingCapacity.title}
+        subTitle={liabilityStETH.totalStethMintingCapacity.subTitle}
         amount={totalMintingCapacityStETH}
-        description={
-          'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.'
-        }
+        description={liabilityStETH.totalStethMintingCapacity.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'stETH minting limit'}
+        title={liabilityStETH.stethMintingLimit.title}
         amount={tierLimitStETH}
-        description={
-          'Absolute maximum limit for the stETH minting capacity defined by the Tier the vaults belong to. It can be changed by changing the Tier.'
-        }
+        description={liabilityStETH.stethMintingLimit.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Remaining capacity'}
-        amount={remainingMintingCapacity}
-        description={
-          'The amount of stETH remaining mintable in the vault, based on the current Total stETH minting capacity and stETH Liability.'
-        }
+        title={liabilityStETH.remainingCapacity.title}
+        amount={remainingMintingCapacityStETH}
+        description={liabilityStETH.remainingCapacity.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Reserve Ratio'}
+        title={liabilityStETH.reserveRatio.title}
         amount={reserveRatio}
-        description={
-          'Defines amount of ETH that will be reserved as a part of collateral when the vault owner mints stETH in the vault.'
-        }
+        description={liabilityStETH.reserveRatio.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Forced Rebalance Threshold'}
+        title={liabilityStETH.forcedRebalanceThreshold.title}
         amount={rebalanceThreshold}
-        description={
-          'Defines the minimum allowed ratio stETH Liability to Total Value. Exceeding this minimum threshold makes the vault subject to forced rebalancing.'
-        }
+        description={liabilityStETH.forcedRebalanceThreshold.description}
       />
     </OverviewModal>
   );

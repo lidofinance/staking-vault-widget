@@ -5,6 +5,8 @@ import {
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
+
 import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import { useVaultOverview } from 'features/overview/contexts';
 import {
@@ -16,11 +18,13 @@ import { useWithdrawChart } from 'features/overview/hooks';
 
 import { ChartContainer, ChartHeading, List, ListItem } from './styles';
 
+const { withdrawal } = vaultTexts.metrics.modals;
+
 export const ImmediateWithdrawalModal = () => {
   const {
     isLoadingVault,
     values: {
-      totalValue,
+      totalValueETH,
       balanceEth,
       withdrawableEth,
       collateral,
@@ -36,7 +40,7 @@ export const ImmediateWithdrawalModal = () => {
           <ChartHeading>
             <Text size="xxs">Total value:</Text>
             <Text size="xxs" strong>
-              {totalValue}
+              {totalValueETH}
             </Text>
           </ChartHeading>
           <ChartLine
@@ -68,37 +72,33 @@ export const ImmediateWithdrawalModal = () => {
       )}
       <SectionDivider />
       <ModalSection
-        title="Total Value"
-        amount={totalValue}
-        description={
-          'The amount of ETH deposited on validators and used for earning rewards.'
-        }
+        title={withdrawal.totalValue.title}
+        amount={totalValueETH}
+        description={withdrawal.totalValue.description}
       >
         <ModalSection
-          title={'Locked by Collateral'}
+          title="Locked by Collateral"
           titleLeftDecorator={<NewLine />}
           amount={collateral}
         />
         <ModalSection
-          title={'Fee obligations'}
+          title="Fee obligations"
           titleLeftDecorator={<NewLine />}
           amount={feeObligationEth}
         />
         <ModalSection
-          title={'Withdrawable part of Total Value'}
+          title="Withdrawable part of Total Value"
           titleLeftDecorator={<NewLine />}
           amount={withdrawableEth}
         />
       </ModalSection>
       <SectionDivider />
-      <ModalSection title={'Not staked stVault Balance'} amount={balanceEth} />
+      <ModalSection title="Not staked stVault Balance" amount={balanceEth} />
       <SectionDivider />
       <ModalSection
-        title={'Available for Immediate Withdrawal'}
+        title={withdrawal.availableForWithdrawal.title}
         amount={withdrawableEth}
-        description={
-          'Immediately available to withdraw ETH is limited by Collateral and Obligations, as well as current stVault Balance.'
-        }
+        description={withdrawal.availableForWithdrawal.description}
       />
     </OverviewModal>
   );

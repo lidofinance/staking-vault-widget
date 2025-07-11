@@ -1,5 +1,5 @@
 import { OverviewModal } from 'features/overview/shared';
 
 export const TotalValueModal = () => {
-  return <OverviewModal name="totalValue" />;
+  return <OverviewModal name="totalValueETH" />;
 };

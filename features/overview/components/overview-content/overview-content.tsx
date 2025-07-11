@@ -23,8 +23,7 @@ export const OverviewContent = () => {
       <ReportState />
       <Content>
         <General />
-        {!isLoadingVault && !isVaultConnected && <ConnectVault />}
-        {(isLoadingVault || (!isLoadingVault && isVaultConnected)) && (
+        {isLoadingVault || isVaultConnected ? (
           <>
             <SectionDivider />
             <StakingMetrics />
@@ -34,6 +33,8 @@ export const OverviewContent = () => {
             <SectionDivider />
             <Fees />
           </>
+        ) : (
+          <ConnectVault />
         )}
       </Content>
     </OverviewWrapper>

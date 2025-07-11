@@ -1,3 +1,5 @@
+import { vaultTexts } from 'modules/vaults';
+
 import {
   Formula,
   ModalSection,
@@ -85,6 +87,8 @@ const formulasMap: Record<'netApr' | 'netRewards', FormulaItem[]> = {
   ],
 };
 
+const { netApr } = vaultTexts.metrics.modals;
+
 export const NetAprModal = () => {
   const {
     values: {
@@ -99,37 +103,29 @@ export const NetAprModal = () => {
       <Formula list={formulasMap.netApr} />
       <SectionDivider />
       <ModalSection
-        title={'Net staking rewards'}
+        title={netApr.netStakingRewards.title}
         amount={netStakingRewardsEth}
-        description={
-          'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.'
-        }
+        description={netApr.netStakingRewards.description}
       >
         <Formula list={formulasMap.netRewards} />
       </ModalSection>
       <SectionDivider />
       <ModalSection
-        title={'Gross staking rewards'}
+        title={netApr.grossStakingRewards.title}
         amount={grossStakingRewardsEth}
-        description={
-          'The amount of rewards earned by the validators expressed as a percentage of the volt total value, before fees deductions.'
-        }
+        description={netApr.grossStakingRewards.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Node Operator Fee'}
+        title={netApr.noFee.title}
         amount={nodeOperatorRewardsEth}
-        description={
-          'The share of Gross staking rewards that the Node Operator charges for provided validation service.'
-        }
+        description={netApr.noFee.description}
       />
       <SectionDivider />
       <ModalSection
-        title={'Lido fees'}
+        title={netApr.lidoFees.title}
         amount={unsettledLidoFees}
-        description={
-          'The amount of accumulated but not yet claimed Lido fees. This amount of ETH increases the amount of total locked ETH.'
-        }
+        description={netApr.lidoFees.description}
       />
     </OverviewModal>
   );

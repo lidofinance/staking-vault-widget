@@ -4,7 +4,7 @@ import { InlineLoader } from '@lidofinance/lido-ui';
 import { LoaderWrapper, ContentText } from './styles';
 
 export interface ItemValueProps {
-  content: string | number | undefined | boolean;
+  content: string | number | undefined | boolean | bigint;
   isLoading?: boolean;
   color?: string;
   textSize?: 'lg' | 'xl';
@@ -12,6 +12,8 @@ export interface ItemValueProps {
 
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
   const { content, isLoading, color, textSize = 'xl' } = props;
+  const contentView =
+    typeof content === 'bigint' ? content.toString() : content;
 
   return (
     <>
@@ -21,7 +23,7 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
         </LoaderWrapper>
       ) : (
         <ContentText size={textSize} style={{ color }} strong>
-          {content || '-'}
+          {contentView || '-'}
         </ContentText>
       )}
     </>

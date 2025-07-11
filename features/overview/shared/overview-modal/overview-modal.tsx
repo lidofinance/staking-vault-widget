@@ -27,7 +27,9 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   const isHealthFactor = name === 'healthFactorNumber';
   const formattedPayload = isHealthFactor
     ? formatPercent.format(Number(payload) / 100)
-    : payload;
+    : typeof payload === 'bigint'
+      ? payload.toString()
+      : payload;
 
   const descriptionTextList: string[] = (description || hint || '').split(
     '\n\n',
