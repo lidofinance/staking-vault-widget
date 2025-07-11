@@ -75,7 +75,9 @@ export type VaultOverviewContextType = {
     mintableStETH: bigint;
     totalValue: bigint;
     vaultLiability: bigint;
+    totalMintingCapacity: bigint;
     forcedRebalanceThresholdBP: number;
+    reserveRatioBP: number;
   };
   isLoadingVault?: boolean;
   getVaultDataToRender: (payload: SectionData) => SectionPayload;
@@ -239,6 +241,8 @@ export const VaultOverviewProvider: FC<PropsWithChildren> = ({ children }) => {
       tierLimitStETH,
       mintableStETH,
       forcedRebalanceThresholdBP,
+      reserveRatioBP,
+      totalMintingCapacity: vaultData.totalMintingCapacityStETH,
       totalValue: vaultData.totalValue,
       vaultLiability: vaultData.liabilityStETH,
       rebaseRewardEth: toStethValue(rebaseReward),

@@ -1,15 +1,18 @@
 import { InlineLoader } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
 import { useEthUsd } from 'shared/hooks/use-eth-usd';
 import { formatDollar } from 'utils/format-number';
+
+import { useVaultOverview } from 'features/overview/contexts';
 
 import { TextBlack } from './styles';
 
 export const TotalValueUsd = () => {
-  const { data: activeVault, isLoading: isLoadingVault } =
-    useVaultOverviewData();
-  const { usdAmount, isLoading } = useEthUsd(activeVault?.totalValue);
+  const {
+    isLoadingVault,
+    values: { totalValue },
+  } = useVaultOverview();
+  const { usdAmount, isLoading } = useEthUsd(totalValue);
 
   return (
     <>

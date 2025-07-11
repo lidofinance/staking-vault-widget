@@ -11,6 +11,8 @@ export const RemainingMintingCapacityChart = () => {
   const { isLoadingVault } = useVaultOverview();
   const chartData = useRemainingMintingCapacityChart();
 
+  if (isLoadingVault) return null;
+
   return (
     <ChartLine
       loading={isLoadingVault && !!chartData}
