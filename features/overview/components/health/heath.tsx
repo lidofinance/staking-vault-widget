@@ -1,51 +1,56 @@
+import { useMemo } from 'react';
+
+import { formatPercent, getHealthFactorColor } from 'utils';
+
 import { OverviewItem, OverviewSection } from 'features/overview/shared';
 import { SectionData, useVaultOverview } from 'features/overview/contexts';
-import { formatPercent, getHealthFactorColor } from 'utils';
-import { appPaths } from 'consts/routing';
+
+import { CarrySpread } from './carry-spread';
+import {
+  RemainingMintingCapacity,
+  RemainingMintingCapacityChart,
+} from './remaining-minting-capacity';
 
 const sectionPayloadList: SectionData[] = [
   {
-    key: 'healthFactorNumber',
+    indicator: 'healthFactorNumber',
   },
   {
-    key: 'totalValue',
-  },
-  {
-    key: 'liabilityStETH',
-    addStethToWallet: true,
-    actionRole: 'minter',
-    actionLink: (vaultAddress) =>
-      appPaths.vaults.vault(vaultAddress).steth('mint'),
-  },
-  {
-    key: 'rebalanceThreshold',
+    indicator: 'liabilityStETH',
   },
 ];
 
 export const Health = () => {
   const { getVaultDataToRender } = useVaultOverview();
 
-  return (
-    <OverviewSection title="Vault health" titleTooltip="Lorem Ipsum">
-      {sectionPayloadList.map((sectionEntry) => {
-        const { key, payload, ...item } = getVaultDataToRender(sectionEntry);
-        const isHealthFactor = key === 'healthFactorNumber';
+  const [healthFactorData, liabilityStETHData] = useMemo(
+    () =>
+      sectionPayloadList.map((sectionEntry) => {
+        const { indicator, payload, ...item } =
+          getVaultDataToRender(sectionEntry);
+        const isHealthFactor = indicator === 'healthFactorNumber';
         const color = isHealthFactor
-          ? getHealthFactorColor(payload)
+          ? getHealthFactorColor(payload as string | number)
           : undefined;
+
         const formattedPayload = isHealthFactor
           ? formatPercent.format(Number(payload) / 100)
           : payload;
 
-        return (
-          <OverviewItem
-            {...item}
-            key={key}
-            payload={formattedPayload}
-            color={color}
-          />
-        );
-      })}
+        return { payload: formattedPayload, indicator, color, ...item };
+      }),
+    [getVaultDataToRender],
+  );
+
+  return (
+    <OverviewSection>
+      <OverviewItem {...healthFactorData}>
+        <CarrySpread />
+      </OverviewItem>
+      <OverviewItem {...liabilityStETHData}>
+        <RemainingMintingCapacityChart />
+        <RemainingMintingCapacity />
+      </OverviewItem>
     </OverviewSection>
   );
 };

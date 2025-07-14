@@ -1,0 +1,82 @@
+import {
+  ChartLine,
+  ChartLineBorderType,
+  ChartLineThresholdType,
+} from '@lidofinance/lido-ui';
+
+import { vaultTexts } from 'modules/vaults';
+
+import {
+  ModalSection,
+  OverviewModal,
+  SectionDivider,
+} from 'features/overview/shared';
+import { useVaultOverview } from 'features/overview/contexts';
+import { useStEthChart } from 'features/overview/hooks';
+
+const { liabilityStETH } = vaultTexts.metrics.modals;
+
+export const StethLiabilityModal = () => {
+  const chartData = useStEthChart();
+  const {
+    isLoadingVault,
+    values: {
+      utilizationRatio,
+      totalMintingCapacityStETH,
+      remainingMintingCapacityStETH,
+      reserveRatio,
+      rebalanceThreshold,
+      tierLimitStETH,
+    },
+  } = useVaultOverview();
+
+  return (
+    <OverviewModal name="liabilityStETH">
+      <ChartLine
+        loading={isLoadingVault}
+        border={ChartLineBorderType.rounded}
+        thresholdType={ChartLineThresholdType.flag}
+        data={chartData}
+        height={16}
+        showLabels
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.utilizationRatio.title}
+        amount={utilizationRatio}
+        description={liabilityStETH.utilizationRatio.description}
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.totalStethMintingCapacity.title}
+        subTitle={liabilityStETH.totalStethMintingCapacity.subTitle}
+        amount={totalMintingCapacityStETH}
+        description={liabilityStETH.totalStethMintingCapacity.description}
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.stethMintingLimit.title}
+        amount={tierLimitStETH}
+        description={liabilityStETH.stethMintingLimit.description}
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.remainingCapacity.title}
+        amount={remainingMintingCapacityStETH}
+        description={liabilityStETH.remainingCapacity.description}
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.reserveRatio.title}
+        amount={reserveRatio}
+        description={liabilityStETH.reserveRatio.description}
+      />
+      <SectionDivider />
+      <ModalSection
+        title={liabilityStETH.forcedRebalanceThreshold.title}
+        amount={rebalanceThreshold}
+        description={liabilityStETH.forcedRebalanceThreshold.description}
+      />
+    </OverviewModal>
+  );
+};

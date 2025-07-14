@@ -4,6 +4,7 @@ import type {
   getDashboardContract,
   getStakingVaultContract,
   getVaultHubContract,
+  getOperatorGridContract,
 } from './contracts';
 
 type VaultConnection = ReadContractReturnType<
@@ -22,6 +23,7 @@ type VaultObligations = {
 
 export type VaultInfo = VaultConnection &
   VaultObligations & {
+    isVaultConnected: boolean;
     address: Address;
     owner: Address;
     nodeOperator: Address;
@@ -43,6 +45,9 @@ export type VaultInfo = VaultConnection &
     balance: bigint;
     nodeOperatorFeeRate: bigint;
     withdrawalCredentials: Address;
+    tierId: bigint;
+    tierShareLimit: bigint;
+    tierStETHLimit: bigint;
   };
 
 export type VaultReportType = {
@@ -66,6 +71,7 @@ export type VaultBaseInfo = {
   vault: ReturnType<typeof getStakingVaultContract>;
   hub: ReturnType<typeof getVaultHubContract>;
   dashboard: ReturnType<typeof getDashboardContract>;
+  operatorGrid: ReturnType<typeof getOperatorGridContract>;
   nodeOperator: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;

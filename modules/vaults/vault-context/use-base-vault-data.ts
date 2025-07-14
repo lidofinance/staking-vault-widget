@@ -10,6 +10,7 @@ import {
   getDashboardContract,
   getStakingVaultContract,
   getVaultHubContract,
+  getOperatorGridContract,
 } from '../contracts';
 import {
   DisplayableError,
@@ -79,6 +80,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       }
 
       const dashboard = getDashboardContract(connection.owner, publicClient);
+      const operatorGrid = getOperatorGridContract(publicClient);
 
       return {
         address: vaultAddress,
@@ -88,6 +90,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         nodeOperator,
         withdrawalCredentials,
         report,
+        operatorGrid,
         hubReport: {
           root: latestHubReportRoot,
           cid: latestHubReportCID,

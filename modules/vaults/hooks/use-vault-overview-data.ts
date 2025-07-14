@@ -30,11 +30,13 @@ const getVaultData = async ({
     forcedRebalanceThresholdBP,
     shareLimit,
     hub,
+    operatorGrid,
     ...rest
   } = vault;
 
   const [
     record,
+    isVaultConnected,
     obligations,
     balance,
     totalValue,
@@ -43,11 +45,13 @@ const getVaultData = async ({
     nodeOperatorFeeRate,
     totalMintingCapacityShares,
     mintableShares,
+    tier,
   ] = await readWithReport({
     publicClient,
     report: vault.report,
     contracts: [
       hub.prepare.vaultRecord([vault.address]),
+      hub.prepare.isVaultConnected([vault.address]),
       hub.prepare.vaultObligations([vault.address]),
       {
         abi: Multicall3AbiUtils,
@@ -61,6 +65,7 @@ const getVaultData = async ({
       dashboard.prepare.nodeOperatorFeeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
+      operatorGrid.prepare.vaultInfo([vault.address]),
     ] as const,
   });
 
@@ -70,18 +75,22 @@ const getVaultData = async ({
     locked,
   } = record;
 
+  const [_, tierId, tierShareLimit] = tier;
+
   const [
     liabilityStETH,
     mintableStETH,
     stETHLimit,
     lockedShares,
     totalMintingCapacityStETH,
+    tierStETHLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacityShares),
+    shares.convertToSteth(tierShareLimit),
   ]);
 
   const healthScore = calculateHealth({
@@ -91,6 +100,7 @@ const getVaultData = async ({
   });
 
   return {
+    isVaultConnected,
     address,
     nodeOperator,
     totalValue,
@@ -116,6 +126,9 @@ const getVaultData = async ({
     withdrawalCredentials,
     obligations,
 
+    tierId,
+    tierShareLimit,
+    tierStETHLimit,
     ...rest,
   };
 };

@@ -6,3 +6,4 @@ export * from './vault-hub';
 export * from './vault-viewer';
 export * from './lazy-oracle';
 export * from './weth';
+export * from './operator-grid';
