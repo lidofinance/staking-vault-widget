@@ -7,3 +7,4 @@ export type {
 } from './fetch-vaults';
 
 export { fetchReport } from './fetch-report';
+export { fetchVaultMetrics } from './fetch-metrics';
