@@ -20,4 +20,8 @@ export const vaultApiRoutes = {
     });
     return `${basePath}/v1/vaults?${queryParams.toString()}`;
   },
+  vaultMetrics: (basePath: string, vaultAddress: string) =>
+    `${basePath}/v1/vaults/${vaultAddress}/latest-metrics`,
+  vaultReport: (basePath: string, vaultAddress: string, cid: string) =>
+    `${basePath}/v1/report/${cid}/${vaultAddress}`,
 };

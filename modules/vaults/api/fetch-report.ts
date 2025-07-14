@@ -5,7 +5,7 @@ import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient } from 'modules/web3';
 
-import { CID_TO_GATEWAY } from '../consts';
+import { CID_TO_GATEWAY, vaultApiRoutes } from '../consts';
 import invariant from 'tiny-invariant';
 
 type IPFSReport = {
@@ -31,6 +31,27 @@ type IPFSReport = {
     '3': 'liability_shares';
     '4': 'slashing_reserve';
   };
+};
+
+type ApiReport = {
+  report: {
+    data: {
+      vaultAddress: Address;
+      fee: string;
+      totalValueWei: string;
+      liabilityShares: string;
+      slashingReserve: string;
+    };
+    extraData: {
+      inOutDelta: string;
+    };
+    leaf: string;
+    refSlot: number;
+    blockNumber: number;
+    timestamp: number;
+    prevTreeCID: string;
+    proof: string[];
+  } | null;
 };
 
 export type FetchReportContext = {
@@ -104,7 +125,7 @@ const fetchReportIPFS = async (
 const fetchReportApi = async (
   ctx: FetchReportContext,
   _params: FetchReportParams,
-) => {
+): Promise<VaultReport | null> => {
   const apiUrl = getApiURL(ctx.publicClient.chain.id, 'vaultsApi');
   if (!apiUrl) {
     throw new Error(
@@ -112,7 +133,31 @@ const fetchReportApi = async (
     );
   }
 
-  throw new Error('not implemented');
+  const response = await fetch(
+    vaultApiRoutes.vaultReport(apiUrl, _params.vault, _params.cid),
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch report from API: ${response.statusText}`);
+  }
+
+  const reportData: ApiReport = await response.json();
+
+  if (!reportData.report) {
+    return null;
+  }
+
+  const { data, proof, leaf } = reportData.report;
+
+  return {
+    vault: data.vaultAddress,
+    totalValueWei: BigInt(data.totalValueWei),
+    fee: BigInt(data.fee),
+    liabilityShares: BigInt(data.liabilityShares),
+    slashingReserve: BigInt(data.slashingReserve),
+    proof: proof as Hex[],
+    vaultLeafHash: leaf as Hex,
+  };
 };
 
 export const fetchReport = async (
