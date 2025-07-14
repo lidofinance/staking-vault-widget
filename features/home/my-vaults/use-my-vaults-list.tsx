@@ -27,7 +27,7 @@ export const useMyVaultsList = () => {
 
   return {
     ...query,
-    isLoading: query.isPending || query.isPlaceholderData,
+    isLoading: query.isLoading || query.isPlaceholderData,
     page: params.page,
     setPage,
     vaults: query.data?.data,
