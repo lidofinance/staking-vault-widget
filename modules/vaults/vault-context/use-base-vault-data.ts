@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { type Address } from 'viem';
 
 import { useLidoSDK } from 'modules/web3';
-import { fetchReportMerkle } from 'modules/vaults/report';
+import { fetchReport } from 'modules/vaults';
 
 import {
   getLazyOracleContract,
@@ -66,10 +66,9 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       // we might not have a report even when fresh is not true
       const report = isReportAvailable
-        ? await fetchReportMerkle(
-            publicClient.chain.id,
-            latestHubReport[2],
-            vaultAddress,
+        ? await fetchReport(
+            { publicClient },
+            { cid: latestHubReportCID, vault: vaultAddress },
           )
         : null;
 

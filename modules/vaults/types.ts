@@ -52,7 +52,7 @@ export type VaultReportType = {
   liabilityShares: bigint;
   slashingReserve: bigint;
   proof: Hex[];
-  vaultLeftHash: Hex;
+  vaultLeafHash: Hex;
 };
 
 export type HubReportData = {

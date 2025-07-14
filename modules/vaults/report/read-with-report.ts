@@ -65,7 +65,7 @@ export const readWithReport = async <
     //     state: [
     //       {
     //         slot: LAZY_ORACLE_ROOT_HASH_SLOT,
-    //         value: report.vaultLeftHash,
+    //         value: report.vaultLeafHash,
     //       },
     //     ],
     //   },
