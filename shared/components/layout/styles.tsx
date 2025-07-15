@@ -25,6 +25,10 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   grid-row-gap: 16px;
   min-height: 100vh;
   height: auto;
+
+  @media ${devicesHeaderMedia.tablet} {
+    grid-template-columns: 166px 1fr;
+  }
 `;
 
 export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`

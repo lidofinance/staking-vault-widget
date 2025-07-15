@@ -2,14 +2,14 @@ import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { appPaths } from 'consts/routing';
-import { useVaultOverviewData } from 'modules/vaults';
 
 import { modals } from 'features/overview/consts';
 import type { OverviewModalItem } from 'features/overview/types';
+import { useVault } from 'modules/vaults';
 
 export const useOverviewModal = () => {
   const router = useRouter();
-  const { data: vault } = useVaultOverviewData();
+  const { vaultAddress } = useVault();
   const rawModal = router.query.modal;
 
   const currentModal = useMemo<OverviewModalItem | null>(() => {
@@ -21,22 +21,22 @@ export const useOverviewModal = () => {
 
   const openModal = useCallback(
     (modal: OverviewModalItem) => {
-      if (!vault) return;
+      if (!vaultAddress) return;
 
-      const pathname = appPaths.vaults.vault(vault.address).overview;
+      const pathname = appPaths.vaults.vault(vaultAddress).overview;
       void router.push({ pathname, query: { modal } }, undefined, {
         shallow: true,
       });
     },
-    [router, vault],
+    [router, vaultAddress],
   );
 
   const closeModal = useCallback(() => {
-    if (!vault) return;
+    if (!vaultAddress) return;
 
-    const pathname = appPaths.vaults.vault(vault.address).overview;
+    const pathname = appPaths.vaults.vault(vaultAddress).overview;
     void router.push({ pathname, query: {} }, undefined, { shallow: true });
-  }, [router, vault]);
+  }, [router, vaultAddress]);
 
   return { currentModal, openModal, closeModal };
 };
