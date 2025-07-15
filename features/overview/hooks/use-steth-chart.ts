@@ -4,21 +4,20 @@ import { LineData } from '@lidofinance/lido-ui';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
-import { useVaultOverview } from 'features/overview/contexts';
+import { useVaultOverview } from 'features/overview/vault-overview';
 
 export const useStEthChart = (): LineData[] => {
-  const {
-    isLoadingVault,
-    values: {
+  const { values } = useVaultOverview();
+
+  return useMemo(() => {
+    if (!values) return [];
+
+    const {
       forcedRebalanceThresholdBP,
       totalValue,
       totalMintingCapacity,
       reserveRatioBP,
-    },
-  } = useVaultOverview();
-
-  return useMemo(() => {
-    if (isLoadingVault) return [];
+    } = values;
 
     const totalValueETH = `${formatBalance(totalValue).trimmed} ETH`;
     const forcedRebalanceThreshold =
@@ -71,11 +70,5 @@ export const useStEthChart = (): LineData[] => {
         },
       },
     ] as LineData[];
-  }, [
-    forcedRebalanceThresholdBP,
-    isLoadingVault,
-    reserveRatioBP,
-    totalMintingCapacity,
-    totalValue,
-  ]);
+  }, [values]);
 };

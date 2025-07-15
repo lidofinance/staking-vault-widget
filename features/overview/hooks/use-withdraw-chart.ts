@@ -1,16 +1,18 @@
 import { useMemo } from 'react';
 import { LineData } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
+import { useVaultOverview } from 'features/overview/vault-overview';
+
 export const useWithdrawChart = () => {
-  const { data: activeVault } = useVaultOverviewData();
+  const { values } = useVaultOverview();
 
   return useMemo(() => {
-    if (!activeVault) return {};
+    if (!values) return {};
 
-    const { withdrawableEther, totalValue } = activeVault;
+    const totalValue = values.totalValue;
+    const withdrawableEther = values.vaultData.withdrawableEther;
 
     const totalValueAmount = formatBalance(totalValue).trimmed;
     const withdrawableEthAmount = formatBalance(withdrawableEther).trimmed;
@@ -43,5 +45,5 @@ export const useWithdrawChart = () => {
         },
       ] as LineData[],
     };
-  }, [activeVault]);
+  }, [values]);
 };

@@ -20,7 +20,7 @@ export const getHealthFactorColor = (healthFactor?: string | number) => {
   return 'darkRed';
 };
 
-export const getUtilizationRatioColor = (utilizationRatio: string) => {
+export const getUtilizationRatioColor = (utilizationRatio?: string) => {
   if (!utilizationRatio) return '';
   let utilizationRatioNumber = 0;
 

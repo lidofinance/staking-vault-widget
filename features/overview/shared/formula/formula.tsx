@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import { Text } from '@lidofinance/lido-ui';
 
-import { FormulaItem } from 'features/overview/types';
+import type { FormulaItem } from 'features/overview/inner';
 
 import { FormulaWrapper, Variable } from './styles';
 

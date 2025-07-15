@@ -78,7 +78,7 @@ const calculateHealthChart = (healthFactorNumber = 0) => {
   };
 };
 
-export const useHealthChart = (healthFactorNumber: number) => {
+export const useHealthChart = (healthFactorNumber?: number) => {
   return useMemo(
     () => calculateHealthChart(healthFactorNumber),
     [healthFactorNumber],

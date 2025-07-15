@@ -12,16 +12,19 @@ import {
   NodeOperatorFeeModal,
   StethLiabilityModal,
   VaultBalanceModal,
-} from 'features/overview/components/modals';
-import type { SectionPayload } from 'features/overview/contexts';
-import { useOverviewModal } from 'features/overview/hooks';
-import type { VaultOverviewModalKey } from 'features/overview/types';
+} from 'features/overview/content/modals';
+
+import {
+  useOverviewModal,
+  type SectionPayload,
+  type VaultOverviewModalKey,
+} from 'features/overview/inner';
 
 import { OverviewItemValue } from './overview-item-value';
 import { DefaultContent, ItemWrapper, Title } from './styles';
 
 export type ItemProps = {
-  payload: string | number | boolean | bigint;
+  payload?: string | number | boolean | bigint;
   indicator: VaultOverviewModalKey;
   titleView?: 'column' | 'row';
   color?: string;
@@ -57,23 +60,25 @@ export const OverviewItem: FC<PropsWithChildren<ItemProps>> = ({
   const ModalComponent = getModalComponent(indicator);
 
   return (
-    <ItemWrapper onClick={() => openModal(indicator)}>
-      <DefaultContent titleView={titleView}>
-        <Title>
-          <Text color="secondary" size="xxs">
-            {title}
-          </Text>
-          <Hint text={hint} />
-        </Title>
-        <OverviewItemValue
-          content={payload}
-          isLoading={isLoading}
-          color={color}
-          {...rest}
-        />
-      </DefaultContent>
-      {children}
-      {!!ModalComponent && <ModalComponent />}
-    </ItemWrapper>
+    <>
+      <ItemWrapper onClick={() => openModal(indicator)}>
+        <DefaultContent titleView={titleView}>
+          <Title>
+            <Text color="secondary" size="xxs">
+              {title}
+            </Text>
+            <Hint text={hint} />
+          </Title>
+          <OverviewItemValue
+            content={payload}
+            isLoading={isLoading}
+            color={color}
+            {...rest}
+          />
+        </DefaultContent>
+        {children}
+      </ItemWrapper>
+      <ModalComponent />
+    </>
   );
 };

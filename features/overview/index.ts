@@ -1,1 +1,1 @@
-export { OverviewPage } from './overview-page';
+export { VaultOverview } from './vault-overview';
