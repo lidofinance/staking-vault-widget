@@ -185,7 +185,7 @@ const selectOverviewData = ({
   vaultMetrics,
 }: {
   vaultData: VaultInfo;
-  vaultMetrics: VaultApiMetrics;
+  vaultMetrics: VaultApiMetrics | null;
 }) => {
   const {
     address,
@@ -205,16 +205,6 @@ const selectOverviewData = ({
     tierStETHLimit,
   } = vaultData;
 
-  const {
-    rebaseReward,
-    grossStakingRewards,
-    nodeOperatorRewards,
-    netStakingRewards,
-    netStakingAprPercent,
-    bottomLine,
-    carrySpreadAprPercent,
-  } = vaultMetrics;
-
   const overview = calculateOverviewV2({
     totalValue: vaultData.totalValue,
     reserveRatioBP,
@@ -228,11 +218,27 @@ const selectOverviewData = ({
     unsettledLidoFees: vaultData.obligations.unsettledLidoFees,
   });
 
+  const {
+    rebaseReward,
+    grossStakingRewards,
+    nodeOperatorRewards,
+    netStakingRewards,
+    bottomLine,
+  } = vaultMetrics || {};
+
+  const netApr =
+    (vaultMetrics &&
+      formatPercent.format(vaultMetrics.netStakingAprPercent / 100)) ??
+    undefined;
+  const carrySpreadApr =
+    (vaultMetrics &&
+      formatPercent.format(vaultMetrics.carrySpreadAprPercent / 100)) ??
+    undefined;
+
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
   const undisbursedNodeOperatorFee = toEthValue(nodeOperatorUnclaimedFee);
-  const netApr = formatPercent.format(netStakingAprPercent / 100);
-  const carrySpreadApr = formatPercent.format(carrySpreadAprPercent / 100);
+
   const unsettledLidoFees = toEthValue(obligations.unsettledLidoFees);
 
   const feeObligationEth = toEthValue(
@@ -316,12 +322,19 @@ export const useVaultOverviewData = () => {
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
+
       const [vaultData, vaultMetrics] = await Promise.all([
         getVaultData({ publicClient, shares, vault: activeVault }),
         fetchVaultMetrics(
           { publicClient },
           { vaultAddress: activeVault.address },
-        ),
+        ).catch((error) => {
+          console.warn(
+            '[useVaultOverviewData] Failed to fetch vault metrics from API',
+            error,
+          );
+          return null;
+        }),
       ]);
       return { vaultData, vaultMetrics };
     },
