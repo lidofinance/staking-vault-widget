@@ -4,6 +4,7 @@ import { VaultFactoryAbi } from 'abi/vault-factory';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_CONNECT_DEPOSIT,
+  VAULTS_ROOT_ROLES_MAP,
 } from 'modules/vaults';
 
 import type { CreateVaultSchema } from '../types';
@@ -24,7 +25,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   );
 
   // first manager goes to factory as direct argument
-  const [defaultAdmin] = values.vaultManager;
+  const [defaultAdmin, ...restAdmins] = values.vaultManager;
 
   return {
     data: encodeFunctionData({
@@ -36,7 +37,10 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
         nodeOperatorManager,
         nodeOperatorFeeRateFormatted,
         confirmExpiryFormatted,
-        [],
+        restAdmins.map((admin) => ({
+          role: VAULTS_ROOT_ROLES_MAP['defaultAdmin'],
+          account: admin.value,
+        })),
       ],
     }),
     value: VAULTS_CONNECT_DEPOSIT,
