@@ -1,6 +1,5 @@
 import { Identicon, Text } from '@lidofinance/lido-ui';
 import { zeroAddress } from 'viem';
-import Link from 'next/link';
 
 import { vaultTexts } from 'modules/vaults';
 
@@ -38,9 +37,9 @@ export const Vault = () => {
               {reserveRatio} {general.reserveRatio}
             </Text>
             {/* TODO: add appPath when tiers settings will be ready*/}
-            <Link href={`/vaults/${address}/settings/tier`}>
+            {/* <Link href={`/vaults/${address}/settings/tier`}>
               {general.action}
-            </Link>
+            </Link> */}
           </VaultRR>
         )}
       </VaultBaseInfo>
