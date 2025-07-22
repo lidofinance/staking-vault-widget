@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Percent = styled.span<{ color: string }>`
-  color: ${({ color }) => color};
-  font-weight: 700;
+export const Percent = styled.span<{ color?: string; strong?: boolean }>`
+  ${({ color }) => (color ? `color: ${color};` : '')};
+  ${({ strong }) => (strong ? 'font-weight: 700;' : '')};
 `;

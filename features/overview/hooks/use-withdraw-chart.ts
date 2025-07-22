@@ -1,0 +1,49 @@
+import { useMemo } from 'react';
+import { LineData } from '@lidofinance/lido-ui';
+
+import { formatBalance } from 'utils';
+
+import { useVaultOverview } from 'features/overview/vault-overview';
+
+export const useWithdrawChart = () => {
+  const { values } = useVaultOverview();
+
+  return useMemo(() => {
+    if (!values) return {};
+
+    const totalValue = values.totalValue;
+    const withdrawableEther = values.vaultData.withdrawableEther;
+
+    const totalValueAmount = formatBalance(totalValue).trimmed;
+    const withdrawableEthAmount = formatBalance(withdrawableEther).trimmed;
+    const notWithdrawableEthAmount = formatBalance(
+      totalValue - withdrawableEther,
+    ).trimmed;
+
+    return {
+      totalValueAmount,
+      withdrawableEthAmount,
+      notWithdrawableEthAmount,
+      chartData: [
+        {
+          color: '#00A3FF',
+          labelPosition: 'top',
+          threshold: {
+            description: `Available for Immediate Withdrawal ${withdrawableEthAmount} ETH`,
+            label: `${withdrawableEthAmount} ETH`,
+            value: parseFloat(withdrawableEthAmount),
+          },
+        },
+        {
+          color: '#B35FE0',
+          labelPosition: 'top',
+          threshold: {
+            description: `Total value ${totalValueAmount} ETH`,
+            label: `${totalValueAmount} ETH`,
+            value: parseFloat(totalValueAmount),
+          },
+        },
+      ] as LineData[],
+    };
+  }, [values]);
+};

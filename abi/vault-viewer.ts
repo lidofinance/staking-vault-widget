@@ -305,6 +305,11 @@ export const VaultViewerAbi = [
             name: 'nodeOperatorFeeRate',
             type: 'uint256',
           },
+          {
+            internalType: 'bool',
+            name: 'isReportFresh',
+            type: 'bool',
+          },
         ],
         internalType: 'struct VaultViewer.VaultData',
         name: 'data',
@@ -468,6 +473,11 @@ export const VaultViewerAbi = [
             internalType: 'uint256',
             name: 'nodeOperatorFeeRate',
             type: 'uint256',
+          },
+          {
+            internalType: 'bool',
+            name: 'isReportFresh',
+            type: 'bool',
           },
         ],
         internalType: 'struct VaultViewer.VaultData[]',

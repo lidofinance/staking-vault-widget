@@ -8,6 +8,9 @@ export const AllVaults = () => {
     page,
     pagesCount,
     setPage,
+    setSort,
+    sortBy,
+    sortDir,
     refetch,
     isError,
     totalVaultsCount,
@@ -24,6 +27,9 @@ export const AllVaults = () => {
       page={page}
       pagesCount={pagesCount}
       setPage={setPage}
+      sortDir={sortDir}
+      sortBy={sortBy}
+      setSort={setSort}
     />
   );
 };

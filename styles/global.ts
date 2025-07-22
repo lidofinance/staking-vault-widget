@@ -1,9 +1,14 @@
 import { createGlobalStyle } from 'styled-components';
 
-import { NAV_MOBILE_HEIGHT, NAV_MOBILE_MAX_WIDTH } from './constants';
+import {
+  NAV_MOBILE_HEIGHT,
+  NAV_MOBILE_MAX_WIDTH,
+  NAV_TABLET_MAX_WIDTH,
+} from './constants';
 import { ThemeName } from '@lidofinance/lido-ui';
 
 export const devicesHeaderMedia = {
+  tablet: `screen and (max-width: ${NAV_TABLET_MAX_WIDTH}px)`,
   mobile: `screen and (max-width: ${NAV_MOBILE_MAX_WIDTH}px)`,
 };
 
@@ -30,6 +35,11 @@ const GlobalStyle = createGlobalStyle`
 
     --nav-transition-duration: 0.15s;
     --nav-transition-timing-function: ease-out;
+    
+    --chart-health-rebalance: #8A2D38;
+    --chart-health-danger: #D74758;
+    --chart-health-warning: #EB9925;
+    --chart-health-success: var(--lido-color-success);
   }
   * {
     margin: 0;

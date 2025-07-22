@@ -2,6 +2,7 @@ import { config } from 'config';
 
 export const formatPercent = new Intl.NumberFormat(config.LOCALE, {
   style: 'percent',
+  maximumFractionDigits: 2,
 });
 
 export const formatDollar = new Intl.NumberFormat(config.LOCALE, {

@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
-import { OverviewPage } from 'features/overview';
+import { VaultOverview } from 'features/overview';
 
 const Overview: FC = () => {
   return (
@@ -10,7 +10,7 @@ const Overview: FC = () => {
       <Head>
         <title>Vault Overview | Lido</title>
       </Head>
-      <OverviewPage />
+      <VaultOverview />
     </Layout>
   );
 };

@@ -2,14 +2,22 @@ import type { FC } from 'react';
 import { formatPercent } from 'utils/format-number';
 
 import { Percent } from './styles';
+import { DATA_UNAVAILABLE } from 'consts/text';
 
 type PercentCellProps = {
-  value: number;
-  color: string;
+  value?: number;
+  color?: string;
+  strong?: boolean;
 };
 
-export const PercentCell: FC<PercentCellProps> = ({ value, color }) => {
-  const percent = formatPercent.format(value / 100);
+export const PercentCell: FC<PercentCellProps> = ({ value, color, strong }) => {
+  if (typeof value !== 'number') {
+    return DATA_UNAVAILABLE;
+  }
 
-  return <Percent color={color}>{percent}</Percent>;
+  return (
+    <Percent color={color} strong={strong}>
+      {formatPercent.format(value / 100)}
+    </Percent>
+  );
 };

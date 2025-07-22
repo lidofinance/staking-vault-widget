@@ -1,6 +1,7 @@
 export * from './consts';
 export * from './hooks';
 export * from './utils';
+export * from './api';
 export * from './contracts';
 export * from './report';
 export * from './vault-context';

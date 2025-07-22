@@ -2,7 +2,7 @@ import { FC, useCallback } from 'react';
 
 import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
 
-import { VaultTableInfo } from 'modules/vaults';
+import { type FetchVaultsParams, VaultEntry } from 'modules/vaults';
 import { getHealthFactorColor } from 'utils';
 
 import { PercentCell, HeaderCell } from './cells';
@@ -16,24 +16,25 @@ import {
   SpacerRow,
   TableCell,
 } from './styles';
-import { Address, isAddress, zeroAddress } from 'viem';
+import { isAddress, zeroAddress } from 'viem';
 import { FormatToken } from 'shared/formatters';
 import { useRouter } from 'next/router';
 import { appPaths } from 'consts/routing';
 import { AddressBadge } from 'shared/components';
-import { DATA_UNAVAILABLE } from 'consts/text';
-
-type VaultTableInfoErroable =
-  | VaultTableInfo
-  | (Partial<VaultTableInfo> & { address: Address });
 
 export type VaultTableProps = {
   title: string;
   emptyDisplay?: 'default' | 'hideTable';
   page?: number;
   setPage?: (page: number) => void;
+  sortBy?: FetchVaultsParams['sortBy'];
+  sortDir?: FetchVaultsParams['sortDir'];
+  setSort?: (
+    sortBy: FetchVaultsParams['sortBy'],
+    sortDir: FetchVaultsParams['sortDir'],
+  ) => void;
   pagesCount?: number;
-  vaults?: VaultTableInfoErroable[];
+  vaults?: VaultEntry[];
   isLoading?: boolean;
   vaultsCount?: number;
   isError?: boolean;
@@ -46,30 +47,41 @@ const tableHeaders = [
   },
   {
     title: 'Total value, ETH',
+    sortKey: 'totalValue',
     hint: 'The total amount of ETH deposited on validators and on the vault balance.',
   },
   {
     title: 'stETH liability',
+    sortKey: 'liabilityStETH',
     hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
   },
   {
+    title: 'Net Staking APR',
+    sortKey: 'netStakingAprPercent',
+  },
+  {
+    title: 'Carry Spread',
+    sortKey: 'carrySpreadAprPercent',
+  },
+  {
     title: 'Health factor',
+    sortKey: 'healthFactor',
     hint: 'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.',
   },
 ];
 
-const PLACEHOLDER_VAULT: VaultTableInfo = {
+const PLACEHOLDER_VAULT: VaultEntry = {
   address: zeroAddress,
   totalValue: 0n,
   liabilityStETH: 0n,
-  healthScore: 0,
-  forcedRebalanceThresholdBP: 0,
-  liabilityShares: 0n,
-  owner: zeroAddress,
+  healthFactor: 0,
+  carrySpreadAprPercent: 0,
+  netStakingAprPercent: 0,
+  bottomLine: 0n,
 };
 
 type VaultTableRowProps = {
-  vault: VaultTableInfoErroable;
+  vault: VaultEntry;
 };
 
 const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
@@ -91,14 +103,17 @@ const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
         <FormatToken amount={vault?.liabilityStETH} />
       </TableCell>
       <TableCell align="right">
-        {typeof vault.healthScore != 'undefined' ? (
-          <PercentCell
-            value={vault.healthScore}
-            color={getHealthFactorColor(vault.healthScore)}
-          />
-        ) : (
-          DATA_UNAVAILABLE
-        )}
+        <PercentCell value={vault.netStakingAprPercent} />
+      </TableCell>
+      <TableCell align="right">
+        <PercentCell value={vault.carrySpreadAprPercent} />
+      </TableCell>
+      <TableCell align="right">
+        <PercentCell
+          value={vault.healthFactor}
+          strong
+          color={getHealthFactorColor(vault.healthFactor)}
+        />
       </TableCell>
     </>
   );
@@ -168,6 +183,17 @@ const QueryStatus = ({
   );
 };
 
+const toUIsortDir = (dir?: FetchVaultsParams['sortDir']) => {
+  switch (dir) {
+    case 'desc':
+      return 'ASC';
+    case 'asc':
+      return 'DESC';
+    default:
+      return undefined;
+  }
+};
+
 export const VaultTable: FC<VaultTableProps> = ({
   vaults,
   title,
@@ -178,6 +204,9 @@ export const VaultTable: FC<VaultTableProps> = ({
   isLoading = false,
   page,
   setPage,
+  sortBy,
+  setSort,
+  sortDir,
   pagesCount,
 }) => {
   const router = useRouter();
@@ -201,6 +230,23 @@ export const VaultTable: FC<VaultTableProps> = ({
     [router],
   );
 
+  const onSortClick = useCallback(
+    (e: React.MouseEvent<HTMLTableCellElement>) => {
+      const columnKey = e.currentTarget.dataset.sortKey as
+        | FetchVaultsParams['sortBy']
+        | undefined;
+
+      if (!columnKey) return;
+
+      if (columnKey === sortBy) {
+        setSort?.(columnKey, sortDir === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSort?.(columnKey, 'desc');
+      }
+    },
+    [setSort, sortBy, sortDir],
+  );
+
   return (
     <>
       <TableStyled>
@@ -209,8 +255,16 @@ export const VaultTable: FC<VaultTableProps> = ({
           <>
             <Thead>
               <TableRow>
-                {tableHeaders.map(({ title, hint }) => (
-                  <TableHeaderCell key={title}>
+                {tableHeaders.map(({ title, hint, sortKey }) => (
+                  <TableHeaderCell
+                    data-sort-key={sortKey}
+                    align="left"
+                    onClick={onSortClick}
+                    sortDir={
+                      sortKey === sortBy ? toUIsortDir(sortDir) : undefined
+                    }
+                    key={title}
+                  >
                     <HeaderCell hint={hint} title={title} />
                   </TableHeaderCell>
                 ))}
@@ -238,7 +292,7 @@ export const VaultTable: FC<VaultTableProps> = ({
           </>
         )}
       </TableStyled>
-      {showPagination && (
+      {showPagination && setPage && typeof page == 'number' && (
         <Pagination
           onItemClick={setPage}
           pagesCount={pagesCount}
