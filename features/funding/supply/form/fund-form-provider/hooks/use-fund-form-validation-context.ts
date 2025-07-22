@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useEthereumBalance, useWethBalance } from 'modules/web3';
 import { useValidateRecipientArgs } from 'modules/vaults';
 
-import type { FundFormDataValidationContext } from 'features/funding/fund/form/types';
+import type { FundFormDataValidationContext } from 'features/funding/supply/form/types';
 
 export const useFundFormValidationContext = () => {
   const validateRecipientArgs = useValidateRecipientArgs();

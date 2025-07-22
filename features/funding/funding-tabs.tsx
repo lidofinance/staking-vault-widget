@@ -1,13 +1,14 @@
 import { FC } from 'react';
+import { zeroAddress } from 'viem';
 import { useVault } from 'modules/vaults';
-
-import { PageWrapper } from './styles';
-import { Fund } from './fund';
-import { Withdraw } from './withdraw';
 
 import { Switch } from 'shared/components/switch';
 import { appPaths } from 'consts/routing';
-import { zeroAddress } from 'viem';
+
+import { Supply } from './supply';
+import { Withdraw } from './withdraw';
+
+import { PageWrapper } from './styles';
 
 export type FundingTabsProps = {
   mode: 'supply' | 'withdraw';
@@ -32,7 +33,7 @@ export const FundingTabs: FC<FundingTabsProps> = ({ mode }) => {
     <PageWrapper>
       <Switch checked={!isFundTab} routes={fundingRoutes} />
 
-      {isFundTab ? <Fund /> : <Withdraw />}
+      {isFundTab ? <Supply /> : <Withdraw />}
     </PageWrapper>
   );
 };

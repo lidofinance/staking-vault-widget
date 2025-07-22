@@ -5,7 +5,7 @@ import { FundFormInputs } from './fund-form-inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
 
-export const FundForm = () => {
+export const SupplyForm = () => {
   return (
     <FundFormProvider>
       <Suppliable />
