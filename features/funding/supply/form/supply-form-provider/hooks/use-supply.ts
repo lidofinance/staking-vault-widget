@@ -15,9 +15,9 @@ import {
 } from 'modules/vaults';
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
-import type { FundFormValidatedValues } from 'features/funding/supply/form/types';
+import type { SupplyFormValidatedValues } from 'features/funding/supply/form/types';
 
-export const useFund = () => {
+export const useSupply = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVault();
 
@@ -25,14 +25,14 @@ export const useFund = () => {
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    fund: useCallback(
+    supply: useCallback(
       async ({
         amount,
         mintSteth,
         token,
         mintAddress,
-      }: FundFormValidatedValues) => {
-        invariant(activeVault, '[useFund] activeVault is undefined');
+      }: SupplyFormValidatedValues) => {
+        invariant(activeVault, '[useSupply] activeVault is undefined');
         const wethContract = getWethContract(publicClient);
 
         let prepareTransactions: () => Promise<TransactionEntry[]> = () =>

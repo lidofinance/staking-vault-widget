@@ -2,23 +2,23 @@ import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, MultiplePermissionedSubmitButton } from 'modules/vaults';
 
-import { useFundForm } from './fund-form-provider';
+import { useSupplyForm } from './supply-form-provider';
 
-import type { FundFormFieldValues } from './types';
+import type { SupplyFormFieldValues } from './types';
 
-const FUND_ROLES = ['supplier'] as const;
-const FUND_MINT_ROLES = ['supplier', 'minter'] as const;
+const SUPPLY_ROLES = ['supplier'] as const;
+const SUPPLY_MINT_ROLES = [...SUPPLY_ROLES, 'minter'] as const;
 
 export const SubmitButton = () => {
   const [amount, token, mintSteth] =
-    useFormContext<FundFormFieldValues>().watch([
+    useFormContext<SupplyFormFieldValues>().watch([
       'amount',
       'token',
       'mintSteth',
     ]);
 
   const { isSubmitting, disabled } = useFormState();
-  const { maxMintableStethQuery } = useFundForm();
+  const { maxMintableStethQuery } = useSupplyForm();
 
   const isDisabled = isSubmitting || disabled;
 
@@ -32,7 +32,7 @@ export const SubmitButton = () => {
 
   return (
     <MultiplePermissionedSubmitButton
-      dashboardRoles={mintSteth ? FUND_MINT_ROLES : FUND_ROLES}
+      dashboardRoles={mintSteth ? SUPPLY_MINT_ROLES : SUPPLY_ROLES}
       type="submit"
       loading={isSubmitting}
       disabled={isDisabled}

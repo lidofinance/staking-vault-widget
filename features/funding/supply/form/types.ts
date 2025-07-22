@@ -1,29 +1,29 @@
 import type { z } from 'zod';
-import type { fundFormSchema } from './fund-form-provider/validation';
-import type { useFundFormData } from './fund-form-provider/hooks';
+import type { supplyFormSchema } from './supply-form-provider/validation';
+import type { useSupplyFormData } from './supply-form-provider/hooks';
 import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
-export type FundFormDataValidationContext = {
+export type SupplyFormDataValidationContext = {
   ethBalance: bigint;
   wethBalance: bigint;
   validateRecipientArgs: ValidateRecipientArgs;
 };
 
-export type FundFormDataAwaitableValidationContext =
-  Promise<FundFormDataValidationContext>;
+export type SupplyFormDataAwaitableValidationContext =
+  Promise<SupplyFormDataValidationContext>;
 
-export type FundFormValidatedValues = z.infer<
-  ReturnType<typeof fundFormSchema>
+export type SupplyFormValidatedValues = z.infer<
+  ReturnType<typeof supplyFormSchema>
 >;
 
-export type FundFormFieldValues = {
+export type SupplyFormFieldValues = {
   // booleans as is
-  token: FundFormValidatedValues['token'];
-  mintSteth: FundFormValidatedValues['mintSteth'];
+  token: SupplyFormValidatedValues['token'];
+  mintSteth: SupplyFormValidatedValues['mintSteth'];
   //  will be validated to correct types
   amount: bigint | null;
   mintAddress: string;
 };
 
 // underlying type is too complex
-export type FundFormData = ReturnType<typeof useFundFormData>;
+export type SupplyFormData = ReturnType<typeof useSupplyFormData>;

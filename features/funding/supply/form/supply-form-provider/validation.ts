@@ -11,23 +11,23 @@ import {
 } from 'utils/zod-validation';
 
 import type {
-  FundFormDataAwaitableValidationContext,
-  FundFormDataValidationContext,
-  FundFormFieldValues,
-  FundFormValidatedValues,
+  SupplyFormDataAwaitableValidationContext,
+  SupplyFormDataValidationContext,
+  SupplyFormFieldValues,
+  SupplyFormValidatedValues,
 } from '../types';
 
-type FundFormSchemaOptions = FundFormDataValidationContext & {
+type SupplyFormSchemaOptions = SupplyFormDataValidationContext & {
   mintSteth: boolean;
   isETH: boolean;
 };
 
-export const fundFormSchema = ({
+export const supplyFormSchema = ({
   isETH,
   ethBalance,
   wethBalance,
   validateRecipientArgs,
-}: FundFormSchemaOptions) => {
+}: SupplyFormSchemaOptions) => {
   const mintSchema = z.discriminatedUnion('mintSteth', [
     z.object({
       mintSteth: z.literal(true),
@@ -50,21 +50,21 @@ export const fundFormSchema = ({
   );
 };
 
-export const FundFormResolver: Resolver<
-  FundFormFieldValues,
-  FundFormDataAwaitableValidationContext,
-  FundFormValidatedValues
+export const SupplyFormResolver: Resolver<
+  SupplyFormFieldValues,
+  SupplyFormDataAwaitableValidationContext,
+  SupplyFormValidatedValues
 > = async (values, context, options) => {
-  invariant(context, '[FundFormResolver] context is undefined');
+  invariant(context, '[SupplyFormResolver] context is undefined');
   const contextValue = await awaitWithTimeout(context, 4000);
-  const schema = fundFormSchema({
+  const schema = supplyFormSchema({
     ...contextValue,
     isETH: values.token === 'ETH',
     mintSteth: values.mintSteth,
   });
   return zodResolver<
-    FundFormFieldValues,
-    FundFormDataAwaitableValidationContext,
-    FundFormValidatedValues
+    SupplyFormFieldValues,
+    SupplyFormDataAwaitableValidationContext,
+    SupplyFormValidatedValues
   >(schema as any)(values, context, options);
 };

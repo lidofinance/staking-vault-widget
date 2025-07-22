@@ -1,17 +1,17 @@
-import { FundFormProvider } from './fund-form-provider';
+import { SupplyFormProvider } from './supply-form-provider';
 
 import { Suppliable } from './suppliable';
-import { FundFormInputs } from './fund-form-inputs';
+import { SupplyFormInputs } from './supply-form-inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
 
 export const SupplyForm = () => {
   return (
-    <FundFormProvider>
+    <SupplyFormProvider>
       <Suppliable />
-      <FundFormInputs />
+      <SupplyFormInputs />
       <SubmitButton />
       <TxInfo />
-    </FundFormProvider>
+    </SupplyFormProvider>
   );
 };

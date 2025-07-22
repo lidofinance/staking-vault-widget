@@ -4,12 +4,12 @@ import { type RefetchOptions } from '@tanstack/react-query';
 import { useMaxMintable, useReadDashboard, useVault } from 'modules/vaults';
 import { useEthereumBalance, useWethBalance, ONE_ETH } from 'modules/web3';
 
-import type { FundFormFieldValues } from 'features/funding/supply/form/types';
+import type { SupplyFormFieldValues } from 'features/funding/supply/form/types';
 
-export const useFundFormData = (
-  token: FundFormFieldValues['token'],
-  mintSteth: FundFormFieldValues['mintSteth'],
-  amount: FundFormFieldValues['amount'],
+export const useSupplyFormData = (
+  token: SupplyFormFieldValues['token'],
+  mintSteth: SupplyFormFieldValues['mintSteth'],
+  amount: SupplyFormFieldValues['amount'],
 ) => {
   const { invalidateVaultState } = useVault();
   const ethBalanceQuery = useEthereumBalance();
@@ -27,7 +27,7 @@ export const useFundFormData = (
 
   const maxMintableStethQuery = useMaxMintable(mintSteth ? amount : undefined);
 
-  const invalidateFundFormData = useCallback(() => {
+  const invalidateSupplyFormData = useCallback(() => {
     const options: RefetchOptions = {
       cancelRefetch: true,
       throwOnError: false,
@@ -43,14 +43,14 @@ export const useFundFormData = (
 
   return useMemo(
     () => ({
-      invalidateFundFormData,
+      invalidateSupplyFormData,
       balanceQuery,
       maxMintableStethQuery,
       isStethMintableQuery,
     }),
     [
       balanceQuery,
-      invalidateFundFormData,
+      invalidateSupplyFormData,
       isStethMintableQuery,
       maxMintableStethQuery,
     ],
