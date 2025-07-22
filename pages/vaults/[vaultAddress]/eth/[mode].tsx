@@ -3,16 +3,16 @@ import Head from 'next/head';
 import { Address } from 'viem';
 
 import { Layout } from 'shared/components';
-import { SupplyTabs } from 'features/supply';
+import { FundingTabs } from 'features/funding';
 import { useRouter } from 'next/router';
 
-type SupplyModePageParams = {
+type FundingModePageParams = {
   mode: 'supply' | 'withdraw';
   address: Address;
 };
 
-const Supply: FC = () => {
-  const { mode } = useRouter().query as SupplyModePageParams;
+const Funding: FC = () => {
+  const { mode } = useRouter().query as FundingModePageParams;
   const title = mode === 'supply' ? 'Supply' : 'Withdraw';
 
   return (
@@ -21,9 +21,9 @@ const Supply: FC = () => {
         <title>{title} | Lido</title>
       </Head>
 
-      <SupplyTabs mode={mode} />
+      <FundingTabs mode={mode} />
     </Layout>
   );
 };
 
-export default Supply;
+export default Funding;

@@ -9,15 +9,15 @@ import { Switch } from 'shared/components/switch';
 import { appPaths } from 'consts/routing';
 import { zeroAddress } from 'viem';
 
-export type SupplyTabProps = {
+export type FundingTabsProps = {
   mode: 'supply' | 'withdraw';
 };
 
-export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
+export const FundingTabs: FC<FundingTabsProps> = ({ mode }) => {
   const isFundTab = mode === 'supply';
   const { vaultAddress } = useVault();
 
-  const supplyRoutes = [
+  const fundingRoutes = [
     {
       path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('supply'),
       name: 'Supply',
@@ -30,7 +30,7 @@ export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
 
   return (
     <PageWrapper>
-      <Switch checked={!isFundTab} routes={supplyRoutes} />
+      <Switch checked={!isFundTab} routes={fundingRoutes} />
 
       {isFundTab ? <Fund /> : <Withdraw />}
     </PageWrapper>

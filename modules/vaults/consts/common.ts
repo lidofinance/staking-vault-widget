@@ -2,7 +2,7 @@ import { parseEther } from 'viem';
 
 export const VAULTS_PER_PAGE = 15;
 
-export const VAULT_SUPPLY_TOKENS = ['ETH', 'wETH'] as const;
+export const VAULT_FUNDING_TOKENS = ['ETH', 'wETH'] as const;
 export const VAULT_MINT_TOKENS = ['stETH', 'wstETH'] as const;
 
 export const VAULTS_CONNECT_DEPOSIT = parseEther('1');

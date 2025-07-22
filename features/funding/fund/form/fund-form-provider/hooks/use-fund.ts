@@ -15,7 +15,7 @@ import {
 } from 'modules/vaults';
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
-import type { FundFormValidatedValues } from 'features/supply/fund/form/types';
+import type { FundFormValidatedValues } from 'features/funding/fund/form/types';
 
 export const useFund = () => {
   const publicClient = usePublicClient();

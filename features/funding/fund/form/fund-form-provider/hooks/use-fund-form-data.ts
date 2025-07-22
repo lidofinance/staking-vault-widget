@@ -4,7 +4,7 @@ import { type RefetchOptions } from '@tanstack/react-query';
 import { useMaxMintable, useReadDashboard, useVault } from 'modules/vaults';
 import { useEthereumBalance, useWethBalance, ONE_ETH } from 'modules/web3';
 
-import type { FundFormFieldValues } from 'features/supply/fund/form/types';
+import type { FundFormFieldValues } from 'features/funding/fund/form/types';
 
 export const useFundFormData = (
   token: FundFormFieldValues['token'],
