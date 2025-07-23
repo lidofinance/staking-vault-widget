@@ -15,6 +15,7 @@ export const TxInfo = () => {
       amount={amount}
       token={token}
       noDataLabel="-"
+      data-testid="youWillReceiveRow"
     />
   );
 };

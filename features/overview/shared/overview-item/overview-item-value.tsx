@@ -22,7 +22,12 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
           <InlineLoader />
         </LoaderWrapper>
       ) : (
-        <ContentText size={textSize} style={{ color }} strong>
+        <ContentText
+          data-testid="blockValue"
+          size={textSize}
+          style={{ color }}
+          strong
+        >
           {contentView || '-'}
         </ContentText>
       )}

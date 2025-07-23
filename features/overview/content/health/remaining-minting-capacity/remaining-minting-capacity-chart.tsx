@@ -21,6 +21,7 @@ export const RemainingMintingCapacityChart = () => {
       data={chartData}
       height={8}
       showLabels
+      data-testid="remaining-minting-capacity-chart"
     />
   );
 };

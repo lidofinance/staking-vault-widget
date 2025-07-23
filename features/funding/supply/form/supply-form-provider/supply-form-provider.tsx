@@ -99,6 +99,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
+        data-testId="supplyForm"
       >
         {children}
       </FormControllerStyled>

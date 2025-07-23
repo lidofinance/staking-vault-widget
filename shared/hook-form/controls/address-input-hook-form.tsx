@@ -50,6 +50,7 @@ export const AddressInputHookForm = ({
           });
       }}
       disabled={disabled || !address || safeIsAddressEqual(fieldValue, address)}
+      data-testid="currentAddressBtn"
     >
       Current address
     </Button>

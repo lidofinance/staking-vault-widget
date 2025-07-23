@@ -14,6 +14,10 @@ export const CheckboxHookForm = ({
 }: CheckBoxHookFormProps) => {
   const { register } = useFormContext();
   return (
-    <CheckBoxStyled label={label} {...register(fieldName, registerOptions)} />
+    <CheckBoxStyled
+      data-testid="mintStethCheckbox"
+      label={label}
+      {...register(fieldName, registerOptions)}
+    />
   );
 };
