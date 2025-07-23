@@ -3,7 +3,7 @@ import {
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
 import { useWithdrawFormData } from './withdraw-form-context';
-import { VAULT_SUPPLY_TOKENS } from 'modules/vaults';
+import { VAULT_FUNDING_TOKENS } from 'modules/vaults';
 
 export const WithdrawFormInputs = () => {
   const { withdrawableEtherQuery } = useWithdrawFormData();
@@ -13,7 +13,7 @@ export const WithdrawFormInputs = () => {
       <TokenAmountInputGroup
         amountFieldName="amount"
         tokenFieldName="token"
-        tokenOptions={VAULT_SUPPLY_TOKENS}
+        tokenOptions={VAULT_FUNDING_TOKENS}
         maxAmount={withdrawableEtherQuery.data}
       />
       <AddressInputHookForm

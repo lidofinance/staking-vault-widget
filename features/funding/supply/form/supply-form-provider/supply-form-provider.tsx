@@ -13,42 +13,44 @@ import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormControllerStyled } from 'shared/components/form';
 
-import { FundFormResolver } from './validation';
+import { SupplyFormResolver } from './validation';
 
 import {
-  useFund,
-  useFundFormValidationContext,
-  useFundFormData,
+  useSupply,
+  useSupplyFormValidationContext,
+  useSupplyFormData,
 } from './hooks';
 import {
-  FundFormData,
-  FundFormDataAwaitableValidationContext,
-  FundFormFieldValues,
-  FundFormValidatedValues,
+  SupplyFormData,
+  SupplyFormDataAwaitableValidationContext,
+  SupplyFormFieldValues,
+  SupplyFormValidatedValues,
 } from '../types';
 
 // Context for sharing relevant form data
-const FundFormDataContext = createContext<FundFormData | null>(null);
-FundFormDataContext.displayName = 'FundFormDataContext';
+const SupplyFormDataContext = createContext<SupplyFormData | null>(null);
+SupplyFormDataContext.displayName = 'SupplyFormDataContext';
 
-export const useFundForm = () => {
-  const context = useContext(FundFormDataContext);
+export const useSupplyForm = () => {
+  const context = useContext(SupplyFormDataContext);
   invariant(
     context,
-    '[useFundForm] useFundForm must be used within a FundFormProvider',
+    '[useSupplyForm] useSupplyForm must be used within a SupplyFormProvider',
   );
   return context;
 };
 
-export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const { isDappActive } = useDappStatus();
-  const { validationContext } = useFundFormValidationContext();
-  const { fund, retryEvent } = useFund();
+  const { validationContext } = useSupplyFormValidationContext();
+  const { supply, retryEvent } = useSupply();
 
   const formObject = useForm<
-    FundFormFieldValues,
-    FundFormDataAwaitableValidationContext,
-    FundFormValidatedValues
+    SupplyFormFieldValues,
+    SupplyFormDataAwaitableValidationContext,
+    SupplyFormValidatedValues
   >({
     defaultValues: {
       token: 'ETH',
@@ -59,15 +61,15 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     mode: 'onTouched',
     disabled: !isDappActive,
     context: useAwaiter(validationContext).awaiter,
-    resolver: FundFormResolver,
+    resolver: SupplyFormResolver,
   });
 
   const { watch, resetField } = formObject;
   const [mintSteth, amount, token] = watch(['mintSteth', 'amount', 'token']);
 
-  const fundFormData = useFundFormData(token, mintSteth, amount);
-  const invalidateFundFormData = fundFormData.invalidateFundFormData;
-  const isStethMintable = fundFormData.isStethMintableQuery.data === true;
+  const supplyFormData = useSupplyFormData(token, mintSteth, amount);
+  const invalidateSupplyFormData = supplyFormData.invalidateSupplyFormData;
+  const isStethMintable = supplyFormData.isStethMintableQuery.data === true;
 
   useEffect(() => {
     // reset mintSteth  when stETH is not mintable
@@ -81,18 +83,18 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [isStethMintable, mintSteth, resetField]);
 
   const onSubmit = useCallback(
-    async (values: FundFormValidatedValues) => {
-      const result = await fund(values);
+    async (values: SupplyFormValidatedValues) => {
+      const result = await supply(values);
       // revalidate form data because some TXs may have changed the state
-      await invalidateFundFormData();
+      await invalidateSupplyFormData();
 
       return result;
     },
-    [fund, invalidateFundFormData],
+    [invalidateSupplyFormData, supply],
   );
 
   return (
-    <FundFormDataContext.Provider value={fundFormData}>
+    <SupplyFormDataContext.Provider value={supplyFormData}>
       <FormControllerStyled
         formObject={formObject}
         onSubmit={onSubmit}
@@ -100,6 +102,6 @@ export const FundFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       >
         {children}
       </FormControllerStyled>
-    </FundFormDataContext.Provider>
+    </SupplyFormDataContext.Provider>
   );
 };

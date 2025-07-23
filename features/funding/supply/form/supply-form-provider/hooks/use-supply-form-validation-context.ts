@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { useEthereumBalance, useWethBalance } from 'modules/web3';
 import { useValidateRecipientArgs } from 'modules/vaults';
 
-import type { FundFormDataValidationContext } from 'features/supply/fund/form/types';
+import type { SupplyFormDataValidationContext } from 'features/funding/supply/form/types';
 
-export const useFundFormValidationContext = () => {
+export const useSupplyFormValidationContext = () => {
   const validateRecipientArgs = useValidateRecipientArgs();
   const ethBalanceQuery = useEthereumBalance();
   const wethBalanceQuery = useWethBalance();
@@ -23,7 +23,7 @@ export const useFundFormValidationContext = () => {
       ethBalance: ethBalanceQuery.data,
       wethBalance: wethBalanceQuery.data,
       validateRecipientArgs,
-    } as FundFormDataValidationContext;
+    } as SupplyFormDataValidationContext;
   }, [validateRecipientArgs, ethBalanceQuery.data, wethBalanceQuery.data]);
 
   const isError = !!(ethBalanceQuery.error || wethBalanceQuery.error);

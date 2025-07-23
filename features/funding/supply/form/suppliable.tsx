@@ -2,15 +2,15 @@ import { useFormState, useWatch } from 'react-hook-form';
 
 import { vaultTexts } from 'modules/vaults';
 
-import { useFundForm } from './fund-form-provider';
-import type { FundFormValidatedValues } from './types';
+import { useSupplyForm } from './supply-form-provider';
+import type { SupplyFormValidatedValues } from './types';
 
 import { InfoRowAmount } from 'shared/components/form';
 
 export const Suppliable = () => {
-  const { token } = useWatch<FundFormValidatedValues>();
+  const { token } = useWatch<SupplyFormValidatedValues>();
   const { disabled } = useFormState();
-  const { data, isPending } = useFundForm().balanceQuery;
+  const { data, isPending } = useSupplyForm().balanceQuery;
 
   return (
     <InfoRowAmount

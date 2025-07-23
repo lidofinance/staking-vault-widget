@@ -5,14 +5,14 @@ import {
   CheckboxHookForm,
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
-import { VAULT_SUPPLY_TOKENS, vaultTexts } from 'modules/vaults';
+import { VAULT_FUNDING_TOKENS, vaultTexts } from 'modules/vaults';
 
-import { useFundForm } from './fund-form-provider/fund-form-provider';
-import type { FundFormValidatedValues } from './types';
+import { useSupplyForm } from './supply-form-provider/supply-form-provider';
+import type { SupplyFormValidatedValues } from './types';
 
-export const FundFormInputs = () => {
-  const { balanceQuery, isStethMintableQuery } = useFundForm();
-  const { watch } = useFormContext<FundFormValidatedValues>();
+export const SupplyFormInputs = () => {
+  const { balanceQuery, isStethMintableQuery } = useSupplyForm();
+  const { watch } = useFormContext<SupplyFormValidatedValues>();
   const mintSteth = watch('mintSteth');
 
   const isStethMintable = isStethMintableQuery.data === true;
@@ -23,7 +23,7 @@ export const FundFormInputs = () => {
       <TokenAmountInputGroup
         amountFieldName="amount"
         tokenFieldName="token"
-        tokenOptions={VAULT_SUPPLY_TOKENS}
+        tokenOptions={VAULT_FUNDING_TOKENS}
         maxAmount={maxValue}
       />
       <CheckboxHookForm

@@ -12,7 +12,7 @@ import invariant from 'tiny-invariant';
 import { useDappStatus } from 'modules/web3';
 
 import { FormControllerStyled } from 'shared/components/form';
-import { useWithdraw } from 'features/supply/withdraw/form/hooks';
+import { useWithdraw } from 'features/funding/withdraw/form/hooks';
 
 import { withdrawFormResolver } from './validation';
 
@@ -21,7 +21,7 @@ import type {
   WithdrawFormFieldValues,
   WithdrawFormValidatedValues,
   WithdrawFormValidationContextAwaitable,
-} from 'features/supply/withdraw/form/types';
+} from 'features/funding/withdraw/form/types';
 import { useWithdrawValidationContext } from './use-withdraw-validation-context';
 
 const WithdrawDataContext = createContext<WithdrawFormData | null>(null);

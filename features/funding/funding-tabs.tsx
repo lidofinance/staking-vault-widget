@@ -1,23 +1,24 @@
 import { FC } from 'react';
+import { zeroAddress } from 'viem';
 import { useVault } from 'modules/vaults';
-
-import { PageWrapper } from './styles';
-import { Fund } from './fund';
-import { Withdraw } from './withdraw';
 
 import { Switch } from 'shared/components/switch';
 import { appPaths } from 'consts/routing';
-import { zeroAddress } from 'viem';
 
-export type SupplyTabProps = {
+import { Supply } from './supply';
+import { Withdraw } from './withdraw';
+
+import { PageWrapper } from './styles';
+
+export type FundingTabsProps = {
   mode: 'supply' | 'withdraw';
 };
 
-export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
+export const FundingTabs: FC<FundingTabsProps> = ({ mode }) => {
   const isFundTab = mode === 'supply';
   const { vaultAddress } = useVault();
 
-  const supplyRoutes = [
+  const fundingRoutes = [
     {
       path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('supply'),
       name: 'Supply',
@@ -30,9 +31,9 @@ export const SupplyTabs: FC<SupplyTabProps> = ({ mode }) => {
 
   return (
     <PageWrapper>
-      <Switch checked={!isFundTab} routes={supplyRoutes} />
+      <Switch checked={!isFundTab} routes={fundingRoutes} />
 
-      {isFundTab ? <Fund /> : <Withdraw />}
+      {isFundTab ? <Supply /> : <Withdraw />}
     </PageWrapper>
   );
 };
