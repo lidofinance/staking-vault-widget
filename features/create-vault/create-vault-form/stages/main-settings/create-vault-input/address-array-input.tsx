@@ -1,22 +1,21 @@
-import { useFieldArray, useFormContext, useFormState } from 'react-hook-form';
+import { useFieldArray, useFormState } from 'react-hook-form';
 import { Plus } from '@lidofinance/lido-ui';
-
-import { ButtonClose } from 'shared/components';
-import { AddressInputGroup, AddressList, AppendButton } from './styles';
-import { AddressInputBase } from './address-input-base';
-
-import type { MainSettingsEntryType } from 'features/create-vault/types';
 import type { FC } from 'react';
 import type { Address } from 'viem';
 
-export type AddressArrayProps = MainSettingsEntryType;
+import { ButtonClose } from 'shared/components';
+import { AddressInputHookForm } from 'shared/hook-form/controls';
+import { AddressInputGroup, AddressList, AppendButton } from './styles';
+import type { CreateFormInputProps } from './types';
 
 type PlaceholderForm = {
   addresses: { value: Address }[];
 };
 
-export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
-  const { register } = useFormContext();
+export const AddressArrayInput: FC<CreateFormInputProps> = ({
+  name,
+  label,
+}) => {
   const { disabled } = useFormState();
   const { fields, append, remove } = useFieldArray<
     PlaceholderForm,
@@ -29,10 +28,11 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>
-            <AddressInputBase
+            <AddressInputHookForm
               key={field.id}
+              showRightDecorator={false}
               label={label}
-              {...register(`${name}.${index}.value` as const)}
+              fieldName={`${name}.${index}.value` as const}
             />
             {allowDelete && <ButtonClose onClick={() => remove(index)} />}
           </AddressInputGroup>

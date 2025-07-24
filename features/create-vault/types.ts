@@ -8,6 +8,16 @@ import type { z } from 'zod';
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
 
+export type CreateVaultFormValues = {
+  nodeOperator: string;
+  vaultManager: { value: string }[];
+  nodeOperatorManager: string;
+  nodeOperatorFeeRate: string;
+  confirmExpiry: string;
+  acceptTerms: CreateVaultSchema['acceptTerms'];
+  roles: CreateVaultSchema['roles'];
+  step: CreateVaultSchema['step'];
+};
 export type InputDataType =
   | 'address'
   | 'percent'
