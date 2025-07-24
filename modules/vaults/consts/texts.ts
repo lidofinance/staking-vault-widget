@@ -113,6 +113,10 @@ export const vaultTexts = {
       loadingUnwrap: 'Unwrapping wETH',
       loadingWrap: 'Wrapping ETH to wETH',
     },
+    tier: {
+      settingsTitle: 'Tier settings',
+      requestTitle: 'Request to change minting limit',
+    },
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {

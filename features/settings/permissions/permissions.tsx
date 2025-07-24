@@ -10,6 +10,11 @@ import {
   VAULT_OWNER_ROLES,
 } from 'modules/vaults';
 
+import {
+  SectionContainer,
+  ContentWrapper,
+} from 'features/settings/shared/components';
+
 import { PermissionsFormProvider } from './permissions-form-provider';
 import { RoleDescription, PermissionsAction, AddressBlock } from './components';
 import {
@@ -18,7 +23,6 @@ import {
   PermissionGroupTitle,
   PermissionRoleWrapper,
 } from './styles';
-import { SectionContainer } from './styles';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
@@ -74,12 +78,14 @@ const PermissionsSection = ({
 export const PermissionsSettings = () => {
   return (
     <PermissionsFormProvider>
-      <SectionContainer>
-        {PERMISSIONS_SECTIONS.map((section) => (
-          <PermissionsSection key={section.permissionsTitle} {...section} />
-        ))}
-        <PermissionsAction />
-      </SectionContainer>
+      <ContentWrapper>
+        <SectionContainer>
+          {PERMISSIONS_SECTIONS.map((section) => (
+            <PermissionsSection key={section.permissionsTitle} {...section} />
+          ))}
+          <PermissionsAction />
+        </SectionContainer>
+      </ContentWrapper>
     </PermissionsFormProvider>
   );
 };
