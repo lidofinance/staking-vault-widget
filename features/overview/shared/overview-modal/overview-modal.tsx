@@ -1,12 +1,14 @@
-import { FC, PropsWithChildren, ReactNode, useCallback } from 'react';
+import { FC, PropsWithChildren, ReactNode } from 'react';
 import Link from 'next/link';
 import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
 
 import { formatPercent } from 'utils';
 
-import { useVaultOverview } from 'features/overview/contexts';
-import { useOverviewModal } from 'features/overview/hooks';
-import type { OverviewModalItem } from 'features/overview/types';
+import {
+  useOverviewModal,
+  type OverviewModalItem,
+} from 'features/overview/inner';
+import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { AmountLoader, AmountWrapper, ContentWrapper } from './styles';
 
@@ -21,6 +23,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   amountRightDecorator = null,
 }) => {
   const { closeModal, currentModal } = useOverviewModal();
+
   const { isLoadingVault, getVaultDataToRender } = useVaultOverview();
   const { title, payload, hint, description, learnMoreLink } =
     getVaultDataToRender({ indicator: name });
@@ -35,39 +38,8 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
     '\n\n',
   );
 
-  // This approach is used for two main reasons:
-  // 1. The UI library returns an event argument when the close (cross) button is clicked, but its type definitions (.d.ts) do not declare this.
-  // 2. Stopping event propagation explicitly prevents unnecessary re-renders caused by router-dependent URL state changes.
-  const onClose = useCallback(
-    (...args: unknown[]) => {
-      args.forEach((arg) => {
-        // ui lib returns event for crossed button but in doest declare in d.ts
-        if (
-          typeof arg === 'object' &&
-          arg &&
-          'preventDefault' in arg &&
-          typeof arg.preventDefault === 'function'
-        ) {
-          arg.preventDefault();
-        }
-
-        if (
-          typeof arg === 'object' &&
-          arg &&
-          'stopPropagation' in arg &&
-          typeof arg.stopPropagation === 'function'
-        ) {
-          arg.stopPropagation();
-        }
-      });
-
-      closeModal();
-    },
-    [closeModal],
-  );
-
   return (
-    <Modal title={title} open={name === currentModal} onClose={onClose}>
+    <Modal title={title} open={name === currentModal} onClose={closeModal}>
       <ContentWrapper>
         <AmountWrapper>
           {isLoadingVault ? (

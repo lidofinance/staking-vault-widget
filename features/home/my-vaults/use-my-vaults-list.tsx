@@ -1,75 +1,44 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  VAULTS_PER_PAGE,
-  getVaultViewerContract,
-  getVaultDataTable,
-  vaultListQueryKeys,
-} from 'modules/vaults';
+import { vaultListQueryKeys, fetchVaults } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import { useState } from 'react';
-import invariant from 'tiny-invariant';
+
+import { useVaultListParams } from '../use-vault-list-params';
 
 export const useMyVaultsList = () => {
   const { address } = useDappStatus();
-  const { shares, publicClient } = useLidoSDK();
-  const [page, setPage] = useState(1);
+  const { publicClient, shares } = useLidoSDK();
+  const { isReady, params, setPage, setSort } = useVaultListParams();
 
   const query = useQuery({
     queryKey: [
       ...vaultListQueryKeys(publicClient.chain.id).myVaults,
-      address,
-      { page },
-    ],
-    enabled: !!address,
+      { ...params, address },
+    ] as const,
+    queryFn: async ({ queryKey }) =>
+      fetchVaults({ publicClient, shares }, queryKey[4]),
+    enabled: !!address && isReady,
     placeholderData: (prevData) => {
       if (!address) return undefined;
       return prevData;
     },
-
-    queryFn: async () => {
-      invariant(address, 'Address is required');
-      const vaultViewer = getVaultViewerContract(publicClient);
-      const fromCursor = BigInt(VAULTS_PER_PAGE * (page - 1));
-      const toCursor = BigInt(page * VAULTS_PER_PAGE);
-      const [vaultAddress, leftOver] =
-        await vaultViewer.read.vaultsByOwnerBound([
-          address,
-          fromCursor,
-          toCursor,
-        ]);
-      const vaults = await Promise.all(
-        vaultAddress.map((vaultAddress) =>
-          getVaultDataTable({
-            publicClient,
-            vaultAddress,
-            shares,
-          }).catch((e) => {
-            console.warn(
-              `[useMyVaultsList] Failed to fetch vault data for ${vaultAddress}:`,
-              e,
-            );
-            return {
-              address: vaultAddress,
-            };
-          }),
-        ),
-      );
-
-      const totalVaultsCount =
-        Number(fromCursor) + vaultAddress.length + Number(leftOver);
-      const pagesCount = Math.ceil(totalVaultsCount / VAULTS_PER_PAGE);
-
-      return { vaults, totalVaultsCount, pagesCount };
-    },
   });
+
+  const isAPI = !!query.data?.isAPI;
 
   return {
     ...query,
-    page,
-    setPage,
     isLoading: query.isLoading || query.isPlaceholderData,
+    page: params.page,
+    setPage,
+    vaults: query.data?.data,
     pagesCount: query.data?.pagesCount,
-    totalVaultsCount: query.data?.totalVaultsCount,
-    vaults: query.data?.vaults,
+    totalVaultsCount: query.data?.total,
+    ...(isAPI
+      ? {
+          sortBy: params.sortBy,
+          sortDir: params.sortDir,
+          setSort,
+        }
+      : {}),
   };
 };

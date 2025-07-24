@@ -6,8 +6,8 @@ import {
   VAULT_UTILIZATION_RATIO_RED,
 } from 'consts/threshold';
 
-export const getHealthFactorColor = (healthFactor: string | number) => {
-  if (!healthFactor) return '';
+export const getHealthFactorColor = (healthFactor?: string | number) => {
+  if (typeof healthFactor === 'undefined') return '';
   let healthFactorNumber = 0;
 
   if (typeof healthFactor === 'string')
@@ -20,7 +20,7 @@ export const getHealthFactorColor = (healthFactor: string | number) => {
   return 'darkRed';
 };
 
-export const getUtilizationRatioColor = (utilizationRatio: string) => {
+export const getUtilizationRatioColor = (utilizationRatio?: string) => {
   if (!utilizationRatio) return '';
   let utilizationRatioNumber = 0;
 

@@ -206,7 +206,7 @@ export const vaultTexts = {
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',
       description:
-        "The stVault forced rebalance threshold exceeded, and the permissionless rebalance mechanism is activated for this stVault.  It means the stVault can be rebalanced at any moment in time. You can still restore the vault health factor by taking one of the following actions. There is no guarantee that the permissionless rebalancing won't be performed before your transaction.",
+        "The stVault forced rebalance threshold exceeded, and the permissionless rebalance mechanism is activated for this stVault. It means the stVault can be rebalanced at any moment in time. You can still restore the vault health factor by taking one of the following actions. There is no guarantee that the permissionless rebalancing won't be performed before your transaction.",
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
       actions: [
         {
@@ -317,7 +317,7 @@ export const vaultTexts = {
     },
     undisbursedNodeOperatorFee: {
       title: 'Undisbursed Node Operator fee',
-      hint: 'The amount of accumulated but not yet claimed Node Operator Fee. This amount of ETH increases the amount of total locked ETH.',
+      hint: 'The amount of accumulated but not yet disbursed Node Operator Fee. This amount of ETH increases the amount of total locked ETH.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     unsettledLidoFees: {

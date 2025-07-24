@@ -37,26 +37,9 @@ const withBundleAnalyzer = NextBundleAnalyzer({
   enabled: process.env.ANALYZE_BUNDLE ?? false,
 });
 
-const redirects = async () => {
-  return [
-    {
-      source: '/supply',
-      destination: '/supply/fund',
-      permanent: true,
-    },
-    {
-      source: '/adjustment',
-      destination: '/adjustment/mint',
-      permanent: true,
-    },
-  ];
-};
-
 export default withBundleAnalyzer({
   basePath,
   generateBuildId,
-  redirects,
-
   // IPFS next.js configuration reference:
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,

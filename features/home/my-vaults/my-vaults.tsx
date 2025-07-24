@@ -11,6 +11,9 @@ export const MyVaults = () => {
     refetch,
     page,
     setPage,
+    setSort,
+    sortBy,
+    sortDir,
     pagesCount,
     isError,
   } = useMyVaultsList();
@@ -27,6 +30,9 @@ export const MyVaults = () => {
         page={page}
         pagesCount={pagesCount}
         setPage={setPage}
+        sortDir={sortDir}
+        sortBy={sortBy}
+        setSort={setSort}
       />
       <AddVault />
     </>

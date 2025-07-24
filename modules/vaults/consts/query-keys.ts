@@ -20,16 +20,10 @@ export const vaultQueryKeys = (
   // e.g. roles, fees, confirmations
   const config = [...base, 'config'] as const;
 
-  // this key scopes all queries about vault configuration that is not dependant on state
-  // but about vault metrics based on report
-  // e.g. net apr, gross apr
-  const metrics = [...base, 'metrics'] as const;
-
   return {
     base,
     stateBase,
     state,
-    metrics,
     config: (scope?: VaultConfigScopes) =>
       [...config, ...(scope ? [scope] : [])] as const,
   } as const;

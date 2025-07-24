@@ -7,48 +7,19 @@ import type {
   getOperatorGridContract,
 } from './contracts';
 
-type VaultConnection = ReadContractReturnType<
+export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
   'vaultConnection',
   [Address]
 >;
 
-type VaultObligations = {
+export type VaultObligations = {
   obligations: ReadContractReturnType<
     typeof VaultHubAbi,
     'vaultObligations',
     [Address]
   >;
 };
-
-export type VaultInfo = VaultConnection &
-  VaultObligations & {
-    isVaultConnected: boolean;
-    address: Address;
-    owner: Address;
-    nodeOperator: Address;
-    totalValue: bigint;
-    liabilityShares: bigint;
-    liabilityStETH: bigint;
-    mintableStETH: bigint;
-    mintableShares: bigint;
-    stETHLimit: bigint;
-    apr: null;
-    healthScore: number;
-    totalMintingCapacityShares: bigint;
-    totalMintingCapacityStETH: bigint;
-    inOutDelta: bigint;
-    locked: bigint;
-    lockedShares: bigint;
-    nodeOperatorUnclaimedFee: bigint;
-    withdrawableEther: bigint;
-    balance: bigint;
-    nodeOperatorFeeRate: bigint;
-    withdrawalCredentials: Address;
-    tierId: bigint;
-    tierShareLimit: bigint;
-    tierStETHLimit: bigint;
-  };
 
 export type VaultReportType = {
   vault: Address;
@@ -57,7 +28,7 @@ export type VaultReportType = {
   liabilityShares: bigint;
   slashingReserve: bigint;
   proof: Hex[];
-  vaultLeftHash: Hex;
+  vaultLeafHash: Hex;
 };
 
 export type HubReportData = {
