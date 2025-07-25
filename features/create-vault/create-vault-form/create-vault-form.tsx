@@ -1,5 +1,4 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
-import type { Address } from 'viem';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
@@ -7,7 +6,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useDappStatus } from 'modules/web3';
 import { FormController } from 'shared/hook-form/form-controller';
 
-import { CreateVaultSchema } from 'features/create-vault/types';
+import {
+  CreateVaultFormValues,
+  CreateVaultSchema,
+} from 'features/create-vault/types';
 import {
   CREATE_VAULT_FORM_STEPS,
   CREATE_VAULT_STEPS,
@@ -31,22 +33,28 @@ const AFTER_SUBMIT_RESET_OPTIONS = {
 export const CreateVaultForm: FC<PropsWithChildren> = () => {
   const { isDappActive } = useDappStatus();
   const queryClient = useQueryClient();
-  const formObject = useForm({
-    defaultValues: {
-      nodeOperator: '' as Address,
-      vaultManager: [{ value: '' as Address }],
-      nodeOperatorManager: '' as Address,
-      nodeOperatorFeeRate: undefined,
-      confirmExpiry: '36',
-      acceptTerms: false,
-      roles: {},
-      step: CREATE_VAULT_FORM_STEPS.main,
+  const formObject = useForm<CreateVaultFormValues, unknown, CreateVaultSchema>(
+    {
+      defaultValues: {
+        nodeOperator: '',
+        vaultManager: [{ value: '' }],
+        nodeOperatorManager: '',
+        nodeOperatorFeeRate: undefined,
+        confirmExpiry: '36',
+        acceptTerms: false,
+        roles: {},
+        step: CREATE_VAULT_FORM_STEPS.main,
+      },
+      disabled: !isDappActive,
+      mode: 'onTouched',
+      shouldUnregister: false,
+      resolver: zodResolver<CreateVaultFormValues, unknown, CreateVaultSchema>(
+        createVaultSchema,
+        { async: false },
+        { raw: false },
+      ),
     },
-    disabled: !isDappActive,
-    mode: 'onTouched',
-    shouldUnregister: false,
-    resolver: zodResolver(createVaultSchema, { async: false }, { raw: false }),
-  });
+  );
 
   const { createVault, retryEvent, mutation } = useCreateVault();
 
