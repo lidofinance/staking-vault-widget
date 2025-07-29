@@ -1,11 +1,23 @@
 import styled, { css } from 'styled-components';
 import { Table, Tbody, Tr, Th, Td } from '@lidofinance/lido-ui';
 
-export const TableTitle = styled.caption<{ counter?: number }>`
+export const TableContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  align-items: center;
+`;
+
+export const ScrollableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
+
+export const TableTitle = styled.div<{ counter?: number }>`
   position: relative;
-  width: fit-content;
-  margin-bottom: ${({ theme }) => theme.spaceMap.md}px;
   text-align: left;
+  align-self: flex-start;
   font-weight: 700;
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   line-height: 38px;
@@ -39,12 +51,12 @@ export const TableStyled = styled(Table)`
   width: 100%;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
   background-color: var(--lido-color-foreground);
-  overflow: hidden;
 `;
 
 export const TableBody = styled(Tbody)`
   position: relative;
 `;
+
 export const TableHeaderCell = styled(Th)`
   padding: 24px 2px 16px;
   text-align: right;
