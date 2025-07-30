@@ -39,7 +39,12 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   );
 
   return (
-    <Modal title={title} open={name === currentModal} onClose={closeModal}>
+    <Modal
+      title={title}
+      open={name === currentModal}
+      onClose={closeModal}
+      windowSize="md"
+    >
       <ContentWrapper>
         <AmountWrapper>
           {isLoadingVault ? (
