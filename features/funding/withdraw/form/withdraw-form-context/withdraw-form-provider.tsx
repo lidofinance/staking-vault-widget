@@ -85,6 +85,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
+        data-testid="withdrawForm"
       >
         {children}
       </FormControllerStyled>

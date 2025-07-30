@@ -61,13 +61,16 @@ export const OverviewItem: FC<PropsWithChildren<ItemProps>> = ({
 
   return (
     <>
-      <ItemWrapper onClick={() => openModal(indicator)}>
+      <ItemWrapper
+        data-testid={`${title}-Block`}
+        onClick={() => openModal(indicator)}
+      >
         <DefaultContent titleView={titleView}>
           <Title>
-            <Text color="secondary" size="xxs">
+            <Text data-testid="blockTitle" color="secondary" size="xxs">
               {title}
             </Text>
-            <Hint text={hint} />
+            <Hint data-testid="tooltip" text={hint} />
           </Title>
           <OverviewItemValue
             content={payload}

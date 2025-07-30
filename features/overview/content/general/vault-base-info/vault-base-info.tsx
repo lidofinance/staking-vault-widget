@@ -5,7 +5,7 @@ import { Wrapper } from './styles';
 
 export const VaultBaseInfo = () => {
   return (
-    <Wrapper>
+    <Wrapper data-testid="baseInfoSection">
       <Vault />
       <NodeOperator />
     </Wrapper>

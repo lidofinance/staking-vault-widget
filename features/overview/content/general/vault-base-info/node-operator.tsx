@@ -22,25 +22,30 @@ export const NodeOperator = () => {
   const { nodeOperator, nodeOperatorFeeRate } = values || {};
 
   return (
-    <NodeOperatorContainer>
+    <NodeOperatorContainer data-testid="noInfo">
       <NodeOperatorParameter>
-        <Text size="xxs" color="secondary">
+        <Text size="xxs" color="secondary" data-testid="noLabel">
           {general.nodeOperator}
         </Text>
         <NodeOperatorAddressWrapper>
-          <Identicon diameter={16} address={nodeOperator ?? zeroAddress} />
+          <Identicon
+            diameter={16}
+            address={nodeOperator ?? zeroAddress}
+            data-testid="noIcon"
+          />
           <NodeOperatorAddress
             symbols={4}
             address={nodeOperator ?? zeroAddress}
+            data-testid="noAddress"
           />
         </NodeOperatorAddressWrapper>
       </NodeOperatorParameter>
       <SectionDivider type="vertical" />
       <NodeOperatorParameter>
-        <Text size="xxs" color="secondary">
+        <Text size="xxs" color="secondary" data-testid="noFeeLabel">
           {general.nodeOperatorFeeRate}
         </Text>
-        <Text size="xxs" weight={700}>
+        <Text size="xxs" weight={700} data-testid="noFee">
           {nodeOperatorFeeRate}
         </Text>
       </NodeOperatorParameter>
