@@ -5,6 +5,7 @@ import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { normalizeChartBN } from './utils';
 
 export const useStEthChart = (): LineData[] => {
   const { values } = useVaultOverview();
@@ -13,6 +14,7 @@ export const useStEthChart = (): LineData[] => {
     if (!values) return [];
 
     const {
+      vaultLiability,
       forcedRebalanceThresholdBP,
       totalValue,
       totalMintingCapacity,
@@ -34,39 +36,49 @@ export const useStEthChart = (): LineData[] => {
 
     return [
       {
-        color: '#EC8600',
+        color: 'var(--lido-color-primary)',
         labelPosition: 'top',
         threshold: {
-          description: `Reserve Ratio ${reserveRatioAmount}`,
-          label: `${reserveRatioAmount}`,
-          value: Number(reserveRatio),
+          color: 'transparent',
+          value: normalizeChartBN(vaultLiability),
         },
       },
       {
-        color: '#0085FF',
         labelPosition: 'top',
+        color: '#CCEDFF',
         threshold: {
+          color: 'var(--lido-color-primary)',
           description: `Total stETH capacity ${totalMintingCapacityStETH}`,
           label: `${totalMintingCapacityStETH}`,
-          value: Number(totalMintingCapacity),
+          value: normalizeChartBN(totalMintingCapacity),
         },
       },
       {
-        color: '#D74758',
+        labelPosition: 'top',
+        threshold: {
+          color: '#EC8600',
+          description: `Reserve Ratio ${reserveRatioAmount}`,
+          label: `${reserveRatioAmount}`,
+          value: normalizeChartBN(reserveRatio),
+        },
+      },
+
+      {
         labelPosition: 'bottom',
         threshold: {
+          color: '#D74758',
           description: `Forced Rebalance Threshold ${forcedRebalanceThresholdStETH}`,
           label: `${forcedRebalanceThresholdStETH} stETH`,
-          value: Number(forcedRebalanceThreshold),
+          value: normalizeChartBN(forcedRebalanceThreshold),
         },
       },
       {
-        color: '#7A8AA0',
         labelPosition: 'bottom',
         threshold: {
+          color: '#7A8AA0',
           description: `Total Value ${totalValueETH}`,
           label: `${totalValueETH}`,
-          value: Number(totalValue),
+          value: normalizeChartBN(totalValue),
         },
       },
     ] as LineData[];
