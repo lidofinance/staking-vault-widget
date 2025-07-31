@@ -73,9 +73,9 @@ export const useStEthChart = (): LineData[] => {
         },
       },
       {
-        color: '#7A8AA0',
         labelPosition: 'bottom',
         threshold: {
+          color: '#7A8AA0',
           description: `Total Value ${totalValueETH}`,
           label: `${totalValueETH}`,
           value: normalizeChartBN(totalValue),

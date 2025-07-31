@@ -67,7 +67,7 @@ export const useRemainingMintingCapacityChart = () => {
       },
 
       {
-        color: '#13121714',
+        color: '#ECECEC',
         labelPosition: 'top',
         threshold: {
           color: 'var(--lido-color-error)',
@@ -77,7 +77,7 @@ export const useRemainingMintingCapacityChart = () => {
         },
       },
       {
-        color: '#13121714',
+        color: '#ECECEC',
         labelPosition: 'top',
         threshold: {
           color: 'transparent',
