@@ -5,6 +5,7 @@ import { formatBalance } from 'utils';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { normalizeChartBN } from './utils';
 
 export const useRemainingMintingCapacityChart = () => {
   const { values } = useVaultOverview();
@@ -42,7 +43,7 @@ export const useRemainingMintingCapacityChart = () => {
           description: `Minted ${vaultLiabilityStETH}`,
           color: 'transparent',
           label: `${vaultLiabilityStETH}`,
-          value: Number(vaultLiability),
+          value: normalizeChartBN(vaultLiability),
         },
       },
       {
@@ -52,7 +53,7 @@ export const useRemainingMintingCapacityChart = () => {
           color: `var(--lido-color-primary)`,
           description: `Available for minting ${remainingMintingCapacityStETH}`,
           label: `${remainingMintingCapacityStETH}`,
-          value: Number(remainingMintingCapacity),
+          value: normalizeChartBN(remainingMintingCapacity),
         },
       },
       {
@@ -61,7 +62,7 @@ export const useRemainingMintingCapacityChart = () => {
           color: '#EC8600',
           description: `Reserve Ratio ${reserveRatioAmount}`,
           label: `${reserveRatioAmount}`,
-          value: Number(reserveRatio),
+          value: normalizeChartBN(reserveRatio),
         },
       },
 
@@ -72,7 +73,7 @@ export const useRemainingMintingCapacityChart = () => {
           color: 'var(--lido-color-error)',
           description: `Not available for minting ${forcedRebalanceThresholdStETH}`,
           label: `${forcedRebalanceThresholdStETH}`,
-          value: Number(forcedRebalanceThreshold),
+          value: normalizeChartBN(forcedRebalanceThreshold),
         },
       },
       {
@@ -82,7 +83,7 @@ export const useRemainingMintingCapacityChart = () => {
           color: 'transparent',
           description: `Total value ${totalValueETH}`,
           label: `${totalValueETH}`,
-          value: Number(totalValue),
+          value: normalizeChartBN(totalValue),
         },
       },
     ] as LineData[];

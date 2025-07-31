@@ -5,6 +5,7 @@ import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { formatBalance } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { normalizeChartBN } from './utils';
 
 export const useStEthChart = (): LineData[] => {
   const { values } = useVaultOverview();
@@ -39,7 +40,7 @@ export const useStEthChart = (): LineData[] => {
         labelPosition: 'top',
         threshold: {
           color: 'transparent',
-          value: Number(vaultLiability),
+          value: normalizeChartBN(vaultLiability),
         },
       },
       {
@@ -49,7 +50,7 @@ export const useStEthChart = (): LineData[] => {
           color: 'var(--lido-color-primary)',
           description: `Total stETH capacity ${totalMintingCapacityStETH}`,
           label: `${totalMintingCapacityStETH}`,
-          value: Number(totalMintingCapacity),
+          value: normalizeChartBN(totalMintingCapacity),
         },
       },
       {
@@ -58,7 +59,7 @@ export const useStEthChart = (): LineData[] => {
           color: '#EC8600',
           description: `Reserve Ratio ${reserveRatioAmount}`,
           label: `${reserveRatioAmount}`,
-          value: Number(reserveRatio),
+          value: normalizeChartBN(reserveRatio),
         },
       },
 
@@ -68,7 +69,7 @@ export const useStEthChart = (): LineData[] => {
           color: '#D74758',
           description: `Forced Rebalance Threshold ${forcedRebalanceThresholdStETH}`,
           label: `${forcedRebalanceThresholdStETH} stETH`,
-          value: Number(forcedRebalanceThreshold),
+          value: normalizeChartBN(forcedRebalanceThreshold),
         },
       },
       {
@@ -77,7 +78,7 @@ export const useStEthChart = (): LineData[] => {
         threshold: {
           description: `Total Value ${totalValueETH}`,
           label: `${totalValueETH}`,
-          value: Number(totalValue),
+          value: normalizeChartBN(totalValue),
         },
       },
     ] as LineData[];
