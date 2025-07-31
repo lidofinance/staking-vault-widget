@@ -13,6 +13,7 @@ export const useStEthChart = (): LineData[] => {
     if (!values) return [];
 
     const {
+      vaultLiability,
       forcedRebalanceThresholdBP,
       totalValue,
       totalMintingCapacity,
@@ -34,27 +35,37 @@ export const useStEthChart = (): LineData[] => {
 
     return [
       {
-        color: '#EC8600',
+        color: 'var(--lido-color-primary)',
         labelPosition: 'top',
         threshold: {
-          description: `Reserve Ratio ${reserveRatioAmount}`,
-          label: `${reserveRatioAmount}`,
-          value: Number(reserveRatio),
+          color: 'transparent',
+          value: Number(vaultLiability),
         },
       },
       {
-        color: '#0085FF',
         labelPosition: 'top',
+        color: '#CCEDFF',
         threshold: {
+          color: 'var(--lido-color-primary)',
           description: `Total stETH capacity ${totalMintingCapacityStETH}`,
           label: `${totalMintingCapacityStETH}`,
           value: Number(totalMintingCapacity),
         },
       },
       {
-        color: '#D74758',
+        labelPosition: 'top',
+        threshold: {
+          color: '#EC8600',
+          description: `Reserve Ratio ${reserveRatioAmount}`,
+          label: `${reserveRatioAmount}`,
+          value: Number(reserveRatio),
+        },
+      },
+
+      {
         labelPosition: 'bottom',
         threshold: {
+          color: '#D74758',
           description: `Forced Rebalance Threshold ${forcedRebalanceThresholdStETH}`,
           label: `${forcedRebalanceThresholdStETH} stETH`,
           value: Number(forcedRebalanceThreshold),

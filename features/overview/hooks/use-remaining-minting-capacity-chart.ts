@@ -15,6 +15,7 @@ export const useRemainingMintingCapacityChart = () => {
     const {
       mintableStETH,
       totalValue,
+      reserveRatioBP,
       vaultLiability,
       forcedRebalanceThresholdBP,
     } = values;
@@ -28,6 +29,10 @@ export const useRemainingMintingCapacityChart = () => {
       (totalValue / VAULT_TOTAL_BASIS_POINTS_BN) *
         BigInt(forcedRebalanceThresholdBP);
     const forcedRebalanceThresholdStETH = `${formatBalance(forcedRebalanceThreshold).trimmed} stETH`;
+    const reserveRatio =
+      totalValue -
+      (totalValue / VAULT_TOTAL_BASIS_POINTS_BN) * BigInt(reserveRatioBP);
+    const reserveRatioAmount = `${formatBalance(reserveRatio).trimmed} stETH`;
 
     return [
       {
@@ -41,8 +46,7 @@ export const useRemainingMintingCapacityChart = () => {
         },
       },
       {
-        color:
-          'color-mix(in display-p3, var(--lido-color-primary) 20%, transparent)',
+        color: '#CCEDFF',
         labelPosition: 'top',
         threshold: {
           color: `var(--lido-color-primary)`,
@@ -51,6 +55,16 @@ export const useRemainingMintingCapacityChart = () => {
           value: Number(remainingMintingCapacity),
         },
       },
+      {
+        labelPosition: 'top',
+        threshold: {
+          color: '#EC8600',
+          description: `Reserve Ratio ${reserveRatioAmount}`,
+          label: `${reserveRatioAmount}`,
+          value: Number(reserveRatio),
+        },
+      },
+
       {
         color: '#13121714',
         labelPosition: 'top',
