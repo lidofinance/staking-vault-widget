@@ -22,6 +22,7 @@ export const Mintable = () => {
       loading={mintableQuery.isPending}
       amount={mintableAmount}
       token={token}
+      data-testid="availableToMintRow"
     />
   );
 };

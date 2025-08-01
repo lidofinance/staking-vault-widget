@@ -18,6 +18,7 @@ export const Repayable = () => {
       token={token}
       loading={isMaxRepayableLoading}
       disabled={formState.disabled}
+      data-testid="availableToRepayRow"
     />
   );
 };

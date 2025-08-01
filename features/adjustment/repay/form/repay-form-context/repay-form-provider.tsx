@@ -86,6 +86,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
+        data-testid="repayForm"
       >
         {children}
       </FormControllerStyled>
