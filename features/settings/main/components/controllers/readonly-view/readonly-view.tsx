@@ -31,7 +31,9 @@ export const ReadonlyView: FC<ReadonlyViewProps> = ({ vaultKey, value }) => {
 
   return (
     <Wrapper>
-      <Text size="xs">{renderData}</Text>
+      <Text size="xs" data-testid={`${vaultKey}-readyOnlyValue`}>
+        {renderData}
+      </Text>
     </Wrapper>
   );
 };

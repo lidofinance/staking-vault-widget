@@ -15,31 +15,54 @@ export type SelectableAddressBadgeProps = {
 export const AddressBadgeSelectable = forwardRef<
   HTMLDivElement | null,
   SelectableAddressBadgeProps
->(({ checked, onCheckedChange, defaultBg = 'default', ...badgeProps }, ref) => {
-  const id = useId();
+>(
+  (
+    {
+      checked,
+      onCheckedChange,
+      defaultBg = 'default',
+      dataTestId,
+      ...badgeProps
+    },
+    ref,
+  ) => {
+    const id = useId();
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onCheckedChange(e.target.checked);
-  };
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+      onCheckedChange(e.target.checked);
+    };
 
-  return (
-    <SelectableWrapper crossed={checked} bgColor={defaultBg}>
-      <AddressBadge
-        ref={ref}
-        {...badgeProps}
-        bgColor="transparent"
-        crossed={checked}
-      />
-
-      <Label htmlFor={id}>
-        <HiddenCheckbox
-          id={id}
-          type="checkbox"
-          checked={checked}
-          onChange={handleInputChange}
+    return (
+      <SelectableWrapper crossed={checked} bgColor={defaultBg}>
+        <AddressBadge
+          ref={ref}
+          {...badgeProps}
+          bgColor="transparent"
+          crossed={checked}
+          dataTestId={dataTestId}
         />
-        {checked ? <RestoreIcon /> : <Close />}
-      </Label>
-    </SelectableWrapper>
-  );
-});
+
+        <Label
+          htmlFor={id}
+          data-testid={dataTestId ? `${dataTestId}-actionButtonLabel` : null}
+        >
+          <HiddenCheckbox
+            id={id}
+            type="checkbox"
+            checked={checked}
+            onChange={handleInputChange}
+          />
+          {checked ? (
+            <RestoreIcon
+              data-testid={dataTestId ? `${dataTestId}-restoreIcon` : null}
+            />
+          ) : (
+            <Close
+              data-testid={dataTestId ? `${dataTestId}-closeIcon` : null}
+            />
+          )}
+        </Label>
+      </SelectableWrapper>
+    );
+  },
+);

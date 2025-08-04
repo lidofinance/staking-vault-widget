@@ -14,6 +14,7 @@ interface RoleAddressProps {
   hasMultipleValues: boolean;
   onRemove: (index: number) => void;
   onUpdate: (index: number, field: RoleFieldSchema) => void;
+  dataTestId?: string;
 }
 
 export const RoleAddress: FC<RoleAddressProps> = ({
@@ -24,6 +25,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   hasMultipleValues,
   onRemove,
   onUpdate,
+  dataTestId,
 }) => {
   const { state } = field;
   const toRemove = state === 'remove';
@@ -58,6 +60,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
           defaultBg={bgColor}
           onCheckedChange={onToggle}
           symbols={21}
+          dataTestId={dataTestId}
         />
       ) : (
         <AddressBadge
@@ -66,6 +69,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
           crossed={toRemove}
           bgColor={bgColor}
           symbols={21}
+          dataTestId={dataTestId}
         />
       )}
     </AddressWrapper>

@@ -44,7 +44,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
 
   return (
     <RadioSelectorContainer>
-      <Text size="xs" strong>
+      <Text size="xs" strong data-testid={`${vaultKey}-title`}>
         {title}
       </Text>
       {isLoading && <Skeleton />}
@@ -73,11 +73,19 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                     placeholder={placeholder}
                     error={inputError?.message as string}
                     shouldClearField={isSubmitSuccessful || !isDirty}
+                    dataTestId={`${vaultKey}-proposeNew`}
                     {...register(inputKey)}
                   />
                 );
 
-              return <RadioInput key={key} {...radioProps} disabled={isMy} />;
+              return (
+                <RadioInput
+                  key={key}
+                  {...radioProps}
+                  disabled={isMy}
+                  dataTestId={`${vaultKey}-${index}`}
+                />
+              );
             },
           )}
         </>
