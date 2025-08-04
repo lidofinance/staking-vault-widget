@@ -40,6 +40,7 @@ export const InfoRowAllowance = ({
         <FormatToken
           amount={allowance || 0n}
           symbol={getTokenDisplayName(token)}
+          data-testid="rowValue"
         />
       )}
     </DataTableRowStyled>
