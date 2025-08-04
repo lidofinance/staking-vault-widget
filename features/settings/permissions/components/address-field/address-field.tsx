@@ -14,6 +14,7 @@ export type AddressItemProps = {
   onUpdate: (field: FieldSchema, index: number) => void;
   onRemove: (index: number) => void;
   readonly?: boolean;
+  dataTestId?: string;
 };
 
 export const AddressField: FC<AddressItemProps> = ({
@@ -22,6 +23,7 @@ export const AddressField: FC<AddressItemProps> = ({
   onUpdate,
   onRemove,
   readonly,
+  dataTestId,
 }) => {
   const {
     field: { value },
@@ -50,7 +52,13 @@ export const AddressField: FC<AddressItemProps> = ({
   };
 
   if (readonly) {
-    return <AddressBadge address={account} showPopover={true} />;
+    return (
+      <AddressBadge
+        address={account}
+        showPopover={true}
+        dataTestId={dataTestId}
+      />
+    );
   }
 
   return (
@@ -60,6 +68,7 @@ export const AddressField: FC<AddressItemProps> = ({
       bgColor={bgColor}
       showPopover={true}
       onCheckedChange={handleChangeField}
+      dataTestId={dataTestId}
     />
   );
 };

@@ -16,7 +16,7 @@ export const NodeOperator: FC = () => {
 
   return (
     <Wrapper>
-      <Text size="xs" strong>
+      <Text size="xs" strong data-testid="nodeOperator-title">
         {texts.title}
       </Text>
       {isLoading ? (
@@ -26,6 +26,7 @@ export const NodeOperator: FC = () => {
           weight={400}
           address={activeVault?.nodeOperator}
           symbols={21}
+          dataTestId="nodeOperator"
         />
       )}
     </Wrapper>

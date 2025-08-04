@@ -83,12 +83,14 @@ export const adminsForRender: MainSettingsOverview[] = [
     name: 'defaultAdmins',
     dataType: 'address',
     canEditRole: 'defaultAdmin',
+    dataTestId: 'vaultOwner',
     ...vaultTexts.actions.settings.fields.vaultManager,
   },
   {
     name: 'nodeOperatorManagers',
     dataType: 'address',
     canEditRole: 'nodeOperatorManager',
+    dataTestId: 'nodeOperatorManager',
     ...vaultTexts.actions.settings.fields.nodeOperatorManager,
   },
 ];

@@ -94,6 +94,7 @@ export const MainSettingsAction: FC = () => {
           disabled={isClearDisabled || !hasChanges}
           onClick={handleClearMainForm}
           fullwidth
+          data-testid="mainSettings-clearButton"
         >
           {vaultTexts.actions.settings.clearChanges}
         </Button>
@@ -101,6 +102,7 @@ export const MainSettingsAction: FC = () => {
           type="submit"
           disabled={isSubmitDisabled || !hasChanges}
           fullwidth
+          data-testid="mainSettings-submitButton"
         >
           {vaultTexts.actions.settings.submit(counter)}
         </Button>

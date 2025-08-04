@@ -7,14 +7,21 @@ export interface RoleDescriptionProps {
   permission: string;
   description: string;
   tooltip: string;
+  dataTestId?: string;
 }
 
 export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
-  const { description, tooltip } = props;
+  const { description, tooltip, dataTestId } = props;
 
   return (
-    <RoleDescriptionWrapper>
-      <span>{description}</span>
+    <RoleDescriptionWrapper
+      data-testid={dataTestId ? `${dataTestId}-roleDescriptionWrapper` : null}
+    >
+      <span
+        data-testid={dataTestId ? `${dataTestId}-roleDescriptionText` : null}
+      >
+        {description}
+      </span>
       <Tooltip placement="right" offset="xs" title={tooltip}>
         <WarningIcon />
       </Tooltip>
