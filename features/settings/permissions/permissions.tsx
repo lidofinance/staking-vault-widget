@@ -24,6 +24,7 @@ type PermissionSectionEntry = {
   permissionsTitle: string;
   roles: (VAULTS_NO_ROLES | VAULT_OWNER_ROLES)[];
   canEditRole: VAULT_ROOT_ROLES;
+  dataTestId?: string;
 };
 
 const PERMISSIONS_SECTIONS: PermissionSectionEntry[] = [
@@ -31,11 +32,13 @@ const PERMISSIONS_SECTIONS: PermissionSectionEntry[] = [
     permissionsTitle: 'Vault Manager Permissions',
     canEditRole: 'defaultAdmin',
     roles: VAULT_MANAGER_PERMISSIONS_LIST,
+    dataTestId: 'vaultOwnerPermissions',
   },
   {
     permissionsTitle: 'Node Operator Manager Permissions',
     canEditRole: 'nodeOperatorManager',
     roles: NO_MANAGER_PERMISSION_LIST,
+    dataTestId: 'nodeOperatorManagerPermissions',
   },
 ] as const;
 
@@ -43,6 +46,7 @@ const PermissionsSection = ({
   canEditRole,
   permissionsTitle,
   roles,
+  dataTestId,
 }: PermissionSectionEntry) => {
   const { disabled } = useFormState();
   const { hasPermission } = useVaultPermission(canEditRole);
@@ -51,18 +55,32 @@ const PermissionsSection = ({
 
   return (
     <PermissionContainer>
-      <PermissionGroupTitle>{permissionsTitle}</PermissionGroupTitle>
-      <PermissionBlock>
+      <PermissionGroupTitle
+        data-testid={dataTestId ? `${dataTestId}-title` : null}
+      >
+        {permissionsTitle}
+      </PermissionGroupTitle>
+      <PermissionBlock data-testid={dataTestId ? `${dataTestId}-block` : null}>
         {roles.map((role) => {
           const { title, hint } = vaultTexts.roles[role];
           return (
-            <PermissionRoleWrapper key={role}>
+            <PermissionRoleWrapper
+              key={role}
+              data-testid={
+                dataTestId ? `${dataTestId}-${role}-roleWrapper` : null
+              }
+            >
               <RoleDescription
                 permission={role}
                 description={title}
                 tooltip={hint}
+                dataTestId={`${dataTestId}-${role}`}
               />
-              <AddressBlock readonly={isReadonly} permission={role} />
+              <AddressBlock
+                readonly={isReadonly}
+                permission={role}
+                dataTestId={`${dataTestId}-${role}`}
+              />
             </PermissionRoleWrapper>
           );
         })}
@@ -76,7 +94,11 @@ export const PermissionsSettings = () => {
     <PermissionsFormProvider>
       <SectionContainer>
         {PERMISSIONS_SECTIONS.map((section) => (
-          <PermissionsSection key={section.permissionsTitle} {...section} />
+          <PermissionsSection
+            key={section.permissionsTitle}
+            {...section}
+            dataTestId={section.dataTestId}
+          />
         ))}
         <PermissionsAction />
       </SectionContainer>
