@@ -25,6 +25,7 @@ export const CheckboxHookForm = ({
       style={style}
       className={className}
       error={hasError}
+      data-testid="mintStethCheckbox"
       label={label}
       {...register(fieldName, registerOptions)}
     />

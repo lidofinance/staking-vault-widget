@@ -20,6 +20,7 @@ export const TxInfo = () => {
       token="stETH"
       loading={isLoading}
       noDataLabel="-"
+      data-testid="youWillReceiveRow"
     />
   );
 };

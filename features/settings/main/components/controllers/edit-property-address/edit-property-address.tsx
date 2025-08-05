@@ -19,6 +19,7 @@ type EditPropertyAddressProps = {
   editLabel: string;
   fields: (Record<'id', string> & RoleFieldSchema)[];
   append: UseFieldArrayAppend<MainSettingsFormValidatedValues>;
+  dataTestId?: string;
 };
 
 export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
@@ -26,6 +27,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
   editLabel,
   fields,
   append,
+  dataTestId,
 }) => {
   const [showInput, setInputVisibility] = useState(false);
   const {
@@ -71,6 +73,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
             onBlur={handleInputEvent}
             error={inputError}
             autoFocus
+            data-testid={dataTestId ? `${dataTestId}-addNewAddressInput` : null}
           />
           <ButtonClose onClick={hideInputField} />
         </>
@@ -83,6 +86,7 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
           variant="ghost"
           type="button"
           onClick={() => setInputVisibility(true)}
+          data-testid={dataTestId ? `${dataTestId}-addNewAddressButton` : null}
         >
           Add new address
         </ButtonContainer>

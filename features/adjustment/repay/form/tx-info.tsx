@@ -21,5 +21,11 @@ export const TxInfo = () => {
 
   if (isAA) return null;
 
-  return <InfoRowAllowance token={token} allowance={data} />;
+  return (
+    <InfoRowAllowance
+      token={token}
+      allowance={data}
+      data-testid="allowanceRow"
+    />
+  );
 };

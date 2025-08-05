@@ -14,10 +14,10 @@ export const NetStakingRewards = () => {
         <InlineLoader />
       ) : (
         <TextWrapper>
-          <Text color="secondary" size="xxs">
+          <Text data-testid="netRewardsLabel" color="secondary" size="xxs">
             Net staking rewards
           </Text>
-          <TextBlack size="xxs" strong>
+          <TextBlack data-testid="netRewardsValue" size="xxs" strong>
             {values?.netStakingRewardsEth || '-'}
           </TextBlack>
         </TextWrapper>

@@ -15,6 +15,7 @@ export const ClaimInputs = () => {
       value={recipientQuery.data}
       readOnly
       disabled
+      data-testid="claimInput"
     />
   );
 };

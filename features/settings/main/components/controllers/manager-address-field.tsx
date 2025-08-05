@@ -27,6 +27,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
   title,
   hint,
   canEditRole,
+  dataTestId,
 }) => {
   invariant(
     canEditRole !== 'confirmingRoles',
@@ -43,9 +44,16 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
 
   return (
     <GroupWrapper>
-      <Text size="xs" strong>
+      <Text
+        size="xs"
+        strong
+        data-testid={dataTestId ? `${dataTestId}-title` : null}
+      >
         {title}
-        <Hint text={hint} />
+        <Hint
+          text={hint}
+          data-testid={dataTestId ? `${dataTestId}-hint` : null}
+        />
       </Text>
       {isLoading && <Skeleton />}
       <DisplayAddress
@@ -53,6 +61,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
         fields={fields}
         remove={remove}
         update={update}
+        dataTestId={dataTestId}
       />
       {isEditable && (
         <EditPropertyAddress
@@ -60,6 +69,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
           name={name as ManagersKeys}
           fields={fields}
           append={append}
+          dataTestId={dataTestId}
         />
       )}
     </GroupWrapper>

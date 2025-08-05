@@ -5,7 +5,7 @@ import { FormContainer } from './styles';
 
 export const ClaimForm = () => {
   return (
-    <FormContainer>
+    <FormContainer data-testid="claimForm">
       <Claimable />
       <ClaimInputs />
       <SubmitButton />
