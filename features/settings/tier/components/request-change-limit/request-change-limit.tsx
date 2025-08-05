@@ -12,6 +12,7 @@ export const RequestChangeLimit = () => {
   const [showAdditionalInfo, setAdditionalInfoVisibility] = useState(false);
   const buttonText = showAdditionalInfo ? 'Hide details' : 'Review request';
 
+  // TODO: get info from voting
   return (
     <RequestWrapper>
       <HeadingSection>

@@ -12,6 +12,7 @@ type TokenAmountInputHookFormProps = Partial<
   token: Parameters<typeof getTokenDisplayName>[0];
   fieldName: string;
   showErrorMessage?: boolean;
+  label?: string;
 };
 
 export const TokenAmountInputHookForm = ({
@@ -20,6 +21,8 @@ export const TokenAmountInputHookForm = ({
   token,
   fieldName,
   showErrorMessage = true,
+  label,
+  showRightDecorator,
   error: errorProp,
   onBlur: onBlurProp,
   ...props
@@ -43,7 +46,8 @@ export const TokenAmountInputHookForm = ({
       error={errorProp ?? (showErrorMessage ? errorMessage : hasErrorHighlight)}
       isLocked={isLocked}
       maxValue={maxValue}
-      label={`${getTokenDisplayName(token)} amount`}
+      label={label ?? `${getTokenDisplayName(token)} amount`}
+      showRightDecorator={showRightDecorator}
       fullwidth
     />
   );

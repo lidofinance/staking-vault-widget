@@ -114,6 +114,32 @@ export const vaultTexts = {
       loadingWrap: 'Wrapping ETH to wETH',
     },
     tier: {
+      fields: {
+        totalMintingCapacityAmountStETH: {
+          title: 'stVault minting capacity',
+        },
+        utilizationRatio: {
+          title: 'Utilization',
+        },
+        reserveRatio: {
+          title: 'Reserve ratio',
+        },
+        rebalanceThreshold: {
+          title: 'Forced rebalance threshold',
+        },
+        lidoInfraFee: {
+          title: 'Lido infrastructure fee',
+        },
+        lidoLiquidityFee: {
+          title: 'Lido liquidity fee',
+        },
+        totalValueETH: {
+          title: 'Total value',
+        },
+        liabilityAmountStETH: {
+          title: 'Liability',
+        },
+      },
       settingsTitle: 'Tier settings',
       requestTitle: 'Request to change minting limit',
     },
@@ -131,6 +157,8 @@ export const vaultTexts = {
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
+        `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
       submit: (counter: number) => {
         if (counter > 0)
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;

@@ -1,33 +1,47 @@
+import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
+
+import { useTierData } from 'features/settings/tier/contexts';
+import { SectionData } from 'features/settings/tier/types';
+
 import { List, ListItem } from './styles';
 
+const sectionPayloadList: SectionData[] = [
+  {
+    indicator: 'totalMintingCapacityAmountStETH',
+  },
+  {
+    indicator: 'utilizationRatio',
+  },
+  {
+    indicator: 'reserveRatio',
+  },
+  {
+    indicator: 'rebalanceThreshold',
+  },
+  {
+    indicator: 'lidoInfraFee',
+  },
+  {
+    indicator: 'lidoLiquidityFee',
+  },
+];
+
 export const ExtendedMetrics = () => {
+  const { getTierDataToRender } = useTierData();
+  const dataToRender = useMemo(
+    () => sectionPayloadList.map((item) => getTierDataToRender(item)),
+    [getTierDataToRender],
+  );
+
   return (
     <List>
-      <ListItem>
-        <Text size="xxs">stVault minting capacity</Text>
-        <Text size="xxs">9 000 stETH</Text>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs">Utilization</Text>
-        <Text size="xxs">52.94%</Text>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs">Reserve ratio</Text>
-        <Text size="xxs">10%</Text>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs">Forced rebalance threshold</Text>
-        <Text size="xxs">8%</Text>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs">Lido infrastructure fee</Text>
-        <Text size="xxs">1.0%</Text>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs">Lido liquidity fee</Text>
-        <Text size="xxs">6.5%</Text>
-      </ListItem>
+      {dataToRender.map((item) => (
+        <ListItem key={item.indicator}>
+          <Text size="xxs">{item.title}</Text>
+          <Text size="xxs">{item.payload}</Text>
+        </ListItem>
+      ))}
     </List>
   );
 };

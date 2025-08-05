@@ -1,0 +1,45 @@
+import { FC } from 'react';
+import { Modal } from '@lidofinance/lido-ui';
+
+import { useDappStatus } from 'modules/web3';
+
+import { useNodeOperatorTiersInfo } from 'features/settings/tier/hooks';
+import { ReceiveReserveRatio } from '../receive-reserve-ratio';
+import { TiersSelector } from './tiers-selector';
+
+import { ContentWrapper, InlineLoaderStyled } from './styles';
+
+type SelectTierModalProps = {
+  showModal: boolean;
+  closeModal: () => void;
+};
+
+export const SelectTierModal: FC<SelectTierModalProps> = ({
+  showModal,
+  closeModal,
+}) => {
+  const { address } = useDappStatus();
+  const { data: nodeOperatorTiersInfo, isLoading } = useNodeOperatorTiersInfo();
+  const { nodeOperator, tiers } = nodeOperatorTiersInfo ?? {};
+  const isNodeOperatorConnected = address === nodeOperator;
+
+  return (
+    <Modal
+      title="Select Tier"
+      open={showModal}
+      onClose={closeModal}
+      windowSize="md"
+    >
+      {isLoading ? (
+        <InlineLoaderStyled />
+      ) : (
+        <ContentWrapper>
+          {isNodeOperatorConnected && tiers?.length === 0 && (
+            <ReceiveReserveRatio />
+          )}
+          <TiersSelector tiers={tiers} />
+        </ContentWrapper>
+      )}
+    </Modal>
+  );
+};

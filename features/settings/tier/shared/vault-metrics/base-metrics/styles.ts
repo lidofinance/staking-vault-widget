@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import { Address } from '@lidofinance/lido-ui';
+import { Address, InlineLoader } from '@lidofinance/lido-ui';
 
 export const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
   gap: ${({ theme }) => theme.spaceMap.md}px;
+  width: 100%;
 `;
 
 export const IndicatorContent = styled.div<{ align: 'start' | 'end' }>`
@@ -24,4 +25,9 @@ export const AddressStyled = styled(Address)`
   font-weight: bold;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
+`;
+
+export const InlineLoaderStyled = styled(InlineLoader)`
+  height: 20px;
+  width: 100px;
 `;
