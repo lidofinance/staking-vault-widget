@@ -7,6 +7,7 @@ type CheckBoxHookFormProps = {
   fieldName: string;
   label?: ReactNode;
   error?: boolean;
+  'data-testid'?: string;
 } & RegisterOptions &
   Partial<Pick<ComponentProps<typeof CheckBoxStyled>, 'style' | 'className'>>;
 
@@ -15,6 +16,7 @@ export const CheckboxHookForm = ({
   label,
   style,
   className,
+  'data-testid': dataTestId,
   ...registerOptions
 }: CheckBoxHookFormProps) => {
   const { getFieldState } = useFormContext();
@@ -25,7 +27,7 @@ export const CheckboxHookForm = ({
       style={style}
       className={className}
       error={hasError}
-      data-testid="mintStethCheckbox"
+      data-testid={dataTestId}
       label={label}
       {...register(fieldName, registerOptions)}
     />
