@@ -328,7 +328,7 @@ export const VaultTable: FC<VaultTableProps> = ({
           pagesCount={pagesCount}
           siblingCount={1}
           activePage={page}
-          data-testid={`${dataTestId}-pagination`}
+          data-testid={dataTestId ? `${dataTestId}-pagination` : null}
         />
       )}
     </>
