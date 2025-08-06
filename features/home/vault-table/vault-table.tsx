@@ -39,6 +39,7 @@ export type VaultTableProps = {
   vaultsCount?: number;
   isError?: boolean;
   refetch?: () => void;
+  dataTestId?: string;
 };
 
 const tableHeaders = [
@@ -82,33 +83,50 @@ const PLACEHOLDER_VAULT: VaultEntry = {
 
 type VaultTableRowProps = {
   vault: VaultEntry;
+  dataTestId?: string;
 };
 
-const VaultTableRowContent = ({ vault }: VaultTableRowProps) => {
+const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
   return (
     <>
-      <TableCell>
+      <TableCell data-testid={dataTestId ? `${dataTestId}-addressCell` : null}>
         <AddressBadge
           weight={700}
           showPopover="hover"
           hoverEffect={false}
           popoverPlacement="top"
           address={vault.address}
+          dataTestId={`${dataTestId}-addressCell`}
         />
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        data-testid={dataTestId ? `${dataTestId}-totalValueCell` : null}
+      >
         <FormatToken amount={vault.totalValue} />
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        data-testid={dataTestId ? `${dataTestId}-liabilityCell` : null}
+      >
         <FormatToken amount={vault?.liabilityStETH} />
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : null}
+      >
         <PercentCell value={vault.netStakingAprPercent} />
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        data-testid={dataTestId ? `${dataTestId}-carrySpreadAprCell` : null}
+      >
         <PercentCell value={vault.carrySpreadAprPercent} />
       </TableCell>
-      <TableCell align="right">
+      <TableCell
+        align="right"
+        data-testid={dataTestId ? `${dataTestId}-healthFactorCell` : null}
+      >
         <PercentCell
           value={vault.healthFactor}
           strong
@@ -208,6 +226,7 @@ export const VaultTable: FC<VaultTableProps> = ({
   setSort,
   sortDir,
   pagesCount,
+  dataTestId,
 }) => {
   const router = useRouter();
   const isEmpty = (vaults?.length ?? 0) === 0;
@@ -249,8 +268,13 @@ export const VaultTable: FC<VaultTableProps> = ({
 
   return (
     <>
-      <TableStyled>
-        <TableTitle counter={vaultsCount}>{title}</TableTitle>
+      <TableStyled data-testid={dataTestId ? `${dataTestId}-table` : null}>
+        <TableTitle
+          counter={vaultsCount}
+          data-testid={dataTestId ? `${dataTestId}-tableTitle` : null}
+        >
+          {title}
+        </TableTitle>
         {showTable && (
           <>
             <Thead>
@@ -277,8 +301,14 @@ export const VaultTable: FC<VaultTableProps> = ({
                     onClick={onRowClick}
                     data-address={vault.address}
                     key={vault.address}
+                    data-testid={
+                      dataTestId ? `${dataTestId}-vault-${vault.address}` : null
+                    }
                   >
-                    <VaultTableRowContent vault={vault} />
+                    <VaultTableRowContent
+                      vault={vault}
+                      dataTestId={`${dataTestId}-vault-${vault.address}`}
+                    />
                   </TableRow>
                 );
               })}
@@ -298,6 +328,7 @@ export const VaultTable: FC<VaultTableProps> = ({
           pagesCount={pagesCount}
           siblingCount={1}
           activePage={page}
+          data-testid={`${dataTestId}-pagination`}
         />
       )}
     </>
