@@ -9,10 +9,11 @@ type AddressLinkEtherscanProps = {
   text?: string;
   address?: Address;
   onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  dataTestId?: string;
 };
 
 export const AddressLinkEtherscan = (props: AddressLinkEtherscanProps) => {
-  const { address, text = 'View on Etherscan', onClick } = props;
+  const { address, text = 'View on Etherscan', onClick, dataTestId } = props;
   const { walletChainId } = useDappStatus();
 
   if (!address) return null;
@@ -24,6 +25,7 @@ export const AddressLinkEtherscan = (props: AddressLinkEtherscanProps) => {
         walletChainId ?? config.defaultChain,
         address,
       )}
+      data-testid={dataTestId ? `${dataTestId}-etherScanLink` : null}
     >
       {text}
     </Link>

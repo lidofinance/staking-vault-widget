@@ -13,7 +13,11 @@ export const MainSettings = ({ isShown }: MainSettingsProps) => {
   return (
     <SectionContainer isShown={isShown}>
       {MAIN_SETTINGS.map((field) => (
-        <CreateVaultInput key={field.name} {...field} />
+        <CreateVaultInput
+          key={field.name}
+          {...field}
+          dataTestId={`createVault-${field.name}`}
+        />
       ))}
       <MainSettingsAction />
     </SectionContainer>
