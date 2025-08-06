@@ -151,11 +151,11 @@ type QueryStatusProps = {
 };
 
 const QueryStatus = ({
-                       isEmpty,
-                       isError,
-                       isLoading,
-                       refetch,
-                     }: QueryStatusProps) => {
+  isEmpty,
+  isError,
+  isLoading,
+  refetch,
+}: QueryStatusProps) => {
   let content: JSX.Element | null = null;
   switch (true) {
     case isError:
@@ -219,21 +219,21 @@ const toUIsortDir = (dir?: FetchVaultsParams['sortDir']) => {
 };
 
 export const VaultTable: FC<VaultTableProps> = ({
-                                                  vaults,
-                                                  title,
-                                                  vaultsCount,
-                                                  refetch,
-                                                  emptyDisplay = 'default',
-                                                  isError = false,
-                                                  isLoading = false,
-                                                  page,
-                                                  setPage,
-                                                  sortBy,
-                                                  setSort,
-                                                  sortDir,
-                                                  pagesCount,
-                                                  dataTestId,
-                                                }) => {
+  vaults,
+  title,
+  vaultsCount,
+  refetch,
+  emptyDisplay = 'default',
+  isError = false,
+  isLoading = false,
+  page,
+  setPage,
+  sortBy,
+  setSort,
+  sortDir,
+  pagesCount,
+  dataTestId,
+}) => {
   const router = useRouter();
   const isEmpty = (vaults?.length ?? 0) === 0;
   const showTable = !(
