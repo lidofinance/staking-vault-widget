@@ -10,7 +10,17 @@ import type {
 
 export type AddressInputProps = MainSettingsEntryType;
 
-export const AddressInput: FC<AddressInputProps> = ({ name, label }) => {
+export const AddressInput: FC<AddressInputProps> = ({
+  name,
+  label,
+  dataTestId,
+}) => {
   const { register } = useFormContext<CreateVaultSchema>();
-  return <AddressInputBase {...register(name)} label={label} />;
+  return (
+    <AddressInputBase
+      {...register(name)}
+      label={label}
+      dataTestId={dataTestId}
+    />
+  );
 };

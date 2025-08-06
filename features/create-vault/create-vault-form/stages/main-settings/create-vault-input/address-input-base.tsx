@@ -14,10 +14,12 @@ import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg
 import { addressSchema } from 'utils/zod-validation';
 
 type AddressInputProps = Omit<UseFormRegisterReturn, 'ref'> &
-  React.ComponentProps<typeof Input>;
+  React.ComponentProps<typeof Input> & {
+    dataTestId?: string;
+  };
 
 export const AddressInputBase = forwardRef<HTMLInputElement, AddressInputProps>(
-  ({ onFocus, onBlur, ...rest }, ref) => {
+  ({ onFocus, onBlur, dataTestId, ...rest }, ref) => {
     const name = rest.name as 'value';
 
     const [inFocus, setInFocus] = useState(false);
@@ -57,10 +59,15 @@ export const AddressInputBase = forwardRef<HTMLInputElement, AddressInputProps>(
           }}
           error={inFocus ? error?.message : Boolean(error?.message)}
           {...rest}
+          data-testid={dataTestId ? `${dataTestId}-input` : null}
         />
         {!invalid && value && (
-          <EtherScanLink>
-            <AddressLinkEtherscan address={value} />
+          <EtherScanLink
+            data-testid={
+              dataTestId ? `${dataTestId}-etherScanLinkWrapper` : null
+            }
+          >
+            <AddressLinkEtherscan address={value} dataTestId={dataTestId} />
           </EtherScanLink>
         )}
       </AddressInputWrapper>

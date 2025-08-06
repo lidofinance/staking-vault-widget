@@ -9,7 +9,11 @@ import type {
 
 export type GeneralInputProps = MainSettingsEntryType;
 
-export const GeneralInput: FC<GeneralInputProps> = ({ name, label }) => {
+export const GeneralInput: FC<GeneralInputProps> = ({
+  name,
+  label,
+  dataTestId,
+}) => {
   const [inFocus, setInFocus] = useState(false);
 
   const {
@@ -33,6 +37,7 @@ export const GeneralInput: FC<GeneralInputProps> = ({ name, label }) => {
           setInFocus(false);
         },
       })}
+      data-testid={dataTestId ? `${dataTestId}-input` : null}
     />
   );
 };

@@ -25,6 +25,7 @@ export const ConfirmInput = (props: GeneralInputProps) => {
       {...register(props.name, {
         onChange: () => void trigger(props.name, { shouldFocus: false }),
       })}
+      data-testid={props.dataTestId ? `${props.dataTestId}-checkbox` : null}
     />
   );
 };

@@ -39,6 +39,7 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   dataType,
   title,
   hint,
+  dataTestId,
 }) => {
   const { getValues } = useFormContext();
   const value = getValues(name);
@@ -48,11 +49,20 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   if (!DataComponent) return null;
 
   return (
-    <ListItem key={name}>
-      <ConfirmationLabel>
-        {title} <Hint text={hint} />
+    <ListItem
+      key={name}
+      data-testid={dataTestId ? `${dataTestId}-listItem` : null}
+    >
+      <ConfirmationLabel
+        data-testid={dataTestId ? `${dataTestId}-label` : null}
+      >
+        {title}{' '}
+        <Hint
+          text={hint}
+          data-testid={dataTestId ? `${dataTestId}-hint` : null}
+        />
       </ConfirmationLabel>
-      <DataComponent payload={value} />
+      <DataComponent payload={value} dataTestId={dataTestId} />
     </ListItem>
   );
 };

@@ -33,11 +33,25 @@ export const Confirmation = ({ isShown }: ConfirmationProps) => {
       <List>
         <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
         {MAIN_SETTINGS.map((item) => {
-          return <ConfirmationEntry {...item} key={item.name} />;
+          return (
+            <ConfirmationEntry
+              {...item}
+              key={item.name}
+              dataTestId={`createVault-confirmation-${item.name}`}
+            />
+          );
         })}
         <ListItemCompact>
-          <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>
-          <PreSupplyAmountComponent>1 ETH</PreSupplyAmountComponent>
+          <ConfirmationLabel
+            data-testid={`createVault-confirmation-initialSupply-label`}
+          >
+            Initial supply to stVault
+          </ConfirmationLabel>
+          <PreSupplyAmountComponent
+            data-testid={`createVault-confirmation-initialSupply-value`}
+          >
+            1 ETH
+          </PreSupplyAmountComponent>
         </ListItemCompact>
         <CreateVaultCost />
       </List>
