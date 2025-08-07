@@ -13,7 +13,7 @@ type FormulaProps = {
 
 export const Formula: FC<FormulaProps> = ({ list, dataTestId }) => {
   return (
-    <FormulaWrapper data-testid={dataTestId ? dataTestId : null}>
+    <FormulaWrapper data-testid={dataTestId}>
       {list.map((item) => {
         if (item.hasHighlight)
           return (
