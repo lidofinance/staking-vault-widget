@@ -29,6 +29,7 @@ export type MainSettingsEntryType = {
   notes?: string;
   hint?: string;
   type?: string;
+  dataTestId?: string;
 };
 
 export type PermissionKeys =

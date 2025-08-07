@@ -3,7 +3,11 @@ import { FAQ, FAQComponentProps } from 'shared/components/faq';
 
 export const Roles: FC<FAQComponentProps> = ({ defaultExpanded }) => {
   return (
-    <FAQ.Item title="Roles" defaultExpanded={defaultExpanded}>
+    <FAQ.Item
+      title="Roles"
+      defaultExpanded={defaultExpanded}
+      data-testid="createVault-faq-roles"
+    >
       There are three main roles in the stVault:
       <ol>
         <li>

@@ -15,7 +15,11 @@ type PlaceholderForm = {
   addresses: { value: Address }[];
 };
 
-export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
+export const AddressArrayInput: FC<AddressArrayProps> = ({
+  name,
+  label,
+  dataTestId,
+}) => {
   const { register } = useFormContext();
   const { disabled } = useFormState();
   const { fields, append, remove } = useFieldArray<
@@ -25,16 +29,22 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
   const allowDelete = fields.length > 1;
 
   return (
-    <AddressList>
+    <AddressList data-testid={dataTestId ? `${dataTestId}-addressList` : null}>
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>
             <AddressInputBase
               key={field.id}
               label={label}
+              dataTestId={`${dataTestId}-${index}`}
               {...register(`${name}.${index}.value` as const)}
             />
-            {allowDelete && <ButtonClose onClick={() => remove(index)} />}
+            {allowDelete && (
+              <ButtonClose
+                onClick={() => remove(index)}
+                dataTestId={`${dataTestId}-${index}-removeButton`}
+              />
+            )}
           </AddressInputGroup>
         );
       })}
@@ -46,6 +56,7 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({ name, label }) => {
           variant="ghost"
           type="button"
           onClick={() => append({ value: '' as Address })}
+          data-testid={dataTestId ? `${dataTestId}-addAddressButton` : null}
         >
           Add new address
         </AppendButton>
