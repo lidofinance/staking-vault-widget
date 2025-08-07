@@ -71,8 +71,14 @@ const formulasMap: Record<'infraFee' | 'liquidityFee', FormulaItem[]> = {
 export const LidoFeeModal = () => {
   return (
     <OverviewModal name="unsettledLidoFees">
-      <Formula list={formulasMap.infraFee} />
-      <Formula list={formulasMap.liquidityFee} />
+      <Formula
+        list={formulasMap.infraFee}
+        dataTestId="unsettledLidoFees-modal-infraFee-formula"
+      />
+      <Formula
+        list={formulasMap.liquidityFee}
+        dataTestId="unsettledLidoFees-modal-liquidityFee-formula"
+      />
     </OverviewModal>
   );
 };

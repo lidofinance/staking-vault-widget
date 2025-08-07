@@ -15,6 +15,7 @@ type ModalSectionProps = {
   subTitle?: string;
   amount?: string;
   description?: string;
+  dataTestId?: string;
 };
 
 export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
@@ -24,9 +25,10 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
   amount,
   description,
   children,
+  dataTestId,
 }) => {
   return (
-    <SectionWrapper>
+    <SectionWrapper data-testid={dataTestId ? `${dataTestId}` : null}>
       {!!title && (
         <TitleWrapper>
           <Title>

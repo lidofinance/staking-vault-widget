@@ -34,8 +34,8 @@ export const ImmediateWithdrawalModal = () => {
   return (
     <OverviewModal name="withdrawableEth">
       {!isLoadingVault && chartData && (
-        <ChartContainer>
-          <ChartHeading>
+        <ChartContainer data-testid="withdrawableEth-modal-chartContainer">
+          <ChartHeading data-testid="withdrawableEth-modal-chartHeading">
             <Text size="xxs">Total value:</Text>
             <Text size="xxs" strong>
               {totalValueETH}
@@ -47,8 +47,9 @@ export const ImmediateWithdrawalModal = () => {
             data={chartData}
             height={24}
             showLabels
+            data-testid="withdrawableEth-modal-chart"
           />
-          <List>
+          <List data-testid="withdrawableEth-modal-chartLabelsList">
             <ListItem color="withdrawable">
               <Text size="xxs" color="secondary">
                 Available for Immediate Withdrawal
@@ -73,30 +74,39 @@ export const ImmediateWithdrawalModal = () => {
         title={withdrawal.totalValue.title}
         amount={totalValueETH}
         description={withdrawal.totalValue.description}
+        dataTestId="withdrawableEth-modal-totalValueSection"
       >
         <ModalSection
           title="Locked by Collateral"
           titleLeftDecorator={<NewLine />}
           amount={collateral}
+          dataTestId="withdrawableEth-modal-totalValueSection-lockedByCollateralSubsection"
         />
         <ModalSection
           title="Fee obligations"
           titleLeftDecorator={<NewLine />}
           amount={feeObligationEth}
+          dataTestId="withdrawableEth-modal-totalValueSection-feeObligationsSubsection"
         />
         <ModalSection
           title="Withdrawable part of Total Value"
           titleLeftDecorator={<NewLine />}
           amount={withdrawableEth}
+          dataTestId="withdrawableEth-modal-totalValueSection-withdrawablePartSubsection"
         />
       </ModalSection>
       <SectionDivider />
-      <ModalSection title="Not staked stVault Balance" amount={balanceEth} />
+      <ModalSection
+        title="Not staked stVault Balance"
+        amount={balanceEth}
+        dataTestId="withdrawableEth-modal-notStakedStVaultBalanceSection"
+      />
       <SectionDivider />
       <ModalSection
         title={withdrawal.availableForWithdrawal.title}
         amount={withdrawableEth}
         description={withdrawal.availableForWithdrawal.description}
+        dataTestId="withdrawableEth-modal-availableForWithdrawalSection"
       />
     </OverviewModal>
   );

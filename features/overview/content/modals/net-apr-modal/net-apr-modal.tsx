@@ -100,32 +100,39 @@ export const NetAprModal = () => {
   } = values || {};
   return (
     <OverviewModal name="netApr">
-      <Formula list={formulasMap.netApr} />
+      <Formula list={formulasMap.netApr} dataTestId="netApr-modal-formula" />
       <SectionDivider />
       <ModalSection
         title={netApr.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={netApr.netStakingRewards.description}
+        dataTestId="netApr-modal-netStakingRewardsSection"
       >
-        <Formula list={formulasMap.netRewards} />
+        <Formula
+          list={formulasMap.netRewards}
+          dataTestId="netApr-modal-netStakingRewardsSection-formula"
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={netApr.grossStakingRewards.title}
         amount={grossStakingRewardsEth}
         description={netApr.grossStakingRewards.description}
+        dataTestId="netApr-modal-grossStakingRewardsSection"
       />
       <SectionDivider />
       <ModalSection
         title={netApr.noFee.title}
         amount={nodeOperatorRewardsEth}
         description={netApr.noFee.description}
+        dataTestId="netApr-modal-noFeeSection"
       />
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
         amount={unsettledLidoFees}
         description={netApr.lidoFees.description}
+        dataTestId="netApr-modal-lidoFeesSection"
       />
     </OverviewModal>
   );
