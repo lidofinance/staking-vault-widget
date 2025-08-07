@@ -114,12 +114,12 @@ export const LidoFeeModal = () => {
 
   return (
     <OverviewModal name="unsettledLidoFees">
-      {values?.vaultData.infraFeeBP && <Formula list={formulasMap.infraFee} />}
+      {values?.vaultData.infraFeeBP && <Formula list={formulasMap.infraFee} dataTestId="unsettledLidoFees-modal-infraFee-formula" />}
       {values?.vaultData.liquidityFeeBP && (
-        <Formula list={formulasMap.liquidityFee} />
+        <Formula list={formulasMap.liquidityFee} dataTestId="unsettledLidoFees-modal-liquidityFee-formula" />
       )}
       {values?.vaultData.reservationFeeBP && (
-        <Formula list={formulasMap.annualReservationFee} />
+        <Formula list={formulasMap.annualReservationFee} dataTestId="unsettledLidoFees-modal-annualReservationFee-formula" />
       )}
     </OverviewModal>
   );

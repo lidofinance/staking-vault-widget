@@ -140,6 +140,7 @@ export const HealthFactorModal = () => {
         <HealthFactorHint color={colorName}>{hint}</HealthFactorHint>
       }
     >
+      <ModalSection dataTestId="healthFactorNumber-modal-chartSection">
       <ModalSection>
         <ChartProportion
           loading={isLoadingVault}
@@ -149,42 +150,56 @@ export const HealthFactorModal = () => {
           borderSize={ChartProportionBorderSize.md}
           data={chartData}
           showLabels
+          data-testid="healthFactorNumber-modal-chart"
         />
-        <List>
+        <List data-testid="healthFactorNumber-modal-chartLabelsList">
           <ListItem color="rebalance">Forced rebalance</ListItem>
           <ListItem color="danger">At risk</ListItem>
           <ListItem color="warning">Needs attention</ListItem>
           <ListItem color="success">Healthy</ListItem>
         </List>
       </ModalSection>
-      <ModalSection description={health.rebalanceThreshold.description} />
+      <ModalSection
+        description={health.rebalanceThreshold.description}
+        dataTestId="healthFactorNumber-modal-rebalanceThresholdSection"
+      />
       <SectionDivider />
       <ModalSection
         title={health.carrySpread.title}
         amount={carrySpreadApr}
         description={health.carrySpread.description}
+        dataTestId="healthFactorNumber-modal-carrySpreadSection"
       >
-        <Formula list={formulasMap.carrySpread} />
+        <Formula
+          list={formulasMap.carrySpread}
+          dataTestId="healthFactorNumber-modal-carrySpreadSection-formula"
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={health.bottomLine.title}
         amount={bottomLineEth}
         description={health.bottomLine.description}
+        dataTestId="healthFactorNumber-modal-bottomLineSection"
       >
-        <Formula list={formulasMap.bottomLine} />
+        <Formula
+          list={formulasMap.bottomLine}
+          dataTestId="healthFactorNumber-modal-bottomLineSection-formula"
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={health.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={health.netStakingRewards.description}
+        dataTestId="healthFactorNumber-modal-netStakingRewardsSection"
       />
       <SectionDivider />
       <ModalSection
         title={health.stethRebase.title}
         amount={rebaseRewardEth}
         description={health.stethRebase.description}
+        dataTestId="healthFactorNumber-modal-stethRebaseSection"
       />
     </OverviewModal>
   );
