@@ -20,6 +20,8 @@ import { ChartContainer, ChartHeading, List, ListItem } from './styles';
 
 const { withdrawal } = vaultTexts.metrics.modals;
 
+const dataTestIdPrefix = 'withdrawableEth-modal';
+
 export const ImmediateWithdrawalModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
   const {
@@ -34,8 +36,8 @@ export const ImmediateWithdrawalModal = () => {
   return (
     <OverviewModal name="withdrawableEth">
       {!isLoadingVault && chartData && (
-        <ChartContainer data-testid="withdrawableEth-modal-chartContainer">
-          <ChartHeading data-testid="withdrawableEth-modal-chartHeading">
+        <ChartContainer data-testid={`${dataTestIdPrefix}-chartContainer`}>
+          <ChartHeading data-testid={`${dataTestIdPrefix}-chartHeading`}>
             <Text size="xxs">Total value:</Text>
             <Text size="xxs" strong>
               {totalValueETH}
@@ -47,9 +49,9 @@ export const ImmediateWithdrawalModal = () => {
             data={chartData}
             height={24}
             showLabels
-            data-testid="withdrawableEth-modal-chart"
+            data-testid={`${dataTestIdPrefix}-chart`}
           />
-          <List data-testid="withdrawableEth-modal-chartLabelsList">
+          <List data-testid={`${dataTestIdPrefix}-chartLabelsList`}>
             <ListItem color="withdrawable">
               <Text size="xxs" color="secondary">
                 Available for Immediate Withdrawal
@@ -74,39 +76,39 @@ export const ImmediateWithdrawalModal = () => {
         title={withdrawal.totalValue.title}
         amount={totalValueETH}
         description={withdrawal.totalValue.description}
-        dataTestId="withdrawableEth-modal-totalValueSection"
+        dataTestId={`${dataTestIdPrefix}-totalValueSection`}
       >
         <ModalSection
           title="Locked by Collateral"
           titleLeftDecorator={<NewLine />}
           amount={collateral}
-          dataTestId="withdrawableEth-modal-totalValueSection-lockedByCollateralSubsection"
+          dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
         />
         <ModalSection
           title="Fee obligations"
           titleLeftDecorator={<NewLine />}
           amount={feeObligationEth}
-          dataTestId="withdrawableEth-modal-totalValueSection-feeObligationsSubsection"
+          dataTestId={`${dataTestIdPrefix}-totalValueSection-feeObligationsSubsection`}
         />
         <ModalSection
           title="Withdrawable part of Total Value"
           titleLeftDecorator={<NewLine />}
           amount={withdrawableEth}
-          dataTestId="withdrawableEth-modal-totalValueSection-withdrawablePartSubsection"
+          dataTestId={`${dataTestIdPrefix}-totalValueSection-withdrawablePartSubsection`}
         />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title="Not staked stVault Balance"
         amount={balanceEth}
-        dataTestId="withdrawableEth-modal-notStakedStVaultBalanceSection"
+        dataTestId={`${dataTestIdPrefix}-notStakedStVaultBalanceSection`}
       />
       <SectionDivider />
       <ModalSection
         title={withdrawal.availableForWithdrawal.title}
         amount={withdrawableEth}
         description={withdrawal.availableForWithdrawal.description}
-        dataTestId="withdrawableEth-modal-availableForWithdrawalSection"
+        dataTestId={`${dataTestIdPrefix}-availableForWithdrawalSection`}
       />
     </OverviewModal>
   );

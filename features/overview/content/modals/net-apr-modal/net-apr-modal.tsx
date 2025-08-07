@@ -89,6 +89,8 @@ const formulasMap: Record<'netApr' | 'netRewards', FormulaItem[]> = {
 
 const { netApr } = vaultTexts.metrics.modals;
 
+const dataTestIdPrefix = 'netApr-modal';
+
 export const NetAprModal = () => {
   const { values } = useVaultOverview();
 
@@ -100,17 +102,20 @@ export const NetAprModal = () => {
   } = values || {};
   return (
     <OverviewModal name="netApr">
-      <Formula list={formulasMap.netApr} dataTestId="netApr-modal-formula" />
+      <Formula
+        list={formulasMap.netApr}
+        dataTestId={`${dataTestIdPrefix}-formula`}
+      />
       <SectionDivider />
       <ModalSection
         title={netApr.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={netApr.netStakingRewards.description}
-        dataTestId="netApr-modal-netStakingRewardsSection"
+        dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       >
         <Formula
           list={formulasMap.netRewards}
-          dataTestId="netApr-modal-netStakingRewardsSection-formula"
+          dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection-formula`}
         />
       </ModalSection>
       <SectionDivider />
@@ -118,21 +123,21 @@ export const NetAprModal = () => {
         title={netApr.grossStakingRewards.title}
         amount={grossStakingRewardsEth}
         description={netApr.grossStakingRewards.description}
-        dataTestId="netApr-modal-grossStakingRewardsSection"
+        dataTestId={`${dataTestIdPrefix}-grossStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.noFee.title}
         amount={nodeOperatorRewardsEth}
         description={netApr.noFee.description}
-        dataTestId="netApr-modal-noFeeSection"
+        dataTestId={`${dataTestIdPrefix}-noFeeSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
         amount={unsettledLidoFees}
         description={netApr.lidoFees.description}
-        dataTestId="netApr-modal-lidoFeesSection"
+        dataTestId={`${dataTestIdPrefix}-lidoFeesSection`}
       />
     </OverviewModal>
   );

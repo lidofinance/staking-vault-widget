@@ -28,7 +28,7 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
   dataTestId,
 }) => {
   return (
-    <SectionWrapper data-testid={dataTestId ? `${dataTestId}` : null}>
+    <SectionWrapper data-testid={dataTestId}>
       {!!title && (
         <TitleWrapper>
           <Title>

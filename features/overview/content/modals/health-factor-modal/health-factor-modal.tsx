@@ -119,6 +119,8 @@ const getHealthColor = (
   return [color, colorTextsMap[color]];
 };
 
+const dataTestIdPrefix = 'healthFactorNumber-modal';
+
 export const HealthFactorModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
 
@@ -140,7 +142,7 @@ export const HealthFactorModal = () => {
         <HealthFactorHint color={colorName}>{hint}</HealthFactorHint>
       }
     >
-      <ModalSection dataTestId="healthFactorNumber-modal-chartSection">
+      <ModalSection dataTestId={`${dataTestIdPrefix}-chartSection`}>
       <ModalSection>
         <ChartProportion
           loading={isLoadingVault}
@@ -150,9 +152,9 @@ export const HealthFactorModal = () => {
           borderSize={ChartProportionBorderSize.md}
           data={chartData}
           showLabels
-          data-testid="healthFactorNumber-modal-chart"
+          data-testid={`${dataTestIdPrefix}-chart`}
         />
-        <List data-testid="healthFactorNumber-modal-chartLabelsList">
+        <List data-testid={`${dataTestIdPrefix}-chartLabelsList`}>
           <ListItem color="rebalance">Forced rebalance</ListItem>
           <ListItem color="danger">At risk</ListItem>
           <ListItem color="warning">Needs attention</ListItem>
@@ -161,18 +163,18 @@ export const HealthFactorModal = () => {
       </ModalSection>
       <ModalSection
         description={health.rebalanceThreshold.description}
-        dataTestId="healthFactorNumber-modal-rebalanceThresholdSection"
+        dataTestId={`${dataTestIdPrefix}-rebalanceThresholdSection`}
       />
       <SectionDivider />
       <ModalSection
         title={health.carrySpread.title}
         amount={carrySpreadApr}
         description={health.carrySpread.description}
-        dataTestId="healthFactorNumber-modal-carrySpreadSection"
+        dataTestId={`${dataTestIdPrefix}-carrySpreadSection`}
       >
         <Formula
           list={formulasMap.carrySpread}
-          dataTestId="healthFactorNumber-modal-carrySpreadSection-formula"
+          dataTestId={`${dataTestIdPrefix}-carrySpreadSection-formula`}
         />
       </ModalSection>
       <SectionDivider />
@@ -180,11 +182,11 @@ export const HealthFactorModal = () => {
         title={health.bottomLine.title}
         amount={bottomLineEth}
         description={health.bottomLine.description}
-        dataTestId="healthFactorNumber-modal-bottomLineSection"
+        dataTestId={`${dataTestIdPrefix}-bottomLineSection`}
       >
         <Formula
           list={formulasMap.bottomLine}
-          dataTestId="healthFactorNumber-modal-bottomLineSection-formula"
+          dataTestId={`${dataTestIdPrefix}-bottomLineSection-formula`}
         />
       </ModalSection>
       <SectionDivider />
@@ -192,14 +194,14 @@ export const HealthFactorModal = () => {
         title={health.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={health.netStakingRewards.description}
-        dataTestId="healthFactorNumber-modal-netStakingRewardsSection"
+        dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={health.stethRebase.title}
         amount={rebaseRewardEth}
         description={health.stethRebase.description}
-        dataTestId="healthFactorNumber-modal-stethRebaseSection"
+        dataTestId={`${dataTestIdPrefix}-stethRebaseSection`}
       />
     </OverviewModal>
   );
