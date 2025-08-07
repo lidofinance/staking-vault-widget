@@ -33,6 +33,7 @@ export const MyVaults = () => {
         sortDir={sortDir}
         sortBy={sortBy}
         setSort={setSort}
+        dataTestId="myVaultsTable"
       />
       <AddVault />
     </>

@@ -30,6 +30,7 @@ export const AllVaults = () => {
       sortDir={sortDir}
       sortBy={sortBy}
       setSort={setSort}
+      dataTestId="allVaultsTable"
     />
   );
 };
