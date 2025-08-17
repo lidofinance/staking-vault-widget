@@ -6,7 +6,7 @@ import { PartitionContainer } from '../partition-container';
 import { TierBaseInfo } from '../tier-base-info';
 import { SelectTierModal } from '../select-tier-modal';
 
-import { ArrowButton } from './styles';
+import { TierSelector } from './styles';
 
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
@@ -22,17 +22,16 @@ export const ChooseTier = () => {
 
   return (
     <PartitionContainer title="Choose Tier">
-      <TierBaseInfo
-        tierName={selectedTier.tierName}
-        reserveRatio={selectedTier.reserveRatioBP}
-        tierStETHLimit={selectedTier.shareLimitStETH}
-        liabilityStETH={selectedTier.liabilityStETH}
-        isActive={isActive}
-      >
-        <ArrowButton onClick={openModal} role="button">
-          <ArrowRight />
-        </ArrowButton>
-      </TierBaseInfo>
+      <TierSelector onClick={openModal} role="button">
+        <TierBaseInfo
+          tierName={selectedTier.tierName}
+          reserveRatio={selectedTier.reserveRatioBP}
+          tierStETHLimit={selectedTier.shareLimitStETH}
+          liabilityStETH={selectedTier.liabilityStETH}
+          isActive={isActive}
+        />
+        <ArrowRight />
+      </TierSelector>
       <SelectTierModal showModal={showModal} closeModal={closeModal} />
     </PartitionContainer>
   );

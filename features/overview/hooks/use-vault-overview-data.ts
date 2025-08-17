@@ -20,7 +20,13 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { formatPercent, toEthValue, toStethValue } from 'utils';
+import {
+  formatPercent,
+  toEthValue,
+  toStethValue,
+  getMintingConstraintType,
+  type MintingConstraintType,
+} from 'utils';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -41,7 +47,7 @@ export type VaultInfo = VaultConnection &
     mintableShares: bigint;
     stETHLimit: bigint;
     healthScore: number;
-    mintingConstraintBy: 'vault' | 'lido' | 'tier' | 'group';
+    mintingConstraintBy: MintingConstraintType;
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
@@ -143,19 +149,22 @@ const getVaultData = async ({
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
-  const mintingConstraintBy = (
-    [
-      {
-        label: 'vault',
-        value: shareLimit,
-      },
-      { label: 'tier', value: tierShareLimit },
-      { label: 'group', value: groupShareLimit },
-      { label: 'lido', value: lidoTVLSharesLimit },
-    ] as const
-  ).reduce((acc, val) => {
-    return val.value < acc.value ? val : acc;
-  }).label;
+  // Binding-constraint detection:
+  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
+  //   reduced by any active caps).
+  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
+  //   identify what actually constrains minting right now.
+  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
+  //   ties resolve to the later entry in the list below.
+  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
+  const mintingConstraintBy = getMintingConstraintType({
+    totalMintingCapacityShares,
+    vaultShareLimit: shareLimit,
+    tierShareLimit,
+    tierId,
+    groupShareLimit,
+    lidoTVLSharesLimit,
+  });
 
   const healthScore = calculateHealth({
     totalValue,

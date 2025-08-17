@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
 import {
   TransactionEntry,
@@ -20,6 +21,7 @@ export const useEditTierSettings = () => {
   const { data: nodeOperatorTiers } = useNodeOperatorTiersInfo();
   const { sendTX, ...rest } = useSendTransaction();
   const { shares } = useLidoSDK();
+  const { address } = useAccount();
 
   return {
     editTierSettings: useCallback(
@@ -30,6 +32,7 @@ export const useEditTierSettings = () => {
           '[useEditTierSettings] activeVault is undefined',
         );
 
+        const isNodeOperator = activeVault.nodeOperator === address;
         const transactions: TransactionEntry[] = [];
         const { selectedTierId, vaultMintingLimit } = formValues;
 
@@ -47,17 +50,32 @@ export const useEditTierSettings = () => {
             ? selectedTier.shareLimit
             : await shares.convertToShares(BigInt(vaultMintingLimit));
 
-        transactions.push({
-          ...activeVault.operatorGrid.encode.changeTier([
-            activeVault.address,
-            BigInt(selectedTierId),
-            mintingLimitInShares,
-          ]),
-          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-            selectedTierId,
-            toStethValue(vaultMintingLimit),
-          ),
-        });
+        // if node operator, use operator grid contract
+        // if not node operator, use dashboard contract
+        if (isNodeOperator) {
+          transactions.push({
+            ...activeVault.operatorGrid.encode.changeTier([
+              activeVault.address,
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          });
+        } else {
+          transactions.push({
+            ...activeVault.dashboard.encode.changeTier([
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          });
+        }
 
         const result = await withSuccess(
           sendTX({
@@ -73,7 +91,14 @@ export const useEditTierSettings = () => {
           result,
         };
       },
-      [tierInfo, activeVault, nodeOperatorTiers?.tiers, shares, sendTX],
+      [
+        tierInfo,
+        activeVault,
+        address,
+        nodeOperatorTiers?.tiers,
+        shares,
+        sendTX,
+      ],
     ),
     ...rest,
   };

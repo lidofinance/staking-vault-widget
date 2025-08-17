@@ -444,9 +444,11 @@ export const vaultTexts = {
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
           constrainedBy: (
-            constraintBy: 'vault' | 'lido' | 'tier' | 'group',
+            constraintBy: 'reserveRatio' | 'vault' | 'lido' | 'tier' | 'group',
           ) => {
             switch (constraintBy) {
+              case 'reserveRatio':
+                return 'constrained by Reserve Ratio';
               case 'vault':
                 return 'constrained by Vault Share Limit';
               case 'lido':

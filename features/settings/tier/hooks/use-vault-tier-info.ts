@@ -159,15 +159,7 @@ const selectTierData = (tierData: VaultTierInfo) => {
   const tierName =
     tier.id === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tier.id)}`;
   const tierStETHLimitValue = toStethValue(tier.shareLimitStETH);
-  const tierTotalMintingCapacityStETHValue = toStethValue(
-    tier.shareLimitStETH - tier.liabilityStETH,
-  );
-  const tierLiabilityStETHValue = toStethValue(tier.liabilityStETH);
-  const tierReserveRatioValue = formatPercent.format(
-    tier.reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
-  );
 
-  const vaultStETHLimitValue = toStethValue(vault.stETHLimit);
   const vaultTotalValueETHValue = toEthValue(vault.totalValue);
   const vaultLiabilityStETHValue = toStethValue(vault.liabilityStETH);
   const vaultReserveRatioValue = formatPercent.format(
@@ -204,13 +196,9 @@ const selectTierData = (tierData: VaultTierInfo) => {
     vaultRebalanceThresholdValue,
     vaultLiabilityStETHValue,
     vaultTotalMintingCapacityStETHValue,
-    vaultStETHLimitValue,
 
     tierName,
     tierStETHLimitValue,
-    tierTotalMintingCapacityStETHValue,
-    tierLiabilityStETHValue,
-    tierReserveRatioValue,
     tierStETHLimit: tier.shareLimitStETH,
     tierLiabilityStETH: tier.liabilityStETH,
   };

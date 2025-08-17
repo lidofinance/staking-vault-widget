@@ -41,21 +41,19 @@ export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
       {tiers.map((tier) => {
         const isActive = values?.vault.tierId === tier.id;
         return (
-          <div key={tier.tierName}>
-            <RadioSelector
-              key={tier.tierName}
-              tierIdString={tier.id.toString()}
-              {...register('selectedTierId')}
-            >
-              <TierBaseInfo
-                tierName={tier.tierName}
-                reserveRatio={tier.reserveRatioBP}
-                tierStETHLimit={tier.shareLimitStETH}
-                liabilityStETH={tier.liabilityStETH}
-                isActive={isActive}
-              />
-            </RadioSelector>
-          </div>
+          <RadioSelector
+            key={tier.tierName}
+            tierIdString={tier.id.toString()}
+            {...register('selectedTierId')}
+          >
+            <TierBaseInfo
+              tierName={tier.tierName}
+              reserveRatio={tier.reserveRatioBP}
+              tierStETHLimit={tier.shareLimitStETH}
+              liabilityStETH={tier.liabilityStETH}
+              isActive={isActive}
+            />
+          </RadioSelector>
         );
       })}
     </>

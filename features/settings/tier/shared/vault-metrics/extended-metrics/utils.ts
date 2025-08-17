@@ -33,18 +33,18 @@ export const calcNewMetrics = ({
       newUtilizationValue: undefined,
     };
 
-  const newMintingCapacityBigInt = bigIntMin(
-    newVaultMintingLimit - vault.liabilityStETH,
+  const newTotalMintingCapacityBigInt = bigIntMin(
+    newVaultMintingLimit,
     vault.totalMintingCapacityStETH,
   );
-  const newMintingCapacityValue = toStethValue(newMintingCapacityBigInt);
+  const newMintingCapacityValue = toStethValue(newTotalMintingCapacityBigInt);
 
   const newUtilizationValue = formatPercent.format(
-    newMintingCapacityBigInt === 0n
+    newTotalMintingCapacityBigInt === 0n
       ? 0
       : Number(
           ((vault.liabilityStETH ?? 0n) * VAULT_TOTAL_BASIS_POINTS_BN) /
-            newMintingCapacityBigInt,
+            newTotalMintingCapacityBigInt,
         ) / VAULT_TOTAL_BASIS_POINTS,
   );
 

@@ -38,6 +38,7 @@ export const RequestChangeLimit = () => {
     : isTheSameUser
       ? vaultTexts.actions.tier.request.showButton.show
       : vaultTexts.actions.tier.request.showButton.review;
+
   const isShowAdditionalInfoComp =
     showAdditionalInfo &&
     proposedTier &&

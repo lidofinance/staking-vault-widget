@@ -25,6 +25,9 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
 
   const isOnlyDefaultTier = tiers?.length === 1 && tiers[0].id === 0n;
 
+  // temporary disable RRR for now
+  const isDisabledRRR = true;
+
   return (
     <Modal
       title="Select Tier"
@@ -36,7 +39,7 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
         <InlineLoaderStyled />
       ) : (
         <ContentWrapper>
-          {isNodeOperatorConnected && isOnlyDefaultTier && (
+          {isNodeOperatorConnected && isOnlyDefaultTier && !isDisabledRRR && (
             <ReceiveReserveRatio />
           )}
           <TiersSelector tiers={tiers} />
