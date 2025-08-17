@@ -422,7 +422,7 @@ export const vaultTexts = {
         grossStakingRewards: {
           title: 'Gross staking rewards',
           description:
-            'The amount of rewards earned by the validators expressed as a percentage of the volt total value, before fees deductions.',
+            'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
         noFee: {
           title: 'Node Operator Fee',
@@ -443,7 +443,20 @@ export const vaultTexts = {
         },
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
-          subTitle: 'constrained by Reserve Ratio',
+          constrainedBy: (
+            constraintBy: 'vault' | 'lido' | 'tier' | 'group',
+          ) => {
+            switch (constraintBy) {
+              case 'vault':
+                return 'constrained by Vault Share Limit';
+              case 'lido':
+                return 'constrained by Lido TVL';
+              case 'tier':
+                return 'constrained by Vault Tier';
+              case 'group':
+                return 'constrained by NO Group Limit';
+            }
+          },
           description:
             'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
         },

@@ -12,6 +12,7 @@ import {
   useVault,
   fetchVaultMetrics,
   VAULT_TOTAL_BASIS_POINTS,
+  getLidoV3Contract,
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
@@ -39,8 +40,8 @@ export type VaultInfo = VaultConnection &
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
-    apr: null;
     healthScore: number;
+    mintingConstraintBy: 'vault' | 'lido' | 'tier' | 'group';
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
@@ -88,6 +89,7 @@ const getVaultData = async ({
     totalMintingCapacityShares,
     mintableShares,
     tier,
+    group,
   ] = await readWithReport({
     publicClient,
     report: vault.report,
@@ -108,6 +110,7 @@ const getVaultData = async ({
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultInfo([vault.address]),
+      operatorGrid.prepare.group([vault.nodeOperator]),
     ] as const,
   });
 
@@ -118,6 +121,9 @@ const getVaultData = async ({
   } = record;
 
   const [_, tierId, tierShareLimit] = tier;
+  const { shareLimit: groupShareLimit } = group;
+
+  const lidoV3Contract = getLidoV3Contract(publicClient);
 
   const [
     liabilityStETH,
@@ -126,6 +132,7 @@ const getVaultData = async ({
     lockedShares,
     totalMintingCapacityStETH,
     tierStETHLimit,
+    lidoTVLSharesLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
@@ -133,7 +140,22 @@ const getVaultData = async ({
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
+    lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
+
+  const mintingConstraintBy = (
+    [
+      {
+        label: 'vault',
+        value: shareLimit,
+      },
+      { label: 'tier', value: tierShareLimit },
+      { label: 'group', value: groupShareLimit },
+      { label: 'lido', value: lidoTVLSharesLimit },
+    ] as const
+  ).reduce((acc, val) => {
+    return val.value < acc.value ? val : acc;
+  }).label;
 
   const healthScore = calculateHealth({
     totalValue,
@@ -150,7 +172,7 @@ const getVaultData = async ({
     mintableStETH,
     mintableShares,
     stETHLimit,
-    apr: null,
+    mintingConstraintBy,
     healthScore: healthScore.healthRatio,
     totalMintingCapacityShares,
     totalMintingCapacityStETH,

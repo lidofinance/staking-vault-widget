@@ -25,7 +25,7 @@ export const CarrySpread = () => {
 
   return (
     <ContentWrapper>
-      <ChartContainer>
+      <ChartContainer data-testid="carrySpreadChart">
         <ChartProportion
           height={8}
           border={ChartProportionBorderType.rounded}
@@ -35,13 +35,14 @@ export const CarrySpread = () => {
         />
       </ChartContainer>
       <TextWrapper>
-        <Text size="xxs" color="secondary">
+        <Text size="xxs" color="secondary" data-testid="carrySpreadLabel">
           Carry Spread
         </Text>
         <Text
           size="xxs"
           strong
           style={{ color: getUtilizationRatioColor(values?.carrySpreadApr) }}
+          data-testid="carrySpreadApr"
         >
           {values?.carrySpreadApr ?? '-'}
         </Text>

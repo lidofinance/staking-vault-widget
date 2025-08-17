@@ -7,3 +7,4 @@ export * from './vault-viewer';
 export * from './lazy-oracle';
 export * from './weth';
 export * from './operator-grid';
+export * from './lido-v3';

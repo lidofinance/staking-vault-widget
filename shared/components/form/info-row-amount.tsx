@@ -21,7 +21,12 @@ export const InfoRowAmount = ({
 }: InfoRowAmountProps) => {
   return (
     <DataTableRowStyled {...props}>
-      <FormatToken amount={amount} symbol={token} fallback={noDataLabel} />
+      <FormatToken
+        data-testid="rowValue"
+        amount={amount}
+        symbol={token}
+        fallback={noDataLabel}
+      />
     </DataTableRowStyled>
   );
 };

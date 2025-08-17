@@ -84,6 +84,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
         formObject={formObject}
         onSubmit={onSubmit}
         retryEvent={retryEvent}
+        data-testid="mintForm"
       >
         {children}
       </FormControllerStyled>

@@ -43,7 +43,7 @@ export const TokenAmountInputGroup = ({
   const errorMessage = inFocus && errors[errorFieldName]?.message;
 
   return (
-    <InputGroupStyled error={errorMessage} {...props}>
+    <InputGroupStyled data-testid="inputForm" error={errorMessage} {...props}>
       {hasTokenField && (
         <TokenSelectHookForm
           errorField={errorFieldName}

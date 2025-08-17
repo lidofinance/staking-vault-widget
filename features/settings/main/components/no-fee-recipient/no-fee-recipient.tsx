@@ -33,6 +33,7 @@ export const NodeOperatorFeeRecipient: FC = () => {
           weight={400}
           address={mainSettingsData?.nodeOperatorFeeRecipient}
           symbols={21}
+          dataTestId="nodeOperatorFeeRecipient"
         />
       )}
     </Wrapper>

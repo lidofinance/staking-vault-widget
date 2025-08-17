@@ -14,12 +14,14 @@ export type InputBlockProps = {
   fields: (Record<'id', string> & FieldSchema)[];
   append: UseFieldArrayAppend<EditPermissionsSchema>;
   readonly?: boolean;
+  dataTestId?: string;
 };
 
 export const InputBlock: FC<InputBlockProps> = ({
   fields,
   append,
   readonly,
+  dataTestId,
 }) => {
   const { inputError, resetError, validateInputValue } =
     useAddressValidation(fields);
@@ -62,9 +64,13 @@ export const InputBlock: FC<InputBlockProps> = ({
             onKeyDown={handleInputEvent}
             onBlur={handleInputEvent}
             autoFocus
+            data-testid={dataTestId ? `${dataTestId}-addAddressInput` : null}
           />
 
-          <ButtonClose onClick={hideInputField} />
+          <ButtonClose
+            onClick={hideInputField}
+            dataTestId={`${dataTestId}-addAddressInput-closeButton`}
+          />
         </>
       )}
 
@@ -76,6 +82,7 @@ export const InputBlock: FC<InputBlockProps> = ({
           variant="ghost"
           type="button"
           onClick={() => setInputVisibility(true)}
+          data-testid={dataTestId ? `${dataTestId}-addNewAddressButton` : null}
         >
           Add new address
         </AddAddress>

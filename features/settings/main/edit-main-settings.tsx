@@ -24,7 +24,7 @@ export const EditMainSettings = () => {
       <MainSettingsDataProvider>
         <MainSettingsProvider>
           <SectionContainer>
-            <Text size="lg" strong>
+            <Text size="lg" strong data-testid="mainSettingsTitle">
               {vaultTexts.actions.settings.title}
             </Text>
             <NodeOperator />

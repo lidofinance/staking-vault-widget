@@ -13,10 +13,14 @@ export const RemainingMintingCapacity = () => {
         <InlineLoader />
       ) : (
         <TextWrapper>
-          <Text size="xxs" color="secondary">
+          <Text
+            size="xxs"
+            color="secondary"
+            data-testid="remain-capacity-label"
+          >
             Remaining minting capacity
           </Text>
-          <Text size="xxs" strong>
+          <Text size="xxs" strong data-testid="remain-capacity">
             {values?.remainingMintingCapacityStETH ?? '-'}
           </Text>
         </TextWrapper>

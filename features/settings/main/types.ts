@@ -75,6 +75,7 @@ export type MainSettingsOverview = {
   dataType: InputDataType;
   actionText?: string;
   canEditRole: VAULT_ROOT_ROLES | 'confirmingRoles';
+  dataTestId?: string;
 };
 
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';

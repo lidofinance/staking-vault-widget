@@ -16,7 +16,7 @@ export const TotalValueUsd = () => {
       {isLoadingVault || isLoading ? (
         <InlineLoader />
       ) : (
-        <TextBlack size="xxs" strong>
+        <TextBlack data-testid="usdValue" size="xxs" strong>
           {formatDollar.format(usdAmount as number)}
         </TextBlack>
       )}

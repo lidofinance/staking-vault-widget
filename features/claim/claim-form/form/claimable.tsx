@@ -13,6 +13,7 @@ export const Claimable = () => {
       token="ETH"
       loading={claimableFeeQuery.isPending}
       noDataLabel="-"
+      data-testid="availableToClaimRow"
     />
   );
 };

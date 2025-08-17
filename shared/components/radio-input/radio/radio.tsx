@@ -24,6 +24,7 @@ export type RadioInputProps = PropsWithChildren<
   disabled?: boolean;
   ref?: Ref<HTMLInputElement>;
   valueToDisplay?: string;
+  dataTestId?: string;
 };
 
 export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
@@ -36,6 +37,7 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
       symbol,
       hasError,
       disabled,
+      dataTestId,
       ...rest
     } = props;
     const valueToDisplay =
@@ -46,6 +48,7 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
         htmlFor={rest.id}
         hasError={hasError}
         disabled={disabled}
+        data-testid={dataTestId ? `${dataTestId}-radioInputLabel` : null}
       >
         <RadioInputStyled
           type="radio"
@@ -53,12 +56,19 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
           value={value}
           ref={ref}
           disabled={disabled}
+          data-testid={dataTestId ? `${dataTestId}-radioInput` : null}
         />
-        <RadioInputSelector />
+        <RadioInputSelector
+          data-testid={dataTestId ? `${dataTestId}-radioInputSelector` : null}
+        />
         {valueToDisplay}
         {children && <Content>{children}</Content>}
         {tags && (
-          <RightDecorator>
+          <RightDecorator
+            data-testid={
+              dataTestId ? `${dataTestId}-radioInputTagsWrapper` : null
+            }
+          >
             {tags.map((tag) => (
               <Chip key={tag}>{tag}</Chip>
             ))}
