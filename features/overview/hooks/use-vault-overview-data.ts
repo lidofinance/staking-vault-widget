@@ -19,7 +19,7 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { formatBalance, formatPercent } from 'utils';
+import { formatPercent, toEthValue, toStethValue } from 'utils';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -174,11 +174,6 @@ const getVaultData = async ({
     ...rest,
   };
 };
-
-const toEthValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} ETH` : '';
-const toStethValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} stETH` : '';
 
 const selectOverviewData = ({
   vaultData,

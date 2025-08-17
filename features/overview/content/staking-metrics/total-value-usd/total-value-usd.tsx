@@ -1,7 +1,7 @@
 import { InlineLoader } from '@lidofinance/lido-ui';
 
 import { useEthUsd } from 'shared/hooks/use-eth-usd';
-import { formatDollar } from 'utils/format-number';
+import { formatDollar } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
 

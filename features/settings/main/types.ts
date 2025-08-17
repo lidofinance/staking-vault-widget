@@ -1,11 +1,12 @@
-import type { Address, Hex, DecodeFunctionDataReturnType } from 'viem';
+import type { Address } from 'viem';
 import type { z } from 'zod';
 
 import type { VAULT_ROOT_ROLES } from 'modules/vaults';
-import type { dashboardAbi } from 'abi/dashboard-abi';
 
 import type { mainSettingsFormSchema } from './consts';
 import { UseQueryResult } from '@tanstack/react-query';
+
+import type { Confirmation } from 'utils/get-confirmations';
 
 export type MainSettingsFormValidatedValues = z.infer<
   typeof mainSettingsFormSchema
@@ -21,30 +22,16 @@ export type MainSettingFormsValues = MainSettingsFormValidatedValues & {
   defaultAdmins: MainSettingsFormValidatedValues['defaultAdmins'] | null;
 };
 
-type DecodedData = DecodeFunctionDataReturnType<
-  typeof dashboardAbi,
-  'setConfirmExpiry' | 'setNodeOperatorFeeRate'
->;
-
-export type ConfirmationsData = {
-  member: Address;
-  role: Hex;
-  expiryTimestamp: bigint;
-  expiryDate: Date;
-  data: Hex;
-  decodedData: DecodedData;
-};
-
 export type VaultMainSettingsData = {
   defaultAdmins: Address[];
   nodeOperatorManagers: Address[];
   nodeOperatorFeeRecipient: Address;
 
   nodeOperatorFeeRate: bigint;
-  nodeOperatorFeeConfirmations: ConfirmationsData[];
+  nodeOperatorFeeConfirmations: Confirmation[];
 
   confirmExpiry: bigint;
-  confirmExpiryConfirmations: ConfirmationsData[];
+  confirmExpiryConfirmations: Confirmation[];
 };
 
 export type MainSettingsFormData = {

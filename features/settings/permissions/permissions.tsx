@@ -77,15 +77,15 @@ const PermissionsSection = ({
 
 export const PermissionsSettings = () => {
   return (
-    <PermissionsFormProvider>
-      <ContentWrapper>
+    <ContentWrapper>
+      <PermissionsFormProvider>
         <SectionContainer>
           {PERMISSIONS_SECTIONS.map((section) => (
             <PermissionsSection key={section.permissionsTitle} {...section} />
           ))}
           <PermissionsAction />
         </SectionContainer>
-      </ContentWrapper>
-    </PermissionsFormProvider>
+      </PermissionsFormProvider>
+    </ContentWrapper>
   );
 };

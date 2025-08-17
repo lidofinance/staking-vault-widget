@@ -1,9 +1,8 @@
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { formatBalance } from 'utils';
-
-import { formatWeiToEthShort } from 'features/settings/tier/const';
+import { formatPercent, formatWeiToEthShort } from 'utils/formats';
+import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 import {
   Wrapper,
@@ -17,10 +16,11 @@ import {
 } from './styles';
 
 type TierBaseInfoProps = {
-  tierName?: string;
-  reserveRatio?: string;
-  tierStETHLimit?: string;
-  liabilityStETH?: string;
+  tierName: string;
+  reserveRatio: number;
+  tierStETHLimit: bigint;
+  liabilityStETH: bigint;
+  isActive: boolean;
 };
 
 export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
@@ -29,8 +29,24 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
   reserveRatio,
   tierStETHLimit,
   liabilityStETH,
+  isActive,
 }) => {
-  const mintingLimit = formatWeiToEthShort(tierStETHLimit, 'stETH');
+  const baseInfo = useMemo(() => {
+    const tierStETHLimitValue = formatWeiToEthShort(tierStETHLimit, 'stETH');
+    const availableStETHValue = formatWeiToEthShort(
+      tierStETHLimit - liabilityStETH,
+    );
+
+    const reserveRatioValue = formatPercent.format(
+      Number(reserveRatio) / VAULT_TOTAL_BASIS_POINTS,
+    );
+
+    return {
+      tierStETHLimitValue,
+      availableStETHValue,
+      reserveRatioValue,
+    };
+  }, [reserveRatio, tierStETHLimit, liabilityStETH]);
 
   return (
     <Wrapper>
@@ -40,33 +56,30 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
             {tierName}
           </Text>
           <ReserveRatio>
-            <Text size="xxs">{reserveRatio}</Text>
+            <Text size="xxs">{baseInfo.reserveRatioValue}</Text>
             <Text size="xxs" color="secondary">
               Reserve ratio
             </Text>
           </ReserveRatio>
-          {/* TODO: check tier activity */}
-          <TierStatus>{'Active'}</TierStatus>
+          {isActive && <TierStatus>{'Active'}</TierStatus>}
         </TierLevel>
         <TierAmount>
           <MintingLimit>
             <Text size="xxs" color="secondary">
               Minting limit
             </Text>
-            <Text size="xxs">{mintingLimit}</Text>
+            <Text size="xxs">{baseInfo.tierStETHLimitValue}</Text>
           </MintingLimit>
           <MintingAvailable>
             <Text size="xxs" color="secondary">
               Available &nbsp;
             </Text>
-            {!!liabilityStETH && (
-              <Text size="xxs">
-                {formatBalance(BigInt(liabilityStETH)).trimmed} stETH
-              </Text>
+            {!!baseInfo.availableStETHValue && (
+              <Text size="xxs">{baseInfo.availableStETHValue}&nbsp;</Text>
             )}
-            {!!mintingLimit && (
+            {!!baseInfo.tierStETHLimitValue && (
               <Text size="xxs" color="secondary">
-                / {mintingLimit}
+                / {baseInfo.tierStETHLimitValue}
               </Text>
             )}
           </MintingAvailable>

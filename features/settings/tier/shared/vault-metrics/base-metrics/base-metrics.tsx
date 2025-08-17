@@ -15,10 +15,10 @@ import {
 
 const sectionPayloadList: SectionData[] = [
   {
-    indicator: 'totalValueETH',
+    indicator: 'vaultTotalValueETHValue',
   },
   {
-    indicator: 'liabilityAmountStETH',
+    indicator: 'vaultLiabilityStETHValue',
   },
 ];
 

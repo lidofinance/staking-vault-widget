@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useId } from 'react';
 
 import { Text } from '@lidofinance/lido-ui';
 
@@ -11,17 +11,18 @@ type FormulaProps = {
 };
 
 export const Formula: FC<FormulaProps> = ({ list }) => {
+  const uniqKey = useId();
   return (
     <FormulaWrapper>
-      {list.map((item) => {
+      {list.map((item, index) => {
         if (item.hasHighlight)
           return (
-            <Variable key={item.label} variant="gray">
+            <Variable key={`${uniqKey}-${index}-${item.label}`} variant="gray">
               {item.label}
             </Variable>
           );
         return (
-          <Text key={item.label} size="xxs">
+          <Text key={`${uniqKey}-${index}-${item.label}`} size="xxs">
             {item.label}
           </Text>
         );

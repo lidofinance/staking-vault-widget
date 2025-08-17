@@ -5,7 +5,7 @@ import { Wrapper } from './styles';
 
 type OldToNewProps = {
   old: string;
-  supposed: string;
+  supposed?: string;
 };
 
 export const OldToNew: FC<OldToNewProps> = ({ old, supposed }) => {
@@ -14,8 +14,12 @@ export const OldToNew: FC<OldToNewProps> = ({ old, supposed }) => {
       <Text size="xxs" color="secondary">
         {old}
       </Text>
-      <ArrowRight />
-      <Text size="xxs">{supposed}</Text>
+      {supposed && (
+        <>
+          <ArrowRight />
+          <Text size="xxs">{supposed}</Text>
+        </>
+      )}
     </Wrapper>
   );
 };

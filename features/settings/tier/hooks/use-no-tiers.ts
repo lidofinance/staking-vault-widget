@@ -1,41 +1,11 @@
 import invariant from 'tiny-invariant';
-import { useQuery } from '@tanstack/react-query';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
-import type { Address } from 'viem';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
 
-import { type VaultBaseInfo, useVault, DEFAULT_TIER_ID } from 'modules/vaults';
+import { useVault, DEFAULT_TIER_ID } from 'modules/vaults';
 
-type NodeOperatorTierInfoArgs = {
-  vault: VaultBaseInfo;
-  shares: LidoSDKShares;
-};
-
-export type NodeOperatorTiersInfo = {
-  operator: Address;
-  shareLimit: bigint;
-  stEthLimit: bigint;
-  liabilityShares: bigint;
-  liabilityStETH: bigint;
-  nodeOperator: Address;
-  tiers: Tier[];
-};
-
-export type Tier = {
-  id: bigint;
-  tierName: string;
-  shareLimitStETH: bigint;
-  liabilityStETH: bigint;
-  operator: Address;
-  shareLimit: bigint;
-  liabilityShares: bigint;
-  reserveRatioBP: number;
-  forcedRebalanceThresholdBP: number;
-  infraFeeBP: number;
-  liquidityFeeBP: number;
-  reservationFeeBP: number;
-};
+import { NodeOperatorTierInfoArgs, NodeOperatorTiersInfo } from './types';
 
 export type NodeOperatorTiersData = ReturnType<
   typeof selectNodeOperatorTiersData
@@ -47,11 +17,18 @@ const fetchTiersForOperator = async ({
 }: NodeOperatorTierInfoArgs): Promise<NodeOperatorTiersInfo> => {
   const { nodeOperator, operatorGrid } = vault;
 
-  const { tierIds, shareLimit, liabilityShares, ...rest } =
-    await operatorGrid.read.group([nodeOperator]);
+  const [group, vaultInfo] = await Promise.all([
+    operatorGrid.read.group([nodeOperator]),
+    operatorGrid.read.vaultInfo([vault.address]),
+  ]);
+
+  const { tierIds, shareLimit, liabilityShares, ...rest } = group;
+  const [_, vaultTierId] = vaultInfo;
+
   const writableTierIds: bigint[] = [...tierIds];
-  if (writableTierIds.length === 0) {
-    writableTierIds.push(0n);
+
+  if (vaultTierId === 0n) {
+    writableTierIds.unshift(0n);
   }
 
   const tiers = await Promise.all(
@@ -78,12 +55,14 @@ const fetchTiersForOperator = async ({
 
   return {
     tiers: tiersWithStETH,
+    group: {
+      nodeOperator,
+      shareLimit,
+      stEthLimit,
+      liabilityShares,
+      liabilityStETH,
+    },
     ...rest,
-    nodeOperator,
-    stEthLimit,
-    liabilityStETH,
-    shareLimit,
-    liabilityShares,
   };
 };
 
@@ -92,7 +71,10 @@ const selectNodeOperatorTiersData = (tierData: NodeOperatorTiersInfo) => {
   return tierData;
 };
 
-export const useNodeOperatorTiersInfo = () => {
+export const useNodeOperatorTiersInfo = (): UseQueryResult<
+  NodeOperatorTiersData,
+  Error
+> => {
   const { activeVault, queryKeys } = useVault();
   const { shares } = useLidoSDK();
 

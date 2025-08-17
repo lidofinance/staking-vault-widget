@@ -6,10 +6,10 @@ import {
 } from 'features/settings/shared/components';
 import {
   ChooseTier,
-  MintingLimit,
   Title,
   VaultMetrics,
   FormAction,
+  MintingLimit,
 } from 'features/settings/tier/shared';
 
 export const TierInfo = () => {

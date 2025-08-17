@@ -23,13 +23,11 @@ export const FormAction = () => {
     }
 
     if (selectedTierId !== defaultValues.selectedTierId) {
-      // TODO: check text
-      `You selected Tier ${selectedTierId.toString()}`;
+      return `Request Tier ${selectedTierId.toString()}`;
     }
 
     if (vaultMintingLimit !== defaultValues.vaultMintingLimit) {
-      // TODO: check text
-      `Increase tier limit`;
+      return `Request new minting limit`;
     }
 
     return 'Your current tier';
@@ -42,5 +40,9 @@ export const FormAction = () => {
     return null;
   }
 
-  return <ButtonStyled disabled={buttonDisabled}>{buttonText}</ButtonStyled>;
+  return (
+    <ButtonStyled disabled={buttonDisabled} type="submit">
+      {buttonText}
+    </ButtonStyled>
+  );
 };

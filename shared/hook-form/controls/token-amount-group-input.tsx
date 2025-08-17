@@ -27,6 +27,7 @@ export const TokenAmountInputGroup = ({
   label,
   showRightDecorator,
   leftDecorator,
+  disabled,
   ...props
 }: TokenAmountInputGroupProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
@@ -60,6 +61,7 @@ export const TokenAmountInputGroup = ({
         maxValue={maxAmount}
         onFocus={onFocus}
         onBlur={onBlur}
+        disabled={disabled}
       />
     </InputGroupStyled>
   );

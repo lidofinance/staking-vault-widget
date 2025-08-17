@@ -20,8 +20,10 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
 }) => {
   const { address } = useDappStatus();
   const { data: nodeOperatorTiersInfo, isLoading } = useNodeOperatorTiersInfo();
-  const { nodeOperator, tiers } = nodeOperatorTiersInfo ?? {};
-  const isNodeOperatorConnected = address === nodeOperator;
+  const { group, tiers } = nodeOperatorTiersInfo ?? {};
+  const isNodeOperatorConnected = address === group?.nodeOperator;
+
+  const isOnlyDefaultTier = tiers?.length === 1 && tiers[0].id === 0n;
 
   return (
     <Modal
@@ -34,7 +36,7 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
         <InlineLoaderStyled />
       ) : (
         <ContentWrapper>
-          {isNodeOperatorConnected && tiers?.length === 0 && (
+          {isNodeOperatorConnected && isOnlyDefaultTier && (
             <ReceiveReserveRatio />
           )}
           <TiersSelector tiers={tiers} />
