@@ -62,7 +62,7 @@ export const OverviewItem: FC<PropsWithChildren<ItemProps>> = ({
   return (
     <>
       <ItemWrapper
-        data-testid={`${title}-Block`}
+        data-testid={`${indicator}`}
         onClick={() => openModal(indicator)}
       >
         <DefaultContent titleView={titleView}>
