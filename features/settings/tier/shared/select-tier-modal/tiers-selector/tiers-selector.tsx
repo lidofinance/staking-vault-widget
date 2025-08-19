@@ -23,10 +23,14 @@ export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
         shouldDirty: true,
         shouldValidate: false,
       });
-      setValue('vaultMintingLimit', tier.shareLimitStETH, {
-        shouldDirty: true,
-        shouldValidate: false,
-      });
+      setValue(
+        'vaultMintingLimit',
+        tier.shareLimitStETH - tier.liabilityStETH,
+        {
+          shouldDirty: true,
+          shouldValidate: false,
+        },
+      );
       void trigger(['vaultMintingLimit', 'selectedTierLimit']);
 
       setSelectedTier(tier);
@@ -40,10 +44,15 @@ export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
     <>
       {tiers.map((tier) => {
         const isActive = values?.vault.tierId === tier.id;
+        const showSelector =
+          (values?.vault.liabilityStETH ?? 0n) <=
+          tier.shareLimitStETH - tier.liabilityStETH;
+
         return (
           <RadioSelector
             key={tier.tierName}
             tierIdString={tier.id.toString()}
+            showSelector={showSelector}
             {...register('selectedTierId')}
           >
             <TierBaseInfo

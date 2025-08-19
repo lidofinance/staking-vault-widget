@@ -1,6 +1,5 @@
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import { FormController } from 'shared/hook-form/form-controller';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -8,11 +7,12 @@ import { useDappStatus } from 'modules/web3';
 
 import {
   useEditTierSettings,
+  useNodeOperatorTiersInfo,
   useVaultTierInfo,
   VaultTierData,
 } from 'features/settings/tier/hooks';
 import { TierSettingsFormValues } from 'features/settings/tier/types';
-import { tierSettingsFormSchema } from 'features/settings/tier/const';
+import { tierSettingsFormResolver } from 'features/settings/tier/const';
 
 const prepareDefaultValues = async (
   tierInfo: VaultTierData,
@@ -30,15 +30,17 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { refetch, data } = useVaultTierInfo();
+  const { data: noTiersInfo } = useNodeOperatorTiersInfo();
 
   const promisedTierInfo = useAwaiter(data).awaiter;
+  const promisedNOTiersInfo = useAwaiter(noTiersInfo).awaiter;
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
     disabled: !isDappActive,
-    context: promisedTierInfo,
-    resolver: zodResolver(tierSettingsFormSchema),
+    context: Promise.all([promisedTierInfo, promisedNOTiersInfo]),
+    resolver: tierSettingsFormResolver,
     mode: 'all',
   });
 

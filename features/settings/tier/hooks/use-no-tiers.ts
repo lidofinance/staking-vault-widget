@@ -82,7 +82,10 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
     queryKey: [...queryKeys.base, 'node-operator-tier-info'],
     enabled: !!activeVault,
     queryFn: async () => {
-      invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');
+      invariant(
+        activeVault,
+        '[useNodeOperatorTiersInfo] activeVault is not defined',
+      );
       return await fetchTiersForOperator({ vault: activeVault, shares });
     },
     select: selectNodeOperatorTiersData,

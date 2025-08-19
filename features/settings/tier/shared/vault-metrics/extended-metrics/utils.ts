@@ -34,7 +34,7 @@ export const calcNewMetrics = ({
     };
 
   const newTotalMintingCapacityBigInt = bigIntMin(
-    newVaultMintingLimit,
+    newVaultMintingLimit ?? 0n,
     vault.totalMintingCapacityStETH,
   );
   const newMintingCapacityValue = toStethValue(newTotalMintingCapacityBigInt);

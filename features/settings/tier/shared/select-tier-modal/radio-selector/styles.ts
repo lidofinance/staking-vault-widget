@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Check } from '@lidofinance/lido-ui';
 
 export const CheckStyled = styled(Check)`
@@ -11,7 +11,7 @@ export const CheckStyled = styled(Check)`
   background-color: ${({ theme }) => theme.colors.text};
 `;
 
-export const SelectorLabel = styled.label`
+const tierSelectorStyles = css`
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -24,6 +24,14 @@ export const SelectorLabel = styled.label`
   &:last-child {
     margin-bottom: 0;
   }
+`;
+
+export const Selector = styled.div`
+  ${tierSelectorStyles};
+`;
+
+export const SelectorLabel = styled.label`
+  ${tierSelectorStyles};
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.backgroundSecondary};
