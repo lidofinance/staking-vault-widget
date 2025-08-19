@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useAccount } from 'wagmi';
 
-import { useVaultConfirmingRoles } from 'modules/vaults';
+import {
+  useVaultConfirmingRoles,
+  MultiplePermissionedSubmitButton,
+  useVault,
+} from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
 
@@ -16,6 +21,8 @@ export const FormAction = () => {
     'selectedTierId',
     'vaultMintingLimit',
   ]);
+  const { address } = useAccount();
+  const { activeVault } = useVault();
 
   const buttonText = useMemo(() => {
     if (!defaultValues || !isDirty) {
@@ -23,13 +30,11 @@ export const FormAction = () => {
     }
 
     if (selectedTierId !== defaultValues.selectedTierId) {
-      // TODO: check text
-      `You selected Tier ${selectedTierId.toString()}`;
+      return `Request Tier ${selectedTierId.toString()}`;
     }
 
     if (vaultMintingLimit !== defaultValues.vaultMintingLimit) {
-      // TODO: check text
-      `Increase tier limit`;
+      return `Request new minting limit`;
     }
 
     return 'Your current tier';
@@ -42,5 +47,22 @@ export const FormAction = () => {
     return null;
   }
 
-  return <ButtonStyled disabled={buttonDisabled}>{buttonText}</ButtonStyled>;
+  const isNodeOperator = activeVault?.nodeOperator === address;
+
+  if (isNodeOperator) {
+    return (
+      <ButtonStyled disabled={buttonDisabled} type="submit">
+        {buttonText}
+      </ButtonStyled>
+    );
+  }
+
+  return (
+    <MultiplePermissionedSubmitButton
+      disabled={buttonDisabled}
+      dashboardRoles={['defaultAdmin', 'tierChangeRequester']}
+    >
+      {buttonText}
+    </MultiplePermissionedSubmitButton>
+  );
 };

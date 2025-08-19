@@ -1,6 +1,21 @@
 import { Text } from '@lidofinance/lido-ui';
 
-export const ExpiresInItem = () => {
-  // TODO calculate time distance
-  return <Text size="xxs">{'7d 23h'}</Text>;
+import { formatExpiry } from 'utils/formats';
+
+export const ExpiresInItem = ({
+  expiryTimestamp,
+  strong,
+}: {
+  expiryTimestamp?: bigint;
+  strong?: boolean;
+}) => {
+  if (!expiryTimestamp) return null;
+
+  const expiry = formatExpiry(expiryTimestamp);
+
+  return (
+    <Text size="xxs" strong={!!strong}>
+      {expiry}
+    </Text>
+  );
 };

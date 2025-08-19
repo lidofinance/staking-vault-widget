@@ -20,11 +20,11 @@ import {
 
 export const EditMainSettings = () => {
   return (
-    <MainSettingsDataProvider>
-      <MainSettingsProvider>
-        <ContentWrapper>
+    <ContentWrapper>
+      <MainSettingsDataProvider>
+        <MainSettingsProvider>
           <SectionContainer>
-            <Text size="lg" strong>
+            <Text size="lg" strong data-testid="mainSettingsTitle">
               {vaultTexts.actions.settings.title}
             </Text>
             <NodeOperator />
@@ -33,8 +33,8 @@ export const EditMainSettings = () => {
             <Voting />
             <MainSettingsAction />
           </SectionContainer>
-        </ContentWrapper>
-      </MainSettingsProvider>
-    </MainSettingsDataProvider>
+        </MainSettingsProvider>
+      </MainSettingsDataProvider>
+    </ContentWrapper>
   );
 };

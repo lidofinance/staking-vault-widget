@@ -1,49 +1,18 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
-import type { Address } from 'viem';
-
-import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
+import { useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
   VAULT_TOTAL_BASIS_POINTS,
   VAULT_TOTAL_BASIS_POINTS_BN,
-  type VaultBaseInfo,
   useVault,
   DEFAULT_TIER_ID,
 } from 'modules/vaults';
+import { formatPercent, toEthValue, toStethValue } from 'utils';
 
-import { formatBalance, formatPercent } from 'utils';
-
-type VaultTierInfoArgs = {
-  publicClient: RegisteredPublicClient;
-  vault: VaultBaseInfo;
-  shares: LidoSDKShares;
-};
-
-export type VaultTierInfo = {
-  isVaultConnected: boolean;
-  address: Address;
-  owner: Address;
-  nodeOperator: Address;
-  totalValue: bigint;
-  liabilityStETH: bigint;
-  mintableStETH: bigint;
-  stETHLimit: bigint;
-  totalMintingCapacityStETH: bigint;
-  forcedRebalanceThresholdBP: number;
-  reserveRatioBP: number;
-  reservationFeeBP: number;
-  tierId: bigint;
-  tierShareLimit: bigint;
-  tierStETHLimit: bigint;
-  tierReserveRatioBP: bigint;
-  tierForcedRebalanceThresholdBP: bigint;
-  tierInfraFeeBP: bigint;
-  tierLiquidityFeeBP: bigint;
-  tierReservationFeeBP: bigint;
-};
+import { VaultTierInfoArgs, VaultTierInfo } from './types';
+import { getConfirmationsInfo } from 'utils/get-confirmations';
 
 export type VaultTierData = ReturnType<typeof selectTierData>;
 
@@ -69,9 +38,9 @@ const getVaultTierInfo = async ({
     record,
     isVaultConnected,
     totalValue,
-    totalMintingCapacityShares,
-    mintableShares,
-    tier,
+    vaultTotalMintingCapacityShares,
+    vaultMintableShares,
+    vaultInfo,
   ] = await readWithReport({
     publicClient,
     report: vault.report,
@@ -85,119 +54,153 @@ const getVaultTierInfo = async ({
     ] as const,
   });
 
-  const { liabilityShares } = record;
-
   const [
-    _,
+    _nodeOperator,
     tierId,
-    tierShareLimit,
-    tierReserveRatioBP,
-    tierForcedRebalanceThresholdBP,
-    tierInfraFeeBP,
-    tierLiquidityFeeBP,
-    tierReservationFeeBP,
-  ] = tier;
+    vaultShareLimit,
+    vaultReserveRatioBP,
+    vaultForcedRebalanceThresholdBP,
+    vaultInfraFeeBP,
+    vaultLiquidityFeeBP,
+    vaultReservationFeeBP,
+  ] = vaultInfo;
+  const { liabilityShares: vaultLiabilityShares } = record;
+
+  const [tier] = await readWithReport({
+    publicClient,
+    report: vault.report,
+    contracts: [operatorGrid.prepare.tier([tierId])],
+  });
+  const {
+    operator: tierOperator,
+    shareLimit: tierShareLimit,
+    liabilityShares: tierLiabilityShares,
+    reserveRatioBP: tierReserveRatioBP,
+    forcedRebalanceThresholdBP: tierForcedRebalanceThresholdBP,
+    infraFeeBP: tierInfraFeeBP,
+    liquidityFeeBP: tierLiquidityFeeBP,
+    reservationFeeBP: tierReservationFeeBP,
+  } = tier;
+
+  const tierName =
+    tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
+
+  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
+    operatorGrid as any,
+    publicClient,
+    operatorGrid.abi,
+  );
+  const lastProposal = confirmations[confirmations.length - 1];
+  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
 
   const [
-    liabilityStETH,
-    mintableStETH,
-    stETHLimit,
-    totalMintingCapacityStETH,
+    vaultLiabilityStETH,
+    vaultMintableStETH,
+    vaultStETHLimit,
+    vaultTotalMintingCapacityStETH,
     tierStETHLimit,
+    tierLiabilityStETH,
+    proposedVaultLimitStETH,
   ] = await Promise.all([
-    shares.convertToSteth(liabilityShares),
-    shares.convertToSteth(mintableShares),
-    shares.convertToSteth(shareLimit),
-    shares.convertToSteth(totalMintingCapacityShares),
+    shares.convertToSteth(vaultLiabilityShares),
+    shares.convertToSteth(vaultMintableShares),
+    shares.convertToSteth(vaultShareLimit),
+    shares.convertToSteth(vaultTotalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
+    shares.convertToSteth(tierLiabilityShares),
+    shares.convertToSteth(proposedVaultLimit),
   ]);
 
   return {
     isVaultConnected,
     address,
     nodeOperator,
-    totalValue,
-    liabilityStETH,
-    mintableStETH,
-    stETHLimit,
-    totalMintingCapacityStETH,
-    forcedRebalanceThresholdBP,
-    tierId,
-    tierShareLimit,
-    tierStETHLimit,
-    tierReserveRatioBP,
-    tierForcedRebalanceThresholdBP,
-    tierInfraFeeBP,
-    tierLiquidityFeeBP,
-    tierReservationFeeBP,
+    proposals: {
+      confirmExpiry,
+      lastProposal,
+      proposedVaultLimitStETH,
+      proposedVaultLimit,
+    },
+    vault: {
+      tierId,
+      totalValue,
+      liabilityStETH: vaultLiabilityStETH,
+      mintableStETH: vaultMintableStETH,
+      stETHLimit: vaultStETHLimit,
+      totalMintingCapacityStETH: vaultTotalMintingCapacityStETH,
+      reserveRatioBP: Number(vaultReserveRatioBP),
+      forcedRebalanceThresholdBP: Number(vaultForcedRebalanceThresholdBP),
+      infraFeeBP: Number(vaultInfraFeeBP),
+      liquidityFeeBP: Number(vaultLiquidityFeeBP),
+      reservationFeeBP: Number(vaultReservationFeeBP),
+      shareLimit: vaultShareLimit,
+    },
+    tier: {
+      id: tierId,
+      tierName,
+      operator: tierOperator,
+      shareLimit: tierShareLimit,
+      shareLimitStETH: tierStETHLimit,
+      liabilityShares: tierLiabilityShares,
+      liabilityStETH: tierLiabilityStETH,
+      reserveRatioBP: tierReserveRatioBP,
+      forcedRebalanceThresholdBP: tierForcedRebalanceThresholdBP,
+      infraFeeBP: tierInfraFeeBP,
+      liquidityFeeBP: tierLiquidityFeeBP,
+      reservationFeeBP: tierReservationFeeBP,
+    },
     ...rest,
   };
 };
 
-const toEthValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} ETH` : '';
-const toStethValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} stETH` : '';
-
 const selectTierData = (tierData: VaultTierInfo) => {
-  const {
-    totalValue,
-    reserveRatioBP,
-    liabilityStETH,
-    mintableStETH,
-    forcedRebalanceThresholdBP,
-    tierId,
-    tierStETHLimit,
-    tierInfraFeeBP,
-    tierLiquidityFeeBP,
-  } = tierData;
+  const { vault, tier } = tierData;
 
   const tierName =
-    tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
-  const tierLimitAmountStETH = toStethValue(tierStETHLimit);
-  const remainingMintingCapacityAmountStETH = toStethValue(mintableStETH);
-  const totalValueETH = toEthValue(totalValue);
-  const liabilityAmountStETH = toStethValue(liabilityStETH);
-  const reserveRatio = formatPercent.format(
-    reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-  const rebalanceThreshold = formatPercent.format(
-    forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
-  );
+    tier.id === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tier.id)}`;
+  const tierStETHLimitValue = toStethValue(tier.shareLimitStETH);
 
-  const lidoInfraFee = formatPercent.format(
-    Number(tierInfraFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+  const vaultTotalValueETHValue = toEthValue(vault.totalValue);
+  const vaultLiabilityStETHValue = toStethValue(vault.liabilityStETH);
+  const vaultReserveRatioValue = formatPercent.format(
+    vault.reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
   );
-  const lidoLiquidityFee = formatPercent.format(
-    Number(tierLiquidityFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+  const vaultRebalanceThresholdValue = formatPercent.format(
+    vault.forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
   );
-
-  const utilizationRatio =
-    tierData.totalMintingCapacityStETH === 0n
+  const vaultLidoInfraFeeValue = formatPercent.format(
+    Number(vault.infraFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+  );
+  const vaultLidoLiquidityFeeValue = formatPercent.format(
+    Number(vault.liquidityFeeBP) / VAULT_TOTAL_BASIS_POINTS,
+  );
+  const vaultUtilizationRatioValue = formatPercent.format(
+    vault.totalMintingCapacityStETH === 0n
       ? 0
       : Number(
-          ((tierData.liabilityStETH * VAULT_TOTAL_BASIS_POINTS_BN) /
-            tierData.totalMintingCapacityStETH) *
-            100n,
-        ) / VAULT_TOTAL_BASIS_POINTS;
-
-  const totalMintingCapacityAmountStETH = toStethValue(
-    tierData.totalMintingCapacityStETH,
+          (vault.liabilityStETH * VAULT_TOTAL_BASIS_POINTS_BN) /
+            vault.totalMintingCapacityStETH,
+        ) / VAULT_TOTAL_BASIS_POINTS,
+  );
+  const vaultTotalMintingCapacityStETHValue = toStethValue(
+    vault.totalMintingCapacityStETH,
   );
 
   return {
-    tierName,
-    totalValueETH,
-    reserveRatio,
-    utilizationRatio,
-    lidoInfraFee,
-    lidoLiquidityFee,
-    rebalanceThreshold,
-    liabilityAmountStETH,
-    totalMintingCapacityAmountStETH,
-    remainingMintingCapacityAmountStETH,
-    tierLimitAmountStETH,
     ...tierData,
+    vaultTotalValueETHValue,
+    vaultReserveRatioValue,
+    vaultUtilizationRatioValue,
+    vaultLidoInfraFeeValue,
+    vaultLidoLiquidityFeeValue,
+    vaultRebalanceThresholdValue,
+    vaultLiabilityStETHValue,
+    vaultTotalMintingCapacityStETHValue,
+
+    tierName,
+    tierStETHLimitValue,
+    tierStETHLimit: tier.shareLimitStETH,
+    tierLiabilityStETH: tier.liabilityStETH,
   };
 };
 

@@ -13,6 +13,7 @@ interface DisplayAddressProps {
   fields: (Record<'id', string> & RoleFieldSchema)[];
   remove: UseFieldArrayRemove;
   update: UseFieldArrayUpdate<MainSettingsFormValidatedValues>;
+  dataTestId?: string;
 }
 
 export const DisplayAddress: FC<DisplayAddressProps> = ({
@@ -20,6 +21,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
   fields,
   remove,
   update,
+  dataTestId,
 }) => {
   const onRemove = useCallback(
     (index: number) => {
@@ -53,6 +55,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
             isEditable={isEditable}
             onRemove={onRemove}
             onUpdate={onUpdate}
+            dataTestId={`${dataTestId}-${index}`}
           />
         );
       })}

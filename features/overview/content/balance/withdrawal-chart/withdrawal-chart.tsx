@@ -25,14 +25,15 @@ export const WithdrawalChart = () => {
         data={chartData}
         height={8}
         showLabels
+        data-testid="withdraw-chart"
       />
       <List>
         <ListItem color="withdrawable">
-          <Text size="xxs" color="secondary">
+          <Text size="xxs" color="secondary" data-testid="withdrawableLabel">
             Available for Immediate Withdrawal
           </Text>
         </ListItem>
-        <ListItem color="notWithdrawable">
+        <ListItem color="notWithdrawable" data-testid="norWithdrawableLabel">
           <Text size="xxs" color="secondary">
             Not withdrawable
           </Text>

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import type { VAULTS_ALL_ROLES } from 'modules/vaults';
 
-import type { VaultTierData } from './hooks';
+import type { VaultTierData, Tier } from './hooks';
 import { tierSettingsFormSchema } from './const';
 
 export type VaultTierDataKeys = keyof VaultTierData;
@@ -20,6 +20,8 @@ export type SectionPayload = SectionData & {
 
 export type TierDataContextType = {
   values?: VaultTierData;
+  selectedTier: Tier | null;
+  setSelectedTier: (tier: Tier) => void;
   isLoadingVault: boolean;
   getTierDataToRender: (payload: SectionData) => SectionPayload;
 };

@@ -5,10 +5,6 @@ export const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${({ theme }) => theme.spaceMap.md}px;
-  border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 `;
 
 export const BaseInfoContainer = styled.div`

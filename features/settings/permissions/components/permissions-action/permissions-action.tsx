@@ -29,11 +29,17 @@ export const PermissionsAction: FC = () => {
             disabled={isClearDisabled}
             variant="outlined"
             fullwidth
+            data-testid="permissions-clearButton"
           >
             Clear changes
           </Button>
         )}
-        <Button type="submit" disabled={isSubmitDisabled} fullwidth>
+        <Button
+          type="submit"
+          disabled={isSubmitDisabled}
+          fullwidth
+          data-testid="permissions-submitButton"
+        >
           {isSubmitDisabled ? 'No changes' : 'Submit transactions'}
         </Button>
       </ConnectWalletButton>

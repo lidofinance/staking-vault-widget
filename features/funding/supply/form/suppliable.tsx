@@ -19,6 +19,7 @@ export const Suppliable = () => {
       loading={isPending}
       token={token}
       disabled={disabled}
+      data-testid="availableToSupplyRow"
     />
   );
 };

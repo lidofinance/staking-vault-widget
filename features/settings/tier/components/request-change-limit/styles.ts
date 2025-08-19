@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '@lidofinance/lido-ui';
 
 export const RequestWrapper = styled.div`
   display: flex;
@@ -18,4 +19,10 @@ export const ExpiresContainer = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.xs}px;
+`;
+
+export const ButtonStyled = styled(Button)`
+  border-radius: 16px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
 `;

@@ -30,6 +30,7 @@ export const MintFormInputs = () => {
       <AddressInputHookForm
         label={vaultTexts.actions.mint.recipientLabel}
         fieldName="recipient"
+        data-testid="mintAddress"
       />
     </>
   );

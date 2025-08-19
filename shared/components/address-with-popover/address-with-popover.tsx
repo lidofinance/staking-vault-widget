@@ -15,7 +15,7 @@ import {
   PopoverWrapper,
 } from './styles';
 
-import { truncateAddress } from 'utils/truncate-address';
+import { truncateAddress } from 'utils';
 import { Address } from 'viem';
 
 export const AddressWithPopover: FC<AddressBadgeProps> = (props) => {

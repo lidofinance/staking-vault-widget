@@ -5,12 +5,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from 'react';
 import invariant from 'tiny-invariant';
 
 import { vaultTexts } from 'modules/vaults';
-
 import { useVaultTierInfo } from 'features/settings/tier/hooks';
+import { Tier } from 'features/settings/tier/hooks/types';
 
 import type {
   TierDataContextType,
@@ -45,6 +46,11 @@ export const TierDataProvider: FC<PropsWithChildren> = ({ children }) => {
     isPending: isLoadingVault,
     error,
   } = useVaultTierInfo();
+  const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
+
+  useEffect(() => {
+    setSelectedTier(tierData?.tier ?? null);
+  }, [tierData]);
 
   useEffect(() => {
     if (error) {
@@ -62,8 +68,10 @@ export const TierDataProvider: FC<PropsWithChildren> = ({ children }) => {
         payload: tierData?.[sectionEntry.indicator].toString(),
         isLoading: isLoadingVault,
       }),
+      selectedTier,
+      setSelectedTier,
     };
-  }, [isLoadingVault, tierData]);
+  }, [isLoadingVault, tierData, selectedTier]);
 
   return (
     <TierDataContext.Provider value={value}>

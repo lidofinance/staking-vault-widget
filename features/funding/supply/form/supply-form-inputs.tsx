@@ -28,6 +28,7 @@ export const SupplyFormInputs = () => {
       />
       <CheckboxHookForm
         fieldName="mintSteth"
+        data-testid="mintStethCheckbox"
         label={vaultTexts.actions.supply.mint.isMint}
         disabled={!isStethMintable}
       />

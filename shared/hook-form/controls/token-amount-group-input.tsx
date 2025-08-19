@@ -27,6 +27,7 @@ export const TokenAmountInputGroup = ({
   label,
   showRightDecorator,
   leftDecorator,
+  disabled,
   ...props
 }: TokenAmountInputGroupProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
@@ -42,7 +43,7 @@ export const TokenAmountInputGroup = ({
   const errorMessage = inFocus && errors[errorFieldName]?.message;
 
   return (
-    <InputGroupStyled error={errorMessage} {...props}>
+    <InputGroupStyled data-testid="inputForm" error={errorMessage} {...props}>
       {hasTokenField && (
         <TokenSelectHookForm
           errorField={errorFieldName}
@@ -60,6 +61,7 @@ export const TokenAmountInputGroup = ({
         maxValue={maxAmount}
         onFocus={onFocus}
         onBlur={onBlur}
+        disabled={disabled}
       />
     </InputGroupStyled>
   );

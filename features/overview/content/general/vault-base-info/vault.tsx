@@ -25,15 +25,23 @@ export const Vault = () => {
   const diameter = useIdenticonSize();
 
   return (
-    <VaultContainer>
-      <Identicon diameter={diameter} address={address ?? zeroAddress} />
+    <VaultContainer data-testid="vaultInfo">
+      <Identicon
+        diameter={diameter}
+        address={address ?? zeroAddress}
+        data-testid="vaultIcon"
+      />
       <VaultBaseInfo>
         <VaultAddressAndTier>
-          <VaultAddress symbols={4} address={address ?? zeroAddress} />
+          <VaultAddress
+            symbols={4}
+            address={address ?? zeroAddress}
+            data-testid="vaultAddress"
+          />
         </VaultAddressAndTier>
         {isVaultConnected && (
           <VaultRR>
-            <Text size="xxs">
+            <Text size="xxs" data-testid="RR">
               {reserveRatio} {general.reserveRatio}
             </Text>
             {/* TODO: add appPath when tiers settings will be ready*/}

@@ -29,6 +29,7 @@ export type AddressBadgeProps = {
   color?: TextColors;
   weight?: TextWeight;
   hoverEffect?: boolean;
+  dataTestId?: string;
 } & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
@@ -45,6 +46,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       showEnsName = false,
       hoverEffect = true,
       popoverPlacement = 'topLeft',
+      dataTestId,
       ...props
     },
     forwardedRef,
@@ -91,6 +93,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
         bgColor={bgColor}
         onClick={onClick}
         hoverEffect={hoverEffect}
+        data-testid={dataTestId ? `${dataTestId}-pillContainer` : null}
         {...props}
       >
         <AddressAvatar address={address} ensName={ensName} />
@@ -101,6 +104,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           symbols={symbols}
           address={mainText}
           crossedText={crossed}
+          data-testid={dataTestId ? `${dataTestId}-addressText` : null}
         />
       </PillContainer>
     );

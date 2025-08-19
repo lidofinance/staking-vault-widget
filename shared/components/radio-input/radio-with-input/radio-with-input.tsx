@@ -20,11 +20,13 @@ type RadioWithInputProps = Omit<InputProps, 'type'> & {
   radioProps: RadioInputProps;
   type: string;
   shouldClearField?: boolean;
+  dataTestId?: string;
 };
 
 export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
   (props, ref) => {
-    const { radioProps, shouldClearField, type, error, ...rest } = props;
+    const { radioProps, shouldClearField, type, error, dataTestId, ...rest } =
+      props;
 
     const [value, setValue] = useState<string>('');
     const [isFocused, setIsFocused] = useState(false);
@@ -80,6 +82,7 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
         hasError={hasError}
         value="custom"
         valueToDisplay={valueToDisplay}
+        dataTestId={dataTestId}
       >
         <InputStyled
           {...rest}
@@ -89,6 +92,7 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
           onClick={onClick}
           onChange={onChange}
           ref={ref}
+          data-testid={dataTestId ? `${dataTestId}-input` : null}
         />
       </RadioInput>
     );

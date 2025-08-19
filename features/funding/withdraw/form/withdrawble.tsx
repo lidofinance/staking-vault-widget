@@ -13,6 +13,7 @@ export const Withdrawable = () => {
       loading={isLoading}
       token="ETH"
       title={vaultTexts.actions.withdraw.available}
+      data-testid="availableToWithdrawRow"
     />
   );
 };

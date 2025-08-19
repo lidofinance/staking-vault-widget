@@ -1,10 +1,17 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
+import { Address } from 'viem';
 
 import { ExpiresInItem } from './content/expires-in-item';
 import { RequestBy } from './content/request-by';
-import { OldToNew } from './content/old-to-new';
-import { DefaultItem } from './content/default-item';
 import { VaultInfo } from './vault-info';
+
+import {
+  ExtendedMetrics,
+  OldToNew,
+} from 'features/settings/tier/shared/vault-metrics/extended-metrics';
+
+import { Tier } from 'features/settings/tier/hooks/types';
+import { toStethValue } from 'utils';
 
 import {
   ContentContainer,
@@ -14,8 +21,32 @@ import {
   Wrapper,
 } from './styles';
 
-export const RequestAdditionalInfo = () => {
-  // TODO: get voting info
+type RequestAdditionalInfoProps = {
+  proposedTier: Tier;
+  expiryTimestamp: bigint;
+  requestedBy: Address;
+  vaultLiabilityStETH: bigint;
+  proposedVaultMintingLimitStETH: bigint;
+};
+
+export const RequestAdditionalInfo = ({
+  proposedTier,
+  expiryTimestamp,
+  requestedBy,
+  vaultLiabilityStETH,
+  proposedVaultMintingLimitStETH,
+}: RequestAdditionalInfoProps) => {
+  const tierMintingLimit = proposedTier.shareLimitStETH;
+  const tierMintingLimitValue = toStethValue(tierMintingLimit);
+  const tierRemainingCapacity =
+    proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
+  const newTierRemainingCapacity = tierRemainingCapacity - vaultLiabilityStETH;
+  const tierRemainingCapacityValue = toStethValue(tierRemainingCapacity, false);
+  const newTierRemainingCapacityValue = toStethValue(newTierRemainingCapacity);
+
+  // show proposed vault minting limit if it's different from the proposed tier minting limit
+  const showProposedVaultMintingLimit =
+    proposedTier?.shareLimitStETH !== proposedVaultMintingLimitStETH;
 
   return (
     <Wrapper>
@@ -26,7 +57,7 @@ export const RequestAdditionalInfo = () => {
               Tier minting limit
             </Text>
             <ContentContainer>
-              <Text size="xxs">{'50 000 stETH'}</Text>
+              <Text size="xxs">{tierMintingLimitValue}</Text>
             </ContentContainer>
           </ListItem>
           <ListItem>
@@ -34,7 +65,10 @@ export const RequestAdditionalInfo = () => {
               Tier remaining capacity
             </Text>
             <ContentContainer>
-              <OldToNew old={'32 000 stETH'} supposed={'27 500 stETH'} />
+              <OldToNew
+                old={tierRemainingCapacityValue}
+                supposed={newTierRemainingCapacityValue}
+              />
             </ContentContainer>
           </ListItem>
         </List>
@@ -43,48 +77,11 @@ export const RequestAdditionalInfo = () => {
       <VaultInfo />
       <Divider />
       <ListContainer>
-        <List>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              stVault minting capacity
-            </Text>
-            <ContentContainer>
-              <OldToNew old={'5 000 stETH'} supposed={'9000 stETH'} />
-            </ContentContainer>
-          </ListItem>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              Reserve ratio
-            </Text>
-            <ContentContainer>
-              <OldToNew old={'50%'} supposed={'30%'} />
-            </ContentContainer>
-          </ListItem>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              Forced rebalance threshold
-            </Text>
-            <ContentContainer>
-              <OldToNew old={'40%'} supposed={'20%'} />
-            </ContentContainer>
-          </ListItem>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              Lido infrastructure fee
-            </Text>
-            <ContentContainer>
-              <DefaultItem payload={'1%'} />
-            </ContentContainer>
-          </ListItem>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              Lido liquidity fee
-            </Text>
-            <ContentContainer>
-              <OldToNew old={'5,5%'} supposed={'6,5%'} />
-            </ContentContainer>
-          </ListItem>
-        </List>
+        <ExtendedMetrics
+          selectedTier={proposedTier}
+          newVaultMintingLimit={proposedVaultMintingLimitStETH}
+          showRequestedVaultMintingLimit={showProposedVaultMintingLimit}
+        />
       </ListContainer>
       <Divider />
       <ListContainer>
@@ -94,9 +91,7 @@ export const RequestAdditionalInfo = () => {
               Request by
             </Text>
             <ContentContainer>
-              <RequestBy
-                address={'0x317Eb725E5eC272651e594e7D14f49ad9D46A98B'}
-              />
+              <RequestBy address={requestedBy} />
             </ContentContainer>
           </ListItem>
           <ListItem>
@@ -104,7 +99,7 @@ export const RequestAdditionalInfo = () => {
               Expires in
             </Text>
             <ContentContainer>
-              <ExpiresInItem />
+              <ExpiresInItem expiryTimestamp={expiryTimestamp} />
             </ContentContainer>
           </ListItem>
         </List>

@@ -1,6 +1,11 @@
-import { InputHTMLAttributes, forwardRef, ChangeEvent } from 'react';
+import {
+  InputHTMLAttributes,
+  forwardRef,
+  ChangeEvent,
+  PropsWithChildren,
+} from 'react';
 
-import { CheckStyled, Label } from './styles';
+import { CheckStyled, SelectorLabel } from './styles';
 
 type RadioSelectorOwnProps = {
   tierIdString: string;
@@ -8,13 +13,15 @@ type RadioSelectorOwnProps = {
   onChange: (e: ChangeEvent) => void;
 };
 
-export type RadioSelectorProps = RadioSelectorOwnProps &
-  InputHTMLAttributes<HTMLInputElement>;
+export type RadioSelectorProps = PropsWithChildren<
+  RadioSelectorOwnProps & InputHTMLAttributes<HTMLInputElement>
+>;
 
 export const RadioSelector = forwardRef<HTMLInputElement, RadioSelectorProps>(
-  ({ tierIdString, ...rest }, ref) => {
+  ({ tierIdString, children, ...rest }, ref) => {
     return (
-      <Label htmlFor={tierIdString}>
+      <SelectorLabel htmlFor={tierIdString}>
+        {children}
         <input
           id={tierIdString}
           type="radio"
@@ -23,7 +30,7 @@ export const RadioSelector = forwardRef<HTMLInputElement, RadioSelectorProps>(
           ref={ref}
         />
         <CheckStyled />
-      </Label>
+      </SelectorLabel>
     );
   },
 );

@@ -115,33 +115,49 @@ export const vaultTexts = {
     },
     tier: {
       fields: {
-        totalMintingCapacityAmountStETH: {
+        vaultTotalMintingCapacityStETHValue: {
           title: 'stVault minting capacity',
         },
-        utilizationRatio: {
+        vaultUtilizationRatioValue: {
           title: 'Utilization',
         },
-        reserveRatio: {
+        vaultReserveRatioValue: {
           title: 'Reserve ratio',
         },
-        rebalanceThreshold: {
+        vaultRebalanceThresholdValue: {
           title: 'Forced rebalance threshold',
         },
-        lidoInfraFee: {
+        vaultLidoInfraFeeValue: {
           title: 'Lido infrastructure fee',
         },
-        lidoLiquidityFee: {
+        vaultLidoLiquidityFeeValue: {
           title: 'Lido liquidity fee',
         },
-        totalValueETH: {
+        vaultTotalValueETHValue: {
           title: 'Total value',
         },
-        liabilityAmountStETH: {
+        vaultLiabilityStETHValue: {
           title: 'Liability',
         },
       },
       settingsTitle: 'Tier settings',
-      requestTitle: 'Request to change minting limit',
+      requestTitle: 'Request moving to',
+      vaultMetricsTitle: 'Current vault metrics',
+      request: {
+        showButton: {
+          show: 'See details',
+          review: 'Review request',
+          hide: 'Hide details',
+        },
+      },
+      inputMintingLimit: {
+        titleCurrent: 'stVault minting limit',
+        titleNew: 'Enter stVault minting limit',
+        errors: {
+          max: (max: bigint) =>
+            `Requested minting limit exceeds ${formatBalance(max).trimmed} stETH. Reduce the amount or select another tier.`,
+        },
+      },
     },
     settings: {
       title: 'Main settings',
@@ -406,7 +422,7 @@ export const vaultTexts = {
         grossStakingRewards: {
           title: 'Gross staking rewards',
           description:
-            'The amount of rewards earned by the validators expressed as a percentage of the volt total value, before fees deductions.',
+            'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
         noFee: {
           title: 'Node Operator Fee',
@@ -427,7 +443,22 @@ export const vaultTexts = {
         },
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
-          subTitle: 'constrained by Reserve Ratio',
+          constrainedBy: (
+            constraintBy: 'reserveRatio' | 'vault' | 'lido' | 'tier' | 'group',
+          ) => {
+            switch (constraintBy) {
+              case 'reserveRatio':
+                return 'constrained by Reserve Ratio';
+              case 'vault':
+                return 'constrained by Vault Share Limit';
+              case 'lido':
+                return 'constrained by Lido TVL';
+              case 'tier':
+                return 'constrained by Vault Tier';
+              case 'group':
+                return 'constrained by NO Group Limit';
+            }
+          },
           description:
             'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
         },
