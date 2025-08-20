@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { vaultTexts } from 'modules/vaults/consts';
 import { TierSettingsFormValues } from './types';
-import { NodeOperatorTiersData, VaultTierData } from './hooks';
+import { VaultTierData } from './hooks';
 
 export const tierSettingsFormSchema = z
   .object({
@@ -44,41 +44,23 @@ const baseTierValidation = zodResolver<
 
 export const tierSettingsFormResolver: Resolver<
   TierSettingsFormValues,
-  Promise<[VaultTierData, NodeOperatorTiersData]>,
+  Promise<VaultTierData>,
   TierSettingsFormValues
 > = async (values, awaitableContext, options) => {
   const baseResult = await baseTierValidation(values, undefined, options);
+  if (Object.keys(baseResult.errors).length > 0) return baseResult;
+
   const context = await awaitableContext;
+  if (context && context.vault.liabilityStETH >= values.vaultMintingLimit) {
+    (
+      baseResult.errors as FieldErrors<TierSettingsFormValues>
+    ).vaultMintingLimit = {
+      type: 'custom',
+      message:
+        vaultTexts.actions.tier.vaultMintingLimit.errors.lessThanVaultLiability,
+    };
 
-  if (context) {
-    const [vaultTierData, noTiersData] = context;
-    if (Object.keys(baseResult.errors).length > 0) return baseResult;
-
-    if (vaultTierData.vault.liabilityStETH > values.vaultMintingLimit) {
-      (
-        baseResult.errors as FieldErrors<TierSettingsFormValues>
-      ).vaultMintingLimit = {
-        type: 'custom',
-        message: `Value less than Vault liability`,
-      };
-
-      return baseResult;
-    }
-    const selectedTier = noTiersData.tiers.find(
-      (tier) => tier.id === BigInt(values.selectedTierId),
-    );
-    if (!selectedTier) return baseResult;
-
-    const availableStETH =
-      selectedTier.shareLimitStETH - selectedTier.liabilityStETH;
-    if (values.vaultMintingLimit > availableStETH) {
-      (
-        baseResult.errors as FieldErrors<TierSettingsFormValues>
-      ).vaultMintingLimit = {
-        type: 'custom',
-        message: `Remaining Tier capacity is less than the Vault liability`,
-      };
-    }
+    return baseResult;
   }
 
   return baseResult;

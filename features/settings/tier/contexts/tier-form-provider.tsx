@@ -7,7 +7,6 @@ import { useDappStatus } from 'modules/web3';
 
 import {
   useEditTierSettings,
-  useNodeOperatorTiersInfo,
   useVaultTierInfo,
   VaultTierData,
 } from 'features/settings/tier/hooks';
@@ -30,16 +29,14 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { refetch, data } = useVaultTierInfo();
-  const { data: noTiersInfo } = useNodeOperatorTiersInfo();
 
   const promisedTierInfo = useAwaiter(data).awaiter;
-  const promisedNOTiersInfo = useAwaiter(noTiersInfo).awaiter;
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
     disabled: !isDappActive,
-    context: Promise.all([promisedTierInfo, promisedNOTiersInfo]),
+    context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
     mode: 'all',
   });

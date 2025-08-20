@@ -42,7 +42,7 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
           {isNodeOperatorConnected && isOnlyDefaultTier && !isDisabledRRR && (
             <ReceiveReserveRatio />
           )}
-          <TiersSelector tiers={tiers} />
+          <TiersSelector tiers={tiers} closeModal={closeModal} />
         </ContentWrapper>
       )}
     </Modal>

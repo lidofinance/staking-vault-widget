@@ -158,6 +158,12 @@ export const vaultTexts = {
             `Requested minting limit exceeds ${formatBalance(max).trimmed} stETH. Reduce the amount or select another tier.`,
         },
       },
+      vaultMintingLimit: {
+        errors: {
+          lessThanVaultLiability:
+            'Requested minting limit is less than current stETH liability',
+        },
+      },
     },
     settings: {
       title: 'Main settings',

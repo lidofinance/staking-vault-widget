@@ -8,9 +8,13 @@ import { useTierData } from 'features/settings/tier/contexts';
 
 type TiersSelectorProps = {
   tiers: Tier[] | undefined;
+  closeModal: () => void;
 };
 
-export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
+export const TiersSelector: FC<TiersSelectorProps> = ({
+  tiers = [],
+  closeModal,
+}) => {
   const { register, setValue, watch, trigger } = useFormContext();
   const { values, setSelectedTier } = useTierData();
   const selectedTierId = watch('selectedTierId');
@@ -40,6 +44,8 @@ export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
   if (tiers.length === 0) return null;
   if (selectedTierId === null) return null;
 
+  const selectedTierIdField = register('selectedTierId');
+
   return (
     <>
       {tiers.map((tier) => {
@@ -53,7 +59,10 @@ export const TiersSelector: FC<TiersSelectorProps> = ({ tiers = [] }) => {
             key={tier.tierName}
             tierIdString={tier.id.toString()}
             showSelector={showSelector}
-            {...register('selectedTierId')}
+            {...selectedTierIdField}
+            onChange={(e) => {
+              void selectedTierIdField.onChange(e).then(closeModal);
+            }}
           >
             <TierBaseInfo
               tierName={tier.tierName}
