@@ -28,6 +28,7 @@ export type TierVault = {
   liabilityStETH: bigint;
   mintableStETH: bigint;
   totalMintingCapacityStETH: bigint;
+  totalMintingCapacityShares: bigint;
   reserveRatioBP: number;
   forcedRebalanceThresholdBP: number;
   infraFeeBP: number;
@@ -42,6 +43,7 @@ export type VaultTierInfoArgs = {
 };
 
 export type VaultTierInfo = {
+  lidoTVLSharesLimit: bigint;
   isVaultConnected: boolean;
   address: Address;
   owner: Address;

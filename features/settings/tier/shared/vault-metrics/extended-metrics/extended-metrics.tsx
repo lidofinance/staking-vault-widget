@@ -3,11 +3,13 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { Tier } from 'features/settings/tier/hooks';
 import { useTierData } from 'features/settings/tier/contexts';
+import { toStethValue } from 'utils';
 
 import { OldToNew } from './old-to-new';
 import { calcNewMetrics } from './utils';
+
 import { List, ListItem, ContentContainer } from './styles';
-import { toStethValue } from 'utils';
+import { MintingCapacityTooltip } from './minting-capacity-tooltip';
 
 type ExtendedMetricsProps = {
   selectedTier: Tier | null;
@@ -28,11 +30,14 @@ export const ExtendedMetrics = ({
 
     if (!isSelectedNewTier || !values) return;
 
-    return calcNewMetrics({
+    return {
+      ...calcNewMetrics({
+        newTier: selectedTier,
+        vault: values.vault,
+        newVaultMintingLimit,
+      }),
       newTier: selectedTier,
-      vault: values.vault,
-      newVaultMintingLimit,
-    });
+    };
   }, [selectedTier, values, newVaultMintingLimit]);
 
   return (
@@ -58,6 +63,10 @@ export const ExtendedMetrics = ({
               supposed={newMetrics?.newMintingCapacityValue}
             />
           )}
+
+          <MintingCapacityTooltip
+            tierId={newMetrics?.newTier?.id ?? values?.vault.tierId}
+          />
         </ContentContainer>
       </ListItem>
       <ListItem>

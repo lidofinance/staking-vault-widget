@@ -8,6 +8,7 @@ import {
   VAULT_TOTAL_BASIS_POINTS_BN,
   useVault,
   DEFAULT_TIER_ID,
+  getLidoV3Contract,
 } from 'modules/vaults';
 import { formatPercent, toEthValue, toStethValue } from 'utils';
 
@@ -33,6 +34,8 @@ const getVaultTierInfo = async ({
     operatorGrid,
     ...rest
   } = vault;
+
+  const lidoV3Contract = getLidoV3Contract(publicClient);
 
   const [
     record,
@@ -101,6 +104,7 @@ const getVaultTierInfo = async ({
     tierStETHLimit,
     tierLiabilityStETH,
     proposedVaultLimitStETH,
+    lidoTVLSharesLimit,
   ] = await Promise.all([
     shares.convertToSteth(vaultLiabilityShares),
     shares.convertToSteth(vaultMintableShares),
@@ -109,9 +113,11 @@ const getVaultTierInfo = async ({
     shares.convertToSteth(tierShareLimit),
     shares.convertToSteth(tierLiabilityShares),
     shares.convertToSteth(proposedVaultLimit),
+    lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
   return {
+    lidoTVLSharesLimit,
     isVaultConnected,
     address,
     nodeOperator,
@@ -128,6 +134,7 @@ const getVaultTierInfo = async ({
       mintableStETH: vaultMintableStETH,
       stETHLimit: vaultStETHLimit,
       totalMintingCapacityStETH: vaultTotalMintingCapacityStETH,
+      totalMintingCapacityShares: vaultTotalMintingCapacityShares,
       reserveRatioBP: Number(vaultReserveRatioBP),
       forcedRebalanceThresholdBP: Number(vaultForcedRebalanceThresholdBP),
       infraFeeBP: Number(vaultInfraFeeBP),

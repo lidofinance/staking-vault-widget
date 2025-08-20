@@ -34,6 +34,7 @@ const fetchTiersForOperator = async ({
   const tiers = await Promise.all(
     writableTierIds.map((tierId) => operatorGrid.read.tier([tierId])),
   );
+
   const [stEthLimit, liabilityStETH] = await Promise.all([
     shares.convertToSteth(shareLimit),
     shares.convertToSteth(liabilityShares),

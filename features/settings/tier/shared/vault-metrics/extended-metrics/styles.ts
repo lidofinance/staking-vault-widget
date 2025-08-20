@@ -23,4 +23,5 @@ export const ListItem = styled.li`
 export const ContentContainer = styled.div`
   display: flex;
   align-items: center;
+  gap: 2px;
 `;
