@@ -20,6 +20,8 @@ import {
   ListItem,
   Wrapper,
 } from './styles';
+import { useEditTierSettings } from '../../hooks';
+import { ApproveRequest } from './approve-request/approve-request';
 
 type RequestAdditionalInfoProps = {
   proposedTier: Tier;
@@ -36,6 +38,7 @@ export const RequestAdditionalInfo = ({
   vaultLiabilityStETH,
   proposedVaultMintingLimitStETH,
 }: RequestAdditionalInfoProps) => {
+  useEditTierSettings();
   const tierMintingLimit = proposedTier.shareLimitStETH;
   const tierMintingLimitValue = toStethValue(tierMintingLimit);
   const tierRemainingCapacity =
@@ -103,6 +106,9 @@ export const RequestAdditionalInfo = ({
             </ContentContainer>
           </ListItem>
         </List>
+      </ListContainer>
+      <ListContainer>
+        <ApproveRequest />
       </ListContainer>
     </Wrapper>
   );

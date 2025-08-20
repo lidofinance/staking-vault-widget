@@ -27,7 +27,9 @@ export const RequestChangeLimit = () => {
   const proposedTierId = proposal?.decodedData.args[1];
   const proposedVaultMintingLimitStETH =
     vaultTierInfo?.proposals.proposedVaultLimitStETH;
-  const proposedTier = noTiersInfo?.tiers[Number(proposedTierId)];
+  const proposedTier = noTiersInfo?.tiers.find(
+    (tier) => tier.id === proposedTierId,
+  );
   const proposer = proposal?.member;
   const isTheSameUser = proposer === address;
 
@@ -40,10 +42,7 @@ export const RequestChangeLimit = () => {
       : vaultTexts.actions.tier.request.showButton.review;
 
   const isShowAdditionalInfoComp =
-    showAdditionalInfo &&
-    proposedTier &&
-    proposal &&
-    !!proposedVaultMintingLimitStETH;
+    showAdditionalInfo && proposal && !!proposedVaultMintingLimitStETH;
 
   return (
     <RequestWrapper>
