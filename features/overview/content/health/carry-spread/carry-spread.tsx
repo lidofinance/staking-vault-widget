@@ -7,7 +7,7 @@ import {
   ChartProportionBorderSize,
 } from '@lidofinance/lido-ui';
 
-import { getUtilizationRatioColor } from 'utils';
+import { getCarrySpreadColor } from 'utils';
 
 import { useHealthChart } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
@@ -41,7 +41,7 @@ export const CarrySpread = () => {
         <Text
           size="xxs"
           strong
-          style={{ color: getUtilizationRatioColor(values?.carrySpreadApr) }}
+          style={{ color: getCarrySpreadColor(values?.carrySpreadApr) }}
           data-testid="carrySpreadApr"
         >
           {values?.carrySpreadApr ?? '-'}

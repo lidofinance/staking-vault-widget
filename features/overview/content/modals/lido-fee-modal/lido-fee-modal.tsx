@@ -1,7 +1,11 @@
 import { Formula, OverviewModal } from 'features/overview/shared';
 import { FormulaItem } from 'features/overview/types';
+import { useVaultOverview } from '../../../vault-overview';
 
-const formulasMap: Record<'infraFee' | 'liquidityFee', FormulaItem[]> = {
+const formulasMap: Record<
+  'infraFee' | 'liquidityFee' | 'annualReservationFee',
+  FormulaItem[]
+> = {
   infraFee: [
     {
       label: 'Annual Infrastructure fee',
@@ -61,7 +65,44 @@ const formulasMap: Record<'infraFee' | 'liquidityFee', FormulaItem[]> = {
       hasHighlight: false,
     },
     {
-      label: 'stETH APR',
+      label: 'Lido Core APR',
+      type: 'variable',
+      hasHighlight: true,
+    },
+  ],
+  annualReservationFee: [
+    {
+      label: 'Annual Reservation Liquidity fee',
+      type: 'variable',
+      hasHighlight: true,
+    },
+    {
+      label: '=',
+      type: 'operation',
+      hasHighlight: false,
+    },
+    {
+      label: '8%',
+      type: 'variable',
+      hasHighlight: false,
+    },
+    {
+      label: '×',
+      type: 'operation',
+      hasHighlight: false,
+    },
+    {
+      label: 'stETH minting capacity',
+      type: 'variable',
+      hasHighlight: true,
+    },
+    {
+      label: '×',
+      type: 'operation',
+      hasHighlight: false,
+    },
+    {
+      label: 'Lido Core APR',
       type: 'variable',
       hasHighlight: true,
     },
@@ -69,10 +110,17 @@ const formulasMap: Record<'infraFee' | 'liquidityFee', FormulaItem[]> = {
 };
 
 export const LidoFeeModal = () => {
+  const { values } = useVaultOverview();
+
   return (
     <OverviewModal name="unsettledLidoFees">
-      <Formula list={formulasMap.infraFee} />
-      <Formula list={formulasMap.liquidityFee} />
+      {values?.vaultData.infraFeeBP && <Formula list={formulasMap.infraFee} />}
+      {values?.vaultData.liquidityFeeBP && (
+        <Formula list={formulasMap.liquidityFee} />
+      )}
+      {values?.vaultData.reservationFeeBP && (
+        <Formula list={formulasMap.annualReservationFee} />
+      )}
     </OverviewModal>
   );
 };
