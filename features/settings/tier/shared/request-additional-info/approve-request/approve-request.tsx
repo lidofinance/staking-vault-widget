@@ -6,7 +6,7 @@ import { ButtonStyled } from './styles';
 
 export const ApproveRequest = () => {
   const { approveMovingTier, approving } = useChangeTierRequest();
-  const { data: vaultTierInfo } = useVaultTierInfo();
+  const { data: vaultTierInfo, refetch } = useVaultTierInfo();
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
 
@@ -15,7 +15,8 @@ export const ApproveRequest = () => {
     if (typeof tierId !== 'bigint' || typeof mintingLimit !== 'bigint') return;
 
     await approveMovingTier(tierId, mintingLimit);
-  }, [approveMovingTier, proposal]);
+    await refetch();
+  }, [approveMovingTier, refetch, proposal]);
 
   if (!proposal) return null;
 
