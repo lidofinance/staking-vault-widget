@@ -10,7 +10,7 @@ import {
 
 import { ButtonStyled } from './styles';
 
-export const FormAction = () => {
+export const TierFormAction = () => {
   const {
     watch,
     formState: { isDirty, isSubmitting, isValid, defaultValues },
@@ -40,7 +40,8 @@ export const FormAction = () => {
     return 'Your current tier';
   }, [selectedTierId, vaultMintingLimit, defaultValues, isDirty]);
 
-  const showButton = hasConfirmingRole || hasAdmin || hasNodeOperatorManager;
+  const showButton =
+    (hasConfirmingRole || hasAdmin || hasNodeOperatorManager) && isDirty;
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
 
   if (!showButton) {
