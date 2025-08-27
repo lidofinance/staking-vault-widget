@@ -10,7 +10,7 @@ import {
   OldToNew,
 } from 'features/settings/tier/shared/vault-metrics/extended-metrics';
 
-import { Tier } from 'features/settings/tier/hooks/types';
+import type { Tier } from 'features/settings/tier/hooks/types';
 import { toStethValue } from 'utils';
 
 import {

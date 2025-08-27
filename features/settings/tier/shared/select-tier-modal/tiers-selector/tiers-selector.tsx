@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { TierBaseInfo } from 'features/settings/tier/shared/tier-base-info';
-import { Tier } from 'features/settings/tier/hooks/types';
+import type { Tier } from 'features/settings/tier/hooks/types';
 import { RadioSelector } from '../radio-selector';
 import { useTierData } from 'features/settings/tier/contexts';
 

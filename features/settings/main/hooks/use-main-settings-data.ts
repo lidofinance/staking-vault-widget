@@ -49,7 +49,7 @@ export const useVaultSettingsData = () => {
       ]);
 
       const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-        activeVault.dashboard as any,
+        activeVault.dashboard.address,
         publicClient,
         dashboard.abi,
       );

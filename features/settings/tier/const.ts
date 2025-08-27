@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { vaultTexts } from 'modules/vaults/consts';
 import { TierSettingsFormValues } from './types';
 import { VaultTierData } from './hooks';
+import { awaitWithTimeout } from '../../../utils/await-with-timeout';
+import invariant from 'tiny-invariant';
 
 export const tierSettingsFormSchema = z
   .object({
@@ -50,7 +52,12 @@ export const tierSettingsFormResolver: Resolver<
   const baseResult = await baseTierValidation(values, undefined, options);
   if (Object.keys(baseResult.errors).length > 0) return baseResult;
 
-  const context = await awaitableContext;
+  invariant(
+    awaitableContext,
+    '[tierSettingsFormResolver] context is undefined',
+  );
+
+  const context = await awaitWithTimeout(awaitableContext, 5000);
   if (context && context.vault.liabilityStETH >= values.vaultMintingLimit) {
     (
       baseResult.errors as FieldErrors<TierSettingsFormValues>

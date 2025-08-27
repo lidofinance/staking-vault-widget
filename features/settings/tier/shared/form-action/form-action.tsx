@@ -60,7 +60,7 @@ export const FormAction = () => {
   return (
     <MultiplePermissionedSubmitButton
       disabled={buttonDisabled}
-      dashboardRoles={['defaultAdmin', 'tierChangeRequester']}
+      dashboardRoles={['tierChangeRequester']}
     >
       {buttonText}
     </MultiplePermissionedSubmitButton>

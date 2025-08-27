@@ -1,18 +1,7 @@
-import {
-  Abi,
-  decodeFunctionData,
-  GetContractReturnType,
-  Address,
-  Hex,
-} from 'viem';
-import { AccessControlConfirmableAbi } from '@lidofinance/lsv-cli/dist/abi/AccessControlConfirmable';
+import { Abi, decodeFunctionData, Address, Hex, getContract } from 'viem';
 
 import { type RegisteredPublicClient } from 'modules/web3';
-
-type ConfirmationContract = GetContractReturnType<
-  typeof AccessControlConfirmableAbi,
-  RegisteredPublicClient
->;
+import { confirmationAbi } from 'abi/confirmation-abi';
 
 // Define argument types for each function
 export type FunctionArgsMap = {
@@ -40,8 +29,8 @@ export type Confirmation = {
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
-export const getConfirmationsInfo = async <T extends ConfirmationContract>(
-  contract: T,
+export const getConfirmationsInfo = async (
+  address: Address,
   publicClient: RegisteredPublicClient,
   abi: Abi,
 ): Promise<{
@@ -49,6 +38,12 @@ export const getConfirmationsInfo = async <T extends ConfirmationContract>(
   confirmationsCount: bigint[];
   confirmExpiry: bigint;
 }> => {
+  const contract = getContract({
+    address,
+    abi: confirmationAbi,
+    client: { public: publicClient },
+  });
+
   const [confirmExpiry, currentBlock] = await Promise.all([
     contract.read.getConfirmExpiry(),
     publicClient.getBlockNumber(),

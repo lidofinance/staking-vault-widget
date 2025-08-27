@@ -95,8 +95,8 @@ const PermissionsSection = ({
 
 export const PermissionsSettings = () => {
   return (
-    <ContentWrapper>
-      <PermissionsFormProvider>
+    <PermissionsFormProvider>
+      <ContentWrapper>
         <SectionContainer>
           {PERMISSIONS_SECTIONS.map((section) => (
             <PermissionsSection
@@ -107,7 +107,7 @@ export const PermissionsSettings = () => {
           ))}
           <PermissionsAction />
         </SectionContainer>
-      </PermissionsFormProvider>
-    </ContentWrapper>
+      </ContentWrapper>
+    </PermissionsFormProvider>
   );
 };

@@ -89,7 +89,7 @@ const getVaultTierInfo = async ({
     tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
 
   const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-    operatorGrid as any,
+    operatorGrid.address,
     publicClient,
     operatorGrid.abi,
   );
