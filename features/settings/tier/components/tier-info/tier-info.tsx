@@ -8,7 +8,7 @@ import {
   ChooseTier,
   Title,
   VaultMetrics,
-  FormAction,
+  TierFormAction,
   MintingLimit,
 } from 'features/settings/tier/shared';
 
@@ -20,7 +20,7 @@ export const TierInfo = () => {
         <ChooseTier />
         <MintingLimit />
         <VaultMetrics />
-        <FormAction />
+        <TierFormAction />
       </SectionContainer>
     </ContentWrapper>
   );

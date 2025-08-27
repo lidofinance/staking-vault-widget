@@ -9,14 +9,16 @@ import {
 } from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
+import { useVaultTierInfo } from '../../hooks';
 
-export const FormAction = () => {
+export const TierFormAction = () => {
   const {
     watch,
     formState: { isDirty, isSubmitting, isValid, defaultValues },
   } = useFormContext();
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
+  const { data: vaultTierInfo } = useVaultTierInfo();
   const [selectedTierId, vaultMintingLimit] = watch([
     'selectedTierId',
     'vaultMintingLimit',
@@ -40,7 +42,9 @@ export const FormAction = () => {
     return 'Your current tier';
   }, [selectedTierId, vaultMintingLimit, defaultValues, isDirty]);
 
-  const showButton = hasConfirmingRole || hasAdmin || hasNodeOperatorManager;
+  const showButton =
+    (hasConfirmingRole || hasAdmin || hasNodeOperatorManager) &&
+    vaultTierInfo?.tier.id !== BigInt(selectedTierId);
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
 
   if (!showButton) {
