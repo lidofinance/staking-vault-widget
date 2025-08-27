@@ -18,7 +18,7 @@ export const NetStakingRewards = () => {
             Net staking rewards
           </Text>
           <TextBlack data-testid="netRewardsValue" size="xxs" strong>
-            {values?.netStakingRewardsEth || '-'}
+            {values?.netStakingRewardsEthLong || '-'}
           </TextBlack>
         </TextWrapper>
       )}

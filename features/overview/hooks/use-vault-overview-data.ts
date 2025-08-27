@@ -20,7 +20,7 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { formatBalance, formatPercent } from 'utils';
+import { formatBalance, FormatBalanceArgs, formatPercent } from 'utils';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -197,8 +197,10 @@ const getVaultData = async ({
   };
 };
 
-const toEthValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} ETH` : '';
+const toEthValue = (value: bigint | undefined, options?: FormatBalanceArgs) =>
+  typeof value === 'bigint'
+    ? `${formatBalance(value, options).trimmed} ETH`
+    : '';
 const toStethValue = (value: bigint | undefined) =>
   typeof value === 'bigint' ? `${formatBalance(value).trimmed} stETH` : '';
 
@@ -262,7 +264,6 @@ const selectOverviewData = ({
   const undisbursedNodeOperatorFee = toEthValue(nodeOperatorUnclaimedFee);
 
   const unsettledLidoFees = toEthValue(obligations.unsettledLidoFees);
-
   const feeObligationEth = toEthValue(
     obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
   );
@@ -327,6 +328,9 @@ const selectOverviewData = ({
     rebaseRewardEth: toStethValue(rebaseReward),
     grossStakingRewardsEth: toEthValue(grossStakingRewards),
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
+    netStakingRewardsEthLong: toEthValue(netStakingRewards, {
+      adaptiveDecimals: true,
+    }),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
     carrySpreadApr,
