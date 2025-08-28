@@ -1,11 +1,12 @@
+import { useRef } from 'react';
 import { Identicon, Text } from '@lidofinance/lido-ui';
 import Link from 'next/link';
 import { zeroAddress } from 'viem';
 
 import { vaultTexts } from 'modules/vaults';
+import { AddressPopover } from 'shared/components/address-badge/address-popover';
 
 import { useIdenticonSize } from 'features/overview/inner';
-
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import {
@@ -19,6 +20,7 @@ import {
 const { general } = vaultTexts.metrics;
 
 export const Vault = () => {
+  const ref = useRef<HTMLDivElement>(null);
   const { values } = useVaultOverview();
 
   const { address, reserveRatio, isVaultConnected } = values || {};
@@ -34,11 +36,20 @@ export const Vault = () => {
       />
       <VaultBaseInfo>
         <VaultAddressAndTier>
-          <VaultAddress
-            symbols={4}
+          <AddressPopover
             address={address ?? zeroAddress}
-            data-testid="vaultAddress"
-          />
+            anchorRef={ref}
+            placement="topLeft"
+            mode="hover"
+            isOpen
+          >
+            <VaultAddress
+              ref={ref}
+              symbols={4}
+              address={address ?? zeroAddress}
+              data-testid="vaultAddress"
+            />
+          </AddressPopover>
         </VaultAddressAndTier>
         {isVaultConnected && (
           <VaultRR>
