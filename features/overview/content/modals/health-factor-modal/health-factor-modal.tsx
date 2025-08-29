@@ -17,7 +17,7 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-import { List, ListItem } from './styles';
+import { HealthFactorHint, List, ListItem } from './styles';
 
 const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   carrySpread: [
@@ -88,6 +88,37 @@ const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
 
 const { health } = vaultTexts.metrics.modals;
 
+type HealthColor = 'rebalance' | 'danger' | 'warning' | 'success';
+
+const colorTextsMap: Record<HealthColor, string> = {
+  rebalance: 'Forced rebalance',
+  danger: 'At risk',
+  warning: 'Needs attention',
+  success: 'Healthy',
+};
+
+const getHealthColor = (
+  healthFactorNumber: number | undefined,
+): [HealthColor, string] => {
+  if (typeof healthFactorNumber === 'undefined') {
+    return ['success', ''];
+  }
+
+  let color: HealthColor;
+
+  if (healthFactorNumber <= 100) {
+    color = 'rebalance';
+  } else if (healthFactorNumber <= 105) {
+    color = 'danger';
+  } else if (healthFactorNumber <= 125) {
+    color = 'warning';
+  } else {
+    color = 'success';
+  }
+
+  return [color, colorTextsMap[color]];
+};
+
 export const HealthFactorModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
 
@@ -100,9 +131,15 @@ export const HealthFactorModal = () => {
   } = values || {};
 
   const { chartData } = useHealthChart(healthFactorNumber);
+  const [colorName, hint] = getHealthColor(healthFactorNumber);
 
   return (
-    <OverviewModal name="healthFactorNumber">
+    <OverviewModal
+      name="healthFactorNumber"
+      amountRightDecorator={
+        <HealthFactorHint color={colorName}>{hint}</HealthFactorHint>
+      }
+    >
       <ModalSection>
         <ChartProportion
           loading={isLoadingVault}
