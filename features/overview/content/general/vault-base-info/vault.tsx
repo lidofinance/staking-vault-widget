@@ -24,6 +24,7 @@ export const Vault = () => {
   const { values } = useVaultOverview();
 
   const { address, reserveRatio, isVaultConnected } = values || {};
+  const vaultAddress = address ?? zeroAddress;
 
   const diameter = useIdenticonSize();
 
@@ -31,13 +32,13 @@ export const Vault = () => {
     <VaultContainer data-testid="vaultInfo">
       <Identicon
         diameter={diameter}
-        address={address ?? zeroAddress}
+        address={vaultAddress}
         data-testid="vaultIcon"
       />
       <VaultBaseInfo>
         <VaultAddressAndTier>
           <AddressPopover
-            address={address ?? zeroAddress}
+            address={vaultAddress}
             anchorRef={ref}
             placement="topLeft"
             mode="hover"
@@ -46,7 +47,7 @@ export const Vault = () => {
             <VaultAddress
               ref={ref}
               symbols={4}
-              address={address ?? zeroAddress}
+              address={vaultAddress}
               data-testid="vaultAddress"
             />
           </AddressPopover>

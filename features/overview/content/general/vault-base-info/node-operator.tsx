@@ -22,6 +22,7 @@ export const NodeOperator = () => {
   const { values } = useVaultOverview();
 
   const { nodeOperator, nodeOperatorFeeRate } = values || {};
+  const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (
     <NodeOperatorContainer data-testid="noInfo">
@@ -30,7 +31,7 @@ export const NodeOperator = () => {
           {general.nodeOperator}
         </Text>
         <AddressPopover
-          address={nodeOperator ?? zeroAddress}
+          address={nodeOperatorAddress}
           anchorRef={ref}
           placement="topLeft"
           mode="hover"
@@ -39,12 +40,12 @@ export const NodeOperator = () => {
           <NodeOperatorAddressWrapper ref={ref}>
             <Identicon
               diameter={16}
-              address={nodeOperator ?? zeroAddress}
+              address={nodeOperatorAddress}
               data-testid="noIcon"
             />
             <NodeOperatorAddress
               symbols={4}
-              address={nodeOperator ?? zeroAddress}
+              address={nodeOperatorAddress}
               data-testid="noAddress"
             />
           </NodeOperatorAddressWrapper>
