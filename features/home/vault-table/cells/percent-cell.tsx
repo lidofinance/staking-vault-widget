@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { formatPercent } from 'utils/format-number';
+import { formatPercent } from 'utils';
 
 import { Percent } from './styles';
 import { DATA_UNAVAILABLE } from 'consts/text';

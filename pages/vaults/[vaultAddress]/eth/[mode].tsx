@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 
 type FundingModePageParams = {
   mode: 'supply' | 'withdraw';
-  address: Address;
+  vaultAddress: Address;
 };
 
 const Funding: FC = () => {

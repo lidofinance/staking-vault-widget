@@ -23,6 +23,7 @@ type InputAmountProps = {
   onMaxClick?: (event: MouseEvent<HTMLButtonElement>, maxValue: bigint) => void;
   maxValue?: bigint;
   isLocked?: boolean;
+  showRightDecorator?: boolean;
 } & Omit<ComponentProps<typeof Input>, 'onChange' | 'value'>;
 
 const parseEtherSafe = (value: string) => {
@@ -40,6 +41,7 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
       value,
       onMaxClick,
       rightDecorator,
+      showRightDecorator = true,
       isLocked,
       maxValue,
       placeholder = '0',
@@ -156,7 +158,8 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
         {...props}
         placeholder={placeholder}
         rightDecorator={
-          rightDecorator ?? (
+          showRightDecorator &&
+          (rightDecorator ?? (
             <>
               <InputDecoratorMaxButton
                 onClick={handleClickMax}
@@ -164,7 +167,7 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
               />
               {isLocked ? <InputDecoratorLocked /> : undefined}
             </>
-          )
+          ))
         }
         inputMode="decimal"
         defaultValue={defaultValue}
