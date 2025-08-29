@@ -109,17 +109,30 @@ const formulasMap: Record<
   ],
 };
 
+const dataTestIdPrefix = 'unsettledLidoFees-modal';
+
 export const LidoFeeModal = () => {
   const { values } = useVaultOverview();
 
   return (
     <OverviewModal name="unsettledLidoFees">
-      {values?.vaultData.infraFeeBP && <Formula list={formulasMap.infraFee} />}
+      {values?.vaultData.infraFeeBP && (
+        <Formula
+          list={formulasMap.infraFee}
+          dataTestId={`${dataTestIdPrefix}-infraFee-formula`}
+        />
+      )}
       {values?.vaultData.liquidityFeeBP && (
-        <Formula list={formulasMap.liquidityFee} />
+        <Formula
+          list={formulasMap.liquidityFee}
+          dataTestId={`${dataTestIdPrefix}-liquidityFee-formula`}
+        />
       )}
       {values?.vaultData.reservationFeeBP && (
-        <Formula list={formulasMap.annualReservationFee} />
+        <Formula
+          list={formulasMap.annualReservationFee}
+          dataTestId={`${dataTestIdPrefix}-annualReservationFee-formula`}
+        />
       )}
     </OverviewModal>
   );

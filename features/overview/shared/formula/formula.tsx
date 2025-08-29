@@ -8,12 +8,14 @@ import { FormulaWrapper, Variable } from './styles';
 
 type FormulaProps = {
   list: FormulaItem[];
+  dataTestId?: string;
 };
 
-export const Formula: FC<FormulaProps> = ({ list }) => {
+export const Formula: FC<FormulaProps> = ({ list, dataTestId }) => {
   const uniqKey = useId();
+
   return (
-    <FormulaWrapper>
+    <FormulaWrapper data-testid={dataTestId}>
       {list.map((item, index) => {
         if (item.hasHighlight)
           return (

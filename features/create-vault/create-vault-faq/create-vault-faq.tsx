@@ -6,7 +6,7 @@ import { FeeStructure, Roles } from './items';
 
 export const CreateVaultFaq: FC = () => {
   return (
-    <FAQ.List>
+    <FAQ.List data-testid="createVault-faqSection">
       <Roles defaultExpanded />
       <FeeStructure />
     </FAQ.List>

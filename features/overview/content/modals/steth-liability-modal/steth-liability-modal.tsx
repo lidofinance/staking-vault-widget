@@ -16,6 +16,8 @@ import { useVaultOverview } from 'features/overview/vault-overview';
 
 const { liabilityStETH } = vaultTexts.metrics.modals;
 
+const dataTestIdPrefix = 'liabilityStETH-modal';
+
 export const StethLiabilityModal = () => {
   const chartData = useStEthChart();
   const { isLoadingVault, values } = useVaultOverview();
@@ -39,12 +41,14 @@ export const StethLiabilityModal = () => {
         data={chartData}
         height={16}
         showLabels
+        data-testid={`${dataTestIdPrefix}-chart`}
       />
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.utilizationRatio.title}
         amount={utilizationRatio}
         description={liabilityStETH.utilizationRatio.description}
+        dataTestId={`${dataTestIdPrefix}-utilizationRatioSection`}
       />
       <SectionDivider />
       <ModalSection
@@ -54,30 +58,35 @@ export const StethLiabilityModal = () => {
         )}
         amount={totalMintingCapacityStETH}
         description={liabilityStETH.totalStethMintingCapacity.description}
+        dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}
       />
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.stethMintingLimit.title}
         amount={tierLimitStETH}
         description={liabilityStETH.stethMintingLimit.description}
+        dataTestId={`${dataTestIdPrefix}-totalStethMintingLimitSection`}
       />
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.remainingCapacity.title}
         amount={remainingMintingCapacityStETH}
         description={liabilityStETH.remainingCapacity.description}
+        dataTestId={`${dataTestIdPrefix}-remainingCapacitySection`}
       />
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.reserveRatio.title}
         amount={reserveRatio}
         description={liabilityStETH.reserveRatio.description}
+        dataTestId={`${dataTestIdPrefix}-reserveRatioSection`}
       />
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.forcedRebalanceThreshold.title}
         amount={rebalanceThreshold}
         description={liabilityStETH.forcedRebalanceThreshold.description}
+        dataTestId={`${dataTestIdPrefix}-forcedRebalanceThresholdSection`}
       />
     </OverviewModal>
   );

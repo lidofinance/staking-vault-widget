@@ -85,10 +85,13 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
           <ResultOverview transactionResult={mutation.data} />
         ) : (
           <>
-            <FormSubtitle>
+            <FormSubtitle data-testid="createVault-formSubtitle">
               Step {step} of {CREATE_VAULT_STEPS}
             </FormSubtitle>
-            <FormTitle> {SECTION_NAMES_BY_STEP[step]}</FormTitle>
+            <FormTitle data-testid="createVault-formTitle">
+              {' '}
+              {SECTION_NAMES_BY_STEP[step]}
+            </FormTitle>
             <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
             <Confirmation isShown={step === CREATE_VAULT_FORM_STEPS.confirm} />
           </>

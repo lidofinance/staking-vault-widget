@@ -44,6 +44,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
       open={name === currentModal}
       onClose={closeModal}
       windowSize="md"
+      data-testid={`${name}-modal`}
     >
       <ContentWrapper>
         <AmountWrapper>
@@ -51,7 +52,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
             <AmountLoader />
           ) : (
             <>
-              <Text size="lg" strong>
+              <Text size="lg" strong data-testid={`${name}-modal-amount`}>
                 {formattedPayload || '-'}
               </Text>
               {amountRightDecorator}
@@ -61,15 +62,24 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
         {isLoadingVault ? (
           <InlineLoader />
         ) : (
-          descriptionTextList.map((text) => (
-            <Text key={text} size="xs">
+          descriptionTextList.map((text, index) => (
+            <Text
+              key={text}
+              size="xs"
+              data-testid={`${name}-modal-descriptionText-${index}`}
+            >
               {text}
             </Text>
           ))
         )}
         {children}
         {!isLoadingVault && learnMoreLink && (
-          <Link href={learnMoreLink}>Learn more</Link>
+          <Link
+            href={learnMoreLink}
+            data-testid={`${name}-modal-learnMoreLink`}
+          >
+            Learn more
+          </Link>
         )}
       </ContentWrapper>
     </Modal>

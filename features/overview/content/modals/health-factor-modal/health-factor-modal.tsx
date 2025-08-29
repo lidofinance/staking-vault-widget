@@ -88,6 +88,8 @@ const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
 
 const { health } = vaultTexts.metrics.modals;
 
+const dataTestIdPrefix = 'healthFactorNumber-modal';
+
 export const HealthFactorModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
 
@@ -103,7 +105,7 @@ export const HealthFactorModal = () => {
 
   return (
     <OverviewModal name="healthFactorNumber">
-      <ModalSection>
+      <ModalSection dataTestId={`${dataTestIdPrefix}-chartSection`}>
         <ChartProportion
           loading={isLoadingVault}
           height={24}
@@ -112,42 +114,56 @@ export const HealthFactorModal = () => {
           borderSize={ChartProportionBorderSize.md}
           data={chartData}
           showLabels
+          data-testid={`${dataTestIdPrefix}-chart`}
         />
-        <List>
+        <List data-testid={`${dataTestIdPrefix}-chartLabelsList`}>
           <ListItem color="rebalance">Forced rebalance</ListItem>
           <ListItem color="danger">At risk</ListItem>
           <ListItem color="warning">Needs attention</ListItem>
           <ListItem color="success">Healthy</ListItem>
         </List>
       </ModalSection>
-      <ModalSection description={health.rebalanceThreshold.description} />
+      <ModalSection
+        description={health.rebalanceThreshold.description}
+        dataTestId={`${dataTestIdPrefix}-rebalanceThresholdSection`}
+      />
       <SectionDivider />
       <ModalSection
         title={health.carrySpread.title}
         amount={carrySpreadApr}
         description={health.carrySpread.description}
+        dataTestId={`${dataTestIdPrefix}-carrySpreadSection`}
       >
-        <Formula list={formulasMap.carrySpread} />
+        <Formula
+          list={formulasMap.carrySpread}
+          dataTestId={`${dataTestIdPrefix}-carrySpreadSection-formula`}
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={health.bottomLine.title}
         amount={bottomLineEth}
         description={health.bottomLine.description}
+        dataTestId={`${dataTestIdPrefix}-bottomLineSection`}
       >
-        <Formula list={formulasMap.bottomLine} />
+        <Formula
+          list={formulasMap.bottomLine}
+          dataTestId={`${dataTestIdPrefix}-bottomLineSection-formula`}
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={health.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={health.netStakingRewards.description}
+        dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={health.stethRebase.title}
         amount={rebaseRewardEth}
         description={health.stethRebase.description}
+        dataTestId={`${dataTestIdPrefix}-stethRebaseSection`}
       />
     </OverviewModal>
   );

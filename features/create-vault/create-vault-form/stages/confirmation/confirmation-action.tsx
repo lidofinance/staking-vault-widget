@@ -38,6 +38,7 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
         variant="outlined"
         type="button"
         fullwidth
+        data-testid={`createVault-confirmation-backButton`}
       >
         Back
       </ActionButton>
@@ -47,6 +48,7 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
           disabled={isSubmitDisabled}
           type="submit"
           fullwidth
+          data-testid={`createVault-confirmation-createVaultButton`}
         >
           Create vault and supply 1 ETH
         </ActionButton>
