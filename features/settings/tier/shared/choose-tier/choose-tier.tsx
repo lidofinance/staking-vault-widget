@@ -1,7 +1,12 @@
 import { useState, useCallback } from 'react';
 import { ArrowRight } from '@lidofinance/lido-ui';
+import { useAccount } from 'wagmi';
 
-import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+import {
+  useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
+} from 'modules/vaults';
 
 import { useTierData } from 'features/settings/tier/contexts';
 import { PartitionContainer } from '../partition-container';
@@ -12,9 +17,17 @@ import { TierSelector } from './styles';
 
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
-  const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { activeVault } = useVault();
+  const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
+    useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('tierChangeRequester');
-  const accessPermission = hasConfirmingRole || hasPermission;
+  const { address } = useAccount();
+  const accessPermission =
+    hasConfirmingRole ||
+    hasAdmin ||
+    hasNodeOperatorManager ||
+    hasPermission ||
+    activeVault?.nodeOperator === address;
   const { values, selectedTier } = useTierData();
 
   const isActive =

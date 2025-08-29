@@ -49,7 +49,8 @@ export const TierFormAction = () => {
     (hasConfirmingRole ||
       hasAdmin ||
       hasNodeOperatorManager ||
-      hasPermission) &&
+      hasPermission ||
+      activeVault?.nodeOperator === address) &&
     selectedTierId &&
     vaultTierInfo?.tier.id !== BigInt(selectedTierId);
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
