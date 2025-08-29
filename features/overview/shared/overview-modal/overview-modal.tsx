@@ -43,6 +43,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
       title={title}
       open={name === currentModal}
       onClose={closeModal}
+      windowSize="md"
       data-testid={`${name}-modal`}
     >
       <ContentWrapper>

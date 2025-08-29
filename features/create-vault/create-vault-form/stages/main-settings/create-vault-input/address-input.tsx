@@ -1,26 +1,15 @@
-import { useFormContext } from 'react-hook-form';
-
-import { AddressInputBase } from './address-input-base';
-
 import type { FC } from 'react';
-import type {
-  CreateVaultSchema,
-  MainSettingsEntryType,
-} from 'features/create-vault/types';
 
-export type AddressInputProps = MainSettingsEntryType;
+import { AddressInputHookForm } from 'shared/hook-form/controls';
 
-export const AddressInput: FC<AddressInputProps> = ({
-  name,
-  label,
-  dataTestId,
-}) => {
-  const { register } = useFormContext<CreateVaultSchema>();
+import type { CreateFormInputProps } from './types';
+
+export const AddressInput: FC<CreateFormInputProps> = ({ name, label }) => {
   return (
-    <AddressInputBase
-      {...register(name)}
+    <AddressInputHookForm
+      showRightDecorator={false}
+      fieldName={name}
       label={label}
-      dataTestId={dataTestId}
     />
   );
 };

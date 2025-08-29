@@ -29,6 +29,7 @@ export const StethLiabilityModal = () => {
     reserveRatio,
     rebalanceThreshold,
     tierLimitStETH,
+    vaultData,
   } = values || {};
 
   return (
@@ -52,7 +53,9 @@ export const StethLiabilityModal = () => {
       <SectionDivider />
       <ModalSection
         title={liabilityStETH.totalStethMintingCapacity.title}
-        subTitle={liabilityStETH.totalStethMintingCapacity.subTitle}
+        subTitle={liabilityStETH.totalStethMintingCapacity.constrainedBy(
+          vaultData?.mintingConstraintBy || 'vault',
+        )}
         amount={totalMintingCapacityStETH}
         description={liabilityStETH.totalStethMintingCapacity.description}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}

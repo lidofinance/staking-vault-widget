@@ -12,6 +12,7 @@ import {
   useVault,
   fetchVaultMetrics,
   VAULT_TOTAL_BASIS_POINTS,
+  getLidoV3Contract,
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
@@ -19,7 +20,13 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { formatBalance, formatPercent } from 'utils';
+import {
+  formatPercent,
+  toEthValue,
+  toStethValue,
+  getMintingConstraintType,
+  type MintingConstraintType,
+} from 'utils';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -39,8 +46,8 @@ export type VaultInfo = VaultConnection &
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
-    apr: null;
     healthScore: number;
+    mintingConstraintBy: MintingConstraintType;
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
@@ -88,6 +95,7 @@ const getVaultData = async ({
     totalMintingCapacityShares,
     mintableShares,
     tier,
+    group,
   ] = await readWithReport({
     publicClient,
     report: vault.report,
@@ -108,6 +116,7 @@ const getVaultData = async ({
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultInfo([vault.address]),
+      operatorGrid.prepare.group([vault.nodeOperator]),
     ] as const,
   });
 
@@ -118,6 +127,9 @@ const getVaultData = async ({
   } = record;
 
   const [_, tierId, tierShareLimit] = tier;
+  const { shareLimit: groupShareLimit } = group;
+
+  const lidoV3Contract = getLidoV3Contract(publicClient);
 
   const [
     liabilityStETH,
@@ -126,6 +138,7 @@ const getVaultData = async ({
     lockedShares,
     totalMintingCapacityStETH,
     tierStETHLimit,
+    lidoTVLSharesLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
@@ -133,7 +146,25 @@ const getVaultData = async ({
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
+    lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
+
+  // Binding-constraint detection:
+  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
+  //   reduced by any active caps).
+  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
+  //   identify what actually constrains minting right now.
+  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
+  //   ties resolve to the later entry in the list below.
+  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
+  const mintingConstraintBy = getMintingConstraintType({
+    totalMintingCapacityShares,
+    vaultShareLimit: shareLimit,
+    tierShareLimit,
+    tierId,
+    groupShareLimit,
+    lidoTVLSharesLimit,
+  });
 
   const healthScore = calculateHealth({
     totalValue,
@@ -150,7 +181,7 @@ const getVaultData = async ({
     mintableStETH,
     mintableShares,
     stETHLimit,
-    apr: null,
+    mintingConstraintBy,
     healthScore: healthScore.healthRatio,
     totalMintingCapacityShares,
     totalMintingCapacityStETH,
@@ -174,11 +205,6 @@ const getVaultData = async ({
     ...rest,
   };
 };
-
-const toEthValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} ETH` : '';
-const toStethValue = (value: bigint | undefined) =>
-  typeof value === 'bigint' ? `${formatBalance(value).trimmed} stETH` : '';
 
 const selectOverviewData = ({
   vaultData,

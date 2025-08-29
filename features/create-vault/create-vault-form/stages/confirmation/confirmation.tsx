@@ -28,6 +28,8 @@ export const Confirmation = ({ isShown }: ConfirmationProps) => {
 
   const PreSupplyAmountComponent = showWarning ? TextError : TextBold;
 
+  if (!isShown) return null;
+
   return (
     <SectionContainer isShown={isShown}>
       <List>

@@ -15,6 +15,8 @@ import {
   NonTableRow,
   SpacerRow,
   TableCell,
+  TableContainer,
+  ScrollableContainer,
 } from './styles';
 import { isAddress, zeroAddress } from 'viem';
 import { FormatToken } from 'shared/formatters';
@@ -267,61 +269,65 @@ export const VaultTable: FC<VaultTableProps> = ({
   );
 
   return (
-    <>
-      <TableStyled data-testid={dataTestId ? `${dataTestId}-table` : null}>
-        <TableTitle
-          counter={vaultsCount}
-          data-testid={dataTestId ? `${dataTestId}-tableTitle` : null}
-        >
-          {title}
-        </TableTitle>
-        {showTable && (
-          <>
-            <Thead>
-              <TableRow>
-                {tableHeaders.map(({ title, hint, sortKey }) => (
-                  <TableHeaderCell
-                    data-sort-key={sortKey}
-                    align="left"
-                    onClick={onSortClick}
-                    sortDir={
-                      sortKey === sortBy ? toUIsortDir(sortDir) : undefined
-                    }
-                    key={title}
-                  >
-                    <HeaderCell hint={hint} title={title} />
-                  </TableHeaderCell>
-                ))}
-              </TableRow>
-            </Thead>
-            <TableBody>
-              {vaults?.map((vault) => {
-                return (
-                  <TableRow
-                    onClick={onRowClick}
-                    data-address={vault.address}
-                    key={vault.address}
-                    data-testid={
-                      dataTestId ? `${dataTestId}-vault-${vault.address}` : null
-                    }
-                  >
-                    <VaultTableRowContent
-                      vault={vault}
-                      dataTestId={`${dataTestId}-vault-${vault.address}`}
-                    />
-                  </TableRow>
-                );
-              })}
-              <QueryStatus
-                isLoading={isLoading}
-                isEmpty={isEmpty}
-                isError={isError}
-                refetch={refetch}
-              />
-            </TableBody>
-          </>
-        )}
-      </TableStyled>
+    <TableContainer>
+      <TableTitle
+        counter={vaultsCount}
+        data-testid={dataTestId ? `${dataTestId}-tableTitle` : null}
+      >
+        {title}
+      </TableTitle>
+      <ScrollableContainer>
+        <TableStyled>
+          {showTable && (
+            <>
+              <Thead>
+                <TableRow>
+                  {tableHeaders.map(({ title, hint, sortKey }) => (
+                    <TableHeaderCell
+                      data-sort-key={sortKey}
+                      align="left"
+                      onClick={sortKey && setSort ? onSortClick : undefined}
+                      sortDir={
+                        sortKey === sortBy ? toUIsortDir(sortDir) : undefined
+                      }
+                      key={title}
+                    >
+                      <HeaderCell hint={hint} title={title} />
+                    </TableHeaderCell>
+                  ))}
+                </TableRow>
+              </Thead>
+              <TableBody>
+                {vaults?.map((vault) => {
+                  return (
+                    <TableRow
+                      onClick={onRowClick}
+                      data-address={vault.address}
+                      key={vault.address}
+                      data-testid={
+                        dataTestId
+                          ? `${dataTestId}-vault-${vault.address}`
+                          : null
+                      }
+                    >
+                      <VaultTableRowContent
+                        vault={vault}
+                        dataTestId={`${dataTestId}-vault-${vault.address}`}
+                      />
+                    </TableRow>
+                  );
+                })}
+                <QueryStatus
+                  isLoading={isLoading}
+                  isEmpty={isEmpty}
+                  isError={isError}
+                  refetch={refetch}
+                />
+              </TableBody>
+            </>
+          )}
+        </TableStyled>
+      </ScrollableContainer>
       {showPagination && setPage && typeof page == 'number' && (
         <Pagination
           onItemClick={setPage}
@@ -331,6 +337,6 @@ export const VaultTable: FC<VaultTableProps> = ({
           data-testid={dataTestId ? `${dataTestId}-pagination` : null}
         />
       )}
-    </>
+    </TableContainer>
   );
 };

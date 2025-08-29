@@ -113,6 +113,58 @@ export const vaultTexts = {
       loadingUnwrap: 'Unwrapping wETH',
       loadingWrap: 'Wrapping ETH to wETH',
     },
+    tier: {
+      fields: {
+        vaultTotalMintingCapacityStETHValue: {
+          title: 'stVault minting capacity',
+        },
+        vaultUtilizationRatioValue: {
+          title: 'Utilization',
+        },
+        vaultReserveRatioValue: {
+          title: 'Reserve ratio',
+        },
+        vaultRebalanceThresholdValue: {
+          title: 'Forced rebalance threshold',
+        },
+        vaultLidoInfraFeeValue: {
+          title: 'Lido infrastructure fee',
+        },
+        vaultLidoLiquidityFeeValue: {
+          title: 'Lido liquidity fee',
+        },
+        vaultTotalValueETHValue: {
+          title: 'Total value',
+        },
+        vaultLiabilityStETHValue: {
+          title: 'Liability',
+        },
+      },
+      settingsTitle: 'Tier settings',
+      requestTitle: 'Request moving to',
+      vaultMetricsTitle: 'Current vault metrics',
+      request: {
+        showButton: {
+          show: 'See details',
+          review: 'Review request',
+          hide: 'Hide details',
+        },
+      },
+      inputMintingLimit: {
+        titleCurrent: 'stVault minting limit',
+        titleNew: 'Enter stVault minting limit',
+        errors: {
+          max: (max: bigint) =>
+            `Requested minting limit exceeds ${formatBalance(max).trimmed} stETH. Reduce the amount or select another tier.`,
+        },
+      },
+      vaultMintingLimit: {
+        errors: {
+          lessThanVaultLiability:
+            'Requested minting limit is less than current stETH liability',
+        },
+      },
+    },
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -127,6 +179,10 @@ export const vaultTexts = {
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
+        `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
+      approveSelectedTier: (tierId: string) =>
+        `Approving Tier ${tierId} settings.` as const,
       submit: (counter: number) => {
         if (counter > 0)
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
@@ -374,7 +430,7 @@ export const vaultTexts = {
         grossStakingRewards: {
           title: 'Gross staking rewards',
           description:
-            'The amount of rewards earned by the validators expressed as a percentage of the volt total value, before fees deductions.',
+            'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
         noFee: {
           title: 'Node Operator Fee',
@@ -395,7 +451,22 @@ export const vaultTexts = {
         },
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
-          subTitle: 'constrained by Reserve Ratio',
+          constrainedBy: (
+            constraintBy: 'reserveRatio' | 'vault' | 'lido' | 'tier' | 'group',
+          ) => {
+            switch (constraintBy) {
+              case 'reserveRatio':
+                return 'constrained by Reserve Ratio';
+              case 'vault':
+                return 'constrained by Vault Share Limit';
+              case 'lido':
+                return 'constrained by Lido TVL';
+              case 'tier':
+                return 'constrained by Vault Tier';
+              case 'group':
+                return 'constrained by NO Group Limit';
+            }
+          },
           description:
             'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
         },

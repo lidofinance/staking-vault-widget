@@ -1,43 +1,9 @@
-import { FC, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Input } from '@lidofinance/lido-ui';
+import type { FC } from 'react';
 
-import type {
-  CreateVaultSchema,
-  MainSettingsEntryType,
-} from 'features/create-vault/types';
+import { TextInputHookForm } from 'shared/hook-form/controls';
 
-export type GeneralInputProps = MainSettingsEntryType;
+import type { CreateFormInputProps } from './types';
 
-export const GeneralInput: FC<GeneralInputProps> = ({
-  name,
-  label,
-  dataTestId,
-}) => {
-  const [inFocus, setInFocus] = useState(false);
-
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<CreateVaultSchema>();
-
-  const error = errors[name];
-
-  return (
-    <Input
-      label={label}
-      type="text"
-      error={inFocus ? error?.message?.toString() : Boolean(error?.message)}
-      fullwidth
-      onFocus={() => {
-        setInFocus(true);
-      }}
-      {...register(name, {
-        onBlur: () => {
-          setInFocus(false);
-        },
-      })}
-      data-testid={dataTestId ? `${dataTestId}-input` : null}
-    />
-  );
+export const GeneralInput: FC<CreateFormInputProps> = ({ name, label }) => {
+  return <TextInputHookForm fieldName={name} label={label} />;
 };

@@ -9,7 +9,10 @@ import {
   Admins,
   Voting,
 } from 'features/settings/main/components';
-import { SectionContainer } from 'features/settings/main/styles';
+import {
+  SectionContainer,
+  ContentWrapper,
+} from 'features/settings/shared/components';
 import {
   MainSettingsDataProvider,
   MainSettingsProvider,
@@ -19,16 +22,18 @@ export const EditMainSettings = () => {
   return (
     <MainSettingsDataProvider>
       <MainSettingsProvider>
-        <SectionContainer>
-          <Text size="lg" strong data-testid="mainSettingsTitle">
-            {vaultTexts.actions.settings.title}
-          </Text>
-          <NodeOperator />
-          <Admins />
-          <NodeOperatorFeeRecipient />
-          <Voting />
-          <MainSettingsAction />
-        </SectionContainer>
+        <ContentWrapper>
+          <SectionContainer>
+            <Text size="lg" strong data-testid="mainSettingsTitle">
+              {vaultTexts.actions.settings.title}
+            </Text>
+            <NodeOperator />
+            <Admins />
+            <NodeOperatorFeeRecipient />
+            <Voting />
+            <MainSettingsAction />
+          </SectionContainer>
+        </ContentWrapper>
       </MainSettingsProvider>
     </MainSettingsDataProvider>
   );

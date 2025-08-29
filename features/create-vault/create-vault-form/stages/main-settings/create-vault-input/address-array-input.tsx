@@ -1,26 +1,21 @@
-import { useFieldArray, useFormContext, useFormState } from 'react-hook-form';
+import { useFieldArray, useFormState } from 'react-hook-form';
 import { Plus } from '@lidofinance/lido-ui';
-
-import { ButtonClose } from 'shared/components';
-import { AddressInputGroup, AddressList, AppendButton } from './styles';
-import { AddressInputBase } from './address-input-base';
-
-import type { MainSettingsEntryType } from 'features/create-vault/types';
 import type { FC } from 'react';
 import type { Address } from 'viem';
 
-export type AddressArrayProps = MainSettingsEntryType;
+import { ButtonClose } from 'shared/components';
+import { AddressInputHookForm } from 'shared/hook-form/controls';
+import { AddressInputGroup, AddressList, AppendButton } from './styles';
+import type { CreateFormInputProps } from './types';
 
 type PlaceholderForm = {
   addresses: { value: Address }[];
 };
 
-export const AddressArrayInput: FC<AddressArrayProps> = ({
+export const AddressArrayInput: FC<CreateFormInputProps> = ({
   name,
   label,
-  dataTestId,
 }) => {
-  const { register } = useFormContext();
   const { disabled } = useFormState();
   const { fields, append, remove } = useFieldArray<
     PlaceholderForm,
@@ -29,22 +24,17 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({
   const allowDelete = fields.length > 1;
 
   return (
-    <AddressList data-testid={dataTestId ? `${dataTestId}-addressList` : null}>
+    <AddressList>
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>
-            <AddressInputBase
+            <AddressInputHookForm
               key={field.id}
+              showRightDecorator={false}
               label={label}
-              dataTestId={`${dataTestId}-${index}`}
-              {...register(`${name}.${index}.value` as const)}
+              fieldName={`${name}.${index}.value` as const}
             />
-            {allowDelete && (
-              <ButtonClose
-                onClick={() => remove(index)}
-                dataTestId={`${dataTestId}-${index}-removeButton`}
-              />
-            )}
+            {allowDelete && <ButtonClose onClick={() => remove(index)} />}
           </AddressInputGroup>
         );
       })}
@@ -56,7 +46,6 @@ export const AddressArrayInput: FC<AddressArrayProps> = ({
           variant="ghost"
           type="button"
           onClick={() => append({ value: '' as Address })}
-          data-testid={dataTestId ? `${dataTestId}-addAddressButton` : null}
         >
           Add new address
         </AppendButton>
