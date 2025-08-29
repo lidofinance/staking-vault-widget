@@ -2,8 +2,6 @@ import {
   VAULT_HEALTH_PERCENT_GREEN,
   VAULT_HEALTH_PERCENT_YELLOW,
   VAULT_HEALTH_PERCENT_RED,
-  VAULT_UTILIZATION_RATIO_GREEN,
-  VAULT_UTILIZATION_RATIO_RED,
 } from 'consts/threshold';
 
 export const getHealthFactorColor = (healthFactor?: string | number) => {
@@ -20,16 +18,14 @@ export const getHealthFactorColor = (healthFactor?: string | number) => {
   return 'darkRed';
 };
 
-export const getUtilizationRatioColor = (utilizationRatio?: string) => {
-  if (!utilizationRatio) return '';
-  let utilizationRatioNumber = 0;
+export const getCarrySpreadColor = (carrySpread?: string) => {
+  if (!carrySpread) return '';
+  let carrySpreadNumber = 0;
 
-  if (typeof utilizationRatio === 'string')
-    utilizationRatioNumber = Number(utilizationRatio.split('%')[0]);
-  else utilizationRatioNumber = utilizationRatio;
+  if (typeof carrySpread === 'string')
+    carrySpreadNumber = Number(carrySpread.split('%')[0]);
+  else carrySpreadNumber = carrySpread;
 
-  if (utilizationRatioNumber < VAULT_UTILIZATION_RATIO_GREEN) return '#53BA95';
-  if (utilizationRatioNumber < VAULT_UTILIZATION_RATIO_RED) return '#ffbf00';
-  if (utilizationRatioNumber === VAULT_UTILIZATION_RATIO_RED) return '#E14D4D';
-  if (utilizationRatioNumber > VAULT_UTILIZATION_RATIO_RED) return 'darkRed';
+  if (carrySpreadNumber < 0) return 'darkRed';
+  return '#53BA95';
 };

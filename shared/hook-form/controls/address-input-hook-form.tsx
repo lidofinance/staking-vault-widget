@@ -1,13 +1,12 @@
-import { useFormContext, useFormState } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { Button, Input } from '@lidofinance/lido-ui';
 
 import { useDappStatus } from 'modules/web3';
 import { useInFocus } from 'shared/hooks/use-in-focus';
 
-type TokenAmountInputHookFormProps = Partial<
-  React.ComponentProps<typeof Input>
-> & {
+type AddressInputHookFormProps = Partial<React.ComponentProps<typeof Input>> & {
   fieldName: string;
+  errorFieldName?: string;
   showErrorMessage?: boolean;
   showRightDecorator?: boolean;
 };
@@ -20,19 +19,21 @@ const safeIsAddressEqual = (a: string, b: string) => {
 
 export const AddressInputHookForm = ({
   fieldName,
+  errorFieldName = fieldName,
   showErrorMessage = true,
   showRightDecorator = true,
   onBlur: onBlurProp,
   onFocus: onFocusProp,
   disabled,
   ...props
-}: TokenAmountInputHookFormProps) => {
+}: AddressInputHookFormProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
   const { address } = useDappStatus();
-  const error = useFormState().errors[fieldName];
 
-  const { setValue, register, watch } = useFormContext();
+  const { setValue, register, watch, getFieldState } = useFormContext();
   const fieldValue = watch(fieldName);
+
+  const { error } = getFieldState(errorFieldName);
 
   const shouldShowErrorMessage = showErrorMessage && inFocus && !!error;
   const errorMessage = error?.message as string;

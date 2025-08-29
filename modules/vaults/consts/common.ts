@@ -1,6 +1,6 @@
 import { parseEther } from 'viem';
 
-export const VAULTS_PER_PAGE = 15;
+export const VAULTS_PER_PAGE = 12;
 
 export const VAULT_FUNDING_TOKENS = ['ETH', 'wETH'] as const;
 export const VAULT_MINT_TOKENS = ['stETH', 'wstETH'] as const;
@@ -22,3 +22,5 @@ export const MIN_CONFIRM_EXPIRY = 24;
 export const MIN_CONFIRM_EXPIRY_SECONDS = 24 * 3600;
 export const MAX_CONFIRM_EXPIRY = 24 * 30;
 export const MAX_CONFIRM_EXPIRY_SECONDS = 24 * 30 * 3600;
+
+export const DEFAULT_TIER_ID = 0n;

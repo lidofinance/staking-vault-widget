@@ -46,9 +46,7 @@ const numberSchema = (zodPipe: ZodTypeAny) =>
       (value) => value.trim() !== '' && !isNaN(Number(value)),
       INVALID_NUMBER_DATA_OBJECT_MESSAGE,
     )
-    .pipe(
-      z.coerce.string({ message: 'vbab' }).transform((value) => Number(value)),
-    )
+    .pipe(z.coerce.string().transform((value) => Number(value)))
     .pipe(zodPipe);
 
 const permissionSchema = z.object({

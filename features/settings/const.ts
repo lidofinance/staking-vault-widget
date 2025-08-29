@@ -1,6 +1,7 @@
 export enum SETTINGS_PATHS {
   main = 'main',
   permissions = 'permissions',
+  tier = 'tier',
 }
 
 export type SettingsPaths =
@@ -14,5 +15,9 @@ export const settingsToggleList: { value: SettingsPaths; label: string }[] = [
   {
     value: SETTINGS_PATHS.permissions,
     label: 'permissions',
+  },
+  {
+    value: SETTINGS_PATHS.tier,
+    label: 'tier',
   },
 ];

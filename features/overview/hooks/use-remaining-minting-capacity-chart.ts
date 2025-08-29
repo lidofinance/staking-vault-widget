@@ -5,6 +5,7 @@ import { formatBalance } from 'utils';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { normalizeChartBN } from './utils';
 
 export const useRemainingMintingCapacityChart = () => {
   const { values } = useVaultOverview();
@@ -15,6 +16,7 @@ export const useRemainingMintingCapacityChart = () => {
     const {
       mintableStETH,
       totalValue,
+      reserveRatioBP,
       vaultLiability,
       forcedRebalanceThresholdBP,
     } = values;
@@ -28,6 +30,10 @@ export const useRemainingMintingCapacityChart = () => {
       (totalValue / VAULT_TOTAL_BASIS_POINTS_BN) *
         BigInt(forcedRebalanceThresholdBP);
     const forcedRebalanceThresholdStETH = `${formatBalance(forcedRebalanceThreshold).trimmed} stETH`;
+    const reserveRatio =
+      totalValue -
+      (totalValue / VAULT_TOTAL_BASIS_POINTS_BN) * BigInt(reserveRatioBP);
+    const reserveRatioAmount = `${formatBalance(reserveRatio).trimmed} stETH`;
 
     return [
       {
@@ -37,38 +43,47 @@ export const useRemainingMintingCapacityChart = () => {
           description: `Minted ${vaultLiabilityStETH}`,
           color: 'transparent',
           label: `${vaultLiabilityStETH}`,
-          value: Number(vaultLiability),
+          value: normalizeChartBN(vaultLiability),
         },
       },
       {
-        color:
-          'color-mix(in display-p3, var(--lido-color-primary) 20%, transparent)',
+        color: '#CCEDFF',
         labelPosition: 'top',
         threshold: {
           color: `var(--lido-color-primary)`,
           description: `Available for minting ${remainingMintingCapacityStETH}`,
           label: `${remainingMintingCapacityStETH}`,
-          value: Number(remainingMintingCapacity),
+          value: normalizeChartBN(remainingMintingCapacity),
         },
       },
       {
-        color: '#13121714',
+        labelPosition: 'top',
+        threshold: {
+          color: '#EC8600',
+          description: `Reserve Ratio ${reserveRatioAmount}`,
+          label: `${reserveRatioAmount}`,
+          value: normalizeChartBN(reserveRatio),
+        },
+      },
+
+      {
+        color: '#ECECEC',
         labelPosition: 'top',
         threshold: {
           color: 'var(--lido-color-error)',
           description: `Not available for minting ${forcedRebalanceThresholdStETH}`,
           label: `${forcedRebalanceThresholdStETH}`,
-          value: Number(forcedRebalanceThreshold),
+          value: normalizeChartBN(forcedRebalanceThreshold),
         },
       },
       {
-        color: '#13121714',
+        color: '#ECECEC',
         labelPosition: 'top',
         threshold: {
           color: 'transparent',
           description: `Total value ${totalValueETH}`,
           label: `${totalValueETH}`,
-          value: Number(totalValue),
+          value: normalizeChartBN(totalValue),
         },
       },
     ] as LineData[];

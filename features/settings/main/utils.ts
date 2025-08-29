@@ -1,6 +1,7 @@
 import { type Address, isAddressEqual } from 'viem';
 
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
 import type {
@@ -11,12 +12,6 @@ import type {
   VotingOptionType,
   MainSettingFormsValues,
 } from './types';
-
-const formatExpiry = (expiryTimestamp: bigint) =>
-  formatSecondsToHours(
-    (Number(expiryTimestamp) * 1000 - new Date().getTime()) / 1000,
-    true,
-  );
 
 const formatType = (
   member: Address,
@@ -90,7 +85,9 @@ export const formatSettingsValues = (
 
   nodeOperatorFeeRate.push(
     ...vaultInfo.nodeOperatorFeeConfirmations.map((confirmation) => ({
-      value: String(Number(confirmation.decodedData.args[0] * 100n) / 10000),
+      value: String(
+        Number(BigInt(confirmation.decodedData.args[0]) * 100n) / 10000,
+      ),
       tags: [
         formatExpiry(confirmation.expiryTimestamp),
         formatType(confirmation.member, account),
@@ -190,21 +187,4 @@ export const formatValueView = (
   }
 
   return value;
-};
-
-export const formatSecondsToHours = (
-  totalSeconds: number | string,
-  isShort?: boolean,
-): string => {
-  const seconds = Number(totalSeconds);
-  if (isNaN(seconds)) return String(totalSeconds);
-
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-
-  if (hours === 0 && minutes === 0) return '~1 minute';
-  if (isShort) return `${hours}h`;
-  if (hours === 0) return `${minutes} minutes`;
-  if (minutes === 0) return `${hours} hours`;
-  return `${hours}h ${minutes}m`;
 };

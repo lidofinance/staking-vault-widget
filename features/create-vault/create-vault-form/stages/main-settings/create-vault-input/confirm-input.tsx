@@ -1,20 +1,11 @@
-import { useFormContext, useFormState } from 'react-hook-form';
+import { InfoList, StyledCheckboxHookForm } from './styles';
 
-import { InfoList, StyledCheckbox } from './styles';
+import type { CreateFormInputProps } from './types';
 
-import type { GeneralInputProps } from './general-input';
-import type { CreateVaultSchema } from 'features/create-vault/types';
-
-export const ConfirmInput = (props: GeneralInputProps) => {
-  const { trigger, register } = useFormContext<CreateVaultSchema>();
-
-  const { errors } = useFormState<CreateVaultSchema>({ name: props.name });
-
-  const isError = !!errors.acceptTerms;
-
+export const ConfirmInput = (props: CreateFormInputProps) => {
   return (
-    <StyledCheckbox
-      isError={isError}
+    <StyledCheckboxHookForm
+      fieldName={props.name}
       label={
         <InfoList>
           {props.label
@@ -22,10 +13,9 @@ export const ConfirmInput = (props: GeneralInputProps) => {
             .map((item, index) => <span key={index}>{item}</span>)}
         </InfoList>
       }
-      {...register(props.name, {
-        onChange: () => void trigger(props.name, { shouldFocus: false }),
-      })}
-      data-testid={props.dataTestId ? `${props.dataTestId}-checkbox` : null}
+      data-testid={
+        props.dataTestId ? `${props.dataTestId}-checkbox` : undefined
+      }
     />
   );
 };

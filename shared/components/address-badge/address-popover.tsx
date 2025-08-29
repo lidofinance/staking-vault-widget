@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from '@lidofinance/lido-ui';
 
-import { truncateAddress } from 'utils/truncate-address';
+import { truncateAddress } from 'utils';
 import { AddressBadge } from './address-badge';
 import { ButtonLink } from '../button-link';
 import { AddressLinkEtherscan } from '../address-link-etherscan';

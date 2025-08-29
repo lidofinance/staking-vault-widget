@@ -4,6 +4,7 @@ import { LineData } from '@lidofinance/lido-ui';
 import { formatBalance } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { normalizeChartBN } from './utils';
 
 export const useWithdrawChart = () => {
   const { values } = useVaultOverview();
@@ -31,7 +32,7 @@ export const useWithdrawChart = () => {
           threshold: {
             description: `Available for Immediate Withdrawal ${withdrawableEthAmount} ETH`,
             label: `${withdrawableEthAmount} ETH`,
-            value: parseFloat(withdrawableEthAmount),
+            value: normalizeChartBN(withdrawableEther),
           },
         },
         {
@@ -40,7 +41,7 @@ export const useWithdrawChart = () => {
           threshold: {
             description: `Total value ${totalValueAmount} ETH`,
             label: `${totalValueAmount} ETH`,
-            value: parseFloat(totalValueAmount),
+            value: normalizeChartBN(totalValue),
           },
         },
       ] as LineData[],

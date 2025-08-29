@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 
 type AdjustmentModePageParams = {
   mode: 'mint' | 'repay';
-  address: Address;
+  vaultAddress: Address;
 };
 
 const Adjustment: FC = () => {
