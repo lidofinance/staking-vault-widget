@@ -22,3 +22,5 @@ export const MIN_CONFIRM_EXPIRY = 24;
 export const MIN_CONFIRM_EXPIRY_SECONDS = 24 * 3600;
 export const MAX_CONFIRM_EXPIRY = 24 * 30;
 export const MAX_CONFIRM_EXPIRY_SECONDS = 24 * 30 * 3600;
+
+export const DEFAULT_TIER_ID = 0n;

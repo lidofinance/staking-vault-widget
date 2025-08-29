@@ -48,7 +48,7 @@ const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   },
   {
     title: 'Settings',
-    path: appPaths.vaults.vault(vaultAddress).settings,
+    path: appPaths.vaults.vault(vaultAddress).settings(overrideMode || 'main'),
     icon: <GearIcon />,
     exact: true,
   },
