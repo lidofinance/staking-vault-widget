@@ -6,6 +6,7 @@ import {
   useVaultConfirmingRoles,
   MultiplePermissionedSubmitButton,
   useVault,
+  useVaultPermission,
 } from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
@@ -18,6 +19,8 @@ export const TierFormAction = () => {
   } = useFormContext();
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('tierChangeRequester');
+
   const { data: vaultTierInfo } = useVaultTierInfo();
   const [selectedTierId, vaultMintingLimit] = watch([
     'selectedTierId',
@@ -43,7 +46,10 @@ export const TierFormAction = () => {
   }, [selectedTierId, vaultMintingLimit, defaultValues, isDirty]);
 
   const showButton =
-    (hasConfirmingRole || hasAdmin || hasNodeOperatorManager) &&
+    (hasConfirmingRole ||
+      hasAdmin ||
+      hasNodeOperatorManager ||
+      hasPermission) &&
     selectedTierId &&
     vaultTierInfo?.tier.id !== BigInt(selectedTierId);
   const buttonDisabled = !isDirty || isSubmitting || !isValid;

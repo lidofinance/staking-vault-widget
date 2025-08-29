@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { ArrowRight } from '@lidofinance/lido-ui';
 
-import { useVaultConfirmingRoles } from 'modules/vaults';
+import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
 
 import { useTierData } from 'features/settings/tier/contexts';
 import { PartitionContainer } from '../partition-container';
@@ -13,6 +13,8 @@ import { TierSelector } from './styles';
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
   const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('tierChangeRequester');
+  const accessPermission = hasConfirmingRole || hasPermission;
   const { values, selectedTier } = useTierData();
 
   const isActive =
@@ -20,10 +22,10 @@ export const ChooseTier = () => {
 
   const closeModal = useCallback(() => setModalVisibility(false), []);
   const openModal = useCallback(() => {
-    if (hasConfirmingRole) {
+    if (accessPermission) {
       setModalVisibility(true);
     }
-  }, [hasConfirmingRole]);
+  }, [accessPermission]);
 
   if (selectedTier === null) return null;
 
@@ -31,7 +33,7 @@ export const ChooseTier = () => {
     <PartitionContainer title="Choose Tier">
       <TierSelector
         onClick={openModal}
-        $showCursor={hasConfirmingRole}
+        $showCursor={accessPermission}
         role="button"
       >
         <TierBaseInfo
@@ -41,7 +43,7 @@ export const ChooseTier = () => {
           liabilityStETH={selectedTier.liabilityStETH}
           isActive={isActive}
         />
-        {hasConfirmingRole && <ArrowRight />}
+        {accessPermission && <ArrowRight />}
       </TierSelector>
       <SelectTierModal showModal={showModal} closeModal={closeModal} />
     </PartitionContainer>
