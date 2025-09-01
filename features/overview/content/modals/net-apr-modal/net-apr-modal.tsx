@@ -89,6 +89,8 @@ const formulasMap: Record<'netApr' | 'netRewards', FormulaItem[]> = {
 
 const { netApr } = vaultTexts.metrics.modals;
 
+const dataTestIdPrefix = 'netApr-modal';
+
 export const NetAprModal = () => {
   const { values } = useVaultOverview();
 
@@ -100,32 +102,42 @@ export const NetAprModal = () => {
   } = values || {};
   return (
     <OverviewModal name="netApr">
-      <Formula list={formulasMap.netApr} />
+      <Formula
+        list={formulasMap.netApr}
+        dataTestId={`${dataTestIdPrefix}-formula`}
+      />
       <SectionDivider />
       <ModalSection
         title={netApr.netStakingRewards.title}
         amount={netStakingRewardsEth}
         description={netApr.netStakingRewards.description}
+        dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       >
-        <Formula list={formulasMap.netRewards} />
+        <Formula
+          list={formulasMap.netRewards}
+          dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection-formula`}
+        />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title={netApr.grossStakingRewards.title}
         amount={grossStakingRewardsEth}
         description={netApr.grossStakingRewards.description}
+        dataTestId={`${dataTestIdPrefix}-grossStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.noFee.title}
         amount={nodeOperatorRewardsEth}
         description={netApr.noFee.description}
+        dataTestId={`${dataTestIdPrefix}-noFeeSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
         amount={unsettledLidoFees}
         description={netApr.lidoFees.description}
+        dataTestId={`${dataTestIdPrefix}-lidoFeesSection`}
       />
     </OverviewModal>
   );

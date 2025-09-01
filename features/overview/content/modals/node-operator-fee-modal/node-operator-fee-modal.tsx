@@ -27,6 +27,7 @@ export const NodeOperatorFeeModal = () => {
           variant="outlined"
           size="xs"
           onClick={navigate}
+          data-testid="undisbursedNodeOperatorFee-modal-actionButton"
         >
           Disburse
         </ButtonStyled>

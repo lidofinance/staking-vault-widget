@@ -3,7 +3,11 @@ import { FAQ, FAQComponentProps } from 'shared/components/faq';
 
 export const FeeStructure: FC<FAQComponentProps> = ({ defaultExpanded }) => {
   return (
-    <FAQ.Item title="Fee structure" defaultExpanded={defaultExpanded}>
+    <FAQ.Item
+      title="Fee structure"
+      defaultExpanded={defaultExpanded}
+      data-testid="createVault-faq-feeStructure"
+    >
       There are two main fees applied on the vault:
       <ul>
         <li>Node Operator Fee</li>

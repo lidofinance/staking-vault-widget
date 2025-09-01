@@ -15,8 +15,12 @@ export const CreateVaultCost = () => {
 
   return (
     <ListItemCompact>
-      <ConfirmationLabel>Transaction cost</ConfirmationLabel>
-      <TextBold>
+      <ConfirmationLabel
+        data-testid={`createVault-confirmation-transactionCost-label`}
+      >
+        Transaction cost
+      </ConfirmationLabel>
+      <TextBold data-testid={`createVault-confirmation-transactionCost-value`}>
         {isLoading && <Loader size="small" />}
         {usdCostQuery.txCostUsd && (
           <FormatPrice amount={usdCostQuery.txCostUsd} />

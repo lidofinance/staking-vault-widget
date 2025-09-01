@@ -23,16 +23,23 @@ const getInput = (dataType: MainSettingsEntryType['dataType']) => {
 };
 
 export const CreateVaultInput: FC<MainSettingsEntryType> = (props) => {
-  const { dataType, title, notes, hint } = props;
+  const { dataType, title, notes, hint, dataTestId } = props;
 
   const Input = getInput(dataType);
 
   return (
-    <InputContainer>
+    <InputContainer
+      data-testid={dataTestId ? `${dataTestId}-inputContainer` : null}
+    >
       {title && (
-        <InputTitle>
+        <InputTitle
+          data-testid={dataTestId ? `${dataTestId}-inputTitle` : null}
+        >
           {title}
-          <Hint text={hint} />
+          <Hint
+            text={hint}
+            data-testid={dataTestId ? `${dataTestId}-inputHint` : null}
+          />
         </InputTitle>
       )}
       <Input {...props} />

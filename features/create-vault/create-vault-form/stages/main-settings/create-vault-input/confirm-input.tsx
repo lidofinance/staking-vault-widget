@@ -13,6 +13,9 @@ export const ConfirmInput = (props: CreateFormInputProps) => {
             .map((item, index) => <span key={index}>{item}</span>)}
         </InfoList>
       }
+      data-testid={
+        props.dataTestId ? `${props.dataTestId}-checkbox` : undefined
+      }
     />
   );
 };

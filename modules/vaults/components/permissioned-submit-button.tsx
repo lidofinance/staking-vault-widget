@@ -30,15 +30,6 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   const missingRoles =
     data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
 
-  // console.log({
-  //   disabled,
-  //   isAccountActive,
-  //   isLoading,
-  //   hasPermissions: data?.hasPermissions,
-  //   missingRoles,
-  //   dashboardRoles,
-  // });
-
   return (
     <ConnectWalletButton>
       <Button type="submit" disabled={shouldDisable} ref={ref} {...rest}>

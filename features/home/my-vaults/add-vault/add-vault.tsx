@@ -27,6 +27,7 @@ export const AddVault = () => {
         color="secondary"
         size="lg"
         onClick={handleConnect}
+        data-testid="myVaults-connectWalletButton"
       >
         Connect wallet to create a vault
       </ConnectWalletButton>
@@ -39,6 +40,7 @@ export const AddVault = () => {
       size="lg"
       icon={<Plus />}
       onClick={handleNavigate}
+      data-testid="myVaults-createVaultButton"
     >
       Create new Vault
     </AddVaultButton>

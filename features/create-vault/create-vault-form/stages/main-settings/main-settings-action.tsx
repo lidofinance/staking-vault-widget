@@ -38,6 +38,7 @@ export const MainSettingsAction: FC = () => {
         variant="outlined"
         onClick={handleNavigateToRoot}
         fullwidth
+        data-testid="createVault-cancelButton"
       >
         Cancel
       </ActionButton>
@@ -46,6 +47,7 @@ export const MainSettingsAction: FC = () => {
         onClick={handleSetNextStep}
         disabled={isSubmitDisabled}
         fullwidth
+        data-testid="createVault-continueButton"
       >
         Continue
       </ActionButton>

@@ -27,10 +27,3 @@ export const PermissionGroupTitle = styled.div`
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;
-
-export const SectionContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
-  width: 100%;
-`;
