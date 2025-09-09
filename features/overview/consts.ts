@@ -1,12 +1,12 @@
 export const modals = [
-  'totalValueETH',
+  'totalValue',
   'healthFactorNumber',
   'netApr',
-  'liabilityStETH',
-  'balanceEth',
-  'withdrawableEth',
+  'balance',
+  'withdrawableEther',
   'undisbursedNodeOperatorFee',
   'unsettledLidoFees',
+  'vaultLiability',
 ] as const;
 
 export const formatCustomDate = (timestampSeconds: number): string => {

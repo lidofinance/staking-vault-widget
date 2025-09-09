@@ -31,8 +31,8 @@ export const Fees = () => {
 
   return (
     <OverviewSection>
-      <OverviewItem {...noFeeData} />
-      <OverviewItem {...lidoFeeData} />
+      <OverviewItem symbol="ETH" {...noFeeData} />
+      <OverviewItem symbol="ETH" {...lidoFeeData} />
     </OverviewSection>
   );
 };

@@ -1,6 +1,7 @@
 const WEI_IN_ETH = 10n ** 18n;
-const ONE_THOUSAND = 1_000n;
-const ONE_MILLION = 1_000_000n;
+const ONE = 1;
+const ONE_THOUSAND = 1_000;
+const ONE_MILLION = 1_000_000;
 
 export const shortenTokenValue = (value: number) => {
   const ceilValue = Math.ceil(value);
@@ -28,23 +29,27 @@ export const shortenTokenValue = (value: number) => {
   return `${shortValue}${suffix}`;
 };
 
+const formatValue = (value: number) => {
+  return value.toFixed(2).replace(/\.?0+$/, '');
+};
+
 export const formatWeiToEthShort = (
   wei: bigint | undefined | string,
-  token: 'stETH' | 'ETH' | 'ETH' | '' = '',
-) => {
+  token: 'stETH' | 'ETH' | '' = '',
+): string | undefined => {
   if (typeof wei === 'undefined') return wei;
   if (typeof wei === 'string') wei = BigInt(wei);
   if (wei < 0n) return `0 ${token}`;
 
-  const ethAmount = wei / WEI_IN_ETH;
+  const eth = Number(wei) / Number(WEI_IN_ETH);
 
-  if (ethAmount < ONE_THOUSAND) return `${ethAmount} ${token}`;
-
-  if (ethAmount < ONE_MILLION) {
-    const thousands = ethAmount / ONE_THOUSAND;
-    return `${thousands}K ${token}`;
+  if (eth < ONE || eth < ONE_THOUSAND) {
+    return `${formatValue(eth)} ${token}`;
   }
 
-  const millions = ethAmount / ONE_MILLION;
-  return `${millions}M ${token}`;
+  if (eth < ONE_MILLION) {
+    return `${formatValue(eth / ONE_THOUSAND)}K ${token}`;
+  }
+
+  return `${formatValue(eth / ONE_MILLION)}M ${token}`;
 };

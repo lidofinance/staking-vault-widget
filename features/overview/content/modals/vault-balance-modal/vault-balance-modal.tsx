@@ -11,7 +11,8 @@ export const VaultBalanceModal = () => {
 
   return (
     <OverviewModal
-      name="balanceEth"
+      name="balance"
+      symbol="ETH"
       amountRightDecorator={
         <>
           {isPending ? (

@@ -13,8 +13,8 @@ export const appPaths = {
         steth: (mode: 'mint' | 'repay') =>
           `/vaults/${vaultAddress}/steth/${mode}` as const,
         claim: `/vaults/${vaultAddress}/claim`,
-        settings: (tab: 'main' | 'permissions' | 'tier') =>
-          `/vaults/${vaultAddress}/settings/${tab}`,
+        settings: (mode: 'main' | 'permissions' | 'tier') =>
+          `/vaults/${vaultAddress}/settings/${mode}`,
         validators: `/vaults/${vaultAddress}/validators`,
       }) as const,
   },

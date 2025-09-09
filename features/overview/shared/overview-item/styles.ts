@@ -16,7 +16,8 @@ export const ItemWrapper = styled.div`
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.background};
+    background-color: ${({ theme }) =>
+      theme.name === 'dark' ? '#2F2F36' : theme.colors.background};
   }
 
   @media ${devicesHeaderMedia.tablet} {

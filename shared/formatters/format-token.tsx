@@ -36,9 +36,19 @@ export const FormatToken: FormatTokenComponent = ({
   );
 
   if (amount == null) return <span {...rest}>{fallback}</span>;
+  let valueToShow = trimmed;
+
+  if (isTrimmed) {
+    const [integer, decimal] = trimmed.split('.');
+    const index = decimal
+      .split('')
+      .slice(0, maxDecimalDigits + 1)
+      .findLastIndex((v) => v !== '0');
+    valueToShow =
+      `${integer}.` + (index === -1 ? '0' : decimal.slice(0, index + 1));
+  }
 
   const showTooltip = showAmountTip && isTrimmed;
-
   // we show prefix for non zero amount and if we need to show Tooltip Amount
   // overridden by explicitly set approx
   const prefix = amount && amount !== 0n && approx ? '≈ ' : '';
@@ -46,7 +56,7 @@ export const FormatToken: FormatTokenComponent = ({
   const body = (
     <span {...rest}>
       {prefix}
-      {trimmed}&nbsp;{symbol}
+      {valueToShow}&nbsp;{symbol}
     </span>
   );
 

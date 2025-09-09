@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useAccount } from 'wagmi';
 
 import {
   useVaultConfirmingRoles,
   MultiplePermissionedSubmitButton,
-  useVault,
   useVaultPermission,
 } from 'modules/vaults';
 
@@ -17,8 +15,12 @@ export const TierFormAction = () => {
     watch,
     formState: { isDirty, isSubmitting, isValid, defaultValues },
   } = useFormContext();
-  const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
-    useVaultConfirmingRoles();
+  const {
+    hasConfirmingRole,
+    hasAdmin,
+    hasNodeOperatorManager,
+    isNodeOperator,
+  } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('tierChangeRequester');
 
   const { data: vaultTierInfo } = useVaultTierInfo();
@@ -26,8 +28,6 @@ export const TierFormAction = () => {
     'selectedTierId',
     'vaultMintingLimit',
   ]);
-  const { address } = useAccount();
-  const { activeVault } = useVault();
 
   const buttonText = useMemo(() => {
     if (!defaultValues || !isDirty) {
@@ -50,7 +50,7 @@ export const TierFormAction = () => {
       hasAdmin ||
       hasNodeOperatorManager ||
       hasPermission ||
-      activeVault?.nodeOperator === address) &&
+      isNodeOperator) &&
     selectedTierId &&
     vaultTierInfo?.tier.id !== BigInt(selectedTierId);
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
@@ -58,8 +58,6 @@ export const TierFormAction = () => {
   if (!showButton) {
     return null;
   }
-
-  const isNodeOperator = activeVault?.nodeOperator === address;
 
   if (isNodeOperator) {
     return (

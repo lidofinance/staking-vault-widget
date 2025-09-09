@@ -3,6 +3,7 @@ import { Text, InlineLoader } from '@lidofinance/lido-ui';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextWrapper } from '../../styles';
+import { FormatToken } from '../../../../../shared/formatters';
 
 export const RemainingMintingCapacity = () => {
   const { isLoadingVault, values } = useVaultOverview();
@@ -21,7 +22,11 @@ export const RemainingMintingCapacity = () => {
             Remaining minting capacity
           </Text>
           <Text size="xxs" strong data-testid="remain-capacity">
-            {values?.remainingMintingCapacityStETH ?? '-'}
+            <FormatToken
+              amount={values?.mintableStETH}
+              maxDecimalDigits={10}
+              symbol="stETH"
+            />
           </Text>
         </TextWrapper>
       )}
