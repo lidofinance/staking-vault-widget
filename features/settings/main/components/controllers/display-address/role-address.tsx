@@ -52,7 +52,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
 
   return (
     <AddressWrapper
-      data-testid={dataTestId ? `${dataTestId}-addressWrapper` : null}
+      data-testid={dataTestId ? `${dataTestId}-addressWrapper` : undefined}
     >
       {canToggle && isEditable ? (
         <AddressBadgeSelectable

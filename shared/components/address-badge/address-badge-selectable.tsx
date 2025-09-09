@@ -36,7 +36,7 @@ export const AddressBadgeSelectable = forwardRef<
       <SelectableWrapper
         crossed={checked}
         bgColor={defaultBg}
-        data-testid={dataTestId ? `${dataTestId}-selectableWrapper` : null}
+        data-testid={dataTestId ? `${dataTestId}-selectableWrapper` : undefined}
       >
         <AddressBadge
           ref={ref}
@@ -48,7 +48,9 @@ export const AddressBadgeSelectable = forwardRef<
 
         <Label
           htmlFor={id}
-          data-testid={dataTestId ? `${dataTestId}-actionButtonLabel` : null}
+          data-testid={
+            dataTestId ? `${dataTestId}-actionButtonLabel` : undefined
+          }
         >
           <HiddenCheckbox
             id={id}
@@ -58,11 +60,11 @@ export const AddressBadgeSelectable = forwardRef<
           />
           {checked ? (
             <RestoreIcon
-              data-testid={dataTestId ? `${dataTestId}-restoreIcon` : null}
+              data-testid={dataTestId ? `${dataTestId}-restoreIcon` : undefined}
             />
           ) : (
             <Close
-              data-testid={dataTestId ? `${dataTestId}-closeIcon` : null}
+              data-testid={dataTestId ? `${dataTestId}-closeIcon` : undefined}
             />
           )}
         </Label>

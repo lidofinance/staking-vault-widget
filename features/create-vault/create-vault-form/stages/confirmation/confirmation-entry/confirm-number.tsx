@@ -14,7 +14,7 @@ export const ConfirmNumber: FC<ConfirmDataItemProps> = ({
     '[ConfirmNumber] payload should be a string',
   );
   return (
-    <TextBold data-testid={dataTestId ? `${dataTestId}-text` : null}>
+    <TextBold data-testid={dataTestId ? `${dataTestId}-text` : undefined}>
       {payload}
     </TextBold>
   );

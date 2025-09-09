@@ -25,7 +25,7 @@ export const AddressLinkEtherscan = (props: AddressLinkEtherscanProps) => {
         walletChainId ?? config.defaultChain,
         address,
       )}
-      data-testid={dataTestId ? `${dataTestId}-etherScanLink` : null}
+      data-testid={dataTestId ? `${dataTestId}-etherScanLink` : undefined}
     >
       {text}
     </Link>

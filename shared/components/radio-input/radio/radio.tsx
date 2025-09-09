@@ -48,7 +48,7 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
         htmlFor={rest.id}
         hasError={hasError}
         disabled={disabled}
-        data-testid={dataTestId ? `${dataTestId}-radioInputLabel` : null}
+        data-testid={dataTestId ? `${dataTestId}-radioInputLabel` : undefined}
       >
         <RadioInputStyled
           type="radio"
@@ -56,10 +56,12 @@ export const RadioInput = forwardRef<HTMLInputElement, RadioInputProps>(
           value={value}
           ref={ref}
           disabled={disabled}
-          data-testid={dataTestId ? `${dataTestId}-radioInput` : null}
+          data-testid={dataTestId ? `${dataTestId}-radioInput` : undefined}
         />
         <RadioInputSelector
-          data-testid={dataTestId ? `${dataTestId}-radioInputSelector` : null}
+          data-testid={
+            dataTestId ? `${dataTestId}-radioInputSelector` : undefined
+          }
         />
         {valueToDisplay}
         {children && <Content>{children}</Content>}

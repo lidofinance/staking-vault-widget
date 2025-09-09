@@ -14,7 +14,7 @@ export const ConfirmTime: FC<ConfirmDataItemProps> = ({
     'Payload must be a string | number',
   );
   return (
-    <TextBold data-testid={dataTestId ? `${dataTestId}-text` : null}>
+    <TextBold data-testid={dataTestId ? `${dataTestId}-text` : undefined}>
       {payload} hours
     </TextBold>
   );

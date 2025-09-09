@@ -29,16 +29,16 @@ export const CreateVaultInput: FC<MainSettingsEntryType> = (props) => {
 
   return (
     <InputContainer
-      data-testid={dataTestId ? `${dataTestId}-inputContainer` : null}
+      data-testid={dataTestId ? `${dataTestId}-inputContainer` : undefined}
     >
       {title && (
         <InputTitle
-          data-testid={dataTestId ? `${dataTestId}-inputTitle` : null}
+          data-testid={dataTestId ? `${dataTestId}-inputTitle` : undefined}
         >
           {title}
           <Hint
             text={hint}
-            data-testid={dataTestId ? `${dataTestId}-inputHint` : null}
+            data-testid={dataTestId ? `${dataTestId}-inputHint` : undefined}
           />
         </InputTitle>
       )}

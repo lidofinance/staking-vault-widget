@@ -15,10 +15,14 @@ export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
 
   return (
     <RoleDescriptionWrapper
-      data-testid={dataTestId ? `${dataTestId}-roleDescriptionWrapper` : null}
+      data-testid={
+        dataTestId ? `${dataTestId}-roleDescriptionWrapper` : undefined
+      }
     >
       <span
-        data-testid={dataTestId ? `${dataTestId}-roleDescriptionText` : null}
+        data-testid={
+          dataTestId ? `${dataTestId}-roleDescriptionText` : undefined
+        }
       >
         {description}
       </span>
