@@ -43,7 +43,9 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
   const isEditable = !disabled && hasPermission;
 
   return (
-    <GroupWrapper>
+    <GroupWrapper
+      data-testid={dataTestId ? `${dataTestId}-groupWrapper` : null}
+    >
       <Text
         size="xs"
         strong

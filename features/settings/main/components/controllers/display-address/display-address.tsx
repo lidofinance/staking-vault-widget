@@ -55,7 +55,7 @@ export const DisplayAddress: FC<DisplayAddressProps> = ({
             isEditable={isEditable}
             onRemove={onRemove}
             onUpdate={onUpdate}
-            dataTestId={`${dataTestId}-${index}`}
+            dataTestId={`${dataTestId}-${fieldData.value}`}
           />
         );
       })}

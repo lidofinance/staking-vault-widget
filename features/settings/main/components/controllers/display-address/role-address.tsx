@@ -51,7 +51,9 @@ export const RoleAddress: FC<RoleAddressProps> = ({
   }, [toRemove, state]);
 
   return (
-    <AddressWrapper>
+    <AddressWrapper
+      data-testid={dataTestId ? `${dataTestId}-addressWrapper` : null}
+    >
       {canToggle && isEditable ? (
         <AddressBadgeSelectable
           weight={400}
