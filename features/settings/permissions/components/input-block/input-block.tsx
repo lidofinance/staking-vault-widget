@@ -53,7 +53,9 @@ export const InputBlock: FC<InputBlockProps> = ({
   };
 
   return (
-    <InputBlockWrapper>
+    <InputBlockWrapper
+      data-testid={dataTestId ? `${dataTestId}-inputBlockWrapper` : null}
+    >
       {!readonly && showInput && (
         <>
           <Input

@@ -33,7 +33,11 @@ export const AddressBadgeSelectable = forwardRef<
     };
 
     return (
-      <SelectableWrapper crossed={checked} bgColor={defaultBg}>
+      <SelectableWrapper
+        crossed={checked}
+        bgColor={defaultBg}
+        data-testid={dataTestId ? `${dataTestId}-selectableWrapper` : null}
+      >
         <AddressBadge
           ref={ref}
           {...badgeProps}

@@ -58,7 +58,9 @@ const PermissionsSection = ({
   const isReadonly = disabled || !hasPermission;
 
   return (
-    <PermissionContainer>
+    <PermissionContainer
+      data-testid={dataTestId ? `${dataTestId}-container` : null}
+    >
       <PermissionGroupTitle
         data-testid={dataTestId ? `${dataTestId}-title` : null}
       >
