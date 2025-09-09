@@ -2,6 +2,7 @@ import { FC, PropsWithChildren, ReactNode } from 'react';
 import Link from 'next/link';
 import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
 
+import { FormatToken } from 'shared/formatters';
 import { formatPercent } from 'utils';
 
 import {
@@ -14,12 +15,14 @@ import { AmountLoader, AmountWrapper, ContentWrapper } from './styles';
 
 type OverviewModalProps = {
   name: OverviewModalItem;
+  symbol?: 'ETH' | 'stETH';
   amountRightDecorator?: ReactNode;
 };
 
 export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   children = null,
   name,
+  symbol = '',
   amountRightDecorator = null,
 }) => {
   const { closeModal, currentModal } = useOverviewModal();
@@ -27,12 +30,20 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   const { isLoadingVault, getVaultDataToRender } = useVaultOverview();
   const { title, payload, hint, description, learnMoreLink } =
     getVaultDataToRender({ indicator: name });
+
   const isHealthFactor = name === 'healthFactorNumber';
-  const formattedPayload = isHealthFactor
-    ? formatPercent.format(Number(payload) / 100)
-    : typeof payload === 'bigint'
-      ? payload.toString()
-      : payload;
+  const formattedPayload = isHealthFactor ? (
+    formatPercent.format(Number(payload) / 100)
+  ) : typeof payload === 'bigint' ? (
+    <FormatToken
+      amount={payload}
+      maxDecimalDigits={8}
+      symbol={symbol}
+      adaptiveDecimals
+    />
+  ) : (
+    payload
+  );
 
   const descriptionTextList: string[] = (description || hint || '').split(
     '\n\n',

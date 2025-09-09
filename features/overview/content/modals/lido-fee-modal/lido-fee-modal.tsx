@@ -115,7 +115,7 @@ export const LidoFeeModal = () => {
   const { values } = useVaultOverview();
 
   return (
-    <OverviewModal name="unsettledLidoFees">
+    <OverviewModal name="unsettledLidoFees" symbol="ETH">
       {values?.vaultData.infraFeeBP && (
         <Formula
           list={formulasMap.infraFee}

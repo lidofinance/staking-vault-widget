@@ -28,15 +28,16 @@ export type ItemProps = {
   indicator: VaultOverviewModalKey;
   titleView?: 'column' | 'row';
   color?: string;
+  symbol?: 'ETH' | 'stETH';
 } & Omit<SectionPayload, 'key'>;
 
 const modalsMap: Record<VaultOverviewModalKey, FC> = {
-  totalValueETH: TotalValueModal,
+  totalValue: TotalValueModal,
   healthFactorNumber: HealthFactorModal,
   netApr: NetAprModal,
-  liabilityStETH: StethLiabilityModal,
-  balanceEth: VaultBalanceModal,
-  withdrawableEth: ImmediateWithdrawalModal,
+  vaultLiability: StethLiabilityModal,
+  balance: VaultBalanceModal,
+  withdrawableEther: ImmediateWithdrawalModal,
   undisbursedNodeOperatorFee: NodeOperatorFeeModal,
   unsettledLidoFees: LidoFeeModal,
 };

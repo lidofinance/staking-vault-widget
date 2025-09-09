@@ -13,7 +13,7 @@ import { NetStakingRewards } from './net-staking-rewards';
 
 const sectionPayloadList: SectionData[] = [
   {
-    indicator: 'totalValueETH',
+    indicator: 'totalValue',
   },
   {
     indicator: 'netApr',
@@ -30,7 +30,7 @@ export const StakingMetrics = () => {
 
   return (
     <OverviewSection>
-      <OverviewItem {...totalValueData}>
+      <OverviewItem {...totalValueData} symbol="ETH">
         <TotalValueUsd />
       </OverviewItem>
       <OverviewItem {...netAprData}>

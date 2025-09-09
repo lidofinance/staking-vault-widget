@@ -263,9 +263,10 @@ const selectOverviewData = ({
 
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
-  const undisbursedNodeOperatorFee = toEthValue(nodeOperatorUnclaimedFee);
+  const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
+  const undisbursedNodeOperatorFee = nodeOperatorUnclaimedFee;
 
-  const unsettledLidoFees = toEthValue(obligations.unsettledLidoFees);
+  const unsettledLidoFeesEth = toEthValue(obligations.unsettledLidoFees);
 
   const feeObligationEth = toEthValue(
     obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
@@ -310,14 +311,18 @@ const selectOverviewData = ({
     liabilityStETH,
     totalMintingCapacityStETH,
     withdrawableEth,
+    withdrawableEther,
     balanceEth,
+    balance,
+    undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee,
     nodeOperatorFeeRate,
     collateral,
     pendingUnlockEth,
     isVaultConnected,
     netApr,
-    unsettledLidoFees,
+    unsettledLidoFeesEth,
+    unsettledLidoFees: obligations.unsettledLidoFees,
     remainingMintingCapacityStETH,
     feeObligationEth,
     tierId: tierId.toString(),
@@ -333,6 +338,7 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
+    netStakingRewards,
     carrySpreadApr,
     vaultData,
     vaultMetrics,

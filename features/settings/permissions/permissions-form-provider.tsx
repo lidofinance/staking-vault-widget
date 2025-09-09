@@ -12,6 +12,7 @@ import { editPermissionsSchema } from './consts';
 import { useEditPermissions, usePermissionsFormData } from './hooks';
 import { FormBackdrop } from './components';
 import type { EditPermissionsSchema } from './types';
+import { FormAndContentWrapper } from './styles';
 
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
@@ -50,7 +51,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   );
 
   return (
-    <>
+    <FormAndContentWrapper>
       <FormController
         formObject={formObject}
         onSubmit={onSubmit}
@@ -58,8 +59,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         afterSubmitResetOptions={false}
       >
         {children}
+        <FormBackdrop open={formObject.formState.isLoading} />
       </FormController>
-      <FormBackdrop open={formObject.formState.isLoading} />
-    </>
+    </FormAndContentWrapper>
   );
 };

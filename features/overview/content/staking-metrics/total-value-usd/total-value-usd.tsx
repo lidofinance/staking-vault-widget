@@ -9,15 +9,14 @@ import { TextBlack } from './styles';
 
 export const TotalValueUsd = () => {
   const { isLoadingVault, values } = useVaultOverview();
-  const { usdAmount, isLoading } = useEthUsd(values?.totalValue);
+  const { isLoading, usdAmount } = useEthUsd(values?.totalValue);
 
   return (
     <>
-      {isLoadingVault || isLoading ? (
-        <InlineLoader />
-      ) : (
+      {isLoadingVault || (isLoading && <InlineLoader />)}
+      {!!usdAmount && (
         <TextBlack data-testid="usdValue" size="xxs" strong>
-          {formatDollar.format(usdAmount as number)}
+          {formatDollar.format(usdAmount)}
         </TextBlack>
       )}
     </>

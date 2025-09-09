@@ -20,7 +20,7 @@ const sectionPayloadList: SectionData[] = [
     indicator: 'healthFactorNumber',
   },
   {
-    indicator: 'liabilityStETH',
+    indicator: 'vaultLiability',
   },
 ];
 
@@ -51,7 +51,7 @@ export const Health = () => {
       <OverviewItem {...healthFactorData}>
         <CarrySpread />
       </OverviewItem>
-      <OverviewItem {...liabilityStETHData}>
+      <OverviewItem {...liabilityStETHData} symbol="stETH">
         <RemainingMintingCapacityChart />
         <RemainingMintingCapacity />
       </OverviewItem>

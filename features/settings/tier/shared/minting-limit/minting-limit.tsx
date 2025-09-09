@@ -1,5 +1,5 @@
 import { Steth } from '@lidofinance/lido-ui';
-import { useFormContext } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 
 import { TokenAmountInputGroup } from 'shared/hook-form/controls';
 import { useVaultConfirmingRoles } from 'modules/vaults';
@@ -7,13 +7,15 @@ import { useTierData } from 'features/settings/tier/contexts';
 import { vaultTexts } from 'modules/vaults/consts';
 
 import { PartitionContainer } from '../partition-container';
+import { TierSettingsFormValues } from '../../types';
 
 export const MintingLimit = () => {
-  const { hasNodeOperatorManager } = useVaultConfirmingRoles();
   const { values } = useTierData();
+  const { isNodeOperator } = useVaultConfirmingRoles();
 
-  const { watch } = useFormContext();
-  const selectedTierId = watch('selectedTierId');
+  const selectedTierId = useWatch<TierSettingsFormValues>({
+    name: 'selectedTierId',
+  });
 
   // Disable input if the selected tier is the current tier
   const isCurrentTier = values?.vault.tierId.toString() === selectedTierId;
@@ -21,7 +23,7 @@ export const MintingLimit = () => {
     ? vaultTexts.actions.tier.inputMintingLimit.titleCurrent
     : vaultTexts.actions.tier.inputMintingLimit.titleNew;
 
-  if (!hasNodeOperatorManager) {
+  if (!isNodeOperator) {
     return null;
   }
 

@@ -27,3 +27,9 @@ export const PermissionGroupTitle = styled.div`
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;
+
+export const FormAndContentWrapper = styled.div`
+  position: relative;
+  overflow: hidden;
+  border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
+`;

@@ -33,7 +33,7 @@ export const StethLiabilityModal = () => {
   } = values || {};
 
   return (
-    <OverviewModal name="liabilityStETH">
+    <OverviewModal name="vaultLiability" symbol="stETH">
       <ChartLine
         loading={isLoadingVault}
         border={ChartLineBorderType.rounded}
