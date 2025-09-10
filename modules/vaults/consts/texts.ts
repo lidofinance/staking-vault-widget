@@ -181,7 +181,7 @@ export const vaultTexts = {
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
       confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
-      approveSelectedTier: (tierId: string) =>
+      approveSelectedTier: (tierId: bigint) =>
         `Approving Tier ${tierId} settings.` as const,
       submit: (counter: number) => {
         if (counter > 0)
@@ -305,6 +305,11 @@ export const vaultTexts = {
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
+    totalValue: {
+      title: 'Total value',
+      hint: 'The total amount of ETH deposited on validators and on the vault balance.',
+      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
+    },
     reserveRatio: {
       title: 'Reserve ratio',
       hint: 'Defines amount of ETH that will be reserved as a part of collateral when the vault owner mints stETH in the vault.',
@@ -315,11 +320,21 @@ export const vaultTexts = {
       hint: 'The amount of ETH that is available to withdraw from the vault balance. Constrained by the total locked ETH on the vault and the amount of ETH deposited on validators.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
+    withdrawableEther: {
+      title: 'Available for Immediate Withdrawal',
+      hint: 'The amount of ETH that is available to withdraw from the vault balance. Constrained by the total locked ETH on the vault and the amount of ETH deposited on validators.',
+      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
+    },
     healthFactorNumber: {
       title: 'Health factor',
       hint: 'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.\nThe Health Factor value equal to 100% is defined by the Forced Rebalance Threshold meaning that on the Health Factor falling under 100% the vault becomes subject to forced rebalancing.',
       description:
         'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.',
+      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
+    },
+    vaultLiability: {
+      title: 'stETH Liability',
+      hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     liabilityStETH: {
@@ -343,6 +358,11 @@ export const vaultTexts = {
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     balanceEth: {
+      title: 'Not staked stVault Balance',
+      hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
+      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
+    },
+    balance: {
       title: 'Not staked stVault Balance',
       hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready

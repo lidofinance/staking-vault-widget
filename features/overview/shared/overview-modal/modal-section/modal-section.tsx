@@ -36,7 +36,7 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
               {titleLeftDecorator}
               {title}
             </HeaderText>
-            <Text size="xs">{amount || '-'}</Text>
+            <Text size="xs">{amount ?? '-'}</Text>
           </Title>
           {!!subTitle && (
             <SubTitle size="xxs" color="secondary">

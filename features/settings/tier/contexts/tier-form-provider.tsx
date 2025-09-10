@@ -16,12 +16,12 @@ import { tierSettingsFormResolver } from 'features/settings/tier/const';
 const prepareDefaultValues = async (
   tierInfo: VaultTierData,
 ): Promise<TierSettingsFormValues> => {
-  const { vault } = tierInfo;
+  const { vault, tier } = tierInfo;
 
   return {
     selectedTierId: vault.tierId.toString(),
     selectedTierLimit: vault.stETHLimit,
-    vaultMintingLimit: vault.stETHLimit,
+    vaultMintingLimit: vault.stETHLimit - tier.liabilityStETH,
   };
 };
 

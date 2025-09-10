@@ -20,7 +20,7 @@ import { ChartContainer, ChartHeading, List, ListItem } from './styles';
 
 const { withdrawal } = vaultTexts.metrics.modals;
 
-const dataTestIdPrefix = 'withdrawableEth-modal';
+const dataTestIdPrefix = 'withdrawableEther-modal';
 
 export const ImmediateWithdrawalModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
@@ -34,7 +34,7 @@ export const ImmediateWithdrawalModal = () => {
   const { chartData, notWithdrawableEthAmount } = useWithdrawChart();
 
   return (
-    <OverviewModal name="withdrawableEth">
+    <OverviewModal name="withdrawableEther" symbol="ETH">
       {!isLoadingVault && chartData && (
         <ChartContainer data-testid={`${dataTestIdPrefix}-chartContainer`}>
           <ChartHeading data-testid={`${dataTestIdPrefix}-chartHeading`}>

@@ -1,10 +1,11 @@
 import { FC, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { TierBaseInfo } from 'features/settings/tier/shared/tier-base-info';
 import type { Tier } from 'features/settings/tier/hooks/types';
 import { RadioSelector } from '../radio-selector';
 import { useTierData } from 'features/settings/tier/contexts';
+import { TierSettingsFormValues } from '../../../types';
 
 type TiersSelectorProps = {
   tiers: Tier[] | undefined;
@@ -15,9 +16,11 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
   tiers = [],
   closeModal,
 }) => {
-  const { register, setValue, watch, trigger } = useFormContext();
+  const { register, setValue, trigger } = useFormContext();
   const { values, setSelectedTier } = useTierData();
-  const selectedTierId = watch('selectedTierId');
+  const selectedTierId = useWatch<TierSettingsFormValues>({
+    name: 'selectedTierId',
+  });
 
   useEffect(() => {
     const tier = tiers.find((tier) => tier.id.toString() === selectedTierId);
@@ -52,7 +55,7 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
         const isActive = values?.vault.tierId === tier.id;
         const showSelector =
           (values?.vault.liabilityStETH ?? 0n) <=
-          tier.shareLimitStETH - tier.liabilityStETH;
+            tier.shareLimitStETH - tier.liabilityStETH || isActive;
 
         return (
           <RadioSelector

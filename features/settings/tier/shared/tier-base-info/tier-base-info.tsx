@@ -1,7 +1,8 @@
-import { FC, PropsWithChildren, useMemo } from 'react';
+import { FC, PropsWithChildren } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { formatPercent, formatWeiToEthShort } from 'utils/formats';
+import { FormatToken } from 'shared/formatters';
+import { formatPercent } from 'utils/formats';
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 import {
@@ -31,22 +32,9 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
   liabilityStETH,
   isActive,
 }) => {
-  const baseInfo = useMemo(() => {
-    const tierStETHLimitValue = formatWeiToEthShort(tierStETHLimit, 'stETH');
-    const availableStETHValue = formatWeiToEthShort(
-      tierStETHLimit - liabilityStETH,
-    );
-
-    const reserveRatioValue = formatPercent.format(
-      Number(reserveRatio) / VAULT_TOTAL_BASIS_POINTS,
-    );
-
-    return {
-      tierStETHLimitValue,
-      availableStETHValue,
-      reserveRatioValue,
-    };
-  }, [reserveRatio, tierStETHLimit, liabilityStETH]);
+  const reserveRatioValue = formatPercent.format(
+    Number(reserveRatio) / VAULT_TOTAL_BASIS_POINTS,
+  );
 
   return (
     <Wrapper>
@@ -56,7 +44,7 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
             {tierName}
           </Text>
           <ReserveRatio>
-            <Text size="xxs">{baseInfo.reserveRatioValue}</Text>
+            <Text size="xxs">{reserveRatioValue}</Text>
             <Text size="xxs" color="secondary">
               Reserve ratio
             </Text>
@@ -68,18 +56,34 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
             <Text size="xxs" color="secondary">
               Minting limit
             </Text>
-            <Text size="xxs">{baseInfo.tierStETHLimitValue}</Text>
+            <Text size="xxs">
+              <FormatToken
+                amount={tierStETHLimit}
+                maxDecimalDigits={3}
+                symbol="stETH"
+              />
+            </Text>
           </MintingLimit>
           <MintingAvailable>
             <Text size="xxs" color="secondary">
               Available &nbsp;
             </Text>
-            {!!baseInfo.availableStETHValue && (
-              <Text size="xxs">{baseInfo.availableStETHValue}&nbsp;</Text>
+            {!!tierStETHLimit && (
+              <Text size="xxs">
+                <FormatToken
+                  amount={tierStETHLimit - liabilityStETH}
+                  maxDecimalDigits={3}
+                />{' '}
+              </Text>
             )}
-            {!!baseInfo.tierStETHLimitValue && (
+            {!!tierStETHLimit && (
               <Text size="xxs" color="secondary">
-                / {baseInfo.tierStETHLimitValue}
+                /{' '}
+                <FormatToken
+                  amount={tierStETHLimit}
+                  maxDecimalDigits={3}
+                  symbol="stETH"
+                />
               </Text>
             )}
           </MintingAvailable>

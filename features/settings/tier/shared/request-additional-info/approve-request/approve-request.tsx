@@ -1,34 +1,38 @@
 import { useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
-import { useChangeTierRequest, useVaultTierInfo } from '../../../hooks';
+import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
+
+import {
+  useChangeTierRequest,
+  useNodeOperatorTiersInfo,
+  useVaultTierInfo,
+} from '../../../hooks';
 
 import { ButtonStyled } from './styles';
-import { useAccount } from 'wagmi';
-import {
-  useVault,
-  useVaultConfirmingRoles,
-} from '../../../../../../modules/vaults';
 
 export const ApproveRequest = () => {
   const { approveMovingTier, approving } = useChangeTierRequest();
   const { data: vaultTierInfo, refetch } = useVaultTierInfo();
+  const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
   const { address } = useAccount();
   const { activeVault } = useVault();
-  const { hasConfirmingRole } = useVaultConfirmingRoles();
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const hasAccessToApproving =
-    activeVault?.nodeOperator === address ||
-    hasConfirmingRole ||
-    proposal?.member?.toLowerCase() !== address?.toLowerCase();
+    !!address &&
+    ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
+      hasAdmin);
 
   const handleApprove = useCallback(async () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
     if (typeof tierId !== 'bigint' || typeof mintingLimit !== 'bigint') return;
 
     await approveMovingTier(tierId, mintingLimit);
-    await refetch();
-  }, [approveMovingTier, refetch, proposal]);
+    await refetch({ cancelRefetch: true, throwOnError: false });
+    await refetchNOTiers({ cancelRefetch: true, throwOnError: false });
+  }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
 
   if (!proposal || !hasAccessToApproving) return null;
 

@@ -21,6 +21,7 @@ export const NodeOperatorFeeModal = () => {
   return (
     <OverviewModal
       name="undisbursedNodeOperatorFee"
+      symbol="ETH"
       amountRightDecorator={
         <ButtonStyled
           color="secondary"
