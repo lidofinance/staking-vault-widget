@@ -43,7 +43,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   const isEditable = !disabled && (hasConfirmingRole || hasPermission);
 
   return (
-    <RadioSelectorContainer>
+    <RadioSelectorContainer data-testid={`${vaultKey}-container`}>
       <Text size="xs" strong data-testid={`${vaultKey}-title`}>
         {title}
       </Text>
@@ -83,7 +83,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
                   key={key}
                   {...radioProps}
                   disabled={isMy}
-                  dataTestId={`${vaultKey}-${index}`}
+                  dataTestId={`${vaultKey}-${value}`}
                 />
               );
             },

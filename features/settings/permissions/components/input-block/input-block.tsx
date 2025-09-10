@@ -53,7 +53,9 @@ export const InputBlock: FC<InputBlockProps> = ({
   };
 
   return (
-    <InputBlockWrapper>
+    <InputBlockWrapper
+      data-testid={dataTestId ? `${dataTestId}-inputBlockWrapper` : undefined}
+    >
       {!readonly && showInput && (
         <>
           <Input
@@ -64,7 +66,9 @@ export const InputBlock: FC<InputBlockProps> = ({
             onKeyDown={handleInputEvent}
             onBlur={handleInputEvent}
             autoFocus
-            data-testid={dataTestId ? `${dataTestId}-addAddressInput` : null}
+            data-testid={
+              dataTestId ? `${dataTestId}-addAddressInput` : undefined
+            }
           />
 
           <ButtonClose
@@ -82,7 +86,9 @@ export const InputBlock: FC<InputBlockProps> = ({
           variant="ghost"
           type="button"
           onClick={() => setInputVisibility(true)}
-          data-testid={dataTestId ? `${dataTestId}-addNewAddressButton` : null}
+          data-testid={
+            dataTestId ? `${dataTestId}-addNewAddressButton` : undefined
+          }
         >
           Add new address
         </AddAddress>

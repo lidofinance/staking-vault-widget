@@ -43,16 +43,18 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
   const isEditable = !disabled && hasPermission;
 
   return (
-    <GroupWrapper>
+    <GroupWrapper
+      data-testid={dataTestId ? `${dataTestId}-groupWrapper` : undefined}
+    >
       <Text
         size="xs"
         strong
-        data-testid={dataTestId ? `${dataTestId}-title` : null}
+        data-testid={dataTestId ? `${dataTestId}-title` : undefined}
       >
         {title}
         <Hint
           text={hint}
-          data-testid={dataTestId ? `${dataTestId}-hint` : null}
+          data-testid={dataTestId ? `${dataTestId}-hint` : undefined}
         />
       </Text>
       {isLoading && <Skeleton />}

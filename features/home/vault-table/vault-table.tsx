@@ -91,7 +91,9 @@ type VaultTableRowProps = {
 const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
   return (
     <>
-      <TableCell data-testid={dataTestId ? `${dataTestId}-addressCell` : null}>
+      <TableCell
+        data-testid={dataTestId ? `${dataTestId}-addressCell` : undefined}
+      >
         <AddressBadge
           weight={700}
           showPopover="hover"
@@ -103,31 +105,33 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
       </TableCell>
       <TableCell
         align="right"
-        data-testid={dataTestId ? `${dataTestId}-totalValueCell` : null}
+        data-testid={dataTestId ? `${dataTestId}-totalValueCell` : undefined}
       >
         <FormatToken amount={vault.totalValue} />
       </TableCell>
       <TableCell
         align="right"
-        data-testid={dataTestId ? `${dataTestId}-liabilityCell` : null}
+        data-testid={dataTestId ? `${dataTestId}-liabilityCell` : undefined}
       >
         <FormatToken amount={vault?.liabilityStETH} />
       </TableCell>
       <TableCell
         align="right"
-        data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : null}
+        data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : undefined}
       >
         <PercentCell value={vault.netStakingAprPercent} />
       </TableCell>
       <TableCell
         align="right"
-        data-testid={dataTestId ? `${dataTestId}-carrySpreadAprCell` : null}
+        data-testid={
+          dataTestId ? `${dataTestId}-carrySpreadAprCell` : undefined
+        }
       >
         <PercentCell value={vault.carrySpreadAprPercent} />
       </TableCell>
       <TableCell
         align="right"
-        data-testid={dataTestId ? `${dataTestId}-healthFactorCell` : null}
+        data-testid={dataTestId ? `${dataTestId}-healthFactorCell` : undefined}
       >
         <PercentCell
           value={vault.healthFactor}
@@ -272,7 +276,7 @@ export const VaultTable: FC<VaultTableProps> = ({
     <TableContainer>
       <TableTitle
         counter={vaultsCount}
-        data-testid={dataTestId ? `${dataTestId}-tableTitle` : null}
+        data-testid={dataTestId ? `${dataTestId}-tableTitle` : undefined}
       >
         {title}
       </TableTitle>
@@ -334,7 +338,7 @@ export const VaultTable: FC<VaultTableProps> = ({
           pagesCount={pagesCount}
           siblingCount={1}
           activePage={page}
-          data-testid={dataTestId ? `${dataTestId}-pagination` : null}
+          data-testid={dataTestId ? `${dataTestId}-pagination` : undefined}
         />
       )}
     </TableContainer>

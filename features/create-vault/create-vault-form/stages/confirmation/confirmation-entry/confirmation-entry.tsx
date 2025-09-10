@@ -51,15 +51,15 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   return (
     <ListItem
       key={name}
-      data-testid={dataTestId ? `${dataTestId}-listItem` : null}
+      data-testid={dataTestId ? `${dataTestId}-listItem` : undefined}
     >
       <ConfirmationLabel
-        data-testid={dataTestId ? `${dataTestId}-label` : null}
+        data-testid={dataTestId ? `${dataTestId}-label` : undefined}
       >
         {title}{' '}
         <Hint
           text={hint}
-          data-testid={dataTestId ? `${dataTestId}-hint` : null}
+          data-testid={dataTestId ? `${dataTestId}-hint` : undefined}
         />
       </ConfirmationLabel>
       <DataComponent payload={value} dataTestId={dataTestId} />

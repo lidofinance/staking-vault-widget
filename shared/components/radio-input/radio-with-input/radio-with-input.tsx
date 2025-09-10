@@ -92,7 +92,7 @@ export const RadioWithInput = forwardRef<HTMLInputElement, RadioWithInputProps>(
           onClick={onClick}
           onChange={onChange}
           ref={ref}
-          data-testid={dataTestId ? `${dataTestId}-input` : null}
+          data-testid={dataTestId ? `${dataTestId}-input` : undefined}
         />
       </RadioInput>
     );

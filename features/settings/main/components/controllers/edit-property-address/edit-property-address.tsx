@@ -73,7 +73,9 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
             onBlur={handleInputEvent}
             error={inputError}
             autoFocus
-            data-testid={dataTestId ? `${dataTestId}-addNewAddressInput` : null}
+            data-testid={
+              dataTestId ? `${dataTestId}-addNewAddressInput` : undefined
+            }
           />
           <ButtonClose onClick={hideInputField} />
         </>
@@ -86,7 +88,9 @@ export const EditPropertyAddress: FC<EditPropertyAddressProps> = ({
           variant="ghost"
           type="button"
           onClick={() => setInputVisibility(true)}
-          data-testid={dataTestId ? `${dataTestId}-addNewAddressButton` : null}
+          data-testid={
+            dataTestId ? `${dataTestId}-addNewAddressButton` : undefined
+          }
         >
           Add new address
         </ButtonContainer>

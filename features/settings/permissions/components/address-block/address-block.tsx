@@ -42,7 +42,9 @@ export const AddressBlock: FC<AddressBlockProps> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper
+      data-testid={dataTestId ? `${dataTestId}-addressesWrapper` : undefined}
+    >
       {fields.map((field, index) => {
         return (
           <AddressField

@@ -93,7 +93,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
         bgColor={bgColor}
         onClick={onClick}
         hoverEffect={hoverEffect}
-        data-testid={dataTestId ? `${dataTestId}-pillContainer` : null}
+        data-testid={dataTestId ? `${dataTestId}-pillContainer` : undefined}
         {...props}
       >
         <AddressAvatar address={address} ensName={ensName} />
@@ -104,7 +104,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           symbols={symbols}
           address={mainText}
           crossedText={crossed}
-          data-testid={dataTestId ? `${dataTestId}-addressText` : null}
+          data-testid={dataTestId ? `${dataTestId}-addressText` : undefined}
         />
       </PillContainer>
     );

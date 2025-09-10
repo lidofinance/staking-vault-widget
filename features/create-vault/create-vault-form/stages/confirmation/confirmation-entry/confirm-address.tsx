@@ -15,7 +15,7 @@ export const ConfirmAddress: FC<ConfirmDataItemProps> = ({
     <ConfirmationAddressBadge
       address={payload}
       symbols={6}
-      data-testid={dataTestId ? `${dataTestId}-addressBadge` : null}
+      data-testid={dataTestId ? `${dataTestId}-addressBadge` : undefined}
     />
   );
 };

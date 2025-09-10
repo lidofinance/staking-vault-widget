@@ -58,13 +58,17 @@ const PermissionsSection = ({
   const isReadonly = disabled || !hasPermission;
 
   return (
-    <PermissionContainer>
+    <PermissionContainer
+      data-testid={dataTestId ? `${dataTestId}-container` : undefined}
+    >
       <PermissionGroupTitle
-        data-testid={dataTestId ? `${dataTestId}-title` : null}
+        data-testid={dataTestId ? `${dataTestId}-title` : undefined}
       >
         {permissionsTitle}
       </PermissionGroupTitle>
-      <PermissionBlock data-testid={dataTestId ? `${dataTestId}-block` : null}>
+      <PermissionBlock
+        data-testid={dataTestId ? `${dataTestId}-block` : undefined}
+      >
         {roles.map((role) => {
           const { title, hint } = vaultTexts.roles[role];
           return (
