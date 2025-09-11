@@ -111,6 +111,7 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
         hasPermissions: rolesResult.every((item) => item.hasRole),
         hasDefaultAdminsPermissions: isAdmin,
         hasNodeOperatorPermissions: isNOM,
+        isNodeOperator: address === activeVault.nodeOperator,
         missingRoles: rolesResult
           .filter((item) => !item.hasRole)
           .map((item) => item.role),
@@ -145,6 +146,7 @@ export const useVaultConfirmingRoles = () => {
     hasConfirmingRole: hasAtLeastOne,
     hasAdmin: data?.hasDefaultAdminsPermissions,
     hasNodeOperatorManager: data?.hasNodeOperatorPermissions,
+    isNodeOperator: data?.isNodeOperator,
     hasBothConfirmingRoles:
       data?.hasDefaultAdminsPermissions && data?.hasNodeOperatorPermissions,
     ...query,

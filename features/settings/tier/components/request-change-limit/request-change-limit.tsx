@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Text, Divider } from '@lidofinance/lido-ui';
 import { useAccount } from 'wagmi';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { SectionContainer } from 'features/settings/shared/components';
 import { Title, RequestAdditionalInfo } from 'features/settings/tier/shared';
@@ -22,6 +22,7 @@ export const RequestChangeLimit = () => {
   const { data: noTiersInfo } = useNodeOperatorTiersInfo();
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { address } = useAccount();
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const proposedTierId = proposal?.decodedData.args[1];
@@ -33,7 +34,7 @@ export const RequestChangeLimit = () => {
   const proposer = proposal?.member;
   const isTheSameUser = proposer === address;
 
-  if (!proposedTier) return null;
+  if (!proposedTier || !(isNodeOperator || hasAdmin)) return null;
 
   const buttonText = showAdditionalInfo
     ? vaultTexts.actions.tier.request.showButton.hide

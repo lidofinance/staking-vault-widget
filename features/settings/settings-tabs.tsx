@@ -14,7 +14,7 @@ import { PageWrapper } from './styles';
 import { SETTINGS_PATHS, SettingsPaths, settingsToggleList } from './const';
 
 type AdjustmentTabPageParams = {
-  tab: SETTINGS_PATHS;
+  mode: SETTINGS_PATHS;
   vaultAddress: Address;
 };
 
@@ -26,14 +26,14 @@ const settingsTabsMap: Record<SettingsPaths, FC> = {
 
 export const SettingsTabs = () => {
   const router = useRouter();
-  const { tab, vaultAddress } = router.query as AdjustmentTabPageParams;
-  const CurrentSettings = settingsTabsMap[tab];
+  const { mode, vaultAddress } = router.query as AdjustmentTabPageParams;
+  const CurrentSettings = settingsTabsMap[mode];
 
   const changeTab = useCallback(
-    (tab: SETTINGS_PATHS) => {
+    (mode: SETTINGS_PATHS) => {
       void router.push(
         {
-          pathname: appPaths.vaults.vault(vaultAddress).settings(tab),
+          pathname: appPaths.vaults.vault(vaultAddress).settings(mode),
           query: {},
         },
         undefined,
@@ -43,13 +43,13 @@ export const SettingsTabs = () => {
     [router, vaultAddress],
   );
 
-  if (!tab || !vaultAddress) return null;
+  if (!mode || !vaultAddress) return null;
 
   return (
     <PageWrapper>
       <ToggleSwitch
         options={settingsToggleList}
-        defaultValue={tab}
+        defaultValue={mode}
         onToggle={({ value }) => changeTab(value as SettingsPaths)}
       />
       <CurrentSettings />

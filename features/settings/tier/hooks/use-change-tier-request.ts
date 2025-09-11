@@ -10,11 +10,13 @@ import {
 import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
 
 import { useVaultTierInfo } from './use-vault-tier-info';
+import { useNodeOperatorTiersInfo } from './use-no-tiers';
 
 export const useChangeTierRequest = () => {
   const [approving, setApproving] = useState(false);
   const { activeVault } = useVault();
   const { data: tierInfo } = useVaultTierInfo();
+  const { data: noTiersInfo } = useNodeOperatorTiersInfo();
   const { sendTX, ...rest } = useSendTransaction();
   const { address } = useAccount();
 
@@ -23,6 +25,10 @@ export const useChangeTierRequest = () => {
     approveMovingTier: useCallback(
       async (tierId: bigint, mintingLimit: bigint) => {
         invariant(tierInfo, '[useChangeTierRequest] tierInfo is undefined');
+        invariant(
+          noTiersInfo,
+          '[useChangeTierRequest] noTiersInfo is undefined',
+        );
         invariant(
           activeVault,
           '[useChangeTierRequest] activeVault is undefined',
@@ -41,24 +47,26 @@ export const useChangeTierRequest = () => {
               tierId,
               mintingLimit,
             ]),
-            loadingActionText: vaultTexts.actions.settings.approveSelectedTier(
-              tierId.toString(),
-            ),
+            loadingActionText:
+              vaultTexts.actions.settings.approveSelectedTier(tierId),
           });
         } else {
           transactions.push({
             ...activeVault.dashboard.encode.changeTier([tierId, mintingLimit]),
-            loadingActionText: vaultTexts.actions.settings.approveSelectedTier(
-              tierId.toString(),
-            ),
+            loadingActionText:
+              vaultTexts.actions.settings.approveSelectedTier(tierId),
           });
         }
+
+        const tierName = noTiersInfo.tiers.find(
+          (tier) => tier.id === tierId,
+        )?.tierName;
 
         const result = await withSuccess(
           sendTX({
             transactions,
-            mainActionLoadingText: `Approve moving to ${tierInfo.tier.tierName}`,
-            mainActionCompleteText: `Request for ${tierInfo.tier.tierName} approved`,
+            mainActionLoadingText: `Approve moving to ${tierName}`,
+            mainActionCompleteText: `Request for ${tierName} approved`,
             renderSuccessContent: GoToVault,
             allowRetry: false,
           }),
@@ -70,7 +78,7 @@ export const useChangeTierRequest = () => {
           result,
         };
       },
-      [tierInfo, activeVault, address, sendTX],
+      [tierInfo, noTiersInfo, activeVault, address, sendTX],
     ),
     ...rest,
   };

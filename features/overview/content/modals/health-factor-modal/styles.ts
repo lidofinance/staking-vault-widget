@@ -38,3 +38,8 @@ export const ListItem = styled.div<{ color: HealthChartColor }>`
     transform: translateY(-50%);
   }
 `;
+
+export const HealthFactorHint = styled.span<{ color: HealthChartColor }>`
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  color: ${getColor};
+`;
