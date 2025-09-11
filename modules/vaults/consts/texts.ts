@@ -300,11 +300,6 @@ export const vaultTexts = {
       },
       action: 'Request to change',
     },
-    totalValueETH: {
-      title: 'Total value',
-      hint: 'The total amount of ETH deposited on validators and on the vault balance.',
-      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
-    },
     totalValue: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
@@ -313,11 +308,6 @@ export const vaultTexts = {
     reserveRatio: {
       title: 'Reserve ratio',
       hint: 'Defines amount of ETH that will be reserved as a part of collateral when the vault owner mints stETH in the vault.',
-      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
-    },
-    withdrawableEth: {
-      title: 'Available for Immediate Withdrawal',
-      hint: 'The amount of ETH that is available to withdraw from the vault balance. Constrained by the total locked ETH on the vault and the amount of ETH deposited on validators.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     withdrawableEther: {
@@ -337,11 +327,6 @@ export const vaultTexts = {
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
-    liabilityStETH: {
-      title: 'stETH Liability',
-      hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
-      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
-    },
     rebalanceThreshold: {
       title: 'Forced rebalance threshold',
       hint: 'Defines the minimum allowed ratio stETH Liability to Total value. Exceeding this minimum threshold makes the vault subject to forced rebalancing.',
@@ -355,11 +340,6 @@ export const vaultTexts = {
     totalMintingCapacityStETH: {
       title: 'Total minting balance',
       hint: 'The amount of stETH the vault owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
-      learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
-    },
-    balanceEth: {
-      title: 'Not staked stVault Balance',
-      hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     balance: {
@@ -463,7 +443,7 @@ export const vaultTexts = {
             'The amount of accumulated but not yet claimed Lido fees. This amount of ETH increases the amount of total locked ETH.',
         },
       },
-      liabilityStETH: {
+      vaultLiability: {
         utilizationRatio: {
           title: 'Utilization Ratio',
           description:

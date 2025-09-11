@@ -14,9 +14,9 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-const { liabilityStETH } = vaultTexts.metrics.modals;
+const { vaultLiability } = vaultTexts.metrics.modals;
 
-const dataTestIdPrefix = 'liabilityStETH-modal';
+const dataTestIdPrefix = 'vaultLiability-modal';
 
 export const StethLiabilityModal = () => {
   const chartData = useStEthChart();
@@ -45,47 +45,47 @@ export const StethLiabilityModal = () => {
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.utilizationRatio.title}
+        title={vaultLiability.utilizationRatio.title}
         amount={utilizationRatio}
-        description={liabilityStETH.utilizationRatio.description}
+        description={vaultLiability.utilizationRatio.description}
         dataTestId={`${dataTestIdPrefix}-utilizationRatioSection`}
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.totalStethMintingCapacity.title}
-        subTitle={liabilityStETH.totalStethMintingCapacity.constrainedBy(
+        title={vaultLiability.totalStethMintingCapacity.title}
+        subTitle={vaultLiability.totalStethMintingCapacity.constrainedBy(
           vaultData?.mintingConstraintBy || 'vault',
         )}
         amount={totalMintingCapacityStETH}
-        description={liabilityStETH.totalStethMintingCapacity.description}
+        description={vaultLiability.totalStethMintingCapacity.description}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.stethMintingLimit.title}
+        title={vaultLiability.stethMintingLimit.title}
         amount={tierLimitStETH}
-        description={liabilityStETH.stethMintingLimit.description}
+        description={vaultLiability.stethMintingLimit.description}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingLimitSection`}
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.remainingCapacity.title}
+        title={vaultLiability.remainingCapacity.title}
         amount={remainingMintingCapacityStETH}
-        description={liabilityStETH.remainingCapacity.description}
+        description={vaultLiability.remainingCapacity.description}
         dataTestId={`${dataTestIdPrefix}-remainingCapacitySection`}
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.reserveRatio.title}
+        title={vaultLiability.reserveRatio.title}
         amount={reserveRatio}
-        description={liabilityStETH.reserveRatio.description}
+        description={vaultLiability.reserveRatio.description}
         dataTestId={`${dataTestIdPrefix}-reserveRatioSection`}
       />
       <SectionDivider />
       <ModalSection
-        title={liabilityStETH.forcedRebalanceThreshold.title}
+        title={vaultLiability.forcedRebalanceThreshold.title}
         amount={rebalanceThreshold}
-        description={liabilityStETH.forcedRebalanceThreshold.description}
+        description={vaultLiability.forcedRebalanceThreshold.description}
         dataTestId={`${dataTestIdPrefix}-forcedRebalanceThresholdSection`}
       />
     </OverviewModal>
