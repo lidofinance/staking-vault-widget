@@ -34,6 +34,13 @@ type VaultDataArgs = {
   shares: LidoSDKShares;
 };
 
+type VaultQuarantineState = {
+  isActive: boolean;
+  pendingTotalValueIncrease: bigint;
+  startTimestamp: bigint;
+  endTimestamp: bigint;
+};
+
 export type VaultInfo = VaultConnection &
   VaultObligations & {
     isVaultConnected: boolean;
@@ -61,6 +68,7 @@ export type VaultInfo = VaultConnection &
     tierId: bigint;
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
+    vaultQuarantineState: VaultQuarantineState;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -80,6 +88,7 @@ const getVaultData = async ({
     shareLimit,
     hub,
     operatorGrid,
+    lazyOracle,
     ...rest
   } = vault;
 
@@ -139,6 +148,7 @@ const getVaultData = async ({
     totalMintingCapacityStETH,
     tierStETHLimit,
     lidoTVLSharesLimit,
+    vaultQuarantineState,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
@@ -147,6 +157,7 @@ const getVaultData = async ({
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
     lidoV3Contract.read.getMaxMintableExternalShares(),
+    lazyOracle.read.vaultQuarantine([vault.address]),
   ]);
 
   // Binding-constraint detection:
@@ -198,7 +209,7 @@ const getVaultData = async ({
     liabilityShares,
     withdrawalCredentials,
     obligations,
-
+    vaultQuarantineState,
     tierId,
     tierShareLimit,
     tierStETHLimit,
@@ -229,6 +240,7 @@ const selectOverviewData = ({
     mintableStETH,
     tierId,
     tierStETHLimit,
+    vaultQuarantineState,
   } = vaultData;
 
   const overview = calculateOverviewV2({
@@ -336,6 +348,7 @@ const selectOverviewData = ({
     carrySpreadApr,
     vaultData,
     vaultMetrics,
+    vaultQuarantineState,
   };
 };
 

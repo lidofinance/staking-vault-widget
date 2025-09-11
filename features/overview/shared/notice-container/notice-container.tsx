@@ -17,7 +17,7 @@ type NoticeContainerType = 'warning' | 'error';
 
 export type NoticeContainerProps = {
   title: string;
-  description: string;
+  description: string | ReactNode;
   note?: string;
   actions: {
     buttonText: string;

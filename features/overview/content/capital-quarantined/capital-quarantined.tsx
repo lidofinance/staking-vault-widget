@@ -1,10 +1,25 @@
 import { NoticeContainer } from 'features/overview/shared';
+import { useVaultOverviewData } from 'features/overview/hooks';
+import { QuarantineDescription } from './quarantine-description';
 
 export const CapitalQuarantined = () => {
+  const { data } = useVaultOverviewData();
+
+  if (!data?.vaultQuarantineState.isActive) {
+    return null;
+  }
+
+  const { endTimestamp, pendingTotalValueIncrease } = data.vaultQuarantineState;
+
   return (
     <NoticeContainer
       title="Part of the capital is quarantined"
-      description="98.9636 ETH increase in Total Value is pending due to a sudden jump in the value reported by the oracle. The amount will be unlocked gradually until 2025-09-12."
+      description={
+        <QuarantineDescription
+          amount={pendingTotalValueIncrease}
+          timestamp={endTimestamp}
+        />
+      }
       actions={[]}
     />
   );

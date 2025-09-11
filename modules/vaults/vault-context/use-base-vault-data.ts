@@ -91,6 +91,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         withdrawalCredentials,
         report,
         operatorGrid,
+        lazyOracle,
         hubReport: {
           root: latestHubReportRoot,
           cid: latestHubReportCID,
