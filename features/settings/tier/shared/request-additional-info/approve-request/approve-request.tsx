@@ -29,9 +29,11 @@ export const ApproveRequest = () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
     if (typeof tierId !== 'bigint' || typeof mintingLimit !== 'bigint') return;
 
-    await approveMovingTier(tierId, mintingLimit);
-    await refetch({ cancelRefetch: true, throwOnError: false });
-    await refetchNOTiers({ cancelRefetch: true, throwOnError: false });
+    await Promise.all([
+      approveMovingTier(tierId, mintingLimit),
+      refetch({ cancelRefetch: true, throwOnError: false }),
+      refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
+    ]);
   }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
 
   if (!proposal || !hasAccessToApproving) return null;

@@ -5,7 +5,7 @@ import { TierBaseInfo } from 'features/settings/tier/shared/tier-base-info';
 import type { Tier } from 'features/settings/tier/hooks/types';
 import { RadioSelector } from '../radio-selector';
 import { useTierData } from 'features/settings/tier/contexts';
-import { TierSettingsFormValues } from '../../../types';
+import type { TierSettingsFormValues } from '../../../types';
 
 type TiersSelectorProps = {
   tiers: Tier[] | undefined;

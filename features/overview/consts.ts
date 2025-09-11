@@ -9,16 +9,15 @@ export const modals = [
   'vaultLiability',
 ] as const;
 
-export const formatCustomDate = (timestampSeconds: number): string => {
-  const date = new Date(timestampSeconds * 1000);
+const customDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: false,
+  timeZoneName: 'shortOffset',
+});
 
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: false,
-    timeZoneName: 'shortOffset',
-  });
-  return formatter.format(date);
+export const formatCustomDate = (timestampSeconds: number): string => {
+  return customDateFormatter.format(new Date(timestampSeconds * 1000));
 };

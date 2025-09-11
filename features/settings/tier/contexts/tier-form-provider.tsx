@@ -10,7 +10,7 @@ import {
   useVaultTierInfo,
   VaultTierData,
 } from 'features/settings/tier/hooks';
-import { TierSettingsFormValues } from 'features/settings/tier/types';
+import type { TierSettingsFormValues } from 'features/settings/tier/types';
 import { tierSettingsFormResolver } from 'features/settings/tier/const';
 
 const prepareDefaultValues = async (
@@ -18,10 +18,16 @@ const prepareDefaultValues = async (
 ): Promise<TierSettingsFormValues> => {
   const { vault, tier } = tierInfo;
 
+  const tierMintingCapacity = tier.shareLimitStETH - tier.liabilityStETH;
+  const vaultMintingLimit =
+    vault.stETHLimit > tierMintingCapacity
+      ? tierMintingCapacity
+      : vault.stETHLimit;
+
   return {
     selectedTierId: vault.tierId.toString(),
     selectedTierLimit: vault.stETHLimit,
-    vaultMintingLimit: vault.stETHLimit - tier.liabilityStETH,
+    vaultMintingLimit,
   };
 };
 

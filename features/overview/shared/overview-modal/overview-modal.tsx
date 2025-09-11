@@ -1,10 +1,8 @@
-import { FC, PropsWithChildren, ReactNode } from 'react';
+import { FC, PropsWithChildren, ReactNode, useMemo } from 'react';
 import Link from 'next/link';
 import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
 
-import { FormatToken } from 'shared/formatters';
-
-import { formatPercent } from 'utils';
+import { FormatToken, FormatPercent } from 'shared/formatters';
 
 import {
   useOverviewModal,
@@ -32,19 +30,21 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   const { title, payload, hint, description, learnMoreLink } =
     getVaultDataToRender({ indicator: name });
 
-  const formattedPayload =
-    name === 'healthFactorNumber' ? (
-      formatPercent.format(Number(payload) / 100)
-    ) : typeof payload === 'bigint' ? (
-      <FormatToken
-        amount={payload}
-        maxDecimalDigits={8}
-        symbol={symbol}
-        adaptiveDecimals
-      />
-    ) : (
-      payload
-    );
+  const formattedPayload = useMemo(() => {
+    if (name === 'healthFactorNumber')
+      return <FormatPercent value={payload as number} />;
+    if (typeof payload === 'bigint')
+      return (
+        <FormatToken
+          amount={payload}
+          maxDecimalDigits={8}
+          symbol={symbol}
+          adaptiveDecimals
+        />
+      );
+
+    return payload;
+  }, [payload, name, symbol]);
 
   const descriptionTextList: string[] = (description || hint || '').split(
     '\n\n',

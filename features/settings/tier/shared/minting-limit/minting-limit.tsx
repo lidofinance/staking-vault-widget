@@ -7,7 +7,7 @@ import { useTierData } from 'features/settings/tier/contexts';
 import { vaultTexts } from 'modules/vaults/consts';
 
 import { PartitionContainer } from '../partition-container';
-import { TierSettingsFormValues } from '../../types';
+import type { TierSettingsFormValues } from '../../types';
 
 export const MintingLimit = () => {
   const { values } = useTierData();

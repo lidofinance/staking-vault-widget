@@ -6,6 +6,11 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import {
+  VAULT_HEALTH_PERCENT_GREEN,
+  VAULT_HEALTH_PERCENT_RED,
+  VAULT_HEALTH_PERCENT_YELLOW,
+} from 'consts/threshold';
 
 import {
   Formula,
@@ -106,11 +111,11 @@ const getHealthColor = (
 
   let color: HealthColor;
 
-  if (healthFactorNumber <= 100) {
+  if (healthFactorNumber <= VAULT_HEALTH_PERCENT_RED) {
     color = 'rebalance';
-  } else if (healthFactorNumber <= 105) {
+  } else if (healthFactorNumber <= VAULT_HEALTH_PERCENT_YELLOW) {
     color = 'danger';
-  } else if (healthFactorNumber <= 125) {
+  } else if (healthFactorNumber <= VAULT_HEALTH_PERCENT_GREEN) {
     color = 'warning';
   } else {
     color = 'success';
