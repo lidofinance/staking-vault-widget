@@ -18,7 +18,7 @@ type NoticeContainerType = 'warning' | 'error';
 export type NoticeContainerProps = {
   title: string;
   description: string;
-  note: string;
+  note?: string;
   actions: {
     buttonText: string;
     title: string;
@@ -67,7 +67,7 @@ export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
           );
         })}
       </ActionContainer>
-      <Text size="xxs">{note}</Text>
+      {!!note && <Text size="xxs">{note}</Text>}
     </Wrapper>
   );
 };
