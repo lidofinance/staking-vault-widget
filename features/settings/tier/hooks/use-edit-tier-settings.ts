@@ -11,7 +11,7 @@ import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
 
-import { TierSettingsFormValues } from '../types';
+import type { TierSettingsFormValues } from '../types';
 import { useVaultTierInfo } from './use-vault-tier-info';
 import { useNodeOperatorTiersInfo } from './use-no-tiers';
 

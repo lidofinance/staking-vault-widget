@@ -3,26 +3,14 @@ import { Text } from '@lidofinance/lido-ui';
 import { CID_TO_GATEWAY, useVault } from 'modules/vaults';
 import { DATA_UNAVAILABLE } from 'consts/text';
 
+import { formatCustomDate } from 'features/overview/consts';
+
 import {
   InlineLoaderStyled,
   ReportStateContainer,
   StyledLink,
   TextWrapper,
 } from './styles';
-
-const formatCustomDate = (timestampSeconds: number): string => {
-  const date = new Date(timestampSeconds * 1000);
-
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: false,
-    timeZoneName: 'shortOffset',
-  });
-  return formatter.format(date);
-};
 
 export const ReportState = () => {
   const { data, isPending, error } = useVault();

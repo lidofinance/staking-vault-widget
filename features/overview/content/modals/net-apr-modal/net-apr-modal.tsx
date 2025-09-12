@@ -98,7 +98,7 @@ export const NetAprModal = () => {
     netStakingRewardsEth,
     grossStakingRewardsEth,
     nodeOperatorRewardsEth,
-    unsettledLidoFees,
+    unsettledLidoFeesEth,
   } = values || {};
   return (
     <OverviewModal name="netApr">
@@ -135,7 +135,7 @@ export const NetAprModal = () => {
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
-        amount={unsettledLidoFees}
+        amount={unsettledLidoFeesEth}
         description={netApr.lidoFees.description}
         dataTestId={`${dataTestIdPrefix}-lidoFeesSection`}
       />

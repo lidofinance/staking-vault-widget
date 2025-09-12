@@ -12,12 +12,12 @@ import { WithdrawalChart } from './withdrawal-chart';
 
 const sectionPayloadList: SectionData[] = [
   {
-    indicator: 'balanceEth',
+    indicator: 'balance',
     titleView: 'row',
     textSize: 'lg',
   },
   {
-    indicator: 'withdrawableEth',
+    indicator: 'withdrawableEther',
     titleView: 'row',
     textSize: 'lg',
   },
@@ -35,8 +35,8 @@ export const Balance = () => {
 
   return (
     <OverviewSection>
-      <OverviewItem {...balanceData} />
-      <OverviewItem {...withdrawableData}>
+      <OverviewItem symbol="ETH" {...balanceData} />
+      <OverviewItem symbol="ETH" {...withdrawableData}>
         <WithdrawalChart />
       </OverviewItem>
     </OverviewSection>

@@ -6,6 +6,11 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import {
+  VAULT_HEALTH_PERCENT_GREEN,
+  VAULT_HEALTH_PERCENT_RED,
+  VAULT_HEALTH_PERCENT_YELLOW,
+} from 'consts/threshold';
 
 import {
   Formula,
@@ -17,7 +22,7 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-import { List, ListItem } from './styles';
+import { HealthFactorHint, List, ListItem } from './styles';
 
 const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   carrySpread: [
@@ -88,6 +93,37 @@ const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
 
 const { health } = vaultTexts.metrics.modals;
 
+type HealthColor = 'rebalance' | 'danger' | 'warning' | 'success';
+
+const colorTextsMap: Record<HealthColor, string> = {
+  rebalance: 'Forced rebalance',
+  danger: 'At risk',
+  warning: 'Needs attention',
+  success: 'Healthy',
+};
+
+const getHealthColor = (
+  healthFactorNumber: number | undefined,
+): [HealthColor, string] => {
+  if (typeof healthFactorNumber === 'undefined') {
+    return ['success', ''];
+  }
+
+  let color: HealthColor;
+
+  if (healthFactorNumber <= VAULT_HEALTH_PERCENT_RED) {
+    color = 'rebalance';
+  } else if (healthFactorNumber <= VAULT_HEALTH_PERCENT_YELLOW) {
+    color = 'danger';
+  } else if (healthFactorNumber <= VAULT_HEALTH_PERCENT_GREEN) {
+    color = 'warning';
+  } else {
+    color = 'success';
+  }
+
+  return [color, colorTextsMap[color]];
+};
+
 const dataTestIdPrefix = 'healthFactorNumber-modal';
 
 export const HealthFactorModal = () => {
@@ -102,9 +138,15 @@ export const HealthFactorModal = () => {
   } = values || {};
 
   const { chartData } = useHealthChart(healthFactorNumber);
+  const [colorName, hint] = getHealthColor(healthFactorNumber);
 
   return (
-    <OverviewModal name="healthFactorNumber">
+    <OverviewModal
+      name="healthFactorNumber"
+      amountRightDecorator={
+        <HealthFactorHint color={colorName}>{hint}</HealthFactorHint>
+      }
+    >
       <ModalSection dataTestId={`${dataTestIdPrefix}-chartSection`}>
         <ChartProportion
           loading={isLoadingVault}

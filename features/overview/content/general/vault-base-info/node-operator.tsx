@@ -1,10 +1,11 @@
+import { useRef } from 'react';
 import { Identicon, Text } from '@lidofinance/lido-ui';
 import { zeroAddress } from 'viem';
 
 import { vaultTexts } from 'modules/vaults';
+import { AddressPopover } from 'shared/components/address-badge/address-popover';
 
 import { SectionDivider } from 'features/overview/inner';
-
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import {
@@ -17,9 +18,11 @@ import {
 const { general } = vaultTexts.metrics;
 
 export const NodeOperator = () => {
+  const ref = useRef<HTMLDivElement>(null);
   const { values } = useVaultOverview();
 
   const { nodeOperator, nodeOperatorFeeRate } = values || {};
+  const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (
     <NodeOperatorContainer data-testid="noInfo">
@@ -27,18 +30,26 @@ export const NodeOperator = () => {
         <Text size="xxs" color="secondary" data-testid="noLabel">
           {general.nodeOperator}
         </Text>
-        <NodeOperatorAddressWrapper>
-          <Identicon
-            diameter={16}
-            address={nodeOperator ?? zeroAddress}
-            data-testid="noIcon"
-          />
-          <NodeOperatorAddress
-            symbols={4}
-            address={nodeOperator ?? zeroAddress}
-            data-testid="noAddress"
-          />
-        </NodeOperatorAddressWrapper>
+        <AddressPopover
+          address={nodeOperatorAddress}
+          anchorRef={ref}
+          placement="topLeft"
+          mode="hover"
+          isOpen
+        >
+          <NodeOperatorAddressWrapper ref={ref}>
+            <Identicon
+              diameter={16}
+              address={nodeOperatorAddress}
+              data-testid="noIcon"
+            />
+            <NodeOperatorAddress
+              symbols={4}
+              address={nodeOperatorAddress}
+              data-testid="noAddress"
+            />
+          </NodeOperatorAddressWrapper>
+        </AddressPopover>
       </NodeOperatorParameter>
       <SectionDivider type="vertical" />
       <NodeOperatorParameter>

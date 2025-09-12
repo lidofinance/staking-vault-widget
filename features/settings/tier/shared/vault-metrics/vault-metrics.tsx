@@ -7,7 +7,7 @@ import { useTierData } from 'features/settings/tier/contexts';
 import { PartitionContainer } from '../partition-container';
 import { BaseMetrics } from './base-metrics';
 import { ExtendedMetrics } from './extended-metrics';
-import { TierSettingsFormValues } from 'features/settings/tier/types';
+import type { TierSettingsFormValues } from 'features/settings/tier/types';
 
 import { Wrapper } from './styles';
 

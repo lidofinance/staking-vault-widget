@@ -36,6 +36,7 @@ export const NodeOperatorAddressWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
+  cursor: pointer;
 `;
 
 export const VaultAddress = styled(Address)`
@@ -43,6 +44,7 @@ export const VaultAddress = styled(Address)`
   font-weight: 700;
   line-height: 38px;
   color: ${({ theme }) => theme.colors.text};
+  cursor: pointer;
 
   @media ${devicesHeaderMedia.mobile} {
     font-size: ${({ theme }) => theme.fontSizesMap.lg}px;

@@ -3,7 +3,7 @@ import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { vaultTexts } from 'modules/vaults/consts';
-import { TierSettingsFormValues } from './types';
+import type { TierSettingsFormValues } from './types';
 import { VaultTierData } from './hooks';
 import { awaitWithTimeout } from '../../../utils/await-with-timeout';
 import invariant from 'tiny-invariant';
