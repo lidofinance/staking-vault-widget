@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
+import { useAccount } from 'wagmi';
 
-import { useChangeTierRequest, useVaultTierInfo } from '../../../hooks';
+import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
+
+import {
+  useChangeTierRequest,
+  useVaultTierInfo,
+} from 'features/settings/tier/hooks';
 
 import { ButtonStyled } from './styles';
-import { useAccount } from 'wagmi';
-import {
-  useVault,
-  useVaultConfirmingRoles,
-} from '../../../../../../modules/vaults';
 
 export const ApproveRequest = () => {
   const { approveMovingTier, approving } = useChangeTierRequest();
