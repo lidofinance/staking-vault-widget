@@ -39,9 +39,9 @@ export const SectionContainer = styled.section<{
 }>`
   display: ${({ isShown }) => (isShown ? 'flex' : 'none')};
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
+  gap: ${({ theme }) => theme.spaceMap.xxl}px;
   width: 100%;
-  margin-top: ${({ theme }) => theme.spaceMap.xl}px;
+  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
 
   & > a {
     text-align: center;

@@ -39,9 +39,9 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     ...texts.confirmationLifetime,
   },
   {
-    name: 'vaultManager',
+    name: 'vaultOwner',
     dataType: 'addressArray',
-    ...texts.vaultManager,
+    ...texts.vaultOwner,
   },
   {
     name: 'nodeOperatorManager',
@@ -52,5 +52,38 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     name: 'acceptTerms',
     dataType: 'confirm',
     ...texts.acceptTerms,
+  },
+];
+
+export const CREATE_VAULT_ADDRESSES: MainSettingsEntryType[] = [
+  {
+    name: 'nodeOperator',
+    dataType: 'address',
+    ...texts.nodeOperator,
+  },
+  {
+    name: 'nodeOperatorManager',
+    dataType: 'address',
+    ...texts.nodeOperatorManager,
+  },
+  {
+    name: 'vaultOwner',
+    dataType: 'addressArray',
+    ...texts.vaultOwner,
+  },
+];
+
+export const CREATE_VAULT_SETTINGS: MainSettingsEntryType[] = [
+  {
+    name: 'nodeOperatorFeeRate',
+    dataType: 'percent',
+    type: 'number',
+    ...texts.nodeOperatorFeeRate,
+  },
+  {
+    name: 'confirmExpiry',
+    dataType: 'time',
+    type: 'number',
+    ...texts.confirmationLifetime,
   },
 ];

@@ -79,7 +79,7 @@ const roleKeys = [
 
 export const createVaultSchema = z.object({
   nodeOperator: addressSchema,
-  vaultManager: uniqueAddressesSchema,
+  vaultOwner: uniqueAddressesSchema,
   nodeOperatorManager: addressSchema,
 
   nodeOperatorFeeRate: numberSchema(

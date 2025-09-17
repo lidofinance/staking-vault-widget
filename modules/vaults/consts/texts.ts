@@ -24,35 +24,39 @@ export const vaultTexts = {
       fields: {
         nodeOperator: {
           title: 'Node Operator',
-          label: 'Node Operator address',
+          placeholder: '0x...',
           notes:
             'Node Operator address cannot be changed after the vault is created',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
         nodeOperatorFeeRate: {
           title: 'Node Operator Fee',
-          label: 'Node Operator fee, %',
+          placeholder: '%',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
         },
         confirmationLifetime: {
-          title: 'Confirmation Lifetime',
-          label: 'Confirmation Lifetime, hours',
+          title: 'Confirmation Lifetime, hours',
+          placeholder: 'hours',
           hint: 'The main parameter of the “Multi-role confirmation” mechanism. This mechanism is used for editing some of the stVault parameters via finding consensus between two representatives of the stVault: the Vault Owner and the Node Operator Manager.\nMandatory parameter, hours [24h .. 720h (30 days)].\nIn this mechanism, the first representative initiates changing the parameter, and another representative confirms the change within the period of time equal to the Confirmation Lifetime value.\nUsed for:\n - Node Operator Fee\n - Confirmation Lifetime',
         },
-        vaultManager: {
-          title: 'Vault Manager',
-          label: 'Vault Manager address',
+        vaultOwner: {
+          title: 'Vault Owner',
+          placeholder: '0x...',
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Vault Owner (Staker) perspective.\nMultiple addresses supported.',
         },
         nodeOperatorManager: {
           title: 'Node Operator Manager',
-          label: 'Node Operator Manager address',
+          placeholder: '0x...',
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.',
         },
+        lidoCoreConnectionDeposit: {
+          title: 'Lido Core connection deposit',
+          placeholder: '1 ETH',
+          hint: 'Vault creation requires a supply of 1 ETH.',
+        },
         acceptTerms: {
-          label:
+          placeholder:
             'I confirm that I’ve read and agree:\n •  with the fees structure\n •  mechanisms applied in extreme scenarios',
-          notes: 'Vault creation requires a supply of 1 ETH.',
         },
       },
     },
@@ -496,7 +500,7 @@ export const vaultTexts = {
   // configuration for vault roles
   roles: {
     defaultAdmin: {
-      title: 'Vault Owner',
+      title: 'Vault Manager',
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters.\nVault Manager role can be considered as Vault Owner for the User.\nMultiple addresses supported.',
     },
     nodeOperatorManager: {
