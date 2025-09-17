@@ -10,7 +10,6 @@ export const AcceptTerms = () => {
       name="acceptTerms"
       dataType="confirm"
       dataTestId="createVault-acceptTerms"
-      disabled
       {...texts}
     />
   );
