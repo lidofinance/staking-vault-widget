@@ -1,12 +1,16 @@
 import { z } from 'zod';
 import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Abi, Address, getAddress } from 'viem';
+import invariant from 'tiny-invariant';
 
 import { vaultTexts } from 'modules/vaults/consts';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
+import type { RegisteredPublicClient } from 'modules/web3';
+
 import type { TierSettingsFormValues } from './types';
-import { VaultTierData } from './hooks';
-import { awaitWithTimeout } from '../../../utils/await-with-timeout';
-import invariant from 'tiny-invariant';
+import type { VaultTierData } from './hooks';
 
 export const tierSettingsFormSchema = z
   .object({
@@ -71,4 +75,33 @@ export const tierSettingsFormResolver: Resolver<
   }
 
   return baseResult;
+};
+
+export const getVaultTierConfirmation = async (
+  address: Address,
+  publicClient: RegisteredPublicClient,
+  abi: Abi,
+  vaultAddress: Address,
+): Promise<{
+  confirmExpiry: bigint;
+  proposedVaultLimit: bigint;
+  lastProposal: Confirmation | undefined;
+}> => {
+  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
+    address,
+    publicClient,
+    abi,
+  );
+
+  const lastProposal = confirmations.findLast(
+    ({ decodedData }) =>
+      getAddress(decodedData.args[0] as Address) === getAddress(vaultAddress),
+  );
+  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
+
+  return {
+    confirmExpiry,
+    proposedVaultLimit,
+    lastProposal,
+  };
 };

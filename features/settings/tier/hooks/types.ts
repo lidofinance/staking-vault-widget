@@ -52,7 +52,7 @@ export type VaultTierInfo = {
   tier: Tier;
   proposals: {
     confirmExpiry: bigint;
-    lastProposal: Confirmation;
+    lastProposal: Confirmation | undefined;
     proposedVaultLimitStETH: bigint;
     proposedVaultLimit: bigint;
   };

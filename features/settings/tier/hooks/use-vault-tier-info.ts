@@ -13,7 +13,7 @@ import {
 import { formatPercent, toEthValue, toStethValue } from 'utils';
 
 import { VaultTierInfoArgs, VaultTierInfo } from './types';
-import { getConfirmationsInfo } from 'utils/get-confirmations';
+import { getVaultTierConfirmation } from '../const';
 
 export type VaultTierData = ReturnType<typeof selectTierData>;
 
@@ -88,13 +88,13 @@ const getVaultTierInfo = async ({
   const tierName =
     tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
 
-  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-    operatorGrid.address,
-    publicClient,
-    operatorGrid.abi,
-  );
-  const lastProposal = confirmations[confirmations.length - 1];
-  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
+  const { confirmExpiry, lastProposal, proposedVaultLimit } =
+    await getVaultTierConfirmation(
+      operatorGrid.address,
+      publicClient,
+      operatorGrid.abi,
+      vault.address,
+    );
 
   const [
     vaultLiabilityStETH,

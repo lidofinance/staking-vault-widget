@@ -1,19 +1,23 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
-import { useAccount } from 'wagmi';
 
 import {
   TransactionEntry,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  useVaultConfirmingRoles,
+} from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
 
-import type { TierSettingsFormValues } from '../types';
 import { useVaultTierInfo } from './use-vault-tier-info';
 import { useNodeOperatorTiersInfo } from './use-no-tiers';
+import type { TierSettingsFormValues } from '../types';
 
 export const useEditTierSettings = () => {
   const { activeVault } = useVault();
@@ -21,7 +25,7 @@ export const useEditTierSettings = () => {
   const { data: nodeOperatorTiers } = useNodeOperatorTiersInfo();
   const { sendTX, ...rest } = useSendTransaction();
   const { shares } = useLidoSDK();
-  const { address } = useAccount();
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
   return {
     editTierSettings: useCallback(
@@ -32,7 +36,6 @@ export const useEditTierSettings = () => {
           '[useEditTierSettings] activeVault is undefined',
         );
 
-        const isNodeOperator = activeVault.nodeOperator === address;
         const transactions: TransactionEntry[] = [];
         const { selectedTierId, vaultMintingLimit } = formValues;
 
@@ -50,38 +53,49 @@ export const useEditTierSettings = () => {
             ? selectedTier.shareLimit
             : await shares.convertToShares(BigInt(vaultMintingLimit));
 
+        const bothRequestingRoles = isNodeOperator && hasAdmin;
+
+        const nodeOperatorRequest = {
+          ...activeVault.operatorGrid.encode.changeTier([
+            activeVault.address,
+            BigInt(selectedTierId),
+            mintingLimitInShares,
+          ]),
+          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+            selectedTierId,
+            toStethValue(vaultMintingLimit),
+          ),
+        };
+
+        const defaultAdminRequest = {
+          ...activeVault.dashboard.encode.changeTier([
+            BigInt(selectedTierId),
+            mintingLimitInShares,
+          ]),
+          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+            selectedTierId,
+            toStethValue(vaultMintingLimit),
+          ),
+        };
+
         // if node operator, use operator grid contract
         // if not node operator, use dashboard contract
-        if (isNodeOperator) {
-          transactions.push({
-            ...activeVault.operatorGrid.encode.changeTier([
-              activeVault.address,
-              BigInt(selectedTierId),
-              mintingLimitInShares,
-            ]),
-            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-              selectedTierId,
-              toStethValue(vaultMintingLimit),
-            ),
-          });
+        if (bothRequestingRoles) {
+          transactions.push(nodeOperatorRequest, defaultAdminRequest);
+        } else if (isNodeOperator) {
+          transactions.push(nodeOperatorRequest);
         } else {
-          transactions.push({
-            ...activeVault.dashboard.encode.changeTier([
-              BigInt(selectedTierId),
-              mintingLimitInShares,
-            ]),
-            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-              selectedTierId,
-              toStethValue(vaultMintingLimit),
-            ),
-          });
+          transactions.push(defaultAdminRequest);
         }
+
+        const loadingText = bothRequestingRoles ? 'Approving' : 'Requesting';
+        const completeText = bothRequestingRoles ? 'Approve' : 'Request';
 
         const result = await withSuccess(
           sendTX({
             transactions,
-            mainActionLoadingText: `Requesting to move to ${tierInfo.tier.tierName}`,
-            mainActionCompleteText: `Request for ${tierInfo.tier.tierName} submitted`,
+            mainActionLoadingText: `${loadingText} to move to ${selectedTier.tierName}`,
+            mainActionCompleteText: `${completeText} for ${selectedTier.tierName} submitted`,
             renderSuccessContent: GoToVault,
             allowRetry: false,
           }),
@@ -94,10 +108,11 @@ export const useEditTierSettings = () => {
       [
         tierInfo,
         activeVault,
-        address,
         nodeOperatorTiers?.tiers,
         shares,
         sendTX,
+        hasAdmin,
+        isNodeOperator,
       ],
     ),
     ...rest,
