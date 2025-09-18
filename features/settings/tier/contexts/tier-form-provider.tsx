@@ -4,13 +4,13 @@ import { useForm } from 'react-hook-form';
 import { FormController } from 'shared/hook-form/form-controller';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
-
 import {
-  useEditTierSettings,
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
-  VaultTierData,
-} from 'features/settings/tier/hooks';
+  type VaultTierData,
+} from 'modules/vaults';
+
+import { useEditTierSettings } from 'features/settings/tier/hooks';
 import { tierSettingsFormResolver } from 'features/settings/tier/const';
 import type { TierSettingsFormValues } from 'features/settings/tier/types';
 

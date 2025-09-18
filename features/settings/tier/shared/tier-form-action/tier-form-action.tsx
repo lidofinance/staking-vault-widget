@@ -5,10 +5,10 @@ import {
   useVaultConfirmingRoles,
   MultiplePermissionedSubmitButton,
   useVaultPermission,
+  useVaultTierInfo,
 } from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
-import { useVaultTierInfo } from '../../hooks';
 
 export const TierFormAction = () => {
   const {

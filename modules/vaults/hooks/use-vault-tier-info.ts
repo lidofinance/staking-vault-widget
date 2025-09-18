@@ -1,7 +1,8 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { Abi, Address, getAddress } from 'viem';
 
-import { useLidoSDK } from 'modules/web3';
+import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
   VAULT_TOTAL_BASIS_POINTS,
@@ -11,11 +12,40 @@ import {
   getLidoV3Contract,
 } from 'modules/vaults';
 import { formatPercent, toEthValue, toStethValue } from 'utils';
+import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
 
-import { VaultTierInfoArgs, VaultTierInfo } from './types';
-import { getVaultTierConfirmation } from '../const';
+import { VaultTierInfoArgs, VaultTierInfo } from '../types';
 
 export type VaultTierData = ReturnType<typeof selectTierData>;
+
+const getVaultTierConfirmation = async (
+  address: Address,
+  publicClient: RegisteredPublicClient,
+  abi: Abi,
+  vaultAddress: Address,
+): Promise<{
+  confirmExpiry: bigint;
+  proposedVaultLimit: bigint;
+  lastProposal: Confirmation | undefined;
+}> => {
+  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
+    address,
+    publicClient,
+    abi,
+  );
+
+  const lastProposal = confirmations.findLast(
+    ({ decodedData }) =>
+      getAddress(decodedData.args[0] as Address) === getAddress(vaultAddress),
+  );
+  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
+
+  return {
+    confirmExpiry,
+    proposedVaultLimit,
+    lastProposal,
+  };
+};
 
 const getVaultTierInfo = async ({
   publicClient,

@@ -11,12 +11,12 @@ import {
   vaultTexts,
   GoToVault,
   useVaultConfirmingRoles,
+  useVaultTierInfo,
+  useNodeOperatorTiersInfo,
 } from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
 
-import { useVaultTierInfo } from './use-vault-tier-info';
-import { useNodeOperatorTiersInfo } from './use-no-tiers';
 import type { TierSettingsFormValues } from '../types';
 
 export const useEditTierSettings = () => {

@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
 
-import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
-
 import {
-  useChangeTierRequest,
+  useVault,
+  useVaultConfirmingRoles,
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
-} from '../../../hooks';
+} from 'modules/vaults';
+
+import { useChangeTierRequest } from '../../../hooks';
 
 import { ButtonStyled } from './styles';
 
