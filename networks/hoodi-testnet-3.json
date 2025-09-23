@@ -14,6 +14,6 @@
     "operatorGrid": "0xe9c7B88eEc76bCBa96eeFF0e2805B68B9b10eB46"
   },
   "api": {
-    "vaultsApi": "https://vaults-api-hoodi-lidov3.testnet.fi"
+    "vaultsApi": "https://stvaults-api-hoodi.testnet.fi"
   }
 }
