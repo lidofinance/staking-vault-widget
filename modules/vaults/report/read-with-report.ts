@@ -29,6 +29,7 @@ export const encodeReportCall = (
     report.totalValueWei,
     report.fee,
     report.liabilityShares,
+    report.maxLiabilityShares,
     report.slashingReserve,
     report.proof,
   ]);
@@ -78,6 +79,7 @@ export const readWithReport = async <
       report.totalValueWei,
       report.fee,
       report.liabilityShares,
+      report.maxLiabilityShares,
       report.slashingReserve,
       report.proof,
     ]);

@@ -16,7 +16,7 @@ import {
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
-  type VaultObligations,
+  type VaultRecord,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -34,8 +34,10 @@ type VaultDataArgs = {
   shares: LidoSDKShares;
 };
 
+type RecordVault = Omit<VaultRecord, 'inOutDelta'>;
+
 export type VaultInfo = VaultConnection &
-  VaultObligations & {
+  RecordVault & {
     isVaultConnected: boolean;
     address: Address;
     owner: Address;
@@ -51,7 +53,7 @@ export type VaultInfo = VaultConnection &
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
-    locked: bigint;
+    redemptionShares: bigint;
     lockedShares: bigint;
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
@@ -84,9 +86,8 @@ const getVaultData = async ({
   } = vault;
 
   const [
-    record,
+    vaultRecord,
     isVaultConnected,
-    obligations,
     balance,
     totalValue,
     nodeOperatorUnclaimedFee,
@@ -102,7 +103,6 @@ const getVaultData = async ({
     contracts: [
       hub.prepare.vaultRecord([vault.address]),
       hub.prepare.isVaultConnected([vault.address]),
-      hub.prepare.vaultObligations([vault.address]),
       {
         abi: Multicall3AbiUtils,
         address: publicClient.chain.contracts.multicall3.address,
@@ -122,10 +122,15 @@ const getVaultData = async ({
 
   const {
     liabilityShares,
-    inOutDelta: { value: inOutDelta },
-    locked,
-  } = record;
+    inOutDelta: inOutDeltaArray,
+    minimalReserve,
+    settledLidoFees,
+    cumulativeLidoFees,
+    redemptionShares,
+    ...restVaultRecord
+  } = vaultRecord;
 
+  const inOutDelta = inOutDeltaArray[0].value; // TODO: Re-check value;
   const [_, tierId, tierShareLimit] = tier;
   const { shareLimit: groupShareLimit } = group;
 
@@ -143,7 +148,7 @@ const getVaultData = async ({
     shares.convertToSteth(liabilityShares),
     shares.convertToSteth(mintableShares),
     shares.convertToSteth(shareLimit),
-    shares.convertToShares(locked),
+    shares.convertToShares(minimalReserve),
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
     lidoV3Contract.read.getMaxMintableExternalShares(),
@@ -186,7 +191,7 @@ const getVaultData = async ({
     totalMintingCapacityShares,
     totalMintingCapacityStETH,
     inOutDelta,
-    locked,
+    minimalReserve,
     lockedShares,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
@@ -197,12 +202,15 @@ const getVaultData = async ({
     forcedRebalanceThresholdBP,
     liabilityShares,
     withdrawalCredentials,
-    obligations,
+    settledLidoFees,
+    cumulativeLidoFees,
+    redemptionShares,
 
     tierId,
     tierShareLimit,
     tierStETHLimit,
     ...rest,
+    ...restVaultRecord,
   };
 };
 
@@ -218,18 +226,21 @@ const selectOverviewData = ({
     healthScore,
     reserveRatioBP,
     forcedRebalanceThresholdBP,
-    locked,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
     nodeOperatorFeeRate: nodeOperatorFee,
     nodeOperator,
     isVaultConnected,
-    obligations,
+    settledLidoFees,
+    cumulativeLidoFees,
+    redemptionShares,
     mintableStETH,
     tierId,
     tierStETHLimit,
   } = vaultData;
+
+  const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
 
   const overview = calculateOverviewV2({
     totalValue: vaultData.totalValue,
@@ -238,10 +249,10 @@ const selectOverviewData = ({
     forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
     withdrawableEther,
     balance,
-    locked,
+    locked: redemptionShares,
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
-    unsettledLidoFees: vaultData.obligations.unsettledLidoFees,
+    unsettledLidoFees,
   });
 
   const {
@@ -264,13 +275,13 @@ const selectOverviewData = ({
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
   const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
-  const unsettledLidoFeesEth = toEthValue(obligations.unsettledLidoFees);
+  const unsettledLidoFeesEth = toEthValue(unsettledLidoFees);
 
   const feeObligationEth = toEthValue(
-    obligations.unsettledLidoFees + nodeOperatorUnclaimedFee,
+    unsettledLidoFees + nodeOperatorUnclaimedFee,
   );
   const totalValueETH = toEthValue(vaultData.totalValue);
-  const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
+  const totalLocked = toEthValue(redemptionShares + nodeOperatorUnclaimedFee);
   const liabilityStETH = toStethValue(vaultData.liabilityStETH);
   const withdrawableEth = toEthValue(withdrawableEther);
   const balanceEth = toEthValue(balance);
@@ -320,7 +331,7 @@ const selectOverviewData = ({
     isVaultConnected,
     netApr,
     unsettledLidoFeesEth,
-    unsettledLidoFees: obligations.unsettledLidoFees,
+    unsettledLidoFees,
     remainingMintingCapacityStETH,
     feeObligationEth,
     tierId: tierId.toString(),
