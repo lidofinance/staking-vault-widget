@@ -1,11 +1,9 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
-import { calculateOverviewV2 } from '@lidofinance/lsv-cli/dist/utils/calculate-overview-v2';
-
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import type { Address } from 'viem';
 
+import { calculateHealth } from 'utils';
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
@@ -27,6 +25,8 @@ import {
   getMintingConstraintType,
   type MintingConstraintType,
 } from 'utils';
+
+import { calculateOverviewV2 } from 'features/overview/consts';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;

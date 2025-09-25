@@ -1,6 +1,6 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
-import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
+import { calculateHealth } from 'utils';
 import { getDashboardContract, getVaultHubContract } from 'modules/vaults';
 
 import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';

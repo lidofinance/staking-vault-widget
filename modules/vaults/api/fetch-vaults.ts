@@ -1,6 +1,6 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
-import { calculateHealth } from '@lidofinance/lsv-cli/dist/utils/health/calculate-health';
 
+import { calculateHealth } from 'utils';
 import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient, useLidoSDK } from 'modules/web3';
