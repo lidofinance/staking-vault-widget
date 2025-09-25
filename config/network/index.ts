@@ -12,7 +12,7 @@ import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
 import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
 
 // Testnet deployments
-import hoodiTestnet3Set from 'networks/hoodi-testnet-3.json' assert { type: 'json' }; // update VaultViewer address
+import hoodiTestnet3Set from 'networks/hoodi-testnet-3.json' assert { type: 'json' };
 
 // reexport types and const
 export type { CONTRACT_NAMES, NetworkConfig } from './const';
