@@ -37,6 +37,7 @@ export const useVaultSettingsData = () => {
         nodeOperatorManagers,
         nodeOperatorFeeRate,
         nodeOperatorFeeRecipient,
+        { isBeaconDepositsManuallyPaused },
       ] = await Promise.all([
         activeVault.dashboard.read.getRoleMembers([
           VAULTS_ROOT_ROLES_MAP.defaultAdmin,
@@ -46,6 +47,7 @@ export const useVaultSettingsData = () => {
         ]),
         activeVault.dashboard.read.nodeOperatorFeeRate(),
         activeVault.dashboard.read.nodeOperatorFeeRecipient(),
+        activeVault.hub.read.vaultConnection([activeVault.address]),
       ]);
 
       const { confirmations, confirmExpiry } = await getConfirmationsInfo(
@@ -75,6 +77,7 @@ export const useVaultSettingsData = () => {
         nodeOperatorFeeConfirmations,
         confirmExpiry,
         confirmExpiryConfirmations,
+        isDepositAllowed: !isBeaconDepositsManuallyPaused,
       };
     },
   });

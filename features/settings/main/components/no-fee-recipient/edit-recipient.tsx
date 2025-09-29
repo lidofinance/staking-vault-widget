@@ -1,6 +1,8 @@
 import { vaultTexts } from 'modules/vaults';
 import { AddressInputHookForm } from 'shared/hook-form/controls';
 
+import { RecipientEtherscan } from './recipient-etherscan';
+
 const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
 
 export const EditRecipient = () => {
@@ -8,7 +10,8 @@ export const EditRecipient = () => {
     <AddressInputHookForm
       label={texts.editLabel}
       fieldName="nodeOperatorFeeRecipient"
-      showRightDecorator={false}
+      rightDecorator={<RecipientEtherscan />}
+      showRightDecorator
     />
   );
 };

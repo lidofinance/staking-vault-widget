@@ -21,8 +21,11 @@ export const MainSettingsAction: FC = () => {
   const isSubmitDisabled = isSubmitting || disabled || isValidating;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
-  const showActionButtons =
-    hasConfirmingRole || hasAdmin || hasNodeOperatorManager;
+  const showActionButtons = !!(
+    hasConfirmingRole ||
+    hasAdmin ||
+    hasNodeOperatorManager
+  );
 
   const formFields = watch();
 
@@ -42,6 +45,7 @@ export const MainSettingsAction: FC = () => {
         nodeOperatorFeeRateCustom,
         confirmExpiryCustom,
         nodeOperatorFeeRecipient,
+        isDepositAllowed,
       } = formFields;
 
       const confirmExpiryFormValue =
@@ -68,6 +72,10 @@ export const MainSettingsAction: FC = () => {
       if (confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent) {
         counter++;
       }
+
+      if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
+        counter++;
+      }
     }
 
     return counter;
@@ -77,6 +85,7 @@ export const MainSettingsAction: FC = () => {
     mainSettingsData?.confirmExpiryCurrent,
     mainSettingsData?.nodeOperatorFeeRateCurrent,
     mainSettingsData?.nodeOperatorFeeRecipient,
+    mainSettingsData?.isDepositAllowed,
   ]);
 
   const hasChanges = counter > 0;

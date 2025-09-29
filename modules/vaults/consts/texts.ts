@@ -229,6 +229,12 @@ export const vaultTexts = {
           actionText: 'Add new address',
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
         },
+        isDepositAllowed: {
+          title: 'Allow deposits from stVault Balance to validators',
+          allowed: 'Allowed',
+          paused: 'Paused',
+          hint: 'When deposits are paused, the node operator cannot deposit ETH from the stVault Balance to validators. Сonsolidations remain allowed.',
+        },
       },
       clearChanges: 'Clear changes',
     },

@@ -8,6 +8,7 @@ import {
   NodeOperatorFeeRecipient,
   Admins,
   Voting,
+  ManageDeposits,
 } from 'features/settings/main/components';
 import {
   SectionContainer,
@@ -27,6 +28,7 @@ export const EditMainSettings = () => {
             <Text size="lg" strong data-testid="mainSettingsTitle">
               {vaultTexts.actions.settings.title}
             </Text>
+            <ManageDeposits />
             <NodeOperator />
             <Admins />
             <NodeOperatorFeeRecipient />

@@ -120,6 +120,7 @@ export const formatSettingsValues = (
   return {
     defaultAdmins: vaultInfo.defaultAdmins,
     nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
+    isDepositAllowed: vaultInfo.isDepositAllowed,
     nodeOperatorFeeRecipient,
     confirmExpiryCurrent,
     confirmExpiry,
@@ -145,6 +146,7 @@ export const prepareDefaultValues = (
   return {
     defaultAdmins,
     nodeOperatorManagers,
+    isDepositAllowed: data.isDepositAllowed,
     nodeOperatorFeeRecipient: data.nodeOperatorFeeRecipient,
 
     confirmExpiry: data.confirmExpiryCurrent,

@@ -64,6 +64,7 @@ export const mainSettingsFormSchema = z.object({
   nodeOperatorFeeRecipient: addressSchema,
   defaultAdmins: z.array(permissionSchema),
   nodeOperatorFeeRate: z.string(),
+  isDepositAllowed: z.boolean(),
   nodeOperatorFeeRateCustom: z
     .string()
     .pipe(votingFeeSchema)
