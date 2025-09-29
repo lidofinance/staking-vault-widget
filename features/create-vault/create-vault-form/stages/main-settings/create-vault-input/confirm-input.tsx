@@ -8,7 +8,7 @@ export const ConfirmInput = (props: CreateFormInputProps) => {
       fieldName={props.name}
       label={
         <InfoList>
-          {props.label
+          {props.placeholder
             ?.split('\n')
             .map((item, index) => <span key={index}>{item}</span>)}
         </InfoList>

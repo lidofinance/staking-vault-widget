@@ -1,5 +1,5 @@
 import { parseEther } from 'viem';
-import { formatBalance } from '../formatBalance';
+import { formatBalance } from '../formats';
 
 describe('formatBalance', () => {
   it('should format balance with default maxDecimalDigits', () => {

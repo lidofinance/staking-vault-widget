@@ -32,6 +32,7 @@ export const useReportCalls = () => {
           report.totalValueWei,
           report.fee,
           report.liabilityShares,
+          report.maxLiabilityShares,
           report.slashingReserve,
           report.proof,
         ]),

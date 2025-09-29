@@ -11,8 +11,8 @@ import type { API_NAMES, CONTRACT_NAMES, NetworkConfig } from './const';
 import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
 import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
 
-// Devnet deployments
-import hoodiDevnet1Set from 'networks/hoodi-devnet-1.json' assert { type: 'json' };
+// Testnet deployments
+import hoodiTestnet3Set from 'networks/hoodi-testnet-3.json' assert { type: 'json' };
 
 // reexport types and const
 export type { CONTRACT_NAMES, NetworkConfig } from './const';
@@ -36,7 +36,7 @@ const DEVNET_OVERRIDES: Record<number, string> = // Merge client&server values
 
 // Devnet deployments
 const DEVNETS_MAP = {
-  'hoodi-devnet-1': hoodiDevnet1Set,
+  'hoodi-testnet-3': hoodiTestnet3Set,
 } as Record<string, NetworkConfig>;
 
 // Main deployments

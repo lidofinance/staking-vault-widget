@@ -1,4 +1,4 @@
-import { shortenTokenValue } from '../shortenTokenValue';
+import { shortenTokenValue } from '../formats';
 
 describe('shortenTokenValue', () => {
   it('should return the correct value for values less than 1000', () => {

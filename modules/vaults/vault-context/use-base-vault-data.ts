@@ -58,6 +58,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       const [
         latestHubReportTimestamp,
+        latestDataRefSlot,
         latestHubReportRoot,
         latestHubReportCID,
       ] = latestHubReport;
@@ -94,6 +95,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         lazyOracle,
         hubReport: {
           root: latestHubReportRoot,
+          refSlot: latestDataRefSlot,
           cid: latestHubReportCID,
           timestamp: latestHubReportTimestamp,
         },
