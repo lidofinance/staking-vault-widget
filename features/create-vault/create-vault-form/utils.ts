@@ -16,8 +16,8 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const {
     confirmExpiry,
     nodeOperatorFeeRate,
-    nodeOperator,
     nodeOperatorManager,
+    nodeOperator,
   } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
   const nodeOperatorFeeRateFormatted = BigInt(
@@ -25,7 +25,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   );
 
   // first manager goes to factory as direct argument
-  const [defaultAdmin, ...restAdmins] = values.vaultManager;
+  const [defaultAdmin, ...restAdmins] = values.vaultOwner;
 
   return {
     data: encodeFunctionData({

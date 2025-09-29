@@ -16,28 +16,28 @@ export type VaultConnection = ReadContractReturnType<
   [Address]
 >;
 
-export type VaultObligations = {
-  obligations: ReadContractReturnType<
-    typeof VaultHubAbi,
-    'vaultObligations',
-    [Address]
-  >;
-};
+export type VaultRecord = ReadContractReturnType<
+  typeof VaultHubAbi,
+  'vaultRecord',
+  [Address]
+>;
 
 export type VaultReportType = {
   vault: Address;
   totalValueWei: bigint;
   fee: bigint;
   liabilityShares: bigint;
+  maxLiabilityShares: bigint;
   slashingReserve: bigint;
   proof: Hex[];
   vaultLeafHash: Hex;
 };
 
 export type HubReportData = {
+  root: Hex;
+  refSlot: bigint;
   cid: string;
   timestamp: bigint;
-  root: Hex;
 };
 
 export type VaultBaseInfo = {

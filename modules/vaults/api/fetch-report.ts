@@ -20,16 +20,24 @@ type IPFSReport = {
   tree: Hex[];
   values: {
     treeIndex: number;
-    value: [Address, string, string, string, string];
+    value: [Address, string, string, string, string, string];
   }[];
   format: 'standard-v1';
-  leafEncoding: ['address', 'uint256', 'uint256', 'uint256', 'int256'];
+  leafEncoding: [
+    'address',
+    'uint256',
+    'uint256',
+    'uint256',
+    'uint256',
+    'int256',
+  ];
   leafIndexToData: {
     '0': 'vault_address';
     '1': 'total_value_wei';
     '2': 'fee';
     '3': 'liability_shares';
-    '4': 'slashing_reserve';
+    '4': 'max_liability_shares';
+    '5': 'slashing_reserve';
   };
 };
 
@@ -41,6 +49,7 @@ type ApiReport = {
       totalValueWei: string;
       liabilityShares: string;
       slashingReserve: string;
+      maxLiabilityShares: string;
     };
     extraData: {
       inOutDelta: string;
@@ -68,6 +77,7 @@ export type VaultReport = {
   totalValueWei: bigint;
   fee: bigint;
   liabilityShares: bigint;
+  maxLiabilityShares: bigint;
   slashingReserve: bigint;
   proof: Hex[];
   vaultLeafHash: Hex;
@@ -116,7 +126,8 @@ const fetchReportIPFS = async (
     totalValueWei: BigInt(vaultEntry[1]),
     fee: BigInt(vaultEntry[2]),
     liabilityShares: BigInt(vaultEntry[3]),
-    slashingReserve: BigInt(vaultEntry[4]),
+    maxLiabilityShares: BigInt(vaultEntry[4]),
+    slashingReserve: BigInt(vaultEntry[5]),
     proof: merkleTree.getProof(vaultIndex) as Hex[],
     vaultLeafHash: merkleTree.leafHash(vaultEntry) as Hex,
   };
@@ -155,6 +166,7 @@ const fetchReportApi = async (
     fee: BigInt(data.fee),
     liabilityShares: BigInt(data.liabilityShares),
     slashingReserve: BigInt(data.slashingReserve),
+    maxLiabilityShares: BigInt(data.maxLiabilityShares),
     proof: proof as Hex[],
     vaultLeafHash: leaf as Hex,
   };

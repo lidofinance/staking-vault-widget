@@ -14,7 +14,7 @@ type PlaceholderForm = {
 
 export const AddressArrayInput: FC<CreateFormInputProps> = ({
   name,
-  label,
+  placeholder,
 }) => {
   const { disabled } = useFormState();
   const { fields, append, remove } = useFieldArray<
@@ -31,7 +31,7 @@ export const AddressArrayInput: FC<CreateFormInputProps> = ({
             <AddressInputHookForm
               key={field.id}
               showRightDecorator={false}
-              label={label}
+              placeholder={placeholder}
               fieldName={`${name}.${index}.value` as const}
             />
             {allowDelete && <ButtonClose onClick={() => remove(index)} />}

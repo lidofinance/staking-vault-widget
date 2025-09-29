@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type {
   VAULTS_NO_ROLES_MAP,
   VAULTS_OWNER_ROLES_MAP,
@@ -10,7 +11,7 @@ export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
 
 export type CreateVaultFormValues = {
   nodeOperator: string;
-  vaultManager: { value: string }[];
+  vaultOwner: { value: string }[];
   nodeOperatorManager: string;
   nodeOperatorFeeRate: string;
   confirmExpiry: string;
@@ -32,7 +33,7 @@ export type VaultMainSettingsType = Omit<CreateVaultSchema, 'roles'>;
 export type MainSettingsKeys = keyof VaultMainSettingsType;
 
 export type MainSettingsEntryType = {
-  name: MainSettingsKeys;
+  name: MainSettingsKeys | 'connectionDeposit';
   dataType: InputDataType;
   title?: string;
   label?: string;
@@ -40,6 +41,8 @@ export type MainSettingsEntryType = {
   hint?: string;
   type?: string;
   dataTestId?: string;
+  disabled?: boolean;
+  rightDecorator?: ReactNode;
 };
 
 export type PermissionKeys =

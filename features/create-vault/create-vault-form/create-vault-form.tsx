@@ -37,7 +37,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
     {
       defaultValues: {
         nodeOperator: '',
-        vaultManager: [{ value: '' }],
+        vaultOwner: [{ value: '' }],
         nodeOperatorManager: '',
         nodeOperatorFeeRate: undefined,
         confirmExpiry: '36',
