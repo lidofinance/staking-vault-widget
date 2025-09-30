@@ -158,7 +158,7 @@ export const useEditMainSettings = () => {
             : 'pauseBeaconChainDeposits';
           transactions.push({
             ...activeVault.dashboard.encode[txFnName](),
-            loadingActionText: vaultTexts.actions.settings[txFnName](),
+            loadingActionText: vaultTexts.actions.settings[txFnName],
           });
         }
 
