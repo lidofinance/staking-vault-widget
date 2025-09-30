@@ -46,7 +46,8 @@ const NETWORKS_MAP = {
 } as Record<string, NetworkConfig>;
 
 export const getNetworkConfig = (chain: CHAINS): NetworkConfig | undefined => {
-  const overridedSetName = DEVNET_OVERRIDES[chain];
+  let overridedSetName = DEVNET_OVERRIDES[chain];
+  overridedSetName = 'hoodi-testnet-3'; // TEST DEPLOYMENT;
 
   if (overridedSetName) {
     invariant(
