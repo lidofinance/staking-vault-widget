@@ -151,6 +151,17 @@ export const useEditMainSettings = () => {
           });
         }
 
+        const { isDepositAllowed } = formValues;
+        if (isDepositAllowed !== vaultSettings.isDepositAllowed) {
+          const txFnName = isDepositAllowed
+            ? 'resumeBeaconChainDeposits'
+            : 'pauseBeaconChainDeposits';
+          transactions.push({
+            ...activeVault.dashboard.encode[txFnName](),
+            loadingActionText: vaultTexts.actions.settings[txFnName](),
+          });
+        }
+
         const result = await withSuccess(
           sendTX({
             transactions: isFeeValueChanged

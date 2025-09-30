@@ -183,6 +183,9 @@ export const vaultTexts = {
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
+      resumeBeaconChainDeposits: () =>
+        'Resume deposits to beacon chain' as const,
+      pauseBeaconChainDeposits: () => 'Pause deposits to beacon chain' as const,
       confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
       approveSelectedTier: (tierId: bigint) =>
