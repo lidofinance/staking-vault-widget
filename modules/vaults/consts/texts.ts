@@ -195,6 +195,10 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
+      groups: {
+        address: 'Addresses',
+        settings: 'Settings',
+      },
       nodeOperatorFeeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
