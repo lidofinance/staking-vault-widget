@@ -237,6 +237,7 @@ const selectOverviewData = ({
     mintableStETH,
     tierId,
     tierStETHLimit,
+    isBeaconDepositsManuallyPaused,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -350,6 +351,7 @@ const selectOverviewData = ({
     carrySpreadApr,
     vaultData,
     vaultMetrics,
+    isBeaconDepositsManuallyPaused,
   };
 };
 

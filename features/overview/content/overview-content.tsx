@@ -11,6 +11,7 @@ import { StakingMetrics } from './staking-metrics';
 
 import { SectionDivider } from '../shared';
 
+import { DepositsPaused } from './deposits-paused';
 import { OverviewWrapper, Content } from './styles';
 
 export const OverviewContent = () => {
@@ -24,6 +25,7 @@ export const OverviewContent = () => {
         {isLoadingVault || values?.isVaultConnected ? (
           <>
             <SectionDivider />
+            <DepositsPaused />
             <StakingMetrics />
             <Health />
             <SectionDivider />
