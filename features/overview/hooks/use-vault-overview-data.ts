@@ -64,6 +64,7 @@ export type VaultInfo = VaultConnection &
     tierId: bigint;
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
+    reportLiabilitySharesStETH: bigint;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -83,6 +84,7 @@ const getVaultData = async ({
     shareLimit,
     hub,
     operatorGrid,
+    report,
     ...rest
   } = vault;
 
@@ -98,7 +100,7 @@ const getVaultData = async ({
     group,
   ] = await readWithReport({
     publicClient,
-    report: vault.report,
+    report,
     contracts: [
       {
         abi: Multicall3AbiUtils,
@@ -155,6 +157,10 @@ const getVaultData = async ({
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
+  const reportLiabilitySharesStETH = report
+    ? await shares.convertToSteth(report.liabilityShares)
+    : 0n;
+
   // Binding-constraint detection:
   // - totalMintingCapacityShares is the current effective capacity (RR-based and already
   //   reduced by any active caps).
@@ -197,7 +203,7 @@ const getVaultData = async ({
     withdrawableEther,
     balance,
     nodeOperatorFeeRate,
-
+    reportLiabilitySharesStETH,
     shareLimit,
     forcedRebalanceThresholdBP,
     liabilityShares,
@@ -237,6 +243,7 @@ const selectOverviewData = ({
     mintableStETH,
     tierId,
     tierStETHLimit,
+    reportLiabilitySharesStETH,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -252,6 +259,7 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
+    reportLiabilitySharesStETH,
   });
 
   const {
