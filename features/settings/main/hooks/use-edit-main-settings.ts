@@ -127,7 +127,9 @@ export const useEditMainSettings = () => {
               BigInt(newFee),
             ]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
-              confirmingRoleAction,
+              nodeOperatorFeeRate === 'custom'
+                ? confirmingRoleAction
+                : 'Setting',
               feeValue,
             ),
           });
@@ -145,7 +147,7 @@ export const useEditMainSettings = () => {
           transactions.push({
             ...activeVault.dashboard.encode.setConfirmExpiry([expiryValue]),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
-              confirmingRoleAction,
+              confirmExpiry === 'custom' ? confirmingRoleAction : 'Setting',
               Number(expiryValue / 3600n),
             ),
           });
