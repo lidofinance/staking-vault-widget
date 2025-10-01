@@ -198,21 +198,22 @@ const checkForDuplicateValues = (
 ) => {
   const { nodeOperatorFeeRate, confirmExpiry } = context;
 
-  const uniquenodeOperatorFeeRate = nodeOperatorFeeRate
+  const uniqueNodeOperatorFeeRate = nodeOperatorFeeRate
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
   const uniqueConfirmExpiry = confirmExpiry
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
 
-  const isnodeOperatorFeeRateDuplicate = uniquenodeOperatorFeeRate.includes(
-    Number(values.nodeOperatorFeeRateCustom),
-  );
+  const isNodeOperatorFeeRateDuplicate = uniqueNodeOperatorFeeRate
+    .map((rate) => `${rate}`)
+    .includes(values.nodeOperatorFeeRateCustom ?? '');
+
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,
   );
 
-  if (isnodeOperatorFeeRateDuplicate) {
+  if (isNodeOperatorFeeRateDuplicate) {
     errors.nodeOperatorFeeRateCustom = {
       type: 'custom',
       message: DUPLICATE_VALUE,
