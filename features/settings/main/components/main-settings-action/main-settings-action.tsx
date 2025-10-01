@@ -18,7 +18,7 @@ export const MainSettingsAction: FC = () => {
     useFormState();
   const isClearDisabled = !isDirty;
   const { data: mainSettingsData } = useMainSettingsData();
-  const isSubmitDisabled = isSubmitting || disabled || isValidating;
+  const isSubmitDisabled = isSubmitting || disabled || isValidating || !isValid;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
   const showActionButtons = !!(
@@ -36,52 +36,53 @@ export const MainSettingsAction: FC = () => {
   const counter = useMemo(() => {
     let counter = 0;
 
-    if (isValid) {
-      counter += shouldIncrementTxCounterByAddresses(formFields);
+    counter += shouldIncrementTxCounterByAddresses(formFields);
 
-      const {
-        nodeOperatorFeeRate,
-        confirmExpiry,
-        nodeOperatorFeeRateCustom,
-        confirmExpiryCustom,
-        nodeOperatorFeeRecipient,
-        isDepositAllowed,
-      } = formFields;
+    const {
+      nodeOperatorFeeRate,
+      confirmExpiry,
+      nodeOperatorFeeRateCustom,
+      confirmExpiryCustom,
+      nodeOperatorFeeRecipient,
+      isDepositAllowed,
+    } = formFields;
 
-      const confirmExpiryFormValue =
-        confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
+    const confirmExpiryFormValue =
+      confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
-      if (
-        nodeOperatorFeeRecipient !== mainSettingsData?.nodeOperatorFeeRecipient
-      ) {
-        counter++;
-      }
+    if (
+      nodeOperatorFeeRecipient !== mainSettingsData?.nodeOperatorFeeRecipient
+    ) {
+      counter++;
+    }
 
-      const nodeOperatorFeeRateFormValue =
-        nodeOperatorFeeRate === 'custom'
-          ? nodeOperatorFeeRateCustom
-          : nodeOperatorFeeRate;
+    const nodeOperatorFeeRateFormValue =
+      nodeOperatorFeeRate === 'custom'
+        ? nodeOperatorFeeRateCustom
+        : nodeOperatorFeeRate;
 
-      if (
-        nodeOperatorFeeRateFormValue !==
+    if (
+      nodeOperatorFeeRateFormValue !== '' &&
+      nodeOperatorFeeRateFormValue !==
         mainSettingsData?.nodeOperatorFeeRateCurrent
-      ) {
-        counter++;
-      }
+    ) {
+      counter++;
+    }
 
-      if (confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent) {
-        counter++;
-      }
+    if (
+      confirmExpiryFormValue !== '' &&
+      confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent
+    ) {
+      counter++;
+    }
 
-      if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
-        counter++;
-      }
+    if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
+      counter++;
     }
 
     return counter;
   }, [
     formFields,
-    isValid,
     mainSettingsData?.confirmExpiryCurrent,
     mainSettingsData?.nodeOperatorFeeRateCurrent,
     mainSettingsData?.nodeOperatorFeeRecipient,
