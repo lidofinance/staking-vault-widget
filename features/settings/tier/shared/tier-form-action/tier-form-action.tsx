@@ -21,7 +21,7 @@ export const TierFormAction = () => {
     hasNodeOperatorManager,
     isNodeOperator,
   } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('tierChangeRequester');
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
 
   const { data: vaultTierInfo } = useVaultTierInfo();
   const [selectedTierId, vaultMintingLimit] = watch([
@@ -70,7 +70,7 @@ export const TierFormAction = () => {
   return (
     <MultiplePermissionedSubmitButton
       disabled={buttonDisabled}
-      dashboardRoles={['tierChangeRequester']}
+      dashboardRoles={['vaultConfiguration']}
     >
       {buttonText}
     </MultiplePermissionedSubmitButton>

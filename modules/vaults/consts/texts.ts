@@ -560,7 +560,7 @@ export const vaultTexts = {
       title: 'Unguaranteed deposit to validators',
       hint: 'Direct and unguaranteed deposit ETH from the vault balance to validators.\nThis deposit is performed outside Pre-Deposit Guarantee contract so the operation is vulnerable.',
     },
-    tierChangeRequester: {
+    vaultConfiguration: {
       title: 'Request to change the stVault tier',
       hint: 'Allows requesting Node Operator to change the stVaults tier',
     },

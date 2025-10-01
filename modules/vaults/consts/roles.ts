@@ -29,7 +29,7 @@ export const VAULTS_OWNER_ROLES_MAP = {
   unguaranteedDepositor: toRoleHash(
     'vaults.Permissions.UnguaranteedBeaconChainDeposit',
   ),
-  tierChangeRequester: toRoleHash('vaults.Permissions.ChangeTier'),
+  vaultConfiguration: toRoleHash('vaults.Permissions.VaultConfiguration'),
   assetRecoverer: toRoleHash('vaults.Dashboard.RecoverAssets'),
 } as const;
 
@@ -72,7 +72,7 @@ export const VAULT_MANAGER_PERMISSIONS_LIST: VAULT_OWNER_ROLES[] = [
   'pdgCompensater',
   'pdgProver',
   'unguaranteedDepositor',
-  'tierChangeRequester',
+  'vaultConfiguration',
 ] as const;
 
 export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [

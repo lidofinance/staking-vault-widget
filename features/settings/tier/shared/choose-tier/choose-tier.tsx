@@ -13,7 +13,7 @@ import { TierSelector } from './styles';
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('tierChangeRequester');
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
   const accessPermission = !!(hasAdmin || hasPermission || isNodeOperator);
   const { values, selectedTier } = useTierData();
 
