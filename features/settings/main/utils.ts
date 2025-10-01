@@ -1,6 +1,6 @@
 import { type Address, isAddressEqual } from 'viem';
 
-import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
@@ -33,7 +33,7 @@ export const shouldIncrementTxCounterByAddresses = (
 
   multipleDataFields.forEach((key) => {
     const fields = formFields[key];
-    fields.forEach((field: RoleFieldSchema) => {
+    (fields ?? []).forEach((field: RoleFieldSchema) => {
       grant += Number(field.state === 'grant');
       remove += Number(field.state === 'remove');
     });
@@ -48,7 +48,7 @@ export const formatSettingsValues = (
 ): MainSettingsFormData => {
   const confirmExpiryCurrent = String(vaultInfo.confirmExpiry);
   const nodeOperatorFeeRateCurrent = String(
-    (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    Number(vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS,
   );
   const nodeOperatorFeeRecipient = vaultInfo.nodeOperatorFeeRecipient;
 
