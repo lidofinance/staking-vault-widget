@@ -1,5 +1,3 @@
-import { parseEther } from 'viem';
-
 import { calculateHealth } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 
@@ -38,6 +36,7 @@ type OverviewArgs = {
   nodeOperatorDisbursableFee: bigint;
   totalMintingCapacityStethWei: bigint;
   unsettledLidoFees: bigint;
+  minimalReserve: bigint;
   reportLiabilitySharesStETH: bigint;
 };
 
@@ -59,6 +58,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     nodeOperatorDisbursableFee,
     totalMintingCapacityStethWei,
     unsettledLidoFees,
+    minimalReserve,
     reportLiabilitySharesStETH,
   } = args;
 
@@ -72,10 +72,9 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const totalLocked = locked + nodeOperatorDisbursableFee + unsettledLidoFees;
   const RR = BigInt(reserveRatioBP);
   const oneMinusRR = BASIS_POINTS - RR;
-
   const collateral = bigIntMax(
-    parseEther('1'),
-    ceilDiv(liabilitySharesInStethWei, oneMinusRR),
+    minimalReserve,
+    ceilDiv(liabilitySharesInStethWei * BASIS_POINTS, oneMinusRR),
   );
   const recentlyRepaid = bigIntMax(
     0n,

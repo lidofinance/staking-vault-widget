@@ -243,6 +243,7 @@ const selectOverviewData = ({
     mintableStETH,
     tierId,
     tierStETHLimit,
+    minimalReserve,
     reportLiabilitySharesStETH,
   } = vaultData;
 
@@ -259,6 +260,7 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
+    minimalReserve,
     reportLiabilitySharesStETH,
   });
 
