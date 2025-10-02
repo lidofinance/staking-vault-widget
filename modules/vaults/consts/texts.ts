@@ -508,11 +508,11 @@ export const vaultTexts = {
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters from the Node Operator perspective.\nMultiple addresses supported',
     },
     supplier: {
-      title: 'Supply ETH',
+      title: 'Supply (fund) ETH to the stVault',
       hint: 'Allows Supplying ETH',
     },
     withdrawer: {
-      title: 'Withdraw ETH',
+      title: 'Withdraw ETH from the stVault Balance',
       hint: 'Allows Withdrawing unlocked ETH from stVault',
     },
     depositsPauser: {
@@ -541,20 +541,12 @@ export const vaultTexts = {
       hint: 'Allows Minting stETH (considering ReserveRatio)',
     },
     repayer: {
-      title: 'Repay stETH',
+      title: 'Repay (burn) previously minted stETH to decrease stETH Liability',
       hint: 'Allows Repaying stETH',
     },
     volunataryDisconnecter: {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
-    },
-    pdgProver: {
-      title: 'Prove the validator to PDG',
-      hint: 'If validator exists on the Beacon Chain, user can prove this validator to PDG.',
-    },
-    pdgCompensater: {
-      title: 'Compensate 1 ETH for disproven validator',
-      hint: 'In a case of disproven pre-deposit on validator, transfer unlocked 1 ETH from PDG bond to the specified address.',
     },
     unguaranteedDepositor: {
       title: 'Unguaranteed deposit to validators',
@@ -564,18 +556,25 @@ export const vaultTexts = {
       title: 'Request to change the stVault tier',
       hint: 'Allows requesting Node Operator to change the stVaults tier',
     },
-    assetRecoverer: {
-      title: 'Withdraw tokens wrongly transferred to the Dashboard contract',
-      hint: 'Allows to recover ERC20 & NFTs from the Dashboard contract.',
+    assetCollector: {
+      title: 'Lorem ipsum',
+      hint: 'Lorem ipsum set amet.',
     },
-
     nodeOperatorFeeClaimer: {
       title: 'Claim Node Operator’s Accumulated Fees',
       hint: 'Allows claiming accumulated Node Operator’s fee.\nClaimer provides an address to receive fees.',
     },
-    nodeOperatorRewardsAdjuster: {
-      title: 'Adjust rewards on the validators',
-      hint: 'ETH added outside stVaults mechanisms is treated as rewards and subject to Node Operator Fee unless marked as deposit.',
+    feeExemptRole: {
+      title: "Node operator's sub-role for fee exemptions",
+      hint: "Node operator's sub-role for fee exemptions",
+    },
+    unguaranteedDepositRole: {
+      title: "Node operator's sub-role for unguaranteed deposit",
+      hint: "Node operator's sub-role for unguaranteed deposit",
+    },
+    proveUnknownValidatorsRole: {
+      title: "Node operator's sub-role for proving unknown validators",
+      hint: "Node operator's sub-role for proving unknown validators",
     },
   },
   // common texts like errors, warnings, etc.

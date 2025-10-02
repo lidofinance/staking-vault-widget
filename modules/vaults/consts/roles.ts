@@ -24,18 +24,20 @@ export const VAULTS_OWNER_ROLES_MAP = {
     'vaults.Permissions.TriggerValidatorWithdrawal',
   ),
   volunataryDisconnecter: toRoleHash('vaults.Permissions.VoluntaryDisconnect'),
-  pdgCompensater: toRoleHash('vaults.Permissions.PDGCompensatePredeposit'),
-  pdgProver: toRoleHash('vaults.Permissions.PDGProveValidator'),
   unguaranteedDepositor: toRoleHash(
     'vaults.Permissions.UnguaranteedBeaconChainDeposit',
   ),
   vaultConfiguration: toRoleHash('vaults.Permissions.VaultConfiguration'),
-  assetRecoverer: toRoleHash('vaults.Dashboard.RecoverAssets'),
+  assetCollector: toRoleHash('vaults.Dashboard.CollectVaultERC20'),
 } as const;
 
 export const VAULTS_NO_ROLES_MAP = {
-  nodeOperatorRewardsAdjuster: toRoleHash(
-    'vaults.NodeOperatorFee.RewardsAdjustRole',
+  feeExemptRole: toRoleHash('vaults.NodeOperatorFee.FeeExemptRole'),
+  unguaranteedDepositRole: toRoleHash(
+    'vaults.NodeOperatorFee.UnguaranteedDepositRole',
+  ),
+  proveUnknownValidatorsRole: toRoleHash(
+    'vaults.NodeOperatorFee.proveUnknownValidatorsRole',
   ),
 } as const;
 
@@ -62,19 +64,18 @@ export const VAULT_MANAGER_PERMISSIONS_LIST: VAULT_OWNER_ROLES[] = [
   'withdrawer',
   'minter',
   'repayer',
+  'rebalancer',
   'depositsPauser',
   'depositsResumer',
-  'validatorWithdrawalTrigger',
   'validatorExitRequester',
-  'rebalancer',
+  'validatorWithdrawalTrigger',
   'volunataryDisconnecter',
-  'assetRecoverer',
-  'pdgCompensater',
-  'pdgProver',
   'unguaranteedDepositor',
   'vaultConfiguration',
 ] as const;
 
 export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [
-  'nodeOperatorRewardsAdjuster',
+  'feeExemptRole',
+  'unguaranteedDepositRole',
+  'proveUnknownValidatorsRole',
 ] as const;
