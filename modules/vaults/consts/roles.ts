@@ -24,9 +24,6 @@ export const VAULTS_OWNER_ROLES_MAP = {
     'vaults.Permissions.TriggerValidatorWithdrawal',
   ),
   volunataryDisconnecter: toRoleHash('vaults.Permissions.VoluntaryDisconnect'),
-  unguaranteedDepositor: toRoleHash(
-    'vaults.Permissions.UnguaranteedBeaconChainDeposit',
-  ),
   vaultConfiguration: toRoleHash('vaults.Permissions.VaultConfiguration'),
   assetCollector: toRoleHash('vaults.Dashboard.CollectVaultERC20'),
 } as const;
@@ -70,7 +67,6 @@ export const VAULT_MANAGER_PERMISSIONS_LIST: VAULT_OWNER_ROLES[] = [
   'validatorExitRequester',
   'validatorWithdrawalTrigger',
   'volunataryDisconnecter',
-  'unguaranteedDepositor',
   'vaultConfiguration',
 ] as const;
 

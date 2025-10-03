@@ -548,10 +548,6 @@ export const vaultTexts = {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
     },
-    unguaranteedDepositor: {
-      title: 'Unguaranteed deposit to validators',
-      hint: 'Direct and unguaranteed deposit ETH from the vault balance to validators.\nThis deposit is performed outside Pre-Deposit Guarantee contract so the operation is vulnerable.',
-    },
     vaultConfiguration: {
       title: 'Request to change the stVault tier',
       hint: 'Allows requesting Node Operator to change the stVaults tier',
