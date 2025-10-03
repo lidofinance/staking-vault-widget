@@ -59,7 +59,7 @@ export type VaultInfo = VaultConnection &
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
     balance: bigint;
-    nodeOperatorFeeRate: bigint;
+    feeRate: number;
     withdrawalCredentials: Address;
     tierId: bigint;
     tierShareLimit: bigint;
@@ -91,7 +91,7 @@ const getVaultData = async ({
     totalValue,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
-    nodeOperatorFeeRate,
+    feeRate,
     totalMintingCapacityShares,
     mintableShares,
     tier,
@@ -107,12 +107,12 @@ const getVaultData = async ({
         args: [address],
       },
       dashboard.prepare.totalValue(),
-      dashboard.prepare.nodeOperatorDisbursableFee(),
+      dashboard.prepare.accruedFee(),
       dashboard.prepare.withdrawableValue(),
-      dashboard.prepare.nodeOperatorFeeRate(),
+      dashboard.prepare.feeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
-      operatorGrid.prepare.vaultInfo([vault.address]),
+      operatorGrid.prepare.vaultTierInfo([vault.address]),
       operatorGrid.prepare.group([vault.nodeOperator]),
     ] as const,
   });
@@ -196,7 +196,7 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    nodeOperatorFeeRate,
+    feeRate,
 
     shareLimit,
     forcedRebalanceThresholdBP,
@@ -228,7 +228,7 @@ const selectOverviewData = ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    nodeOperatorFeeRate: nodeOperatorFee,
+    feeRate: nodeOperatorFee,
     nodeOperator,
     isVaultConnected,
     settledLidoFees,
@@ -299,7 +299,7 @@ const selectOverviewData = ({
   const totalMintingCapacityStETH = toStethValue(
     vaultData.totalMintingCapacityStETH,
   );
-  const nodeOperatorFeeRate = formatPercent.format(
+  const feeRate = formatPercent.format(
     Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
   );
   const collateral = toEthValue(overview.collateral);
@@ -324,7 +324,7 @@ const selectOverviewData = ({
     balance,
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
-    nodeOperatorFeeRate,
+    feeRate,
     collateral,
     pendingUnlockEth,
     isVaultConnected,

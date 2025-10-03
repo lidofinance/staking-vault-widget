@@ -1,0 +1,19 @@
+{
+  "contracts": {
+    "lidoLocator": "0x1197Ea8C0986A852640fd3d6b9826A6f50b9DF84",
+    "stakingRouter": "0x2fe4E1BD4a936d984f74967cCdFDb6D40BdB5790",
+    "withdrawalQueue": "0x8c135b4599bA7c2dAaD8ecD364b8bB4e8961E2c7",
+    "lido": "0x46e0C0Cb0fcBd910D3d53a6b70E1c47F6B2E2996",
+    "wsteth": "0x1f94499A33d41F008152926c9632a8541E653888",
+    "weth": "0x2387fD72C1DA19f6486B843F5da562679FbB4057",
+    "predepositGuarantee": "0x9B802911Cd17bcF5A97354D2AC60d3FcdCA2bDEA",
+    "vaultFactory": "0x0b58379EC721162d4F5f218220a6f299B4EcC8E9",
+    "vaultHub": "0x2c523D6FC4749432C5501734146458Bbd8f64E8C",
+    "vaultViewer": "0x86c0858a9a15591246e673EF852eeC9Abc3B20C3",
+    "lazyOracle": "0x0c031620Cc5344eDC7C95a7083459a8C9DecAF24",
+    "operatorGrid": "0x8e864bb116452ea9869652e74C6657Ce92587043"
+  },
+  "api": {
+    "vaultsApi": "https://stvaults-api-hoodi.testnet.fi"
+  }
+}

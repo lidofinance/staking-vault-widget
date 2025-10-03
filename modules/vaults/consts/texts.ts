@@ -29,7 +29,7 @@ export const vaultTexts = {
             'Node Operator address cannot be changed after the vault is created',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFeeRate: {
+        feeRate: {
           title: 'Node Operator Fee',
           placeholder: '%',
           hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
@@ -192,18 +192,18 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
-      nodeOperatorFeeRecipient: 'Setting node operator fee recipient address',
+      feeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
           hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
         },
-        nodeOperatorFeeRecipient: {
+        feeRecipient: {
           title: 'Node Operator Fee Recipient',
           editLabel: 'Set new address',
           hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
         },
-        nodeOperatorFeeRate: {
+        feeRate: {
           title: 'Node Operator Fee',
           label: 'Node Operator fee, %',
           editLabel: 'Propose new, %',
@@ -296,7 +296,7 @@ export const vaultTexts = {
     },
     general: {
       nodeOperator: 'Node operator',
-      nodeOperatorFeeRate: 'Node operator fee',
+      feeRate: 'Node operator fee',
       reserveRatio: 'reserve ratio',
       tier: {
         connected: 'Tier',
@@ -366,7 +366,7 @@ export const vaultTexts = {
       hint: 'The amount of ETH that should be unlocked because of repaid stETH but waiting for the confirmation from the upcoming Oracle report.  ',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
-    nodeOperatorFeeRate: {
+    feeRate: {
       title: 'Node Operator Fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready

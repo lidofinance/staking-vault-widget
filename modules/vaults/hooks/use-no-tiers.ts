@@ -22,7 +22,7 @@ const fetchTiersForOperator = async ({
 
   const [group, vaultInfo] = await Promise.all([
     operatorGrid.read.group([nodeOperator]),
-    operatorGrid.read.vaultInfo([vault.address]),
+    operatorGrid.read.vaultTierInfo([vault.address]),
   ]);
 
   const { tierIds, shareLimit, liabilityShares, ...rest } = group;

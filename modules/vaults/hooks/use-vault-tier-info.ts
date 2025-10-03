@@ -83,7 +83,7 @@ const getVaultTierInfo = async ({
       dashboard.prepare.totalValue(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
-      operatorGrid.prepare.vaultInfo([vault.address]),
+      operatorGrid.prepare.vaultTierInfo([vault.address]),
     ] as const,
   });
 

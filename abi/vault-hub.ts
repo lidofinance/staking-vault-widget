@@ -110,30 +110,8 @@ export const VaultHubAbi = [
     type: 'error',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
-      },
-    ],
-    name: 'FeesTooHighCannotDeposit',
-    type: 'error',
-  },
-  {
     inputs: [],
     name: 'ForcedValidatorExitNotAllowed',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
-      },
-    ],
-    name: 'HasRedemptionsCannotDeposit',
     type: 'error',
   },
   {
@@ -325,6 +303,16 @@ export const VaultHubAbi = [
   },
   {
     inputs: [],
+    name: 'PauseIntentAlreadySet',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'PauseIntentAlreadyUnset',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'PauseUntilMustBeInFuture',
     type: 'error',
   },
@@ -384,17 +372,6 @@ export const VaultHubAbi = [
       },
     ],
     name: 'ShareLimitTooHigh',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
-      },
-    ],
-    name: 'UnhealthyVaultCannotDeposit',
     type: 'error',
   },
   {
@@ -567,21 +544,14 @@ export const VaultHubAbi = [
         name: 'vault',
         type: 'address',
       },
-    ],
-    name: 'BeaconChainDepositsPausedByOwner',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
-        indexed: true,
-        internalType: 'address',
-        name: 'vault',
-        type: 'address',
+        indexed: false,
+        internalType: 'bool',
+        name: 'pauseIntent',
+        type: 'bool',
       },
     ],
-    name: 'BeaconChainDepositsResumedByOwner',
+    name: 'BeaconChainDepositsPauseIntentSet',
     type: 'event',
   },
   {
@@ -1920,6 +1890,25 @@ export const VaultHubAbi = [
         type: 'address',
       },
     ],
+    name: 'obligationsShortfallValue',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_vault',
+        type: 'address',
+      },
+    ],
     name: 'pauseBeaconChainDeposits',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -2419,7 +2408,7 @@ export const VaultHubAbi = [
           },
           {
             internalType: 'bool',
-            name: 'isBeaconDepositsManuallyPaused',
+            name: 'beaconChainDepositsPauseIntent',
             type: 'bool',
           },
         ],

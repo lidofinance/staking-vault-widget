@@ -1,6 +1,6 @@
 import { type Address, getContract } from 'viem';
 
-import { StakingVaultAbi } from 'abi/vault';
+import { StakingVaultAbi } from 'abi/staking-vault';
 import { RegisteredPublicClient } from 'modules/web3';
 import { getEncodable } from '../utils/encodable';
 
