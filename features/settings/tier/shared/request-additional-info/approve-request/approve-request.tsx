@@ -8,7 +8,8 @@ import {
   useVaultTierInfo,
 } from 'modules/vaults';
 
-import { useChangeTierRequest } from '../../../hooks';
+import { useChangeTierRequest } from 'features/settings/tier/hooks';
+import { checkDashboardIsProposer } from 'features/settings/tier/const';
 
 import { ButtonStyled } from './styles';
 
@@ -26,6 +27,11 @@ export const ApproveRequest = () => {
     ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
       hasAdmin);
 
+  const isDashboardProposer = checkDashboardIsProposer(
+    activeVault?.owner,
+    proposal?.member,
+  );
+
   const handleApprove = useCallback(async () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
     if (typeof tierId !== 'bigint' || typeof mintingLimit !== 'bigint') return;
@@ -37,7 +43,8 @@ export const ApproveRequest = () => {
     ]);
   }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
 
-  if (!proposal || !hasAccessToApproving) return null;
+  if (!proposal || !hasAccessToApproving || (hasAdmin && isDashboardProposer))
+    return null;
 
   return (
     <ButtonStyled onClick={handleApprove} disabled={approving}>
