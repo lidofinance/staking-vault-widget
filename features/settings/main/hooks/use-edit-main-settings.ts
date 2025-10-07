@@ -154,7 +154,9 @@ export const useEditMainSettings = () => {
         }
 
         const { isDepositAllowed } = formValues;
-        if (isDepositAllowed !== vaultSettings.isDepositAllowed) {
+        const isDepositAllowedChanged =
+          isDepositAllowed !== vaultSettings.isDepositAllowed;
+        if (isDepositAllowedChanged) {
           const txFnName = isDepositAllowed
             ? 'resumeBeaconChainDeposits'
             : 'pauseBeaconChainDeposits';
@@ -166,9 +168,10 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions: isFeeValueChanged
-              ? async () => [...prepareReportCalls(), ...transactions]
-              : transactions,
+            transactions:
+              isFeeValueChanged || isDepositAllowedChanged
+                ? async () => [...prepareReportCalls(), ...transactions]
+                : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
