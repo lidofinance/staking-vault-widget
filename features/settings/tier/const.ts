@@ -26,7 +26,7 @@ export const tierSettingsFormSchema = z
         type: 'bigint',
         path: ['vaultMintingLimit'],
         message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
-          data.vaultMintingLimit,
+          data.selectedTierLimit,
         ),
       });
     }
@@ -74,7 +74,7 @@ export const tierSettingsFormResolver: Resolver<
   return baseResult;
 };
 
-export const checkDashboardIsProposer = (
+export const checkUserIsProposer = (
   dashboard: Address | undefined,
   proposer: Address | undefined,
 ) => {

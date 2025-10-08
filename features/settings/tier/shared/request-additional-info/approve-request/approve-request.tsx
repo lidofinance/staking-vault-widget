@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import {
@@ -9,7 +9,7 @@ import {
 } from 'modules/vaults';
 
 import { useChangeTierRequest } from 'features/settings/tier/hooks';
-import { checkDashboardIsProposer } from 'features/settings/tier/const';
+import { checkUserIsProposer } from 'features/settings/tier/const';
 
 import { ButtonStyled } from './styles';
 
@@ -27,10 +27,19 @@ export const ApproveRequest = () => {
     ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
       hasAdmin);
 
-  const isDashboardProposer = checkDashboardIsProposer(
-    activeVault?.owner,
-    proposal?.member,
-  );
+  const [isDashboardProposer, isNOProposer] = useMemo(() => {
+    const isDashboardProposer = checkUserIsProposer(
+      activeVault?.owner,
+      proposal?.member,
+    );
+
+    const isNOProposer = checkUserIsProposer(
+      activeVault?.nodeOperator,
+      proposal?.member,
+    );
+
+    return [isDashboardProposer, isNOProposer];
+  }, [activeVault, proposal?.member]);
 
   const handleApprove = useCallback(async () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
@@ -43,7 +52,12 @@ export const ApproveRequest = () => {
     ]);
   }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
 
-  if (!proposal || !hasAccessToApproving || (hasAdmin && isDashboardProposer))
+  if (
+    !proposal ||
+    !hasAccessToApproving ||
+    (hasAdmin && isDashboardProposer) ||
+    (isNodeOperator && isNOProposer)
+  )
     return null;
 
   return (
