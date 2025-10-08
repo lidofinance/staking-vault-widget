@@ -184,17 +184,6 @@ export const dashboardAbi = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'SafeCastOverflowedUintToInt',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: 'token',
         type: 'address',
@@ -221,6 +210,11 @@ export const dashboardAbi = [
   {
     inputs: [],
     name: 'TierChangeNotConfirmed',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'UnexpectedFeeExemptionAmount',
     type: 'error',
   },
   {
