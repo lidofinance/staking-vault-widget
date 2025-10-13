@@ -6,7 +6,7 @@ import { confirmationAbi } from 'abi/confirmation-abi';
 // Define argument types for each function
 export type FunctionArgsMap = {
   setConfirmExpiry: readonly [bigint];
-  setNodeOperatorFeeRate: readonly [bigint];
+  setFeeRate: readonly [bigint];
   changeTier: readonly [Address, bigint, bigint];
   transferVaultOwnership: readonly [Address];
 };

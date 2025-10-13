@@ -1,13 +1,13 @@
 import { vaultTexts } from 'modules/vaults';
 import { AddressInputHookForm } from 'shared/hook-form/controls';
 
-const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
+const texts = vaultTexts.actions.settings.fields.feeRecipient;
 
 export const EditRecipient = () => {
   return (
     <AddressInputHookForm
       label={texts.editLabel}
-      fieldName="nodeOperatorFeeRecipient"
+      fieldName="feeRecipient"
       showRightDecorator={false}
     />
   );

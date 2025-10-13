@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { vaultTexts } from 'modules/vaults/consts';
-import type { TierSettingsFormValues } from './types';
-import { VaultTierData } from './hooks';
-import { awaitWithTimeout } from '../../../utils/await-with-timeout';
 import invariant from 'tiny-invariant';
+
+import { vaultTexts, type VaultTierData } from 'modules/vaults';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
+
+import type { TierSettingsFormValues } from './types';
 
 export const tierSettingsFormSchema = z
   .object({

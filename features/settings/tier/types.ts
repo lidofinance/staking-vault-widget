@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
-import type { VAULTS_ALL_ROLES } from 'modules/vaults';
+import type { VAULTS_ALL_ROLES, VaultTierData, Tier } from 'modules/vaults';
 
-import type { VaultTierData, Tier } from './hooks';
 import { tierSettingsFormSchema } from './const';
 
 export type VaultTierDataKeys = keyof VaultTierData;

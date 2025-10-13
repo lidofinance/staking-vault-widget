@@ -9,9 +9,7 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
-import { vaultTexts } from 'modules/vaults';
-import { useVaultTierInfo } from 'features/settings/tier/hooks';
-import { Tier } from 'features/settings/tier/hooks/types';
+import { vaultTexts, useVaultTierInfo, type Tier } from 'modules/vaults';
 
 import type {
   TierDataContextType,

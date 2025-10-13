@@ -5,10 +5,15 @@ import {
   useVaultConfirmingRoles,
   MultiplePermissionedSubmitButton,
   useVaultPermission,
+  useVaultTierInfo,
+  VAULTS_ALL_ROLES,
 } from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
-import { useVaultTierInfo } from '../../hooks';
+
+const configurationRoles = [
+  'vaultConfiguration',
+] as readonly VAULTS_ALL_ROLES[];
 
 export const TierFormAction = () => {
   const {
@@ -21,7 +26,7 @@ export const TierFormAction = () => {
     hasNodeOperatorManager,
     isNodeOperator,
   } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('tierChangeRequester');
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
 
   const { data: vaultTierInfo } = useVaultTierInfo();
   const [selectedTierId, vaultMintingLimit] = watch([
@@ -70,7 +75,7 @@ export const TierFormAction = () => {
   return (
     <MultiplePermissionedSubmitButton
       disabled={buttonDisabled}
-      dashboardRoles={['tierChangeRequester']}
+      dashboardRoles={configurationRoles}
     >
       {buttonText}
     </MultiplePermissionedSubmitButton>

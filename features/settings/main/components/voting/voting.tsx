@@ -12,9 +12,9 @@ export const Voting: FC = () => {
   return (
     <VotingBlock>
       <RadioSelector
-        data={data?.nodeOperatorFeeRate}
-        vaultKey="nodeOperatorFeeRate"
-        title={vaultTexts.actions.settings.fields.nodeOperatorFeeRate.title}
+        data={data?.feeRate}
+        vaultKey="feeRate"
+        title={vaultTexts.actions.settings.fields.feeRate.title}
       />
       <RadioSelector
         data={data?.confirmExpiry}
