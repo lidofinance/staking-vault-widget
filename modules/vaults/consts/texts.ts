@@ -553,8 +553,8 @@ export const vaultTexts = {
       hint: 'Allows requesting Node Operator to change the stVaults tier',
     },
     assetCollector: {
-      title: 'Lorem ipsum',
-      hint: 'Lorem ipsum set amet.',
+      title: 'Assets Collector',
+      hint: 'ERC20 Assets Collector', // TODO: add description
     },
     nodeOperatorFeeClaimer: {
       title: 'Claim Node Operator’s Accumulated Fees',

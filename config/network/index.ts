@@ -6,6 +6,7 @@ import type { API_NAMES, CONTRACT_NAMES, NetworkConfig } from './const';
 
 // Main deployments
 import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
+// Public
 import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
 
 // reexport types and const
