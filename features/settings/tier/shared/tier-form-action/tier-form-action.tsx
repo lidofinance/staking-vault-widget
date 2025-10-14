@@ -6,9 +6,14 @@ import {
   MultiplePermissionedSubmitButton,
   useVaultPermission,
   useVaultTierInfo,
+  VAULTS_ALL_ROLES,
 } from 'modules/vaults';
 
 import { ButtonStyled } from './styles';
+
+const configurationRoles = [
+  'vaultConfiguration',
+] as readonly VAULTS_ALL_ROLES[];
 
 export const TierFormAction = () => {
   const {
@@ -70,7 +75,7 @@ export const TierFormAction = () => {
   return (
     <MultiplePermissionedSubmitButton
       disabled={buttonDisabled}
-      dashboardRoles={['vaultConfiguration']}
+      dashboardRoles={configurationRoles}
     >
       {buttonText}
     </MultiplePermissionedSubmitButton>

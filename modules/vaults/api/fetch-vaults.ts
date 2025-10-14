@@ -53,7 +53,7 @@ type VaultEntryRaw = {
   infraFeeBP: number;
   liquidityFeeBP: number;
   reservationFeeBP: number;
-  nodeOperatorFeeRate: string;
+  feeRate: string;
   updatedAt: string;
   blockNumber: number;
   isReportFresh: boolean;
@@ -90,7 +90,7 @@ export type VaultEntry = {
   infraFeeBP: number;
   liquidityFeeBP: number;
   reservationFeeBP: number;
-  nodeOperatorFeeRate: bigint;
+  feeRate: bigint;
   updatedAt: Date;
   blockNumber: number;
   isReportFresh: boolean;
@@ -146,22 +146,19 @@ const fetchVaultRPC = async (
   vaultAddress: Address,
 ): Promise<VaultEntryRaw> => {
   const vaultHub = getVaultHubContract(publicClient);
-  const { owner } = await vaultHub.read.vaultConnection([vaultAddress]);
+  const { owner, forcedRebalanceThresholdBP } =
+    await vaultHub.read.vaultConnection([vaultAddress]);
 
   if (isAddressEqual(zeroAddress, owner)) {
-    throw new Error(
-      `[getVaultDataTable ] no such vault connected: ${vaultAddress}`,
-    );
+    throw new Error(`[fetchVaultRPC] no such vault connected: ${vaultAddress}`);
   }
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
-  const [totalValue, liabilityShares, forcedRebalanceThresholdBP] =
-    await Promise.all([
-      dashboardContract.read.totalValue(),
-      dashboardContract.read.liabilityShares(),
-      dashboardContract.read.forcedRebalanceThresholdBP(),
-    ]);
+  const [totalValue, liabilityShares] = await Promise.all([
+    dashboardContract.read.totalValue(),
+    dashboardContract.read.liabilityShares(),
+  ]);
 
   const liabilityStETH = await shares.convertToSteth(liabilityShares);
 
@@ -231,7 +228,7 @@ const fetchConnectedVaultsApi = async (
 
   if (!apiUrl) {
     throw new Error(
-      `Vault API URL is not defined for ${ctx.publicClient.chain.id}`,
+      `[fetchConnectedVaultsApi] Vault API URL is not defined for ${ctx.publicClient.chain.id}`,
     );
   }
 
@@ -248,7 +245,7 @@ const fetchConnectedVaultsApi = async (
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch vaults from API: ${response.status} ${response.statusText}`,
+      `[fetchConnectedVaultsApi] Failed to fetch vaults from API: ${response.status} ${response.statusText}`,
     );
   }
   const result = await response.json();
@@ -299,7 +296,7 @@ const normalizeResponse = (
       infraFeeBP: vault.infraFeeBP,
       liquidityFeeBP: vault.liquidityFeeBP,
       reservationFeeBP: vault.reservationFeeBP,
-      nodeOperatorFeeRate: optBigInt(vault.nodeOperatorFeeRate),
+      feeRate: optBigInt(vault.feeRate),
       updatedAt: vault.updatedAt ? new Date(vault.updatedAt) : undefined,
       blockNumber: vault.blockNumber,
       isReportFresh: vault.isReportFresh,

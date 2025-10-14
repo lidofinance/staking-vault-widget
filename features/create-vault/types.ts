@@ -13,7 +13,7 @@ export type CreateVaultFormValues = {
   nodeOperator: string;
   vaultOwner: { value: string }[];
   nodeOperatorManager: string;
-  nodeOperatorFeeRate: string;
+  feeRate: string;
   confirmExpiry: string;
   acceptTerms: CreateVaultSchema['acceptTerms'];
   roles: CreateVaultSchema['roles'];

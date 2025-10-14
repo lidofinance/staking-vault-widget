@@ -13,9 +13,7 @@ export type MainSettingsFormValidatedValues = z.infer<
 >;
 
 export type MainSettingFormsValues = MainSettingsFormValidatedValues & {
-  nodeOperatorFeeRecipient:
-    | MainSettingsFormValidatedValues['nodeOperatorFeeRecipient']
-    | string;
+  feeRecipient: MainSettingsFormValidatedValues['feeRecipient'] | string;
   nodeOperatorManagers:
     | MainSettingsFormValidatedValues['nodeOperatorManagers']
     | null;
@@ -25,9 +23,9 @@ export type MainSettingFormsValues = MainSettingsFormValidatedValues & {
 export type VaultMainSettingsData = {
   defaultAdmins: Address[];
   nodeOperatorManagers: Address[];
-  nodeOperatorFeeRecipient: Address;
+  feeRecipient: Address;
 
-  nodeOperatorFeeRate: bigint;
+  feeRate: number;
   nodeOperatorFeeConfirmations: Confirmation[];
 
   confirmExpiry: bigint;
@@ -37,9 +35,9 @@ export type VaultMainSettingsData = {
 export type MainSettingsFormData = {
   defaultAdmins: Address[];
   nodeOperatorManagers: Address[];
-  nodeOperatorFeeRecipient: Address;
+  feeRecipient: Address;
 
-  nodeOperatorFeeRate: VotingOptionType[];
+  feeRate: VotingOptionType[];
   nodeOperatorFeeRateCurrent: string;
 
   confirmExpiry: VotingOptionType[];

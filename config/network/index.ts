@@ -5,14 +5,13 @@ import type { Address } from 'viem';
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 
 import { getPreConfig } from 'config/get-preconfig';
+
 import type { API_NAMES, CONTRACT_NAMES, NetworkConfig } from './const';
 
 // Main deployments
 import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
+// Public
 import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
-
-// Testnet deployments
-import hoodiTestnet3Set from 'networks/hoodi-testnet-3.json' assert { type: 'json' };
 
 // reexport types and const
 export type { CONTRACT_NAMES, NetworkConfig } from './const';
@@ -36,7 +35,7 @@ const DEVNET_OVERRIDES: Record<number, string> = // Merge client&server values
 
 // Devnet deployments
 const DEVNETS_MAP = {
-  'hoodi-testnet-3': hoodiTestnet3Set,
+  hoodi: hoodiSet,
 } as Record<string, NetworkConfig>;
 
 // Main deployments

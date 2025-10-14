@@ -32,21 +32,17 @@ export const useVaultSettingsData = () => {
 
       const dashboard = activeVault.dashboard;
 
-      const [
-        defaultAdmins,
-        nodeOperatorManagers,
-        nodeOperatorFeeRate,
-        nodeOperatorFeeRecipient,
-      ] = await Promise.all([
-        activeVault.dashboard.read.getRoleMembers([
-          VAULTS_ROOT_ROLES_MAP.defaultAdmin,
-        ]),
-        activeVault.dashboard.read.getRoleMembers([
-          VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
-        ]),
-        activeVault.dashboard.read.nodeOperatorFeeRate(),
-        activeVault.dashboard.read.nodeOperatorFeeRecipient(),
-      ]);
+      const [defaultAdmins, nodeOperatorManagers, feeRate, feeRecipient] =
+        await Promise.all([
+          activeVault.dashboard.read.getRoleMembers([
+            VAULTS_ROOT_ROLES_MAP.defaultAdmin,
+          ]),
+          activeVault.dashboard.read.getRoleMembers([
+            VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
+          ]),
+          activeVault.dashboard.read.feeRate(),
+          activeVault.dashboard.read.feeRecipient(),
+        ]);
 
       const { confirmations, confirmExpiry } = await getConfirmationsInfo(
         activeVault.dashboard.address,
@@ -57,8 +53,8 @@ export const useVaultSettingsData = () => {
       // filter out votes that are already accepted
       const nodeOperatorFeeConfirmations = confirmations.filter(
         ({ decodedData }) =>
-          decodedData.functionName === 'setNodeOperatorFeeRate' &&
-          decodedData.args[0] !== nodeOperatorFeeRate,
+          decodedData.functionName === 'setFeeRate' &&
+          Number(decodedData.args[0]) !== feeRate,
       );
 
       const confirmExpiryConfirmations = confirmations.filter(
@@ -70,8 +66,8 @@ export const useVaultSettingsData = () => {
       return {
         defaultAdmins: [...defaultAdmins],
         nodeOperatorManagers: [...nodeOperatorManagers],
-        nodeOperatorFeeRecipient,
-        nodeOperatorFeeRate,
+        feeRecipient,
+        feeRate,
         nodeOperatorFeeConfirmations,
         confirmExpiry,
         confirmExpiryConfirmations,

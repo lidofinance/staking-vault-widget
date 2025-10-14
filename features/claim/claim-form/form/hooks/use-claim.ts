@@ -25,7 +25,7 @@ export const useClaim = () => {
       const mainActionCompleteText = vaultTexts.actions.claim.completed;
 
       const claimCall = {
-        ...activeVault.dashboard.encode.disburseNodeOperatorFee(),
+        ...activeVault.dashboard.encode.accruedFee(),
         loadingActionText,
       };
 

@@ -1,5 +1,3 @@
-import { parseEther } from 'viem';
-
 import { calculateHealth } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 
@@ -38,6 +36,8 @@ type OverviewArgs = {
   nodeOperatorDisbursableFee: bigint;
   totalMintingCapacityStethWei: bigint;
   unsettledLidoFees: bigint;
+  minimalReserve: bigint;
+  reportLiabilitySharesStETH: bigint;
 };
 
 const ceilDiv = (numerator: bigint, denominator: bigint): bigint => {
@@ -58,6 +58,8 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     nodeOperatorDisbursableFee,
     totalMintingCapacityStethWei,
     unsettledLidoFees,
+    minimalReserve,
+    reportLiabilitySharesStETH,
   } = args;
 
   const { healthRatio, isHealthy } = calculateHealth({
@@ -70,16 +72,14 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const totalLocked = locked + nodeOperatorDisbursableFee + unsettledLidoFees;
   const RR = BigInt(reserveRatioBP);
   const oneMinusRR = BASIS_POINTS - RR;
-  const liabilityDivOneMinusRR =
-    oneMinusRR === 0n
-      ? 0n
-      : ceilDiv(liabilitySharesInStethWei * BASIS_POINTS, oneMinusRR);
-
-  const collateral = bigIntMax(parseEther('1'), liabilityDivOneMinusRR);
-  const recentlyRepaid =
-    liabilityDivOneMinusRR <= parseEther('1')
-      ? bigIntMax(locked - parseEther('1'), 0n)
-      : bigIntMax(locked - liabilityDivOneMinusRR, 0n);
+  const collateral = bigIntMax(
+    minimalReserve,
+    ceilDiv(liabilitySharesInStethWei * BASIS_POINTS, oneMinusRR),
+  );
+  const recentlyRepaid = bigIntMax(
+    0n,
+    reportLiabilitySharesStETH - liabilitySharesInStethWei,
+  );
 
   const reservedByFormula =
     oneMinusRR === 0n

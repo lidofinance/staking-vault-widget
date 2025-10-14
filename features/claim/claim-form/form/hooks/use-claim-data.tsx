@@ -16,7 +16,7 @@ export const useClaimData = () => {
   const validationContext = useAwaiter(useValidateRecipientArgs()).awaiter;
 
   const recipientQuery = useReadDashboard({
-    functionName: 'nodeOperatorFeeRecipient',
+    functionName: 'feeRecipient',
   });
 
   const claimableFeeQuery = useQuery({
@@ -29,7 +29,7 @@ export const useClaimData = () => {
         report: activeVault.report,
         publicClient,
         contracts: [
-          activeVault.dashboard.prepare.nodeOperatorDisbursableFee(),
+          activeVault.dashboard.prepare.accruedFee(),
           activeVault.hub.prepare.withdrawableValue([activeVault.address]),
         ] as const,
       });
