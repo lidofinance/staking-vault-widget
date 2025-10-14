@@ -21,7 +21,7 @@ export const NodeOperator = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { values } = useVaultOverview();
 
-  const { nodeOperator, nodeOperatorFeeRate } = values || {};
+  const { nodeOperator, feeRate } = values || {};
   const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (
@@ -54,10 +54,10 @@ export const NodeOperator = () => {
       <SectionDivider type="vertical" />
       <NodeOperatorParameter>
         <Text size="xxs" color="secondary" data-testid="noFeeLabel">
-          {general.nodeOperatorFeeRate}
+          {general.feeRate}
         </Text>
         <Text size="xxs" weight={700} data-testid="noFee">
-          {nodeOperatorFeeRate}
+          {feeRate}
         </Text>
       </NodeOperatorParameter>
     </NodeOperatorContainer>

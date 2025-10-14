@@ -13,15 +13,10 @@ import { createVaultSchema } from './validation';
 
 export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
-  const {
-    confirmExpiry,
-    nodeOperatorFeeRate,
-    nodeOperatorManager,
-    nodeOperator,
-  } = values;
+  const { confirmExpiry, feeRate, nodeOperatorManager, nodeOperator } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
   const nodeOperatorFeeRateFormatted = BigInt(
-    Math.floor((nodeOperatorFeeRate * VAULT_TOTAL_BASIS_POINTS) / 100),
+    Math.floor((feeRate * VAULT_TOTAL_BASIS_POINTS) / 100),
   );
 
   // first manager goes to factory as direct argument

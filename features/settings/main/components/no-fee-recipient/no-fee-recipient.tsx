@@ -11,7 +11,7 @@ import { Wrapper } from './styles';
 import { EditRecipient } from './edit-recipient';
 import { useMainSettingsData } from '../../contexts';
 
-const texts = vaultTexts.actions.settings.fields.nodeOperatorFeeRecipient;
+const texts = vaultTexts.actions.settings.fields.feeRecipient;
 
 export const NodeOperatorFeeRecipient: FC = () => {
   const { data: mainSettingsData } = useMainSettingsData();
@@ -31,9 +31,9 @@ export const NodeOperatorFeeRecipient: FC = () => {
       {!hasPermission && !isLoading && (
         <AddressBadge
           weight={400}
-          address={mainSettingsData?.nodeOperatorFeeRecipient}
+          address={mainSettingsData?.feeRecipient}
           symbols={21}
-          dataTestId="nodeOperatorFeeRecipient"
+          dataTestId="feeRecipient"
         />
       )}
     </Wrapper>

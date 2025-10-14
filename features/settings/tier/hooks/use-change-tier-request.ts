@@ -7,10 +7,13 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
-
-import { useVaultTierInfo } from './use-vault-tier-info';
-import { useNodeOperatorTiersInfo } from './use-no-tiers';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  useVaultTierInfo,
+  useNodeOperatorTiersInfo,
+} from 'modules/vaults';
 
 export const useChangeTierRequest = () => {
   const [approving, setApproving] = useState(false);

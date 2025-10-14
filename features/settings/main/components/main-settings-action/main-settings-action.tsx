@@ -37,26 +37,22 @@ export const MainSettingsAction: FC = () => {
       counter += shouldIncrementTxCounterByAddresses(formFields);
 
       const {
-        nodeOperatorFeeRate,
+        feeRate,
         confirmExpiry,
         nodeOperatorFeeRateCustom,
         confirmExpiryCustom,
-        nodeOperatorFeeRecipient,
+        feeRecipient,
       } = formFields;
 
       const confirmExpiryFormValue =
         confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
-      if (
-        nodeOperatorFeeRecipient !== mainSettingsData?.nodeOperatorFeeRecipient
-      ) {
+      if (feeRecipient !== mainSettingsData?.feeRecipient) {
         counter++;
       }
 
       const nodeOperatorFeeRateFormValue =
-        nodeOperatorFeeRate === 'custom'
-          ? nodeOperatorFeeRateCustom
-          : nodeOperatorFeeRate;
+        feeRate === 'custom' ? nodeOperatorFeeRateCustom : feeRate;
 
       if (
         nodeOperatorFeeRateFormValue !==
@@ -76,7 +72,7 @@ export const MainSettingsAction: FC = () => {
     isValid,
     mainSettingsData?.confirmExpiryCurrent,
     mainSettingsData?.nodeOperatorFeeRateCurrent,
-    mainSettingsData?.nodeOperatorFeeRecipient,
+    mainSettingsData?.feeRecipient,
   ]);
 
   const hasChanges = counter > 0;

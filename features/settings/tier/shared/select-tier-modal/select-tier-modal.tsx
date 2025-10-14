@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { Modal } from '@lidofinance/lido-ui';
 
 import { useDappStatus } from 'modules/web3';
+import { useNodeOperatorTiersInfo } from 'modules/vaults';
 
-import { useNodeOperatorTiersInfo } from 'features/settings/tier/hooks';
 import { ReceiveReserveRatio } from '../receive-reserve-ratio';
 import { TiersSelector } from './tiers-selector';
 
