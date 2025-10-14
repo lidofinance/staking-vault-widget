@@ -33,7 +33,7 @@ type PermissionSectionEntry = {
 
 const PERMISSIONS_SECTIONS: PermissionSectionEntry[] = [
   {
-    permissionsTitle: 'Vault Owner Permissions',
+    permissionsTitle: 'Vault Manager Permissions',
     canEditRole: 'defaultAdmin',
     roles: VAULT_MANAGER_PERMISSIONS_LIST,
     dataTestId: 'vaultOwnerPermissions',

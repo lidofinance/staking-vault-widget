@@ -2,10 +2,17 @@ import { useState } from 'react';
 import { Text, Divider } from '@lidofinance/lido-ui';
 import { useAccount } from 'wagmi';
 
-import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
+import {
+  useVaultConfirmingRoles,
+  useNodeOperatorTiersInfo,
+  useVaultTierInfo,
+  vaultTexts,
+} from 'modules/vaults';
 
 import { SectionContainer } from 'features/settings/shared/components';
 import { Title, RequestAdditionalInfo } from 'features/settings/tier/shared';
+
+import { ExpiresInItem } from 'features/settings/tier/shared/request-additional-info/content/expires-in-item/expires-in-item';
 
 import {
   RequestWrapper,
@@ -13,9 +20,6 @@ import {
   ExpiresContainer,
   ButtonStyled,
 } from './styles';
-import { useNodeOperatorTiersInfo } from 'features/settings/tier/hooks';
-import { useVaultTierInfo } from 'features/settings/tier/hooks';
-import { ExpiresInItem } from 'features/settings/tier/shared/request-additional-info/content/expires-in-item/expires-in-item';
 
 export const RequestChangeLimit = () => {
   const [showAdditionalInfo, setAdditionalInfoVisibility] = useState(false);

@@ -1,8 +1,9 @@
 import { FC, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
+import type { Tier } from 'modules/vaults';
+
 import { TierBaseInfo } from 'features/settings/tier/shared/tier-base-info';
-import type { Tier } from 'features/settings/tier/hooks/types';
 import { RadioSelector } from '../radio-selector';
 import { useTierData } from 'features/settings/tier/contexts';
 import type { TierSettingsFormValues } from '../../../types';

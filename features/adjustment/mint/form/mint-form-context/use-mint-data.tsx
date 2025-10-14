@@ -4,6 +4,8 @@ import {
   useMaxMintable,
   useValidateRecipientArgs,
   useVault,
+  useVaultTierInfo,
+  useNodeOperatorTiersInfo,
 } from 'modules/vaults';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -13,9 +15,10 @@ import { MintFormValidationContext } from '../types';
 export const useMintData = () => {
   const validateRecipientArgs = useValidateRecipientArgs();
   const { invalidateVaultState } = useVault();
-
   const mintableQuery = useMaxMintable(0n);
 
+  const { refetch: refetchVaultTierInfo } = useVaultTierInfo();
+  const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
   const { data, refetch: refetchMintable } = mintableQuery;
 
   const validationContextValue = useMemo(() => {
@@ -43,8 +46,15 @@ export const useMintData = () => {
       Promise.all([
         invalidateVaultState(),
         refetchMintable({ cancelRefetch: true, throwOnError: false }),
+        refetchVaultTierInfo({ cancelRefetch: true, throwOnError: false }),
+        refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
       ]),
-    [invalidateVaultState, refetchMintable],
+    [
+      invalidateVaultState,
+      refetchMintable,
+      refetchVaultTierInfo,
+      refetchNOTiers,
+    ],
   );
 
   return {

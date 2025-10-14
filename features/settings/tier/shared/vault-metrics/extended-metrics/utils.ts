@@ -1,4 +1,4 @@
-import { Tier, TierVault } from 'features/settings/tier/hooks';
+import { Tier, TierVault } from 'modules/vaults';
 import { bigIntMin } from 'utils/bigint-math';
 import { formatPercent, toStethValue } from 'utils';
 import {

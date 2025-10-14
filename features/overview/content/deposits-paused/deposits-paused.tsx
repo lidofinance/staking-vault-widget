@@ -5,7 +5,7 @@ import { DepositsPausedDescription } from './deposits-paused-description';
 export const DepositsPaused = () => {
   const { data } = useVaultOverviewData();
 
-  if (!data?.isBeaconDepositsManuallyPaused) {
+  if (!data?.beaconChainDepositsPauseIntent) {
     return null;
   }
 

@@ -82,7 +82,7 @@ export const createVaultSchema = z.object({
   vaultOwner: uniqueAddressesSchema,
   nodeOperatorManager: addressSchema,
 
-  nodeOperatorFeeRate: numberSchema(
+  feeRate: numberSchema(
     z
       .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
       .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
