@@ -12,7 +12,7 @@ import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 export const RecipientEtherscan = () => {
   const { walletChainId } = useDappStatus();
   const nodeOperatorFeeRecipient = useWatch<MainSettingsFormValidatedValues>({
-    name: 'nodeOperatorFeeRecipient',
+    name: 'feeRecipient',
   }) as string;
   const link = useMemo(
     () =>

@@ -28,7 +28,8 @@ export const getVaultDataTable = async ({
   shares,
 }: VaultDataArgs): Promise<VaultTableInfo> => {
   const vaultHub = getVaultHubContract(publicClient);
-  const { owner } = await vaultHub.read.vaultConnection([vaultAddress]);
+  const { owner, forcedRebalanceThresholdBP } =
+    await vaultHub.read.vaultConnection([vaultAddress]);
 
   if (isAddressEqual(zeroAddress, owner)) {
     throw new Error(
@@ -38,12 +39,10 @@ export const getVaultDataTable = async ({
 
   const dashboardContract = getDashboardContract(owner, publicClient);
 
-  const [totalValue, liabilityShares, forcedRebalanceThresholdBP] =
-    await Promise.all([
-      dashboardContract.read.totalValue(),
-      dashboardContract.read.liabilityShares(),
-      dashboardContract.read.forcedRebalanceThresholdBP(),
-    ]);
+  const [totalValue, liabilityShares] = await Promise.all([
+    dashboardContract.read.totalValue(),
+    dashboardContract.read.liabilityShares(),
+  ]);
 
   const liabilityStETH = await shares.convertToSteth(liabilityShares);
 

@@ -1,6 +1,6 @@
 import { type Address, isAddressEqual } from 'viem';
 
-import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
@@ -48,9 +48,9 @@ export const formatSettingsValues = (
 ): MainSettingsFormData => {
   const confirmExpiryCurrent = String(vaultInfo.confirmExpiry);
   const nodeOperatorFeeRateCurrent = String(
-    (vaultInfo.nodeOperatorFeeRate * 100n) / VAULT_TOTAL_BASIS_POINTS_BN,
+    (vaultInfo.feeRate * 100) / VAULT_TOTAL_BASIS_POINTS,
   );
-  const nodeOperatorFeeRecipient = vaultInfo.nodeOperatorFeeRecipient;
+  const feeRecipient = vaultInfo.feeRecipient;
 
   const confirmExpiry: VotingOptionType[] = [
     {
@@ -61,7 +61,7 @@ export const formatSettingsValues = (
       symbol: ' hours',
     },
   ];
-  const nodeOperatorFeeRate: VotingOptionType[] = [
+  const feeRate: VotingOptionType[] = [
     {
       value: nodeOperatorFeeRateCurrent,
       type: 'current',
@@ -83,7 +83,7 @@ export const formatSettingsValues = (
     })),
   );
 
-  nodeOperatorFeeRate.push(
+  feeRate.push(
     ...vaultInfo.nodeOperatorFeeConfirmations.map((confirmation) => ({
       value: String(
         Number(BigInt(confirmation.decodedData.args[0]) * 100n) / 10000,
@@ -105,7 +105,7 @@ export const formatSettingsValues = (
     symbol: ' hours',
     placeholder: 'Propose new, hours',
   });
-  nodeOperatorFeeRate.push({
+  feeRate.push({
     value: '',
     type: 'custom',
     tags: [],
@@ -115,17 +115,17 @@ export const formatSettingsValues = (
 
   // Sorting
   confirmExpiry.sort(myProposalsLast);
-  nodeOperatorFeeRate.sort(myProposalsLast);
+  feeRate.sort(myProposalsLast);
 
   return {
     defaultAdmins: vaultInfo.defaultAdmins,
     nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
+    feeRecipient,
     isDepositAllowed: vaultInfo.isDepositAllowed,
-    nodeOperatorFeeRecipient,
     confirmExpiryCurrent,
     confirmExpiry,
     nodeOperatorFeeRateCurrent,
-    nodeOperatorFeeRate,
+    feeRate,
   };
 };
 
@@ -147,12 +147,12 @@ export const prepareDefaultValues = (
     defaultAdmins,
     nodeOperatorManagers,
     isDepositAllowed: data.isDepositAllowed,
-    nodeOperatorFeeRecipient: data.nodeOperatorFeeRecipient,
+    feeRecipient: data.feeRecipient,
 
     confirmExpiry: data.confirmExpiryCurrent,
     confirmExpiryCustom: '',
 
-    nodeOperatorFeeRate: data.nodeOperatorFeeRateCurrent,
+    feeRate: data.nodeOperatorFeeRateCurrent,
     nodeOperatorFeeRateCustom: '',
   };
 };

@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { Tier } from 'features/settings/tier/hooks';
-import { useTierData } from 'features/settings/tier/contexts';
 import { toStethValue } from 'utils';
+import type { Tier } from 'modules/vaults';
+
+import { useTierData } from 'features/settings/tier/contexts';
 
 import { OldToNew } from './old-to-new';
 import { calcNewMetrics } from './utils';

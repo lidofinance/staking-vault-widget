@@ -27,10 +27,10 @@ export const MAIN_SETTINGS: MainSettingsEntryType[] = [
     ...texts.nodeOperator,
   },
   {
-    name: 'nodeOperatorFeeRate',
+    name: 'feeRate',
     dataType: 'percent',
     type: 'number',
-    ...texts.nodeOperatorFeeRate,
+    ...texts.feeRate,
   },
   {
     name: 'confirmExpiry',
@@ -75,10 +75,10 @@ export const CREATE_VAULT_ADDRESSES: MainSettingsEntryType[] = [
 
 export const CREATE_VAULT_SETTINGS: MainSettingsEntryType[] = [
   {
-    name: 'nodeOperatorFeeRate',
+    name: 'feeRate',
     dataType: 'percent',
     type: 'number',
-    ...texts.nodeOperatorFeeRate,
+    ...texts.feeRate,
   },
   {
     name: 'confirmExpiry',

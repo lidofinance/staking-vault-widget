@@ -3,9 +3,12 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
 
-import { useVault, DEFAULT_TIER_ID } from 'modules/vaults';
-
-import { NodeOperatorTierInfoArgs, NodeOperatorTiersInfo } from './types';
+import {
+  useVault,
+  DEFAULT_TIER_ID,
+  NodeOperatorTierInfoArgs,
+  NodeOperatorTiersInfo,
+} from 'modules/vaults';
 
 export type NodeOperatorTiersData = ReturnType<
   typeof selectNodeOperatorTiersData
@@ -19,7 +22,7 @@ const fetchTiersForOperator = async ({
 
   const [group, vaultInfo] = await Promise.all([
     operatorGrid.read.group([nodeOperator]),
-    operatorGrid.read.vaultInfo([vault.address]),
+    operatorGrid.read.vaultTierInfo([vault.address]),
   ]);
 
   const { tierIds, shareLimit, liabilityShares, ...rest } = group;

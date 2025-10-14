@@ -1,6 +1,8 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
 import { Address } from 'viem';
 
+import type { Tier } from 'modules/vaults';
+
 import { ExpiresInItem } from './content/expires-in-item';
 import { RequestBy } from './content/request-by';
 import { VaultInfo } from './vault-info';
@@ -10,7 +12,6 @@ import {
   OldToNew,
 } from 'features/settings/tier/shared/vault-metrics/extended-metrics';
 
-import type { Tier } from 'features/settings/tier/hooks/types';
 import { toStethValue } from 'utils';
 
 import {

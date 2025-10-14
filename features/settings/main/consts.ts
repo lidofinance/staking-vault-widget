@@ -61,9 +61,9 @@ const votingLifetimeSchema = z.coerce
 
 export const mainSettingsFormSchema = z.object({
   nodeOperatorManagers: z.array(permissionSchema),
-  nodeOperatorFeeRecipient: addressSchema,
+  feeRecipient: addressSchema,
   defaultAdmins: z.array(permissionSchema),
-  nodeOperatorFeeRate: z.string(),
+  feeRate: z.string(),
   isDepositAllowed: z.boolean(),
   nodeOperatorFeeRateCustom: z
     .string()
@@ -152,7 +152,7 @@ const handleCustomFieldErrors = (
   errors: FieldErrors<MainSettingsFormValidatedValues>,
   values: MainSettingFormsValues,
 ) => {
-  const isnodeOperatorFeeRateCustom = values.nodeOperatorFeeRate === 'custom';
+  const isnodeOperatorFeeRateCustom = values.feeRate === 'custom';
   const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
   const isnodeOperatorFeeRateEmpty = values.nodeOperatorFeeRateCustom === '';
   const isConfirmExpiryEmpty = values.confirmExpiryCustom === '';
@@ -192,9 +192,9 @@ const checkForDuplicateValues = (
   values: MainSettingFormsValues,
   errors: FieldErrors<MainSettingsFormValidatedValues>,
 ) => {
-  const { nodeOperatorFeeRate, confirmExpiry } = context;
+  const { feeRate, confirmExpiry } = context;
 
-  const uniquenodeOperatorFeeRate = nodeOperatorFeeRate
+  const uniquenodeOperatorFeeRate = feeRate
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
   const uniqueConfirmExpiry = confirmExpiry

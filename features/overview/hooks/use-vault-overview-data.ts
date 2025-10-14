@@ -59,11 +59,12 @@ export type VaultInfo = VaultConnection &
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
     balance: bigint;
-    nodeOperatorFeeRate: bigint;
+    feeRate: number;
     withdrawalCredentials: Address;
     tierId: bigint;
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
+    reportLiabilitySharesStETH: bigint;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -83,6 +84,7 @@ const getVaultData = async ({
     shareLimit,
     hub,
     operatorGrid,
+    report,
     ...rest
   } = vault;
 
@@ -91,14 +93,14 @@ const getVaultData = async ({
     totalValue,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
-    nodeOperatorFeeRate,
+    feeRate,
     totalMintingCapacityShares,
     mintableShares,
     tier,
     group,
   ] = await readWithReport({
     publicClient,
-    report: vault.report,
+    report,
     contracts: [
       {
         abi: Multicall3AbiUtils,
@@ -107,12 +109,12 @@ const getVaultData = async ({
         args: [address],
       },
       dashboard.prepare.totalValue(),
-      dashboard.prepare.nodeOperatorDisbursableFee(),
+      dashboard.prepare.accruedFee(),
       dashboard.prepare.withdrawableValue(),
-      dashboard.prepare.nodeOperatorFeeRate(),
+      dashboard.prepare.feeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
-      operatorGrid.prepare.vaultInfo([vault.address]),
+      operatorGrid.prepare.vaultTierInfo([vault.address]),
       operatorGrid.prepare.group([vault.nodeOperator]),
     ] as const,
   });
@@ -155,6 +157,10 @@ const getVaultData = async ({
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
+  const reportLiabilitySharesStETH = report
+    ? await shares.convertToSteth(report.liabilityShares)
+    : 0n;
+
   // Binding-constraint detection:
   // - totalMintingCapacityShares is the current effective capacity (RR-based and already
   //   reduced by any active caps).
@@ -196,8 +202,8 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    nodeOperatorFeeRate,
-
+    reportLiabilitySharesStETH,
+    feeRate,
     shareLimit,
     forcedRebalanceThresholdBP,
     liabilityShares,
@@ -228,7 +234,7 @@ const selectOverviewData = ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    nodeOperatorFeeRate: nodeOperatorFee,
+    feeRate: nodeOperatorFee,
     nodeOperator,
     isVaultConnected,
     settledLidoFees,
@@ -237,7 +243,9 @@ const selectOverviewData = ({
     mintableStETH,
     tierId,
     tierStETHLimit,
-    isBeaconDepositsManuallyPaused,
+    minimalReserve,
+    reportLiabilitySharesStETH,
+    beaconChainDepositsPauseIntent,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -253,6 +261,8 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
+    minimalReserve,
+    reportLiabilitySharesStETH,
   });
 
   const {
@@ -300,7 +310,7 @@ const selectOverviewData = ({
   const totalMintingCapacityStETH = toStethValue(
     vaultData.totalMintingCapacityStETH,
   );
-  const nodeOperatorFeeRate = formatPercent.format(
+  const feeRate = formatPercent.format(
     Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
   );
   const collateral = toEthValue(overview.collateral);
@@ -325,7 +335,7 @@ const selectOverviewData = ({
     balance,
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
-    nodeOperatorFeeRate,
+    feeRate,
     collateral,
     pendingUnlockEth,
     isVaultConnected,
@@ -351,7 +361,7 @@ const selectOverviewData = ({
     carrySpreadApr,
     vaultData,
     vaultMetrics,
-    isBeaconDepositsManuallyPaused,
+    beaconChainDepositsPauseIntent,
   };
 };
 

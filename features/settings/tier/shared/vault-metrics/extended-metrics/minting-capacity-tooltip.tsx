@@ -2,8 +2,7 @@ import { FC } from 'react';
 import { Question, Tooltip } from '@lidofinance/lido-ui';
 
 import { getMintingConstraintType, MintingConstraintType } from 'utils';
-
-import { useNodeOperatorTiersInfo, useVaultTierInfo } from '../../../hooks';
+import { useNodeOperatorTiersInfo, useVaultTierInfo } from 'modules/vaults';
 
 type MintingCapacityTooltipProps = {
   tierId: bigint | undefined;

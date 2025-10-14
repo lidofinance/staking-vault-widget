@@ -12,30 +12,19 @@ import { TierSelector } from './styles';
 
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
-  const {
-    hasConfirmingRole,
-    hasAdmin,
-    hasNodeOperatorManager,
-    isNodeOperator,
-  } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('tierChangeRequester');
-  const accessPermission =
-    hasConfirmingRole ||
-    hasAdmin ||
-    hasNodeOperatorManager ||
-    hasPermission ||
-    isNodeOperator;
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
+  const accessPermission = !!(hasAdmin || hasPermission || isNodeOperator);
   const { values, selectedTier } = useTierData();
 
   const isActive =
     selectedTier?.id.toString() === values?.vault.tierId.toString();
 
   const closeModal = useCallback(() => setModalVisibility(false), []);
-  const openModal = useCallback(() => {
-    if (accessPermission) {
-      setModalVisibility(true);
-    }
-  }, [accessPermission]);
+  const openModal = useCallback(
+    () => setModalVisibility(accessPermission),
+    [accessPermission],
+  );
 
   if (selectedTier === null) return null;
 

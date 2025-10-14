@@ -93,25 +93,19 @@ export const useEditMainSettings = () => {
           });
         }
 
-        if (
-          formValues.nodeOperatorFeeRecipient !==
-          vaultSettings.nodeOperatorFeeRecipient
-        ) {
+        if (formValues.feeRecipient !== vaultSettings.feeRecipient) {
           transactions.push({
-            ...activeVault.dashboard.encode.setNodeOperatorFeeRecipient([
-              formValues.nodeOperatorFeeRecipient,
+            ...activeVault.dashboard.encode.setFeeRecipient([
+              formValues.feeRecipient,
             ]),
-            loadingActionText:
-              vaultTexts.actions.settings.nodeOperatorFeeRecipient,
+            loadingActionText: vaultTexts.actions.settings.feeRecipient,
           });
         }
 
-        const { nodeOperatorFeeRate, nodeOperatorFeeRateCustom } = formValues;
+        const { feeRate, nodeOperatorFeeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(
-          nodeOperatorFeeRate !== 'custom'
-            ? nodeOperatorFeeRate
-            : nodeOperatorFeeRateCustom,
+          feeRate !== 'custom' ? feeRate : nodeOperatorFeeRateCustom,
         );
 
         const isFeeValueChanged =
@@ -123,9 +117,7 @@ export const useEditMainSettings = () => {
           );
 
           transactions.push({
-            ...activeVault.dashboard.encode.setNodeOperatorFeeRate([
-              BigInt(newFee),
-            ]),
+            ...activeVault.dashboard.encode.setFeeRate([BigInt(newFee)]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
               confirmingRoleAction,
               feeValue,
