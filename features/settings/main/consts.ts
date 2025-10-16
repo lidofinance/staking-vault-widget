@@ -206,7 +206,7 @@ const checkForDuplicateValues = (
     .map((item) => Number(item.value));
 
   const isNodeOperatorFeeRateDuplicate = uniqueNodeOperatorFeeRate
-    .map((rate) => `${rate}`)
+    .map((rate) => String(rate))
     .includes(values.nodeOperatorFeeRateCustom ?? '');
 
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
