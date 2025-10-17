@@ -6,7 +6,7 @@ import { useVaultListParams } from '../use-vault-list-params';
 
 export const useMyVaultsList = () => {
   const { address } = useDappStatus();
-  const { publicClient, shares } = useLidoSDK();
+  const { publicClient } = useLidoSDK();
   const { isReady, params, setPage, setSort } = useVaultListParams();
 
   const query = useQuery({
@@ -14,8 +14,7 @@ export const useMyVaultsList = () => {
       ...vaultListQueryKeys(publicClient.chain.id).myVaults,
       { ...params, address },
     ] as const,
-    queryFn: async ({ queryKey }) =>
-      fetchVaults({ publicClient, shares }, queryKey[4]),
+    queryFn: async ({ queryKey }) => fetchVaults({ publicClient }, queryKey[4]),
     enabled: !!address && isReady,
     placeholderData: (prevData) => {
       if (!address) return undefined;
