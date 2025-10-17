@@ -1,6 +1,5 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import type { Address } from 'viem';
 
 import { calculateHealth } from 'utils';
@@ -31,7 +30,6 @@ import { calculateOverviewV2 } from 'features/overview/consts';
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
   vault: VaultBaseInfo;
-  shares: LidoSDKShares;
 };
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
@@ -72,7 +70,6 @@ export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
 const getVaultData = async ({
   publicClient,
   vault,
-  shares,
 }: VaultDataArgs): Promise<VaultInfo> => {
   const {
     address,
@@ -148,17 +145,21 @@ const getVaultData = async ({
     tierStETHLimit,
     lidoTVLSharesLimit,
   ] = await Promise.all([
-    shares.convertToSteth(liabilityShares),
-    shares.convertToSteth(mintableShares),
-    shares.convertToSteth(shareLimit),
-    shares.convertToShares(locked),
-    shares.convertToSteth(totalMintingCapacityShares),
-    shares.convertToSteth(tierShareLimit),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([liabilityShares]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([mintableShares]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([shareLimit]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([locked]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([
+      totalMintingCapacityShares,
+    ]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
   const reportLiabilitySharesStETH = report
-    ? await shares.convertToSteth(report.liabilityShares)
+    ? await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+        report.liabilityShares,
+      ])
     : 0n;
 
   // Binding-constraint detection:
@@ -364,7 +365,7 @@ const selectOverviewData = ({
 };
 
 export const useVaultOverviewData = () => {
-  const { shares, publicClient } = useLidoSDK();
+  const { publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
@@ -374,7 +375,7 @@ export const useVaultOverviewData = () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 
       const [vaultData, vaultMetrics] = await Promise.all([
-        getVaultData({ publicClient, shares, vault: activeVault }),
+        getVaultData({ publicClient, vault: activeVault }),
         fetchVaultMetrics(
           { publicClient },
           { vaultAddress: activeVault.address },

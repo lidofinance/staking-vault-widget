@@ -50,7 +50,6 @@ const getVaultTierConfirmation = async (
 const getVaultTierInfo = async ({
   publicClient,
   vault,
-  shares,
 }: VaultTierInfoArgs): Promise<VaultTierInfo> => {
   const {
     address,
@@ -136,13 +135,15 @@ const getVaultTierInfo = async ({
     proposedVaultLimitStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
-    shares.convertToSteth(vaultLiabilityShares),
-    shares.convertToSteth(vaultMintableShares),
-    shares.convertToSteth(vaultShareLimit),
-    shares.convertToSteth(vaultTotalMintingCapacityShares),
-    shares.convertToSteth(tierShareLimit),
-    shares.convertToSteth(tierLiabilityShares),
-    shares.convertToSteth(proposedVaultLimit),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultMintableShares]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultShareLimit]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([
+      vaultTotalMintingCapacityShares,
+    ]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
+    lidoV3Contract.read.getPooledEthBySharesRoundUp([proposedVaultLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -242,7 +243,7 @@ const selectTierData = (tierData: VaultTierInfo) => {
 };
 
 export const useVaultTierInfo = () => {
-  const { shares, publicClient } = useLidoSDK();
+  const { publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
@@ -252,7 +253,6 @@ export const useVaultTierInfo = () => {
       invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');
       return await getVaultTierInfo({
         publicClient,
-        shares,
         vault: activeVault,
       });
     },

@@ -3,10 +3,11 @@ import { isAddressEqual, zeroAddress, type Address } from 'viem';
 import { calculateHealth } from 'utils';
 import { getApiURL } from 'config';
 
-import type { RegisteredPublicClient, useLidoSDK } from 'modules/web3';
+import type { RegisteredPublicClient } from 'modules/web3';
 
 import {
   getDashboardContract,
+  getLidoV3Contract,
   getVaultHubContract,
   getVaultViewerContract,
 } from '../contracts';
@@ -35,7 +36,6 @@ export type FetchVaultsParams = {
 
 export type FetchVaultsContext = {
   publicClient: RegisteredPublicClient;
-  shares: ReturnType<typeof useLidoSDK>['shares'];
 };
 
 type VaultEntryRaw = {
@@ -142,7 +142,7 @@ export type FetchVaultsResult = {
 };
 
 const fetchVaultRPC = async (
-  { publicClient, shares }: FetchVaultsContext,
+  { publicClient }: FetchVaultsContext,
   vaultAddress: Address,
 ): Promise<VaultEntryRaw> => {
   const vaultHub = getVaultHubContract(publicClient);
@@ -160,7 +160,10 @@ const fetchVaultRPC = async (
     dashboardContract.read.liabilityShares(),
   ]);
 
-  const liabilityStETH = await shares.convertToSteth(liabilityShares);
+  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const liabilityStETH = await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+    liabilityShares,
+  ]);
 
   const healthScore = calculateHealth({
     totalValue,

@@ -7,7 +7,6 @@ import type {
   getOperatorGridContract,
 } from './contracts';
 import type { RegisteredPublicClient } from '../web3';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/dist/types/shares';
 import type { Confirmation } from '../../utils/get-confirmations';
 
 export type VaultConnection = ReadContractReturnType<
@@ -88,7 +87,6 @@ export type TierVault = {
 export type VaultTierInfoArgs = {
   publicClient: RegisteredPublicClient;
   vault: VaultBaseInfo;
-  shares: LidoSDKShares;
 };
 
 export type VaultTierInfo = {
@@ -109,7 +107,7 @@ export type VaultTierInfo = {
 
 export type NodeOperatorTierInfoArgs = {
   vault: VaultBaseInfo;
-  shares: LidoSDKShares;
+  publicClient: RegisteredPublicClient;
 };
 
 export type NodeOperatorTiersInfo = {
