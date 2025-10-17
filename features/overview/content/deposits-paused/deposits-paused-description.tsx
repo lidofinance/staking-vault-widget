@@ -13,7 +13,7 @@ export const DepositsPausedDescription = () => {
   return (
     <>
       Node Operator cannot deposit ETH from the stVault Balance to validators.
-      Сonsolidations remain allowed.
+      Сonsolidations remain allowed.{' '}
       <Link href={appPaths.vaults.vault(activeVault.address).settings('main')}>
         Go to settings
       </Link>{' '}

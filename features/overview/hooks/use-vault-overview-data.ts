@@ -372,6 +372,7 @@ export const useVaultOverviewData = () => {
   return useQuery({
     queryKey: [...queryKeys.state, 'vault-overview-data'],
     enabled: !!activeVault,
+    refetchOnMount: true,
     queryFn: async () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 
