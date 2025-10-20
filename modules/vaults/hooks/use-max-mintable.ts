@@ -5,7 +5,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import { useVault } from '../vault-context';
 import { readWithReport } from '../report';
-import { getLidoV3Contract } from '../contracts';
+import { getStEthContract } from '../contracts';
 
 export type MaxMintableResult = {
   maxMintableStETH: bigint;
@@ -46,11 +46,11 @@ export const useMaxMintable = (amount?: bigint | null) => {
         ] as const,
       });
 
-      const lidoV3Contract = getLidoV3Contract(publicClient);
+      const stethContract = getStEthContract(publicClient);
       const maxMintableStETH =
         maxMintableShares === 0n
           ? 0n
-          : await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+          : await stethContract.read.getPooledEthBySharesRoundUp([
               maxMintableShares,
             ]);
 

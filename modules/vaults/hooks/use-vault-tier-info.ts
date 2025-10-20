@@ -9,7 +9,8 @@ import {
   VAULT_TOTAL_BASIS_POINTS_BN,
   useVault,
   DEFAULT_TIER_ID,
-  getLidoV3Contract,
+  getLidoContract,
+  getStEthContract,
 } from 'modules/vaults';
 import { formatPercent, toEthValue, toStethValue } from 'utils';
 import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
@@ -64,7 +65,8 @@ const getVaultTierInfo = async ({
     ...rest
   } = vault;
 
-  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const lidoV3Contract = getLidoContract(publicClient);
+  const stethContract = getStEthContract(publicClient);
 
   const [
     record,
@@ -135,15 +137,15 @@ const getVaultTierInfo = async ({
     proposedVaultLimitStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultMintableShares]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([vaultShareLimit]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([
+    stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([vaultMintableShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([vaultShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([
       vaultTotalMintingCapacityShares,
     ]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([proposedVaultLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([proposedVaultLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 

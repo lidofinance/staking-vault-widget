@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import { getLidoV3Contract, readWithReport, useVault } from 'modules/vaults';
+import { getStEthContract, readWithReport, useVault } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
 export const useLiability = () => {
@@ -20,11 +20,9 @@ export const useLiability = () => {
         contracts: [activeVault.dashboard.prepare.liabilityShares()] as const,
       });
 
-      const lidoV3Contract = getLidoV3Contract(publicClient);
+      const stethContract = getStEthContract(publicClient);
       const liabilitySteth =
-        await lidoV3Contract.read.getPooledEthBySharesRoundUp([
-          liabilityShares,
-        ]);
+        await stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]);
 
       return {
         liabilityWsteth: liabilityShares,

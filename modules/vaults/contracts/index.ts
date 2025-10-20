@@ -6,5 +6,6 @@ export * from './vault-hub';
 export * from './vault-viewer';
 export * from './lazy-oracle';
 export * from './weth';
+export * from './steth';
 export * from './operator-grid';
-export * from './lido-v3';
+export * from './lido';

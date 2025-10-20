@@ -7,7 +7,7 @@ import type { RegisteredPublicClient } from 'modules/web3';
 
 import {
   getDashboardContract,
-  getLidoV3Contract,
+  getStEthContract,
   getVaultHubContract,
   getVaultViewerContract,
 } from '../contracts';
@@ -160,8 +160,8 @@ const fetchVaultRPC = async (
     dashboardContract.read.liabilityShares(),
   ]);
 
-  const lidoV3Contract = getLidoV3Contract(publicClient);
-  const liabilityStETH = await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+  const stethContract = getStEthContract(publicClient);
+  const liabilityStETH = await stethContract.read.getPooledEthBySharesRoundUp([
     liabilityShares,
   ]);
 

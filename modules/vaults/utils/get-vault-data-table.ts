@@ -3,7 +3,7 @@ import { isAddressEqual, zeroAddress, type Address } from 'viem';
 import { calculateHealth } from 'utils';
 import {
   getDashboardContract,
-  getLidoV3Contract,
+  getStEthContract,
   getVaultHubContract,
 } from 'modules/vaults';
 
@@ -29,7 +29,7 @@ export const getVaultDataTable = async ({
   vaultAddress,
 }: VaultDataArgs): Promise<VaultTableInfo> => {
   const vaultHub = getVaultHubContract(publicClient);
-  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const stethContract = getStEthContract(publicClient);
 
   const { owner, forcedRebalanceThresholdBP } =
     await vaultHub.read.vaultConnection([vaultAddress]);
@@ -47,7 +47,7 @@ export const getVaultDataTable = async ({
     dashboardContract.read.liabilityShares(),
   ]);
 
-  const liabilityStETH = await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+  const liabilityStETH = await stethContract.read.getPooledEthBySharesRoundUp([
     liabilityShares,
   ]);
 

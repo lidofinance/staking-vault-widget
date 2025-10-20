@@ -9,7 +9,8 @@ import {
   useVault,
   fetchVaultMetrics,
   VAULT_TOTAL_BASIS_POINTS,
-  getLidoV3Contract,
+  getLidoContract,
+  getStEthContract,
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
@@ -134,7 +135,8 @@ const getVaultData = async ({
   const [_, tierId, tierShareLimit] = tier;
   const { shareLimit: groupShareLimit } = group;
 
-  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const lidoV3Contract = getLidoContract(publicClient);
+  const stethContract = getStEthContract(publicClient);
 
   const [
     liabilityStETH,
@@ -145,19 +147,19 @@ const getVaultData = async ({
     tierStETHLimit,
     lidoTVLSharesLimit,
   ] = await Promise.all([
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([liabilityShares]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([mintableShares]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([shareLimit]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([locked]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([
+    stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([mintableShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([shareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([locked]),
+    stethContract.read.getPooledEthBySharesRoundUp([
       totalMintingCapacityShares,
     ]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
   const reportLiabilitySharesStETH = report
-    ? await lidoV3Contract.read.getPooledEthBySharesRoundUp([
+    ? await stethContract.read.getPooledEthBySharesRoundUp([
         report.liabilityShares,
       ])
     : 0n;

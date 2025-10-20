@@ -5,10 +5,10 @@ import { useLidoSDK } from 'modules/web3';
 
 import {
   useVault,
+  getStEthContract,
   DEFAULT_TIER_ID,
   NodeOperatorTierInfoArgs,
   NodeOperatorTiersInfo,
-  getLidoV3Contract,
 } from 'modules/vaults';
 
 export type NodeOperatorTiersData = ReturnType<
@@ -20,7 +20,7 @@ const fetchTiersForOperator = async ({
   publicClient,
 }: NodeOperatorTierInfoArgs): Promise<NodeOperatorTiersInfo> => {
   const { nodeOperator, operatorGrid } = vault;
-  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const stethContract = getStEthContract(publicClient);
 
   const [group, vaultInfo] = await Promise.all([
     operatorGrid.read.group([nodeOperator]),
@@ -41,15 +41,15 @@ const fetchTiersForOperator = async ({
   );
 
   const [stEthLimit, liabilityStETH] = await Promise.all([
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([shareLimit]),
-    lidoV3Contract.read.getPooledEthBySharesRoundUp([liabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([shareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
   ]);
 
   const tiersWithStETH = await Promise.all(
     tiers.map(async (tier, index) => {
       const [shareLimitStETH, liabilityStETH] = await Promise.all([
-        lidoV3Contract.read.getPooledEthBySharesRoundUp([tier.shareLimit]),
-        lidoV3Contract.read.getPooledEthBySharesRoundUp([tier.liabilityShares]),
+        stethContract.read.getPooledEthBySharesRoundUp([tier.shareLimit]),
+        stethContract.read.getPooledEthBySharesRoundUp([tier.liabilityShares]),
       ]);
 
       const id = writableTierIds[index];
