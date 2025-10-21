@@ -16,6 +16,7 @@ export const MintingLimit = () => {
   const selectedTierId = useWatch<TierSettingsFormValues>({
     name: 'selectedTierId',
   });
+
   // Disable input if the selected tier is the current tier
   const isCurrentTier = values?.vault.tierId.toString() === selectedTierId;
   const text = isCurrentTier
@@ -33,7 +34,6 @@ export const MintingLimit = () => {
         label="stVault minting limit"
         showRightDecorator={false}
         leftDecorator={<Steth />}
-        disabled={isCurrentTier}
       />
     </PartitionContainer>
   );
