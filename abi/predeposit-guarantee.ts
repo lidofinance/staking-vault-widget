@@ -18,7 +18,7 @@ export const PredepositGuaranteeAbi = [
       },
       {
         internalType: 'uint64',
-        name: '_changeSlot',
+        name: '_pivotSlot',
         type: 'uint64',
       },
     ],
@@ -44,6 +44,11 @@ export const PredepositGuaranteeAbi = [
       },
     ],
     name: 'AccessControlUnauthorizedAccount',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ArrayLengthsNotMatch',
     type: 'error',
   },
   {
@@ -89,11 +94,6 @@ export const PredepositGuaranteeAbi = [
   {
     inputs: [],
     name: 'InvalidSlot',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'InvalidTimestamp',
     type: 'error',
   },
   {
@@ -375,37 +375,6 @@ export const PredepositGuaranteeAbi = [
     inputs: [],
     name: 'ZeroPauseDuration',
     type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'nodeOperator',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint128',
-        name: 'total',
-        type: 'uint128',
-      },
-      {
-        indexed: false,
-        internalType: 'uint128',
-        name: 'locked',
-        type: 'uint128',
-      },
-    ],
-    name: 'BalanceCompensated',
-    type: 'event',
   },
   {
     anonymous: false,
