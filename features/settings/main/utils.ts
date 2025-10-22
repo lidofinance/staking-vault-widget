@@ -33,7 +33,7 @@ export const shouldIncrementTxCounterByAddresses = (
 
   multipleDataFields.forEach((key) => {
     const fields = formFields[key];
-    fields.forEach((field: RoleFieldSchema) => {
+    (fields ?? []).forEach((field: RoleFieldSchema) => {
       grant += Number(field.state === 'grant');
       remove += Number(field.state === 'remove');
     });
