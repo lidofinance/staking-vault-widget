@@ -13,7 +13,7 @@ export const ManageDeposits = () => {
   const { isDappActive } = useDappStatus();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
-  if (!isDappActive || !(hasAdmin || isNodeOperator)) {
+  if (!isDappActive || !hasAdmin || isNodeOperator) {
     return null;
   }
 

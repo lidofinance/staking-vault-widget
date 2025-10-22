@@ -153,7 +153,7 @@ export const prepareDefaultValues = (
     confirmExpiryCustom: '',
 
     feeRate: data.nodeOperatorFeeRateCurrent,
-    nodeOperatorFeeRateCustom: '',
+    feeRateCustom: '',
   };
 };
 
