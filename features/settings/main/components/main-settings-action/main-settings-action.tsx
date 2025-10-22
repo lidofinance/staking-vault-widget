@@ -39,7 +39,7 @@ export const MainSettingsAction: FC = () => {
       const {
         feeRate,
         confirmExpiry,
-        nodeOperatorFeeRateCustom,
+        feeRateCustom,
         confirmExpiryCustom,
         feeRecipient,
       } = formFields;
@@ -52,7 +52,7 @@ export const MainSettingsAction: FC = () => {
       }
 
       const nodeOperatorFeeRateFormValue =
-        feeRate === 'custom' ? nodeOperatorFeeRateCustom : feeRate;
+        feeRate === 'custom' ? feeRateCustom : feeRate;
 
       if (
         nodeOperatorFeeRateFormValue !==
