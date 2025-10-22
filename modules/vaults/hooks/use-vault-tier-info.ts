@@ -38,7 +38,10 @@ const getVaultTierConfirmation = async (
     ({ decodedData }) =>
       getAddress(decodedData.args[0] as Address) === getAddress(vaultAddress),
   );
-  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
+
+  const index =
+    lastProposal?.decodedData.functionName === 'updateVaultShareLimit' ? 1 : 2;
+  const proposedVaultLimit = lastProposal?.decodedData.args[index] ?? 0n;
 
   return {
     confirmExpiry,

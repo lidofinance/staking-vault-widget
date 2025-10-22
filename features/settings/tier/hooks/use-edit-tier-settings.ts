@@ -54,48 +54,74 @@ export const useEditTierSettings = () => {
             : await shares.convertToShares(BigInt(vaultMintingLimit));
 
         const bothRequestingRoles = isNodeOperator && hasAdmin;
+        const isUpdatingVaultShareLimit =
+          isNodeOperator && BigInt(selectedTierId) === tierInfo.vault.tierId;
 
-        const nodeOperatorRequest = {
-          ...activeVault.operatorGrid.encode.changeTier([
-            activeVault.address,
-            BigInt(selectedTierId),
-            mintingLimitInShares,
-          ]),
-          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-            selectedTierId,
-            toStethValue(vaultMintingLimit),
-          ),
-        };
-
-        const defaultAdminRequest = {
-          ...activeVault.dashboard.encode.changeTier([
-            BigInt(selectedTierId),
-            mintingLimitInShares,
-          ]),
-          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-            selectedTierId,
-            toStethValue(vaultMintingLimit),
-          ),
-        };
-
-        // if node operator, use operator grid contract
-        // if not node operator, use dashboard contract
-        if (bothRequestingRoles) {
-          transactions.push(nodeOperatorRequest, defaultAdminRequest);
-        } else if (isNodeOperator) {
-          transactions.push(nodeOperatorRequest);
+        if (isUpdatingVaultShareLimit) {
+          transactions.push({
+            ...activeVault.operatorGrid.encode.updateVaultShareLimit([
+              activeVault.address,
+              mintingLimitInShares,
+            ]),
+            loadingActionText:
+              vaultTexts.actions.settings.confirmUpdateVaultShareLimit(
+                toStethValue(vaultMintingLimit),
+              ),
+          });
         } else {
-          transactions.push(defaultAdminRequest);
+          const nodeOperatorChangeTierRequest = {
+            ...activeVault.operatorGrid.encode.changeTier([
+              activeVault.address,
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          };
+
+          const defaultAdminRequest = {
+            ...activeVault.dashboard.encode.changeTier([
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          };
+
+          // if node operator, use operator grid contract
+          // if not node operator, use dashboard contract
+          if (bothRequestingRoles) {
+            transactions.push(
+              nodeOperatorChangeTierRequest,
+              defaultAdminRequest,
+            );
+          } else if (isNodeOperator) {
+            transactions.push(nodeOperatorChangeTierRequest);
+          } else {
+            transactions.push(defaultAdminRequest);
+          }
         }
 
-        const loadingText = bothRequestingRoles ? 'Approving' : 'Requesting';
-        const completeText = bothRequestingRoles ? 'Approve' : 'Request';
+        const loadingTextHead = bothRequestingRoles
+          ? 'Approving'
+          : 'Requesting';
+        const loadingTextBody = isUpdatingVaultShareLimit
+          ? `to change vault minting limit with ${toStethValue(vaultMintingLimit)}`
+          : `to move to ${selectedTier.tierName}`;
+        const completeTextHead = bothRequestingRoles ? 'Approve' : 'Request';
+        const completeTextBody = isUpdatingVaultShareLimit
+          ? 'updating minting limit for vault'
+          : `${selectedTier.tierName}`;
 
         const result = await withSuccess(
           sendTX({
             transactions,
-            mainActionLoadingText: `${loadingText} to move to ${selectedTier.tierName}`,
-            mainActionCompleteText: `${completeText} for ${selectedTier.tierName} submitted`,
+            mainActionLoadingText: `${loadingTextHead} ${loadingTextBody}`,
+            mainActionCompleteText: `${completeTextHead} for ${completeTextBody} submitted`,
             renderSuccessContent: GoToVault,
             allowRetry: false,
           }),

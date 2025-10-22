@@ -185,6 +185,8 @@ export const vaultTexts = {
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
       confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
+      confirmUpdateVaultShareLimit: (tierMintingLimit: string) =>
+        `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
       approveSelectedTier: (tierId: bigint) =>
         `Approving Tier ${tierId} settings.` as const,
       submit: (counter: number) => {

@@ -9,6 +9,7 @@ export type FunctionArgsMap = {
   setFeeRate: readonly [bigint];
   changeTier: readonly [Address, bigint, bigint];
   transferVaultOwnership: readonly [Address];
+  updateVaultShareLimit: readonly [Address, bigint];
 };
 type FunctionName = keyof FunctionArgsMap;
 type DecodedData = {
