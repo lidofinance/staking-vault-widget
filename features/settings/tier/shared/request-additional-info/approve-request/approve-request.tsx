@@ -6,6 +6,7 @@ import {
   useVaultConfirmingRoles,
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
+  useVaultPermission,
 } from 'modules/vaults';
 
 import { useChangeTierRequest } from 'features/settings/tier/hooks';
@@ -20,11 +21,15 @@ export const ApproveRequest = () => {
   const { address } = useAccount();
   const { activeVault } = useVault();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const hasAccessToApproving =
     !!address &&
     ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
+      (hasVaultConfigurationPermission &&
+        activeVault?.nodeOperator === proposal?.member) ||
       hasAdmin);
 
   const [isDashboardProposer, isNOProposer] = useMemo(() => {

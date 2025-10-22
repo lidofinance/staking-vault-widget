@@ -7,6 +7,7 @@ import {
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
   vaultTexts,
+  useVaultPermission,
 } from 'modules/vaults';
 
 import { SectionContainer } from 'features/settings/shared/components';
@@ -27,6 +28,8 @@ export const RequestChangeLimit = () => {
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { address } = useAccount();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const proposedTierId = proposal?.decodedData.args[1];
@@ -38,7 +41,11 @@ export const RequestChangeLimit = () => {
   const proposer = proposal?.member;
   const isTheSameUser = proposer === address;
 
-  if (!proposedTier || !(isNodeOperator || hasAdmin)) return null;
+  if (
+    !proposedTier ||
+    !(isNodeOperator || hasAdmin || hasVaultConfigurationPermission)
+  )
+    return null;
 
   const buttonText = showAdditionalInfo
     ? vaultTexts.actions.tier.request.showButton.hide
