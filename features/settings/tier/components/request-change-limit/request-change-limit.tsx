@@ -50,14 +50,20 @@ export const RequestChangeLimit = () => {
     showAdditionalInfo && proposal && !!proposedVaultMintingLimitStETH;
 
   return (
-    <RequestWrapper>
+    <RequestWrapper data-testid="requestWrapper">
       <HeadingSection>
-        <Title as="h2">
+        <Title as="h2" data-testid="title">
           {vaultTexts.actions.tier.requestTitle} {proposedTier?.tierName}
         </Title>
         <ExpiresContainer>
-          <Text size="xxs">Expires in</Text>
-          <ExpiresInItem expiryTimestamp={proposal?.expiryTimestamp} strong />
+          <Text data-testid="expiresInLabel" size="xxs">
+            Expires in
+          </Text>
+          <ExpiresInItem
+            data-testid="expiresInValue"
+            expiryTimestamp={proposal?.expiryTimestamp}
+            strong
+          />
         </ExpiresContainer>
       </HeadingSection>
       <Divider />
@@ -75,6 +81,7 @@ export const RequestChangeLimit = () => {
         <ButtonStyled
           variant="ghost"
           onClick={() => setAdditionalInfoVisibility(!showAdditionalInfo)}
+          data-testid="reviewRequestBtn"
         >
           {buttonText}
         </ButtonStyled>

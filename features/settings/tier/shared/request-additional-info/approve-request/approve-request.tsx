@@ -40,7 +40,11 @@ export const ApproveRequest = () => {
   if (!proposal || !hasAccessToApproving) return null;
 
   return (
-    <ButtonStyled onClick={handleApprove} disabled={approving}>
+    <ButtonStyled
+      onClick={handleApprove}
+      disabled={approving}
+      data-testid="approveButton"
+    >
       Approve
     </ButtonStyled>
   );
