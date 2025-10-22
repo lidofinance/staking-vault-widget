@@ -64,19 +64,17 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
               />
             </Text>
           </MintingLimit>
-          <MintingAvailable>
-            <Text size="xxs" color="secondary">
-              Available &nbsp;
-            </Text>
-            {!!tierStETHLimit && (
+          {!!tierStETHLimit && (
+            <MintingAvailable>
+              <Text size="xxs" color="secondary">
+                Available &nbsp;
+              </Text>
               <Text size="xxs">
                 <FormatToken
                   amount={tierStETHLimit - liabilityStETH}
                   maxDecimalDigits={3}
                 />{' '}
               </Text>
-            )}
-            {!!tierStETHLimit && (
               <Text size="xxs" color="secondary">
                 /{' '}
                 <FormatToken
@@ -85,8 +83,8 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                   symbol="stETH"
                 />
               </Text>
-            )}
-          </MintingAvailable>
+            </MintingAvailable>
+          )}
         </TierAmount>
       </BaseInfoContainer>
       {children}
