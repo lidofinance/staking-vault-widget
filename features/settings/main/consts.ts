@@ -65,7 +65,7 @@ export const mainSettingsFormSchema = z.object({
   defaultAdmins: z.array(permissionSchema),
   feeRate: z.string(),
   isDepositAllowed: z.boolean(),
-  nodeOperatorFeeRateCustom: z
+  feeRateCustom: z
     .string()
     .pipe(votingFeeSchema)
     .transform((val) => String(val))
@@ -152,19 +152,15 @@ const handleCustomFieldErrors = (
   errors: FieldErrors<MainSettingsFormValidatedValues>,
   values: MainSettingFormsValues,
 ) => {
-  const isnodeOperatorFeeRateCustom = values.feeRate === 'custom';
+  const isNOFeeRateCustom = values.feeRate === 'custom';
   const isConfirmExpiryCustom = values.confirmExpiry === 'custom';
-  const isnodeOperatorFeeRateEmpty = values.nodeOperatorFeeRateCustom === '';
+  const isNOFeeRateEmpty = values.feeRateCustom === '';
   const isConfirmExpiryEmpty = values.confirmExpiryCustom === '';
 
-  if (
-    isnodeOperatorFeeRateCustom &&
-    baseResultErrors.nodeOperatorFeeRateCustom
-  ) {
-    errors.nodeOperatorFeeRateCustom =
-      baseResultErrors.nodeOperatorFeeRateCustom;
+  if (isNOFeeRateCustom && baseResultErrors.feeRateCustom) {
+    errors.feeRateCustom = baseResultErrors.feeRateCustom;
   } else {
-    delete errors.nodeOperatorFeeRateCustom;
+    delete errors.feeRateCustom;
   }
 
   if (isConfirmExpiryCustom && baseResultErrors.confirmExpiryCustom) {
@@ -173,8 +169,8 @@ const handleCustomFieldErrors = (
     delete errors.confirmExpiryCustom;
   }
 
-  if (isnodeOperatorFeeRateCustom && isnodeOperatorFeeRateEmpty) {
-    errors.nodeOperatorFeeRateCustom = {
+  if (isNOFeeRateCustom && isNOFeeRateEmpty) {
+    errors.feeRateCustom = {
       type: 'custom',
       message: INVALID_EMPTY_STRING,
     };
@@ -202,14 +198,14 @@ const checkForDuplicateValues = (
     .map((item) => Number(item.value));
 
   const isnodeOperatorFeeRateDuplicate = uniquenodeOperatorFeeRate.includes(
-    Number(values.nodeOperatorFeeRateCustom),
+    Number(values.feeRateCustom),
   );
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,
   );
 
   if (isnodeOperatorFeeRateDuplicate) {
-    errors.nodeOperatorFeeRateCustom = {
+    errors.feeRateCustom = {
       type: 'custom',
       message: DUPLICATE_VALUE,
     };
