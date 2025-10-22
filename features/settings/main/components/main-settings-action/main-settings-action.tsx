@@ -7,10 +7,10 @@ import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
 import { useMainSettingsData } from 'features/settings/main/contexts';
+import { useDepositorRolesPermissions } from 'features/settings/main/hooks';
+import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 import { Container } from './styled';
-
-import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 export const MainSettingsAction: FC = () => {
   const { watch, reset } = useFormContext<MainSettingsFormValidatedValues>();
@@ -21,11 +21,15 @@ export const MainSettingsAction: FC = () => {
   const isSubmitDisabled = isSubmitting || disabled || isValidating || !isValid;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
-  const showActionButtons = !!(
+  const { showForPauserRole, showForResumerRole } =
+    useDepositorRolesPermissions();
+
+  const showActionButtons =
     hasConfirmingRole ||
     hasAdmin ||
-    hasNodeOperatorManager
-  );
+    hasNodeOperatorManager ||
+    showForPauserRole ||
+    showForResumerRole;
 
   const formFields = watch();
 
