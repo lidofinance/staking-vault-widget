@@ -40,16 +40,18 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
     <Wrapper>
       <BaseInfoContainer>
         <TierLevel>
-          <Text size="xs" strong>
+          <Text size="xs" strong data-testid="tierName">
             {tierName}
           </Text>
-          <ReserveRatio>
+          <ReserveRatio data-testid="tierRR">
             <Text size="xxs">{reserveRatioValue}</Text>
             <Text size="xxs" color="secondary">
               Reserve ratio
             </Text>
           </ReserveRatio>
-          {isActive && <TierStatus>{'Active'}</TierStatus>}
+          {isActive && (
+            <TierStatus data-testid="tierStatus">{'Active'}</TierStatus>
+          )}
         </TierLevel>
         <TierAmount>
           <MintingLimit>
@@ -61,6 +63,7 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                 amount={tierStETHLimit}
                 maxDecimalDigits={3}
                 symbol="stETH"
+                data-testid="tierMintingLimit"
               />
             </Text>
           </MintingLimit>
@@ -73,6 +76,7 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                 <FormatToken
                   amount={tierStETHLimit - liabilityStETH}
                   maxDecimalDigits={3}
+                  data-testid="tierAvailableMinting"
                 />{' '}
               </Text>
               <Text size="xxs" color="secondary">

@@ -34,6 +34,7 @@ export const ChooseTier = () => {
         onClick={openModal}
         $showCursor={accessPermission}
         role="button"
+        data-testid="chooseTierWrapper"
       >
         <TierBaseInfo
           tierName={selectedTier.tierName}

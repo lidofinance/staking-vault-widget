@@ -67,6 +67,7 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
             onChange={(e) => {
               void selectedTierIdField.onChange(e).then(closeModal);
             }}
+            data-testid={`tierId-${tier.id.toString()}`}
           >
             <TierBaseInfo
               tierName={tier.tierName}
