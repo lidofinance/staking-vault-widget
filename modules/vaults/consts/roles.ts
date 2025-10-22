@@ -34,7 +34,7 @@ export const VAULTS_NO_ROLES_MAP = {
     'vaults.NodeOperatorFee.UnguaranteedDepositRole',
   ),
   proveUnknownValidatorsRole: toRoleHash(
-    'vaults.NodeOperatorFee.proveUnknownValidatorsRole',
+    'vaults.NodeOperatorFee.ProveUnknownValidatorsRole',
   ),
 } as const;
 

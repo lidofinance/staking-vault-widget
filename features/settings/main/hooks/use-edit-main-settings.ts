@@ -102,11 +102,9 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { feeRate, nodeOperatorFeeRateCustom } = formValues;
+        const { feeRate, feeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const feeValue = Number(
-          feeRate !== 'custom' ? feeRate : nodeOperatorFeeRateCustom,
-        );
+        const feeValue = Number(feeRate !== 'custom' ? feeRate : feeRateCustom);
 
         const isFeeValueChanged =
           feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
