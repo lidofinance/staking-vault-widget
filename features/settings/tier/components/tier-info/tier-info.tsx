@@ -15,8 +15,10 @@ import {
 export const TierInfo = () => {
   return (
     <ContentWrapper>
-      <SectionContainer>
-        <Title as="h2">{vaultTexts.actions.tier.settingsTitle}</Title>
+      <SectionContainer data-testid="tierSection">
+        <Title data-testid="title" as="h2">
+          {vaultTexts.actions.tier.settingsTitle}
+        </Title>
         <ChooseTier />
         <MintingLimit />
         <VaultMetrics />
