@@ -5,8 +5,9 @@ import { useDappStatus } from 'modules/web3';
 import { ConnectWalletButton } from 'shared/wallet';
 
 import { useVaultPermissions } from '../hooks';
-
 import { VAULTS_ALL_ROLES, vaultTexts } from '../consts';
+
+import { SubmitButton } from './styles';
 
 type MultiplePermissionedSubmitProps = {
   dashboardRoles: readonly VAULTS_ALL_ROLES[];
@@ -32,11 +33,11 @@ export const MultiplePermissionedSubmitButton = forwardRef<
 
   return (
     <ConnectWalletButton>
-      <Button type="submit" disabled={shouldDisable} ref={ref} {...rest}>
+      <SubmitButton type="submit" disabled={shouldDisable} ref={ref} {...rest}>
         {shouldShowPermissionError
           ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}
-      </Button>
+      </SubmitButton>
     </ConnectWalletButton>
   );
 });

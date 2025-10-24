@@ -13,6 +13,7 @@ import {
   useVaultConfirmingRoles,
   useVaultTierInfo,
   useNodeOperatorTiersInfo,
+  useReportCalls,
 } from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
@@ -24,6 +25,7 @@ export const useEditTierSettings = () => {
   const { data: tierInfo } = useVaultTierInfo();
   const { data: nodeOperatorTiers } = useNodeOperatorTiersInfo();
   const { sendTX, ...rest } = useSendTransaction();
+  const prepareReportCalls = useReportCalls();
   const { shares } = useLidoSDK();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
@@ -81,7 +83,11 @@ export const useEditTierSettings = () => {
         // if node operator, use operator grid contract
         // if not node operator, use dashboard contract
         if (bothRequestingRoles) {
-          transactions.push(nodeOperatorRequest, defaultAdminRequest);
+          transactions.push(
+            ...prepareReportCalls(),
+            nodeOperatorRequest,
+            defaultAdminRequest,
+          );
         } else if (isNodeOperator) {
           transactions.push(nodeOperatorRequest);
         } else {
@@ -113,6 +119,7 @@ export const useEditTierSettings = () => {
         sendTX,
         hasAdmin,
         isNodeOperator,
+        prepareReportCalls,
       ],
     ),
     ...rest,

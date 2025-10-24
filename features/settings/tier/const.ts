@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { FieldErrors, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
+import { type Address, isAddressEqual } from 'viem';
 
 import { vaultTexts, type VaultTierData } from 'modules/vaults';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
@@ -25,7 +26,7 @@ export const tierSettingsFormSchema = z
         type: 'bigint',
         path: ['vaultMintingLimit'],
         message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
-          data.vaultMintingLimit,
+          data.selectedTierLimit,
         ),
       });
     }
@@ -71,4 +72,15 @@ export const tierSettingsFormResolver: Resolver<
   }
 
   return baseResult;
+};
+
+export const checkUserIsProposer = (
+  dashboard: Address | undefined,
+  proposer: Address | undefined,
+) => {
+  if (!dashboard || !proposer) {
+    return false;
+  }
+
+  return isAddressEqual(dashboard, proposer);
 };

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 
 import {
@@ -6,9 +6,11 @@ import {
   useVaultConfirmingRoles,
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
+  useVaultPermission,
 } from 'modules/vaults';
 
-import { useChangeTierRequest } from '../../../hooks';
+import { useChangeTierRequest } from 'features/settings/tier/hooks';
+import { checkUserIsProposer } from 'features/settings/tier/const';
 
 import { ButtonStyled } from './styles';
 
@@ -19,12 +21,30 @@ export const ApproveRequest = () => {
   const { address } = useAccount();
   const { activeVault } = useVault();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const hasAccessToApproving =
     !!address &&
     ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
+      (hasVaultConfigurationPermission &&
+        activeVault?.nodeOperator === proposal?.member) ||
       hasAdmin);
+
+  const [isDashboardProposer, isNOProposer] = useMemo(() => {
+    const isDashboardProposer = checkUserIsProposer(
+      activeVault?.owner,
+      proposal?.member,
+    );
+
+    const isNOProposer = checkUserIsProposer(
+      activeVault?.nodeOperator,
+      proposal?.member,
+    );
+
+    return [isDashboardProposer, isNOProposer];
+  }, [activeVault, proposal?.member]);
 
   const handleApprove = useCallback(async () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
@@ -37,10 +57,20 @@ export const ApproveRequest = () => {
     ]);
   }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
 
-  if (!proposal || !hasAccessToApproving) return null;
+  if (
+    !proposal ||
+    !hasAccessToApproving ||
+    (hasAdmin && isDashboardProposer) ||
+    (isNodeOperator && isNOProposer)
+  )
+    return null;
 
   return (
-    <ButtonStyled onClick={handleApprove} disabled={approving}>
+    <ButtonStyled
+      onClick={handleApprove}
+      disabled={approving}
+      data-testid="approveButton"
+    >
       Approve
     </ButtonStyled>
   );
