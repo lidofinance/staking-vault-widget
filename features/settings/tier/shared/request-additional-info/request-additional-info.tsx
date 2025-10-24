@@ -2,6 +2,7 @@ import { Text, Divider } from '@lidofinance/lido-ui';
 import { Address } from 'viem';
 
 import type { Tier } from 'modules/vaults';
+import { toStethValue } from 'utils';
 
 import { ExpiresInItem } from './content/expires-in-item';
 import { RequestBy } from './content/request-by';
@@ -12,8 +13,7 @@ import {
   OldToNew,
 } from 'features/settings/tier/shared/vault-metrics/extended-metrics';
 
-import { toStethValue } from 'utils';
-
+import { ApproveRequest } from './approve-request';
 import {
   ContentContainer,
   List,
@@ -21,8 +21,6 @@ import {
   ListItem,
   Wrapper,
 } from './styles';
-import { useEditTierSettings } from '../../hooks';
-import { ApproveRequest } from './approve-request/approve-request';
 
 type RequestAdditionalInfoProps = {
   proposedTier: Tier;
@@ -39,7 +37,6 @@ export const RequestAdditionalInfo = ({
   vaultLiabilityStETH,
   proposedVaultMintingLimitStETH,
 }: RequestAdditionalInfoProps) => {
-  useEditTierSettings();
   const tierMintingLimit = proposedTier.shareLimitStETH;
   const tierMintingLimitValue = toStethValue(tierMintingLimit);
   const tierRemainingCapacity =

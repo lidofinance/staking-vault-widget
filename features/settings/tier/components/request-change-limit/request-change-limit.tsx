@@ -22,6 +22,8 @@ import {
   ButtonStyled,
 } from './styles';
 
+const tierTexts = vaultTexts.actions.tier;
+
 export const RequestChangeLimit = () => {
   const [showAdditionalInfo, setAdditionalInfoVisibility] = useState(false);
   const { data: noTiersInfo } = useNodeOperatorTiersInfo();
@@ -32,13 +34,15 @@ export const RequestChangeLimit = () => {
     useVaultPermission('vaultConfiguration');
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
-  const proposedTierId = proposal?.decodedData.args[1];
+  const { decodedData, member: proposer } = proposal ?? {};
+  const isUpdateShareLimit =
+    decodedData?.functionName === 'updateVaultShareLimit';
+  const proposedTierId = decodedData?.args[1];
   const proposedVaultMintingLimitStETH =
     vaultTierInfo?.proposals.proposedVaultLimitStETH;
-  const proposedTier = noTiersInfo?.tiers.find(
-    (tier) => tier.id === proposedTierId,
-  );
-  const proposer = proposal?.member;
+  const proposedTier =
+    noTiersInfo?.tiers.find((tier) => tier.id === proposedTierId) ??
+    vaultTierInfo?.tier;
   const isTheSameUser = proposer === address;
 
   if (
@@ -48,19 +52,23 @@ export const RequestChangeLimit = () => {
     return null;
 
   const buttonText = showAdditionalInfo
-    ? vaultTexts.actions.tier.request.showButton.hide
+    ? tierTexts.request.showButton.hide
     : isTheSameUser
-      ? vaultTexts.actions.tier.request.showButton.show
-      : vaultTexts.actions.tier.request.showButton.review;
+      ? tierTexts.request.showButton.show
+      : tierTexts.request.showButton.review;
 
   const isShowAdditionalInfoComp =
     showAdditionalInfo && proposal && !!proposedVaultMintingLimitStETH;
+
+  const headingText = isUpdateShareLimit
+    ? `${tierTexts.requestChangeLimitTitle}`
+    : `${tierTexts.requestMovingTierTitle} ${proposedTier?.tierName}`;
 
   return (
     <RequestWrapper data-testid="requestWrapper">
       <HeadingSection>
         <Title as="h2" data-testid="title">
-          {vaultTexts.actions.tier.requestTitle} {proposedTier?.tierName}
+          {headingText}
         </Title>
         <ExpiresContainer>
           <Text data-testid="expiresInLabel" size="xxs">

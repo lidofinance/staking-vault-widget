@@ -145,7 +145,8 @@ export const vaultTexts = {
         },
       },
       settingsTitle: 'Tier settings',
-      requestTitle: 'Request moving to',
+      requestMovingTierTitle: 'Request moving to',
+      requestChangeLimitTitle: 'Request to change minting limit',
       vaultMetricsTitle: 'Current vault metrics',
       request: {
         showButton: {
