@@ -29,6 +29,9 @@ const INVALID_NUMBER_MAX_MESSAGE = `Cannot exceed ${MAX_FEE_VALUE}%`;
 const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
+const INVALID_INT_NUMBER_DATA_OBJECT_MESSAGE = {
+  message: 'Only integer number is valid',
+};
 const INVALID_EMPTY_STRING = 'Missing value';
 const DUPLICATE_VALUE = 'Duplicate value';
 
@@ -49,6 +52,7 @@ const votingFeeSchema = z.coerce
 
 const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+  .int(INVALID_INT_NUMBER_DATA_OBJECT_MESSAGE)
   .transform((val) => Number(val) * 3600)
   .refine(
     (seconds) => seconds >= MIN_CONFIRM_EXPIRY_SECONDS,
@@ -190,21 +194,22 @@ const checkForDuplicateValues = (
 ) => {
   const { feeRate, confirmExpiry } = context;
 
-  const uniquenodeOperatorFeeRate = feeRate
+  const uniqueNodeOperatorFeeRate = feeRate
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
   const uniqueConfirmExpiry = confirmExpiry
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
 
-  const isnodeOperatorFeeRateDuplicate = uniquenodeOperatorFeeRate.includes(
-    Number(values.feeRateCustom),
-  );
+  const isNodeOperatorFeeRateDuplicate = uniqueNodeOperatorFeeRate
+    .map((rate) => String(rate))
+    .includes(values.feeRateCustom ?? '');
+
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,
   );
 
-  if (isnodeOperatorFeeRateDuplicate) {
+  if (isNodeOperatorFeeRateDuplicate) {
     errors.feeRateCustom = {
       type: 'custom',
       message: DUPLICATE_VALUE,

@@ -18,7 +18,7 @@ export const MainSettingsAction: FC = () => {
     useFormState();
   const isClearDisabled = !isDirty;
   const { data: mainSettingsData } = useMainSettingsData();
-  const isSubmitDisabled = isSubmitting || disabled || isValidating;
+  const isSubmitDisabled = isSubmitting || disabled || isValidating || !isValid;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
   const { showForPauserRole, showForResumerRole } =
@@ -40,48 +40,49 @@ export const MainSettingsAction: FC = () => {
   const counter = useMemo(() => {
     let counter = 0;
 
-    if (isValid) {
-      counter += shouldIncrementTxCounterByAddresses(formFields);
+    counter += shouldIncrementTxCounterByAddresses(formFields);
 
-      const {
-        feeRate,
-        confirmExpiry,
-        feeRateCustom,
-        confirmExpiryCustom,
-        feeRecipient,
-        isDepositAllowed,
-      } = formFields;
+    const {
+      feeRate,
+      confirmExpiry,
+      feeRateCustom,
+      confirmExpiryCustom,
+      feeRecipient,
+      isDepositAllowed,
+    } = formFields;
 
-      const confirmExpiryFormValue =
-        confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
+    const confirmExpiryFormValue =
+      confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
-      if (feeRecipient !== mainSettingsData?.feeRecipient) {
-        counter++;
-      }
+    if (feeRecipient !== mainSettingsData?.feeRecipient) {
+      counter++;
+    }
 
-      const nodeOperatorFeeRateFormValue =
-        feeRate === 'custom' ? feeRateCustom : feeRate;
+    const nodeOperatorFeeRateFormValue =
+      feeRate === 'custom' ? feeRateCustom : feeRate;
 
-      if (
-        nodeOperatorFeeRateFormValue !==
+    if (
+      nodeOperatorFeeRateFormValue !== '' &&
+      nodeOperatorFeeRateFormValue !==
         mainSettingsData?.nodeOperatorFeeRateCurrent
-      ) {
-        counter++;
-      }
+    ) {
+      counter++;
+    }
 
-      if (confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent) {
-        counter++;
-      }
+    if (
+      confirmExpiryFormValue !== '' &&
+      confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent
+    ) {
+      counter++;
+    }
 
-      if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
-        counter++;
-      }
+    if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
+      counter++;
     }
 
     return counter;
   }, [
     formFields,
-    isValid,
     mainSettingsData?.confirmExpiryCurrent,
     mainSettingsData?.nodeOperatorFeeRateCurrent,
     mainSettingsData?.isDepositAllowed,
