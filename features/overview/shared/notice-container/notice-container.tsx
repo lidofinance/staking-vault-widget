@@ -13,13 +13,13 @@ import {
 } from './styles';
 import { SectionDivider } from '../styles';
 
-type NoticeContainerType = 'warning' | 'error';
+type NoticeContainerType = 'warning' | 'error' | 'info';
 
 export type NoticeContainerProps = {
   title: string;
   description: string | ReactNode;
   note?: string;
-  actions: {
+  actions?: {
     buttonText: string;
     title: string;
     navigate: () => void;
@@ -28,12 +28,13 @@ export type NoticeContainerProps = {
 };
 
 const iconsMap: Record<NoticeContainerType, ReactNode> = {
-  warning: <WarningTriangle />,
+  warning: <WarningTriangle color="#EC8600" />,
+  info: <WarningTriangle color="#7A8AA0" />,
   error: <ErrorTriangle />,
 };
 
 export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
-  const { title, description, note, actions, type = 'warning' } = props;
+  const { title, description, note, actions = [], type = 'warning' } = props;
 
   return (
     <Wrapper type={type}>
@@ -43,30 +44,32 @@ export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
         </Title>
         <Text size="xxs">{description}</Text>
       </div>
-      <ActionContainer>
-        {actions.map((action, index) => {
-          const showDivider = actions.length !== index + 1;
+      {actions.length > 0 && (
+        <ActionContainer>
+          {actions.map((action, index) => {
+            const showDivider = actions.length !== index + 1;
 
-          return (
-            <>
-              <ActionWrapper key={action.title}>
-                <Text size="xxs" strong>
-                  {action.title}
-                </Text>
-                <ActionButton
-                  onClick={action.navigate}
-                  size="sm"
-                  variant="outlined"
-                  color="secondary"
-                >
-                  {action.buttonText}
-                </ActionButton>
-              </ActionWrapper>
-              {showDivider && <SectionDivider type="vertical" />}
-            </>
-          );
-        })}
-      </ActionContainer>
+            return (
+              <>
+                <ActionWrapper key={action.title}>
+                  <Text size="xxs" strong>
+                    {action.title}
+                  </Text>
+                  <ActionButton
+                    onClick={action.navigate}
+                    size="sm"
+                    variant="outlined"
+                    color="secondary"
+                  >
+                    {action.buttonText}
+                  </ActionButton>
+                </ActionWrapper>
+                {showDivider && <SectionDivider type="vertical" />}
+              </>
+            );
+          })}
+        </ActionContainer>
+      )}
       {!!note && <Text size="xxs">{note}</Text>}
     </Wrapper>
   );

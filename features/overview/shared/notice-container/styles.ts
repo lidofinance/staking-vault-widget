@@ -2,12 +2,16 @@ import styled from 'styled-components';
 import { Heading, Button, Theme } from '@lidofinance/lido-ui';
 
 type WrapperProps = {
-  type: 'warning' | 'error';
+  type: 'warning' | 'error' | 'info';
   theme: Theme;
 };
 
 const getBackgroundColor = ({ type, theme }: WrapperProps) => {
-  return `color-mix(in display-p3, ${theme.colors[type]} 20%, transparent)`;
+  if (type !== 'info') {
+    return `color-mix(in display-p3, ${theme.colors[type]} 20%, transparent)`;
+  }
+
+  return `color-mix(in display-p3, ${theme.colors.textSecondary} 10%, transparent)`;
 };
 
 export const Wrapper = styled.section<WrapperProps>`

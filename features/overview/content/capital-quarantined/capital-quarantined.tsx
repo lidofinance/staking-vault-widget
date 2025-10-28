@@ -14,13 +14,13 @@ export const CapitalQuarantined = () => {
   return (
     <NoticeContainer
       title="Part of the capital is quarantined"
+      type="info"
       description={
         <QuarantineDescription
           amount={pendingTotalValueIncrease}
           timestamp={endTimestamp}
         />
       }
-      actions={[]}
     />
   );
 };
