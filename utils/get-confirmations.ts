@@ -20,7 +20,7 @@ type DecodedData = {
 
 export type Confirmation = {
   member: Address;
-  role: Hex;
+  roleOrAddress: Hex;
   expiryTimestamp: bigint;
   expiryDate: Date;
   data: Hex;
@@ -68,14 +68,13 @@ export const getConfirmationsInfo = async (
         args.confirmTimestamp + confirmExpiry > BigInt(Date.now()) / 1000n,
     )
     .map((log) => {
-      const { confirmTimestamp, member, role, data } = log.args as Required<
-        typeof log.args
-      >;
+      const { confirmTimestamp, member, roleOrAddress, data } =
+        log.args as Required<typeof log.args>;
       const expiryTimestamp = confirmTimestamp + confirmExpiry;
 
       return {
         member,
-        role,
+        roleOrAddress,
         expiryTimestamp,
         expiryDate: new Date(Number(expiryTimestamp) * 1000),
         data,
@@ -110,7 +109,7 @@ export const getConfirmationsInfo = async (
       address: contract.address,
       abi: contract.abi,
       functionName: 'confirmation',
-      args: [confirmation.data, confirmation.role],
+      args: [confirmation.data, confirmation.roleOrAddress],
     })),
   })) as bigint[];
 

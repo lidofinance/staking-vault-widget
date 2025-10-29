@@ -14,11 +14,9 @@ import {
 } from '../contracts';
 import {
   DisplayableError,
-  VaultOwnerNotDashboardError,
   vaultQueryKeys,
   VAULT_REPORT_REFETCH_INTERVAL_MS,
 } from '../consts';
-import { isDashboard } from '../utils/is-dashboard';
 
 import type { VaultBaseInfo } from '../types';
 
@@ -76,9 +74,10 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       const isReportMissing = !report && !isReportFresh;
 
-      if (!(await isDashboard(publicClient, connection.owner))) {
-        throw new VaultOwnerNotDashboardError();
-      }
+      // TODO: reword to support multiple factories
+      // if (!(await isDashboard(publicClient, connection.owner))) {
+      //   throw new VaultOwnerNotDashboardError();
+      // }
 
       const dashboard = getDashboardContract(connection.owner, publicClient);
       const operatorGrid = getOperatorGridContract(publicClient);

@@ -41,8 +41,8 @@ export const useCreateVault = () => {
         return await withSuccess(
           sendTX({
             transactions: [tx],
-            mainActionCompleteText: vaultTexts.actions.createVault.loading,
-            mainActionLoadingText: vaultTexts.actions.createVault.completed,
+            mainActionCompleteText: vaultTexts.actions.createVault.completed,
+            mainActionLoadingText: vaultTexts.actions.createVault.loading,
             renderSuccessContent: ModalCTA,
           }),
         );
