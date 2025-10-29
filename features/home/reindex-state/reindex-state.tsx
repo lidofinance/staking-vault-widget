@@ -18,15 +18,14 @@ export const ReindexState: FC<ReindexStateProps> = ({
   nextUpdateAt,
   isLoading,
 }) => {
-  if (!nextUpdateAt) {
+  if (!nextUpdateAt && !isLoading) {
     return null;
   }
 
   return (
     <ReindexStateContainer data-testid="reindexVaultsSection">
-      {isLoading ? (
-        <InlineLoaderStyled />
-      ) : (
+      {isLoading && <InlineLoaderStyled />}
+      {nextUpdateAt && (
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
             Next update at: {formatCustomDate(nextUpdateAt.getTime())}
