@@ -13,6 +13,7 @@ import { SectionDivider } from '../shared';
 
 import { DepositsPaused } from './deposits-paused';
 import { OverviewWrapper, Content } from './styles';
+import { CapitalQuarantined } from './capital-quarantined';
 
 export const OverviewContent = () => {
   const { isLoadingVault, values } = useVaultOverview();
@@ -26,6 +27,7 @@ export const OverviewContent = () => {
           <>
             <SectionDivider />
             <DepositsPaused />
+            <CapitalQuarantined />
             <StakingMetrics />
             <Health />
             <SectionDivider />

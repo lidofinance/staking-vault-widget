@@ -34,7 +34,7 @@ const iconsMap: Record<NoticeContainerType, ReactNode> = {
 };
 
 export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
-  const { title, description, note, actions, type = 'warning' } = props;
+  const { title, description, note, actions = [], type = 'warning' } = props;
 
   return (
     <Wrapper type={type}>
@@ -44,7 +44,7 @@ export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
         </Title>
         <Text size="xxs">{description}</Text>
       </div>
-      {!!actions && (
+      {actions.length > 0 && (
         <ActionContainer>
           {actions.map((action, index) => {
             const showDivider = actions.length !== index + 1;
