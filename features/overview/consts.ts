@@ -22,7 +22,12 @@ const customDateFormatter = new Intl.DateTimeFormat('en-US', {
 });
 
 export const formatCustomDate = (timestampSeconds: number): string => {
-  return customDateFormatter.format(new Date(timestampSeconds * 1000));
+  const dateForFormatting = new Date(timestampSeconds * 1000);
+  return customDateFormatter.format(
+    dateForFormatting.getUTCFullYear() === 1970
+      ? dateForFormatting
+      : new Date(timestampSeconds),
+  );
 };
 
 type OverviewArgs = {

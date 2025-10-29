@@ -1,10 +1,15 @@
 import { FC, useCallback } from 'react';
-
+import { isAddress, zeroAddress } from 'viem';
 import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
+import { useRouter } from 'next/router';
 
-import { type FetchVaultsParams, VaultEntry } from 'modules/vaults';
+import { FormatToken } from 'shared/formatters';
+import { appPaths } from 'consts/routing';
+import { AddressBadge } from 'shared/components';
 import { getHealthFactorColor } from 'utils';
+import { type FetchVaultsParams, VaultEntry } from 'modules/vaults';
 
+import { ReindexState } from 'features/home/reindex-state';
 import { PercentCell, HeaderCell } from './cells';
 import {
   TableTitle,
@@ -17,12 +22,8 @@ import {
   TableCell,
   TableContainer,
   ScrollableContainer,
+  TableTitleContainer,
 } from './styles';
-import { isAddress, zeroAddress } from 'viem';
-import { FormatToken } from 'shared/formatters';
-import { useRouter } from 'next/router';
-import { appPaths } from 'consts/routing';
-import { AddressBadge } from 'shared/components';
 
 export type VaultTableProps = {
   title: string;
@@ -42,6 +43,7 @@ export type VaultTableProps = {
   isError?: boolean;
   refetch?: () => void;
   dataTestId?: string;
+  nextUpdateAt?: Date;
 };
 
 const tableHeaders = [
@@ -232,6 +234,7 @@ export const VaultTable: FC<VaultTableProps> = ({
   setSort,
   sortDir,
   pagesCount,
+  nextUpdateAt,
   dataTestId,
 }) => {
   const router = useRouter();
@@ -274,12 +277,15 @@ export const VaultTable: FC<VaultTableProps> = ({
 
   return (
     <TableContainer>
-      <TableTitle
-        counter={vaultsCount}
-        data-testid={dataTestId ? `${dataTestId}-tableTitle` : undefined}
-      >
-        {title}
-      </TableTitle>
+      <TableTitleContainer>
+        <TableTitle
+          counter={vaultsCount}
+          data-testid={dataTestId ? `${dataTestId}-tableTitle` : undefined}
+        >
+          {title}
+        </TableTitle>
+        <ReindexState isLoading={isLoading} nextUpdateAt={nextUpdateAt} />
+      </TableTitleContainer>
       <ScrollableContainer>
         <TableStyled>
           {showTable && (

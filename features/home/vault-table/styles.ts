@@ -14,6 +14,13 @@ export const ScrollableContainer = styled.div`
   overflow-x: auto;
 `;
 
+export const TableTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
 export const TableTitle = styled.div<{ counter?: number }>`
   position: relative;
   text-align: left;

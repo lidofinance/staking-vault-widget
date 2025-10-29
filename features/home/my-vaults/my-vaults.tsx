@@ -8,6 +8,7 @@ export const MyVaults = () => {
     vaults,
     isLoading,
     totalVaultsCount,
+    nextUpdateAt,
     refetch,
     page,
     setPage,
@@ -17,6 +18,7 @@ export const MyVaults = () => {
     pagesCount,
     isError,
   } = useMyVaultsList();
+
   return (
     <>
       <VaultTable
@@ -33,6 +35,7 @@ export const MyVaults = () => {
         sortDir={sortDir}
         sortBy={sortBy}
         setSort={setSort}
+        nextUpdateAt={nextUpdateAt}
         dataTestId="myVaultsTable"
       />
       <AddVault />
