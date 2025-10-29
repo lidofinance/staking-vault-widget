@@ -17,9 +17,8 @@ export const ManageDeposits = () => {
   const { showForPauserRole, showForResumerRole } =
     useDepositorRolesPermissions();
 
-  if (!isDappActive || !(hasAdmin || showForPauserRole || showForResumerRole)) {
-    return null;
-  }
+  const isDisabled =
+    !isDappActive || !(hasAdmin || showForPauserRole || showForResumerRole);
 
   return (
     <>
@@ -37,6 +36,7 @@ export const ManageDeposits = () => {
           textPosition="left"
           textOn={text.allowed}
           textOff={text.paused}
+          disabled={isDisabled}
           showText
         />
       </ManageDepositsWrapper>

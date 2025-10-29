@@ -2,7 +2,7 @@ import { useId, type FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 import { useController } from 'react-hook-form';
 
-import { Container, InputWrapper } from './styles';
+import { Container, InputWrapper, ToggleLoader } from './styles';
 
 export type InputToggleProps = {
   name: string;
@@ -30,7 +30,7 @@ export const InputToggle: FC<InputToggleProps> = ({
   } = useController({ name });
 
   if (isLoading) {
-    return null;
+    return <ToggleLoader />;
   }
 
   return (

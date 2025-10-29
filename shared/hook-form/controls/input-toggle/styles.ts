@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { InlineLoader } from '@lidofinance/lido-ui';
 
 export const Container = styled.div<{ $position: 'left' | 'right' }>`
   display: flex;
@@ -7,6 +8,11 @@ export const Container = styled.div<{ $position: 'left' | 'right' }>`
     $position === 'left' ? 'row' : 'row-reverse'};
   gap: ${({ theme }) => theme.spaceMap.sm}px;
   width: fit-content;
+`;
+
+export const ToggleLoader = styled(InlineLoader)`
+  width: 80px;
+  height: 24px;
 `;
 
 export const InputWrapper = styled.label<{ $disabled?: boolean }>`
