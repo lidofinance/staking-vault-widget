@@ -28,7 +28,8 @@ export const ReindexState: FC<ReindexStateProps> = ({
       {nextUpdateAt && (
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
-            Next update at: {formatCustomDate(nextUpdateAt.getTime())}
+            The stVaults list will refresh on{' '}
+            {formatCustomDate(nextUpdateAt.getTime())}
           </Text>
         </TextWrapper>
       )}
