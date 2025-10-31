@@ -35,7 +35,7 @@ const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   },
   {
     title: 'Validators',
-    path: 'https://hoodi.beaconcha.in/validators/deposits?q=',
+    path: 'https://hoodi.beaconcha.in/validators/deposits?q=', // TODO: get right link by network
     icon: <External />,
     exact: true,
     external: true,

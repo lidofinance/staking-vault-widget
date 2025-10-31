@@ -8,6 +8,7 @@ import {
   NodeOperatorFeeRecipient,
   Admins,
   Voting,
+  ManageDeposits,
 } from 'features/settings/main/components';
 import {
   SectionContainer,
@@ -18,6 +19,9 @@ import {
   MainSettingsProvider,
 } from 'features/settings/main/contexts';
 
+import { GroupWrapper, InputGroup, GroupHeading } from './styles';
+
+const texts = vaultTexts.actions.settings;
 export const EditMainSettings = () => {
   return (
     <MainSettingsDataProvider>
@@ -25,12 +29,23 @@ export const EditMainSettings = () => {
         <ContentWrapper>
           <SectionContainer>
             <Text size="lg" strong data-testid="mainSettingsTitle">
-              {vaultTexts.actions.settings.title}
+              {texts.title}
             </Text>
-            <NodeOperator />
-            <Admins />
-            <NodeOperatorFeeRecipient />
-            <Voting />
+            <ManageDeposits />
+            <GroupWrapper>
+              <GroupHeading as="h3">{texts.groups.address}</GroupHeading>
+              <InputGroup>
+                <NodeOperator />
+                <Admins />
+                <NodeOperatorFeeRecipient />
+              </InputGroup>
+            </GroupWrapper>
+            <GroupWrapper>
+              <GroupHeading as="h3">{texts.groups.settings}</GroupHeading>
+              <InputGroup>
+                <Voting />
+              </InputGroup>
+            </GroupWrapper>
             <MainSettingsAction />
           </SectionContainer>
         </ContentWrapper>

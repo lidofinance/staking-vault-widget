@@ -25,6 +25,7 @@ export const AddressInputHookForm = ({
   onBlur: onBlurProp,
   onFocus: onFocusProp,
   disabled,
+  rightDecorator = null,
   ...props
 }: AddressInputHookFormProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
@@ -38,7 +39,7 @@ export const AddressInputHookForm = ({
   const shouldShowErrorMessage = showErrorMessage && inFocus && !!error;
   const errorMessage = error?.message as string;
 
-  const rightDecorator = showRightDecorator ? (
+  const customRightDecorator = showRightDecorator ? (
     <Button
       size="xxs"
       variant="translucent"
@@ -73,7 +74,7 @@ export const AddressInputHookForm = ({
       style={{ display: props.hidden ? 'none' : undefined }}
       error={shouldShowErrorMessage ? errorMessage : !!error}
       fullwidth
-      rightDecorator={rightDecorator}
+      rightDecorator={rightDecorator || customRightDecorator}
       {...props}
     />
   );

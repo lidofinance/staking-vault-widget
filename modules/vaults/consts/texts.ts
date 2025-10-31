@@ -195,6 +195,12 @@ export const vaultTexts = {
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;
         return 'No changes';
       },
+      resumeBeaconChainDeposits: 'Resume deposits to beacon chain' as const,
+      pauseBeaconChainDeposits: 'Pause deposits to beacon chain' as const,
+      groups: {
+        address: 'Addresses',
+        settings: 'Settings',
+      },
       feeRecipient: 'Setting node operator fee recipient address',
       fields: {
         nodeOperator: {
@@ -231,6 +237,12 @@ export const vaultTexts = {
           editLabel: 'Node Operator Manager address',
           actionText: 'Add new address',
           hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.\nMultiple addresses supported.',
+        },
+        isDepositAllowed: {
+          title: 'Allow deposits from stVault Balance to validators',
+          allowed: 'Allowed',
+          paused: 'Paused',
+          hint: 'When deposits are paused, the node operator cannot deposit ETH from the stVault Balance to validators. Сonsolidations remain allowed.',
         },
       },
       clearChanges: 'Clear changes',

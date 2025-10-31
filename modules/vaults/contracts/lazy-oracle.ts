@@ -11,9 +11,7 @@ import type {
 } from 'modules/web3';
 import { getEncodable } from '../utils/encodable';
 
-export const getLazyOracleContract = <TClient extends RegisteredPublicClient>(
-  publicClient: TClient,
-) => {
+export const getLazyOracleContract = (publicClient: RegisteredPublicClient) => {
   invariant(
     publicClient.chain?.id,
     '[getLazyOracleContract] chainId is not defined',

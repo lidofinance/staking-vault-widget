@@ -2,8 +2,13 @@ import { useState, useEffect } from 'react';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-const matchTabletMedia = () =>
-  window.matchMedia(devicesHeaderMedia.tablet).matches;
+const matchTabletMedia = () => {
+  if ('matchMedia' in globalThis) {
+    return globalThis.matchMedia(devicesHeaderMedia.tablet).matches;
+  }
+
+  return false;
+};
 
 export const useIdenticonSize = (tabletDiameter = 56, defaultDiameter = 72) => {
   const [diameter, setDiameter] = useState(() =>

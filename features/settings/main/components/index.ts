@@ -4,3 +4,4 @@ export { NodeOperatorFeeRecipient } from './no-fee-recipient';
 export * from './controllers';
 export * from './admins';
 export * from './voting';
+export * from './manage-deposits';
