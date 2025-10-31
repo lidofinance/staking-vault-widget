@@ -18,10 +18,6 @@ export const ReindexState: FC<ReindexStateProps> = ({
   nextUpdateAt,
   isLoading,
 }) => {
-  if (!nextUpdateAt && !isLoading) {
-    return null;
-  }
-
   return (
     <ReindexStateContainer data-testid="reindexVaultsSection">
       {isLoading && <InlineLoaderStyled />}
