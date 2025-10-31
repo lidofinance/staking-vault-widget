@@ -19,7 +19,11 @@ import type {
 
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { invalidateVaultConfig, invalidateVaultState } = useVault();
+  const {
+    invalidateVaultConfig,
+    invalidateVaultState,
+    refetch: refetchVault,
+  } = useVault();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const { data, refetch } = useMainSettingsFormData();
 
@@ -47,6 +51,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         isStateChanged ? invalidateVaultState() : Promise.resolve(),
         invalidateVaultConfig(),
         refetch({ cancelRefetch: true, throwOnError: false }),
+        refetchVault({ cancelRefetch: true, throwOnError: false }),
       ]);
 
       // we reset form anyway because partial success is possible and will invalidate form state
@@ -62,6 +67,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       invalidateVaultConfig,
       invalidateVaultState,
       refetch,
+      refetchVault,
       reset,
     ],
   );

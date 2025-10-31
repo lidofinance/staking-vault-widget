@@ -257,6 +257,7 @@ const selectOverviewData = ({
     tierStETHLimit,
     minimalReserve,
     reportLiabilitySharesStETH,
+    beaconChainDepositsPauseIntent,
     vaultQuarantineState,
   } = vaultData;
 
@@ -374,6 +375,7 @@ const selectOverviewData = ({
     vaultData,
     vaultMetrics,
     vaultQuarantineState,
+    beaconChainDepositsPauseIntent,
   };
 };
 
@@ -384,6 +386,8 @@ export const useVaultOverviewData = () => {
   return useQuery({
     queryKey: [...queryKeys.state, 'vault-overview-data'],
     enabled: !!activeVault,
+    refetchOnMount: true,
+    staleTime: 0,
     queryFn: async () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 
