@@ -18,17 +18,24 @@ export const ReindexState: FC<ReindexStateProps> = ({
   nextUpdateAt,
   isLoading,
 }) => {
+  if (isLoading) {
+    return (
+      <ReindexStateContainer data-testid="reindexVaultsSection">
+        <InlineLoaderStyled />
+      </ReindexStateContainer>
+    );
+  }
+
+  if (!nextUpdateAt) return null;
+
   return (
     <ReindexStateContainer data-testid="reindexVaultsSection">
-      {isLoading && <InlineLoaderStyled />}
-      {nextUpdateAt && (
-        <TextWrapper>
-          <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
-            The stVaults list will refresh on{' '}
-            {formatCustomDate(nextUpdateAt.getTime())}
-          </Text>
-        </TextWrapper>
-      )}
+      <TextWrapper>
+        <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
+          The stVaults list will refresh on{' '}
+          {formatCustomDate(nextUpdateAt.getTime())}
+        </Text>
+      </TextWrapper>
     </ReindexStateContainer>
   );
 };
