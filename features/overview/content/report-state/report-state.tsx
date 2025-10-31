@@ -13,7 +13,7 @@ export const ReportState = () => {
 
   return (
     <ReportStateContainer data-testid="reportSection">
-      <InlineLoader isLoading={isPending} width="140">
+      <InlineLoader isLoading={isPending} width={140}>
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reportData">
             Last updated:{' '}
