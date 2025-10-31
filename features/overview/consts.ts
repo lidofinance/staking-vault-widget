@@ -21,13 +21,9 @@ const customDateFormatter = new Intl.DateTimeFormat('en-US', {
   timeZoneName: 'shortOffset',
 });
 
-export const formatCustomDate = (timestampSeconds: number): string => {
-  const dateForFormatting = new Date(timestampSeconds * 1000);
-  return customDateFormatter.format(
-    dateForFormatting.getUTCFullYear() === 1970
-      ? dateForFormatting
-      : new Date(timestampSeconds),
-  );
+export const formatCustomDate = (ts: number): string => {
+  const ms = Math.abs(ts) < 1e11 ? ts * 1000 : ts;
+  return customDateFormatter.format(new Date(ms));
 };
 
 type OverviewArgs = {
