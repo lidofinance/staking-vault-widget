@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Address, InlineLoader } from '@lidofinance/lido-ui';
+import { Address } from '@lidofinance/lido-ui';
 
 export const Wrapper = styled.div`
   display: grid;
@@ -25,9 +25,4 @@ export const AddressStyled = styled(Address)`
   font-weight: bold;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
-`;
-
-export const InlineLoaderStyled = styled(InlineLoader)`
-  height: 20px;
-  width: 100px;
 `;

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { InlineLoader } from '@lidofinance/lido-ui';
 
 export const ContentWrapper = styled.div`
   display: flex;
@@ -16,8 +15,4 @@ export const AmountWrapper = styled.div`
   padding: ${({ theme }) => theme.spaceMap.md}px;
   border-radius: 16px;
   background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const AmountLoader = styled(InlineLoader)`
-  height: 28px;
 `;
