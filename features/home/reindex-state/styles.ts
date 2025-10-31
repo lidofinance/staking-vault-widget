@@ -1,4 +1,3 @@
-import { InlineLoader } from '@lidofinance/lido-ui';
 import styled from 'styled-components';
 
 export const ReindexStateContainer = styled.div`
@@ -8,10 +7,6 @@ export const ReindexStateContainer = styled.div`
   justify-content: flex-end;
   height: 21px;
   gap: 8px;
-`;
-
-export const InlineLoaderStyled = styled(InlineLoader)`
-  width: 140px;
 `;
 
 export const TextWrapper = styled.div`

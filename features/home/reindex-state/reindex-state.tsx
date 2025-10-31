@@ -3,11 +3,8 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { formatCustomDate } from 'features/overview/consts';
 
-import {
-  InlineLoaderStyled,
-  ReindexStateContainer,
-  TextWrapper,
-} from './styles';
+import { ValueWithLoader } from 'shared/components';
+import { ReindexStateContainer, TextWrapper } from './styles';
 
 type ReindexStateProps = {
   nextUpdateAt: Date | undefined;
@@ -18,23 +15,18 @@ export const ReindexState: FC<ReindexStateProps> = ({
   nextUpdateAt,
   isLoading,
 }) => {
-  if (isLoading) {
-    return (
-      <ReindexStateContainer data-testid="reindexVaultsSection">
-        <InlineLoaderStyled />
-      </ReindexStateContainer>
-    );
-  }
   if (!nextUpdateAt) return null;
 
   return (
-    <ReindexStateContainer data-testid="reindexVaultsSection">
-      <TextWrapper>
-        <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
-          The stVaults list will refresh on{' '}
-          {formatCustomDate(nextUpdateAt.getTime())}
-        </Text>
-      </TextWrapper>
-    </ReindexStateContainer>
+    <ValueWithLoader isLoading={isLoading} width="140">
+      <ReindexStateContainer data-testid="reindexVaultsSection">
+        <TextWrapper>
+          <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
+            The stVaults list will refresh on{' '}
+            {formatCustomDate(nextUpdateAt.getTime())}
+          </Text>
+        </TextWrapper>
+      </ReindexStateContainer>
+    </ValueWithLoader>
   );
 };
