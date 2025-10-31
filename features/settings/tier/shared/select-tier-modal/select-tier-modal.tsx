@@ -3,11 +3,12 @@ import { Modal } from '@lidofinance/lido-ui';
 
 import { useDappStatus } from 'modules/web3';
 import { useNodeOperatorTiersInfo } from 'modules/vaults';
+import { InlineLoader } from 'shared/components';
 
 import { ReceiveReserveRatio } from '../receive-reserve-ratio';
 import { TiersSelector } from './tiers-selector';
 
-import { ContentWrapper, InlineLoaderStyled } from './styles';
+import { ContentWrapper } from './styles';
 
 type SelectTierModalProps = {
   showModal: boolean;
@@ -35,16 +36,14 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
       onClose={closeModal}
       windowSize="md"
     >
-      {isLoading ? (
-        <InlineLoaderStyled />
-      ) : (
+      <InlineLoader isLoading={isLoading} height={44}>
         <ContentWrapper>
           {isNodeOperatorConnected && isOnlyDefaultTier && !isDisabledRRR && (
             <ReceiveReserveRatio />
           )}
           <TiersSelector tiers={tiers} closeModal={closeModal} />
         </ContentWrapper>
-      )}
+      </InlineLoader>
     </Modal>
   );
 };

@@ -2,19 +2,21 @@ import type { FC, PropsWithChildren } from 'react';
 
 import { InlineLoaderStyled } from './styles';
 
-type ValueWithLoaderProps = {
+type InlineLoaderProps = {
   isLoading: boolean;
-  width?: string;
-  placeholder?: string | number | undefined;
+  width?: number;
+  height?: number;
+  placeholder?: React.ReactNode;
 };
 
-export const ValueWithLoader: FC<PropsWithChildren<ValueWithLoaderProps>> = ({
+export const InlineLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
   placeholder,
   isLoading,
   children,
   width,
+  height,
 }) => {
-  if (isLoading) return <InlineLoaderStyled width={width} />;
+  if (isLoading) return <InlineLoaderStyled width={width} height={height} />;
   if (children === undefined) return placeholder || null;
 
   return children;

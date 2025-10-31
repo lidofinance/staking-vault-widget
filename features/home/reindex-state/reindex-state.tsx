@@ -3,7 +3,7 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { formatCustomDate } from 'features/overview/consts';
 
-import { ValueWithLoader } from 'shared/components';
+import { InlineLoader } from 'shared/components';
 import { ReindexStateContainer, TextWrapper } from './styles';
 
 type ReindexStateProps = {
@@ -18,7 +18,7 @@ export const ReindexState: FC<ReindexStateProps> = ({
   if (!nextUpdateAt) return null;
 
   return (
-    <ValueWithLoader isLoading={isLoading} width="140">
+    <InlineLoader isLoading={isLoading} width={140}>
       <ReindexStateContainer data-testid="reindexVaultsSection">
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reindexVaultsData">
@@ -27,6 +27,6 @@ export const ReindexState: FC<ReindexStateProps> = ({
           </Text>
         </TextWrapper>
       </ReindexStateContainer>
-    </ValueWithLoader>
+    </InlineLoader>
   );
 };
