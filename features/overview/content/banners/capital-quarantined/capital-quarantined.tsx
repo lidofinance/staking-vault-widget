@@ -1,15 +1,19 @@
+import type { FC } from 'react';
+
 import { NoticeContainer } from 'features/overview/shared';
-import { useVaultOverviewData } from 'features/overview/hooks';
 import { QuarantineDescription } from './quarantine-description';
 
-export const CapitalQuarantined = () => {
-  const { data } = useVaultOverviewData();
+type CapitalQuarantinedProps = {
+  endTimestamp: bigint | undefined;
+  pendingTotalValueIncrease: bigint | undefined;
+};
 
-  if (!data?.vaultQuarantineState.isActive) {
+export const CapitalQuarantined: FC<CapitalQuarantinedProps> = (props) => {
+  const { endTimestamp, pendingTotalValueIncrease } = props;
+
+  if (!endTimestamp || !pendingTotalValueIncrease) {
     return null;
   }
-
-  const { endTimestamp, pendingTotalValueIncrease } = data.vaultQuarantineState;
 
   return (
     <NoticeContainer

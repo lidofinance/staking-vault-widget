@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useVaultOverviewData } from 'features/overview/hooks';
 import { DisconnectState } from './disconnect-state';
 import { DepositsPaused } from './deposits-paused';
@@ -8,9 +10,34 @@ import { BannerContainer } from './styles';
 export const Banners = () => {
   const { data } = useVaultOverviewData();
 
-  const { isVaultDisconnected, isPendingDisconnect } = data ?? {};
+  const {
+    isVaultDisconnected,
+    isPendingDisconnect,
+    beaconChainDepositsPauseIntent,
+    vaultQuarantineState,
+  } = data ?? {};
+  const {
+    endTimestamp,
+    pendingTotalValueIncrease,
+    isActive: isQuarantineActive,
+  } = vaultQuarantineState ?? {};
 
-  const showBanners = isVaultDisconnected || isPendingDisconnect;
+  const showBanners = useMemo(
+    () =>
+      [
+        isVaultDisconnected,
+        isPendingDisconnect,
+        beaconChainDepositsPauseIntent,
+        isQuarantineActive,
+      ].some((flag) => !!flag),
+    [
+      isVaultDisconnected,
+      isPendingDisconnect,
+      beaconChainDepositsPauseIntent,
+      isQuarantineActive,
+    ],
+  );
+
   if (!showBanners) {
     return null;
   }
@@ -21,8 +48,13 @@ export const Banners = () => {
         isPendingDisconnect={isPendingDisconnect}
         isVaultDisconnected={isVaultDisconnected}
       />
-      <DepositsPaused />
-      <CapitalQuarantined />
+      {beaconChainDepositsPauseIntent && <DepositsPaused />}
+      {isQuarantineActive && (
+        <CapitalQuarantined
+          endTimestamp={endTimestamp}
+          pendingTotalValueIncrease={pendingTotalValueIncrease}
+        />
+      )}
     </BannerContainer>
   );
 };
