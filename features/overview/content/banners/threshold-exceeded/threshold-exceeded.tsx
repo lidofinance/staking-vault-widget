@@ -6,7 +6,7 @@ import { vaultTexts } from 'modules/vaults';
 import { NoticeContainer } from 'features/overview/shared';
 
 const {
-  capacityExceeded: { title, description, note, actions },
+  thresholdExceeded: { title, description, note, actions },
 } = vaultTexts.metrics;
 
 const actionsFundsMap_MOCK = {
@@ -24,18 +24,19 @@ const actionsFundsMap_MOCK = {
   },
 } as const;
 
-export const CapacityExceeded = () => {
+export const ThresholdExceeded = () => {
   const router = useRouter();
+
   // TODO: calculate Supply, Repay, Rebalance
   const viewActions = useMemo(
     () =>
       actions.map(({ name, getText, title }) => {
         const event = actionsFundsMap_MOCK[name];
         const buttonText = getText(event.amount);
-        const navigate = () => router.push(event.path);
+        const onClick = () => router.push(event.path);
         return {
           buttonText,
-          navigate,
+          onClick,
           title,
         };
       }),
@@ -48,6 +49,7 @@ export const CapacityExceeded = () => {
       description={description}
       note={note}
       actions={viewActions}
+      type="error"
     />
   );
 };

@@ -73,6 +73,7 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
+    isPendingDisconnect: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -130,11 +131,13 @@ const getVaultData = async ({
     ] as const,
   });
 
-  const [vaultRecord, isVaultConnected, locked] = await Promise.all([
-    hub.read.vaultRecord([vault.address]),
-    hub.read.isVaultConnected([vault.address]),
-    hub.read.locked([vault.address]),
-  ]);
+  const [vaultRecord, isVaultConnected, locked, isPendingDisconnect] =
+    await Promise.all([
+      hub.read.vaultRecord([vault.address]),
+      hub.read.isVaultConnected([vault.address]),
+      hub.read.locked([vault.address]),
+      hub.read.isPendingDisconnect([vault.address]),
+    ]);
 
   const {
     liabilityShares,
@@ -226,6 +229,7 @@ const getVaultData = async ({
     tierId,
     tierShareLimit,
     tierStETHLimit,
+    isPendingDisconnect,
     ...rest,
     ...restVaultRecord,
   };
@@ -259,6 +263,8 @@ const selectOverviewData = ({
     reportLiabilitySharesStETH,
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
+    disconnectInitiatedTs,
+    isPendingDisconnect,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -376,6 +382,9 @@ const selectOverviewData = ({
     vaultMetrics,
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
+    isPendingDisconnect,
+    isVaultDisconnected: disconnectInitiatedTs === 0,
+    disconnectInitiatedTs,
   };
 };
 
