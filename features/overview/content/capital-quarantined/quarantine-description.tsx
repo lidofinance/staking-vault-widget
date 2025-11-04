@@ -3,7 +3,8 @@ import { FC } from 'react';
 import { FormatToken } from 'shared/formatters';
 
 type QuarantineDescriptionProps = {
-  amount: bigint;
+  pendingTotalValueIncrease: bigint;
+  totalValueRemainder: bigint;
   timestamp: bigint;
 };
 
@@ -19,15 +20,24 @@ const formatUnixDate = (ts: bigint) => {
 };
 
 export const QuarantineDescription: FC<QuarantineDescriptionProps> = ({
-  amount,
+  pendingTotalValueIncrease,
+  totalValueRemainder,
   timestamp,
 }) => {
+  const quarantineValue = pendingTotalValueIncrease + totalValueRemainder;
+
   return (
     <>
-      <FormatToken amount={amount} maxDecimalDigits={4} symbol="ETH" /> increase
-      in Total Value is pending due to a sudden jump in the value reported by
-      the oracle. The amount will be unlocked gradually until{' '}
-      {formatUnixDate(timestamp)}.
+      A sudden jump in Total Value was detected based on the latest oracle
+      report. As a result,{' '}
+      <FormatToken amount={quarantineValue} maxDecimalDigits={4} symbol="ETH" />{' '}
+      currently remains under quarantine. At least{' '}
+      <FormatToken
+        amount={pendingTotalValueIncrease}
+        maxDecimalDigits={4}
+        symbol="ETH"
+      />{' '}
+      will be unlocked {formatUnixDate(timestamp)}.
     </>
   );
 };
