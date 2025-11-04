@@ -9,7 +9,8 @@ export const CapitalQuarantined = () => {
     return null;
   }
 
-  const { endTimestamp, pendingTotalValueIncrease } = data.vaultQuarantineState;
+  const { endTimestamp, pendingTotalValueIncrease, totalValueRemainder } =
+    data.vaultQuarantineState;
 
   return (
     <NoticeContainer
@@ -17,7 +18,8 @@ export const CapitalQuarantined = () => {
       type="info"
       description={
         <QuarantineDescription
-          amount={pendingTotalValueIncrease}
+          pendingTotalValueIncrease={pendingTotalValueIncrease}
+          totalValueRemainder={totalValueRemainder}
           timestamp={endTimestamp}
         />
       }
