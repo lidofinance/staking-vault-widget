@@ -1,17 +1,24 @@
 import type { FC } from 'react';
 
 import { NoticeContainer } from 'features/overview/shared';
+import type { VaultQuarantineState } from 'features/overview/hooks';
 import { QuarantineDescription } from './quarantine-description';
 
 type CapitalQuarantinedProps = {
-  endTimestamp: bigint | undefined;
-  pendingTotalValueIncrease: bigint | undefined;
+  vaultQuarantineState: VaultQuarantineState | undefined;
 };
 
-export const CapitalQuarantined: FC<CapitalQuarantinedProps> = (props) => {
-  const { endTimestamp, pendingTotalValueIncrease } = props;
+export const CapitalQuarantined: FC<CapitalQuarantinedProps> = ({
+  vaultQuarantineState,
+}) => {
+  const { endTimestamp, pendingTotalValueIncrease, totalValueRemainder } =
+    vaultQuarantineState ?? {};
 
-  if (!endTimestamp || !pendingTotalValueIncrease) {
+  if (
+    !endTimestamp ||
+    !pendingTotalValueIncrease ||
+    typeof totalValueRemainder !== 'bigint'
+  ) {
     return null;
   }
 
@@ -21,7 +28,8 @@ export const CapitalQuarantined: FC<CapitalQuarantinedProps> = (props) => {
       type="info"
       description={
         <QuarantineDescription
-          amount={pendingTotalValueIncrease}
+          pendingTotalValueIncrease={pendingTotalValueIncrease}
+          totalValueRemainder={totalValueRemainder}
           timestamp={endTimestamp}
         />
       }

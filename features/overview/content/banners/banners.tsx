@@ -16,11 +16,7 @@ export const Banners = () => {
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
   } = data ?? {};
-  const {
-    endTimestamp,
-    pendingTotalValueIncrease,
-    isActive: isQuarantineActive,
-  } = vaultQuarantineState ?? {};
+  const { isActive: isQuarantineActive } = vaultQuarantineState ?? {};
 
   const showBanners = useMemo(
     () =>
@@ -50,10 +46,7 @@ export const Banners = () => {
       />
       {beaconChainDepositsPauseIntent && <DepositsPaused />}
       {isQuarantineActive && (
-        <CapitalQuarantined
-          endTimestamp={endTimestamp}
-          pendingTotalValueIncrease={pendingTotalValueIncrease}
-        />
+        <CapitalQuarantined vaultQuarantineState={vaultQuarantineState} />
       )}
     </BannerContainer>
   );

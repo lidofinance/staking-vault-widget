@@ -36,11 +36,12 @@ type VaultDataArgs = {
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
 
-type VaultQuarantineState = {
+export type VaultQuarantineState = {
   isActive: boolean;
   pendingTotalValueIncrease: bigint;
   startTimestamp: bigint;
   endTimestamp: bigint;
+  totalValueRemainder: bigint;
 };
 
 export type VaultInfo = VaultConnection &
