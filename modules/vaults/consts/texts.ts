@@ -97,7 +97,7 @@ export const vaultTexts = {
     withdraw: {
       available: `Available to withdraw`,
       loading: ' Withdrawing ETH from the vault',
-      completed: 'ETH withdrawn',
+      completed: (token: string) => `${token} withdrawn`,
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
     },
