@@ -152,7 +152,7 @@ export default withBundleAnalyzer({
 
     rateLimit: process.env.RATE_LIMIT,
     rateLimitTimeFrame: process.env.RATE_LIMIT_TIME_FRAME,
-    runStartUpChecks: process.env.RUN_STARTUP_CHECKS,
+    runStartupChecks: process.env.RUN_STARTUP_CHECKS,
     devnetOverrides: process.env.DEVNET_OVERRIDES,
   },
 
