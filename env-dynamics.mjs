@@ -68,3 +68,6 @@ export const matomoHost = process.env.MATOMO_URL;
 
 /** @type string */
 export const devnetOverrides = process.env.DEVNET_OVERRIDES;
+
+/** @type string */
+export const vaultsApiBasePath = process.env.VAULTS_API_BASE_PATH;

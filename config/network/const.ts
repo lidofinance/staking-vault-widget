@@ -1,6 +1,6 @@
 import type { Address } from 'viem';
 
-const API_LIST = ['vaultsApi'] as const;
+const API_LIST = ['vaultsApiBasePath'] as const;
 
 const CONTRACT_LIST = [
   'lido',
@@ -32,9 +32,6 @@ export type CONTRACT_NAMES = (typeof CONTRACT_LIST)[number];
 export type API_NAMES = (typeof API_LIST)[number];
 
 export type NetworkConfig = {
-  api: {
-    [K in keyof typeof APIS]?: string;
-  };
   contracts: {
     [K in keyof typeof CONTRACTS]?: Address;
   };
