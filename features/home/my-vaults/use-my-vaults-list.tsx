@@ -32,6 +32,7 @@ export const useMyVaultsList = () => {
     setPage,
     vaults: query.data?.data,
     pagesCount: query.data?.pagesCount,
+    nextUpdateAt: query.data?.nextUpdateAt,
     totalVaultsCount: query.data?.total,
     ...(isAPI
       ? {

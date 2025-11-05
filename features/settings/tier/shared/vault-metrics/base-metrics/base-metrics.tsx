@@ -5,12 +5,12 @@ import { zeroAddress } from 'viem';
 import { useTierData } from 'features/settings/tier/contexts';
 import { SectionData } from 'features/settings/tier/types';
 
+import { InlineLoader } from 'shared/components';
 import {
   AddressContainer,
   AddressStyled,
   IndicatorContent,
   Wrapper,
-  InlineLoaderStyled,
 } from './styles';
 
 const sectionPayloadList: SectionData[] = [
@@ -55,7 +55,11 @@ export const BaseMetrics = () => {
             {title}
           </Text>
           <Text size="xs" strong data-testid="value">
-            {payload ? payload : <InlineLoaderStyled />}
+            {payload ? (
+              payload
+            ) : (
+              <InlineLoader isLoading width={100} height={20} />
+            )}
           </Text>
         </IndicatorContent>
       ))}

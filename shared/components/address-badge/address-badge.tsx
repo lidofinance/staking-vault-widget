@@ -2,7 +2,6 @@ import { type MouseEvent, forwardRef, useRef, useState } from 'react';
 import { zeroAddress } from 'viem';
 import {
   Identicon,
-  InlineLoader,
   TextColors,
   TextWeight,
   Tooltip,
@@ -10,6 +9,7 @@ import {
 
 import { useSafeEnsName } from 'shared/hooks/use-safe-ens-name';
 import { addressSchema } from 'utils/zod-validation';
+import { InlineLoader } from 'shared/components';
 
 import { AddressAvatar } from './address-avatar';
 import { AddressPopover } from './address-popover';
@@ -76,7 +76,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
         >
           {/* if ens forced loading we can show right identicon */}
           <Identicon address={parsing.data ?? zeroAddress} />
-          <InlineLoader style={{ width: 113 }} />
+          <InlineLoader width={113} isLoading />
         </PillContainer>
       );
     }
