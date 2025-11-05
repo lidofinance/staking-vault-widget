@@ -4,6 +4,7 @@ import { ButtonProps, useBreakpoint } from '@lidofinance/lido-ui';
 
 import { FormatToken } from 'shared/formatters';
 import { useDappStatus, useEthereumBalance } from 'modules/web3';
+import { InlineLoader } from 'shared/components';
 
 import { AddressBadge } from '../components/address-badge/address-badge';
 import { useWalletModal } from '../wallet-modal/use-wallet-modal';
@@ -12,7 +13,6 @@ import {
   WalledButtonStyle,
   WalledButtonWrapperStyle,
   WalledButtonBalanceStyle,
-  WalledButtonLoaderStyle,
 } from './styles';
 
 export const Button: FC<ButtonProps> = (props) => {
@@ -35,17 +35,15 @@ export const Button: FC<ButtonProps> = (props) => {
     >
       <WalledButtonWrapperStyle>
         <WalledButtonBalanceStyle>
-          {isLoading ? (
-            <WalledButtonLoaderStyle />
-          ) : (
-            isDappActive && (
+          <InlineLoader isLoading={isLoading} width={60}>
+            {isDappActive && (
               <FormatToken
                 amount={balance}
                 symbol="ETH"
                 showAmountTip={false}
               />
-            )
-          )}
+            )}
+          </InlineLoader>
         </WalledButtonBalanceStyle>
         <AddressBadge address={address as Address} />
       </WalledButtonWrapperStyle>
