@@ -83,7 +83,7 @@ export const useSupply = () => {
           sendTX({
             transactions: mintSteth ? prepareTransactions : calls,
             mainActionLoadingText: vaultTexts.actions.supply.loading,
-            mainActionCompleteText: vaultTexts.actions.supply.completed,
+            mainActionCompleteText: vaultTexts.actions.supply.completed(token),
             renderSuccessContent: GoToVault,
           }),
         );

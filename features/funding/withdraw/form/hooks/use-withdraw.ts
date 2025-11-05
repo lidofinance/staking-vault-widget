@@ -36,7 +36,7 @@ export const useWithdraw = () => {
         loadingActionText: vaultTexts.actions.withdraw.loading,
       });
 
-      // eth->weth wrap call
+      // eth -> weth wrap call
       if (token === 'wETH') {
         calls.push({
           ...wethContract.encode.deposit({ value: amount }),
@@ -49,7 +49,7 @@ export const useWithdraw = () => {
           transactions: async () => [...prepareReportCalls(), ...calls],
           forceAtomic: true,
           mainActionLoadingText: vaultTexts.actions.withdraw.loading,
-          mainActionCompleteText: vaultTexts.actions.withdraw.completed,
+          mainActionCompleteText: vaultTexts.actions.withdraw.completed(token),
           renderSuccessContent: GoToVault,
         }),
       );
