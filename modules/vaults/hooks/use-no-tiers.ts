@@ -41,14 +41,14 @@ const fetchTiersForOperator = async ({
   );
 
   const [stEthLimit, liabilityStETH] = await Promise.all([
-    stethContract.read.getPooledEthBySharesRoundUp([shareLimit]),
+    stethContract.read.getPooledEthByShares([shareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
   ]);
 
   const tiersWithStETH = await Promise.all(
     tiers.map(async (tier, index) => {
       const [shareLimitStETH, liabilityStETH] = await Promise.all([
-        stethContract.read.getPooledEthBySharesRoundUp([tier.shareLimit]),
+        stethContract.read.getPooledEthByShares([tier.shareLimit]),
         stethContract.read.getPooledEthBySharesRoundUp([tier.liabilityShares]),
       ]);
 

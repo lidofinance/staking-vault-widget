@@ -12,7 +12,7 @@ export const useLiability = () => {
     queryKey: [...queryKeys.state, 'vault-liability'],
     enabled: !!activeVault,
     queryFn: async () => {
-      invariant(activeVault, '[useLiability]Active vault is not available');
+      invariant(activeVault, '[useLiability] Active vault is not available');
 
       const [liabilityShares] = await readWithReport({
         publicClient,

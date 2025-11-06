@@ -138,14 +138,12 @@ const getVaultTierInfo = async ({
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([vaultMintableShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([vaultShareLimit]),
-    stethContract.read.getPooledEthBySharesRoundUp([
-      vaultTotalMintingCapacityShares,
-    ]),
-    stethContract.read.getPooledEthBySharesRoundUp([tierShareLimit]),
+    stethContract.read.getPooledEthByShares([vaultMintableShares]),
+    stethContract.read.getPooledEthByShares([vaultShareLimit]),
+    stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
+    stethContract.read.getPooledEthByShares([tierShareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([proposedVaultLimit]),
+    stethContract.read.getPooledEthByShares([proposedVaultLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
