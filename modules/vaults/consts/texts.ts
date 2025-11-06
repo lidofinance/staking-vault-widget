@@ -92,12 +92,12 @@ export const vaultTexts = {
           `Supply ${balance(amount)}${token} & Mint ${balance(amountSteth)}stETH` as const,
       },
       loading: 'Supplying ETH into the vault',
-      completed: 'ETH supplied',
+      completed: (token: string) => `${token} supplied`,
     },
     withdraw: {
       available: `Available to withdraw`,
       loading: ' Withdrawing ETH from the vault',
-      completed: 'ETH withdrawn',
+      completed: (token: string) => `${token} withdrawn`,
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
     },

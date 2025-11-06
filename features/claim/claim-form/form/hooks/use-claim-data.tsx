@@ -20,7 +20,7 @@ export const useClaimData = () => {
   });
 
   const claimableFeeQuery = useQuery({
-    queryKey: [...queryKeys.state, 'claimableFee'],
+    queryKey: [...queryKeys.state, 'accruedFee'],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');

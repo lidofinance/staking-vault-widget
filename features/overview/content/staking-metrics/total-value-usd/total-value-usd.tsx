@@ -1,8 +1,7 @@
-import { InlineLoader } from '@lidofinance/lido-ui';
-
 import { useEthUsd } from 'shared/hooks/use-eth-usd';
 import { formatDollar } from 'utils';
 
+import { InlineLoader } from 'shared/components';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextBlack } from './styles';
@@ -12,13 +11,12 @@ export const TotalValueUsd = () => {
   const { isLoading, usdAmount } = useEthUsd(values?.totalValue);
 
   return (
-    <>
-      {isLoadingVault || (isLoading && <InlineLoader />)}
+    <InlineLoader isLoading={isLoading || isLoadingVault}>
       {!!usdAmount && (
         <TextBlack data-testid="usdValue" size="xxs" strong>
           {formatDollar.format(usdAmount)}
         </TextBlack>
       )}
-    </>
+    </InlineLoader>
   );
 };

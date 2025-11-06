@@ -41,6 +41,7 @@ type VaultQuarantineState = {
   pendingTotalValueIncrease: bigint;
   startTimestamp: bigint;
   endTimestamp: bigint;
+  totalValueRemainder: bigint;
 };
 
 export type VaultInfo = VaultConnection &

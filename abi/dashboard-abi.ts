@@ -136,6 +136,11 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'InsufficientBalance',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'PDGPolicyAlreadyActive',
     type: 'error',
   },
@@ -188,7 +193,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'SettledGrowthMismatch',
+    name: 'SettleGrowthIsNotSet',
     type: 'error',
   },
   {
@@ -204,11 +209,6 @@ export const dashboardAbi = [
   {
     inputs: [],
     name: 'UnexpectedSettledGrowth',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'VaultQuarantined',
     type: 'error',
   },
   {
@@ -303,6 +303,12 @@ export const dashboardAbi = [
         internalType: 'uint256',
         name: 'fee',
         type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
       },
     ],
     name: 'FeeDisbursed',
@@ -494,15 +500,15 @@ export const dashboardAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: 'int128',
+        internalType: 'int256',
         name: 'oldSettledGrowth',
-        type: 'int128',
+        type: 'int256',
       },
       {
         indexed: false,
-        internalType: 'int128',
+        internalType: 'int256',
         name: 'newSettledGrowth',
-        type: 'int128',
+        type: 'int256',
       },
     ],
     name: 'SettledGrowthSet',
@@ -1019,11 +1025,6 @@ export const dashboardAbi = [
         name: '_requestedShareLimit',
         type: 'uint256',
       },
-      {
-        internalType: 'uint256',
-        name: '_currentSettledGrowth',
-        type: 'uint256',
-      },
     ],
     name: 'connectAndAcceptTier',
     outputs: [],
@@ -1031,13 +1032,7 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_currentSettledGrowth',
-        type: 'uint256',
-      },
-    ],
+    inputs: [],
     name: 'connectToVaultHub',
     outputs: [],
     stateMutability: 'payable',
@@ -1079,6 +1074,19 @@ export const dashboardAbi = [
     name: 'disburseFee',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'feeLeftover',
+    outputs: [
+      {
+        internalType: 'uint128',
+        name: '',
+        type: 'uint128',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1606,13 +1614,7 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_currentSettledGrowth',
-        type: 'uint256',
-      },
-    ],
+    inputs: [],
     name: 'reconnectToVaultHub',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -1637,6 +1639,13 @@ export const dashboardAbi = [
       },
     ],
     name: 'recoverERC20',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'recoverFeeLeftover',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

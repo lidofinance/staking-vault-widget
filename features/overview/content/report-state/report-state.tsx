@@ -2,24 +2,18 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { CID_TO_GATEWAY, useVault } from 'modules/vaults';
 import { DATA_UNAVAILABLE } from 'consts/text';
+import { InlineLoader } from 'shared/components';
 
 import { formatCustomDate } from 'features/overview/consts';
 
-import {
-  InlineLoaderStyled,
-  ReportStateContainer,
-  StyledLink,
-  TextWrapper,
-} from './styles';
+import { ReportStateContainer, StyledLink, TextWrapper } from './styles';
 
 export const ReportState = () => {
   const { data, isPending, error } = useVault();
 
   return (
     <ReportStateContainer data-testid="reportSection">
-      {isPending ? (
-        <InlineLoaderStyled />
-      ) : (
+      <InlineLoader isLoading={isPending} width={140}>
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reportData">
             Last updated:{' '}
@@ -36,7 +30,7 @@ export const ReportState = () => {
             </StyledLink>
           )}
         </TextWrapper>
-      )}
+      </InlineLoader>
     </ReportStateContainer>
   );
 };
