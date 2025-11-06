@@ -5,6 +5,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import {
   useVault,
+  getStEthContract,
   DEFAULT_TIER_ID,
   NodeOperatorTierInfoArgs,
   NodeOperatorTiersInfo,
@@ -16,9 +17,10 @@ export type NodeOperatorTiersData = ReturnType<
 
 const fetchTiersForOperator = async ({
   vault,
-  shares,
+  publicClient,
 }: NodeOperatorTierInfoArgs): Promise<NodeOperatorTiersInfo> => {
   const { nodeOperator, operatorGrid } = vault;
+  const stethContract = getStEthContract(publicClient);
 
   const [group, vaultInfo] = await Promise.all([
     operatorGrid.read.group([nodeOperator]),
@@ -39,15 +41,15 @@ const fetchTiersForOperator = async ({
   );
 
   const [stEthLimit, liabilityStETH] = await Promise.all([
-    shares.convertToSteth(shareLimit),
-    shares.convertToSteth(liabilityShares),
+    stethContract.read.getPooledEthByShares([shareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
   ]);
 
   const tiersWithStETH = await Promise.all(
     tiers.map(async (tier, index) => {
       const [shareLimitStETH, liabilityStETH] = await Promise.all([
-        shares.convertToSteth(tier.shareLimit),
-        shares.convertToSteth(tier.liabilityShares),
+        stethContract.read.getPooledEthByShares([tier.shareLimit]),
+        stethContract.read.getPooledEthBySharesRoundUp([tier.liabilityShares]),
       ]);
 
       const id = writableTierIds[index];
@@ -80,7 +82,7 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
   Error
 > => {
   const { activeVault, queryKeys } = useVault();
-  const { shares } = useLidoSDK();
+  const { publicClient } = useLidoSDK();
 
   return useQuery({
     queryKey: [...queryKeys.base, 'node-operator-tier-info'],
@@ -90,7 +92,7 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
         activeVault,
         '[useNodeOperatorTiersInfo] activeVault is not defined',
       );
-      return await fetchTiersForOperator({ vault: activeVault, shares });
+      return await fetchTiersForOperator({ vault: activeVault, publicClient });
     },
     select: selectNodeOperatorTiersData,
   });

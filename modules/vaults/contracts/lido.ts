@@ -1,21 +1,21 @@
 import invariant from 'tiny-invariant';
 import { getContract } from 'viem';
 
-import { LidoV3Abi } from 'abi/lido-v3-abi';
+import { LidoPartialAbi } from 'abi/lido-partial-abi';
 import { getContractAddress } from 'config';
 import type { RegisteredPublicClient } from 'modules/web3';
 
 import { getEncodable } from '../utils/encodable';
 
-export const getLidoV3Contract = (publicClient: RegisteredPublicClient) => {
+export const getLidoContract = (publicClient: RegisteredPublicClient) => {
   const address = getContractAddress(publicClient.chain.id, 'lido');
 
-  invariant(address, '[getLidoV3Contract] lido is not defined');
+  invariant(address, '[getLidoContract] lido is not defined');
 
   return getEncodable(
     getContract({
       address,
-      abi: LidoV3Abi,
+      abi: LidoPartialAbi,
       client: publicClient,
     }),
   );
