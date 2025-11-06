@@ -4,7 +4,7 @@ import { Block } from '@lidofinance/lido-ui';
 export const SectionContainer = styled.section`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
+  gap: ${({ theme }) => theme.spaceMap.xxl}px;
   width: 100%;
 `;
 

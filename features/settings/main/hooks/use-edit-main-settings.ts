@@ -102,11 +102,9 @@ export const useEditMainSettings = () => {
           });
         }
 
-        const { feeRate, nodeOperatorFeeRateCustom } = formValues;
+        const { feeRate, feeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const feeValue = Number(
-          feeRate !== 'custom' ? feeRate : nodeOperatorFeeRateCustom,
-        );
+        const feeValue = Number(feeRate !== 'custom' ? feeRate : feeRateCustom);
 
         const isFeeValueChanged =
           feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
@@ -119,7 +117,7 @@ export const useEditMainSettings = () => {
           transactions.push({
             ...activeVault.dashboard.encode.setFeeRate([BigInt(newFee)]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
-              confirmingRoleAction,
+              feeRate === 'custom' ? confirmingRoleAction : 'Setting',
               feeValue,
             ),
           });
@@ -137,17 +135,31 @@ export const useEditMainSettings = () => {
           transactions.push({
             ...activeVault.dashboard.encode.setConfirmExpiry([expiryValue]),
             loadingActionText: vaultTexts.actions.settings.confirmExpiry(
-              confirmingRoleAction,
+              confirmExpiry === 'custom' ? confirmingRoleAction : 'Setting',
               Number(expiryValue / 3600n),
             ),
           });
         }
 
+        const { isDepositAllowed } = formValues;
+        const isDepositAllowedChanged =
+          isDepositAllowed !== vaultSettings.isDepositAllowed;
+        if (isDepositAllowedChanged) {
+          const txFnName = isDepositAllowed
+            ? 'resumeBeaconChainDeposits'
+            : 'pauseBeaconChainDeposits';
+          transactions.push({
+            ...activeVault.dashboard.encode[txFnName](),
+            loadingActionText: vaultTexts.actions.settings[txFnName],
+          });
+        }
+
         const result = await withSuccess(
           sendTX({
-            transactions: isFeeValueChanged
-              ? async () => [...prepareReportCalls(), ...transactions]
-              : transactions,
+            transactions:
+              isFeeValueChanged || isDepositAllowedChanged
+                ? async () => [...prepareReportCalls(), ...transactions]
+                : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,

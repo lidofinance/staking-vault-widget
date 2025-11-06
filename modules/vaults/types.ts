@@ -1,10 +1,11 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
 import type { Address, Hex, ReadContractReturnType } from 'viem';
-import type {
+import {
   getDashboardContract,
   getStakingVaultContract,
   getVaultHubContract,
   getOperatorGridContract,
+  getLazyOracleContract,
 } from './contracts';
 import type { RegisteredPublicClient } from '../web3';
 import type { Confirmation } from '../../utils/get-confirmations';
@@ -45,6 +46,7 @@ export type VaultBaseInfo = {
   hub: ReturnType<typeof getVaultHubContract>;
   dashboard: ReturnType<typeof getDashboardContract>;
   operatorGrid: ReturnType<typeof getOperatorGridContract>;
+  lazyOracle: ReturnType<typeof getLazyOracleContract>;
   nodeOperator: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;

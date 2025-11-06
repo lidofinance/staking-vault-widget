@@ -30,6 +30,7 @@ export const useConnectedVaultsList = () => {
     vaults: query.data?.data,
     pagesCount: query.data?.pagesCount,
     totalVaultsCount: query.data?.total,
+    nextUpdateAt: query.data?.nextUpdateAt,
     ...(isAPI
       ? {
           sortBy: params.sortBy,

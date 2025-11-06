@@ -30,6 +30,7 @@ export type VaultMainSettingsData = {
 
   confirmExpiry: bigint;
   confirmExpiryConfirmations: Confirmation[];
+  isDepositAllowed: boolean;
 };
 
 export type MainSettingsFormData = {
@@ -42,6 +43,8 @@ export type MainSettingsFormData = {
 
   confirmExpiry: VotingOptionType[];
   confirmExpiryCurrent: string;
+
+  isDepositAllowed: boolean;
 };
 
 export type MainSettingsDataContextValue = UseQueryResult<MainSettingsFormData>;

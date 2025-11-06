@@ -7,6 +7,7 @@ import {
   useNodeOperatorTiersInfo,
   useVaultTierInfo,
   vaultTexts,
+  useVaultPermission,
 } from 'modules/vaults';
 
 import { SectionContainer } from 'features/settings/shared/components';
@@ -27,6 +28,8 @@ export const RequestChangeLimit = () => {
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { address } = useAccount();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const proposedTierId = proposal?.decodedData.args[1];
@@ -38,7 +41,11 @@ export const RequestChangeLimit = () => {
   const proposer = proposal?.member;
   const isTheSameUser = proposer === address;
 
-  if (!proposedTier || !(isNodeOperator || hasAdmin)) return null;
+  if (
+    !proposedTier ||
+    !(isNodeOperator || hasAdmin || hasVaultConfigurationPermission)
+  )
+    return null;
 
   const buttonText = showAdditionalInfo
     ? vaultTexts.actions.tier.request.showButton.hide
@@ -50,14 +57,20 @@ export const RequestChangeLimit = () => {
     showAdditionalInfo && proposal && !!proposedVaultMintingLimitStETH;
 
   return (
-    <RequestWrapper>
+    <RequestWrapper data-testid="requestWrapper">
       <HeadingSection>
-        <Title as="h2">
+        <Title as="h2" data-testid="title">
           {vaultTexts.actions.tier.requestTitle} {proposedTier?.tierName}
         </Title>
         <ExpiresContainer>
-          <Text size="xxs">Expires in</Text>
-          <ExpiresInItem expiryTimestamp={proposal?.expiryTimestamp} strong />
+          <Text data-testid="expiresInLabel" size="xxs">
+            Expires in
+          </Text>
+          <ExpiresInItem
+            data-testid="expiresInValue"
+            expiryTimestamp={proposal?.expiryTimestamp}
+            strong
+          />
         </ExpiresContainer>
       </HeadingSection>
       <Divider />
@@ -75,6 +88,7 @@ export const RequestChangeLimit = () => {
         <ButtonStyled
           variant="ghost"
           onClick={() => setAdditionalInfoVisibility(!showAdditionalInfo)}
+          data-testid="reviewRequestBtn"
         >
           {buttonText}
         </ButtonStyled>

@@ -195,11 +195,6 @@ export const StakingVaultAbi = [
   },
   {
     inputs: [],
-    name: 'VaultOssified',
-    type: 'error',
-  },
-  {
-    inputs: [],
     name: 'WithdrawalFeeInvalidData',
     type: 'error',
   },
@@ -790,7 +785,7 @@ export const StakingVaultAbi = [
     inputs: [],
     name: 'renounceOwnership',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
   },
   {

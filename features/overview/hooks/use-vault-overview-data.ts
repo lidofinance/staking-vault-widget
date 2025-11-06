@@ -35,6 +35,14 @@ type VaultDataArgs = {
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
 
+type VaultQuarantineState = {
+  isActive: boolean;
+  pendingTotalValueIncrease: bigint;
+  startTimestamp: bigint;
+  endTimestamp: bigint;
+  totalValueRemainder: bigint;
+};
+
 export type VaultInfo = VaultConnection &
   VaultRecordWithoutDelta & {
     isVaultConnected: boolean;
@@ -63,6 +71,7 @@ export type VaultInfo = VaultConnection &
     tierId: bigint;
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
+    vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
   };
 
@@ -83,6 +92,7 @@ const getVaultData = async ({
     hub,
     operatorGrid,
     report,
+    lazyOracle,
     ...rest
   } = vault;
 
@@ -96,6 +106,7 @@ const getVaultData = async ({
     mintableShares,
     tier,
     group,
+    vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
     report,
@@ -114,6 +125,7 @@ const getVaultData = async ({
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultTierInfo([vault.address]),
       operatorGrid.prepare.group([vault.nodeOperator]),
+      lazyOracle.prepare.vaultQuarantine([vault.address]),
     ] as const,
   });
 
@@ -213,6 +225,7 @@ const getVaultData = async ({
     withdrawalCredentials,
     settledLidoFees,
     cumulativeLidoFees,
+    vaultQuarantineState,
     locked,
     tierId,
     tierShareLimit,
@@ -248,6 +261,8 @@ const selectOverviewData = ({
     tierStETHLimit,
     minimalReserve,
     reportLiabilitySharesStETH,
+    beaconChainDepositsPauseIntent,
+    vaultQuarantineState,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -363,6 +378,8 @@ const selectOverviewData = ({
     carrySpreadApr,
     vaultData,
     vaultMetrics,
+    vaultQuarantineState,
+    beaconChainDepositsPauseIntent,
   };
 };
 
@@ -373,6 +390,8 @@ export const useVaultOverviewData = () => {
   return useQuery({
     queryKey: [...queryKeys.state, 'vault-overview-data'],
     enabled: !!activeVault,
+    refetchOnMount: true,
+    staleTime: 0,
     queryFn: async () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 

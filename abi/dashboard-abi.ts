@@ -27,6 +27,11 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'AbnormallyHighFee',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'AccessControlBadConfirmation',
     type: 'error',
   },
@@ -131,12 +136,7 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
-    name: 'ForbiddenToConnectByNodeOperator',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'NonProxyCallsForbidden',
+    name: 'InsufficientBalance',
     type: 'error',
   },
   {
@@ -168,22 +168,6 @@ export const dashboardAbi = [
   {
     inputs: [
       {
-        internalType: 'uint8',
-        name: 'bits',
-        type: 'uint8',
-      },
-      {
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'SafeCastOverflowedUintDowncast',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: 'token',
         type: 'address',
@@ -209,6 +193,11 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'SettleGrowthIsNotSet',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'TierChangeNotConfirmed',
     type: 'error',
   },
@@ -220,11 +209,6 @@ export const dashboardAbi = [
   {
     inputs: [],
     name: 'UnexpectedSettledGrowth',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'VaultQuarantined',
     type: 'error',
   },
   {
@@ -241,19 +225,6 @@ export const dashboardAbi = [
     inputs: [],
     name: 'ZeroConfirmingRoles',
     type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'isApproved',
-        type: 'bool',
-      },
-    ],
-    name: 'ApprovedToConnectSet',
-    type: 'event',
   },
   {
     anonymous: false,
@@ -310,9 +281,9 @@ export const dashboardAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: 'uint64',
+        internalType: 'uint256',
         name: 'timestamp',
-        type: 'uint64',
+        type: 'uint256',
       },
     ],
     name: 'CorrectionTimestampUpdated',
@@ -333,6 +304,12 @@ export const dashboardAbi = [
         name: 'fee',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'recipient',
+        type: 'address',
+      },
     ],
     name: 'FeeDisbursed',
     type: 'event',
@@ -348,15 +325,15 @@ export const dashboardAbi = [
       },
       {
         indexed: false,
-        internalType: 'uint64',
+        internalType: 'uint256',
         name: 'oldFeeRate',
-        type: 'uint64',
+        type: 'uint256',
       },
       {
         indexed: false,
-        internalType: 'uint64',
+        internalType: 'uint256',
         name: 'newFeeRate',
-        type: 'uint64',
+        type: 'uint256',
       },
     ],
     name: 'FeeRateSet',
@@ -468,7 +445,7 @@ export const dashboardAbi = [
       {
         indexed: true,
         internalType: 'bytes32',
-        name: 'role',
+        name: 'roleOrAddress',
         type: 'bytes32',
       },
       {
@@ -523,15 +500,15 @@ export const dashboardAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: 'int128',
+        internalType: 'int256',
         name: 'oldSettledGrowth',
-        type: 'int128',
+        type: 'int256',
       },
       {
         indexed: false,
-        internalType: 'int128',
+        internalType: 'int256',
         name: 'newSettledGrowth',
-        type: 'int128',
+        type: 'int256',
       },
     ],
     name: 'SettledGrowthSet',
@@ -1087,9 +1064,29 @@ export const dashboardAbi = [
   },
   {
     inputs: [],
+    name: 'disburseAbnormallyHighFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'disburseFee',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'feeLeftover',
+    outputs: [
+      {
+        internalType: 'uint128',
+        name: '',
+        type: 'uint128',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1335,19 +1332,6 @@ export const dashboardAbi = [
   {
     inputs: [],
     name: 'initialized',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'isApprovedToConnect',
     outputs: [
       {
         internalType: 'bool',
@@ -1660,6 +1644,13 @@ export const dashboardAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'recoverFeeLeftover',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -1755,19 +1746,6 @@ export const dashboardAbi = [
       },
     ],
     name: 'revokeRoles',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bool',
-        name: '_isApproved',
-        type: 'bool',
-      },
-    ],
-    name: 'setApprovedToConnect',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -1929,7 +1907,13 @@ export const dashboardAbi = [
       },
     ],
     name: 'transferVaultOwnership',
-    outputs: [],
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },

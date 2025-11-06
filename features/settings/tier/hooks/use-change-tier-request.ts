@@ -13,6 +13,7 @@ import {
   GoToVault,
   useVaultTierInfo,
   useNodeOperatorTiersInfo,
+  useReportCalls,
 } from 'modules/vaults';
 
 export const useChangeTierRequest = () => {
@@ -20,6 +21,7 @@ export const useChangeTierRequest = () => {
   const { activeVault } = useVault();
   const { data: tierInfo } = useVaultTierInfo();
   const { data: noTiersInfo } = useNodeOperatorTiersInfo();
+  const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
   const { address } = useAccount();
 
@@ -39,7 +41,7 @@ export const useChangeTierRequest = () => {
 
         setApproving(true);
         const isNodeOperator = activeVault.nodeOperator === address;
-        const transactions: TransactionEntry[] = [];
+        const transactions: TransactionEntry[] = [...prepareReportCalls()];
 
         // if node operator, use operator grid contract
         // if not node operator, use dashboard contract
@@ -81,7 +83,7 @@ export const useChangeTierRequest = () => {
           result,
         };
       },
-      [tierInfo, noTiersInfo, activeVault, address, sendTX],
+      [tierInfo, noTiersInfo, activeVault, address, sendTX, prepareReportCalls],
     ),
     ...rest,
   };

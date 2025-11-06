@@ -33,7 +33,7 @@ export const shouldIncrementTxCounterByAddresses = (
 
   multipleDataFields.forEach((key) => {
     const fields = formFields[key];
-    fields.forEach((field: RoleFieldSchema) => {
+    (fields ?? []).forEach((field: RoleFieldSchema) => {
       grant += Number(field.state === 'grant');
       remove += Number(field.state === 'remove');
     });
@@ -121,6 +121,7 @@ export const formatSettingsValues = (
     defaultAdmins: vaultInfo.defaultAdmins,
     nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
     feeRecipient,
+    isDepositAllowed: vaultInfo.isDepositAllowed,
     confirmExpiryCurrent,
     confirmExpiry,
     nodeOperatorFeeRateCurrent,
@@ -145,13 +146,14 @@ export const prepareDefaultValues = (
   return {
     defaultAdmins,
     nodeOperatorManagers,
+    isDepositAllowed: data.isDepositAllowed,
     feeRecipient: data.feeRecipient,
 
     confirmExpiry: data.confirmExpiryCurrent,
     confirmExpiryCustom: '',
 
     feeRate: data.nodeOperatorFeeRateCurrent,
-    nodeOperatorFeeRateCustom: '',
+    feeRateCustom: '',
   };
 };
 

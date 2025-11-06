@@ -5,12 +5,12 @@ import { zeroAddress } from 'viem';
 import { useTierData } from 'features/settings/tier/contexts';
 import { SectionData } from 'features/settings/tier/types';
 
+import { InlineLoader } from 'shared/components';
 import {
   AddressContainer,
   AddressStyled,
   IndicatorContent,
   Wrapper,
-  InlineLoaderStyled,
 } from './styles';
 
 const sectionPayloadList: SectionData[] = [
@@ -34,21 +34,32 @@ export const BaseMetrics = () => {
   return (
     <Wrapper>
       <AddressContainer>
-        <Identicon diameter={40} address={values?.address ?? zeroAddress} />
+        <Identicon
+          diameter={40}
+          address={values?.address ?? zeroAddress}
+          data-testid="vaultIcon"
+        />
         <IndicatorContent align="start">
-          <Text color="secondary" size="xxs">
+          <Text color="secondary" size="xxs" data-testid="vaultAddressLabel">
             stVault
           </Text>
-          <AddressStyled address={values?.address ?? zeroAddress} />
+          <AddressStyled
+            address={values?.address ?? zeroAddress}
+            data-testid="vaultAddress"
+          />
         </IndicatorContent>
       </AddressContainer>
-      {dataToRender.map(({ title, payload }) => (
-        <IndicatorContent key={title} align="end">
-          <Text color="secondary" size="xxs">
+      {dataToRender.map(({ title, payload, indicator }) => (
+        <IndicatorContent key={title} align="end" data-testid={indicator}>
+          <Text color="secondary" size="xxs" data-testid="label">
             {title}
           </Text>
-          <Text size="xs" strong>
-            {payload ? payload : <InlineLoaderStyled />}
+          <Text size="xs" strong data-testid="value">
+            {payload ? (
+              payload
+            ) : (
+              <InlineLoader isLoading width={100} height={20} />
+            )}
           </Text>
         </IndicatorContent>
       ))}

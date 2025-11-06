@@ -7,10 +7,10 @@ import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
 import { useMainSettingsData } from 'features/settings/main/contexts';
+import { useDepositorRolesPermissions } from 'features/settings/main/hooks';
+import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 import { Container } from './styled';
-
-import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 export const MainSettingsAction: FC = () => {
   const { watch, reset } = useFormContext<MainSettingsFormValidatedValues>();
@@ -18,11 +18,18 @@ export const MainSettingsAction: FC = () => {
     useFormState();
   const isClearDisabled = !isDirty;
   const { data: mainSettingsData } = useMainSettingsData();
-  const isSubmitDisabled = isSubmitting || disabled || isValidating;
+  const isSubmitDisabled = isSubmitting || disabled || isValidating || !isValid;
   const { hasConfirmingRole, hasAdmin, hasNodeOperatorManager } =
     useVaultConfirmingRoles();
+  const { showForPauserRole, showForResumerRole } =
+    useDepositorRolesPermissions();
+
   const showActionButtons =
-    hasConfirmingRole || hasAdmin || hasNodeOperatorManager;
+    hasConfirmingRole ||
+    hasAdmin ||
+    hasNodeOperatorManager ||
+    showForPauserRole ||
+    showForResumerRole;
 
   const formFields = watch();
 
@@ -33,45 +40,52 @@ export const MainSettingsAction: FC = () => {
   const counter = useMemo(() => {
     let counter = 0;
 
-    if (isValid) {
-      counter += shouldIncrementTxCounterByAddresses(formFields);
+    counter += shouldIncrementTxCounterByAddresses(formFields);
 
-      const {
-        feeRate,
-        confirmExpiry,
-        nodeOperatorFeeRateCustom,
-        confirmExpiryCustom,
-        feeRecipient,
-      } = formFields;
+    const {
+      feeRate,
+      confirmExpiry,
+      feeRateCustom,
+      confirmExpiryCustom,
+      feeRecipient,
+      isDepositAllowed,
+    } = formFields;
 
-      const confirmExpiryFormValue =
-        confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
+    const confirmExpiryFormValue =
+      confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
-      if (feeRecipient !== mainSettingsData?.feeRecipient) {
-        counter++;
-      }
+    if (feeRecipient !== mainSettingsData?.feeRecipient) {
+      counter++;
+    }
 
-      const nodeOperatorFeeRateFormValue =
-        feeRate === 'custom' ? nodeOperatorFeeRateCustom : feeRate;
+    const nodeOperatorFeeRateFormValue =
+      feeRate === 'custom' ? feeRateCustom : feeRate;
 
-      if (
-        nodeOperatorFeeRateFormValue !==
+    if (
+      nodeOperatorFeeRateFormValue !== '' &&
+      nodeOperatorFeeRateFormValue !==
         mainSettingsData?.nodeOperatorFeeRateCurrent
-      ) {
-        counter++;
-      }
+    ) {
+      counter++;
+    }
 
-      if (confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent) {
-        counter++;
-      }
+    if (
+      confirmExpiryFormValue !== '' &&
+      confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent
+    ) {
+      counter++;
+    }
+
+    if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
+      counter++;
     }
 
     return counter;
   }, [
     formFields,
-    isValid,
     mainSettingsData?.confirmExpiryCurrent,
     mainSettingsData?.nodeOperatorFeeRateCurrent,
+    mainSettingsData?.isDepositAllowed,
     mainSettingsData?.feeRecipient,
   ]);
 

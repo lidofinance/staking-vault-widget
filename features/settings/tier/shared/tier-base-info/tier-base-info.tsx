@@ -40,16 +40,18 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
     <Wrapper>
       <BaseInfoContainer>
         <TierLevel>
-          <Text size="xs" strong>
+          <Text size="xs" strong data-testid="tierName">
             {tierName}
           </Text>
-          <ReserveRatio>
+          <ReserveRatio data-testid="tierRR">
             <Text size="xxs">{reserveRatioValue}</Text>
             <Text size="xxs" color="secondary">
               Reserve ratio
             </Text>
           </ReserveRatio>
-          {isActive && <TierStatus>{'Active'}</TierStatus>}
+          {isActive && (
+            <TierStatus data-testid="tierStatus">{'Active'}</TierStatus>
+          )}
         </TierLevel>
         <TierAmount>
           <MintingLimit>
@@ -61,22 +63,22 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                 amount={tierStETHLimit}
                 maxDecimalDigits={3}
                 symbol="stETH"
+                data-testid="tierMintingLimit"
               />
             </Text>
           </MintingLimit>
-          <MintingAvailable>
-            <Text size="xxs" color="secondary">
-              Available &nbsp;
-            </Text>
-            {!!tierStETHLimit && (
+          {!!tierStETHLimit && (
+            <MintingAvailable>
+              <Text size="xxs" color="secondary">
+                Available &nbsp;
+              </Text>
               <Text size="xxs">
                 <FormatToken
                   amount={tierStETHLimit - liabilityStETH}
                   maxDecimalDigits={3}
+                  data-testid="tierAvailableMinting"
                 />{' '}
               </Text>
-            )}
-            {!!tierStETHLimit && (
               <Text size="xxs" color="secondary">
                 /{' '}
                 <FormatToken
@@ -85,8 +87,8 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                   symbol="stETH"
                 />
               </Text>
-            )}
-          </MintingAvailable>
+            </MintingAvailable>
+          )}
         </TierAmount>
       </BaseInfoContainer>
       {children}

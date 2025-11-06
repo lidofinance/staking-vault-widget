@@ -19,7 +19,7 @@ export const VaultMetrics = () => {
 
   return (
     <PartitionContainer title={vaultTexts.actions.tier.vaultMetricsTitle}>
-      <Wrapper>
+      <Wrapper data-testid="vaultMetrics">
         <BaseMetrics />
         <Divider />
         <ExtendedMetrics
