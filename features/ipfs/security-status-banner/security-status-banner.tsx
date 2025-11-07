@@ -2,6 +2,7 @@ import { Button, Modal } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
+import { useAddressValidation } from 'providers/address-validation-provider';
 
 import {
   WarningIcon,
@@ -20,6 +21,7 @@ type WarningContentOptions = {
   isVersionUnsafe: boolean;
   isNotVerifiable: boolean;
   isIpfs: boolean;
+  isNotValidAddress: boolean;
 };
 
 const warningContent = ({
@@ -27,6 +29,7 @@ const warningContent = ({
   isVersionUnsafe,
   isNotVerifiable,
   isIpfs,
+  isNotValidAddress,
 }: WarningContentOptions) => {
   switch (true) {
     // not veryfiable, only for IPFS
@@ -88,6 +91,15 @@ const warningContent = ({
         ),
         canClose: true,
       };
+    case isNotValidAddress:
+      return {
+        content: (
+          <WarningBlock>
+            Sorry, you don’t have access to our services right now.
+          </WarningBlock>
+        ),
+        canClose: false,
+      };
     default:
       return { content: null };
   }
@@ -102,19 +114,27 @@ export const SecurityStatusBanner = () => {
     isNotVerifiable,
     data,
   } = useVersionStatus();
+  const { isNotValidAddress, setIsNotValidAddress } = useAddressValidation();
 
   const { content, canClose, showTwitterLink } = warningContent({
     isUpdateAvailable,
     isVersionUnsafe,
     isNotVerifiable,
     isIpfs: config.ipfsMode,
+    isNotValidAddress,
   });
 
-  const showModal = !!content && !(canClose && areConditionsAccepted);
+  const showModal =
+    (!!content && !(canClose && areConditionsAccepted)) || isNotValidAddress;
 
   return (
     <NoSsrWrapper>
-      <Modal open={showModal}>
+      <Modal
+        open={showModal}
+        onClose={
+          isNotValidAddress ? () => setIsNotValidAddress(false) : undefined
+        }
+      >
         <Wrapper>
           <WarningIcon />
           {content}

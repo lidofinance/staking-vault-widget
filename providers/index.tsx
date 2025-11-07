@@ -6,7 +6,9 @@ import { GlobalStyle } from 'styles';
 import { ConfigProvider } from 'config';
 
 import { Web3Provider } from 'modules/web3';
+import { AddressValidationFile } from 'utils/address-validation';
 
+import { AddressValidationProvider } from './address-validation-provider';
 import { AppFlagProvider } from './app-flag';
 import { IPFSInfoBoxStatusesProvider } from './ipfs-info-box-statuses';
 import { InpageNavigationProvider } from './inpage-navigation';
@@ -18,6 +20,7 @@ import { TransactionModal } from 'shared/components/transaction-modal';
 
 type ProvidersProps = {
   prefetchedManifest?: unknown;
+  validationFile?: AddressValidationFile;
 };
 
 const queryClient = new QueryClient({
@@ -31,6 +34,7 @@ const queryClient = new QueryClient({
 export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
   children,
   prefetchedManifest,
+  validationFile,
 }) => (
   <QueryClientProvider client={queryClient}>
     <ConfigProvider prefetchedManifest={prefetchedManifest}>
@@ -42,9 +46,11 @@ export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
               <InpageNavigationProvider>
                 <ModalProvider>
                   <ExternalForbiddenRouteProvider>
-                    <VaultProvider>
-                      <TransactionModal>{children}</TransactionModal>
-                    </VaultProvider>
+                    <AddressValidationProvider validationFile={validationFile}>
+                      <VaultProvider>
+                        <TransactionModal>{children}</TransactionModal>
+                      </VaultProvider>
+                    </AddressValidationProvider>
                   </ExternalForbiddenRouteProvider>
                 </ModalProvider>
               </InpageNavigationProvider>

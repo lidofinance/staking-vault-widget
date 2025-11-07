@@ -6,12 +6,17 @@ import type {
 } from 'next';
 import type { ParsedUrlQuery } from 'querystring';
 
-import Metrics from 'utilsApi/metrics';
-import { fetchExternalManifest } from './fetch-external-manifest';
 import type { Manifest } from 'config/external-config';
 import { config } from 'config';
 import { shouldRedirectToRoot } from 'config/external-config';
 import { AppPathsType } from 'consts/routing';
+import Metrics from 'utilsApi/metrics';
+
+import { fetchExternalManifest } from './fetch-external-manifest';
+import {
+  AddressValidationFile,
+  loadValidationFile,
+} from './load-validation-file';
 
 export const getDefaultStaticProps = <
   P extends { [key: string]: any } = { [key: string]: any },
@@ -20,17 +25,38 @@ export const getDefaultStaticProps = <
 >(
   currentPath: AppPathsType,
   custom?: GetStaticProps<P, Q, D>,
-): GetStaticProps<P & { ___prefetch_manifest___?: object }, Q, D> => {
+): GetStaticProps<
+  P & {
+    ___prefetch_manifest___?: object;
+    __validation_file__?: AddressValidationFile;
+  },
+  Q,
+  D
+> => {
   return async (context) => {
+    const validationFile = await loadValidationFile();
+
     /// general props
     const { ___prefetch_manifest___ } = await fetchExternalManifest();
-    const props = ___prefetch_manifest___ ? { ___prefetch_manifest___ } : {};
+    const propsWithManifest = ___prefetch_manifest___
+      ? { ___prefetch_manifest___ }
+      : {};
+    const props = {
+      ...propsWithManifest,
+      __validation_file__: validationFile,
+    };
+
     const base: GetStaticPropsResult<typeof props> = {
       props,
       // because next only remembers first value, default to short revalidation period
       revalidate: config.DEFAULT_REVALIDATION,
     };
-    let result = base as GetStaticPropsResult<P>;
+    let result = base as GetStaticPropsResult<
+      P & {
+        ___prefetch_manifest___?: object;
+        __validation_file__?: AddressValidationFile;
+      }
+    >;
 
     if (
       shouldRedirectToRoot(

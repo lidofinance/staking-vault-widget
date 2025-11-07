@@ -68,3 +68,7 @@ export const matomoHost = process.env.MATOMO_URL;
 
 /** @type string */
 export const devnetOverrides = process.env.DEVNET_OVERRIDES;
+
+/** @type boolean */
+export const addressApiValidationEnabled =
+  !!process.env.VALIDATION_SERVICE_BASE_PATH;

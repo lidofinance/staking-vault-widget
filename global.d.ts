@@ -38,6 +38,8 @@ declare module 'next/config' {
       runStartupChecks: string | undefined;
 
       devnetOverrides: string | undefined;
+
+      validationAPI: string | undefined;
     };
     publicRuntimeConfig: {
       basePath: string | undefined;
