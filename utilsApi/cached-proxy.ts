@@ -1,3 +1,4 @@
+import type { NextApiRequest } from 'next';
 import { API } from '@lidofinance/next-api-wrapper';
 import { Cache } from 'memory-cache';
 import { responseTimeExternalMetricWrapper } from './fetch-api-wrapper';
@@ -5,7 +6,7 @@ import { standardFetcher } from 'utils/standardFetcher';
 import { FetcherError } from 'utils/fetcherError';
 
 type ProxyOptions = {
-  proxyUrl: string | (() => string);
+  proxyUrl: string | ((req: NextApiRequest) => string);
   cacheTTL: number;
   timeout?: number;
   ignoreParams?: boolean;
@@ -19,7 +20,7 @@ export const createCachedProxy = ({
   ignoreParams,
   timeout = 5000,
   transformData = (data) => data,
-  metricsHost = typeof proxyUrl === 'function' ? proxyUrl() : proxyUrl,
+  metricsHost,
 }: ProxyOptions): API => {
   const cache = new Cache<string, any>();
   return async (req, res) => {
@@ -35,21 +36,22 @@ export const createCachedProxy = ({
               {} as Record<string, string>,
             ),
           );
-    const cacheKey = `${proxyUrl}-${params?.toString() ?? ''}`;
+    // Generate the actual proxy URL, passing req if the function accepts it
+    const proxyUrlString =
+      typeof proxyUrl === 'function' ? proxyUrl(req) : proxyUrl;
+
+    const cacheKey = `${proxyUrlString}-${params?.toString() ?? ''}`;
 
     const cachedValue = cache.get(cacheKey);
     if (cachedValue) {
       res.json(cachedValue);
       return;
     }
-
-    const proxyUrlString =
-      typeof proxyUrl === 'function' ? proxyUrl() : proxyUrl;
     const url = proxyUrlString + (params ? `?${params.toString()}` : '');
 
     try {
       const data = await responseTimeExternalMetricWrapper({
-        payload: metricsHost,
+        payload: metricsHost || proxyUrlString,
         request: () =>
           standardFetcher(url, {
             signal: AbortSignal.timeout(timeout),
