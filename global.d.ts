@@ -40,6 +40,7 @@ declare module 'next/config' {
       devnetOverrides: string | undefined;
 
       validationAPI: string | undefined;
+      validationFilePath: string | undefined;
     };
     publicRuntimeConfig: {
       basePath: string | undefined;

@@ -158,6 +158,7 @@ export default withBundleAnalyzer({
     devnetOverrides: process.env.DEVNET_OVERRIDES,
 
     validationAPI: process.env.VALIDATION_SERVICE_BASE_PATH,
+    validationFilePath: process.env.VALIDATION_FILE_PATH,
   },
 
   // ATTENTION: If you add a new variable you should declare it in `global.d.ts`

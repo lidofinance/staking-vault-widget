@@ -10,6 +10,7 @@ export const isValidAnyAddress = (input: string): input is Address =>
 // TODO: move to utilsApi?
 export interface AddressValidationFile {
   addresses: string[];
+  isBroken?: boolean;
 }
 
 // TODO: move to utilsApi?

@@ -4,6 +4,7 @@ import type {
   PreviewData,
   Redirect,
 } from 'next';
+
 import type { ParsedUrlQuery } from 'querystring';
 
 import type { Manifest } from 'config/external-config';
