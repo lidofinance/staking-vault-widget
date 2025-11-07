@@ -7,6 +7,7 @@ import { ConfigProvider } from 'config';
 
 import { Web3Provider } from 'modules/web3';
 import { AddressValidationFile } from 'utils/address-validation';
+import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 import { AddressValidationProvider } from './address-validation-provider';
 import { AppFlagProvider } from './app-flag';
@@ -26,7 +27,7 @@ type ProvidersProps = {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      ...STRATEGY_LAZY,
     },
   },
 });
