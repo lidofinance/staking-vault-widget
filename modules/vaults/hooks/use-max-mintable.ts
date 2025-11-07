@@ -50,7 +50,9 @@ export const useMaxMintable = (amount?: bigint | null) => {
       const maxMintableStETH =
         maxMintableShares === 0n
           ? 0n
-          : await stethContract.read.getPooledEthByShares([maxMintableShares]);
+          : await stethContract.read.getPooledEthBySharesRoundUp([
+              maxMintableShares,
+            ]);
 
       return { maxMintableStETH, maxMintableShares };
     },
