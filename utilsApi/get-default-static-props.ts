@@ -19,6 +19,11 @@ import {
   loadValidationFile,
 } from './load-validation-file';
 
+type PrefetchManifestProp = {
+  ___prefetch_manifest___?: object;
+  __validation_file__?: AddressValidationFile;
+};
+
 export const getDefaultStaticProps = <
   P extends { [key: string]: any } = { [key: string]: any },
   Q extends ParsedUrlQuery = ParsedUrlQuery,
@@ -26,24 +31,14 @@ export const getDefaultStaticProps = <
 >(
   currentPath: AppPathsType,
   custom?: GetStaticProps<P, Q, D>,
-): GetStaticProps<
-  P & {
-    ___prefetch_manifest___?: object;
-    __validation_file__?: AddressValidationFile;
-  },
-  Q,
-  D
-> => {
+): GetStaticProps<P & PrefetchManifestProp, Q, D> => {
   return async (context) => {
     const validationFile = await loadValidationFile();
 
     /// general props
     const { ___prefetch_manifest___ } = await fetchExternalManifest();
-    const propsWithManifest = ___prefetch_manifest___
-      ? { ___prefetch_manifest___ }
-      : {};
     const props = {
-      ...propsWithManifest,
+      ...(___prefetch_manifest___ ? { ___prefetch_manifest___ } : {}),
       __validation_file__: validationFile,
     };
 
