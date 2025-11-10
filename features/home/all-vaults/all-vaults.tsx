@@ -4,6 +4,7 @@ import { useConnectedVaultsList } from './use-connected-vaults-list';
 export const AllVaults = () => {
   const {
     vaults,
+    nextUpdateAt,
     isLoading,
     page,
     pagesCount,
@@ -30,6 +31,7 @@ export const AllVaults = () => {
       sortDir={sortDir}
       sortBy={sortBy}
       setSort={setSort}
+      nextUpdateAt={nextUpdateAt}
       dataTestId="allVaultsTable"
     />
   );

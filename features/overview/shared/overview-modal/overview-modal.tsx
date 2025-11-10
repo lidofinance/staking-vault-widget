@@ -1,16 +1,16 @@
 import { FC, PropsWithChildren, ReactNode, useMemo } from 'react';
 import Link from 'next/link';
-import { Modal, Text, InlineLoader } from '@lidofinance/lido-ui';
+import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { FormatToken, FormatPercent } from 'shared/formatters';
-
+import { InlineLoader } from 'shared/components';
 import {
   useOverviewModal,
   type OverviewModalItem,
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-import { AmountLoader, AmountWrapper, ContentWrapper } from './styles';
+import { AmountWrapper, ContentWrapper } from './styles';
 
 type OverviewModalProps = {
   name: OverviewModalItem;
@@ -60,21 +60,15 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
     >
       <ContentWrapper>
         <AmountWrapper>
-          {isLoadingVault ? (
-            <AmountLoader />
-          ) : (
-            <>
-              <Text size="lg" strong data-testid={`${name}-modal-amount`}>
-                {formattedPayload || '-'}
-              </Text>
-              {amountRightDecorator}
-            </>
-          )}
+          <InlineLoader isLoading={isLoadingVault} height={28}>
+            <Text size="lg" strong data-testid={`${name}-modal-amount`}>
+              {formattedPayload || '-'}
+            </Text>
+            {amountRightDecorator}
+          </InlineLoader>
         </AmountWrapper>
-        {isLoadingVault ? (
-          <InlineLoader />
-        ) : (
-          descriptionTextList.map((text, index) => (
+        <InlineLoader isLoading={isLoadingVault}>
+          {descriptionTextList.map((text, index) => (
             <Text
               key={text}
               size="xs"
@@ -82,8 +76,8 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
             >
               {text}
             </Text>
-          ))
-        )}
+          ))}
+        </InlineLoader>
         {children}
         {!isLoadingVault && learnMoreLink && (
           <Link
