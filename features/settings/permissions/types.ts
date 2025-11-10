@@ -3,6 +3,7 @@ import type { editPermissionsSchema, EDITABLE_ROLES_LIST } from './consts';
 import type { z } from 'zod';
 
 export type PermissionKeys = (typeof EDITABLE_ROLES_LIST)[number];
+export type PermissionFormField = `rolesSchema.${PermissionKeys}`;
 
 export type PermissionAccounts = {
   permissionName: PermissionKeys;
@@ -24,3 +25,5 @@ export type FieldSchema = {
   action: 'display' | 'revoke' | 'grant';
   account: Address;
 };
+
+export type PGDRolesKeys = 'noDepositor' | 'noGuarantor';

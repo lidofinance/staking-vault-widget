@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import {
   type TransactionEntry,
+  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -11,8 +12,10 @@ import {
   vaultTexts,
   GoToVault,
   VAULTS_ALL_ROLES_MAP,
+  getPredepositGuaranteeContract,
 } from 'modules/vaults';
 
+import { usePermissionsFormData } from './use-permissions-form-data';
 import type {
   EditPermissionsSchema,
   GrantRole,
@@ -20,8 +23,10 @@ import type {
 } from '../types';
 
 export const useEditPermissions = () => {
+  const { publicClient } = useLidoSDK();
   const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
+  const { data: permissionsData } = usePermissionsFormData();
 
   return {
     editPermissions: useCallback(
@@ -30,8 +35,15 @@ export const useEditPermissions = () => {
           activeVault,
           '[useEditPermissions] activeVault is not defined',
         );
+        invariant(
+          permissionsData,
+          '[useEditPermissions] permissionsData is not defined',
+        );
 
-        const { toGrant, toRevoke } = Object.entries(values).reduce<{
+        const pdgContract = getPredepositGuaranteeContract(publicClient);
+
+        const { rolesSchema, noGuarantor, noDepositor } = values;
+        const { toGrant, toRevoke } = Object.entries(rolesSchema).reduce<{
           toRevoke: GrantRole[];
           toGrant: GrantRole[];
         }>(
@@ -74,7 +86,22 @@ export const useEditPermissions = () => {
             ),
           });
         }
-        const result = withSuccess(
+
+        if (permissionsData.noGuarantor !== noGuarantor) {
+          transactions.push({
+            ...pdgContract.encode.setNodeOperatorGuarantor([noGuarantor]),
+            loadingActionText: vaultTexts.actions.settings.noGuarantorLoading(),
+          });
+        }
+
+        if (permissionsData.noDepositor !== noDepositor) {
+          transactions.push({
+            ...pdgContract.encode.setNodeOperatorDepositor([noDepositor]),
+            loadingActionText: vaultTexts.actions.settings.noDepositorLoading(),
+          });
+        }
+
+        return withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: 'Editing vault permissions',
@@ -82,10 +109,8 @@ export const useEditPermissions = () => {
             renderSuccessContent: GoToVault,
           }),
         );
-
-        return result;
       },
-      [activeVault, sendTX],
+      [activeVault, sendTX, permissionsData, publicClient],
     ),
     ...rest,
   };
