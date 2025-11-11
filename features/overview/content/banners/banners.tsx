@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useVaultOverviewData } from 'features/overview/hooks';
-import { DisconnectState } from './disconnect-state';
+import { PendingDisconnect } from './pending-disconnect';
 import { DepositsPaused } from './deposits-paused';
 import { CapitalQuarantined } from './capital-quarantined';
 
@@ -40,7 +40,7 @@ export const Banners = () => {
 
   return (
     <BannerContainer>
-      <DisconnectState isPendingDisconnect={isPendingDisconnect} />
+      <PendingDisconnect isPendingDisconnect={isPendingDisconnect} />
       {beaconChainDepositsPauseIntent && <DepositsPaused />}
       {isQuarantineActive && (
         <CapitalQuarantined vaultQuarantineState={vaultQuarantineState} />

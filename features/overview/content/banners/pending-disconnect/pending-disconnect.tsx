@@ -8,7 +8,7 @@ type DisconnectStateProps = {
   isPendingDisconnect: boolean | undefined;
 };
 
-export const DisconnectState: FC<DisconnectStateProps> = ({
+export const PendingDisconnect: FC<DisconnectStateProps> = ({
   isPendingDisconnect,
 }) => {
   const { applyReport } = useSendReport();

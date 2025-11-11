@@ -1,14 +1,24 @@
 import { Text, Button } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 
-import { Card, List, Title } from './styles';
+import { useVaultOverviewData } from 'features/overview/hooks';
+
+import { List, Title, Wrapper } from './styles';
 
 const { connectVault } = vaultTexts.metrics;
 
 export const ConnectVault = () => {
+  const { activeVault } = useVault();
+  const { isLoading } = useVaultOverviewData();
+  const { isVaultDisconnected, isVaultConnected } = activeVault ?? {};
+
+  if (!activeVault || isVaultDisconnected || isVaultConnected || isLoading) {
+    return null;
+  }
+
   return (
-    <Card>
+    <Wrapper>
       <Title as="h2" color="text">
         {connectVault.title}
       </Title>
@@ -26,6 +36,6 @@ export const ConnectVault = () => {
       <Button size="sm" onClick={() => {}}>
         {connectVault.action}
       </Button>
-    </Card>
+    </Wrapper>
   );
 };

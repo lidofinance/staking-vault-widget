@@ -8,14 +8,12 @@ export const Title = styled(Heading)`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const Card = styled(Block)`
+export const Wrapper = styled(Block)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: ${({ theme }) => theme.spaceMap.md}px;
-  max-width: 868px;
   width: 100%;
-  margin: 0 auto;
   padding: ${({ theme }) => theme.spaceMap.xl}px;
   background-color: ${({ theme }) => theme.colors.foreground};
 

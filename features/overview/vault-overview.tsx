@@ -7,11 +7,17 @@ import {
   useMemo,
 } from 'react';
 import invariant from 'tiny-invariant';
-import { Button, Text } from '@lidofinance/lido-ui';
 
-import { useVault, vaultTexts } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults';
 
-import { OverviewContent } from './content';
+import {
+  OverviewContent,
+  ReportState,
+  General,
+  VaultDisconnected,
+  ConnectVault,
+  RetryFetching,
+} from './content';
 import { useVaultOverviewData } from './hooks';
 
 import type {
@@ -20,11 +26,7 @@ import type {
   SectionData,
 } from './types';
 
-import { Content, ErrorState, OverviewContentWrapper } from './styles';
-import { ReportState } from './content/report-state';
-import { General } from './content/general';
-import { VaultDisconnected } from './content/vault-disconnected';
-import { ConnectVault } from './content/connect-vault';
+import { Content, OverviewContentWrapper } from './styles';
 
 type MetricText = {
   title: string;
@@ -60,10 +62,7 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
     data: vaultData,
     isPending: isLoadingVault,
     error,
-    refetch,
   } = useVaultOverviewData();
-  const { activeVault } = useVault();
-  const { isVaultDisconnected } = activeVault ?? {};
 
   useEffect(() => {
     if (error) {
@@ -93,23 +92,9 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
         <ReportState />
         <Content>
           <General />
-          <VaultDisconnected isVaultDisconnected={isVaultDisconnected} />
+          <VaultDisconnected />
           <OverviewContent />
-          {!!error && !isVaultDisconnected && (
-            <ErrorState>
-              <Text color="error" size="xs" weight={700}>
-                Failed to fetch data
-              </Text>
-              <Button
-                color="error"
-                variant="ghost"
-                size="xs"
-                onClick={() => refetch()}
-              >
-                Retry
-              </Button>
-            </ErrorState>
-          )}
+          <RetryFetching />
         </Content>
         <ConnectVault />
       </OverviewContentWrapper>

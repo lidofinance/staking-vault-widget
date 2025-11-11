@@ -1,16 +1,16 @@
-import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
+
+import { useVault } from 'modules/vaults';
+
+import { useVaultOverviewData } from 'features/overview/hooks';
 
 import { Wrapper } from './styles';
 
-type VaultDisconnectedProps = {
-  isVaultDisconnected: boolean | undefined;
-};
+export const VaultDisconnected = () => {
+  const { activeVault } = useVault();
+  const { isLoading } = useVaultOverviewData();
 
-export const VaultDisconnected: FC<VaultDisconnectedProps> = ({
-  isVaultDisconnected,
-}) => {
-  if (!isVaultDisconnected) {
+  if (!activeVault?.isVaultDisconnected || isLoading) {
     return null;
   }
 
