@@ -9,9 +9,9 @@ import {
 import invariant from 'tiny-invariant';
 import { Button, Text } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
-import { OverviewContent } from './content';
+import { useVault, vaultTexts } from 'modules/vaults';
 
+import { OverviewContent } from './content';
 import { useVaultOverviewData } from './hooks';
 
 import type {
@@ -20,7 +20,11 @@ import type {
   SectionData,
 } from './types';
 
-import { ErrorState } from './styles';
+import { Content, ErrorState, OverviewContentWrapper } from './styles';
+import { ReportState } from './content/report-state';
+import { General } from './content/general';
+import { VaultDisconnected } from './content/vault-disconnected';
+import { ConnectVault } from './content/connect-vault';
 
 type MetricText = {
   title: string;
@@ -58,6 +62,8 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
     error,
     refetch,
   } = useVaultOverviewData();
+  const { activeVault } = useVault();
+  const { isVaultDisconnected } = activeVault ?? {};
 
   useEffect(() => {
     if (error) {
@@ -83,23 +89,30 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
 
   return (
     <VaultOverviewContext.Provider value={value}>
-      {!error ? (
-        <OverviewContent />
-      ) : (
-        <ErrorState>
-          <Text color="error" size="xs" weight={700}>
-            Failed to fetch data
-          </Text>
-          <Button
-            color="error"
-            variant="ghost"
-            size="xs"
-            onClick={() => refetch()}
-          >
-            Retry
-          </Button>
-        </ErrorState>
-      )}
+      <OverviewContentWrapper>
+        <ReportState />
+        <Content>
+          <General />
+          <VaultDisconnected isVaultDisconnected={isVaultDisconnected} />
+          <OverviewContent />
+          {!!error && !isVaultDisconnected && (
+            <ErrorState>
+              <Text color="error" size="xs" weight={700}>
+                Failed to fetch data
+              </Text>
+              <Button
+                color="error"
+                variant="ghost"
+                size="xs"
+                onClick={() => refetch()}
+              >
+                Retry
+              </Button>
+            </ErrorState>
+          )}
+        </Content>
+        <ConnectVault />
+      </OverviewContentWrapper>
     </VaultOverviewContext.Provider>
   );
 };

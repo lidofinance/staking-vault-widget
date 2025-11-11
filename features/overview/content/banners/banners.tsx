@@ -40,10 +40,7 @@ export const Banners = () => {
 
   return (
     <BannerContainer>
-      <DisconnectState
-        isPendingDisconnect={isPendingDisconnect}
-        isVaultDisconnected={isVaultDisconnected}
-      />
+      <DisconnectState isPendingDisconnect={isPendingDisconnect} />
       {beaconChainDepositsPauseIntent && <DepositsPaused />}
       {isQuarantineActive && (
         <CapitalQuarantined vaultQuarantineState={vaultQuarantineState} />

@@ -3,11 +3,11 @@ import { Identicon, Text } from '@lidofinance/lido-ui';
 import Link from 'next/link';
 import { zeroAddress } from 'viem';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVault, VAULT_TOTAL_BASIS_POINTS, vaultTexts } from 'modules/vaults';
 import { AddressPopover } from 'shared/components/address-badge/address-popover';
+import { formatPercent } from 'utils';
 
 import { useIdenticonSize } from 'features/overview/inner';
-import { useVaultOverview } from 'features/overview/vault-overview';
 
 import {
   VaultContainer,
@@ -15,17 +15,26 @@ import {
   VaultBaseInfo,
   VaultRR,
   VaultAddressAndTier,
+  VaultState,
 } from './styles';
 
 const { general } = vaultTexts.metrics;
 
 export const Vault = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const { values } = useVaultOverview();
+  const { activeVault } = useVault();
 
-  const { address, reserveRatio, isVaultConnected } = values || {};
+  const {
+    address,
+    reserveRatioBP,
+    isVaultDisconnected,
+    isVaultConnected,
+    isPendingDisconnect,
+  } = activeVault ?? {};
   const vaultAddress = address ?? zeroAddress;
-
+  const reserveRatio = formatPercent.format(
+    reserveRatioBP ?? 0 / VAULT_TOTAL_BASIS_POINTS,
+  );
   const diameter = useIdenticonSize();
 
   return (
@@ -51,6 +60,11 @@ export const Vault = () => {
               data-testid="vaultAddress"
             />
           </AddressPopover>
+          {isVaultDisconnected && <VaultState>Disconnected</VaultState>}
+          {isPendingDisconnect && <VaultState>Pending disconnect</VaultState>}
+          {!isVaultConnected && !isVaultDisconnected && (
+            <VaultState>Not connected</VaultState>
+          )}
         </VaultAddressAndTier>
         {isVaultConnected && (
           <VaultRR>

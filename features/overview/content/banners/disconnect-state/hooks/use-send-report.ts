@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 
-import { GoToVault, useReportCalls } from 'modules/vaults';
+import {
+  GoToVault,
+  useReportCalls,
+  useVault,
+  vaultTexts,
+} from 'modules/vaults';
 import {
   TransactionEntry,
   useSendTransaction,
@@ -9,27 +14,28 @@ import {
 
 export const useSendReport = () => {
   const { sendTX, ...rest } = useSendTransaction();
+  const { refetch } = useVault();
   const prepareReportCalls = useReportCalls();
 
   return {
     applyReport: useCallback(async () => {
-      // const loadingActionText = vaultTexts.actions.repay.loading(token);
-      const loadingActionText = 'Applying report';
-      const mainActionCompleteText = 'Applying report has done';
+      const mainActionLoadingText = vaultTexts.actions.report.loading;
+      const mainActionCompleteText = vaultTexts.actions.report.completed;
 
       const transactions: TransactionEntry[] = [...prepareReportCalls()];
       const { success } = await withSuccess(
         sendTX({
           transactions,
           forceAtomic: true,
-          mainActionLoadingText: loadingActionText,
+          mainActionLoadingText,
           mainActionCompleteText,
           renderSuccessContent: GoToVault,
         }),
       );
 
+      await refetch({ cancelRefetch: true, throwOnError: false });
       return success;
-    }, [prepareReportCalls, sendTX]),
+    }, [prepareReportCalls, sendTX, refetch]),
     ...rest,
   };
 };

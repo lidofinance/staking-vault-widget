@@ -46,7 +46,6 @@ export type VaultQuarantineState = {
 
 export type VaultInfo = VaultConnection &
   VaultRecordWithoutDelta & {
-    isVaultConnected: boolean;
     address: Address;
     owner: Address;
     nodeOperator: Address;
@@ -132,13 +131,10 @@ const getVaultData = async ({
     ] as const,
   });
 
-  const [vaultRecord, isVaultConnected, locked, isPendingDisconnect] =
-    await Promise.all([
-      hub.read.vaultRecord([vault.address]),
-      hub.read.isVaultConnected([vault.address]),
-      hub.read.locked([vault.address]),
-      hub.read.isPendingDisconnect([vault.address]),
-    ]);
+  const [vaultRecord, locked] = await Promise.all([
+    hub.read.vaultRecord([vault.address]),
+    hub.read.locked([vault.address]),
+  ]);
 
   const {
     liabilityShares,
@@ -200,7 +196,6 @@ const getVaultData = async ({
   });
 
   return {
-    isVaultConnected,
     address,
     nodeOperator,
     totalValue,
@@ -230,7 +225,6 @@ const getVaultData = async ({
     tierId,
     tierShareLimit,
     tierStETHLimit,
-    isPendingDisconnect,
     ...rest,
     ...restVaultRecord,
   };
@@ -384,7 +378,6 @@ const selectOverviewData = ({
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
     isPendingDisconnect,
-    isVaultDisconnected: disconnectInitiatedTs === 0,
     disconnectInitiatedTs,
   };
 };

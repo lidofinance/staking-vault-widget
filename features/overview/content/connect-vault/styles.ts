@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { Heading } from '@lidofinance/lido-ui';
+import { Heading, Block } from '@lidofinance/lido-ui';
+import { devicesHeaderMedia } from 'styles/global';
 
 export const Title = styled(Heading)`
   font-size: ${({ theme }) => theme.fontSizesMap.lg}px;
@@ -7,14 +8,20 @@ export const Title = styled(Heading)`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const Card = styled.div`
+export const Card = styled(Block)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: ${({ theme }) => theme.spaceMap.md}px;
-  padding: ${({ theme }) => theme.spaceMap.md}px;
-  border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.background};
+  max-width: 868px;
+  width: 100%;
+  margin: 0 auto;
+  padding: ${({ theme }) => theme.spaceMap.xl}px;
+  background-color: ${({ theme }) => theme.colors.foreground};
+
+  @media ${devicesHeaderMedia.tablet} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
 `;
 
 export const List = styled.ul`

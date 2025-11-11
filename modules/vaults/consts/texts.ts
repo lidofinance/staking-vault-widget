@@ -75,6 +75,10 @@ export const vaultTexts = {
       submit: (token: LidoToken, amount?: bigint | null) =>
         `Repay ${balance(amount)}${token}` as const,
     },
+    report: {
+      loading: 'Applying oracle report' as const,
+      completed: 'Applying oracle report has done' as const,
+    },
     supply: {
       available: `Available to supply`,
       mint: {
@@ -109,9 +113,6 @@ export const vaultTexts = {
       notEnoughEther: `Not enough unlocked ETH to claim` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
-    },
-    report: {
-      loading: 'Applying oracle report',
     },
     weth: {
       loadingUnwrap: 'Unwrapping wETH',
