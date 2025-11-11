@@ -74,6 +74,8 @@ export type VaultInfo = VaultConnection &
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
     isPendingDisconnect: boolean;
+    isVaultDisconnected: boolean;
+    isVaultConnected: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -247,6 +249,7 @@ const selectOverviewData = ({
     balance,
     feeRate: nodeOperatorFee,
     nodeOperator,
+    isVaultDisconnected,
     isVaultConnected,
     settledLidoFees,
     cumulativeLidoFees,
@@ -352,7 +355,6 @@ const selectOverviewData = ({
     feeRate,
     collateral,
     pendingUnlockEth,
-    isVaultConnected,
     netApr,
     unsettledLidoFeesEth,
     unsettledLidoFees,
@@ -378,6 +380,8 @@ const selectOverviewData = ({
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
     isPendingDisconnect,
+    isVaultDisconnected,
+    isVaultConnected,
     disconnectInitiatedTs,
   };
 };
