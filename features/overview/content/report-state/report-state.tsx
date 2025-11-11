@@ -16,7 +16,7 @@ export const ReportState = () => {
       <InlineLoader isLoading={isPending} width={140}>
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reportData">
-            Last updated:{' '}
+            Metrics are based on simulated report data. Last updated:{' '}
             {data && formatCustomDate(Number(data.hubReport.timestamp))}
             {error && DATA_UNAVAILABLE}
           </Text>
