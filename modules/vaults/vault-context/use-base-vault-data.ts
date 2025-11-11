@@ -107,6 +107,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isVaultDisconnected: connection.disconnectInitiatedTs === 0,
         isVaultConnected,
         isPendingDisconnect,
+        isReportAvailable,
         ...connection,
       };
     },

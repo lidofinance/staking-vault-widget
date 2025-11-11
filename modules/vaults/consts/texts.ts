@@ -249,6 +249,18 @@ export const vaultTexts = {
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
   metrics: {
+    pendingDisconnect: {
+      title: 'Pending disconnect from Lido Core',
+      description: {
+        reportIsAvailable:
+          'Lido Core disconnection has been initiated. To complete the process, apply the latest Oracle report. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+        reportIsNotAvailable:
+          'Lido Core disconnection has been initiated. Oracle report submission is currently unavailable. Please wait for the next reporting window. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+      },
+      actions: {
+        applyReport: 'Apply the latest Oracle report',
+      },
+    },
     capacityExceeded: {
       title: 'stETH minting balance exceeded',
       description:
