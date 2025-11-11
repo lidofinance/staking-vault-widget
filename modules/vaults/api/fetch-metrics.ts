@@ -33,7 +33,7 @@ export const fetchVaultMetrics = async (
   { publicClient }: FetchVaultMetricsContext,
   { vaultAddress }: FetchVaultMetricsParams,
 ): Promise<VaultApiMetrics> => {
-  const apiURL = getApiURL(publicClient.chain.id, 'vaultsApi');
+  const apiURL = getApiURL('vaultsApiBasePath');
   if (!apiURL) {
     throw new Error(`API URL not found for chain ID: ${publicClient.chain.id}`);
   }

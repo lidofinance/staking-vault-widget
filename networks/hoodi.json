@@ -12,8 +12,5 @@
     "vaultViewer": "0x7155ef6c1487442AB62B2b1c2A87956D3d2dBa36",
     "lazyOracle": "0xf41491C79C30e8f4862d3F4A5b790171adB8e04A",
     "operatorGrid": "0x501e678182bB5dF3f733281521D3f3D1aDe69917"
-  },
-  "api": {
-    "vaultsApi": "https://stvaults-api-hoodi.testnet.fi"
   }
 }
