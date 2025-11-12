@@ -22,7 +22,7 @@ export const PendingDisconnect: FC<DisconnectStateProps> = ({
     ? texts.description.reportIsAvailable
     : texts.description.reportIsNotAvailable;
 
-  if (!isPendingDisconnect) {
+  if (!isPendingDisconnect || !!activeVault?.isVaultDisconnected) {
     return null;
   }
 

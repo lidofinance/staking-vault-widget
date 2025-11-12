@@ -1,3 +1,5 @@
+import { useVault } from 'modules/vaults';
+
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { Balance } from './balance';
@@ -10,10 +12,12 @@ import { SectionDivider } from '../shared';
 
 export const OverviewContent = () => {
   const { isLoadingVault, values } = useVaultOverview();
+  const { activeVault } = useVault();
 
   return (
     <>
-      {(isLoadingVault || values?.isVaultConnected) && (
+      {(isLoadingVault ||
+        (values?.isVaultConnected && !activeVault.isVaultDisconnected)) && (
         <>
           <SectionDivider />
           <Banners />
