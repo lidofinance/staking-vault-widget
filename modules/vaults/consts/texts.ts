@@ -590,6 +590,14 @@ export const vaultTexts = {
       title: "Node operator's sub-role for proving unknown validators",
       hint: "Node operator's sub-role for proving unknown validators",
     },
+    guarantor: {
+      title: 'Guarantor',
+      hint: 'Manages the Node Operator’s guarantor bond: top up, withdraw, and claim refunds.',
+    },
+    depositor: {
+      title: 'Depositor',
+      hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
+    },
   },
   // common texts like errors, warnings, etc.
   common: {

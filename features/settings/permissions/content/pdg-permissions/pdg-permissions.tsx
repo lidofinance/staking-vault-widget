@@ -1,3 +1,5 @@
+import { vaultTexts } from 'modules/vaults';
+
 import {
   PDGAddress,
   RoleDescription,
@@ -11,14 +13,22 @@ import {
   PermissionRoleWrapper,
 } from '../styles';
 
+const { guarantor, depositor } = vaultTexts.roles;
+
 const dataTestId = 'pdgPermissions';
-const noPermissions: { title: string; fieldName: PGDRolesKeys }[] = [
+const noPermissions: {
+  title: string;
+  hint: string;
+  fieldName: PGDRolesKeys;
+}[] = [
   {
-    title: 'Guarantor',
+    title: guarantor.title,
+    hint: guarantor.hint,
     fieldName: 'noGuarantor',
   },
   {
-    title: 'Depositor',
+    title: depositor.title,
+    hint: depositor.hint,
     fieldName: 'noDepositor',
   },
 ];
@@ -30,7 +40,7 @@ export const PDGPermissions = () => {
         {'Predeposit guarantee permissions'}
       </PermissionGroupTitle>
       <PermissionBlock data-testid={`${dataTestId}-block`}>
-        {noPermissions.map(({ title, fieldName }) => {
+        {noPermissions.map(({ title, hint, fieldName }) => {
           const testId = `${dataTestId}-${fieldName}`;
 
           return (
@@ -41,7 +51,7 @@ export const PDGPermissions = () => {
             >
               <RoleDescription
                 description={title}
-                tooltip={'hint'}
+                tooltip={hint}
                 dataTestId={testId}
               />
               <PDGAddress permissionFormField={fieldName} dataTestId={testId} />
