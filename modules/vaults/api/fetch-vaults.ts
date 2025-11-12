@@ -184,8 +184,10 @@ const fetchVaultsDataBatchRPC = async (
   limit: bigint,
 ): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
   const vaultViewer = getVaultViewerContract(publicClient);
-  const vaultsData = await vaultViewer.read.vaultsDataBatch([offset, limit]);
-  const totalVaultsCount = await vaultViewer.read.vaultsCount();
+  const [vaultsData, totalVaultsCount] = await Promise.all([
+    vaultViewer.read.vaultsDataBatch([offset, limit]),
+    vaultViewer.read.vaultsCount(),
+  ]);
 
   const vaultsCalculatedData = vaultsData.map((vaultData) => {
     const { totalValue, liabilityStETH, connection, record } = vaultData;
