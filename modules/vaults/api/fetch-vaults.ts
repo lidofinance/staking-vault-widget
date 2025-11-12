@@ -182,9 +182,10 @@ const fetchVaultsDataBatchRPC = async (
   { publicClient }: FetchVaultsContext,
   offset: bigint,
   limit: bigint,
-): Promise<VaultEntryRaw[]> => {
+): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
   const vaultViewer = getVaultViewerContract(publicClient);
   const vaultsData = await vaultViewer.read.vaultsDataBatch([offset, limit]);
+  const totalVaultsCount = await vaultViewer.read.vaultsCount();
 
   const vaultsCalculatedData = vaultsData.map((vaultData) => {
     const { totalValue, liabilityStETH, connection, record } = vaultData;
@@ -205,22 +206,25 @@ const fetchVaultsDataBatchRPC = async (
     };
   });
 
-  return vaultsCalculatedData;
+  return {
+    vaults: vaultsCalculatedData,
+    total: Number(totalVaultsCount),
+  };
 };
 
+const OFFSET_BY_ADDRESS = BigInt(0);
+const LIMIT_BY_ADDRESS = BigInt(200);
 const fetchVaultsDataByAddressRPC = async (
   ctx: FetchVaultsContext,
   address: Address,
-  offset: bigint,
-  limit: bigint,
-): Promise<VaultEntryRaw[]> => {
+): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
   const { publicClient } = ctx;
   const vaultViewer = getVaultViewerContract(publicClient);
 
   const vaultAddresses = await vaultViewer.read.vaultsByOwnerBatch([
     address,
-    offset,
-    limit,
+    OFFSET_BY_ADDRESS,
+    LIMIT_BY_ADDRESS,
   ]);
 
   const vaults = await Promise.all(
@@ -237,29 +241,23 @@ const fetchVaultsDataByAddressRPC = async (
     ),
   );
 
-  return vaults;
+  return { vaults, total: vaults.length };
 };
 
 const fetchConnectedVaultsRPC = async (
   ctx: FetchVaultsContext,
   params: FetchVaultsParams,
 ): Promise<VaultsApiResponse> => {
-  const { publicClient } = ctx;
-
-  const vaultViewer = getVaultViewerContract(publicClient);
-
-  const fromCursor = BigInt(params.perPage * (params.page - 1));
+  const offset = BigInt(params.perPage * (params.page - 1));
   const limit = BigInt(params.perPage);
 
-  const vaults = await (params.address
-    ? fetchVaultsDataByAddressRPC(ctx, params.address, fromCursor, limit)
-    : fetchVaultsDataBatchRPC(ctx, fromCursor, limit));
-
-  const totalVaultsCount = await vaultViewer.read.vaultsCount();
+  const { vaults, total } = await (params.address
+    ? fetchVaultsDataByAddressRPC(ctx, params.address)
+    : fetchVaultsDataBatchRPC(ctx, offset, limit));
 
   return {
     data: vaults,
-    total: Number(totalVaultsCount),
+    total,
     isAPI: false,
   };
 };
