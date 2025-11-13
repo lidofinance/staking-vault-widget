@@ -77,7 +77,7 @@ export const vaultTexts = {
     },
     report: {
       loading: 'Applying oracle report' as const,
-      completed: 'Applying oracle report has done' as const,
+      completed: 'Applying oracle report is done' as const,
     },
     supply: {
       available: `Available to supply`,
