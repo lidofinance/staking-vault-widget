@@ -21,7 +21,9 @@ type VotingSelectorProps = {
 const radioContentMap: Record<PDGOptions, ReactNode> = {
   STRICT: <PolicyDescription option="STRICT" />,
   ALLOW_PROVE: <PolicyDescription option="ALLOW_PROVE" />,
-  ALLOW_DEPOSIT_AND_PROVE: <PolicyDescription option="ALLOW_PROVE" />,
+  ALLOW_DEPOSIT_AND_PROVE: (
+    <PolicyDescription option="ALLOW_DEPOSIT_AND_PROVE" />
+  ),
 };
 
 const pdgOptionsList = Object.entries(PDGPolicy) as [PDGOptions, string][];
