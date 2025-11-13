@@ -5,3 +5,4 @@ export * from './controllers';
 export * from './admins';
 export * from './voting';
 export * from './manage-deposits';
+export * from './pdg-policy';

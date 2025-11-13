@@ -23,5 +23,5 @@ export { Chip } from './chip';
 export { AddressWithPopover } from './address-with-popover';
 export { Backdrop } from './backdrop';
 export { Hint } from './hint';
-export { RadioInput, RadioWithInput } from './radio-input';
+export { RadioInput, RadioWithInput, RadioInputProps } from './radio-input';
 export { InlineLoader } from './value-with-loader';

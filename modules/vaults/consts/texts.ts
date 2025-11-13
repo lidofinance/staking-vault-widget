@@ -195,10 +195,12 @@ export const vaultTexts = {
       resumeBeaconChainDeposits: 'Resume deposits to beacon chain' as const,
       pauseBeaconChainDeposits: 'Pause deposits to beacon chain' as const,
       groups: {
+        deposits: 'Deposits',
         address: 'Addresses',
         settings: 'Settings',
       },
       feeRecipient: 'Setting node operator fee recipient address',
+      pdgPolicy: 'Setting PDG Policy',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
@@ -208,6 +210,16 @@ export const vaultTexts = {
           title: 'Node Operator Fee Recipient',
           editLabel: 'Set new address',
           hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
+        },
+        pdgPolicy: {
+          title: 'Predeposit Guarantee Policy',
+          optionsDescription: {
+            STRICT: 'deposits require the full PDG process.',
+            ALLOW_PROVE:
+              'allows the node operator to prove unknown validators to PDG.',
+            ALLOW_DEPOSIT_AND_PROVE:
+              'allows the node operator to perform unguaranteed deposits (bypassing the predeposit requirement) and prove unknown validators.',
+          },
         },
         feeRate: {
           title: 'Node Operator Fee',
