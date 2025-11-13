@@ -71,3 +71,10 @@ export const devnetOverrides = process.env.DEVNET_OVERRIDES;
 
 /** @type string */
 export const vaultsApiBasePath = process.env.VAULTS_API_BASE_PATH;
+
+/** @type boolean */
+export const addressApiValidationEnabled =
+  !!process.env.VALIDATION_SERVICE_BASE_PATH;
+
+/** @type string */
+export const validationFilePath = process.env.VALIDATION_FILE_PATH;
