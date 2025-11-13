@@ -33,7 +33,7 @@ export const Vault = () => {
   } = activeVault ?? {};
   const vaultAddress = address ?? zeroAddress;
   const reserveRatio = formatPercent.format(
-    reserveRatioBP ?? 0 / VAULT_TOTAL_BASIS_POINTS,
+    (reserveRatioBP ?? 0) / VAULT_TOTAL_BASIS_POINTS,
   );
   const diameter = useIdenticonSize();
 
