@@ -17,14 +17,12 @@ export const useWithdrawChart = () => {
 
     const totalValueAmount = formatBalance(totalValue).trimmed;
     const withdrawableEthAmount = formatBalance(withdrawableEther).trimmed;
-    const notWithdrawableEthAmount = formatBalance(
-      totalValue - withdrawableEther,
-    ).trimmed;
+    const notWithdrawableAmount = totalValue - withdrawableEther;
 
     return {
       totalValueAmount,
       withdrawableEthAmount,
-      notWithdrawableEthAmount,
+      notWithdrawableAmount,
       chartData: [
         {
           color: '#00A3FF',

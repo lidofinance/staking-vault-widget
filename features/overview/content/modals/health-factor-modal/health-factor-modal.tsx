@@ -131,9 +131,9 @@ export const HealthFactorModal = () => {
 
   const {
     carrySpreadApr,
-    bottomLineEth,
-    netStakingRewardsEth,
-    rebaseRewardEth,
+    bottomLine,
+    netStakingRewards,
+    rebaseReward,
     healthFactorNumber,
   } = values || {};
 
@@ -172,7 +172,8 @@ export const HealthFactorModal = () => {
       <SectionDivider />
       <ModalSection
         title={health.carrySpread.title}
-        amount={carrySpreadApr}
+        amountType="percent"
+        amountValue={carrySpreadApr}
         description={health.carrySpread.description}
         dataTestId={`${dataTestIdPrefix}-carrySpreadSection`}
       >
@@ -184,7 +185,9 @@ export const HealthFactorModal = () => {
       <SectionDivider />
       <ModalSection
         title={health.bottomLine.title}
-        amount={bottomLineEth}
+        amountValue={bottomLine}
+        amountType="token"
+        amountSymbol="ETH"
         description={health.bottomLine.description}
         dataTestId={`${dataTestIdPrefix}-bottomLineSection`}
       >
@@ -196,14 +199,17 @@ export const HealthFactorModal = () => {
       <SectionDivider />
       <ModalSection
         title={health.netStakingRewards.title}
-        amount={netStakingRewardsEth}
+        amountValue={netStakingRewards}
+        amountType="token"
+        amountSymbol="ETH"
         description={health.netStakingRewards.description}
         dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={health.stethRebase.title}
-        amount={rebaseRewardEth}
+        amountValue={rebaseReward}
+        amountType="token"
         description={health.stethRebase.description}
         dataTestId={`${dataTestIdPrefix}-stethRebaseSection`}
       />

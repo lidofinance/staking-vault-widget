@@ -6,6 +6,7 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import { FormatToken } from 'shared/formatters';
 
 import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import {
@@ -24,14 +25,9 @@ const dataTestIdPrefix = 'withdrawableEther-modal';
 
 export const ImmediateWithdrawalModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
-  const {
-    totalValueETH,
-    balanceEth,
-    withdrawableEth,
-    collateral,
-    feeObligationEth,
-  } = values || {};
-  const { chartData, notWithdrawableEthAmount } = useWithdrawChart();
+  const { totalValue, collateral, feeObligation, withdrawableEther, balance } =
+    values || {};
+  const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
   return (
     <OverviewModal name="withdrawableEther" symbol="ETH">
@@ -40,7 +36,11 @@ export const ImmediateWithdrawalModal = () => {
           <ChartHeading data-testid={`${dataTestIdPrefix}-chartHeading`}>
             <Text size="xxs">Total value:</Text>
             <Text size="xxs" strong>
-              {totalValueETH}
+              <FormatToken
+                amount={totalValue}
+                maxDecimalDigits={8}
+                symbol={'ETH'}
+              />
             </Text>
           </ChartHeading>
           <ChartLine
@@ -57,7 +57,11 @@ export const ImmediateWithdrawalModal = () => {
                 Available for Immediate Withdrawal
               </Text>
               <Text size="xxs" strong>
-                {withdrawableEth}
+                <FormatToken
+                  amount={withdrawableEther}
+                  maxDecimalDigits={4}
+                  symbol={'ETH'}
+                />
               </Text>
             </ListItem>
             <ListItem color="notWithdrawable">
@@ -65,7 +69,11 @@ export const ImmediateWithdrawalModal = () => {
                 Not withdrawable
               </Text>
               <Text size="xxs" strong>
-                {notWithdrawableEthAmount} ETH
+                <FormatToken
+                  amount={notWithdrawableAmount}
+                  maxDecimalDigits={4}
+                  symbol={'ETH'}
+                />
               </Text>
             </ListItem>
           </List>
@@ -74,39 +82,51 @@ export const ImmediateWithdrawalModal = () => {
       <SectionDivider />
       <ModalSection
         title={withdrawal.totalValue.title}
-        amount={totalValueETH}
+        amountValue={totalValue}
+        amountType="token"
+        amountSymbol="ETH"
         description={withdrawal.totalValue.description}
         dataTestId={`${dataTestIdPrefix}-totalValueSection`}
       >
         <ModalSection
           title="Locked by Collateral"
           titleLeftDecorator={<NewLine />}
-          amount={collateral}
+          amountValue={collateral}
+          amountType="token"
+          amountSymbol="ETH"
           dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
         />
         <ModalSection
           title="Fee obligations"
           titleLeftDecorator={<NewLine />}
-          amount={feeObligationEth}
+          amountValue={feeObligation}
+          amountType="token"
+          amountSymbol="ETH"
           dataTestId={`${dataTestIdPrefix}-totalValueSection-feeObligationsSubsection`}
         />
         <ModalSection
           title="Withdrawable part of Total Value"
           titleLeftDecorator={<NewLine />}
-          amount={withdrawableEth}
+          amountValue={withdrawableEther}
+          amountType="token"
+          amountSymbol="ETH"
           dataTestId={`${dataTestIdPrefix}-totalValueSection-withdrawablePartSubsection`}
         />
       </ModalSection>
       <SectionDivider />
       <ModalSection
         title="Not staked stVault Balance"
-        amount={balanceEth}
+        amountValue={balance}
+        amountType="token"
+        amountSymbol="ETH"
         dataTestId={`${dataTestIdPrefix}-notStakedStVaultBalanceSection`}
       />
       <SectionDivider />
       <ModalSection
         title={withdrawal.availableForWithdrawal.title}
-        amount={withdrawableEth}
+        amountValue={withdrawableEther}
+        amountType="token"
+        amountSymbol="ETH"
         description={withdrawal.availableForWithdrawal.description}
         dataTestId={`${dataTestIdPrefix}-availableForWithdrawalSection`}
       />

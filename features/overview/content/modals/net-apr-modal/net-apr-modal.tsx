@@ -95,11 +95,12 @@ export const NetAprModal = () => {
   const { values } = useVaultOverview();
 
   const {
-    netStakingRewardsEth,
-    grossStakingRewardsEth,
-    nodeOperatorRewardsEth,
-    unsettledLidoFeesEth,
+    netStakingRewards,
+    grossStakingRewards,
+    nodeOperatorRewards,
+    unsettledLidoFees,
   } = values || {};
+
   return (
     <OverviewModal name="netApr">
       <Formula
@@ -109,7 +110,9 @@ export const NetAprModal = () => {
       <SectionDivider />
       <ModalSection
         title={netApr.netStakingRewards.title}
-        amount={netStakingRewardsEth}
+        amountType="token"
+        amountValue={netStakingRewards}
+        amountSymbol="ETH"
         description={netApr.netStakingRewards.description}
         dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       >
@@ -121,21 +124,27 @@ export const NetAprModal = () => {
       <SectionDivider />
       <ModalSection
         title={netApr.grossStakingRewards.title}
-        amount={grossStakingRewardsEth}
+        amountValue={grossStakingRewards}
+        amountType="token"
+        amountSymbol="ETH"
         description={netApr.grossStakingRewards.description}
         dataTestId={`${dataTestIdPrefix}-grossStakingRewardsSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.noFee.title}
-        amount={nodeOperatorRewardsEth}
+        amountValue={nodeOperatorRewards}
+        amountType="token"
+        amountSymbol="ETH"
         description={netApr.noFee.description}
         dataTestId={`${dataTestIdPrefix}-noFeeSection`}
       />
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
-        amount={unsettledLidoFeesEth}
+        amountValue={unsettledLidoFees}
+        amountType="token"
+        amountSymbol="ETH"
         description={netApr.lidoFees.description}
         dataTestId={`${dataTestIdPrefix}-lidoFeesSection`}
       />

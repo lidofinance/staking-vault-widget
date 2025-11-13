@@ -395,7 +395,9 @@ export const vaultTexts = {
     },
     netApr: {
       title: 'Net staking APR',
-      hint: 'Estimated yearly returns from staking in the vault, after fees deductions but without taking into account stETH Liability growth due to stETH rebase.',
+      hint: 'Estimated yearly returns from staking in the vault, after fees deductions, but without considering stETH Liability growth due to stETH rebase. This percentage reflects moving average of APR for the past 7 day period. This percentage does not guarantee future performance and is subject to change.',
+      description:
+        'Estimated yearly return after fees, excluding stETH liability growth from rebasing. Based on the 7-day moving average APR. Past performance doesn’t guarantee future results.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     modals: {

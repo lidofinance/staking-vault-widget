@@ -9,12 +9,14 @@ import {
   readWithReport,
   useVault,
   fetchVaultMetrics,
+  fetch7dApr,
   VAULT_TOTAL_BASIS_POINTS,
   getLidoV3Contract,
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
   type VaultRecord,
+  type Vault7DApr,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -235,9 +237,11 @@ const getVaultData = async ({
 const selectOverviewData = ({
   vaultData,
   vaultMetrics,
+  vault7dApr,
 }: {
   vaultData: VaultInfo;
   vaultMetrics: VaultApiMetrics | null;
+  vault7dApr: Vault7DApr | null;
 }) => {
   const {
     address,
@@ -288,9 +292,9 @@ const selectOverviewData = ({
   } = vaultMetrics || {};
 
   const netApr =
-    (vaultMetrics &&
-      formatPercent.format(vaultMetrics.netStakingAprPercent / 100)) ??
+    (vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100)) ??
     undefined;
+
   const carrySpreadApr =
     (vaultMetrics &&
       formatPercent.format(vaultMetrics.carrySpreadAprPercent / 100)) ??
@@ -301,9 +305,8 @@ const selectOverviewData = ({
   const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
   const unsettledLidoFeesEth = toEthValue(unsettledLidoFees);
 
-  const feeObligationEth = toEthValue(
-    unsettledLidoFees + nodeOperatorUnclaimedFee,
-  );
+  const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
+  const feeObligationEth = toEthValue(feeObligation);
   const totalValueETH = toEthValue(vaultData.totalValue);
   const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
   const liabilityStETH = toStethValue(vaultData.liabilityStETH);
@@ -327,7 +330,6 @@ const selectOverviewData = ({
   const feeRate = formatPercent.format(
     Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
   );
-  const collateral = toEthValue(overview.collateral);
   const pendingUnlock = overview.recentlyRepaid;
   const pendingUnlockEth = toEthValue(pendingUnlock > 0n ? pendingUnlock : 0n);
 
@@ -350,7 +352,7 @@ const selectOverviewData = ({
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
     feeRate,
-    collateral,
+    collateral: overview.collateral,
     pendingUnlockEth,
     isVaultConnected,
     netApr,
@@ -358,11 +360,16 @@ const selectOverviewData = ({
     unsettledLidoFees,
     remainingMintingCapacityStETH,
     feeObligationEth,
+    feeObligation,
     tierId: tierId.toString(),
     tierLimitStETH,
     mintableStETH,
     forcedRebalanceThresholdBP,
     reserveRatioBP,
+    grossStakingRewards,
+    nodeOperatorRewards,
+    bottomLine,
+    rebaseReward,
     totalMintingCapacity: vaultData.totalMintingCapacityStETH,
     totalValue: vaultData.totalValue,
     vaultLiability: vaultData.liabilityStETH,
@@ -377,6 +384,7 @@ const selectOverviewData = ({
     vaultMetrics,
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
+    tierStETHLimit,
   };
 };
 
@@ -392,20 +400,26 @@ export const useVaultOverviewData = () => {
     queryFn: async () => {
       invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
 
-      const [vaultData, vaultMetrics] = await Promise.all([
+      const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
         getVaultData({ publicClient, shares, vault: activeVault }),
-        fetchVaultMetrics(
-          { publicClient },
-          { vaultAddress: activeVault.address },
-        ).catch((error) => {
+        fetchVaultMetrics({ vaultAddress: activeVault.address }).catch(
+          (error) => {
+            console.warn(
+              '[useVaultOverviewData] Failed to fetch vault metrics from API',
+              error,
+            );
+            return null;
+          },
+        ),
+        fetch7dApr({ vaultAddress: activeVault.address }).catch((error) => {
           console.warn(
-            '[useVaultOverviewData] Failed to fetch vault metrics from API',
+            '[useVaultOverviewData] Failed to fetch vault 7 days APR',
             error,
           );
           return null;
         }),
       ]);
-      return { vaultData, vaultMetrics };
+      return { vaultData, vaultMetrics, vault7dApr };
     },
     select: selectOverviewData,
   });
