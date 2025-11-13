@@ -20,7 +20,7 @@ export const ManageDeposits = () => {
 
   const isDisabled =
     !isDappActive ||
-    activeVault?.isVaultDisconnected ||
+    activeVault?.isPendingDisconnect ||
     !(hasAdmin || showForPauserRole || showForResumerRole);
 
   return (
