@@ -17,7 +17,7 @@ export const OverviewContent = () => {
   return (
     <>
       {(isLoadingVault ||
-        (values?.isVaultConnected && !activeVault.isVaultDisconnected)) && (
+        (values?.isVaultConnected && !activeVault?.isVaultDisconnected)) && (
         <>
           <SectionDivider />
           <Banners />
