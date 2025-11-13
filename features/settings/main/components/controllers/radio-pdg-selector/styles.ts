@@ -7,6 +7,7 @@ export const RadioSelectorContainer = styled.div`
 `;
 
 export const DescriptionWrapper = styled.div`
+  width: 100%;
   text-wrap: pretty;
   & p {
     display: inline;

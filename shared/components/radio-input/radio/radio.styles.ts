@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 export const RadioInputSelector = styled.div`
-  width: 20px;
+  max-width: 20px;
+  width: 100%;
   height: 20px;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.colors.border};
