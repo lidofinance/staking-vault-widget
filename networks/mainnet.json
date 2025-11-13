@@ -9,6 +9,5 @@
     "ensPublicResolver": "0x4976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41",
     "ensRegistry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "weth": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-  },
-  "api": {}
+  }
 }

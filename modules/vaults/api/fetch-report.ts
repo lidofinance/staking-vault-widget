@@ -137,7 +137,7 @@ const fetchReportApi = async (
   ctx: FetchReportContext,
   _params: FetchReportParams,
 ): Promise<VaultReport | null> => {
-  const apiUrl = getApiURL(ctx.publicClient.chain.id, 'vaultsApi');
+  const apiUrl = getApiURL('vaultsApiBasePath');
   if (!apiUrl) {
     throw new Error(
       `Vault API URL is not defined for ${ctx.publicClient.chain.id}`,

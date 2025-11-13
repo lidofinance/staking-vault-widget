@@ -224,7 +224,7 @@ const fetchConnectedVaultsApi = async (
   ctx: FetchVaultsContext,
   params: FetchVaultsParams,
 ) => {
-  const apiUrl = getApiURL(ctx.publicClient.chain.id, 'vaultsApi');
+  const apiUrl = getApiURL('vaultsApiBasePath');
 
   if (!apiUrl) {
     throw new Error(
