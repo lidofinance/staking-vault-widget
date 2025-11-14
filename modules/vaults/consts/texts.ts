@@ -179,12 +179,8 @@ export const vaultTexts = {
         const suffix = roleCount > 1 ? 's' : '';
         return `Revoking ${roleCount} role${suffix}` as const;
       },
-      noGuarantorLoading: () => {
-        return `Granting PDG Guarantor to the new address` as const;
-      },
-      noDepositorLoading: () => {
-        return `Granting PDG Depositor to the new address` as const;
-      },
+      noGuarantorLoading: `Granting PDG Guarantor to the new address` as const,
+      noDepositorLoading: `Granting PDG Depositor to the new address` as const,
       confirmNoFee: (action: ConfirmAction, feePercent: number) =>
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>

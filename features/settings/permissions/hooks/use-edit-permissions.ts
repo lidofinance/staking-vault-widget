@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
+import { getAddress } from 'viem';
 
 import {
   type TransactionEntry,
@@ -87,17 +88,21 @@ export const useEditPermissions = () => {
           });
         }
 
-        if (permissionsData.noGuarantor !== noGuarantor) {
+        if (
+          getAddress(permissionsData.noGuarantor) !== getAddress(noGuarantor)
+        ) {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorGuarantor([noGuarantor]),
-            loadingActionText: vaultTexts.actions.settings.noGuarantorLoading(),
+            loadingActionText: vaultTexts.actions.settings.noGuarantorLoading,
           });
         }
 
-        if (permissionsData.noDepositor !== noDepositor) {
+        if (
+          getAddress(permissionsData.noDepositor) !== getAddress(noDepositor)
+        ) {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorDepositor([noDepositor]),
-            loadingActionText: vaultTexts.actions.settings.noDepositorLoading(),
+            loadingActionText: vaultTexts.actions.settings.noDepositorLoading,
           });
         }
 
