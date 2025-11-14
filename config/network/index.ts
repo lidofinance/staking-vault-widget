@@ -67,11 +67,6 @@ export const getContractAddress = (
   return networkConfig?.contracts?.[contractName];
 };
 
-export const getApiURL = (
-  chain: CHAINS,
-  apiName: API_NAMES,
-): string | undefined => {
-  const networkConfig = getNetworkConfig(chain);
-
-  return networkConfig?.api?.[apiName];
+export const getApiURL = (apiName: API_NAMES): string | undefined => {
+  return getPreConfig()[apiName];
 };

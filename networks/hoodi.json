@@ -9,11 +9,8 @@
     "predepositGuarantee": "0xa5F55f3402beA2B14AE15Dae1b6811457D43581d",
     "vaultFactory": "0x1d10DB6a66EF8D2A6f6D36Ad4dc7092Ef7C12569",
     "vaultHub": "0x4C9fFC325392090F789255b9948Ab1659b797964",
-    "vaultViewer": "0x7155ef6c1487442AB62B2b1c2A87956D3d2dBa36",
+    "vaultViewer": "0xBa9a3127f053a6548FE3874326569E1821783e03",
     "lazyOracle": "0xf41491C79C30e8f4862d3F4A5b790171adB8e04A",
     "operatorGrid": "0x501e678182bB5dF3f733281521D3f3D1aDe69917"
-  },
-  "api": {
-    "vaultsApi": "https://stvaults-api-hoodi.testnet.fi"
   }
 }

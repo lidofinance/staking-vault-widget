@@ -1,19 +1,24 @@
 import styled from 'styled-components';
+import { Block } from '@lidofinance/lido-ui';
 
-export const OverviewWrapper = styled.div`
+import { devicesHeaderMedia } from 'styles/global';
+
+export const OverviewContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
-  max-width: 806px;
-  min-width: 540px;
+  gap: 12px;
+  max-width: 868px;
   margin: 0 auto;
 `;
 
-export const ErrorState = styled.div`
+export const Content = styled(Block)`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
-  padding: ${({ theme }) => theme.spaceMap.lg}px;
+  gap: ${({ theme }) => theme.spaceMap.xl}px;
+  width: 100%;
+  padding: ${({ theme }) => theme.spaceMap.xl}px;
+
+  @media ${devicesHeaderMedia.tablet} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
 `;

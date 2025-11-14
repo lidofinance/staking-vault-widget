@@ -1,4 +1,4 @@
-import { ReactNode, FC } from 'react';
+import type { ReactNode, FC, PropsWithChildren } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
@@ -22,7 +22,7 @@ export type NoticeContainerProps = {
   actions?: {
     buttonText: string;
     title: string;
-    navigate: () => void;
+    onClick: () => void;
   }[];
   type?: NoticeContainerType;
 };
@@ -33,8 +33,17 @@ const iconsMap: Record<NoticeContainerType, ReactNode> = {
   error: <ErrorTriangle />,
 };
 
-export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
-  const { title, description, note, actions = [], type = 'warning' } = props;
+export const NoticeContainer: FC<PropsWithChildren<NoticeContainerProps>> = (
+  props,
+) => {
+  const {
+    title,
+    description,
+    note,
+    actions = [],
+    type = 'warning',
+    children,
+  } = props;
 
   return (
     <Wrapper type={type}>
@@ -46,22 +55,22 @@ export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
       </div>
       {actions.length > 0 && (
         <ActionContainer>
-          {actions.map((action, index) => {
+          {actions.map(({ title, onClick, buttonText }, index) => {
             const showDivider = actions.length !== index + 1;
 
             return (
               <>
-                <ActionWrapper key={action.title}>
+                <ActionWrapper key={title}>
                   <Text size="xxs" strong>
-                    {action.title}
+                    {title}
                   </Text>
                   <ActionButton
-                    onClick={action.navigate}
+                    onClick={onClick}
                     size="sm"
                     variant="outlined"
                     color="secondary"
                   >
-                    {action.buttonText}
+                    {buttonText}
                   </ActionButton>
                 </ActionWrapper>
                 {showDivider && <SectionDivider type="vertical" />}
@@ -70,6 +79,7 @@ export const NoticeContainer: FC<NoticeContainerProps> = (props) => {
           })}
         </ActionContainer>
       )}
+      {children}
       {!!note && <Text size="xxs">{note}</Text>}
     </Wrapper>
   );
