@@ -21,6 +21,7 @@ export type RadioFormData = {
 
 type VotingSelectorProps = {
   data?: RadioFormData[];
+  deactivated?: boolean;
   vaultKey: keyof VaultMainSettingsData;
   title: string;
 };
@@ -29,6 +30,7 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   data,
   vaultKey,
   title,
+  deactivated,
 }) => {
   const { isLoading, errors, disabled, isDirty } = useFormState();
   const { watch, register } = useFormContext();
@@ -39,7 +41,8 @@ export const RadioSelector: FC<VotingSelectorProps> = ({
   const isCustomSelected = selectedValue === 'custom';
   const inputKey = `${vaultKey}Custom`;
   const inputError = isCustomSelected ? errors[inputKey] : undefined;
-  const isEditable = !disabled && (hasConfirmingRole || hasPermission);
+  const isEditable =
+    !disabled && !deactivated && (hasConfirmingRole || hasPermission);
 
   return (
     <RadioSelectorContainer data-testid={`${vaultKey}-container`}>
