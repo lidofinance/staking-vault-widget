@@ -1,7 +1,7 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
 
 import { useDappStatus } from 'modules/web3';
-import { useVaultConfirmingRoles } from 'modules/vaults';
+import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
 import { InputToggle } from 'shared/hook-form/controls';
 import { vaultTexts } from 'modules/vaults';
 
@@ -13,12 +13,15 @@ const text = vaultTexts.actions.settings.fields.isDepositAllowed;
 
 export const ManageDeposits = () => {
   const { isDappActive } = useDappStatus();
+  const { activeVault } = useVault();
   const { hasAdmin } = useVaultConfirmingRoles();
   const { showForPauserRole, showForResumerRole } =
     useDepositorRolesPermissions();
 
   const isDisabled =
-    !isDappActive || !(hasAdmin || showForPauserRole || showForResumerRole);
+    !isDappActive ||
+    activeVault?.isPendingDisconnect ||
+    !(hasAdmin || showForPauserRole || showForResumerRole);
 
   return (
     <>

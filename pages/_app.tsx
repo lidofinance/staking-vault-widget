@@ -14,6 +14,7 @@ import { ErrorBoundaryFallback } from 'shared/components/error-boundary';
 import { MigrationBannerTestnetV2 } from 'shared/components/banner';
 import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
 import { nprogress } from 'utils';
+import { AddressValidationFile } from 'utils/address-validation';
 
 // Visualize route changes
 nprogress();
@@ -29,10 +30,16 @@ const App = (props: AppProps) => {
 };
 
 const AppWrapper = (
-  props: AppProps<{ ___prefetch_manifest___?: object }>,
+  props: AppProps<{
+    ___prefetch_manifest___?: object;
+    __validation_file__?: AddressValidationFile;
+  }>,
 ): JSX.Element => {
   return (
-    <Providers prefetchedManifest={props.pageProps?.___prefetch_manifest___}>
+    <Providers
+      prefetchedManifest={props.pageProps?.___prefetch_manifest___}
+      validationFile={props.pageProps?.__validation_file__}
+    >
       {/* see https://nextjs.org/docs/messages/no-document-viewport-meta */}
       <Head>
         <meta

@@ -38,7 +38,7 @@ type VaultDataArgs = {
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
 
-type VaultQuarantineState = {
+export type VaultQuarantineState = {
   isActive: boolean;
   pendingTotalValueIncrease: bigint;
   startTimestamp: bigint;
@@ -48,7 +48,6 @@ type VaultQuarantineState = {
 
 export type VaultInfo = VaultConnection &
   VaultRecordWithoutDelta & {
-    isVaultConnected: boolean;
     address: Address;
     owner: Address;
     nodeOperator: Address;
@@ -76,6 +75,9 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
+    isPendingDisconnect: boolean;
+    isVaultDisconnected: boolean;
+    isVaultConnected: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -133,9 +135,8 @@ const getVaultData = async ({
     ] as const,
   });
 
-  const [vaultRecord, isVaultConnected, locked] = await Promise.all([
+  const [vaultRecord, locked] = await Promise.all([
     hub.read.vaultRecord([vault.address]),
-    hub.read.isVaultConnected([vault.address]),
     hub.read.locked([vault.address]),
   ]);
 
@@ -199,7 +200,6 @@ const getVaultData = async ({
   });
 
   return {
-    isVaultConnected,
     address,
     nodeOperator,
     totalValue,
@@ -253,6 +253,7 @@ const selectOverviewData = ({
     balance,
     feeRate: nodeOperatorFee,
     nodeOperator,
+    isVaultDisconnected,
     isVaultConnected,
     settledLidoFees,
     cumulativeLidoFees,
@@ -264,6 +265,8 @@ const selectOverviewData = ({
     reportLiabilitySharesStETH,
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
+    disconnectInitiatedTs,
+    isPendingDisconnect,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -386,6 +389,9 @@ const selectOverviewData = ({
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
     tierStETHLimit,
+    isPendingDisconnect,
+    isVaultDisconnected,
+    disconnectInitiatedTs,
   };
 };
 

@@ -17,7 +17,7 @@ import { FormAndContentWrapper } from './styles';
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
-  const { invalidateVaultConfig } = useVault();
+  const { invalidateVaultConfig, activeVault } = useVault();
   const { isDappActive } = useDappStatus();
   const { data: rolesList, refetch } = usePermissionsFormData();
   const asyncPermissions = useAwaiter(rolesList);
@@ -26,7 +26,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () => asyncPermissions.awaiter,
     resolver: zodResolver(editPermissionsSchema),
-    disabled: !isDappActive,
+    disabled: !isDappActive || activeVault?.isPendingDisconnect,
     mode: 'onTouched',
   });
 
