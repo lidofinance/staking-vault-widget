@@ -17,7 +17,7 @@ import type {
   PermissionAccounts,
 } from '../types';
 
-type RolesAndDelegates = {
+export type RolesAndDelegates = {
   rolesList: PermissionAccounts[];
   noGuarantor: Address;
   noDepositor: Address;

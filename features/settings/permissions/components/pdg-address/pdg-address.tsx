@@ -1,12 +1,12 @@
 import type { FC } from 'react';
 
 import { useDappStatus } from 'modules/web3';
+import { useVault } from 'modules/vaults';
 import { AddressInputHookForm } from 'shared/hook-form/controls';
 
-import { usePermissionsFormData } from 'features/settings/permissions/hooks';
-import { PGDRolesKeys } from 'features/settings/permissions/types';
 import { IconDecorator } from './icon-decorator';
 import { PDGAddressReadonly } from './pdg-address-readonly';
+import type { PGDRolesKeys } from 'features/settings/permissions/types';
 import { Wrapper } from './styles';
 
 export type AddressBlockProps = {
@@ -20,9 +20,9 @@ export const PDGAddress: FC<AddressBlockProps> = ({
   dataTestId,
 }) => {
   const { address } = useDappStatus();
-  const { data } = usePermissionsFormData();
+  const { activeVault } = useVault();
 
-  if (data?.[permissionFormField] !== address) {
+  if (activeVault?.nodeOperator !== address) {
     return <PDGAddressReadonly formFieldName={permissionFormField} />;
   }
 
