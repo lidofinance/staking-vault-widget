@@ -20,6 +20,7 @@ import type {
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const {
+    activeVault,
     invalidateVaultConfig,
     invalidateVaultState,
     refetch: refetchVault,
@@ -36,7 +37,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   >({
     defaultValues: async () =>
       await promisedSettingsData.then(prepareDefaultValues),
-    disabled: !isDappActive,
+    disabled: !isDappActive || activeVault?.isPendingDisconnect,
     resolver: mainSettingsFormResolver,
     context: promisedSettingsData,
     mode: 'all',
