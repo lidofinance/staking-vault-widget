@@ -4,7 +4,7 @@ export const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
 `;
 
 export const AmountWrapper = styled.div`

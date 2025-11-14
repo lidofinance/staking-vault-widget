@@ -354,6 +354,7 @@ const selectOverviewData = ({
     feeRate,
     collateral: overview.collateral,
     pendingUnlockEth,
+    pendingUnlock,
     isVaultConnected,
     netApr,
     unsettledLidoFeesEth,

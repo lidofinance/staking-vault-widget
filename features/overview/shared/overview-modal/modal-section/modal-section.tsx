@@ -4,6 +4,8 @@ import { Text } from '@lidofinance/lido-ui';
 import { FormatToken } from 'shared/formatters';
 
 import {
+  ContentWrapper,
+  DecoratorWrapper,
   HeaderText,
   SectionWrapper,
   SubTitle,
@@ -35,38 +37,40 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
 }) => {
   return (
     <SectionWrapper data-testid={dataTestId}>
-      {!!title && (
-        <TitleWrapper>
-          <Title>
-            <HeaderText as="h3">
-              {titleLeftDecorator}
-              {title}
-            </HeaderText>
-            <Text size="xs">
-              {!amountType && '-'}
-              {amountType === 'percent' && <>{amountValue}</>}
-              {amountType === 'token' && (
-                <FormatToken
-                  amount={amountValue as bigint}
-                  maxDecimalDigits={8}
-                  symbol={amountSymbol ?? 'stETH'}
-                />
-              )}
-            </Text>
-          </Title>
-          {!!subTitle && (
-            <SubTitle size="xxs" color="secondary">
-              {subTitle}
-            </SubTitle>
-          )}
-        </TitleWrapper>
+      {!!titleLeftDecorator && (
+        <DecoratorWrapper>{titleLeftDecorator}</DecoratorWrapper>
       )}
-      {!!description && (
-        <Text color="secondary" size="xxs">
-          {description}
-        </Text>
-      )}
-      {children}
+      <ContentWrapper>
+        {!!title && (
+          <TitleWrapper>
+            <Title>
+              <HeaderText as="h3">{title}</HeaderText>
+              <Text size="xs">
+                {!amountType && '-'}
+                {amountType === 'percent' && <>{amountValue}</>}
+                {amountType === 'token' && (
+                  <FormatToken
+                    amount={amountValue as bigint}
+                    maxDecimalDigits={8}
+                    symbol={amountSymbol ?? 'stETH'}
+                  />
+                )}
+              </Text>
+            </Title>
+            {!!subTitle && (
+              <SubTitle size="xxs" color="secondary">
+                {subTitle}
+              </SubTitle>
+            )}
+          </TitleWrapper>
+        )}
+        {!!description && (
+          <Text color="secondary" size="xxs">
+            {description}
+          </Text>
+        )}
+        {children}
+      </ContentWrapper>
     </SectionWrapper>
   );
 };

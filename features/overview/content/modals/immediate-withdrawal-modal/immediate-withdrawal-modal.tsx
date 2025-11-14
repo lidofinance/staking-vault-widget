@@ -17,7 +17,14 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-import { ChartContainer, ChartHeading, List, ListItem } from './styles';
+import {
+  ChartContainer,
+  ChartHeading,
+  ExtendedInfo,
+  List,
+  ListItem,
+  RecentlyRepaied,
+} from './styles';
 
 const { withdrawal } = vaultTexts.metrics.modals;
 
@@ -25,8 +32,14 @@ const dataTestIdPrefix = 'withdrawableEther-modal';
 
 export const ImmediateWithdrawalModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
-  const { totalValue, collateral, feeObligation, withdrawableEther, balance } =
-    values || {};
+  const {
+    totalValue,
+    collateral,
+    feeObligation,
+    withdrawableEther,
+    balance,
+    pendingUnlock,
+  } = values || {};
   const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
   return (
@@ -85,33 +98,52 @@ export const ImmediateWithdrawalModal = () => {
         amountValue={totalValue}
         amountType="token"
         amountSymbol="ETH"
-        description={withdrawal.totalValue.description}
         dataTestId={`${dataTestIdPrefix}-totalValueSection`}
       >
-        <ModalSection
-          title="Locked by Collateral"
-          titleLeftDecorator={<NewLine />}
-          amountValue={collateral}
-          amountType="token"
-          amountSymbol="ETH"
-          dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
-        />
-        <ModalSection
-          title="Fee obligations"
-          titleLeftDecorator={<NewLine />}
-          amountValue={feeObligation}
-          amountType="token"
-          amountSymbol="ETH"
-          dataTestId={`${dataTestIdPrefix}-totalValueSection-feeObligationsSubsection`}
-        />
-        <ModalSection
-          title="Withdrawable part of Total Value"
-          titleLeftDecorator={<NewLine />}
-          amountValue={withdrawableEther}
-          amountType="token"
-          amountSymbol="ETH"
-          dataTestId={`${dataTestIdPrefix}-totalValueSection-withdrawablePartSubsection`}
-        />
+        <ExtendedInfo>
+          <ModalSection
+            title="Locked by Collateral"
+            titleLeftDecorator={<NewLine />}
+            amountValue={collateral}
+            amountType="token"
+            amountSymbol="ETH"
+            dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
+          >
+            {!!pendingUnlock && (
+              <RecentlyRepaied>
+                <Text size="xxs" color="secondary">
+                  Corresponding amount of ETH expecting to be unlocked with the
+                  upcoming Oracle report based on recently repaid
+                </Text>{' '}
+                <Text size="xxs" color="secondary" strong>
+                  ~
+                  <FormatToken
+                    amount={pendingUnlock}
+                    maxDecimalDigits={8}
+                    symbol="stETH"
+                  />
+                  .
+                </Text>
+              </RecentlyRepaied>
+            )}
+          </ModalSection>
+          <ModalSection
+            title="Fee obligations"
+            titleLeftDecorator={<NewLine />}
+            amountValue={feeObligation}
+            amountType="token"
+            amountSymbol="ETH"
+            dataTestId={`${dataTestIdPrefix}-totalValueSection-feeObligationsSubsection`}
+          />
+          <ModalSection
+            title="Withdrawable part of Total Value"
+            titleLeftDecorator={<NewLine />}
+            amountValue={withdrawableEther}
+            amountType="token"
+            amountSymbol="ETH"
+            dataTestId={`${dataTestIdPrefix}-totalValueSection-withdrawablePartSubsection`}
+          />
+        </ExtendedInfo>
       </ModalSection>
       <SectionDivider />
       <ModalSection

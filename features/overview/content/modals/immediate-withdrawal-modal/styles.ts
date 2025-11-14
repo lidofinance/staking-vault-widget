@@ -14,7 +14,6 @@ const getColor = ({ color }: { color: WithdrawChartColor }) => {
 export const ChartContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
 
 export const List = styled.div`
@@ -50,4 +49,18 @@ export const ChartHeading = styled.div`
   justify-content: end;
   text-align: left;
   gap: ${({ theme }) => theme.spaceMap.xs}px;
+`;
+
+export const ExtendedInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  margin-top: ${({ theme }) => theme.spaceMap.md}px;
+`;
+
+export const RecentlyRepaied = styled.div`
+  margin-top: ${({ theme }) => theme.spaceMap.xs}px;
+  & p {
+    display: inline;
+  }
 `;
