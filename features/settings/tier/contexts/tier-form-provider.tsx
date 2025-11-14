@@ -6,6 +6,7 @@ import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
 import {
   useNodeOperatorTiersInfo,
+  useVault,
   useVaultTierInfo,
   type VaultTierData,
 } from 'modules/vaults';
@@ -34,6 +35,7 @@ const prepareDefaultValues = async (
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
+  const { activeVault } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { refetch, data } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
@@ -43,7 +45,7 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
-    disabled: !isDappActive,
+    disabled: !isDappActive || activeVault?.isPendingDisconnect,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
     mode: 'all',

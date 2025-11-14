@@ -10,6 +10,7 @@ import invariant from 'tiny-invariant';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
+import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormControllerStyled } from 'shared/components/form';
 
@@ -44,6 +45,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { isDappActive } = useDappStatus();
+  const { activeVault } = useVault();
   const { validationContext } = useSupplyFormValidationContext();
   const { supply, retryEvent } = useSupply();
 
@@ -59,7 +61,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
       mintAddress: '',
     },
     mode: 'onTouched',
-    disabled: !isDappActive,
+    disabled: !isDappActive || activeVault?.isPendingDisconnect,
     context: useAwaiter(validationContext).awaiter,
     resolver: SupplyFormResolver,
   });

@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Identicon, Text } from '@lidofinance/lido-ui';
 import { zeroAddress } from 'viem';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 import { AddressPopover } from 'shared/components/address-badge/address-popover';
 
 import { SectionDivider } from 'features/overview/inner';
@@ -20,8 +20,10 @@ const { general } = vaultTexts.metrics;
 export const NodeOperator = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { values } = useVaultOverview();
+  const { activeVault } = useVault();
 
-  const { nodeOperator, feeRate } = values || {};
+  const { feeRate } = values ?? {};
+  const { nodeOperator, isVaultDisconnected } = activeVault ?? {};
   const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (
@@ -51,15 +53,19 @@ export const NodeOperator = () => {
           </NodeOperatorAddressWrapper>
         </AddressPopover>
       </NodeOperatorParameter>
-      <SectionDivider type="vertical" />
-      <NodeOperatorParameter>
-        <Text size="xxs" color="secondary" data-testid="noFeeLabel">
-          {general.feeRate}
-        </Text>
-        <Text size="xxs" weight={700} data-testid="noFee">
-          {feeRate}
-        </Text>
-      </NodeOperatorParameter>
+      {!isVaultDisconnected && (
+        <>
+          <SectionDivider type="vertical" />
+          <NodeOperatorParameter>
+            <Text size="xxs" color="secondary" data-testid="noFeeLabel">
+              {general.feeRate}
+            </Text>
+            <Text size="xxs" weight={700} data-testid="noFee">
+              {feeRate}
+            </Text>
+          </NodeOperatorParameter>
+        </>
+      )}
     </NodeOperatorContainer>
   );
 };

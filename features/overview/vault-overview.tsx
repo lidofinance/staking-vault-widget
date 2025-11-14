@@ -7,11 +7,17 @@ import {
   useMemo,
 } from 'react';
 import invariant from 'tiny-invariant';
-import { Button, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
-import { OverviewContent } from './content';
 
+import {
+  OverviewContent,
+  ReportState,
+  General,
+  VaultDisconnected,
+  ConnectVault,
+  RetryFetching,
+} from './content';
 import { useVaultOverviewData } from './hooks';
 
 import type {
@@ -20,7 +26,7 @@ import type {
   SectionData,
 } from './types';
 
-import { ErrorState } from './styles';
+import { Content, OverviewContentWrapper } from './styles';
 
 type MetricText = {
   title: string;
@@ -56,7 +62,6 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
     data: vaultData,
     isPending: isLoadingVault,
     error,
-    refetch,
   } = useVaultOverviewData();
 
   useEffect(() => {
@@ -83,23 +88,16 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
 
   return (
     <VaultOverviewContext.Provider value={value}>
-      {!error ? (
-        <OverviewContent />
-      ) : (
-        <ErrorState>
-          <Text color="error" size="xs" weight={700}>
-            Failed to fetch data
-          </Text>
-          <Button
-            color="error"
-            variant="ghost"
-            size="xs"
-            onClick={() => refetch()}
-          >
-            Retry
-          </Button>
-        </ErrorState>
-      )}
+      <OverviewContentWrapper>
+        <ReportState />
+        <Content>
+          <General />
+          <VaultDisconnected />
+          <OverviewContent />
+          <RetryFetching />
+        </Content>
+        <ConnectVault />
+      </OverviewContentWrapper>
     </VaultOverviewContext.Provider>
   );
 };
