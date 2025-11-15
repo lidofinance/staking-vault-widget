@@ -99,6 +99,7 @@ export type VaultTierInfoArgs = {
 
 export type VaultTierInfo = {
   lidoTVLSharesLimit: bigint;
+  minimalReserve: bigint;
   isVaultConnected: boolean;
   address: Address;
   owner: Address;

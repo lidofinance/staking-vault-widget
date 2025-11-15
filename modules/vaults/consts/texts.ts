@@ -1,4 +1,5 @@
 import { formatBalance } from 'utils';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -483,9 +484,17 @@ export const vaultTexts = {
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
           constrainedBy: (
-            constraintBy: 'reserveRatio' | 'vault' | 'lido' | 'tier' | 'group',
+            constraintBy:
+              | 'minimalReserve'
+              | 'reserveRatio'
+              | 'vault'
+              | 'lido'
+              | 'tier'
+              | 'group',
           ) => {
             switch (constraintBy) {
+              case 'minimalReserve':
+                return 'constrained by Minimal Reserve';
               case 'reserveRatio':
                 return 'constrained by Reserve Ratio';
               case 'vault':
@@ -498,8 +507,30 @@ export const vaultTexts = {
                 return 'constrained by NO Group Limit';
             }
           },
-          description:
-            'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
+          description: (
+            minimalReserve: bigint | undefined,
+            constraintBy:
+              | 'minimalReserve'
+              | 'reserveRatio'
+              | 'vault'
+              | 'lido'
+              | 'tier'
+              | 'group'
+              | undefined,
+          ) => {
+            const baseDescription =
+              'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.';
+            const minimalReserveText =
+              'Reserve is defined by the Minimal Reserve value of 1 ETH for the connection to Lido Core.';
+            if (
+              constraintBy === 'minimalReserve' &&
+              minimalReserve === WEI_PER_ETHER
+            ) {
+              return `${baseDescription} ${minimalReserveText}`;
+            }
+
+            return baseDescription;
+          },
         },
         stethMintingLimit: {
           title: 'stETH minting limit',

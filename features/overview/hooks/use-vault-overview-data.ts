@@ -25,7 +25,6 @@ import {
   toEthValue,
   toStethValue,
   getMintingConstraintType,
-  type MintingConstraintType,
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
@@ -57,8 +56,6 @@ export type VaultInfo = VaultConnection &
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
-    healthScore: number;
-    mintingConstraintBy: MintingConstraintType;
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
@@ -75,6 +72,8 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
+    lidoTVLSharesLimit: bigint;
+    groupShareLimit: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -176,29 +175,6 @@ const getVaultData = async ({
     ? await shares.convertToSteth(report.liabilityShares)
     : 0n;
 
-  // Binding-constraint detection:
-  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
-  //   reduced by any active caps).
-  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
-  //   identify what actually constrains minting right now.
-  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
-  //   ties resolve to the later entry in the list below.
-  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
-  const mintingConstraintBy = getMintingConstraintType({
-    totalMintingCapacityShares,
-    vaultShareLimit: shareLimit,
-    tierShareLimit,
-    tierId,
-    groupShareLimit,
-    lidoTVLSharesLimit,
-  });
-
-  const healthScore = calculateHealth({
-    totalValue,
-    liabilitySharesInStethWei: liabilityStETH,
-    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
-  });
-
   return {
     address,
     nodeOperator,
@@ -207,8 +183,6 @@ const getVaultData = async ({
     mintableStETH,
     mintableShares,
     stETHLimit,
-    mintingConstraintBy,
-    healthScore: healthScore.healthRatio,
     totalMintingCapacityShares,
     totalMintingCapacityStETH,
     inOutDelta,
@@ -229,6 +203,8 @@ const getVaultData = async ({
     tierId,
     tierShareLimit,
     tierStETHLimit,
+    lidoTVLSharesLimit,
+    groupShareLimit,
     ...rest,
     ...restVaultRecord,
   };
@@ -245,7 +221,6 @@ const selectOverviewData = ({
 }) => {
   const {
     address,
-    healthScore,
     reserveRatioBP,
     forcedRebalanceThresholdBP,
     nodeOperatorUnclaimedFee,
@@ -267,6 +242,11 @@ const selectOverviewData = ({
     vaultQuarantineState,
     disconnectInitiatedTs,
     isPendingDisconnect,
+    totalMintingCapacityShares,
+    shareLimit,
+    tierShareLimit,
+    groupShareLimit,
+    lidoTVLSharesLimit,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -284,6 +264,31 @@ const selectOverviewData = ({
     unsettledLidoFees,
     minimalReserve,
     reportLiabilitySharesStETH,
+  });
+
+  // Binding-constraint detection:
+  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
+  //   reduced by any active caps).
+  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
+  //   identify what actually constrains minting right now.
+  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
+  //   ties resolve to the later entry in the list below.
+  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
+  const mintingConstraintBy = getMintingConstraintType({
+    minimalReserve,
+    collateral: overview.collateral,
+    totalMintingCapacityShares,
+    vaultShareLimit: shareLimit,
+    tierShareLimit,
+    tierId,
+    groupShareLimit,
+    lidoTVLSharesLimit,
+  });
+
+  const { healthRatio } = calculateHealth({
+    totalValue: vaultData.totalValue,
+    liabilitySharesInStethWei: vaultData.liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
   });
 
   const {
@@ -321,8 +326,8 @@ const selectOverviewData = ({
   const rebalanceThreshold = formatPercent.format(
     forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
   );
-  const healthFactor = formatPercent.format(healthScore / 100);
-  const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
+  const healthFactor = formatPercent.format(healthRatio / 100);
+  const healthFactorNumber = healthRatio > 100000 ? Infinity : healthRatio;
   const utilizationRatio = formatPercent.format(
     overview.utilizationRatio / 100,
   );
@@ -392,6 +397,8 @@ const selectOverviewData = ({
     isPendingDisconnect,
     isVaultDisconnected,
     disconnectInitiatedTs,
+    mintingConstraintBy,
+    minimalReserve,
   };
 };
 

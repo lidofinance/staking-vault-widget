@@ -40,3 +40,8 @@ export const DecoratorWrapper = styled.div`
 export const ContentWrapper = styled.div`
   width: 100%;
 `;
+
+export const DescriptionWrapper = styled.div`
+  width: fit-content;
+  margin-top: 12px;
+`;

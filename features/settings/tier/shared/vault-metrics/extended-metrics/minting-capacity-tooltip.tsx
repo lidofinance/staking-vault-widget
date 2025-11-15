@@ -9,6 +9,7 @@ type MintingCapacityTooltipProps = {
 };
 
 const texts: Record<MintingConstraintType, string> = {
+  minimalReserve: 'Constrained by Minimal reserve',
   reserveRatio: 'Constrained by Reserve ratio',
   vault: 'Constrained by total stVaults remaining capacity',
   tier: 'Constrained by tier remaining capacity',
@@ -28,6 +29,8 @@ export const MintingCapacityTooltip: FC<MintingCapacityTooltipProps> = ({
   if (!selectedTier) return null;
 
   const mintingConstraintBy = getMintingConstraintType({
+    collateral: vaultTierInfo.collateral,
+    minimalReserve: vaultTierInfo.minimalReserve,
     totalMintingCapacityShares: vaultTierInfo.vault.totalMintingCapacityShares,
     vaultShareLimit: vaultTierInfo.vault.shareLimit,
     tierShareLimit: selectedTier.shareLimit,

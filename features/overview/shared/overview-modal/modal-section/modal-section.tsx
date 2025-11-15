@@ -6,6 +6,7 @@ import { FormatToken } from 'shared/formatters';
 import {
   ContentWrapper,
   DecoratorWrapper,
+  DescriptionWrapper,
   HeaderText,
   SectionWrapper,
   SubTitle,
@@ -65,9 +66,11 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
           </TitleWrapper>
         )}
         {!!description && (
-          <Text color="secondary" size="xxs">
-            {description}
-          </Text>
+          <DescriptionWrapper>
+            <Text color="secondary" size="xxs">
+              {description}
+            </Text>
+          </DescriptionWrapper>
         )}
         {children}
       </ContentWrapper>
