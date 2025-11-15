@@ -7,6 +7,7 @@ import {
 
 import { vaultTexts } from 'modules/vaults';
 import { FormatToken } from 'shared/formatters';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import {
@@ -16,6 +17,7 @@ import {
   SectionDivider,
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { SlashingInfo } from 'features/overview/shared';
 
 import {
   ChartContainer,
@@ -23,8 +25,9 @@ import {
   ExtendedInfo,
   List,
   ListItem,
-  RecentlyRepaied,
 } from './styles';
+import { PendingUnlock } from './pending-unlock';
+import { MinimalReserveLock } from './minimal-reserve-lock';
 
 const { withdrawal } = vaultTexts.metrics.modals;
 
@@ -39,6 +42,7 @@ export const ImmediateWithdrawalModal = () => {
     withdrawableEther,
     balance,
     pendingUnlock,
+    minimalReserve,
   } = values || {};
   const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
@@ -109,22 +113,12 @@ export const ImmediateWithdrawalModal = () => {
             amountSymbol="ETH"
             dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
           >
-            {!!pendingUnlock && (
-              <RecentlyRepaied>
-                <Text size="xxs" color="secondary">
-                  Corresponding amount of ETH expecting to be unlocked with the
-                  upcoming Oracle report based on recently repaid
-                </Text>{' '}
-                <Text size="xxs" color="secondary" strong>
-                  ~
-                  <FormatToken
-                    amount={pendingUnlock}
-                    maxDecimalDigits={8}
-                    symbol="stETH"
-                  />
-                  .
-                </Text>
-              </RecentlyRepaied>
+            {!!pendingUnlock && <PendingUnlock amount={pendingUnlock} />}
+            {!!minimalReserve && minimalReserve === collateral && (
+              <MinimalReserveLock amount={minimalReserve} />
+            )}
+            {!!minimalReserve && minimalReserve > WEI_PER_ETHER && (
+              <SlashingInfo amount={minimalReserve} />
             )}
           </ModalSection>
           <ModalSection

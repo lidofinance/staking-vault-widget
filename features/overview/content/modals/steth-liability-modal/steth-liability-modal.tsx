@@ -1,13 +1,10 @@
 import {
   ChartLine,
-  Text,
   ChartLineBorderType,
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
-import { ReactComponent as WarningTriangle } from 'assets/icons/warning-triangle.svg';
 import { vaultTexts } from 'modules/vaults';
-import { FormatToken } from 'shared/formatters';
 import { WEI_PER_ETHER } from 'consts/tx';
 
 import {
@@ -17,8 +14,7 @@ import {
   useVaultOverviewData,
   SectionDivider,
 } from 'features/overview/inner';
-
-import { IconWrapper, SlashingInfoWrapper } from './styles';
+import { SlashingInfo } from 'features/overview/shared';
 
 const { vaultLiability } = vaultTexts.metrics.modals;
 
@@ -73,21 +69,7 @@ export const StethLiabilityModal = () => {
         dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}
       >
         {!!minimalReserve && minimalReserve > WEI_PER_ETHER && (
-          <SlashingInfoWrapper>
-            <IconWrapper>
-              <WarningTriangle color="var(--text-color-text-secondary)" />
-            </IconWrapper>
-            <Text size="xxs" color="secondary">
-              Reserve is now defined by the Minimal Reserve value which
-              increased to{' '}
-              <FormatToken
-                amount={minimalReserve}
-                maxDecimalDigits={4}
-                symbol="ETH"
-              />{' '}
-              as a reaction to the slashing event.
-            </Text>
-          </SlashingInfoWrapper>
+          <SlashingInfo amount={minimalReserve} />
         )}
       </ModalSection>
       <SectionDivider />

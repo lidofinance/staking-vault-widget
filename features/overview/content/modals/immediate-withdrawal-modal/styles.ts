@@ -58,7 +58,7 @@ export const ExtendedInfo = styled.div`
   margin-top: ${({ theme }) => theme.spaceMap.md}px;
 `;
 
-export const RecentlyRepaied = styled.div`
+export const TextContainer = styled.div`
   margin-top: ${({ theme }) => theme.spaceMap.xs}px;
   & p {
     display: inline;
