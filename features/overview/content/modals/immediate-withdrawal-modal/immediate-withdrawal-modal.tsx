@@ -43,6 +43,7 @@ export const ImmediateWithdrawalModal = () => {
     balance,
     pendingUnlock,
     minimalReserve,
+    stagedBalanceWei,
   } = values || {};
   const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
@@ -129,6 +130,16 @@ export const ImmediateWithdrawalModal = () => {
             amountSymbol="ETH"
             dataTestId={`${dataTestIdPrefix}-totalValueSection-feeObligationsSubsection`}
           />
+          {!!stagedBalanceWei && (
+            <ModalSection
+              title="Staged as Activation Deposit"
+              titleLeftDecorator={<NewLine />}
+              amountValue={stagedBalanceWei}
+              amountType="token"
+              amountSymbol="ETH"
+              dataTestId={`${dataTestIdPrefix}-totalValueSection-stagedBalanceWeiSubsection`}
+            />
+          )}
           <ModalSection
             title="Withdrawable part of Total Value"
             titleLeftDecorator={<NewLine />}

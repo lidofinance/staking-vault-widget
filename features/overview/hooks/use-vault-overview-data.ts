@@ -74,6 +74,7 @@ export type VaultInfo = VaultConnection &
     reportLiabilitySharesStETH: bigint;
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
+    stagedBalanceWei: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -134,9 +135,10 @@ const getVaultData = async ({
     ] as const,
   });
 
-  const [vaultRecord, locked] = await Promise.all([
+  const [vaultRecord, locked, stagedBalanceWei] = await Promise.all([
     hub.read.vaultRecord([vault.address]),
     hub.read.locked([vault.address]),
+    vaultContract.read.stagedBalance(),
   ]);
 
   const {
@@ -205,6 +207,7 @@ const getVaultData = async ({
     tierStETHLimit,
     lidoTVLSharesLimit,
     groupShareLimit,
+    stagedBalanceWei,
     ...rest,
     ...restVaultRecord,
   };
@@ -247,6 +250,7 @@ const selectOverviewData = ({
     tierShareLimit,
     groupShareLimit,
     lidoTVLSharesLimit,
+    stagedBalanceWei,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -399,6 +403,7 @@ const selectOverviewData = ({
     disconnectInitiatedTs,
     mintingConstraintBy,
     minimalReserve,
+    stagedBalanceWei,
   };
 };
 

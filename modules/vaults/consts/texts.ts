@@ -263,9 +263,9 @@ export const vaultTexts = {
       },
     },
     capacityExceeded: {
-      title: 'stETH minting balance exceeded',
+      title: 'stETH minting capacity exceeded',
       description:
-        'The stVault stETH minting balance constrained by the Reserve Ratio has exceeded, indicating imbalance in collaterization of stETH Liability. You are strongly recommended to take one of the following actions:',
+        "The stVault's stETH minting capacity has been exceeded, indicating an imbalanced minted stETH Liability as constrained by the stVault's Reserve Ratio. You are strongly recommended to take one of the following actions:",
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
       actions: [
         {
@@ -288,7 +288,7 @@ export const vaultTexts = {
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',
       description:
-        "The stVault forced rebalance threshold exceeded, and the permissionless rebalance mechanism is activated for this stVault. It means the stVault can be rebalanced at any moment in time. You can still restore the vault health factor by taking one of the following actions. There is no guarantee that the permissionless rebalancing won't be performed before your transaction.",
+        'The stVault’s Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism. This means the stVault can be rebalanced at any moment. You can still restore the Health Factor by taking one of the actions below. However, there’s no guarantee that a permissionless rebalance won’t occur before your transaction is executed.',
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
       actions: [
         {
