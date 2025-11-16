@@ -12,7 +12,7 @@ export const Wrapper = styled(Block)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
+  gap: ${({ theme }) => theme.spaceMap.lg}px;
   width: 100%;
   padding: ${({ theme }) => theme.spaceMap.xl}px;
   background-color: ${({ theme }) => theme.colors.foreground};
@@ -22,8 +22,8 @@ export const Wrapper = styled(Block)`
   }
 `;
 
-export const List = styled.ul`
+export const Content = styled.div`
   display: flex;
-  flex-direction: column;
-  padding-left: ${({ theme }) => theme.spaceMap.md}px;
+  align-items: center;
+  gap: 52px;
 `;

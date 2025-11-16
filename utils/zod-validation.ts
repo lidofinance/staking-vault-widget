@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { type Address, isAddress, isAddressEqual } from 'viem';
 
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults/consts';
 
 const validateAddress = (value: string | null) => !!(value && isAddress(value));
 

@@ -49,6 +49,7 @@ export type VaultBaseInfo = {
   operatorGrid: ReturnType<typeof getOperatorGridContract>;
   lazyOracle: ReturnType<typeof getLazyOracleContract>;
   nodeOperator: Address;
+  vaultOwner: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
