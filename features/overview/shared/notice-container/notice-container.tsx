@@ -2,7 +2,8 @@ import type { ReactNode, FC, PropsWithChildren } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
-import { ReactComponent as WarningTriangle } from 'assets/icons/warning-triangle.svg';
+import { ReactComponent as WarningRing } from 'assets/icons/warning-ring.svg';
+import { ReactComponent as Info } from 'assets/icons/info.svg';
 
 import {
   Wrapper,
@@ -28,8 +29,8 @@ export type NoticeContainerProps = {
 };
 
 const iconsMap: Record<NoticeContainerType, ReactNode> = {
-  warning: <WarningTriangle color="#EC8600" />,
-  info: <WarningTriangle color="#7A8AA0" />,
+  warning: <WarningRing />,
+  info: <Info />,
   error: <ErrorTriangle />,
 };
 
