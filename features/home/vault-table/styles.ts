@@ -69,11 +69,15 @@ export const TableHeaderCell = styled(Th)`
   padding: 24px 2px 16px;
   text-align: right;
   border-top: 0;
-
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
 
   &:first-child {
     text-align: left;
+  }
+
+  & > div {
+    display: flex;
+    align-items: center;
   }
 `;
 

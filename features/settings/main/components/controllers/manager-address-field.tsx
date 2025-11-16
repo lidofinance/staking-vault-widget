@@ -1,5 +1,4 @@
 import type { FC } from 'react';
-import { Text } from '@lidofinance/lido-ui';
 import { useFieldArray, useFormState } from 'react-hook-form';
 
 import { useVaultPermission } from 'modules/vaults';
@@ -8,7 +7,7 @@ import { Hint } from 'shared/components';
 import { Skeleton } from 'features/settings/main/styles';
 import { EditPropertyAddress } from './edit-property-address';
 import { DisplayAddress } from './display-address';
-import { GroupWrapper } from './styles';
+import { GroupWrapper, Title } from './styles';
 
 import {
   MainSettingsFormValidatedValues,
@@ -46,7 +45,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
     <GroupWrapper
       data-testid={dataTestId ? `${dataTestId}-groupWrapper` : undefined}
     >
-      <Text
+      <Title
         size="xs"
         strong
         data-testid={dataTestId ? `${dataTestId}-title` : undefined}
@@ -56,7 +55,7 @@ export const ManagerAddressField: FC<InputResolverProps> = ({
           text={hint}
           data-testid={dataTestId ? `${dataTestId}-hint` : undefined}
         />
-      </Text>
+      </Title>
       {isLoading && <Skeleton />}
       <DisplayAddress
         isEditable={isEditable}
