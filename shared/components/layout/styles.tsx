@@ -14,6 +14,30 @@ const templateAreas = {
     'footer footer footer';`,
 };
 
+const tabletTemplateAreas = {
+  withError: `
+    'header header'
+    'error error'
+    'nav content'
+    'footer footer';`,
+  default: `
+    'header header'
+    'nav content'
+    'footer footer';`,
+};
+
+const mobileTemplateAreas = {
+  withError: `
+    'header'
+    'error'
+    'content'
+    'footer';`,
+  default: `
+    'header'
+    'content'
+    'footer';`,
+};
+
 export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   position: relative;
   display: grid;
@@ -28,6 +52,14 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
 
   @media ${devicesHeaderMedia.tablet} {
     grid-template-columns: 166px 1fr;
+    grid-template-areas: ${({ isError }) =>
+      tabletTemplateAreas[isError ? 'withError' : 'default']};
+  }
+
+  @media ${devicesHeaderMedia.mobile} {
+    grid-template-columns: 1fr;
+    grid-template-areas: ${({ isError }) =>
+      mobileTemplateAreas[isError ? 'withError' : 'default']};
   }
 `;
 

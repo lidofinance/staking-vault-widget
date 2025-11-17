@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { Chip } from '@lidofinance/lido-ui';
 
+import { devicesHeaderMedia } from 'styles/global';
+
 export const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -23,6 +25,11 @@ export const TierAmount = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: column;
+    align-items: start;
+  }
 `;
 
 export const MintingLimit = styled.div`
