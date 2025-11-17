@@ -11,6 +11,7 @@ import {
   fetchVaultMetrics,
   fetch7dApr,
   VAULT_TOTAL_BASIS_POINTS,
+  VAULTS_CONNECT_DEPOSIT,
   getLidoV3Contract,
   type VaultApiMetrics,
   type VaultBaseInfo,
@@ -404,6 +405,8 @@ const selectOverviewData = ({
     mintingConstraintBy,
     minimalReserve,
     stagedBalanceWei,
+    // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
+    isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
   };
 };
 

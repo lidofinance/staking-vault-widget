@@ -37,6 +37,9 @@ export const getMintingConstraintType = ({
   // - In case of equality, we attribute the constraint to the specific cap (not RR), because
   //   ties resolve to the later entry in the list below.
   // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
+
+  // Base scenario when collateral ==== minimalReserve (1 ETH),
+  // in this case withdrawal will be constrained by minimalReserve (connection deposit)
   if (minimalReserve === collateral) {
     return 'minimalReserve';
   }
