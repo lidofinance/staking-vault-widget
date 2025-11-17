@@ -2,12 +2,12 @@ import type { FC } from 'react';
 
 import { useDappStatus } from 'modules/web3';
 import { useVault } from 'modules/vaults';
-import { AddressInputHookForm } from 'shared/hook-form/controls';
 
 import { IconDecorator } from './icon-decorator';
 import { PDGAddressReadonly } from './pdg-address-readonly';
-import type { PGDRolesKeys } from 'features/settings/permissions/types';
-import { Wrapper } from './styles';
+import { PGDRolesKeys } from 'features/settings/permissions/types';
+import { PDGAddressInput, Wrapper } from './styles';
+import { useIsNewAddress } from './hooks';
 
 export type AddressBlockProps = {
   permissionFormField: PGDRolesKeys;
@@ -21,6 +21,7 @@ export const PDGAddress: FC<AddressBlockProps> = ({
 }) => {
   const { address } = useDappStatus();
   const { activeVault } = useVault();
+  const { isNewAddress } = useIsNewAddress(permissionFormField);
 
   if (activeVault?.nodeOperator !== address) {
     return <PDGAddressReadonly formFieldName={permissionFormField} />;
@@ -28,7 +29,8 @@ export const PDGAddress: FC<AddressBlockProps> = ({
 
   return (
     <Wrapper data-testid={`${dataTestId}-addressesWrapper`}>
-      <AddressInputHookForm
+      <PDGAddressInput
+        $isNewAddress={isNewAddress}
         leftDecorator={<IconDecorator formFieldName={permissionFormField} />}
         fieldName={permissionFormField}
         variant="small"
