@@ -46,6 +46,8 @@ export const NavList = styled.ul`
 
   @media ${devicesHeaderMedia.mobile} {
     flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
     margin-top: 0;
   }
 `;
