@@ -373,7 +373,7 @@ export const vaultTexts = {
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     balance: {
-      title: 'Not staked stVault Balance',
+      title: 'Unstaked stVault balance',
       hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },

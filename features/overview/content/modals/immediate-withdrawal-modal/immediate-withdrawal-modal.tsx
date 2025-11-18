@@ -153,7 +153,7 @@ export const ImmediateWithdrawalModal = () => {
       </ModalSection>
       <SectionDivider />
       <ModalSection
-        title="Not staked stVault Balance"
+        title="Unstaked stVault balance"
         amountValue={balance}
         amountType="token"
         amountSymbol="ETH"
