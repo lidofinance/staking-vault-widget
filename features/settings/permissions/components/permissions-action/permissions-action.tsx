@@ -15,7 +15,11 @@ export const PermissionsAction: FC = () => {
   const isAllowedTx = useAllowTransaction();
   const isClearDisabled = isSubmitting;
   const isSubmitDisabled =
-    (!isValid || !isDirty || isClearDisabled || disabled || isLoading) &&
+    !isValid ||
+    !isDirty ||
+    isClearDisabled ||
+    disabled ||
+    isLoading ||
     !isAllowedTx;
 
   const handleResetFields = () => {
