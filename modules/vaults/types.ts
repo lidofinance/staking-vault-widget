@@ -54,6 +54,7 @@ export type VaultBaseInfo = {
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
+  hiddenReport: VaultReportType | null;
   isVaultDisconnected: boolean; // disconnected by user
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;

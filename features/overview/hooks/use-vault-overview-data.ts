@@ -99,6 +99,7 @@ const getVaultData = async ({
     hub,
     operatorGrid,
     report,
+    hiddenReport,
     lazyOracle,
     ...rest
   } = vault;
@@ -174,8 +175,8 @@ const getVaultData = async ({
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
-  const reportLiabilitySharesStETH = report
-    ? await shares.convertToSteth(report.liabilityShares)
+  const reportLiabilitySharesStETH = hiddenReport
+    ? await shares.convertToSteth(hiddenReport.liabilityShares)
     : 0n;
 
   return {

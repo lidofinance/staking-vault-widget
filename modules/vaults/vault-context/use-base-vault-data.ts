@@ -69,13 +69,14 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         latestHubReportTimestamp > latestVaultReport.timestamp;
 
       // we might not have a report even when fresh is not true
-      const report = isReportAvailable
+      const hiddenReport = latestHubReportCID
         ? await fetchReport(
             { publicClient },
             { cid: latestHubReportCID, vault: vaultAddress },
           )
         : null;
 
+      const report = isReportAvailable ? hiddenReport : null;
       const isReportMissing = !report && !isReportFresh;
 
       // TODO: reword to support multiple factories
@@ -94,6 +95,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         nodeOperator,
         withdrawalCredentials,
         report,
+        hiddenReport,
         operatorGrid,
         lazyOracle,
         hubReport: {
