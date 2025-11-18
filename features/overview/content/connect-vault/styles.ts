@@ -3,7 +3,7 @@ import { Heading, Block } from '@lidofinance/lido-ui';
 import { devicesHeaderMedia } from 'styles/global';
 
 export const Title = styled(Heading)`
-  font-size: ${({ theme }) => theme.fontSizesMap.lg}px;
+  font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   line-height: 28px;
   color: ${({ theme }) => theme.colors.text};
 `;

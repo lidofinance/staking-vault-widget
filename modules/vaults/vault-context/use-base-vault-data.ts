@@ -123,6 +123,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isVaultDisconnected: !isDashboard,
         isVaultConnected,
         isPendingDisconnect,
+        isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
         ...connection,
       };

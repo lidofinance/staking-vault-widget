@@ -10,9 +10,9 @@ const { connectVault } = vaultTexts.metrics;
 export const ConnectVault = () => {
   const { activeVault } = useVault();
   const { isLoading } = useVaultOverviewData();
-  const { isVaultDisconnected, isVaultConnected } = activeVault ?? {};
+  const { isPendingConnect } = activeVault ?? {};
 
-  if (!activeVault || isVaultDisconnected || isVaultConnected || isLoading) {
+  if (!activeVault || !isPendingConnect || isLoading) {
     return null;
   }
 

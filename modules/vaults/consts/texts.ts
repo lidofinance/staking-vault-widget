@@ -18,7 +18,7 @@ export const vaultTexts = {
       loading: (token: LidoToken) => `Approving ${token}` as const,
     },
     connectVault: {
-      connect: 'Awaiting for connection Vault',
+      connect: 'Awaiting for Vault connection',
       completed: 'Vault connected',
     },
     createVault: {

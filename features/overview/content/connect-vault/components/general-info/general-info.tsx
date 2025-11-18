@@ -2,22 +2,36 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
 
-import { GeneralInfoContainer, List, ListWrapper } from './styles';
+import { useTierRequest } from 'features/overview/hooks';
 
-const { connectVault } = vaultTexts.metrics;
+import { GeneralInfoContainer, List, ListItem, ListWrapper } from './styles';
+
+const { description, listTitle } = vaultTexts.metrics.connectVault;
 
 export const GeneralInfo = () => {
+  const { proposedTier } = useTierRequest();
+
   return (
     <GeneralInfoContainer>
-      <Text size="xs">{connectVault.description}</Text>
+      <Text size="xs">{description}</Text>
       <ListWrapper>
-        <Text size="xs">{connectVault.listTitle}</Text>
+        <Text size="xs">{listTitle}</Text>
         <List>
-          {connectVault.list.map((text) => (
-            <Text key={text} size="xs">
-              {text}
+          <ListItem>
+            <Text size="xs">Approve connection to Lido VaultHub</Text>
+          </ListItem>
+          <ListItem>
+            <Text size="xs">
+              Enable {proposedTier ? proposedTier.tierName : 'Default Tier'}{' '}
+              terms and fees
             </Text>
-          ))}
+          </ListItem>
+          <ListItem>
+            <Text size="xs">
+              Supply 1 ETH as collateral (refundable if disconnected from Lido
+              VaultHub)
+            </Text>
+          </ListItem>
         </List>
       </ListWrapper>
     </GeneralInfoContainer>

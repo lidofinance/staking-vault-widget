@@ -44,6 +44,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   const { isDappActive } = useDappStatus();
   const { activeVault } = useVault();
   const { withdraw, retryEvent } = useWithdraw();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
   const {
     validationContext,
     withdrawableEtherQuery,
@@ -61,7 +62,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       recipient: '',
     },
     mode: 'onTouched',
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     context: validationContext,
     resolver: withdrawFormResolver,
   });

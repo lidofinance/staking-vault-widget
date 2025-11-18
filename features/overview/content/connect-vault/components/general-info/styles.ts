@@ -12,8 +12,16 @@ export const ListWrapper = styled.div`
   flex-direction: column;
 `;
 
-export const List = styled.div`
+export const List = styled.ol`
   display: flex;
   flex-direction: column;
-  padding-left: ${({ theme }) => theme.spaceMap.xs}px;
+  padding-left: ${({ theme }) => theme.spaceMap.lg}px;
+`;
+
+export const ListItem = styled.li`
+  &::marker {
+    font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
+    line-height: 24px;
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;

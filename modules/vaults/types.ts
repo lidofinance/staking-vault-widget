@@ -58,6 +58,7 @@ export type VaultBaseInfo = {
   isVaultDisconnected: boolean; // disconnected by user
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;
+  isPendingConnect: boolean;
   isReportAvailable: boolean;
 } & VaultConnection;
 
