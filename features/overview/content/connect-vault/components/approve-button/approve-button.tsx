@@ -22,7 +22,7 @@ export const ApproveButton = () => {
   }
 
   return (
-    <Button size="sm" onClick={onClick}>
+    <Button size="xs" onClick={onClick}>
       {action}
     </Button>
   );
