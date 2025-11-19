@@ -58,6 +58,7 @@ export const TableStyled = styled(Table)`
   width: 100%;
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
   background-color: var(--lido-color-foreground);
+  overflow: clip;
 `;
 
 export const TableBody = styled(Tbody)`
