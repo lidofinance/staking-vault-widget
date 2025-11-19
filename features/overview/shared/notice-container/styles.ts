@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Heading, Button, Theme } from '@lidofinance/lido-ui';
+import { Heading, Theme } from '@lidofinance/lido-ui';
 
 type WrapperProps = {
   type: 'warning' | 'error' | 'info';
@@ -32,20 +32,4 @@ export const Title = styled(Heading)`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
-`;
-
-export const ActionButton = styled(Button)`
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const ActionContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
-`;
-
-export const ActionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;

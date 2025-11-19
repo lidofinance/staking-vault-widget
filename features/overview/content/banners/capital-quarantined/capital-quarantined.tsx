@@ -1,16 +1,10 @@
-import type { FC } from 'react';
-
 import { NoticeContainer } from 'features/overview/shared';
-import type { VaultQuarantineState } from 'features/overview/hooks';
+import { useVaultOverview } from 'features/overview/vault-overview';
 import { QuarantineDescription } from './quarantine-description';
 
-type CapitalQuarantinedProps = {
-  vaultQuarantineState: VaultQuarantineState | undefined;
-};
-
-export const CapitalQuarantined: FC<CapitalQuarantinedProps> = ({
-  vaultQuarantineState,
-}) => {
+export const CapitalQuarantined = () => {
+  const { values } = useVaultOverview();
+  const { vaultQuarantineState } = values ?? {};
   const { endTimestamp, pendingTotalValueIncrease, totalValueRemainder } =
     vaultQuarantineState ?? {};
 

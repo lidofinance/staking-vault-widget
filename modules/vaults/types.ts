@@ -1,15 +1,17 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
 import type { Address, Hex, ReadContractReturnType } from 'viem';
+import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+
 import {
   getDashboardContract,
   getStakingVaultContract,
   getVaultHubContract,
   getOperatorGridContract,
   getLazyOracleContract,
+  getPredepositGuaranteeContract,
 } from './contracts';
-import type { RegisteredPublicClient } from '../web3';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/dist/types/shares';
-import type { Confirmation } from '../../utils/get-confirmations';
+import type { RegisteredPublicClient } from 'modules/web3';
+import type { Confirmation } from 'modules/vaults/utils/get-confirmations';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
@@ -48,6 +50,7 @@ export type VaultBaseInfo = {
   dashboard: ReturnType<typeof getDashboardContract>;
   operatorGrid: ReturnType<typeof getOperatorGridContract>;
   lazyOracle: ReturnType<typeof getLazyOracleContract>;
+  predepositGuarantee: ReturnType<typeof getPredepositGuaranteeContract>;
   nodeOperator: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;

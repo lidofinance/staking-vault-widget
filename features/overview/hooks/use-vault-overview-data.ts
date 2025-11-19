@@ -75,6 +75,8 @@ export type VaultInfo = VaultConnection &
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
     stagedBalanceWei: bigint;
+    obligationsShortfallValue: bigint;
+    stETHToBurn: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -135,6 +137,15 @@ const getVaultData = async ({
     ] as const,
   });
 
+  const [obligationsShortfallValue, [sharesToBurn, __]] = await readWithReport({
+    publicClient,
+    report,
+    contracts: [
+      dashboard.prepare.obligationsShortfallValue(),
+      dashboard.prepare.obligations(),
+    ] as const,
+  });
+
   const [vaultRecord, locked, stagedBalanceWei] = await Promise.all([
     hub.read.vaultRecord([vault.address]),
     hub.read.locked([vault.address]),
@@ -162,6 +173,7 @@ const getVaultData = async ({
     lockedShares,
     totalMintingCapacityStETH,
     tierStETHLimit,
+    stETHToBurn,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
@@ -170,6 +182,7 @@ const getVaultData = async ({
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
+    shares.convertToSteth(sharesToBurn),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -208,6 +221,8 @@ const getVaultData = async ({
     lidoTVLSharesLimit,
     groupShareLimit,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
     ...rest,
     ...restVaultRecord,
   };
@@ -251,6 +266,8 @@ const selectOverviewData = ({
     groupShareLimit,
     lidoTVLSharesLimit,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -351,6 +368,7 @@ const selectOverviewData = ({
     totalValueETH,
     reserveRatio,
     utilizationRatio,
+    utilizationRatioNumber: overview.utilizationRatio,
     rebalanceThreshold,
     healthFactor,
     healthFactorNumber,
@@ -404,6 +422,8 @@ const selectOverviewData = ({
     mintingConstraintBy,
     minimalReserve,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
   };
 };
 
