@@ -22,6 +22,7 @@ export const AddressBadgeSelectable = forwardRef<
       onCheckedChange,
       defaultBg = 'default',
       dataTestId,
+      bgColor,
       ...badgeProps
     },
     ref,
@@ -35,7 +36,7 @@ export const AddressBadgeSelectable = forwardRef<
     return (
       <SelectableWrapper
         crossed={checked}
-        bgColor={defaultBg}
+        bgColor={bgColor || defaultBg}
         data-testid={dataTestId ? `${dataTestId}-selectableWrapper` : undefined}
       >
         <AddressBadge

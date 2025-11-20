@@ -4,7 +4,6 @@ import { Tooltip } from '@lidofinance/lido-ui';
 import { WarningIcon, RoleDescriptionWrapper } from './styles';
 
 export interface RoleDescriptionProps {
-  permission: string;
   description: string;
   tooltip: string;
   dataTestId?: string;
