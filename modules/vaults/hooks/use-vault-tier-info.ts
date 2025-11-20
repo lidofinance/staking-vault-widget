@@ -136,7 +136,7 @@ const getVaultTierInfo = async ({
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([vaultMintableShares]),
+    stethContract.read.getPooledEthByShares([vaultMintableShares]),
     stethContract.read.getPooledEthByShares([vaultShareLimit]),
     stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),

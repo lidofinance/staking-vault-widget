@@ -161,7 +161,7 @@ const getVaultData = async ({
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([mintableShares]),
+    stethContract.read.getPooledEthByShares([mintableShares]),
     stethContract.read.getPooledEthByShares([shareLimit]),
     stethContract.read.getPooledEthByShares([locked]),
     stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
