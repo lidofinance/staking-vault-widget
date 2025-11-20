@@ -27,7 +27,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
     defaultValues: async () => asyncPermissions.awaiter,
     resolver: zodResolver(editPermissionsSchema),
     disabled: !isDappActive || activeVault?.isPendingDisconnect,
-    mode: 'onTouched',
+    mode: 'all',
   });
 
   const reset = formObject.reset;
