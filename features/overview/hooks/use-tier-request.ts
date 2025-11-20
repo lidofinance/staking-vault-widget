@@ -14,15 +14,21 @@ export const useTierRequest = () => {
 
     const proposals = vaultTierInfo.proposals;
     const proposal = proposals?.lastProposal;
-    if (!proposal) {
-      return {};
-    }
-
-    const proposedTierId = proposal.decodedData.args[1];
-    const proposedVaultLimitStETH = proposals.proposedVaultLimitStETH;
-    const proposedTier = noTiersInfo.tiers.find(
+    let proposedTierId = 0n;
+    const defaultTier = noTiersInfo.tiers.find(
       (tier) => tier.id === proposedTierId,
     );
+    let proposedTier = { ...defaultTier };
+    let proposedVaultLimitStETH =
+      defaultTier.shareLimitStETH - defaultTier.liabilityStETH;
+
+    if (proposal) {
+      proposedTierId = proposal.decodedData.args[1];
+      proposedVaultLimitStETH = proposals.proposedVaultLimitStETH;
+      proposedTier = noTiersInfo.tiers.find(
+        (tier) => tier.id === proposedTierId,
+      );
+    }
 
     if (!proposedTier) {
       return {};

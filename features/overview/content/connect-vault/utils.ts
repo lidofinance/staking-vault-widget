@@ -7,7 +7,11 @@ export const dataToTx = (
   proposedTier: Tier | undefined,
   proposedVaultLimitShares: bigint | undefined,
 ) => {
-  if (proposedTier && typeof proposedVaultLimitShares === 'bigint') {
+  if (
+    proposedTier &&
+    proposedTier.id !== 0 &&
+    typeof proposedVaultLimitShares === 'bigint'
+  ) {
     return {
       data: encodeFunctionData({
         abi: dashboardAbi,
