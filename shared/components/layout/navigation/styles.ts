@@ -47,14 +47,21 @@ export const NavList = styled.ul`
   @media ${devicesHeaderMedia.mobile} {
     flex-direction: row;
     justify-content: space-around;
+    align-items: start;
     width: 100%;
     margin-top: 0;
+    gap: 8px;
   }
 `;
 
 export const ListItem = styled.div`
   display: flex;
   align-items: center;
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-grow: 1;
+    max-width: calc(calc(100% / 6) - 8px);
+  }
 `;
 
 // Not wrapping <a> inside <a> in IPFS mode
@@ -86,7 +93,13 @@ export const NavLink = styled.span<{ active: boolean }>`
   }
 
   @media ${devicesHeaderMedia.mobile} {
+    display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    white-space: break-spaces;
+    text-wrap: balance;
+    line-break: anywhere;
   }
 `;
 
