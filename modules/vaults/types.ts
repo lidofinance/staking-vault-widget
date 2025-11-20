@@ -42,6 +42,7 @@ export type HubReportData = {
 };
 
 export type VaultBaseInfo = {
+  blockNumber: bigint;
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
   hub: ReturnType<typeof getVaultHubContract>;
