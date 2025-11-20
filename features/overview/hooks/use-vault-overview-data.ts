@@ -27,6 +27,7 @@ import {
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
+import { useVaultDataHash } from './use-vault-data-hash';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -389,14 +390,18 @@ const selectOverviewData = ({
 export const useVaultOverviewData = () => {
   const { shares, publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
+  const hash = useVaultDataHash();
 
-  return useQuery({
-    queryKey: [...queryKeys.state, 'vault-overview-data'],
+  const query = useQuery({
+    queryKey: [...queryKeys.state, 'vault-overview-data', hash],
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,
     queryFn: async () => {
-      invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
+      invariant(
+        activeVault,
+        '[useVaultOverviewData] activeVault is not defined',
+      );
 
       const [vaultData, vaultMetrics] = await Promise.all([
         getVaultData({ publicClient, shares, vault: activeVault }),
@@ -415,4 +420,6 @@ export const useVaultOverviewData = () => {
     },
     select: selectOverviewData,
   });
+
+  return { ...query };
 };

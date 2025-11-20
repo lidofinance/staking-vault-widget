@@ -6,11 +6,9 @@ import { useSendTransaction, withSuccess } from 'modules/web3';
 
 import { useTierRequest } from './use-tier-request';
 import { dataToTx } from '../content/connect-vault/utils';
-import { useVaultOverviewData } from './use-vault-overview-data';
 
 export const useConnectVault = () => {
   const { activeVault, refetch: refetchVault } = useVault();
-  const { refetch: refetchVaultOverview } = useVaultOverviewData();
   const { sendTX, ...rest } = useSendTransaction();
   const { proposedTier, proposedVaultLimitShares } = useTierRequest();
 
@@ -35,9 +33,8 @@ export const useConnectVault = () => {
           renderSuccessContent: GoToVault,
         }),
       );
-      await refetchVault({ cancelRefetch: true, throwOnError: false });
-      await refetchVaultOverview({ cancelRefetch: true, throwOnError: false });
 
+      await refetchVault({ cancelRefetch: true, throwOnError: false });
       return success;
     }, [
       activeVault,
@@ -45,7 +42,6 @@ export const useConnectVault = () => {
       proposedVaultLimitShares,
       proposedTier,
       refetchVault,
-      refetchVaultOverview,
     ]),
     ...rest,
   };

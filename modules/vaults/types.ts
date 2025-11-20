@@ -91,6 +91,7 @@ export type TierVault = {
   infraFeeBP: number;
   liquidityFeeBP: number;
   reservationFeeBP: number;
+  isPendingConnect: boolean;
 };
 
 export type VaultTierInfoArgs = {

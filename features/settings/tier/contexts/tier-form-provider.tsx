@@ -39,13 +39,14 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { refetch, data } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
-
   const promisedTierInfo = useAwaiter(data).awaiter;
+
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
     mode: 'all',

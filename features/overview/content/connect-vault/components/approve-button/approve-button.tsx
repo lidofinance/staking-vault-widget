@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
-import { Button } from '@lidofinance/lido-ui';
 
 import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
 
 import { useConnectVault } from 'features/overview/hooks';
+
+import { ButtonStyled } from './styles';
 
 const { action } = vaultTexts.metrics.connectVault;
 
@@ -22,8 +23,8 @@ export const ApproveButton = () => {
   }
 
   return (
-    <Button size="xs" onClick={onClick}>
+    <ButtonStyled size="xs" onClick={onClick}>
       {action}
-    </Button>
+    </ButtonStyled>
   );
 };
