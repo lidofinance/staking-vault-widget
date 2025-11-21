@@ -25,15 +25,19 @@ export const EDITABLE_ROLES_LIST = Object.keys({
   | keyof typeof VAULTS_NO_ROLES_MAP
 )[];
 
-export const editPermissionsSchema = z.object(
-  Object.fromEntries(
-    EDITABLE_ROLES_LIST.map((key) => [
-      key,
-      z.array(addressEntrySchema).optional(),
-    ]),
-  ) as {
-    [key in PermissionKeys]: z.ZodOptional<
-      z.ZodArray<typeof addressEntrySchema>
-    >;
-  },
-);
+export const editPermissionsSchema = z.object({
+  rolesSchema: z.object(
+    Object.fromEntries(
+      EDITABLE_ROLES_LIST.map((key) => [
+        key,
+        z.array(addressEntrySchema).optional(),
+      ]),
+    ) as {
+      [key in PermissionKeys]: z.ZodOptional<
+        z.ZodArray<typeof addressEntrySchema>
+      >;
+    },
+  ),
+  noGuarantor: addressSchema,
+  noDepositor: addressSchema,
+});

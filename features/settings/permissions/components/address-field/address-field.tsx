@@ -4,13 +4,13 @@ import { AddressBadge, AddressBadgeSelectable } from 'shared/components';
 
 import {
   FieldSchema,
-  PermissionKeys,
+  PermissionFormField,
 } from 'features/settings/permissions/types';
 import { useController } from 'react-hook-form';
 
 export type AddressItemProps = {
   index: number;
-  permission: PermissionKeys;
+  permissionFormField: PermissionFormField;
   onUpdate: (field: FieldSchema, index: number) => void;
   onRemove: (index: number) => void;
   readonly?: boolean;
@@ -19,7 +19,7 @@ export type AddressItemProps = {
 
 export const AddressField: FC<AddressItemProps> = ({
   index,
-  permission,
+  permissionFormField,
   onUpdate,
   onRemove,
   readonly,
@@ -27,7 +27,7 @@ export const AddressField: FC<AddressItemProps> = ({
 }) => {
   const {
     field: { value },
-  } = useController({ name: `${permission}.${index}` });
+  } = useController({ name: `${permissionFormField}.${index}` });
   const { account, action } = value as FieldSchema;
   const isChecked = action === 'revoke';
 
@@ -53,11 +53,7 @@ export const AddressField: FC<AddressItemProps> = ({
 
   if (readonly) {
     return (
-      <AddressBadge
-        address={account}
-        showPopover={true}
-        dataTestId={dataTestId}
-      />
+      <AddressBadge address={account} dataTestId={dataTestId} showPopover />
     );
   }
 
@@ -66,9 +62,9 @@ export const AddressField: FC<AddressItemProps> = ({
       address={account}
       checked={isChecked}
       bgColor={bgColor}
-      showPopover={true}
       onCheckedChange={handleChangeField}
       dataTestId={dataTestId}
+      showPopover
     />
   );
 };

@@ -8,4 +8,5 @@ export * from './lazy-oracle';
 export * from './weth';
 export * from './steth';
 export * from './operator-grid';
+export * from './predeposit-guarantee';
 export * from './lido';
