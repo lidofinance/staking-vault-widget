@@ -102,6 +102,15 @@ export const useEditMainSettings = () => {
           });
         }
 
+        if (formValues.pdgPolicy !== vaultSettings.pdgPolicy) {
+          transactions.push({
+            ...activeVault.dashboard.encode.setPDGPolicy([
+              Number(formValues.pdgPolicy),
+            ]),
+            loadingActionText: vaultTexts.actions.settings.pdgPolicy,
+          });
+        }
+
         const { feeRate, feeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(feeRate !== 'custom' ? feeRate : feeRateCustom);
