@@ -29,7 +29,7 @@ export const useTierRequest = () => {
     }
 
     let proposedVaultLimitStETH = proposals.proposedVaultLimitStETH;
-    if (typeof proposedVaultLimitStETH !== 'bigint') {
+    if (proposedVaultLimitStETH === 0n) {
       proposedVaultLimitStETH =
         proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
     }
