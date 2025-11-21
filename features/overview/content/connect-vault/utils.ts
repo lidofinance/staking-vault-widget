@@ -9,7 +9,7 @@ export const dataToTx = (
 ) => {
   if (
     proposedTier &&
-    proposedTier.id !== 0 &&
+    proposedTier.id !== 0n &&
     typeof proposedVaultLimitShares === 'bigint'
   ) {
     return {

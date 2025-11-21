@@ -14,24 +14,24 @@ export const useTierRequest = () => {
 
     const proposals = vaultTierInfo.proposals;
     const proposal = proposals?.lastProposal;
-    let proposedTierId = 0n;
-    const defaultTier = noTiersInfo.tiers.find(
+
+    let proposedTierId = proposal?.decodedData.args[1];
+    if (typeof proposedTierId !== 'bigint') {
+      proposedTierId = 0n;
+    }
+
+    const proposedTier = noTiersInfo.tiers.find(
       (tier) => tier.id === proposedTierId,
     );
-    let proposedTier = { ...defaultTier };
-    let proposedVaultLimitStETH =
-      defaultTier.shareLimitStETH - defaultTier.liabilityStETH;
-
-    if (proposal) {
-      proposedTierId = proposal.decodedData.args[1];
-      proposedVaultLimitStETH = proposals.proposedVaultLimitStETH;
-      proposedTier = noTiersInfo.tiers.find(
-        (tier) => tier.id === proposedTierId,
-      );
-    }
 
     if (!proposedTier) {
       return {};
+    }
+
+    let proposedVaultLimitStETH = proposals.proposedVaultLimitStETH;
+    if (typeof proposedVaultLimitStETH !== 'bigint') {
+      proposedVaultLimitStETH =
+        proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
     }
 
     return {
