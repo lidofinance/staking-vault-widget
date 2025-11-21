@@ -49,6 +49,7 @@ export const MainSettingsAction: FC = () => {
       confirmExpiryCustom,
       feeRecipient,
       isDepositAllowed,
+      pdgPolicy,
     } = formFields;
 
     const confirmExpiryFormValue =
@@ -80,6 +81,10 @@ export const MainSettingsAction: FC = () => {
       counter++;
     }
 
+    if (pdgPolicy !== mainSettingsData?.pdgPolicy) {
+      counter++;
+    }
+
     return counter;
   }, [
     formFields,
@@ -87,6 +92,7 @@ export const MainSettingsAction: FC = () => {
     mainSettingsData?.nodeOperatorFeeRateCurrent,
     mainSettingsData?.isDepositAllowed,
     mainSettingsData?.feeRecipient,
+    mainSettingsData?.pdgPolicy,
   ]);
 
   const hasChanges = counter > 0;

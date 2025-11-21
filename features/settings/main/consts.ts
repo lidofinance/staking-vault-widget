@@ -81,6 +81,7 @@ export const mainSettingsFormSchema = z.object({
     .pipe(votingLifetimeSchema)
     .transform((val) => String(val))
     .optional(),
+  pdgPolicy: z.string(),
 });
 
 export const adminsForRender: MainSettingsOverview[] = [
@@ -222,3 +223,9 @@ const checkForDuplicateValues = (
     };
   }
 };
+
+export enum PDGPolicy {
+  STRICT = '0',
+  ALLOW_PROVE = '1',
+  ALLOW_DEPOSIT_AND_PROVE = '2',
+}

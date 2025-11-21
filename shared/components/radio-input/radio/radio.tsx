@@ -1,4 +1,10 @@
-import { PropsWithChildren, HTMLAttributes, forwardRef, Ref } from 'react';
+import {
+  PropsWithChildren,
+  HTMLAttributes,
+  forwardRef,
+  Ref,
+  ReactNode,
+} from 'react';
 
 import {
   RadioInputStyled,
@@ -23,7 +29,7 @@ export type RadioInputProps = PropsWithChildren<
   hasError?: boolean;
   disabled?: boolean;
   ref?: Ref<HTMLInputElement>;
-  valueToDisplay?: string;
+  valueToDisplay?: ReactNode;
   dataTestId?: string;
 };
 

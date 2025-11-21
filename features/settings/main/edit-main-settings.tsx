@@ -9,6 +9,7 @@ import {
   Admins,
   Voting,
   ManageDeposits,
+  PdgPolicy,
 } from 'features/settings/main/components';
 import {
   SectionContainer,
@@ -31,7 +32,13 @@ export const EditMainSettings = () => {
             <Text size="lg" strong data-testid="mainSettingsTitle">
               {texts.title}
             </Text>
-            <ManageDeposits />
+            <GroupWrapper>
+              <GroupHeading as="h3">{texts.groups.deposits}</GroupHeading>
+              <InputGroup>
+                <ManageDeposits />
+                <PdgPolicy />
+              </InputGroup>
+            </GroupWrapper>
             <GroupWrapper>
               <GroupHeading as="h3">{texts.groups.address}</GroupHeading>
               <InputGroup>
