@@ -1,7 +1,12 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { Address } from 'viem';
 
-import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
+import {
+  getPredepositGuaranteeContract,
+  useVault,
+  VAULTS_ALL_ROLES_MAP,
+} from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
 import { EDITABLE_ROLES_LIST } from '../consts';
@@ -12,19 +17,36 @@ import type {
   PermissionAccounts,
 } from '../types';
 
-const collectRolesToFormValues = (rolesList: PermissionAccounts[]) => {
-  return rolesList.reduce((acc, role) => {
-    const { addressList, permissionName } = role;
-    acc[permissionName] = addressList.map(
-      (address) =>
-        ({
-          account: address,
-          action: 'display',
-        }) as FieldSchema,
-    );
+export type RolesAndDelegates = {
+  rolesList: PermissionAccounts[];
+  noGuarantor: Address;
+  noDepositor: Address;
+};
 
-    return acc;
-  }, {} as EditPermissionsSchema);
+const collectRolesToFormValues = ({
+  rolesList,
+  ...rest
+}: RolesAndDelegates): EditPermissionsSchema => {
+  const rolesSchema = rolesList.reduce(
+    (acc, role) => {
+      const { addressList, permissionName } = role;
+      acc[permissionName] = addressList.map(
+        (address) =>
+          ({
+            account: address,
+            action: 'display',
+          }) as FieldSchema,
+      );
+
+      return acc;
+    },
+    {} as EditPermissionsSchema['rolesSchema'],
+  );
+
+  return {
+    rolesSchema,
+    ...rest,
+  };
 };
 
 export const usePermissionsFormData = () => {
@@ -52,12 +74,20 @@ export const usePermissionsFormData = () => {
         ),
       });
 
-      return result.map((item, index) => {
-        return {
+      const pdgContract = getPredepositGuaranteeContract(publicClient);
+      const [noGuarantor, noDepositor] = await Promise.all([
+        pdgContract.read.nodeOperatorGuarantor([activeVault.nodeOperator]),
+        pdgContract.read.nodeOperatorDepositor([activeVault.nodeOperator]),
+      ]);
+
+      return {
+        rolesList: result.map((item, index) => ({
           permissionName: EDITABLE_ROLES_LIST[index],
           addressList: [...item],
-        };
-      });
+        })),
+        noGuarantor,
+        noDepositor,
+      };
     },
   });
 };

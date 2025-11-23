@@ -1,5 +1,6 @@
 import { getContract } from 'viem';
 import invariant from 'tiny-invariant';
+
 import { getContractAddress } from 'config';
 import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
 import { getEncodable } from 'modules/vaults/utils/encodable';
@@ -15,7 +16,7 @@ export const getPredepositGuaranteeContract = (
 
   invariant(
     address,
-    '[getPredepositGuaranteeContract] predepositGuarantee is not defined',
+    '[getPredepositGuaranteeContract] predepositGuarantee address is not defined',
   );
   return getEncodable(
     getContract({
