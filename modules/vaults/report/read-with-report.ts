@@ -4,6 +4,7 @@ import {
   type MulticallReturnType,
 } from 'viem';
 
+import { Multicall3AbiUtils } from 'abi/multicall-abi';
 import { type RegisteredPublicClient } from 'modules/web3';
 
 import { getLazyOracleContract } from '../contracts';
@@ -18,6 +19,7 @@ type ReadWithReportArgs<
   publicClient: RegisteredPublicClient;
   contracts: TContracts;
   report?: VaultReportType | null;
+  blockNumber?: bigint;
 };
 
 export const encodeReportCall = (
@@ -43,6 +45,7 @@ export const readWithReport = async <
   publicClient,
   report,
   contracts,
+  blockNumber,
 }: ReadWithReportArgs<TContracts>): Promise<
   MulticallReturnType<TContracts, false>
 > => {
@@ -84,11 +87,30 @@ export const readWithReport = async <
       report.proof,
     ]);
 
-    const [, ...results] = await publicClient.multicall({
-      contracts: [reportCall, ...contracts] as any,
+    // TODO: remove after monitoring error with InvalidProof()
+    // Add getBlockNumber call to multicall to get exact block number
+    const getBlockNumberCall = {
+      abi: Multicall3AbiUtils,
+      address: publicClient.chain.contracts.multicall3.address,
+      functionName: 'getBlockNumber',
+    } as const;
+
+    const allResults = await publicClient.multicall({
+      contracts: [reportCall, ...contracts, getBlockNumberCall] as any,
       batchSize: 0, // this forces to use single call batch for all calls
       allowFailure: false,
+      blockNumber,
     });
+
+    // TODO: remove after monitoring error with InvalidProof()
+    // Extract block number from last result and remove it from results
+    const multicallBlockNumber = allResults[allResults.length - 1] as bigint;
+    const [, ...results] = allResults.slice(0, -1);
+    // eslint-disable-next-line no-console
+    console.log(
+      'multicall executed at block:',
+      multicallBlockNumber.toString(),
+    );
 
     return results as MulticallReturnType<TContracts, false>;
   }

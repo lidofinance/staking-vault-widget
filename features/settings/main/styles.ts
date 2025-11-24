@@ -27,7 +27,7 @@ export const GroupWrapper = styled.article`
 
 export const GroupHeading = styled(Heading)`
   font-size: ${({ theme }) => theme.fontSizesMap.sm}px;
-  line-height: 24x;
+  line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;
 

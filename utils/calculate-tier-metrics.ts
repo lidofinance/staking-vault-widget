@@ -22,7 +22,7 @@ type CalculatedMetrics = {
   reservationFeeBPValue?: string;
 };
 
-export const calcNewMetrics = ({
+export const calculateTierMetrics = ({
   newTier,
   vault,
   newVaultMintingLimit,

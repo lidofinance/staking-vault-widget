@@ -25,7 +25,7 @@ const getProxyCodeWithCache = async (
   return proxyCode;
 };
 
-export const isDashboard = async (
+export const checkIsDashboard = async (
   publicClient: RegisteredPublicClient,
   dashboardAddress: Address,
 ): Promise<boolean> => {

@@ -122,6 +122,7 @@ export const formatSettingsValues = (
     nodeOperatorManagers: vaultInfo.nodeOperatorManagers,
     feeRecipient,
     isDepositAllowed: vaultInfo.isDepositAllowed,
+    pdgPolicy: vaultInfo.pdgPolicy,
     confirmExpiryCurrent,
     confirmExpiry,
     nodeOperatorFeeRateCurrent,
@@ -154,6 +155,8 @@ export const prepareDefaultValues = (
 
     feeRate: data.nodeOperatorFeeRateCurrent,
     feeRateCustom: '',
+
+    pdgPolicy: data.pdgPolicy,
   };
 };
 

@@ -9,7 +9,11 @@ import { formatCustomDate } from 'features/overview/consts';
 import { ReportStateContainer, StyledLink, TextWrapper } from './styles';
 
 export const ReportState = () => {
-  const { data, isPending, error } = useVault();
+  const { data, isPending, error, activeVault } = useVault();
+
+  if (activeVault?.isPendingConnect) {
+    return null;
+  }
 
   return (
     <ReportStateContainer data-testid="reportSection">
