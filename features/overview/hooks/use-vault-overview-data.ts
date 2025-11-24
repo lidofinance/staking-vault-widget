@@ -97,6 +97,7 @@ const getVaultData = async ({
     operatorGrid,
     report,
     lazyOracle,
+    blockNumber,
     ...rest
   } = vault;
 
@@ -131,6 +132,7 @@ const getVaultData = async ({
       operatorGrid.prepare.group([vault.nodeOperator]),
       lazyOracle.prepare.vaultQuarantine([vault.address]),
     ] as const,
+    blockNumber,
   });
 
   const [vaultRecord, locked] = await Promise.all([
