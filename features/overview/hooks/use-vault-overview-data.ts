@@ -28,6 +28,7 @@ import {
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
+import { WEI_PER_ETHER } from '../../../consts/tx';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
@@ -60,6 +61,7 @@ export type VaultInfo = VaultConnection &
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
     redemptionShares: bigint;
+    redemptionStETH: bigint;
     lockedShares: bigint;
     locked: bigint;
     nodeOperatorUnclaimedFee: bigint;
@@ -77,6 +79,9 @@ export type VaultInfo = VaultConnection &
     stagedBalanceWei: bigint;
     obligationsShortfallValue: bigint;
     stETHToBurn: bigint;
+    feesToSettle: bigint;
+    rebalanceShares: bigint;
+    rebalanceStETH: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -137,12 +142,17 @@ const getVaultData = async ({
     ] as const,
   });
 
-  const [obligationsShortfallValue, [sharesToBurn, __]] = await readWithReport({
+  const [
+    obligationsShortfallValue,
+    [sharesToBurn, feesToSettle],
+    rebalanceShares,
+  ] = await readWithReport({
     publicClient,
     report,
     contracts: [
       dashboard.prepare.obligationsShortfallValue(),
       dashboard.prepare.obligations(),
+      hub.prepare.healthShortfallShares([vault.address]),
     ] as const,
   });
 
@@ -157,6 +167,7 @@ const getVaultData = async ({
     inOutDelta: inOutDeltaArray,
     settledLidoFees,
     cumulativeLidoFees,
+    redemptionShares,
     ...restVaultRecord
   } = vaultRecord;
 
@@ -174,6 +185,8 @@ const getVaultData = async ({
     totalMintingCapacityStETH,
     tierStETHLimit,
     stETHToBurn,
+    rebalanceStETH,
+    redemptionStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     shares.convertToSteth(liabilityShares),
@@ -182,7 +195,10 @@ const getVaultData = async ({
     shares.convertToShares(locked),
     shares.convertToSteth(totalMintingCapacityShares),
     shares.convertToSteth(tierShareLimit),
+    // TODO: round with RoundUP
     shares.convertToSteth(sharesToBurn),
+    shares.convertToSteth(rebalanceShares),
+    shares.convertToSteth(redemptionShares),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -223,6 +239,11 @@ const getVaultData = async ({
     stagedBalanceWei,
     obligationsShortfallValue,
     stETHToBurn,
+    feesToSettle,
+    rebalanceShares,
+    rebalanceStETH,
+    redemptionShares,
+    redemptionStETH,
     ...rest,
     ...restVaultRecord,
   };
@@ -268,6 +289,11 @@ const selectOverviewData = ({
     stagedBalanceWei,
     obligationsShortfallValue,
     stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -409,6 +435,7 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
+    isPausedByFees: feesToSettle > WEI_PER_ETHER,
     netStakingRewards,
     carrySpreadApr,
     vaultData,
@@ -424,6 +451,11 @@ const selectOverviewData = ({
     stagedBalanceWei,
     obligationsShortfallValue,
     stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
   };
 };
 

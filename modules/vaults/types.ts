@@ -11,7 +11,7 @@ import {
   getPredepositGuaranteeContract,
 } from './contracts';
 import type { RegisteredPublicClient } from 'modules/web3';
-import type { Confirmation } from 'modules/vaults/utils/get-confirmations';
+import type { Confirmation } from 'utils/get-confirmations';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
