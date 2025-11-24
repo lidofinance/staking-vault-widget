@@ -19,7 +19,10 @@ export const DepositsRestricted = () => {
     beaconChainDepositsPauseIntent,
   } = values ?? {};
 
-  if (typeof feesToSettle !== 'bigint' || feesToSettle < WEI_PER_ETHER) {
+  if (
+    (typeof feesToSettle !== 'bigint' || feesToSettle < WEI_PER_ETHER) &&
+    (typeof redemptionStETH !== 'bigint' || redemptionStETH === 0n)
+  ) {
     return null;
   }
 
