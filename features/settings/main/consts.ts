@@ -10,8 +10,8 @@ import {
   MAX_CONFIRM_EXPIRY_SECONDS,
   MIN_CONFIRM_EXPIRY,
   MIN_CONFIRM_EXPIRY_SECONDS,
-  vaultTexts,
 } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults/consts';
 
 import type {
   MainSettingsFormValidatedValues,

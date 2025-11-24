@@ -51,6 +51,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
     useMintData();
 
   const { mint, retryEvent } = useMint();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     MintFormFieldValues,
@@ -62,7 +63,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       token: 'stETH',
       recipient: '',
     },
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     mode: 'onTouched',
     resolver: mintFormResolver,
     context: validationContext,

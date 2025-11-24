@@ -97,6 +97,7 @@ const getVaultData = async ({
     operatorGrid,
     report,
     lazyOracle,
+    blockNumber,
     ...rest
   } = vault;
 
@@ -131,6 +132,7 @@ const getVaultData = async ({
       operatorGrid.prepare.group([vault.nodeOperator]),
       lazyOracle.prepare.vaultQuarantine([vault.address]),
     ] as const,
+    blockNumber,
   });
 
   const [vaultRecord, locked] = await Promise.all([
@@ -390,13 +392,20 @@ export const useVaultOverviewData = () => {
   const { shares, publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  return useQuery({
-    queryKey: [...queryKeys.state, 'vault-overview-data'],
+  const query = useQuery({
+    queryKey: [
+      ...queryKeys.state,
+      'vault-overview-data',
+      activeVault?.blockNumber.toString(),
+    ],
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,
     queryFn: async () => {
-      invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
+      invariant(
+        activeVault,
+        '[useVaultOverviewData] activeVault is not defined',
+      );
 
       const [vaultData, vaultMetrics] = await Promise.all([
         getVaultData({ publicClient, shares, vault: activeVault }),
@@ -415,4 +424,6 @@ export const useVaultOverviewData = () => {
     },
     select: selectOverviewData,
   });
+
+  return { ...query };
 };

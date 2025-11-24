@@ -9,12 +9,15 @@ import { TierBaseInfo } from '../tier-base-info';
 import { SelectTierModal } from '../select-tier-modal';
 
 import { TierSelector } from './styles';
+import { useFormState } from 'react-hook-form';
 
 export const ChooseTier = () => {
   const [showModal, setModalVisibility] = useState(false);
+  const { disabled } = useFormState();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
-  const accessPermission = !!(hasAdmin || hasPermission || isNodeOperator);
+  const accessPermission =
+    !!(hasAdmin || hasPermission || isNodeOperator) && !disabled;
   const { values, selectedTier } = useTierData();
 
   const isActive =

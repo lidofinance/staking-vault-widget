@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Modal, Button } from '@lidofinance/lido-ui';
 
-import { DisplayableError, useVault, vaultTexts } from 'modules/vaults';
+import { DisplayableError, useVault } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults/consts';
 import { ButtonLink } from 'shared/components/button-link';
 import { appPaths } from 'consts/routing';
 
