@@ -26,14 +26,12 @@ export const Navigation: FC<NavigationProps> = ({ mode = 'root' }) => {
   })();
 
   return (
-    <>
-      <Nav>
-        {NavigationContent && <NavigationContent />}
+    <Nav>
+      {NavigationContent && <NavigationContent />}
 
-        <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
-          Leave feedback <External />
-        </FeedbackLink>
-      </Nav>
-    </>
+      <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
+        Leave feedback <External />
+      </FeedbackLink>
+    </Nav>
   );
 };
