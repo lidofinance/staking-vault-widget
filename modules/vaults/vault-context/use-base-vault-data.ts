@@ -48,6 +48,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportFresh,
         latestVaultReport,
         latestHubReport,
+        blockNumber,
       ] = await Promise.all([
         vault.read.nodeOperator(),
         vault.read.withdrawalCredentials(),
@@ -57,7 +58,12 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         hub.read.isReportFresh([vaultAddress]),
         hub.read.latestReport([vaultAddress]),
         lazyOracle.read.latestReportData(),
+        publicClient.getBlockNumber(),
       ]);
+
+      // TODO: remove after monitoring error with InvalidProof()
+      // eslint-disable-next-line no-console
+      console.log('getting report data for block:', blockNumber);
 
       const [
         latestHubReportTimestamp,
@@ -111,6 +117,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isPendingDisconnect,
         isReportAvailable,
         predepositGuarantee,
+        blockNumber,
         ...connection,
       };
     },
