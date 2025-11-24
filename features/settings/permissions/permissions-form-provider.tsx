@@ -22,11 +22,12 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { data: rolesList, refetch } = usePermissionsFormData();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () => asyncPermissions.awaiter,
     resolver: zodResolver(editPermissionsSchema),
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     mode: 'all',
   });
 

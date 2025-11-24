@@ -1,7 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const RadioInputSelector = styled.div`
-  width: 20px;
+  max-width: 20px;
+  width: 100%;
   height: 20px;
   border-radius: 50%;
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -40,7 +41,15 @@ export const RadioInputLabel = styled.label<{
   color: ${({ theme }) => theme.colors.text};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
-  background: ${({ disabled }) => (disabled ? '#F5F5F7' : 'transparent')};
+  ${({ theme, disabled }) =>
+    theme.name === 'dark'
+      ? css`
+          background: ${disabled && '#27272E8F'};
+        `
+      : css`
+          background: ${disabled && '#EFF2F68F'};
+        `}
+}
 
   &:hover {
     &:after {

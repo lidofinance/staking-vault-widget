@@ -43,6 +43,7 @@ export const RequestChangeLimit = () => {
 
   if (
     !proposedTier ||
+    vaultTierInfo?.vault.isPendingConnect ||
     !(isNodeOperator || hasAdmin || hasVaultConfigurationPermission)
   )
     return null;

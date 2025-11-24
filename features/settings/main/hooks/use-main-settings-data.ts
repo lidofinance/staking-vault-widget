@@ -37,21 +37,21 @@ export const useVaultSettingsData = () => {
         nodeOperatorManagers,
         feeRate,
         feeRecipient,
+        pdgPolicy,
         { beaconChainDepositsPauseIntent },
       ] = await Promise.all([
-        activeVault.dashboard.read.getRoleMembers([
-          VAULTS_ROOT_ROLES_MAP.defaultAdmin,
-        ]),
-        activeVault.dashboard.read.getRoleMembers([
+        dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
+        dashboard.read.getRoleMembers([
           VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
         ]),
-        activeVault.dashboard.read.feeRate(),
-        activeVault.dashboard.read.feeRecipient(),
+        dashboard.read.feeRate(),
+        dashboard.read.feeRecipient(),
+        dashboard.read.pdgPolicy(),
         activeVault.hub.read.vaultConnection([activeVault.address]),
       ]);
 
       const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-        activeVault.dashboard.address,
+        dashboard.address,
         publicClient,
         dashboard.abi,
       );
@@ -78,6 +78,7 @@ export const useVaultSettingsData = () => {
         confirmExpiry,
         confirmExpiryConfirmations,
         isDepositAllowed: !beaconChainDepositsPauseIntent,
+        pdgPolicy: String(pdgPolicy),
       };
     },
   });
