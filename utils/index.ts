@@ -9,3 +9,4 @@ export * from './mergeRefs';
 export * from './get-minting-constraint-type';
 export * from './calculate-health';
 export * from './ceil-div-bigint';
+export * from './calculate-tier-metrics';

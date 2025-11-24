@@ -465,13 +465,20 @@ export const useVaultOverviewData = () => {
   const { shares, publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  return useQuery({
-    queryKey: [...queryKeys.state, 'vault-overview-data'],
+  const query = useQuery({
+    queryKey: [
+      ...queryKeys.state,
+      'vault-overview-data',
+      activeVault?.blockNumber.toString(),
+    ],
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,
     queryFn: async () => {
-      invariant(activeVault, '[useSingleVaultData] activeVault is not defined');
+      invariant(
+        activeVault,
+        '[useVaultOverviewData] activeVault is not defined',
+      );
 
       const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
         getVaultData({ publicClient, shares, vault: activeVault }),
@@ -496,4 +503,6 @@ export const useVaultOverviewData = () => {
     },
     select: selectOverviewData,
   });
+
+  return { ...query };
 };

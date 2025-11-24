@@ -1,9 +1,13 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { type Address } from 'viem';
+import { type Address, zeroAddress } from 'viem';
 
 import { useLidoSDK } from 'modules/web3';
-import { fetchReport } from 'modules/vaults';
+import {
+  fetchReport,
+  checkIsDashboard,
+  VaultOwnerNotDashboardError,
+} from 'modules/vaults';
 
 import {
   getLazyOracleContract,
@@ -40,6 +44,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       const vault = getStakingVaultContract(vaultAddress, publicClient);
 
       const [
+        vaultOwner,
         nodeOperator,
         withdrawalCredentials,
         connection,
@@ -50,6 +55,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         latestHubReport,
         blockNumber,
       ] = await Promise.all([
+        vault.read.owner(),
         vault.read.nodeOperator(),
         vault.read.withdrawalCredentials(),
         hub.read.vaultConnection([vaultAddress]),
@@ -85,18 +91,28 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       const isReportMissing = !report && !isReportFresh;
 
+      const supposedDashboardAddress =
+        connection.owner !== zeroAddress ? connection.owner : vaultOwner;
+      const isDashboard = await checkIsDashboard(
+        publicClient,
+        supposedDashboardAddress,
+      );
       // TODO: reword to support multiple factories
-      // if (!(await isDashboard(publicClient, connection.owner))) {
-      //   throw new VaultOwnerNotDashboardError();
-      // }
+      if (!isDashboard && isVaultConnected) {
+        throw new VaultOwnerNotDashboardError();
+      }
 
-      const dashboard = getDashboardContract(connection.owner, publicClient);
+      const dashboard = getDashboardContract(
+        supposedDashboardAddress,
+        publicClient,
+      );
       const operatorGrid = getOperatorGridContract(publicClient);
       const predepositGuarantee = getPredepositGuaranteeContract(publicClient);
 
       return {
         address: vaultAddress,
         vault,
+        vaultOwner,
         dashboard,
         hub,
         nodeOperator,
@@ -112,9 +128,10 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         },
         isReportFresh,
         isReportMissing,
-        isVaultDisconnected: connection.disconnectInitiatedTs === 0,
+        isVaultDisconnected: !isDashboard,
         isVaultConnected,
         isPendingDisconnect,
+        isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
         predepositGuarantee,
         blockNumber,

@@ -27,6 +27,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   } = useVault();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const { data, refetch } = useMainSettingsFormData();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const promisedSettingsData = useAwaiter(data).awaiter;
 
@@ -37,7 +38,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   >({
     defaultValues: async () =>
       await promisedSettingsData.then(prepareDefaultValues),
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     resolver: mainSettingsFormResolver,
     context: promisedSettingsData,
     mode: 'all',

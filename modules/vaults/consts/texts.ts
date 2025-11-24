@@ -1,4 +1,4 @@
-import { formatBalance } from 'utils';
+import { formatBalance } from 'utils/formats/format-balance';
 import { WEI_PER_ETHER } from 'consts/tx';
 
 type LidoToken = 'stETH' | 'wstETH';
@@ -17,6 +17,10 @@ export const vaultTexts = {
   actions: {
     approve: {
       loading: (token: LidoToken) => `Approving ${token}` as const,
+    },
+    connectVault: {
+      connect: 'Awaiting for Vault connection',
+      completed: 'Vault connected',
     },
     createVault: {
       loading: 'Creating vault',

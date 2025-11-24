@@ -63,6 +63,7 @@ const getVaultTierInfo = async ({
     shareLimit,
     hub,
     operatorGrid,
+    isPendingConnect,
     ...rest
   } = vault;
 
@@ -170,6 +171,7 @@ const getVaultTierInfo = async ({
       liquidityFeeBP: Number(vaultLiquidityFeeBP),
       reservationFeeBP: Number(vaultReservationFeeBP),
       shareLimit: vaultShareLimit,
+      isPendingConnect,
     },
     tier: {
       id: tierId,

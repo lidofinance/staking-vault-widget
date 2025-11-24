@@ -47,6 +47,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
   const { isDappActive } = useDappStatus();
   const { activeVault } = useVault();
   const { burn, retryEvent } = useRepay();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     RepayFormFieldValues,
@@ -60,7 +61,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     mode: 'onTouched',
     context: validationContext,
     resolver: repayFormResolver,
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
   });
 
   const token = formObject.watch('token');

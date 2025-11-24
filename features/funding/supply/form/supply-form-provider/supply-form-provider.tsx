@@ -48,6 +48,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   const { activeVault } = useVault();
   const { validationContext } = useSupplyFormValidationContext();
   const { supply, retryEvent } = useSupply();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     SupplyFormFieldValues,
@@ -61,7 +62,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
       mintAddress: '',
     },
     mode: 'onTouched',
-    disabled: !isDappActive || activeVault?.isPendingDisconnect,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     context: useAwaiter(validationContext).awaiter,
     resolver: SupplyFormResolver,
   });
