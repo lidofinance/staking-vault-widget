@@ -83,10 +83,15 @@ export const AddressInputGroup = styled.div`
 `;
 
 // ConfirmInput
-export const InfoList = styled.span`
-  list-style-position: inside;
+export const ConfirmWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+export const InfoList = styled.ul`
   display: flex;
   flex-direction: column;
+  padding-left: ${({ theme }) => theme.spaceMap.md}px;
   user-select: none;
   color: ${({ theme }) => theme.colors.textSecondary};
 `;

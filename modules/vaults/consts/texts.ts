@@ -55,8 +55,19 @@ export const vaultTexts = {
           hint: 'Vault creation requires a supply of 1 ETH.',
         },
         acceptTerms: {
-          placeholder:
-            'I confirm that I’ve read and agree:\n •  with the fees structure\n •  mechanisms applied in extreme scenarios',
+          placeholder: 'I confirm that I’ve read and agree with:',
+          list: [
+            {
+              text: 'the',
+              linkText: 'fee structure',
+              url: 'https://research.lido.fi/t/default-risk-assessment-framework-and-fees-parameters-for-lido-v3-stvaults/10504#p-22550-fees-7',
+            },
+            {
+              text: 'mechanisms applied according to',
+              linkText: 'Risk Assessment Framework',
+              url: 'https://research.lido.fi/t/default-risk-assessment-framework-and-fees-parameters-for-lido-v3-stvaults/10504',
+            },
+          ],
         },
       },
     },
