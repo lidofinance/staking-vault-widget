@@ -5,6 +5,8 @@ import { isAddressEqual, isAddress } from 'viem';
 import { usePermissionsFormData } from './use-permissions-form-data';
 import type { EditPermissionsSchema } from '../types';
 
+const permissionsActionsTypes = ['grant', 'revoke'];
+
 export const useAllowTransaction = () => {
   const { data: permissionsData } = usePermissionsFormData();
   const formFields = useWatch<EditPermissionsSchema>();
@@ -36,7 +38,11 @@ export const useAllowTransaction = () => {
     const isGuarantorChanged = !isAddressEqual(noGuarantor, currentNOGuarantor);
     const isPdgChanged = isDepositorChanged || isGuarantorChanged;
     const isPermissionsChanged = Object.entries(rolesSchema).some(([_, list]) =>
-      list.some((permission) => permission?.action === 'grant'),
+      list.some(
+        (permission) =>
+          !!permission?.action &&
+          permissionsActionsTypes.includes(permission.action),
+      ),
     );
 
     return isPdgChanged || isPermissionsChanged;
