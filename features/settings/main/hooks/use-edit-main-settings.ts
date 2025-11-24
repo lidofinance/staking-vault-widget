@@ -114,10 +114,15 @@ export const useEditMainSettings = () => {
         const { feeRate, feeRateCustom } = formValues;
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(feeRate !== 'custom' ? feeRate : feeRateCustom);
+        // eslint-disable-next-line no-console
+        console.log('[editMainSettings] feeValue', feeValue);
 
         const isFeeValueChanged =
+          !isNaN(feeValue) &&
           feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
 
+        // eslint-disable-next-line no-console
+        console.log('[editMainSettings] isFeeValueChanged', isFeeValueChanged);
         if (isFeeValueChanged) {
           const newFee = Math.floor(
             (feeValue * VAULT_TOTAL_BASIS_POINTS) / 100,
@@ -137,6 +142,10 @@ export const useEditMainSettings = () => {
           confirmExpiry === 'custom' && confirmExpiryCustom
             ? BigInt(confirmExpiryCustom) * 3600n
             : BigInt(confirmExpiry);
+
+        // eslint-disable-next-line no-console
+        console.log('[editMainSettings] expiryValue', expiryValue);
+
         const isExpiryValueChanged =
           expiryValue !== BigInt(vaultSettings.confirmExpiryCurrent);
 
