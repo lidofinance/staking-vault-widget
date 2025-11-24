@@ -7,4 +7,3 @@ export * from './use-remaining-minting-capacity-chart';
 export * from './use-vault-overview-data';
 export * from './use-connect-vault';
 export * from './use-tier-request';
-export * from './use-vault-data-hash';
