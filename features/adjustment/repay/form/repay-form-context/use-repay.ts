@@ -6,7 +6,6 @@ import {
   vaultTexts,
   GoToVault,
   useReportCalls,
-  getStEthContract,
 } from 'modules/vaults';
 import {
   TransactionEntry,
@@ -20,7 +19,7 @@ import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
   const { activeVault } = useVault();
-  const { stETH, wstETH, publicClient } = useLidoSDK();
+  const { stETH, wstETH, shares } = useLidoSDK();
   const { data } = useLiability();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
@@ -31,7 +30,6 @@ export const useRepay = () => {
       async ({ amount, token }: RepayFormValidatedValues) => {
         invariant(activeVault, '[useRepay] activeVault is undefined');
         invariant(liabilityShares, '[useRepay] liabilityShares is undefined');
-        invariant(publicClient, '[useRepay] publicClient is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
         const mainActionCompleteText =
@@ -42,25 +40,28 @@ export const useRepay = () => {
 
           const isSteth = token === 'stETH';
           const tokenContract = isSteth ? stETH : wstETH;
-          const stethContract = getStEthContract(publicClient);
 
           let txAmount = amount;
           if (isSteth) {
-            const sharesAmount = await stethContract.read.getSharesByPooledEth([
-              amount,
-            ]);
-            const diff = liabilityShares - sharesAmount;
-            txAmount = diff === 1n ? sharesAmount + 1n : sharesAmount;
+            const sharesAmount = await shares.convertToShares(amount);
+
+            // Corner case when a user burns max stETH amount and conversion can return 1 wei less
+            // liabilityShares => stETH for repay form (with round up), max stETH => sharesAmount
+            txAmount =
+              liabilityShares - sharesAmount === 1n
+                ? liabilityShares
+                : sharesAmount;
           }
 
           const allowance = await tokenContract.allowance({
             to: activeVault.dashboard.address,
           });
-          const needsAllowance = allowance < txAmount;
+
+          const needsAllowance = allowance < amount;
           if (needsAllowance) {
             const approveCall = {
               ...(await tokenContract.populateApprove({
-                amount: txAmount,
+                amount: amount,
                 to: activeVault.dashboard.address,
               })),
               loadingActionText: vaultTexts.actions.approve.loading(token),
@@ -96,7 +97,7 @@ export const useRepay = () => {
         stETH,
         wstETH,
         liabilityShares,
-        publicClient,
+        shares,
       ],
     ),
     ...rest,
