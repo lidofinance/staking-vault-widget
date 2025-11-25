@@ -1,4 +1,4 @@
-export const LidoV3Abi = [
+export const LidoPartialAbi = [
   {
     constant: true,
     inputs: [],

@@ -1,15 +1,17 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
 
 import { calculateHealth } from 'utils';
-import { getDashboardContract, getVaultHubContract } from 'modules/vaults';
+import {
+  getDashboardContract,
+  getStEthContract,
+  getVaultHubContract,
+} from 'modules/vaults';
 
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import type { RegisteredPublicClient } from 'modules/web3';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
   vaultAddress: Address;
-  shares: LidoSDKShares;
 };
 
 export type VaultTableInfo = {
@@ -25,9 +27,10 @@ export type VaultTableInfo = {
 export const getVaultDataTable = async ({
   publicClient,
   vaultAddress,
-  shares,
 }: VaultDataArgs): Promise<VaultTableInfo> => {
   const vaultHub = getVaultHubContract(publicClient);
+  const stethContract = getStEthContract(publicClient);
+
   const { owner, forcedRebalanceThresholdBP } =
     await vaultHub.read.vaultConnection([vaultAddress]);
 
@@ -44,7 +47,9 @@ export const getVaultDataTable = async ({
     dashboardContract.read.liabilityShares(),
   ]);
 
-  const liabilityStETH = await shares.convertToSteth(liabilityShares);
+  const liabilityStETH = await stethContract.read.getPooledEthBySharesRoundUp([
+    liabilityShares,
+  ]);
 
   const healthScore = calculateHealth({
     totalValue,
