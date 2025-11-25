@@ -6,6 +6,7 @@ import {
   vaultTexts,
   GoToVault,
   useReportCalls,
+  getStEthContract,
 } from 'modules/vaults';
 import {
   TransactionEntry,
@@ -14,18 +15,23 @@ import {
   withSuccess,
 } from 'modules/web3';
 
+import { useLiability } from './use-liability';
 import type { RepayFormValidatedValues } from '../types';
 
 export const useRepay = () => {
   const { activeVault } = useVault();
-  const { stETH, wstETH } = useLidoSDK();
+  const { stETH, wstETH, publicClient } = useLidoSDK();
+  const { data } = useLiability();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
+  const { liabilityShares } = data ?? {};
 
   return {
     burn: useCallback(
       async ({ amount, token }: RepayFormValidatedValues) => {
         invariant(activeVault, '[useRepay] activeVault is undefined');
+        invariant(liabilityShares, '[useRepay] liabilityShares is undefined');
+        invariant(publicClient, '[useRepay] publicClient is undefined');
 
         const loadingActionText = vaultTexts.actions.repay.loading(token);
         const mainActionCompleteText =
@@ -36,26 +42,36 @@ export const useRepay = () => {
 
           const isSteth = token === 'stETH';
           const tokenContract = isSteth ? stETH : wstETH;
+          const stethContract = getStEthContract(publicClient);
+
+          let txAmount = amount;
+          if (isSteth) {
+            const sharesAmount = await stethContract.read.getSharesByPooledEth([
+              amount,
+            ]);
+            const diff = liabilityShares - sharesAmount;
+            txAmount = diff === 1n ? sharesAmount + 1n : sharesAmount;
+          }
 
           const allowance = await tokenContract.allowance({
             to: activeVault.dashboard.address,
           });
-          const needsAllowance = allowance < amount;
+          const needsAllowance = allowance < txAmount;
           if (needsAllowance) {
             const approveCall = {
               ...(await tokenContract.populateApprove({
-                amount,
+                amount: txAmount,
                 to: activeVault.dashboard.address,
               })),
               loadingActionText: vaultTexts.actions.approve.loading(token),
             };
             calls.push(approveCall);
           }
-          // TODO: convert stETH to shares with correct rounding and call burnShares
+
           calls.push({
             ...activeVault.dashboard.encode[
-              token === 'stETH' ? 'burnStETH' : 'burnWstETH'
-            ]([amount]),
+              isSteth ? 'burnShares' : 'burnWstETH'
+            ]([txAmount]),
             loadingActionText,
           });
           return calls;
@@ -73,7 +89,15 @@ export const useRepay = () => {
 
         return success;
       },
-      [activeVault, prepareReportCalls, sendTX, stETH, wstETH],
+      [
+        activeVault,
+        prepareReportCalls,
+        sendTX,
+        stETH,
+        wstETH,
+        liabilityShares,
+        publicClient,
+      ],
     ),
     ...rest,
   };

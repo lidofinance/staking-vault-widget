@@ -26,6 +26,7 @@ export const useLiability = () => {
 
       return {
         liabilityWsteth: liabilityShares,
+        liabilityShares,
         liabilitySteth,
       };
     },
