@@ -17,17 +17,18 @@ import { FormAndContentWrapper } from './styles';
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
-  const { invalidateVaultConfig } = useVault();
+  const { invalidateVaultConfig, activeVault } = useVault();
   const { isDappActive } = useDappStatus();
   const { data: rolesList, refetch } = usePermissionsFormData();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () => asyncPermissions.awaiter,
     resolver: zodResolver(editPermissionsSchema),
-    disabled: !isDappActive,
-    mode: 'onTouched',
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    mode: 'all',
   });
 
   const reset = formObject.reset;

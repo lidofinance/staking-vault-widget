@@ -9,14 +9,18 @@ import { formatCustomDate } from 'features/overview/consts';
 import { ReportStateContainer, StyledLink, TextWrapper } from './styles';
 
 export const ReportState = () => {
-  const { data, isPending, error } = useVault();
+  const { data, isPending, error, activeVault } = useVault();
+
+  if (activeVault?.isPendingConnect) {
+    return null;
+  }
 
   return (
     <ReportStateContainer data-testid="reportSection">
       <InlineLoader isLoading={isPending} width={140}>
         <TextWrapper>
           <Text color="secondary" size="xxs" data-testid="reportData">
-            Last updated:{' '}
+            Metrics are based on simulated report data. Last updated:{' '}
             {data && formatCustomDate(Number(data.hubReport.timestamp))}
             {error && DATA_UNAVAILABLE}
           </Text>

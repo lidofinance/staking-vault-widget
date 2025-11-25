@@ -5,6 +5,7 @@ import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs
 import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
+import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -14,6 +15,7 @@ if (
   typeof window === 'undefined'
 ) {
   void startupCheckRPCs();
+  void startupCheckValidationFile();
 }
 
 // https://nextjs.org/docs/pages/api-reference/next-config-js/basePath
@@ -154,6 +156,9 @@ export default withBundleAnalyzer({
     rateLimitTimeFrame: process.env.RATE_LIMIT_TIME_FRAME,
     runStartupChecks: process.env.RUN_STARTUP_CHECKS,
     devnetOverrides: process.env.DEVNET_OVERRIDES,
+
+    validationAPI: process.env.VALIDATION_SERVICE_BASE_PATH,
+    validationFilePath: process.env.VALIDATION_FILE_PATH,
   },
 
   // ATTENTION: If you add a new variable you should declare it in `global.d.ts`

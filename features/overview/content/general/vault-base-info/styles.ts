@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Address } from '@lidofinance/lido-ui';
+import { Address, Chip } from '@lidofinance/lido-ui';
 
 import { devicesHeaderMedia } from 'styles/global';
 
@@ -81,4 +81,11 @@ export const NodeOperatorAddress = styled(Address)`
   font-weight: 700;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
+`;
+
+export const VaultState = styled(Chip)`
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  color: ${({ theme }) => theme.colors.text};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background-color: ${({ theme }) => theme.colors.foreground};
 `;

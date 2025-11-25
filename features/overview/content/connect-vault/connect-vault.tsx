@@ -1,31 +1,31 @@
-import { Text, Button } from '@lidofinance/lido-ui';
+import { useVault, vaultTexts } from 'modules/vaults';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVaultOverviewData } from 'features/overview/hooks';
 
-import { Card, List, Title } from './styles';
+import { GeneralInfo, RequestTier, ApproveButton } from './components';
+import { Content, Title, Wrapper } from './styles';
 
 const { connectVault } = vaultTexts.metrics;
 
 export const ConnectVault = () => {
+  const { activeVault } = useVault();
+  const { isLoading } = useVaultOverviewData();
+  const { isPendingConnect } = activeVault ?? {};
+
+  if (!activeVault || !isPendingConnect || isLoading) {
+    return null;
+  }
+
   return (
-    <Card>
+    <Wrapper>
       <Title as="h2" color="text">
         {connectVault.title}
       </Title>
-      <Text size="xs">{connectVault.description}</Text>
-      <div>
-        <Text size="xs">{connectVault.listTitle}</Text>
-        <List>
-          {connectVault.list.map((text) => (
-            <ol key={text}>
-              <Text size="xs">{text}</Text>
-            </ol>
-          ))}
-        </List>
-      </div>
-      <Button size="sm" onClick={() => {}}>
-        {connectVault.action}
-      </Button>
-    </Card>
+      <Content>
+        <GeneralInfo />
+        <RequestTier />
+      </Content>
+      <ApproveButton />
+    </Wrapper>
   );
 };

@@ -65,6 +65,7 @@ const getVaultTierInfo = async ({
     shareLimit,
     hub,
     operatorGrid,
+    isPendingConnect,
     ...rest
   } = vault;
 
@@ -73,7 +74,6 @@ const getVaultTierInfo = async ({
 
   const [
     record,
-    isVaultConnected,
     totalValue,
     vaultTotalMintingCapacityShares,
     vaultMintableShares,
@@ -83,7 +83,6 @@ const getVaultTierInfo = async ({
     report: vault.report,
     contracts: [
       hub.prepare.vaultRecord([vault.address]),
-      hub.prepare.isVaultConnected([vault.address]),
       dashboard.prepare.totalValue(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
@@ -152,7 +151,6 @@ const getVaultTierInfo = async ({
 
   return {
     lidoTVLSharesLimit,
-    isVaultConnected,
     address,
     nodeOperator,
     proposals: {
@@ -175,6 +173,7 @@ const getVaultTierInfo = async ({
       liquidityFeeBP: Number(vaultLiquidityFeeBP),
       reservationFeeBP: Number(vaultReservationFeeBP),
       shareLimit: vaultShareLimit,
+      isPendingConnect,
     },
     tier: {
       id: tierId,

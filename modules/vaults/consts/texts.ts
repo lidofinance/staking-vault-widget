@@ -1,4 +1,4 @@
-import { formatBalance } from 'utils';
+import { formatBalance } from 'utils/formats/format-balance';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -16,6 +16,10 @@ export const vaultTexts = {
   actions: {
     approve: {
       loading: (token: LidoToken) => `Approving ${token}` as const,
+    },
+    connectVault: {
+      connect: 'Awaiting for Vault connection',
+      completed: 'Vault connected',
     },
     createVault: {
       loading: 'Creating vault',
@@ -75,6 +79,10 @@ export const vaultTexts = {
       submit: (token: LidoToken, amount?: bigint | null) =>
         `Repay ${balance(amount)}${token}` as const,
     },
+    report: {
+      loading: 'Applying oracle report' as const,
+      completed: 'Applying oracle report is done' as const,
+    },
     supply: {
       available: `Available to supply`,
       mint: {
@@ -109,9 +117,6 @@ export const vaultTexts = {
       notEnoughEther: `Not enough unlocked ETH to claim` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
-    },
-    report: {
-      loading: 'Applying oracle report',
     },
     weth: {
       loadingUnwrap: 'Unwrapping wETH',
@@ -180,6 +185,8 @@ export const vaultTexts = {
         const suffix = roleCount > 1 ? 's' : '';
         return `Revoking ${roleCount} role${suffix}` as const;
       },
+      noGuarantorLoading: `Granting PDG Guarantor to the new address` as const,
+      noDepositorLoading: `Granting PDG Depositor to the new address` as const,
       confirmNoFee: (action: ConfirmAction, feePercent: number) =>
         `${action} ${feePercent}% Node Operator fee` as const,
       confirmExpiry: (action: ConfirmAction, expiryHours: number) =>
@@ -198,10 +205,12 @@ export const vaultTexts = {
       resumeBeaconChainDeposits: 'Resume deposits to beacon chain' as const,
       pauseBeaconChainDeposits: 'Pause deposits to beacon chain' as const,
       groups: {
+        deposits: 'Deposits',
         address: 'Addresses',
         settings: 'Settings',
       },
       feeRecipient: 'Setting node operator fee recipient address',
+      pdgPolicy: 'Setting PDG Policy',
       fields: {
         nodeOperator: {
           title: 'Node Operator',
@@ -211,6 +220,16 @@ export const vaultTexts = {
           title: 'Node Operator Fee Recipient',
           editLabel: 'Set new address',
           hint: 'The address of the Node Operator Fee Recipient that has opportunity to claim fees.',
+        },
+        pdgPolicy: {
+          title: 'Predeposit Guarantee Policy',
+          optionsDescription: {
+            STRICT: 'deposits require the full PDG process.',
+            ALLOW_PROVE:
+              'allows the node operator to prove unknown validators to PDG.',
+            ALLOW_DEPOSIT_AND_PROVE:
+              'allows the node operator to perform unguaranteed deposits (bypassing the predeposit requirement) and prove unknown validators.',
+          },
         },
         feeRate: {
           title: 'Node Operator Fee',
@@ -251,6 +270,18 @@ export const vaultTexts = {
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
   metrics: {
+    pendingDisconnect: {
+      title: 'Pending disconnect from Lido Core',
+      description: {
+        reportIsAvailable:
+          'Lido Core disconnection has been initiated. To complete the process, apply the latest Oracle report. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+        reportIsNotAvailable:
+          'Lido Core disconnection has been initiated. Oracle report submission is currently unavailable. Please wait for the next reporting window. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+      },
+      actions: {
+        applyReport: 'Apply the latest Oracle report',
+      },
+    },
     capacityExceeded: {
       title: 'stETH minting balance exceeded',
       description:
@@ -586,6 +617,14 @@ export const vaultTexts = {
     proveUnknownValidatorsRole: {
       title: "Node operator's sub-role for proving unknown validators",
       hint: "Node operator's sub-role for proving unknown validators",
+    },
+    guarantor: {
+      title: 'Guarantor',
+      hint: 'Manages the Node Operator’s guarantor bond: top up, withdraw, and claim refunds.',
+    },
+    depositor: {
+      title: 'Depositor',
+      hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },
   // common texts like errors, warnings, etc.

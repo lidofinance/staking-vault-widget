@@ -8,8 +8,10 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
+import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useDappStatus } from 'modules/web3';
+import { type MaxMintableResult, useVault } from 'modules/vaults';
 
 import { FormControllerStyled } from 'shared/components/form';
 
@@ -22,8 +24,6 @@ import type {
   MintFormValidatedValues,
   MintFormValidationContextAwaitable,
 } from '../types';
-import type { MaxMintableResult } from 'modules/vaults';
-import type { UseQueryResult } from '@tanstack/react-query';
 
 type MintFormDataContextValue = {
   mintableQuery: UseQueryResult<MaxMintableResult>;
@@ -46,10 +46,12 @@ export const useMintFormData = () => {
 
 export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
+  const { activeVault } = useVault();
   const { validationContext, mintableQuery, invalidateMintData } =
     useMintData();
 
   const { mint, retryEvent } = useMint();
+  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     MintFormFieldValues,
@@ -61,7 +63,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       token: 'stETH',
       recipient: '',
     },
-    disabled: !isDappActive,
+    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     mode: 'onTouched',
     resolver: mintFormResolver,
     context: validationContext,

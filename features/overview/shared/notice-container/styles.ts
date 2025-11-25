@@ -29,7 +29,7 @@ export const Title = styled(Heading)`
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.xs}px;
   margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
-  font-size: ${({ theme }) => theme.fontSizesMap.sm}px;
+  font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;

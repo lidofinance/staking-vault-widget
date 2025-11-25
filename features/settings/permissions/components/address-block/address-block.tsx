@@ -7,24 +7,24 @@ import { Wrapper } from './styles';
 import {
   EditPermissionsSchema,
   FieldSchema,
-  PermissionKeys,
+  PermissionFormField,
 } from 'features/settings/permissions/types';
 import { InputBlock } from '../input-block';
 
 export type AddressBlockProps = {
-  permission: PermissionKeys;
+  permissionFormField: PermissionFormField;
   readonly?: boolean;
   dataTestId?: string;
 };
 
 export const AddressBlock: FC<AddressBlockProps> = ({
-  permission,
+  permissionFormField,
   readonly,
   dataTestId,
 }) => {
   const { fields, update, append, remove } =
     useFieldArray<EditPermissionsSchema>({
-      name: permission,
+      name: permissionFormField,
     });
 
   const handleUpdateField = useCallback(
@@ -51,7 +51,7 @@ export const AddressBlock: FC<AddressBlockProps> = ({
             key={field.id}
             index={index}
             readonly={readonly}
-            permission={permission}
+            permissionFormField={permissionFormField}
             onUpdate={handleUpdateField}
             onRemove={handleRemoveField}
             dataTestId={`${dataTestId}-${index}`}

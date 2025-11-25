@@ -181,27 +181,59 @@ const fetchVaultRPC = async (
   };
 };
 
-const fetchConnectedVaultsRPC = async (
-  ctx: FetchVaultsContext,
-  params: FetchVaultsParams,
-): Promise<VaultsApiResponse> => {
-  const { publicClient } = ctx;
+const fetchVaultsDataBatchRPC = async (
+  { publicClient }: FetchVaultsContext,
+  offset: bigint,
+  limit: bigint,
+): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
+  const vaultViewer = getVaultViewerContract(publicClient);
+  const [vaultsData, totalVaultsCount] = await Promise.all([
+    vaultViewer.read.vaultsDataBatch([offset, limit]),
+    vaultViewer.read.vaultsCount(),
+  ]);
 
+  const vaultsCalculatedData = vaultsData.map((vaultData) => {
+    const { totalValue, liabilityStETH, connection, record } = vaultData;
+
+    const healthScore = calculateHealth({
+      totalValue,
+      liabilitySharesInStethWei: liabilityStETH,
+      forceRebalanceThresholdBP: connection.forcedRebalanceThresholdBP,
+    });
+
+    return {
+      address: vaultData.vaultAddress,
+      totalValue: totalValue.toString(),
+      liabilityStETH: liabilityStETH.toString(),
+      healthFactor: String(healthScore.healthRatio),
+      forcedRebalanceThresholdBP: connection.forcedRebalanceThresholdBP,
+      liabilityShares: record.liabilityShares.toString(),
+    };
+  });
+
+  return {
+    vaults: vaultsCalculatedData,
+    total: Number(totalVaultsCount),
+  };
+};
+
+const OFFSET_BY_ADDRESS = BigInt(0);
+const LIMIT_BY_ADDRESS = BigInt(200);
+const fetchVaultsDataByAddressRPC = async (
+  ctx: FetchVaultsContext,
+  address: Address,
+): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
+  const { publicClient } = ctx;
   const vaultViewer = getVaultViewerContract(publicClient);
 
-  const fromCursor = BigInt(params.perPage * (params.page - 1));
-  const toCursor = BigInt(params.page * params.perPage);
-
-  const [vaultAddress, leftOver] = await (params.address
-    ? vaultViewer.read.vaultsByOwnerBound([
-        params.address,
-        fromCursor,
-        toCursor,
-      ])
-    : vaultViewer.read.vaultsConnectedBound([fromCursor, toCursor]));
+  const vaultAddresses = await vaultViewer.read.vaultsByOwnerBatch([
+    address,
+    OFFSET_BY_ADDRESS,
+    LIMIT_BY_ADDRESS,
+  ]);
 
   const vaults = await Promise.all(
-    vaultAddress.map((vaultAddress) =>
+    vaultAddresses.map((vaultAddress) =>
       fetchVaultRPC(ctx, vaultAddress).catch((e) => {
         console.warn(
           `[fetchConnectedVaultsRPC] Failed to fetch vault data for ${vaultAddress}:`,
@@ -213,12 +245,24 @@ const fetchConnectedVaultsRPC = async (
       }),
     ),
   );
-  const totalVaultsCount =
-    Number(fromCursor) + vaultAddress.length + Number(leftOver);
+
+  return { vaults, total: vaults.length };
+};
+
+const fetchConnectedVaultsRPC = async (
+  ctx: FetchVaultsContext,
+  params: FetchVaultsParams,
+): Promise<VaultsApiResponse> => {
+  const offset = BigInt(params.perPage * (params.page - 1));
+  const limit = BigInt(params.perPage);
+
+  const { vaults, total } = await (params.address
+    ? fetchVaultsDataByAddressRPC(ctx, params.address)
+    : fetchVaultsDataBatchRPC(ctx, offset, limit));
 
   return {
     data: vaults,
-    total: totalVaultsCount,
+    total,
     isAPI: false,
   };
 };
@@ -227,7 +271,7 @@ const fetchConnectedVaultsApi = async (
   ctx: FetchVaultsContext,
   params: FetchVaultsParams,
 ) => {
-  const apiUrl = getApiURL(ctx.publicClient.chain.id, 'vaultsApi');
+  const apiUrl = getApiURL('vaultsApiBasePath');
 
   if (!apiUrl) {
     throw new Error(

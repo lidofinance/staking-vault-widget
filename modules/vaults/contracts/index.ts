@@ -9,3 +9,4 @@ export * from './weth';
 export * from './steth';
 export * from './operator-grid';
 export * from './lido';
+export * from './predeposit-guarantee';

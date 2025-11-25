@@ -1,13 +1,12 @@
 import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { toStethValue } from 'utils';
+import { toStethValue, calculateTierMetrics } from 'utils';
 import type { Tier } from 'modules/vaults';
 
 import { useTierData } from 'features/settings/tier/contexts';
 
 import { OldToNew } from './old-to-new';
-import { calcNewMetrics } from './utils';
 
 import { List, ListItem, ContentContainer } from './styles';
 import { MintingCapacityTooltip } from './minting-capacity-tooltip';
@@ -32,7 +31,7 @@ export const ExtendedMetrics = ({
     if (!isSelectedNewTier || !values) return;
 
     return {
-      ...calcNewMetrics({
+      ...calculateTierMetrics({
         newTier: selectedTier,
         vault: values.vault,
         newVaultMintingLimit,

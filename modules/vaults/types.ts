@@ -41,6 +41,7 @@ export type HubReportData = {
 };
 
 export type VaultBaseInfo = {
+  blockNumber: bigint;
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
   hub: ReturnType<typeof getVaultHubContract>;
@@ -48,11 +49,17 @@ export type VaultBaseInfo = {
   operatorGrid: ReturnType<typeof getOperatorGridContract>;
   lazyOracle: ReturnType<typeof getLazyOracleContract>;
   nodeOperator: Address;
+  vaultOwner: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
+  isVaultDisconnected: boolean; // disconnected by user
+  isVaultConnected: boolean;
+  isPendingDisconnect: boolean;
+  isPendingConnect: boolean;
+  isReportAvailable: boolean;
 } & VaultConnection;
 
 export type Tier = {
@@ -84,6 +91,7 @@ export type TierVault = {
   infraFeeBP: number;
   liquidityFeeBP: number;
   reservationFeeBP: number;
+  isPendingConnect: boolean;
 };
 
 export type VaultTierInfoArgs = {

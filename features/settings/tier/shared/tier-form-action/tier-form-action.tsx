@@ -17,7 +17,7 @@ const configurationRoles = [
 export const TierFormAction = () => {
   const {
     watch,
-    formState: { isDirty, isSubmitting, isValid, defaultValues },
+    formState: { isDirty, isSubmitting, isValid, defaultValues, disabled },
   } = useFormContext();
   const {
     hasConfirmingRole,
@@ -50,11 +50,12 @@ export const TierFormAction = () => {
   }, [selectedTierId, vaultMintingLimit, defaultValues, isDirty]);
 
   const showButton =
-    hasConfirmingRole ||
-    hasAdmin ||
-    hasNodeOperatorManager ||
-    hasVaultConfigurationPermission ||
-    isNodeOperator;
+    (hasConfirmingRole ||
+      hasAdmin ||
+      hasNodeOperatorManager ||
+      hasVaultConfigurationPermission ||
+      isNodeOperator) &&
+    !disabled;
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
 
   if (!showButton) {
