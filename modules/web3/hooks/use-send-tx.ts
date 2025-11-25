@@ -23,6 +23,8 @@ import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-for
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
 import { DisplayableError } from 'modules/vaults';
+import { useAddressValidation } from 'providers/address-validation-provider';
+import { useDappStatus } from 'modules/web3';
 
 export type TransactionEntry = {
   to: Address;
@@ -57,8 +59,10 @@ export type TransactionResponse =
 
 export const useSendTransaction = () => {
   const config = useConfig();
+  const { address } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();
+  const { validateAddress } = useAddressValidation();
   const { isAA } = useAA();
 
   const mutation = useMutation<
@@ -80,6 +84,15 @@ export const useSendTransaction = () => {
       const useSendCalls = !forceLegacy && isAA;
 
       try {
+        const result = await validateAddress(address);
+        // if address is not valid, don't send the transaction
+        if (!result) {
+          return {
+            isAA,
+            receipts: [],
+          } as TransactionResponse;
+        }
+
         dispatchModal({
           type: 'init',
           isBatch: useSendCalls,
