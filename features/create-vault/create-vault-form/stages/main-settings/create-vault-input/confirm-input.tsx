@@ -1,21 +1,38 @@
-import { InfoList, StyledCheckboxHookForm } from './styles';
+import Link from 'next/link';
+import { Text } from '@lidofinance/lido-ui';
+
+import { vaultTexts } from 'modules/vaults';
+
+import { ConfirmWrapper, InfoList, StyledCheckboxHookForm } from './styles';
 
 import type { CreateFormInputProps } from './types';
 
-export const ConfirmInput = (props: CreateFormInputProps) => {
+const texts = vaultTexts.actions.createVault.fields.acceptTerms;
+
+export const ConfirmInput = ({ name, dataTestId }: CreateFormInputProps) => {
   return (
-    <StyledCheckboxHookForm
-      fieldName={props.name}
-      label={
+    <ConfirmWrapper>
+      <StyledCheckboxHookForm
+        fieldName={name}
+        data-testid={dataTestId ? `${dataTestId}-checkbox` : undefined}
+      />
+      <div>
+        <Text size="xxs" color="secondary">
+          {texts.placeholder}
+        </Text>
         <InfoList>
-          {props.placeholder
-            ?.split('\n')
-            .map((item, index) => <span key={index}>{item}</span>)}
+          {texts.list.map(({ url, text, linkText }) => (
+            <li key={url}>
+              <Text size="xxs" color="secondary">
+                {text}{' '}
+                <Link target="_blank" href={url}>
+                  {linkText}
+                </Link>
+              </Text>
+            </li>
+          ))}
         </InfoList>
-      }
-      data-testid={
-        props.dataTestId ? `${props.dataTestId}-checkbox` : undefined
-      }
-    />
+      </div>
+    </ConfirmWrapper>
   );
 };
