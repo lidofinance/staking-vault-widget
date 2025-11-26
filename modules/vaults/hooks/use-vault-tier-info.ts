@@ -9,7 +9,8 @@ import {
   VAULT_TOTAL_BASIS_POINTS_BN,
   useVault,
   DEFAULT_TIER_ID,
-  getLidoV3Contract,
+  getLidoContract,
+  getStEthContract,
 } from 'modules/vaults';
 import { ceilDivBigint, formatPercent, toEthValue, toStethValue } from 'utils';
 import { bigIntMax } from 'utils/bigint-math';
@@ -51,7 +52,6 @@ const getVaultTierConfirmation = async (
 const getVaultTierInfo = async ({
   publicClient,
   vault,
-  shares,
 }: VaultTierInfoArgs): Promise<VaultTierInfo> => {
   const {
     address,
@@ -67,7 +67,8 @@ const getVaultTierInfo = async ({
     ...rest
   } = vault;
 
-  const lidoV3Contract = getLidoV3Contract(publicClient);
+  const lidoV3Contract = getLidoContract(publicClient);
+  const stethContract = getStEthContract(publicClient);
 
   const [
     vaultRecord,
@@ -136,13 +137,13 @@ const getVaultTierInfo = async ({
     proposedVaultLimitStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
-    shares.convertToSteth(vaultLiabilityShares),
-    shares.convertToSteth(vaultMintableShares),
-    shares.convertToSteth(vaultShareLimit),
-    shares.convertToSteth(vaultTotalMintingCapacityShares),
-    shares.convertToSteth(tierShareLimit),
-    shares.convertToSteth(tierLiabilityShares),
-    shares.convertToSteth(proposedVaultLimit),
+    stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
+    stethContract.read.getPooledEthByShares([vaultMintableShares]),
+    stethContract.read.getPooledEthByShares([vaultShareLimit]),
+    stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
+    stethContract.read.getPooledEthByShares([tierShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
+    stethContract.read.getPooledEthByShares([proposedVaultLimit]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -253,7 +254,7 @@ const selectTierData = (tierData: VaultTierInfo) => {
 };
 
 export const useVaultTierInfo = () => {
-  const { shares, publicClient } = useLidoSDK();
+  const { publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
@@ -263,7 +264,6 @@ export const useVaultTierInfo = () => {
       invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');
       return await getVaultTierInfo({
         publicClient,
-        shares,
         vault: activeVault,
       });
     },
