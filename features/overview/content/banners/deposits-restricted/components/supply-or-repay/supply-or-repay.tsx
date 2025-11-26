@@ -1,7 +1,7 @@
 import type { FC } from 'react';
-import { Text } from '@lidofinance/lido-ui';
 
 import { ListItem, ListItemContent } from '../styles';
+import { TextStyled } from '../../../styles';
 
 type SupplyOrRepayProps = {
   amount: bigint | undefined;
@@ -15,11 +15,11 @@ export const SupplyOrRepay: FC<SupplyOrRepayProps> = ({ amount }) => {
   return (
     <ListItem>
       <ListItemContent>
-        <Text size="xxs">
+        <TextStyled size="xxs">
           Supply ETH, repay stETH, or perform rebalance to restore Health
           Factor.
           {/* TODO: add Learn more. */}
-        </Text>
+        </TextStyled>
       </ListItemContent>
     </ListItem>
   );

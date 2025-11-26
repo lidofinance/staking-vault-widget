@@ -1,15 +1,14 @@
 import type { PropsWithChildren } from 'react';
 
-import { Text } from '@lidofinance/lido-ui';
-
 import { List, Wrapper } from './styles';
+import { TextStyled } from '../../../styles';
 
 export const HowToResolve = ({ children }: PropsWithChildren) => {
   return (
     <Wrapper>
-      <Text size="xxs" strong>
+      <TextStyled size="xxs" strong>
         How to resolve:
-      </Text>
+      </TextStyled>
       <List>{children}</List>
     </Wrapper>
   );

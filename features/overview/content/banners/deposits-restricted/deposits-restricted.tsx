@@ -9,6 +9,7 @@ import {
   SupplyOrRepay,
   EnableDeposits,
 } from './components';
+import { TextStyled } from '../styles';
 
 export const DepositsRestricted = () => {
   const { values } = useVaultOverview();
@@ -27,16 +28,23 @@ export const DepositsRestricted = () => {
   }
 
   return (
-    <NoticeContainer
-      title="Deposits from stVault Balance to validators are temporarily restricted"
-      description="Node Operator cannot deposit ETH from the stVault Balance to validators. Сonsolidations remain allowed. The Vault Owner has paused deposits from stVault Balance to validators, and the restriction is currently enforced by Lido Core."
-    >
-      <HowToResolve>
-        <ApplyReport lidoFees={feesToSettle} />
-        <SupplyOrRepay amount={stETHToBurn} />
-        <RepayOrRebalance amount={redemptionStETH} />
-        <EnableDeposits isPaused={beaconChainDepositsPauseIntent} />
-      </HowToResolve>
+    <NoticeContainer title="Deposits from stVault Balance to validators are temporarily restricted">
+      <div>
+        <TextStyled size="xxs">
+          Node Operator cannot deposit ETH from the stVault Balance to
+          validators. Сonsolidations remain allowed.
+        </TextStyled>
+        <TextStyled size="xxs">
+          The Vault Owner has paused deposits from stVault Balance to
+          validators, and the restriction is currently enforced by Lido Core.
+        </TextStyled>
+        <HowToResolve>
+          <ApplyReport lidoFees={feesToSettle} />
+          <SupplyOrRepay amount={stETHToBurn} />
+          <RepayOrRebalance amount={redemptionStETH} />
+          <EnableDeposits isPaused={beaconChainDepositsPauseIntent} />
+        </HowToResolve>
+      </div>
     </NoticeContainer>
   );
 };

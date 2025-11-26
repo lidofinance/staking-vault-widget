@@ -1,11 +1,11 @@
 import type { FC } from 'react';
-import { Text } from '@lidofinance/lido-ui';
 import Link from 'next/link';
 
 import { appPaths } from 'consts/routing';
 import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
 
 import { ListItem, ListItemContent } from '../styles';
+import { TextStyled } from '../../../styles';
 
 type EnableDepositsProps = {
   isPaused: boolean | undefined;
@@ -20,14 +20,14 @@ export const EnableDeposits: FC<EnableDepositsProps> = ({ isPaused }) => {
   return (
     <ListItem>
       <ListItemContent>
-        <Text size="xxs">
+        <TextStyled size="xxs">
           <Link
             href={appPaths.vaults.vault(activeVault.address).settings('main')}
           >
             Enable deposits
           </Link>{' '}
           in settings.
-        </Text>
+        </TextStyled>
       </ListItemContent>
     </ListItem>
   );

@@ -1,17 +1,16 @@
 import type { ReactNode, FC, PropsWithChildren } from 'react';
-import { Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as ErrorTriangle } from 'assets/icons/error-triangle.svg';
 import { ReactComponent as WarningRing } from 'assets/icons/warning-ring.svg';
 import { ReactComponent as Info } from 'assets/icons/info.svg';
 
-import { Wrapper, Title } from './styles';
+import { Wrapper, Title, TitleContainer, TextStyled } from './styles';
 
 type NoticeContainerType = 'warning' | 'error' | 'info';
 
 export type NoticeContainerProps = {
   title: string;
-  description: ReactNode;
+  description?: ReactNode;
   note?: string;
   type?: NoticeContainerType;
 };
@@ -29,14 +28,14 @@ export const NoticeContainer: FC<PropsWithChildren<NoticeContainerProps>> = (
 
   return (
     <Wrapper type={type}>
-      <div>
+      <TitleContainer>
         <Title as="h2" color="text">
           {iconsMap[type]} {title}
         </Title>
-        <Text size="xxs">{description}</Text>
-      </div>
+        {!!description && <TextStyled size="xxs">{description}</TextStyled>}
+      </TitleContainer>
       {children}
-      {!!note && <Text size="xxs">{note}</Text>}
+      {!!note && <TextStyled size="xxs">{note}</TextStyled>}
     </Wrapper>
   );
 };

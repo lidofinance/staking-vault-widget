@@ -19,7 +19,7 @@ export const DepositsPaused = () => {
 
   return (
     <NoticeContainer
-      title="Deposits from stVault Balance to validators are on pause"
+      title="The Vault Owner has paused deposits from stVault Balance to validators"
       type="info"
       description={<DepositsPausedDescription />}
     />
