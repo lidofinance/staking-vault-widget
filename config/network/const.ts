@@ -18,6 +18,7 @@ const CONTRACT_LIST = [
   'vaultViewer',
   'operatorGrid',
   'weth',
+  'steth',
 ] as const;
 
 export const CONTRACTS = Object.fromEntries(

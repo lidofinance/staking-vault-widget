@@ -1,7 +1,5 @@
 import type { VaultHubAbi } from 'abi/vault-hub';
 import type { Address, Hex, ReadContractReturnType } from 'viem';
-import type { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
-
 import {
   getDashboardContract,
   getStakingVaultContract,
@@ -10,8 +8,8 @@ import {
   getLazyOracleContract,
   getPredepositGuaranteeContract,
 } from './contracts';
-import type { RegisteredPublicClient } from 'modules/web3';
-import type { Confirmation } from 'utils/get-confirmations';
+import type { RegisteredPublicClient } from '../web3';
+import type { Confirmation } from '../../utils/get-confirmations';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
@@ -101,7 +99,6 @@ export type TierVault = {
 export type VaultTierInfoArgs = {
   publicClient: RegisteredPublicClient;
   vault: VaultBaseInfo;
-  shares: LidoSDKShares;
 };
 
 export type VaultTierInfo = {
@@ -123,7 +120,7 @@ export type VaultTierInfo = {
 
 export type NodeOperatorTierInfoArgs = {
   vault: VaultBaseInfo;
-  shares: LidoSDKShares;
+  publicClient: RegisteredPublicClient;
 };
 
 export type NodeOperatorTiersInfo = {
