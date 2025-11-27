@@ -46,6 +46,7 @@ export const RequestChangeLimit = () => {
   const isTheSameUser = proposer === address;
 
   if (
+    !proposal ||
     !proposedTier ||
     vaultTierInfo?.vault.isPendingConnect ||
     !(isNodeOperator || hasAdmin || hasVaultConfigurationPermission)

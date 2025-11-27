@@ -57,19 +57,30 @@ export const useEditTierSettings = () => {
 
         const bothRequestingRoles = isNodeOperator && hasAdmin;
         const isUpdatingVaultShareLimit =
-          isNodeOperator && BigInt(selectedTierId) === tierInfo.vault.tierId;
+          BigInt(selectedTierId) === tierInfo.vault.tierId;
 
         if (isUpdatingVaultShareLimit) {
-          transactions.push({
-            ...activeVault.operatorGrid.encode.updateVaultShareLimit([
-              activeVault.address,
-              mintingLimitInShares,
-            ]),
-            loadingActionText:
-              vaultTexts.actions.settings.confirmUpdateVaultShareLimit(
-                toStethValue(vaultMintingLimit),
-              ),
-          });
+          const loadingActionText =
+            vaultTexts.actions.settings.confirmUpdateVaultShareLimit(
+              toStethValue(vaultMintingLimit),
+            );
+
+          if (isNodeOperator) {
+            transactions.push({
+              ...activeVault.operatorGrid.encode.updateVaultShareLimit([
+                activeVault.address,
+                mintingLimitInShares,
+              ]),
+              loadingActionText,
+            });
+          } else {
+            transactions.push({
+              ...activeVault.dashboard.encode.updateShareLimit([
+                mintingLimitInShares,
+              ]),
+              loadingActionText,
+            });
+          }
         } else {
           const nodeOperatorChangeTierRequest = {
             ...activeVault.operatorGrid.encode.changeTier([
