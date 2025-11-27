@@ -14,12 +14,13 @@ import { TextStyled } from '../styles';
 export const DepositsRestricted = () => {
   const { values } = useVaultOverview();
   const {
-    stETHToBurn,
     feesToSettle,
     redemptionStETH,
     beaconChainDepositsPauseIntent,
     beaconChainDepositsPaused,
+    healthFactorNumber,
   } = values ?? {};
+  const isNotHealth = (healthFactorNumber ?? 100) < 100;
 
   if (
     ((typeof feesToSettle !== 'bigint' || feesToSettle < WEI_PER_ETHER) &&
@@ -44,7 +45,7 @@ export const DepositsRestricted = () => {
         )}
         <HowToResolve>
           <ApplyReport lidoFees={feesToSettle} />
-          <SupplyOrRepay amount={stETHToBurn} />
+          <SupplyOrRepay isNotHealth={isNotHealth} />
           <RepayOrRebalance amount={redemptionStETH} />
           <EnableDeposits isPausedByUser={beaconChainDepositsPauseIntent} />
         </HowToResolve>

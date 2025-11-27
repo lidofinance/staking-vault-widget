@@ -4,11 +4,11 @@ import { ListItem, ListItemContent } from '../styles';
 import { TextStyled } from '../../../styles';
 
 type SupplyOrRepayProps = {
-  amount: bigint | undefined;
+  isNotHealth: boolean | undefined;
 };
 
-export const SupplyOrRepay: FC<SupplyOrRepayProps> = ({ amount }) => {
-  if (!amount) {
+export const SupplyOrRepay: FC<SupplyOrRepayProps> = ({ isNotHealth }) => {
+  if (!isNotHealth) {
     return null;
   }
 
