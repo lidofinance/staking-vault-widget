@@ -179,7 +179,7 @@ const getVaultData = async ({
     ? await stethContract.read.getPooledEthBySharesRoundUp([
         report.liabilityShares,
       ])
-    : 0n;
+    : liabilityStETH;
 
   return {
     address,
