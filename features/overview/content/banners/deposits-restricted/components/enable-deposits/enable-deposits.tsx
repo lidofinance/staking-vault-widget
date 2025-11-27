@@ -8,14 +8,14 @@ import { ListItem, ListItemContent } from '../styles';
 import { TextStyled } from '../../../styles';
 
 type EnableDepositsProps = {
-  isPaused: boolean | undefined;
+  isPausedByUser: boolean | undefined;
 };
 
-export const EnableDeposits: FC<EnableDepositsProps> = ({ isPaused }) => {
+export const EnableDeposits: FC<EnableDepositsProps> = ({ isPausedByUser }) => {
   const { activeVault } = useVault();
   const { hasAdmin } = useVaultConfirmingRoles();
 
-  if (!activeVault || !isPaused || !hasAdmin) return null;
+  if (!activeVault || !isPausedByUser || !hasAdmin) return null;
 
   return (
     <ListItem>

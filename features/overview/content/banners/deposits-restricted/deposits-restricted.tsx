@@ -18,11 +18,13 @@ export const DepositsRestricted = () => {
     feesToSettle,
     redemptionStETH,
     beaconChainDepositsPauseIntent,
+    beaconChainDepositsPaused,
   } = values ?? {};
 
   if (
-    (typeof feesToSettle !== 'bigint' || feesToSettle < WEI_PER_ETHER) &&
-    (typeof redemptionStETH !== 'bigint' || redemptionStETH === 0n)
+    ((typeof feesToSettle !== 'bigint' || feesToSettle < WEI_PER_ETHER) &&
+      (typeof redemptionStETH !== 'bigint' || redemptionStETH === 0n)) ||
+    !beaconChainDepositsPaused
   ) {
     return null;
   }
@@ -34,15 +36,17 @@ export const DepositsRestricted = () => {
           Node Operator cannot deposit ETH from the stVault Balance to
           validators. Сonsolidations remain allowed.
         </TextStyled>
-        <TextStyled size="xxs">
-          The Vault Owner has paused deposits from stVault Balance to
-          validators, and the restriction is currently enforced by Lido Core.
-        </TextStyled>
+        {beaconChainDepositsPauseIntent && (
+          <TextStyled size="xxs">
+            The Vault Owner has paused deposits from stVault Balance to
+            validators, and the restriction is currently enforced by Lido Core.
+          </TextStyled>
+        )}
         <HowToResolve>
           <ApplyReport lidoFees={feesToSettle} />
           <SupplyOrRepay amount={stETHToBurn} />
           <RepayOrRebalance amount={redemptionStETH} />
-          <EnableDeposits isPaused={beaconChainDepositsPauseIntent} />
+          <EnableDeposits isPausedByUser={beaconChainDepositsPauseIntent} />
         </HowToResolve>
       </div>
     </NoticeContainer>

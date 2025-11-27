@@ -6,13 +6,18 @@ import { DepositsPausedDescription } from './deposits-paused-description';
 
 export const DepositsPaused = () => {
   const { values } = useVaultOverview();
-  const { beaconChainDepositsPauseIntent, feesToSettle, redemptionStETH } =
-    values ?? {};
+  const {
+    beaconChainDepositsPauseIntent,
+    feesToSettle,
+    redemptionStETH,
+    beaconChainDepositsPaused,
+  } = values ?? {};
 
   if (
     !beaconChainDepositsPauseIntent ||
     (typeof feesToSettle === 'bigint' && feesToSettle >= WEI_PER_ETHER) ||
-    (typeof redemptionStETH === 'bigint' && redemptionStETH > 0n)
+    (typeof redemptionStETH === 'bigint' && redemptionStETH > 0n) ||
+    beaconChainDepositsPaused
   ) {
     return null;
   }

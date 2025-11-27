@@ -83,6 +83,7 @@ export type VaultInfo = VaultConnection &
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
+    beaconChainDepositsPaused: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -148,6 +149,7 @@ const getVaultData = async ({
     vaultRecord,
     lockedEth,
     stagedBalanceWei,
+    beaconChainDepositsPaused,
   ] = await readWithReport({
     publicClient,
     report,
@@ -158,7 +160,9 @@ const getVaultData = async ({
       hub.prepare.vaultRecord([vault.address]),
       hub.prepare.locked([vault.address]),
       vaultContract.prepare.stagedBalance(),
+      vaultContract.prepare.beaconChainDepositsPaused(),
     ] as const,
+    blockNumber,
   });
 
   const {
@@ -242,6 +246,7 @@ const getVaultData = async ({
     rebalanceStETH,
     redemptionShares,
     redemptionStETH,
+    beaconChainDepositsPaused,
     ...rest,
     ...restVaultRecord,
   };
@@ -292,6 +297,7 @@ const selectOverviewData = ({
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
+    beaconChainDepositsPaused,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -440,6 +446,7 @@ const selectOverviewData = ({
     vaultMetrics,
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
+    beaconChainDepositsPaused,
     tierStETHLimit,
     isPendingDisconnect,
     isVaultDisconnected,
