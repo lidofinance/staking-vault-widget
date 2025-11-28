@@ -6,7 +6,7 @@ import { useLidoSDK } from 'modules/web3';
 import {
   fetchReport,
   checkIsDashboard,
-  // VaultOwnerNotDashboardError,
+  VaultOwnerNotDashboardError,
 } from 'modules/vaults';
 
 import {
@@ -80,14 +80,15 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       const isReportAvailable =
         latestHubReportTimestamp > latestVaultReport.timestamp;
 
-      // we might not have a report even when fresh is not true
-      const report = isReportAvailable
+      const hiddenReport = latestHubReportCID
         ? await fetchReport(
             { publicClient },
             { cid: latestHubReportCID, vault: vaultAddress },
           )
         : null;
 
+      // we might not have a report even when fresh is not true
+      const report = isReportAvailable ? hiddenReport : null;
       const isReportMissing = !report && !isReportFresh;
 
       const supposedDashboardAddress =
@@ -97,9 +98,9 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         supposedDashboardAddress,
       );
       // TODO: reword to support multiple factories
-      // if (!isDashboard && isVaultConnected) {
-      //   throw new VaultOwnerNotDashboardError();
-      // }
+      if (!isDashboard && isVaultConnected) {
+        throw new VaultOwnerNotDashboardError();
+      }
 
       const dashboard = getDashboardContract(
         supposedDashboardAddress,
@@ -116,6 +117,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         nodeOperator,
         withdrawalCredentials,
         report,
+        hiddenReport,
         operatorGrid,
         lazyOracle,
         hubReport: {
