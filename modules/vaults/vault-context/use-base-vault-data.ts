@@ -97,6 +97,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         publicClient,
         supposedDashboardAddress,
       );
+
       // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
         throw new VaultOwnerNotDashboardError();

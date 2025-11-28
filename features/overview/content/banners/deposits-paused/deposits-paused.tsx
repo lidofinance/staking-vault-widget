@@ -10,14 +10,15 @@ export const DepositsPaused = () => {
     beaconChainDepositsPauseIntent,
     feesToSettle,
     redemptionStETH,
-    beaconChainDepositsPaused,
+    healthFactorNumber,
   } = values ?? {};
+  const isNotHealth = (healthFactorNumber ?? 100) < 100;
 
   if (
     !beaconChainDepositsPauseIntent ||
+    isNotHealth ||
     (typeof feesToSettle === 'bigint' && feesToSettle >= WEI_PER_ETHER) ||
-    (typeof redemptionStETH === 'bigint' && redemptionStETH > 0n) ||
-    beaconChainDepositsPaused
+    (typeof redemptionStETH === 'bigint' && redemptionStETH > 0n)
   ) {
     return null;
   }
