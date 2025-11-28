@@ -147,6 +147,36 @@ const getVaultData = async ({
     blockNumber,
   });
 
+  const [
+    totalValueWithoutSimulation,
+    nodeOperatorUnclaimedFeeWithoutSimulation,
+    withdrawableEtherWithoutSimulation,
+    feeRateWithoutSimulation,
+    totalMintingCapacitySharesWithoutSimulation,
+    mintableSharesWithoutSimulation,
+    tierWithoutSimulation,
+    groupWithoutSimulation,
+    vaultQuarantineStateWithoutSimulation,
+    vaultRecordWithoutSimulation,
+    lockedWithoutSimulation,
+    stagedBalanceWeiWithoutSimulation,
+  ] = await Promise.all([
+    dashboard.read.totalValue(),
+    dashboard.read.accruedFee(),
+    dashboard.read.withdrawableValue(),
+    dashboard.read.feeRate(),
+    dashboard.read.totalMintingCapacityShares(),
+    dashboard.read.remainingMintingCapacityShares([0n]),
+    operatorGrid.read.vaultTierInfo([vault.address]),
+    operatorGrid.read.group([vault.nodeOperator]),
+    lazyOracle.read.vaultQuarantine([vault.address]),
+    hub.read.vaultRecord([vault.address]),
+    hub.read.locked([vault.address]),
+    vaultContract.read.stagedBalance(),
+  ]);
+
+  // console.log('vaultRecord without report',  await hub.read.vaultRecord([vault.address]));
+
   const {
     liabilityShares,
     inOutDelta: inOutDeltaArray,
@@ -155,10 +185,64 @@ const getVaultData = async ({
     ...restVaultRecord
   } = vaultRecord;
 
+  const {
+    inOutDelta: _inOutDelta,
+    report: _report,
+    ...vaultRecordForTable
+  } = vaultRecord;
+
   const inOutDelta = inOutDeltaArray[1].value;
   const [_, tierId, tierShareLimit] = tier;
   const { shareLimit: groupShareLimit } = group;
 
+  // eslint-disable-next-line no-console
+  console.log('WITH SIMULATION');
+  // eslint-disable-next-line no-console
+  console.table({
+    totalValue,
+    nodeOperatorUnclaimedFee,
+    withdrawableEther,
+    feeRate,
+    totalMintingCapacityShares,
+    mintableShares,
+    tierShareLimit,
+    tierId,
+    groupShareLimit,
+    ...vaultQuarantineState,
+    ...vaultRecordForTable,
+    locked,
+    stagedBalanceWei,
+  });
+
+  // eslint-disable-next-line no-console
+  console.log('WITHOUT SIMULATION');
+  const {
+    inOutDelta: __inOutDelta,
+    report: __report,
+    ...vaultRecordWithoutSimulationforTable
+  } = vaultRecordWithoutSimulation;
+
+  const [__, tierIdWithoutSimulation, tierShareLimitWithoutSimulation] =
+    tierWithoutSimulation;
+  const { shareLimit: groupShareLimitWithoutSimulation } =
+    groupWithoutSimulation;
+
+  // eslint-disable-next-line no-console
+  console.table({
+    totalValueWithoutSimulation,
+    nodeOperatorUnclaimedFeeWithoutSimulation,
+    withdrawableEtherWithoutSimulation,
+    feeRateWithoutSimulation,
+    totalMintingCapacitySharesWithoutSimulation,
+    mintableSharesWithoutSimulation,
+    tierIdWithoutSimulation,
+    tierShareLimitWithoutSimulation,
+    groupShareLimitWithoutSimulation,
+    ...vaultQuarantineStateWithoutSimulation,
+    ...vaultRecordWithoutSimulationforTable,
+    lockedWithoutSimulation,
+    stagedBalanceWeiWithoutSimulation,
+  });
   const lidoV3Contract = getLidoContract(publicClient);
   const stethContract = getStEthContract(publicClient);
 
