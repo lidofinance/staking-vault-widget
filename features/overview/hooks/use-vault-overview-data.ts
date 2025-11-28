@@ -136,11 +136,16 @@ const getVaultData = async ({
     blockNumber,
   });
 
-  const [vaultRecord, locked, stagedBalanceWei] = await Promise.all([
-    hub.read.vaultRecord([vault.address]),
-    hub.read.locked([vault.address]),
-    vaultContract.read.stagedBalance(),
-  ]);
+  const [vaultRecord, locked, stagedBalanceWei] = await readWithReport({
+    publicClient,
+    report,
+    contracts: [
+      hub.prepare.vaultRecord([vault.address]),
+      hub.prepare.locked([vault.address]),
+      vaultContract.prepare.stagedBalance(),
+    ] as const,
+    blockNumber,
+  });
 
   const {
     liabilityShares,
