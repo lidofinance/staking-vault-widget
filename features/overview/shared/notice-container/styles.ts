@@ -7,10 +7,6 @@ type WrapperProps = {
 };
 
 const getBackgroundColor = ({ type, theme }: WrapperProps) => {
-  // if (type === 'warning') {
-  //   return '#FEF2E1';
-  // }
-
   if (type !== 'info') {
     return `color-mix(in display-p3, ${theme.colors[type]} 20%, transparent)`;
   }
