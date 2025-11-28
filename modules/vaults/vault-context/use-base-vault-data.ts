@@ -6,7 +6,7 @@ import { useLidoSDK } from 'modules/web3';
 import {
   fetchReport,
   checkIsDashboard,
-  VaultOwnerNotDashboardError,
+  // VaultOwnerNotDashboardError,
 } from 'modules/vaults';
 
 import {
@@ -97,9 +97,9 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         supposedDashboardAddress,
       );
       // TODO: reword to support multiple factories
-      if (!isDashboard && isVaultConnected) {
-        throw new VaultOwnerNotDashboardError();
-      }
+      // if (!isDashboard && isVaultConnected) {
+      //   throw new VaultOwnerNotDashboardError();
+      // }
 
       const dashboard = getDashboardContract(
         supposedDashboardAddress,
