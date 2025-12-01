@@ -19,6 +19,20 @@ export const Nav = styled.nav`
   svg {
     margin-right: 8px;
   }
+
+  @media ${devicesHeaderMedia.mobile} {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    flex-direction: row;
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+    background-color: ${({ theme }) => theme.colors.foreground};
+    height: fit-content;
+    width: 100%;
+    border-start-end-radius: 12px;
+    border-start-start-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  }
 `;
 
 export const NavList = styled.ul`
@@ -29,6 +43,11 @@ export const NavList = styled.ul`
   gap: ${({ theme }) => theme.spaceMap.lg}px;
   margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
   list-style-type: none;
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: row;
+    margin-top: 0;
+  }
 `;
 
 export const ListItem = styled.div`
@@ -65,7 +84,7 @@ export const NavLink = styled.span<{ active: boolean }>`
   }
 
   @media ${devicesHeaderMedia.mobile} {
-    // TODO
+    flex-direction: column;
   }
 `;
 
@@ -94,6 +113,10 @@ export const AllVaults = styled(Link)`
       opacity: 1;
     }
   }
+
+  @media ${devicesHeaderMedia.mobile} {
+    display: none;
+  }
 `;
 
 export const ArrowBackStyled = styled(ArrowBack)`
@@ -108,6 +131,10 @@ export const FeedbackLink = styled.a`
   margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
   padding-top: ${({ theme }) => theme.spaceMap.xxl}px;
   border-top: 1px solid var(--lido-color-border);
+
+  @media ${devicesHeaderMedia.mobile} {
+    display: none;
+  }
 `;
 
 export const SelectedVaultWrapper = styled.div`
@@ -117,10 +144,15 @@ export const SelectedVaultWrapper = styled.div`
   align-items: center;
   margin: ${({ theme }) => theme.spaceMap.md}px 0 0;
   height: 32px;
+  width: fit-content;
   border-radius: 40px;
   border: 1px solid var(--lido-color-accentBorderHover);
   background-color: var(--lido-color-background);
   overflow: clip;
+
+  @media ${devicesHeaderMedia.mobile} {
+    display: none;
+  }
 `;
 
 // Error modal

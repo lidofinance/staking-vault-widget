@@ -1,5 +1,6 @@
-import { calculateHealth } from 'utils';
+import { calculateHealth, ceilDivBigint } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
 export const modals = [
   'totalValue',
@@ -41,13 +42,7 @@ type OverviewArgs = {
   reportLiabilitySharesStETH: bigint;
 };
 
-const ceilDiv = (numerator: bigint, denominator: bigint): bigint => {
-  const result = numerator / denominator;
-  return numerator % denominator === 0n ? result : result + 1n;
-};
-
 export const calculateOverviewV2 = (args: OverviewArgs) => {
-  const BASIS_POINTS = 10_000n;
   const {
     totalValue,
     reserveRatioBP,
@@ -72,10 +67,13 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const idleCapital = balance;
   const totalLocked = locked + nodeOperatorDisbursableFee + unsettledLidoFees;
   const RR = BigInt(reserveRatioBP);
-  const oneMinusRR = BASIS_POINTS - RR;
+  const oneMinusRR = VAULT_TOTAL_BASIS_POINTS_BN - RR;
   const collateral = bigIntMax(
     minimalReserve,
-    ceilDiv(liabilitySharesInStethWei * BASIS_POINTS, oneMinusRR),
+    ceilDivBigint(
+      liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN,
+      oneMinusRR,
+    ),
   );
   const recentlyRepaid = bigIntMax(
     0n,
@@ -85,8 +83,10 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const reservedByFormula =
     oneMinusRR === 0n
       ? 0n
-      : ceilDiv(liabilitySharesInStethWei * BASIS_POINTS, oneMinusRR) -
-        liabilitySharesInStethWei;
+      : ceilDivBigint(
+          liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN,
+          oneMinusRR,
+        ) - liabilitySharesInStethWei;
   const reserved = bigIntMin(
     totalValue - liabilitySharesInStethWei,
     reservedByFormula,
@@ -97,10 +97,10 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     totalMintingCapacityStethWei === 0n
       ? 0
       : Number(
-          ((liabilitySharesInStethWei * BASIS_POINTS) /
+          ((liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN) /
             totalMintingCapacityStethWei) *
             100n,
-        ) / Number(BASIS_POINTS);
+        ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
   return {
     healthRatio,

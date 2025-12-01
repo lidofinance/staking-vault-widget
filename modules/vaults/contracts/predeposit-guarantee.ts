@@ -1,12 +1,11 @@
 import { getContract } from 'viem';
-import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
-
 import invariant from 'tiny-invariant';
-import { getContractAddress } from 'config';
-import { RegisteredPublicClient } from 'modules/web3';
-import { getEncodable } from '../utils/encodable';
 
-// TODO: move to lido-sdk
+import { getContractAddress } from 'config';
+import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
+import { getEncodable } from 'modules/vaults/utils/encodable';
+import type { RegisteredPublicClient } from 'modules/web3';
+
 export const getPredepositGuaranteeContract = (
   publicClient: RegisteredPublicClient,
 ) => {

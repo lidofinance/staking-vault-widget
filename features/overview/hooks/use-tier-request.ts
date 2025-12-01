@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useNodeOperatorTiersInfo, useVaultTierInfo } from 'modules/vaults';
-import { calculateTierMetrics } from 'utils';
+import { calculateTierMetrics, isBigint } from 'utils';
 
 export const useTierRequest = () => {
   const { data: vaultTierInfo } = useVaultTierInfo();
@@ -16,7 +16,7 @@ export const useTierRequest = () => {
     const proposal = proposals?.lastProposal;
 
     let proposedTierId = proposal?.decodedData.args[1];
-    if (typeof proposedTierId !== 'bigint') {
+    if (!isBigint(proposedTierId)) {
       proposedTierId = 0n;
     }
 

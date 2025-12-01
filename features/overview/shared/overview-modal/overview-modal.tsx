@@ -4,6 +4,8 @@ import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { FormatToken, FormatPercent } from 'shared/formatters';
 import { InlineLoader } from 'shared/components';
+import { isBigint } from 'utils';
+
 import {
   useOverviewModal,
   type OverviewModalItem,
@@ -33,7 +35,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   const formattedPayload = useMemo(() => {
     if (name === 'healthFactorNumber')
       return <FormatPercent value={payload as number} />;
-    if (typeof payload === 'bigint')
+    if (isBigint(payload))
       return (
         <FormatToken
           amount={payload}

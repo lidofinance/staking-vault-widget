@@ -18,9 +18,14 @@ export const ItemWrapper = styled.div`
   &:hover {
     background-color: ${({ theme }) =>
       theme.name === 'dark' ? '#2F2F36' : theme.colors.background};
+  }
 
   @media ${devicesHeaderMedia.tablet} {
     padding: ${({ theme }) => theme.spaceMap.sm}px;
+  }
+
+  @media ${devicesHeaderMedia.mobile} {
+    padding: 0;
   }
 `;
 

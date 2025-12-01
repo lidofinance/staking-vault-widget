@@ -1,4 +1,5 @@
 import { formatBalance } from 'utils/formats/format-balance';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -291,9 +292,9 @@ export const vaultTexts = {
       },
     },
     capacityExceeded: {
-      title: 'stETH minting balance exceeded',
+      title: 'stETH minting capacity exceeded',
       description:
-        'The stVault stETH minting balance constrained by the Reserve Ratio has exceeded, indicating imbalance in collaterization of stETH Liability. You are strongly recommended to take one of the following actions:',
+        "The stVault's stETH minting capacity has been exceeded, indicating an imbalanced minted stETH Liability as constrained by the stVault's Reserve Ratio. You are strongly recommended to take one of the following actions:",
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
       actions: [
         {
@@ -305,19 +306,13 @@ export const vaultTexts = {
           name: 'repay',
           title: 'Decrease stETH Liability',
           getText: (amount: string) => `Repay ${amount}`,
-        },
-        {
-          name: 'rebalance',
-          title: 'Decrease Total Value and stETH Liability',
-          getText: (amount: string) => `Rebalance ${amount}`,
         },
       ],
     },
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',
       description:
-        "The stVault forced rebalance threshold exceeded, and the permissionless rebalance mechanism is activated for this stVault. It means the stVault can be rebalanced at any moment in time. You can still restore the vault health factor by taking one of the following actions. There is no guarantee that the permissionless rebalancing won't be performed before your transaction.",
-      note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
+        'The stVault’s Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism. This means the stVault can be rebalanced at any moment. You can still restore the Health Factor by taking one of the actions below. However, there’s no guarantee that a permissionless rebalance won’t occur before your transaction is executed.',
       actions: [
         {
           name: 'supply',
@@ -328,11 +323,6 @@ export const vaultTexts = {
           name: 'repay',
           title: 'Decrease stETH Liability',
           getText: (amount: string) => `Repay ${amount}`,
-        },
-        {
-          name: 'rebalance',
-          title: 'Decrease Total Value and stETH Liability',
-          getText: (amount: string) => `Rebalance ${amount}`,
         },
       ],
     },
@@ -437,7 +427,9 @@ export const vaultTexts = {
     },
     netApr: {
       title: 'Net staking APR',
-      hint: 'Estimated yearly returns from staking in the vault, after fees deductions but without taking into account stETH Liability growth due to stETH rebase.',
+      hint: 'Estimated yearly returns from staking in the vault, after fees deductions, but without considering stETH Liability growth due to stETH rebase. This percentage reflects moving average of APR for the past 7 day period. This percentage does not guarantee future performance and is subject to change.',
+      description:
+        'Estimated yearly return after fees, excluding stETH liability growth from rebasing. Based on the 7-day moving average APR. Past performance doesn’t guarantee future results.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     modals: {
@@ -510,9 +502,17 @@ export const vaultTexts = {
         totalStethMintingCapacity: {
           title: 'Total stETH minting capacity',
           constrainedBy: (
-            constraintBy: 'reserveRatio' | 'vault' | 'lido' | 'tier' | 'group',
+            constraintBy:
+              | 'minimalReserve'
+              | 'reserveRatio'
+              | 'vault'
+              | 'lido'
+              | 'tier'
+              | 'group',
           ) => {
             switch (constraintBy) {
+              case 'minimalReserve':
+                return 'constrained by Minimal Reserve';
               case 'reserveRatio':
                 return 'constrained by Reserve Ratio';
               case 'vault':
@@ -525,8 +525,30 @@ export const vaultTexts = {
                 return 'constrained by NO Group Limit';
             }
           },
-          description:
-            'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.',
+          description: (
+            minimalReserve: bigint | undefined,
+            constraintBy:
+              | 'minimalReserve'
+              | 'reserveRatio'
+              | 'vault'
+              | 'lido'
+              | 'tier'
+              | 'group'
+              | undefined,
+          ) => {
+            const baseDescription =
+              'The amount of stETH the Vault Owner can mint within the Reserve Ratio boundaries. Also limited by the stETH minting limit.';
+            const minimalReserveText =
+              'Reserve is defined by the Minimal Reserve value of 1 ETH for the connection to Lido Core.';
+            if (
+              constraintBy === 'minimalReserve' &&
+              minimalReserve === WEI_PER_ETHER
+            ) {
+              return `${baseDescription} ${minimalReserveText}`;
+            }
+
+            return baseDescription;
+          },
         },
         stethMintingLimit: {
           title: 'stETH minting limit',

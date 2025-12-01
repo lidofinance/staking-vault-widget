@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Heading, Button, Theme } from '@lidofinance/lido-ui';
+import { Heading, Text, Theme } from '@lidofinance/lido-ui';
 
 type WrapperProps = {
   type: 'warning' | 'error' | 'info';
@@ -18,34 +18,27 @@ export const Wrapper = styled.section<WrapperProps>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
   padding: ${({ theme }) => theme.spaceMap.md}px;
   border-radius: 12px;
   background-color: ${getBackgroundColor};
+`;
+
+export const TitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
 
 export const Title = styled(Heading)`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.xs}px;
-  margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const ActionButton = styled(Button)`
-  background-color: ${({ theme }) => theme.colors.background};
-`;
-
-export const ActionContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
-`;
-
-export const ActionWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
+export const TextStyled = styled(Text)`
+  line-height: 20px;
 `;

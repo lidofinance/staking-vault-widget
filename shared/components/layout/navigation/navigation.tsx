@@ -1,11 +1,12 @@
 import { FC } from 'react';
 import { External } from '@lidofinance/lido-ui';
 
-import { Nav, FeedbackLink } from './styles';
 import { FEEDBACK_SURVEY_URL } from 'consts/external-links';
+
 import { RootNavigation } from './modes/root';
 import { VaultNavigation } from './modes/vault';
 import { CreateVaultNavigation } from './modes/create-vault';
+import { Nav, FeedbackLink } from './styles';
 
 type NavigationProps = {
   mode?: 'root' | 'create-vault' | 'vault';

@@ -8,13 +8,14 @@ import type {
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useLidoSDK } from 'modules/web3';
+import { isBigint } from 'utils';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
 
 const stringifyArgs = (args: unknown): string => {
   return JSON.stringify(args ?? [], (_, value) =>
-    typeof value === 'bigint' ? value.toString() : value,
+    isBigint(value) ? value.toString() : value,
   );
 };
 

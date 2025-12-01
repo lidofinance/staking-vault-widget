@@ -8,6 +8,7 @@ import {
   readWithReport,
   useVault,
   fetchVaultMetrics,
+  fetch7dApr,
   VAULT_TOTAL_BASIS_POINTS,
   getLidoContract,
   getStEthContract,
@@ -15,15 +16,16 @@ import {
   type VaultBaseInfo,
   type VaultConnection,
   type VaultRecord,
+  type Vault7DApr,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
+import { WEI_PER_ETHER } from 'consts/tx';
 import {
   formatPercent,
   toEthValue,
   toStethValue,
   getMintingConstraintType,
-  type MintingConstraintType,
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
@@ -54,14 +56,12 @@ export type VaultInfo = VaultConnection &
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
-    healthScore: number;
-    mintingConstraintBy: MintingConstraintType;
     totalMintingCapacityShares: bigint;
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
     redemptionShares: bigint;
-    lockedShares: bigint;
-    locked: bigint;
+    redemptionStETH: bigint;
+    lockedEth: bigint;
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
     balance: bigint;
@@ -72,9 +72,18 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
+    lidoTVLSharesLimit: bigint;
+    groupShareLimit: bigint;
+    stagedBalanceWei: bigint;
+    obligationsShortfallValue: bigint;
+    stETHToBurn: bigint;
+    feesToSettle: bigint;
+    rebalanceShares: bigint;
+    rebalanceStETH: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
+    beaconChainDepositsPaused: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -133,16 +142,35 @@ const getVaultData = async ({
     blockNumber,
   });
 
-  const [vaultRecord, locked] = await Promise.all([
-    hub.read.vaultRecord([vault.address]),
-    hub.read.locked([vault.address]),
-  ]);
+  const [
+    obligationsShortfallValue,
+    [sharesToBurn, feesToSettle],
+    rebalanceShares,
+    vaultRecord,
+    lockedEth,
+    stagedBalanceWei,
+    beaconChainDepositsPaused,
+  ] = await readWithReport({
+    publicClient,
+    report,
+    contracts: [
+      dashboard.prepare.obligationsShortfallValue(),
+      dashboard.prepare.obligations(),
+      hub.prepare.healthShortfallShares([vault.address]),
+      hub.prepare.vaultRecord([vault.address]),
+      hub.prepare.locked([vault.address]),
+      vaultContract.prepare.stagedBalance(),
+      vaultContract.prepare.beaconChainDepositsPaused(),
+    ] as const,
+    blockNumber,
+  });
 
   const {
     liabilityShares,
     inOutDelta: inOutDeltaArray,
     settledLidoFees,
     cumulativeLidoFees,
+    redemptionShares,
     ...restVaultRecord
   } = vaultRecord;
 
@@ -157,17 +185,21 @@ const getVaultData = async ({
     liabilityStETH,
     mintableStETH,
     stETHLimit,
-    lockedShares,
     totalMintingCapacityStETH,
     tierStETHLimit,
+    stETHToBurn,
+    rebalanceStETH,
+    redemptionStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
     stethContract.read.getPooledEthByShares([mintableShares]),
     stethContract.read.getPooledEthByShares([shareLimit]),
-    stethContract.read.getPooledEthByShares([locked]),
     stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
+    stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -177,29 +209,6 @@ const getVaultData = async ({
       ])
     : 0n;
 
-  // Binding-constraint detection:
-  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
-  //   reduced by any active caps).
-  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
-  //   identify what actually constrains minting right now.
-  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
-  //   ties resolve to the later entry in the list below.
-  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
-  const mintingConstraintBy = getMintingConstraintType({
-    totalMintingCapacityShares,
-    vaultShareLimit: shareLimit,
-    tierShareLimit,
-    tierId,
-    groupShareLimit,
-    lidoTVLSharesLimit,
-  });
-
-  const healthScore = calculateHealth({
-    totalValue,
-    liabilitySharesInStethWei: liabilityStETH,
-    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
-  });
-
   return {
     address,
     nodeOperator,
@@ -208,12 +217,9 @@ const getVaultData = async ({
     mintableStETH,
     mintableShares,
     stETHLimit,
-    mintingConstraintBy,
-    healthScore: healthScore.healthRatio,
     totalMintingCapacityShares,
     totalMintingCapacityStETH,
     inOutDelta,
-    lockedShares,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
@@ -226,10 +232,21 @@ const getVaultData = async ({
     settledLidoFees,
     cumulativeLidoFees,
     vaultQuarantineState,
-    locked,
+    lockedEth,
     tierId,
     tierShareLimit,
     tierStETHLimit,
+    lidoTVLSharesLimit,
+    groupShareLimit,
+    stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    rebalanceShares,
+    rebalanceStETH,
+    redemptionShares,
+    redemptionStETH,
+    beaconChainDepositsPaused,
     ...rest,
     ...restVaultRecord,
   };
@@ -238,13 +255,14 @@ const getVaultData = async ({
 const selectOverviewData = ({
   vaultData,
   vaultMetrics,
+  vault7dApr,
 }: {
   vaultData: VaultInfo;
   vaultMetrics: VaultApiMetrics | null;
+  vault7dApr: Vault7DApr | null;
 }) => {
   const {
     address,
-    healthScore,
     reserveRatioBP,
     forcedRebalanceThresholdBP,
     nodeOperatorUnclaimedFee,
@@ -256,7 +274,7 @@ const selectOverviewData = ({
     isVaultConnected,
     settledLidoFees,
     cumulativeLidoFees,
-    locked,
+    lockedEth,
     mintableStETH,
     tierId,
     tierStETHLimit,
@@ -266,6 +284,20 @@ const selectOverviewData = ({
     vaultQuarantineState,
     disconnectInitiatedTs,
     isPendingDisconnect,
+    totalMintingCapacityShares,
+    shareLimit,
+    tierShareLimit,
+    groupShareLimit,
+    lidoTVLSharesLimit,
+    stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
+    beaconChainDepositsPaused,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -277,12 +309,37 @@ const selectOverviewData = ({
     forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
     withdrawableEther,
     balance,
-    locked,
+    locked: lockedEth,
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
     minimalReserve,
     reportLiabilitySharesStETH,
+  });
+
+  // Binding-constraint detection:
+  // - totalMintingCapacityShares is the current effective capacity (RR-based and already
+  //   reduced by any active caps).
+  // - We compare it against raw caps (vault / tier / group / Lido) and pick the minimum to
+  //   identify what actually constrains minting right now.
+  // - In case of equality, we attribute the constraint to the specific cap (not RR), because
+  //   ties resolve to the later entry in the list below.
+  // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
+  const mintingConstraintBy = getMintingConstraintType({
+    minimalReserve,
+    collateral: overview.collateral,
+    totalMintingCapacityShares,
+    vaultShareLimit: shareLimit,
+    tierShareLimit,
+    tierId,
+    groupShareLimit,
+    lidoTVLSharesLimit,
+  });
+
+  const { healthRatio } = calculateHealth({
+    totalValue: vaultData.totalValue,
+    liabilitySharesInStethWei: vaultData.liabilityStETH,
+    forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
   });
 
   const {
@@ -294,9 +351,9 @@ const selectOverviewData = ({
   } = vaultMetrics || {};
 
   const netApr =
-    (vaultMetrics &&
-      formatPercent.format(vaultMetrics.netStakingAprPercent / 100)) ??
+    (vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100)) ??
     undefined;
+
   const carrySpreadApr =
     (vaultMetrics &&
       formatPercent.format(vaultMetrics.carrySpreadAprPercent / 100)) ??
@@ -307,11 +364,10 @@ const selectOverviewData = ({
   const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
   const unsettledLidoFeesEth = toEthValue(unsettledLidoFees);
 
-  const feeObligationEth = toEthValue(
-    unsettledLidoFees + nodeOperatorUnclaimedFee,
-  );
+  const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
+  const feeObligationEth = toEthValue(feeObligation);
   const totalValueETH = toEthValue(vaultData.totalValue);
-  const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
+  const totalLocked = toEthValue(lockedEth + nodeOperatorUnclaimedFee);
   const liabilityStETH = toStethValue(vaultData.liabilityStETH);
   const withdrawableEth = toEthValue(withdrawableEther);
   const balanceEth = toEthValue(balance);
@@ -321,8 +377,8 @@ const selectOverviewData = ({
   const rebalanceThreshold = formatPercent.format(
     forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
   );
-  const healthFactor = formatPercent.format(healthScore / 100);
-  const healthFactorNumber = healthScore > 100000 ? Infinity : healthScore;
+  const healthFactor = formatPercent.format(healthRatio / 100);
+  const healthFactorNumber = healthRatio > 100000 ? Infinity : healthRatio;
   const utilizationRatio = formatPercent.format(
     overview.utilizationRatio / 100,
   );
@@ -333,7 +389,6 @@ const selectOverviewData = ({
   const feeRate = formatPercent.format(
     Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
   );
-  const collateral = toEthValue(overview.collateral);
   const pendingUnlock = overview.recentlyRepaid;
   const pendingUnlockEth = toEthValue(pendingUnlock > 0n ? pendingUnlock : 0n);
 
@@ -343,6 +398,7 @@ const selectOverviewData = ({
     totalValueETH,
     reserveRatio,
     utilizationRatio,
+    utilizationRatioNumber: overview.utilizationRatio,
     rebalanceThreshold,
     healthFactor,
     healthFactorNumber,
@@ -356,18 +412,25 @@ const selectOverviewData = ({
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
     feeRate,
-    collateral,
+    collateral: overview.collateral,
     pendingUnlockEth,
+    pendingUnlock,
+    isVaultConnected,
     netApr,
     unsettledLidoFeesEth,
     unsettledLidoFees,
     remainingMintingCapacityStETH,
     feeObligationEth,
+    feeObligation,
     tierId: tierId.toString(),
     tierLimitStETH,
     mintableStETH,
     forcedRebalanceThresholdBP,
     reserveRatioBP,
+    grossStakingRewards,
+    nodeOperatorRewards,
+    bottomLine,
+    rebaseReward,
     totalMintingCapacity: vaultData.totalMintingCapacityStETH,
     totalValue: vaultData.totalValue,
     vaultLiability: vaultData.liabilityStETH,
@@ -376,16 +439,28 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
+    isPausedByFees: feesToSettle > WEI_PER_ETHER,
     netStakingRewards,
     carrySpreadApr,
     vaultData,
     vaultMetrics,
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
+    beaconChainDepositsPaused,
+    tierStETHLimit,
     isPendingDisconnect,
     isVaultDisconnected,
-    isVaultConnected,
     disconnectInitiatedTs,
+    mintingConstraintBy,
+    minimalReserve,
+    stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
   };
 };
 
@@ -408,20 +483,27 @@ export const useVaultOverviewData = () => {
         '[useVaultOverviewData] activeVault is not defined',
       );
 
-      const [vaultData, vaultMetrics] = await Promise.all([
+      const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
         getVaultData({ publicClient, vault: activeVault }),
-        fetchVaultMetrics(
-          { publicClient },
-          { vaultAddress: activeVault.address },
-        ).catch((error) => {
+        fetchVaultMetrics({ vaultAddress: activeVault.address }).catch(
+          (error) => {
+            console.warn(
+              '[useVaultOverviewData] Failed to fetch vault metrics from API',
+              error,
+            );
+            return null;
+          },
+        ),
+        fetch7dApr({ vaultAddress: activeVault.address }).catch((error) => {
           console.warn(
-            '[useVaultOverviewData] Failed to fetch vault metrics from API',
+            '[useVaultOverviewData] Failed to fetch vault 7 days APR',
             error,
           );
           return null;
         }),
       ]);
-      return { vaultData, vaultMetrics };
+
+      return { vaultData, vaultMetrics, vault7dApr };
     },
     select: selectOverviewData,
   });

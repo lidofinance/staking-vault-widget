@@ -15,6 +15,7 @@ import {
   getStakingVaultContract,
   getVaultHubContract,
   getOperatorGridContract,
+  getPredepositGuaranteeContract,
 } from '../contracts';
 import {
   DisplayableError,
@@ -96,6 +97,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         publicClient,
         supposedDashboardAddress,
       );
+
       // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
         throw new VaultOwnerNotDashboardError();
@@ -106,6 +108,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         publicClient,
       );
       const operatorGrid = getOperatorGridContract(publicClient);
+      const predepositGuarantee = getPredepositGuaranteeContract(publicClient);
 
       return {
         address: vaultAddress,
@@ -131,6 +134,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isPendingDisconnect,
         isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
+        predepositGuarantee,
         blockNumber,
         ...connection,
       };
