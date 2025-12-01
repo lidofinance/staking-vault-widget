@@ -104,7 +104,7 @@ const getVaultData = async ({
     hub,
     operatorGrid,
     report,
-    hiddenReport,
+    reportLiabilityShares,
     lazyOracle,
     blockNumber,
     ...rest
@@ -192,6 +192,7 @@ const getVaultData = async ({
     stETHToBurn,
     rebalanceStETH,
     redemptionStETH,
+    reportLiabilitySharesStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
@@ -202,14 +203,9 @@ const getVaultData = async ({
     stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
     stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
     stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([reportLiabilityShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
-
-  const reportLiabilitySharesStETH = hiddenReport
-    ? await stethContract.read.getPooledEthBySharesRoundUp([
-        hiddenReport.liabilityShares,
-      ])
-    : 0n;
 
   return {
     address,

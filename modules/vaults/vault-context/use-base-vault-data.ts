@@ -88,6 +88,8 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
           )
         : null;
 
+      const reportLiabilityShares = hiddenReport?.liabilityShares ?? 0n;
+
       // we might not have a report even when fresh is not true
       const report = isReportAvailable ? hiddenReport : null;
       const isReportMissing = !report && !isReportFresh;
@@ -120,7 +122,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         nodeOperator,
         withdrawalCredentials,
         report,
-        hiddenReport,
         operatorGrid,
         lazyOracle,
         hubReport: {
@@ -138,6 +139,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
+        reportLiabilityShares,
         ...connection,
       };
     },

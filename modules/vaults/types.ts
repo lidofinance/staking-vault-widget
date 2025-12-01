@@ -43,6 +43,7 @@ export type HubReportData = {
 
 export type VaultBaseInfo = {
   blockNumber: bigint;
+  reportLiabilityShares: bigint;
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
   hub: ReturnType<typeof getVaultHubContract>;
@@ -57,7 +58,6 @@ export type VaultBaseInfo = {
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
-  hiddenReport: VaultReportType | null;
   isVaultDisconnected: boolean; // disconnected by user
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;
