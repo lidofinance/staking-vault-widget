@@ -10,6 +10,7 @@ export type FunctionArgsMap = {
   changeTier: readonly [Address, bigint, bigint];
   transferVaultOwnership: readonly [Address];
   updateVaultShareLimit: readonly [Address, bigint];
+  syncTier: readonly [Address, bigint]; // TODO: check params
 };
 type FunctionName = keyof FunctionArgsMap;
 type DecodedData = {

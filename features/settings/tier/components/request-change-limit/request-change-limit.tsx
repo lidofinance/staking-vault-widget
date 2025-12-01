@@ -21,6 +21,7 @@ import {
   ExpiresContainer,
   ButtonStyled,
 } from './styles';
+import { useTierVoting } from '../../hooks';
 
 const tierTexts = vaultTexts.actions.tier;
 
@@ -32,6 +33,7 @@ export const RequestChangeLimit = () => {
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission: hasVaultConfigurationPermission } =
     useVaultPermission('vaultConfiguration');
+  useTierVoting();
 
   const proposal = vaultTierInfo?.proposals.lastProposal;
   const { decodedData, member: proposer } = proposal ?? {};
