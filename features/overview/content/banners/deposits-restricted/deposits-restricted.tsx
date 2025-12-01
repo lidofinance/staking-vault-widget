@@ -21,15 +21,17 @@ export const DepositsRestricted = () => {
     beaconChainDepositsPaused,
     healthFactorNumber,
   } = values ?? {};
-  const isNotHealth = (healthFactorNumber ?? 100) < 100;
 
   if (
+    !healthFactorNumber ||
     ((!isBigint(feesToSettle) || feesToSettle < WEI_PER_ETHER) &&
       (!isBigint(redemptionStETH) || redemptionStETH === 0n)) ||
     !beaconChainDepositsPaused
   ) {
     return null;
   }
+
+  const isNotHealth = healthFactorNumber < 100;
 
   return (
     <NoticeContainer title="Deposits from stVault Balance to validators are temporarily restricted">

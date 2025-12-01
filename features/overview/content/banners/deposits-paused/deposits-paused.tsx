@@ -13,11 +13,11 @@ export const DepositsPaused = () => {
     redemptionStETH,
     healthFactorNumber,
   } = values ?? {};
-  const isNotHealth = (healthFactorNumber ?? 100) < 100;
 
   if (
     !beaconChainDepositsPauseIntent ||
-    isNotHealth ||
+    !healthFactorNumber ||
+    healthFactorNumber < 100 ||
     (isBigint(feesToSettle) && feesToSettle >= WEI_PER_ETHER) ||
     (isBigint(redemptionStETH) && redemptionStETH > 0n)
   ) {
