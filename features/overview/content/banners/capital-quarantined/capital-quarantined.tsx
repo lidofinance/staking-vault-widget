@@ -1,3 +1,5 @@
+import { isBigint } from 'utils';
+
 import { NoticeContainer } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
 import { QuarantineDescription } from './quarantine-description';
@@ -11,7 +13,7 @@ export const CapitalQuarantined = () => {
   if (
     !endTimestamp ||
     !pendingTotalValueIncrease ||
-    typeof totalValueRemainder !== 'bigint'
+    !isBigint(totalValueRemainder)
   ) {
     return null;
   }

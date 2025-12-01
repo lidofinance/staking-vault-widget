@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { InlineLoader } from '@lidofinance/lido-ui';
 
 import { FormatToken } from 'shared/formatters';
+import { isBigint } from 'utils';
 
 import { LoaderWrapper, ContentText } from './styles';
 
@@ -15,17 +16,16 @@ export interface ItemValueProps {
 
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
   const { content, isLoading, color, textSize = 'xl', symbol = '' } = props;
-  const contentView =
-    typeof content === 'bigint' ? (
-      <FormatToken
-        amount={content}
-        maxDecimalDigits={4}
-        showAmountTip={false}
-        symbol={symbol}
-      />
-    ) : (
-      content
-    );
+  const contentView = isBigint(content) ? (
+    <FormatToken
+      amount={content}
+      maxDecimalDigits={4}
+      showAmountTip={false}
+      symbol={symbol}
+    />
+  ) : (
+    content
+  );
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { WEI_PER_ETHER } from 'consts/tx';
+import { isBigint } from 'utils';
 
 import { NoticeContainer } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
@@ -17,8 +18,8 @@ export const DepositsPaused = () => {
   if (
     !beaconChainDepositsPauseIntent ||
     isNotHealth ||
-    (typeof feesToSettle === 'bigint' && feesToSettle >= WEI_PER_ETHER) ||
-    (typeof redemptionStETH === 'bigint' && redemptionStETH > 0n)
+    (isBigint(feesToSettle) && feesToSettle >= WEI_PER_ETHER) ||
+    (isBigint(redemptionStETH) && redemptionStETH > 0n)
   ) {
     return null;
   }
