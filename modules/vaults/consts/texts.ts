@@ -307,18 +307,12 @@ export const vaultTexts = {
           title: 'Decrease stETH Liability',
           getText: (amount: string) => `Repay ${amount}`,
         },
-        {
-          name: 'rebalance',
-          title: 'Decrease Total Value and stETH Liability',
-          getText: (amount: string) => `Rebalance ${amount}`,
-        },
       ],
     },
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',
       description:
         'The stVault’s Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism. This means the stVault can be rebalanced at any moment. You can still restore the Health Factor by taking one of the actions below. However, there’s no guarantee that a permissionless rebalance won’t occur before your transaction is executed.',
-      note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
       actions: [
         {
           name: 'supply',
@@ -329,11 +323,6 @@ export const vaultTexts = {
           name: 'repay',
           title: 'Decrease stETH Liability',
           getText: (amount: string) => `Repay ${amount}`,
-        },
-        {
-          name: 'rebalance',
-          title: 'Decrease Total Value and stETH Liability',
-          getText: (amount: string) => `Rebalance ${amount}`,
         },
       ],
     },

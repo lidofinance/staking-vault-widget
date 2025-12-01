@@ -4,3 +4,4 @@ export * from './notice-container';
 export * from './overview-modal';
 export * from './formula';
 export * from './slashing-info';
+export * from './repay-obligations';

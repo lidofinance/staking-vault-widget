@@ -1,7 +1,11 @@
 import { FC } from 'react';
 import { Question, Tooltip } from '@lidofinance/lido-ui';
 
-import { getMintingConstraintType, MintingConstraintType } from 'utils';
+import {
+  getMintingConstraintType,
+  isBigint,
+  MintingConstraintType,
+} from 'utils';
 import { useNodeOperatorTiersInfo, useVaultTierInfo } from 'modules/vaults';
 
 type MintingCapacityTooltipProps = {
@@ -23,7 +27,7 @@ export const MintingCapacityTooltip: FC<MintingCapacityTooltipProps> = ({
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { data: noTiersInfo } = useNodeOperatorTiersInfo();
 
-  if (!vaultTierInfo || !noTiersInfo || typeof tierId !== 'bigint') return null;
+  if (!vaultTierInfo || !noTiersInfo || !isBigint(tierId)) return null;
 
   const selectedTier = noTiersInfo.tiers.find((tier) => tier.id === tierId);
   if (!selectedTier) return null;

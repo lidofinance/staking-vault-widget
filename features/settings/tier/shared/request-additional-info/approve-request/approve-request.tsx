@@ -13,6 +13,7 @@ import { useChangeTierRequest } from 'features/settings/tier/hooks';
 import { checkUserIsProposer } from 'features/settings/tier/const';
 
 import { ButtonStyled } from './styles';
+import { isBigint } from '../../../../../../utils';
 
 export const ApproveRequest = () => {
   const { approveMovingTier, approving } = useChangeTierRequest();
@@ -48,7 +49,7 @@ export const ApproveRequest = () => {
 
   const handleApprove = useCallback(async () => {
     const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
-    if (typeof tierId !== 'bigint' || typeof mintingLimit !== 'bigint') return;
+    if (!isBigint(tierId) || !isBigint(mintingLimit)) return;
 
     await approveMovingTier(tierId, mintingLimit);
     await Promise.all([

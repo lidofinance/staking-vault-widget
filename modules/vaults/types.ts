@@ -6,6 +6,7 @@ import {
   getVaultHubContract,
   getOperatorGridContract,
   getLazyOracleContract,
+  getPredepositGuaranteeContract,
 } from './contracts';
 import type { RegisteredPublicClient } from '../web3';
 import type { Confirmation } from '../../utils/get-confirmations';
@@ -48,6 +49,7 @@ export type VaultBaseInfo = {
   dashboard: ReturnType<typeof getDashboardContract>;
   operatorGrid: ReturnType<typeof getOperatorGridContract>;
   lazyOracle: ReturnType<typeof getLazyOracleContract>;
+  predepositGuarantee: ReturnType<typeof getPredepositGuaranteeContract>;
   nodeOperator: Address;
   vaultOwner: Address;
   withdrawalCredentials: Hex;

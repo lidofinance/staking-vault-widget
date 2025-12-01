@@ -21,6 +21,7 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
+import { WEI_PER_ETHER } from 'consts/tx';
 import {
   formatPercent,
   toEthValue,
@@ -60,8 +61,8 @@ export type VaultInfo = VaultConnection &
     totalMintingCapacityStETH: bigint;
     inOutDelta: bigint;
     redemptionShares: bigint;
-    lockedShares: bigint;
-    locked: bigint;
+    redemptionStETH: bigint;
+    lockedEth: bigint;
     nodeOperatorUnclaimedFee: bigint;
     withdrawableEther: bigint;
     balance: bigint;
@@ -72,12 +73,18 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
+    obligationsShortfallValue: bigint;
+    stETHToBurn: bigint;
+    feesToSettle: bigint;
+    rebalanceShares: bigint;
+    rebalanceStETH: bigint;
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
     stagedBalanceWei: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
+    beaconChainDepositsPaused: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -137,13 +144,25 @@ const getVaultData = async ({
     blockNumber,
   });
 
-  const [vaultRecord, locked, stagedBalanceWei] = await readWithReport({
+  const [
+    obligationsShortfallValue,
+    [sharesToBurn, feesToSettle],
+    rebalanceShares,
+    vaultRecord,
+    lockedEth,
+    stagedBalanceWei,
+    beaconChainDepositsPaused,
+  ] = await readWithReport({
     publicClient,
     report,
     contracts: [
+      dashboard.prepare.obligationsShortfallValue(),
+      dashboard.prepare.obligations(),
+      hub.prepare.healthShortfallShares([vault.address]),
       hub.prepare.vaultRecord([vault.address]),
       hub.prepare.locked([vault.address]),
       vaultContract.prepare.stagedBalance(),
+      vaultContract.prepare.beaconChainDepositsPaused(),
     ] as const,
     blockNumber,
   });
@@ -153,6 +172,7 @@ const getVaultData = async ({
     inOutDelta: inOutDeltaArray,
     settledLidoFees,
     cumulativeLidoFees,
+    redemptionShares,
     ...restVaultRecord
   } = vaultRecord;
 
@@ -167,17 +187,21 @@ const getVaultData = async ({
     liabilityStETH,
     mintableStETH,
     stETHLimit,
-    lockedShares,
     totalMintingCapacityStETH,
     tierStETHLimit,
+    stETHToBurn,
+    rebalanceStETH,
+    redemptionStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
     stethContract.read.getPooledEthByShares([mintableShares]),
     stethContract.read.getPooledEthByShares([shareLimit]),
-    stethContract.read.getPooledEthByShares([locked]),
     stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),
+    stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
+    stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -198,7 +222,6 @@ const getVaultData = async ({
     totalMintingCapacityShares,
     totalMintingCapacityStETH,
     inOutDelta,
-    lockedShares,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
@@ -211,13 +234,21 @@ const getVaultData = async ({
     settledLidoFees,
     cumulativeLidoFees,
     vaultQuarantineState,
-    locked,
+    lockedEth,
     tierId,
     tierShareLimit,
     tierStETHLimit,
     lidoTVLSharesLimit,
     groupShareLimit,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    rebalanceShares,
+    rebalanceStETH,
+    redemptionShares,
+    redemptionStETH,
+    beaconChainDepositsPaused,
     ...rest,
     ...restVaultRecord,
   };
@@ -245,7 +276,7 @@ const selectOverviewData = ({
     isVaultConnected,
     settledLidoFees,
     cumulativeLidoFees,
-    locked,
+    lockedEth,
     mintableStETH,
     tierId,
     tierStETHLimit,
@@ -261,6 +292,14 @@ const selectOverviewData = ({
     groupShareLimit,
     lidoTVLSharesLimit,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
+    beaconChainDepositsPaused,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -272,7 +311,7 @@ const selectOverviewData = ({
     forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
     withdrawableEther,
     balance,
-    locked,
+    locked: lockedEth,
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
@@ -330,7 +369,7 @@ const selectOverviewData = ({
   const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
   const feeObligationEth = toEthValue(feeObligation);
   const totalValueETH = toEthValue(vaultData.totalValue);
-  const totalLocked = toEthValue(locked + nodeOperatorUnclaimedFee);
+  const totalLocked = toEthValue(lockedEth + nodeOperatorUnclaimedFee);
   const liabilityStETH = toStethValue(vaultData.liabilityStETH);
   const withdrawableEth = toEthValue(withdrawableEther);
   const balanceEth = toEthValue(balance);
@@ -361,6 +400,7 @@ const selectOverviewData = ({
     totalValueETH,
     reserveRatio,
     utilizationRatio,
+    utilizationRatioNumber: overview.utilizationRatio,
     rebalanceThreshold,
     healthFactor,
     healthFactorNumber,
@@ -401,12 +441,14 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
+    isPausedByFees: feesToSettle > WEI_PER_ETHER,
     netStakingRewards,
     carrySpreadApr,
     vaultData,
     vaultMetrics,
     vaultQuarantineState,
     beaconChainDepositsPauseIntent,
+    beaconChainDepositsPaused,
     tierStETHLimit,
     isPendingDisconnect,
     isVaultDisconnected,
@@ -414,6 +456,13 @@ const selectOverviewData = ({
     mintingConstraintBy,
     minimalReserve,
     stagedBalanceWei,
+    obligationsShortfallValue,
+    stETHToBurn,
+    feesToSettle,
+    redemptionShares,
+    redemptionStETH,
+    rebalanceShares,
+    rebalanceStETH,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
   };
