@@ -18,7 +18,8 @@ type ReadWithReportArgs<
 > = {
   publicClient: RegisteredPublicClient;
   contracts: TContracts;
-  report?: VaultReportType | null;
+  report: VaultReportType | null;
+  isReportFresh: boolean;
   blockNumber?: bigint;
 };
 
@@ -44,12 +45,13 @@ export const readWithReport = async <
 >({
   publicClient,
   report,
+  isReportFresh,
   contracts,
   blockNumber,
 }: ReadWithReportArgs<TContracts>): Promise<
   MulticallReturnType<TContracts, false>
 > => {
-  if (report) {
+  if (report && !isReportFresh) {
     // there is logic in lazyOracle that does not allow us to bypass it without proof
     // inclusion of proper tx with proof is not sustainable for rpc load and compute
     // as  proof will gradually become larger

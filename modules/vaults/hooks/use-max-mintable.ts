@@ -37,6 +37,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
       const [maxMintableShares] = await readWithReport({
         publicClient,
         report: activeVault.report,
+        isReportFresh: activeVault.isReportFresh,
         contracts: [
           activeVault.dashboard.prepare.remainingMintingCapacityShares([
             amount,

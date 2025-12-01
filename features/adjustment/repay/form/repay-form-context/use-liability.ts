@@ -17,6 +17,7 @@ export const useLiability = () => {
       const [liabilityShares] = await readWithReport({
         publicClient,
         report: activeVault.report,
+        isReportFresh: activeVault.isReportFresh,
         contracts: [activeVault.dashboard.prepare.liabilityShares()] as const,
       });
 

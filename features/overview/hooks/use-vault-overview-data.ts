@@ -104,6 +104,7 @@ const getVaultData = async ({
     hub,
     operatorGrid,
     report,
+    isReportFresh,
     reportLiabilityShares,
     lazyOracle,
     blockNumber,
@@ -124,6 +125,7 @@ const getVaultData = async ({
   ] = await readWithReport({
     publicClient,
     report,
+    isReportFresh,
     contracts: [
       {
         abi: Multicall3AbiUtils,
@@ -144,6 +146,7 @@ const getVaultData = async ({
     blockNumber,
   });
 
+  // TODO: fix ts types deps and join in one call
   const [
     obligationsShortfallValue,
     [sharesToBurn, feesToSettle],
@@ -155,6 +158,7 @@ const getVaultData = async ({
   ] = await readWithReport({
     publicClient,
     report,
+    isReportFresh,
     contracts: [
       dashboard.prepare.obligationsShortfallValue(),
       dashboard.prepare.obligations(),
