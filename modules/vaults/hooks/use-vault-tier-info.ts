@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { Abi, Address, getAddress } from 'viem';
+import { getAddress, type Abi, type Address } from 'viem';
 
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
@@ -12,10 +12,11 @@ import {
   getLidoContract,
   getStEthContract,
 } from 'modules/vaults';
-import { formatPercent, toEthValue, toStethValue } from 'utils';
+import { ceilDivBigint, formatPercent, toEthValue, toStethValue } from 'utils';
+import { bigIntMax } from 'utils/bigint-math';
 import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
 
-import { VaultTierInfoArgs, VaultTierInfo } from '../types';
+import type { VaultTierInfoArgs, VaultTierInfo } from '../types';
 
 export type VaultTierData = ReturnType<typeof selectTierData>;
 
@@ -73,7 +74,7 @@ const getVaultTierInfo = async ({
   const stethContract = getStEthContract(publicClient);
 
   const [
-    record,
+    vaultRecord,
     totalValue,
     vaultTotalMintingCapacityShares,
     vaultMintableShares,
@@ -100,7 +101,7 @@ const getVaultTierInfo = async ({
     vaultLiquidityFeeBP,
     vaultReservationFeeBP,
   ] = vaultInfo;
-  const { liabilityShares: vaultLiabilityShares } = record;
+  const { liabilityShares: vaultLiabilityShares, minimalReserve } = vaultRecord;
 
   const [tier] = await readWithReport({
     publicClient,
@@ -153,6 +154,7 @@ const getVaultTierInfo = async ({
     lidoTVLSharesLimit,
     address,
     nodeOperator,
+    minimalReserve,
     proposals: {
       confirmExpiry,
       lastProposal,
@@ -194,7 +196,7 @@ const getVaultTierInfo = async ({
 };
 
 const selectTierData = (tierData: VaultTierInfo) => {
-  const { vault, tier } = tierData;
+  const { vault, tier, minimalReserve } = tierData;
 
   const tierName =
     tier.id === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tier.id)}`;
@@ -226,6 +228,16 @@ const selectTierData = (tierData: VaultTierInfo) => {
     vault.totalMintingCapacityStETH,
   );
 
+  const RR = BigInt(vault.reserveRatioBP);
+  const oneMinusRR = VAULT_TOTAL_BASIS_POINTS_BN - RR;
+  const collateral = bigIntMax(
+    minimalReserve,
+    ceilDivBigint(
+      vault.totalMintingCapacityStETH * VAULT_TOTAL_BASIS_POINTS_BN,
+      oneMinusRR,
+    ),
+  );
+
   return {
     ...tierData,
     vaultTotalValueETHValue,
@@ -236,7 +248,7 @@ const selectTierData = (tierData: VaultTierInfo) => {
     vaultRebalanceThresholdValue,
     vaultLiabilityStETHValue,
     vaultTotalMintingCapacityStETHValue,
-
+    collateral,
     tierName,
     tierStETHLimitValue,
     tierStETHLimit: tier.shareLimitStETH,

@@ -5,7 +5,7 @@ export const FormContainer = styled.section`
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.md}px;
 
-  width: 600px;
+  width: 100%;
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;

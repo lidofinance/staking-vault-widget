@@ -1,4 +1,6 @@
 type GetMintingConstraintTypeArgs = {
+  minimalReserve: bigint;
+  collateral: bigint;
   totalMintingCapacityShares: bigint;
   vaultShareLimit: bigint;
   tierShareLimit: bigint;
@@ -8,6 +10,7 @@ type GetMintingConstraintTypeArgs = {
 };
 
 export type MintingConstraintType =
+  | 'minimalReserve'
   | 'reserveRatio'
   | 'vault'
   | 'tier'
@@ -15,6 +18,8 @@ export type MintingConstraintType =
   | 'lido';
 
 export const getMintingConstraintType = ({
+  minimalReserve,
+  collateral,
   totalMintingCapacityShares,
   vaultShareLimit,
   tierShareLimit,
@@ -32,7 +37,11 @@ export const getMintingConstraintType = ({
   // - In case of equality, we attribute the constraint to the specific cap (not RR), because
   //   ties resolve to the later entry in the list below.
   // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
-  const mintingConstraintBy: MintingConstraintType = (
+  if (minimalReserve === collateral) {
+    return 'minimalReserve';
+  }
+
+  return (
     [
       {
         label: 'reserveRatio',
@@ -52,6 +61,4 @@ export const getMintingConstraintType = ({
   ).reduce((acc, val) => {
     return val.value <= acc.value ? val : acc;
   }).label;
-
-  return mintingConstraintBy;
 };

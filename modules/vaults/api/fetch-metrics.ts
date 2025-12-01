@@ -1,5 +1,4 @@
 import { getApiURL } from 'config';
-import type { RegisteredPublicClient } from 'modules/web3';
 import { vaultApiRoutes } from '../consts';
 
 export type VaultApiMetrics = {
@@ -21,21 +20,16 @@ export type VaultApiMetrics = {
   updatedAt: Date;
 };
 
-type FetchVaultMetricsContext = {
-  publicClient: RegisteredPublicClient;
-};
-
 type FetchVaultMetricsParams = {
   vaultAddress: string;
 };
 
-export const fetchVaultMetrics = async (
-  { publicClient }: FetchVaultMetricsContext,
-  { vaultAddress }: FetchVaultMetricsParams,
-): Promise<VaultApiMetrics> => {
+export const fetchVaultMetrics = async ({
+  vaultAddress,
+}: FetchVaultMetricsParams): Promise<VaultApiMetrics> => {
   const apiURL = getApiURL('vaultsApiBasePath');
   if (!apiURL) {
-    throw new Error(`API URL not found for chain ID: ${publicClient.chain.id}`);
+    throw new Error('[fetchVaultMetrics] API URL not found');
   }
 
   const res = await fetch(vaultApiRoutes.vaultMetrics(apiURL, vaultAddress));

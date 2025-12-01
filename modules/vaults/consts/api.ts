@@ -22,6 +22,8 @@ export const vaultApiRoutes = {
   },
   vaultMetrics: (basePath: string, vaultAddress: string) =>
     `${basePath}/v1/vaults/${vaultAddress}/latest-metrics`,
+  vault7dApr: (basePath: string, vaultAddress: string) =>
+    `${basePath}/v1/vaults/${vaultAddress}/apr/sma`,
   vaultReport: (basePath: string, vaultAddress: string, cid: string) =>
     `${basePath}/v1/report/${cid}/${vaultAddress}`,
 };

@@ -2,6 +2,7 @@ import { encodeFunctionData } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { Tier, VAULTS_CONNECT_DEPOSIT } from 'modules/vaults';
+import { isBigint } from 'utils/is-bigint';
 
 export const dataToTx = (
   proposedTier: Tier | undefined,
@@ -10,7 +11,7 @@ export const dataToTx = (
   if (
     proposedTier &&
     proposedTier.id !== 0n &&
-    typeof proposedVaultLimitShares === 'bigint'
+    isBigint(proposedVaultLimitShares)
   ) {
     return {
       data: encodeFunctionData({

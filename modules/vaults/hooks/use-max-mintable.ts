@@ -2,6 +2,7 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
+import { isBigint } from 'utils';
 
 import { useVault } from '../vault-context';
 import { readWithReport } from '../report';
@@ -16,7 +17,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
   const { publicClient } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  const enabled = !!activeVault && typeof amount === 'bigint';
+  const enabled = !!activeVault && isBigint(amount);
 
   return useQuery<MaxMintableResult>({
     queryKey: [
@@ -31,10 +32,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
         '[useMaxMintableSteth] Active vault owner is not defined',
       );
 
-      invariant(
-        typeof amount === 'bigint',
-        '[useMaxMintable] Amount must be a bigint',
-      );
+      invariant(isBigint(amount), '[useMaxMintable] Amount must be a bigint');
 
       const [maxMintableShares] = await readWithReport({
         publicClient,

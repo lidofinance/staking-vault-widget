@@ -20,7 +20,7 @@ export const FooterStyle = styled(Container)`
   padding: var(--footer-desktop-padding-y) var(--footer-desktop-padding-x);
 
   @media ${devicesHeaderMedia.mobile} {
-    margin-bottom: var(--footer-mobile-margin-bottom);
+    margin-bottom: calc(var(--footer-mobile-margin-bottom) + 50px);
     padding: var(--footer-mobile-padding-x) var(--footer-mobile-padding-y);
     justify-content: center;
   }

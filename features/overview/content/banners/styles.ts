@@ -1,7 +1,10 @@
 import styled from 'styled-components';
+import { Text } from '@lidofinance/lido-ui';
 
 export const BannerContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  row-gap: 24px;
+  display: contents;
+`;
+
+export const TextStyled = styled(Text)`
+  line-height: 20px;
 `;

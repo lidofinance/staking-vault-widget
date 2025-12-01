@@ -5,14 +5,16 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 import {
   ModalSection,
   OverviewModal,
-  SectionDivider,
   useStEthChart,
+  useVaultOverviewData,
+  SectionDivider,
 } from 'features/overview/inner';
-import { useVaultOverview } from 'features/overview/vault-overview';
+import { SlashingInfo } from 'features/overview/shared';
 
 const { vaultLiability } = vaultTexts.metrics.modals;
 
@@ -20,22 +22,23 @@ const dataTestIdPrefix = 'vaultLiability-modal';
 
 export const StethLiabilityModal = () => {
   const chartData = useStEthChart();
-  const { isLoadingVault, values } = useVaultOverview();
+  const { isLoading, data: values } = useVaultOverviewData();
 
   const {
     utilizationRatio,
-    totalMintingCapacityStETH,
-    remainingMintingCapacityStETH,
+    totalMintingCapacity,
+    mintableStETH,
     reserveRatio,
     rebalanceThreshold,
-    tierLimitStETH,
-    vaultData,
+    tierStETHLimit,
+    mintingConstraintBy,
+    minimalReserve,
   } = values || {};
 
   return (
     <OverviewModal name="vaultLiability" symbol="stETH">
       <ChartLine
-        loading={isLoadingVault}
+        loading={isLoading}
         border={ChartLineBorderType.rounded}
         thresholdType={ChartLineThresholdType.flag}
         data={chartData}
@@ -46,7 +49,8 @@ export const StethLiabilityModal = () => {
       <SectionDivider />
       <ModalSection
         title={vaultLiability.utilizationRatio.title}
-        amount={utilizationRatio}
+        amountValue={utilizationRatio}
+        amountType="percent"
         description={vaultLiability.utilizationRatio.description}
         dataTestId={`${dataTestIdPrefix}-utilizationRatioSection`}
       />
@@ -54,37 +58,49 @@ export const StethLiabilityModal = () => {
       <ModalSection
         title={vaultLiability.totalStethMintingCapacity.title}
         subTitle={vaultLiability.totalStethMintingCapacity.constrainedBy(
-          vaultData?.mintingConstraintBy || 'vault',
+          mintingConstraintBy ?? 'vault',
         )}
-        amount={totalMintingCapacityStETH}
-        description={vaultLiability.totalStethMintingCapacity.description}
+        amountValue={totalMintingCapacity}
+        amountType="token"
+        description={vaultLiability.totalStethMintingCapacity.description(
+          minimalReserve,
+          mintingConstraintBy,
+        )}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}
-      />
+      >
+        {!!minimalReserve && minimalReserve > WEI_PER_ETHER && (
+          <SlashingInfo amount={minimalReserve} />
+        )}
+      </ModalSection>
       <SectionDivider />
       <ModalSection
         title={vaultLiability.stethMintingLimit.title}
-        amount={tierLimitStETH}
+        amountValue={tierStETHLimit}
+        amountType="token"
         description={vaultLiability.stethMintingLimit.description}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingLimitSection`}
       />
       <SectionDivider />
       <ModalSection
         title={vaultLiability.remainingCapacity.title}
-        amount={remainingMintingCapacityStETH}
+        amountValue={mintableStETH}
+        amountType="token"
         description={vaultLiability.remainingCapacity.description}
         dataTestId={`${dataTestIdPrefix}-remainingCapacitySection`}
       />
       <SectionDivider />
       <ModalSection
         title={vaultLiability.reserveRatio.title}
-        amount={reserveRatio}
+        amountValue={reserveRatio}
+        amountType="percent"
         description={vaultLiability.reserveRatio.description}
         dataTestId={`${dataTestIdPrefix}-reserveRatioSection`}
       />
       <SectionDivider />
       <ModalSection
         title={vaultLiability.forcedRebalanceThreshold.title}
-        amount={rebalanceThreshold}
+        amountValue={rebalanceThreshold}
+        amountType="percent"
         description={vaultLiability.forcedRebalanceThreshold.description}
         dataTestId={`${dataTestIdPrefix}-forcedRebalanceThresholdSection`}
       />

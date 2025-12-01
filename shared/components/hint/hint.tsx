@@ -1,8 +1,8 @@
+import { Fragment } from 'react';
 import type { ComponentProps } from 'react';
 import styled from 'styled-components';
 
 import { Question, Tooltip } from '@lidofinance/lido-ui';
-import { Fragment } from 'react';
 
 const QuestionIcon = styled(Question)`
   min-width: 20px;
