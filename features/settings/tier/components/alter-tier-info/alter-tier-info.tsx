@@ -51,10 +51,6 @@ export const AlterTierInfo = () => {
               </TextStyled>
             ))}
           <TextStyled size="xxs">
-            The Reserve Ratio for your current tier has been updated (15% →
-            10%).
-          </TextStyled>
-          <TextStyled size="xxs">
             Apply the new settings to take effect.
           </TextStyled>
         </ListOfUpdates>
