@@ -5,7 +5,6 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
-import { WEI_PER_ETHER } from 'consts/tx';
 
 import {
   ModalSection,
@@ -33,6 +32,7 @@ export const StethLiabilityModal = () => {
     tierStETHLimit,
     mintingConstraintBy,
     minimalReserve,
+    isSlashingHappened,
   } = values || {};
 
   return (
@@ -68,7 +68,7 @@ export const StethLiabilityModal = () => {
         )}
         dataTestId={`${dataTestIdPrefix}-totalStethMintingCapacitySection`}
       >
-        {!!minimalReserve && minimalReserve > WEI_PER_ETHER && (
+        {!!minimalReserve && isSlashingHappened && (
           <SlashingInfo amount={minimalReserve} />
         )}
       </ModalSection>

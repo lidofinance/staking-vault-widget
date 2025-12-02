@@ -43,3 +43,7 @@ export const HealthFactorHint = styled.span<{ color: HealthChartColor }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   color: ${getColor};
 `;
+
+export const ChartContainer = styled.div`
+  margin-top: 24px;
+`;

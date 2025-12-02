@@ -22,7 +22,7 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
-import { HealthFactorHint, List, ListItem } from './styles';
+import { ChartContainer, HealthFactorHint, List, ListItem } from './styles';
 
 const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   carrySpread: [
@@ -147,24 +147,26 @@ export const HealthFactorModal = () => {
         <HealthFactorHint color={colorName}>{hint}</HealthFactorHint>
       }
     >
-      <ModalSection dataTestId={`${dataTestIdPrefix}-chartSection`}>
-        <ChartProportion
-          loading={isLoadingVault}
-          height={24}
-          border={ChartProportionBorderType.rounded}
-          margin={MarginSize.md}
-          borderSize={ChartProportionBorderSize.md}
-          data={chartData}
-          showLabels
-          data-testid={`${dataTestIdPrefix}-chart`}
-        />
-        <List data-testid={`${dataTestIdPrefix}-chartLabelsList`}>
-          <ListItem color="rebalance">Forced rebalance</ListItem>
-          <ListItem color="danger">At risk</ListItem>
-          <ListItem color="warning">Needs attention</ListItem>
-          <ListItem color="success">Healthy</ListItem>
-        </List>
-      </ModalSection>
+      <ChartContainer>
+        <ModalSection dataTestId={`${dataTestIdPrefix}-chartSection`}>
+          <ChartProportion
+            loading={isLoadingVault}
+            height={24}
+            border={ChartProportionBorderType.rounded}
+            margin={MarginSize.md}
+            borderSize={ChartProportionBorderSize.md}
+            data={chartData}
+            showLabels
+            data-testid={`${dataTestIdPrefix}-chart`}
+          />
+          <List data-testid={`${dataTestIdPrefix}-chartLabelsList`}>
+            <ListItem color="rebalance">Forced rebalance</ListItem>
+            <ListItem color="danger">At risk</ListItem>
+            <ListItem color="warning">Needs attention</ListItem>
+            <ListItem color="success">Healthy</ListItem>
+          </List>
+        </ModalSection>
+      </ChartContainer>
       <ModalSection
         description={health.rebalanceThreshold.description}
         dataTestId={`${dataTestIdPrefix}-rebalanceThresholdSection`}

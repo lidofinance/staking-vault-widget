@@ -1,4 +1,7 @@
+import { Address } from 'viem';
+
 import { getApiURL } from 'config';
+
 import { vaultApiRoutes } from '../consts';
 
 export type TimestampRange = {
@@ -27,22 +30,36 @@ export type Vault7DApr = {
 };
 
 type FetchVaultMetricsParams = {
-  vaultAddress: string;
+  vaultAddress: Address;
 };
 
-export const fetch7dApr = async ({
-  vaultAddress,
-}: FetchVaultMetricsParams): Promise<Vault7DApr> => {
+export const fetchVault7dApr = async (
+  vaultAddress: Address,
+): Promise<Vault7DApr> => {
   const apiURL = getApiURL('vaultsApiBasePath');
   if (!apiURL) {
-    throw new Error('[fetchVaultMetrics] API URL not found');
+    throw new Error('[fetchVault7dApr] API URL not found');
   }
 
   const res = await fetch(vaultApiRoutes.vault7dApr(apiURL, vaultAddress));
 
   if (!res.ok) {
-    throw new Error(`Error fetching vault 7d APR: ${res.statusText}`);
+    throw new Error(
+      `[fetchVault7dApr] Error fetching vault 7d APR: ${res.statusText}`,
+    );
   }
 
   return await res.json();
+};
+
+export const fetch7dApr = async ({
+  vaultAddress,
+}: FetchVaultMetricsParams): Promise<Vault7DApr | null> => {
+  try {
+    return await fetchVault7dApr(vaultAddress);
+  } catch (error) {
+    console.warn('[fetch7dApr] Error fetching 7 days APR from api:', error);
+
+    return null;
+  }
 };

@@ -79,6 +79,7 @@ const getVaultTierInfo = async ({
   ] = await readWithReport({
     publicClient,
     report: vault.report,
+    isReportFresh: vault.isReportFresh,
     contracts: [
       hub.prepare.vaultRecord([vault.address]),
       dashboard.prepare.totalValue(),
@@ -103,6 +104,7 @@ const getVaultTierInfo = async ({
   const [tier] = await readWithReport({
     publicClient,
     report: vault.report,
+    isReportFresh: vault.isReportFresh,
     contracts: [operatorGrid.prepare.tier([tierId])],
   });
   const {

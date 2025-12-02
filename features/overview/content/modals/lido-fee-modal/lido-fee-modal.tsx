@@ -116,19 +116,19 @@ export const LidoFeeModal = () => {
 
   return (
     <OverviewModal name="unsettledLidoFees" symbol="ETH">
-      {values?.vaultData.infraFeeBP && (
+      {!!values?.vaultData.infraFeeBP && (
         <Formula
           list={formulasMap.infraFee}
           dataTestId={`${dataTestIdPrefix}-infraFee-formula`}
         />
       )}
-      {values?.vaultData.liquidityFeeBP && (
+      {!!values?.vaultData.liquidityFeeBP && (
         <Formula
           list={formulasMap.liquidityFee}
           dataTestId={`${dataTestIdPrefix}-liquidityFee-formula`}
         />
       )}
-      {values?.vaultData.reservationFeeBP && (
+      {!!values?.vaultData.reservationFeeBP && (
         <Formula
           list={formulasMap.annualReservationFee}
           dataTestId={`${dataTestIdPrefix}-annualReservationFee-formula`}
