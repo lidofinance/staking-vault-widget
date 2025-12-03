@@ -27,6 +27,7 @@ export const useClaimData = () => {
 
       const [noFee, withdrawableValue] = await readWithReport({
         report: activeVault.report,
+        isReportFresh: activeVault.isReportFresh,
         publicClient,
         contracts: [
           activeVault.dashboard.prepare.accruedFee(),

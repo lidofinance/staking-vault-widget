@@ -12,6 +12,7 @@ import {
   VAULT_TOTAL_BASIS_POINTS,
   getLidoContract,
   getStEthContract,
+  VAULTS_CONNECT_DEPOSIT,
   type VaultApiMetrics,
   type VaultBaseInfo,
   type VaultConnection,
@@ -72,14 +73,14 @@ export type VaultInfo = VaultConnection &
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     reportLiabilitySharesStETH: bigint;
-    lidoTVLSharesLimit: bigint;
-    groupShareLimit: bigint;
-    stagedBalanceWei: bigint;
     obligationsShortfallValue: bigint;
     stETHToBurn: bigint;
     feesToSettle: bigint;
     rebalanceShares: bigint;
     rebalanceStETH: bigint;
+    lidoTVLSharesLimit: bigint;
+    groupShareLimit: bigint;
+    stagedBalanceWei: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -103,6 +104,8 @@ const getVaultData = async ({
     hub,
     operatorGrid,
     report,
+    isReportFresh,
+    reportLiabilityShares,
     lazyOracle,
     blockNumber,
     ...rest
@@ -122,6 +125,7 @@ const getVaultData = async ({
   ] = await readWithReport({
     publicClient,
     report,
+    isReportFresh,
     contracts: [
       {
         abi: Multicall3AbiUtils,
@@ -142,6 +146,7 @@ const getVaultData = async ({
     blockNumber,
   });
 
+  // TODO: fix ts types deps and join in one call
   const [
     obligationsShortfallValue,
     [sharesToBurn, feesToSettle],
@@ -153,6 +158,7 @@ const getVaultData = async ({
   ] = await readWithReport({
     publicClient,
     report,
+    isReportFresh,
     contracts: [
       dashboard.prepare.obligationsShortfallValue(),
       dashboard.prepare.obligations(),
@@ -190,6 +196,7 @@ const getVaultData = async ({
     stETHToBurn,
     rebalanceStETH,
     redemptionStETH,
+    reportLiabilitySharesStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
@@ -200,14 +207,9 @@ const getVaultData = async ({
     stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
     stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
     stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([reportLiabilityShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
-
-  const reportLiabilitySharesStETH = report
-    ? await stethContract.read.getPooledEthBySharesRoundUp([
-        report.liabilityShares,
-      ])
-    : 0n;
 
   return {
     address,
@@ -461,6 +463,8 @@ const selectOverviewData = ({
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
+    // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
+    isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
   };
 };
 
@@ -502,7 +506,6 @@ export const useVaultOverviewData = () => {
           return null;
         }),
       ]);
-
       return { vaultData, vaultMetrics, vault7dApr };
     },
     select: selectOverviewData,

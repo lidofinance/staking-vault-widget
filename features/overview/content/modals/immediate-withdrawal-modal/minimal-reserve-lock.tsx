@@ -14,7 +14,7 @@ export const MinimalReserveLock: FC<MinimalReserveLockProps> = ({ amount }) => {
     <TextContainer>
       <Text size="xxs" color="secondary">
         Reserve is defined by the Minimal Reserve value of{' '}
-        <FormatToken amount={amount} maxDecimalDigits={8} symbol="stETH" /> for
+        <FormatToken amount={amount} maxDecimalDigits={8} symbol="ETH" /> for
         the connection to Lido Core.
       </Text>
     </TextContainer>

@@ -77,6 +77,7 @@ export const useReadDashboard = <
           publicClient,
           contracts: [contractData],
           report: applyReport ? activeVault.report : null,
+          isReportFresh: activeVault.isReportFresh,
         })
       )[0];
     },

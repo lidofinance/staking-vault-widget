@@ -7,7 +7,6 @@ import {
 
 import { vaultTexts } from 'modules/vaults';
 import { FormatToken } from 'shared/formatters';
-import { WEI_PER_ETHER } from 'consts/tx';
 
 import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import {
@@ -44,6 +43,8 @@ export const ImmediateWithdrawalModal = () => {
     pendingUnlock,
     minimalReserve,
     stagedBalanceWei,
+    isSlashingHappened,
+    mintingConstraintBy,
   } = values || {};
   const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
@@ -115,10 +116,10 @@ export const ImmediateWithdrawalModal = () => {
             dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
           >
             {!!pendingUnlock && <PendingUnlock amount={pendingUnlock} />}
-            {!!minimalReserve && minimalReserve === collateral && (
+            {!!minimalReserve && mintingConstraintBy === 'minimalReserve' && (
               <MinimalReserveLock amount={minimalReserve} />
             )}
-            {!!minimalReserve && minimalReserve > WEI_PER_ETHER && (
+            {!!minimalReserve && isSlashingHappened && (
               <SlashingInfo amount={minimalReserve} />
             )}
           </ModalSection>
@@ -152,7 +153,7 @@ export const ImmediateWithdrawalModal = () => {
       </ModalSection>
       <SectionDivider />
       <ModalSection
-        title="Not staked stVault Balance"
+        title="Unstaked stVault balance"
         amountValue={balance}
         amountType="token"
         amountSymbol="ETH"

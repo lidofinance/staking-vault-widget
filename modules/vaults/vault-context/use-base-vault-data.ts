@@ -81,14 +81,16 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       const isReportAvailable =
         latestHubReportTimestamp > latestVaultReport.timestamp;
 
-      // we might not have a report even when fresh is not true
-      const report = isReportAvailable
+      const report = latestHubReportCID
         ? await fetchReport(
             { publicClient },
             { cid: latestHubReportCID, vault: vaultAddress },
           )
         : null;
 
+      const reportLiabilityShares = report?.liabilityShares ?? 0n;
+
+      // we might not have a report even when fresh is not true
       const isReportMissing = !report && !isReportFresh;
 
       const supposedDashboardAddress =
@@ -136,6 +138,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
+        reportLiabilityShares,
         ...connection,
       };
     },

@@ -65,6 +65,7 @@ export const useSupply = () => {
               ],
               publicClient,
               report: activeVault.report,
+              isReportFresh: activeVault.isReportFresh,
             });
 
             calls.push({
