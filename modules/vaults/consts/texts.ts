@@ -209,6 +209,9 @@ export const vaultTexts = {
         `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
       approveSelectedTier: (tierId: bigint) =>
         `Approving Tier ${tierId} settings.` as const,
+      syncTier: (tierId: number) => `Applying Tier ${tierId} updates` as const,
+      completeSyncTier: (tierId: number) =>
+        `Request to apply Tier ${tierId} updates was sent` as const,
       submit: (counter: number) => {
         if (counter > 0)
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;

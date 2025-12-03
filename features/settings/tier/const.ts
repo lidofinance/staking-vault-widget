@@ -84,3 +84,11 @@ export const checkUserIsProposer = (
 
   return isAddressEqual(dashboard, proposer);
 };
+
+export const ALTER_TIER_LABELS = {
+  reserveRatio: 'Reserve Ratio',
+  forcedRebalanceThreshold: 'Forced Rebalance Threshold',
+  infraFee: 'Infra Fee',
+  liquidityFee: 'Liquidity Fee',
+  reservationFee: 'Reservation Fee',
+};

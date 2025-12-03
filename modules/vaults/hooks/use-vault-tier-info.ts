@@ -261,7 +261,11 @@ export const useVaultTierInfo = () => {
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
-    queryKey: [...queryKeys.state, 'vault-tier-info'],
+    queryKey: [
+      ...queryKeys.state,
+      'vault-tier-info',
+      activeVault?.blockNumber.toString(),
+    ],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');

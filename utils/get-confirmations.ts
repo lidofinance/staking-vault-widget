@@ -7,10 +7,10 @@ import { confirmationAbi } from 'abi/confirmation-abi';
 export type FunctionArgsMap = {
   setConfirmExpiry: readonly [bigint];
   setFeeRate: readonly [bigint];
-  changeTier: readonly [Address, bigint, bigint];
   transferVaultOwnership: readonly [Address];
+  changeTier: readonly [Address, bigint, bigint];
   updateVaultShareLimit: readonly [Address, bigint];
-  syncTier: readonly [Address, bigint]; // TODO: check params
+  syncTier: readonly [Address]; // TODO: check params
 };
 type FunctionName = keyof FunctionArgsMap;
 type DecodedData = {
@@ -82,7 +82,7 @@ export const getConfirmationsInfo = async (
         data,
         decodedData: decodeFunctionData({
           abi,
-          data: data,
+          data,
         }) as DecodedData,
       };
     });

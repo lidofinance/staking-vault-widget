@@ -134,7 +134,11 @@ export const useAlterTier = () => {
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
-    queryKey: [...queryKeys.state, 'alter-tier-info'],
+    queryKey: [
+      ...queryKeys.state,
+      'alter-tier-info',
+      activeVault?.blockNumber.toString(),
+    ],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useAlterTier] activeVault is not defined');
