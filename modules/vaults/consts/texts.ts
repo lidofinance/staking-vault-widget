@@ -1,6 +1,7 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { WEI_PER_ETHER } from 'consts/tx';
 import type { TierConfirmationFnNames } from '../types';
+import { toStethValue } from '../../../utils';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -222,10 +223,23 @@ export const vaultTexts = {
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
       confirmUpdateVaultShareLimit: (tierMintingLimit: string) =>
         `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
-      approveSelectedTier: (tierId: bigint) =>
-        `Approving Tier ${tierId} settings.` as const,
-      syncTier: (tierId: number) => `Applying Tier ${tierId} updates` as const,
-      completeSyncTier: (tierId: number) =>
+      approveChangeTierMintingLimit: (
+        tierId: bigint,
+        mintingLimitStETH: bigint,
+      ) =>
+        `Approving change Tier ${tierId} ${toStethValue(mintingLimitStETH)} minting limit.` as const,
+      completeChangeTierMintingLimit: (
+        tierId: bigint,
+        mintingLimitStETH: bigint,
+      ) =>
+        `Request to change Tier ${tierId} ${toStethValue(mintingLimitStETH)} limit approved.` as const,
+      approveSelectedTier: (tierId: bigint, mintingLimitStETH: bigint) =>
+        `Approving Tier ${tierId} change tier with ${toStethValue(mintingLimitStETH)} minting limit.` as const,
+      completeChangeTier: (tierId: bigint, mintingLimitStETH: bigint) =>
+        `Request for tier ${tierId} with ${toStethValue(mintingLimitStETH)} minting limit approved` as const,
+      syncTier: (tierId: number | bigint) =>
+        `Applying Tier ${tierId} updates` as const,
+      completeSyncTier: (tierId: number | bigint) =>
         `Request to apply Tier ${tierId} updates was sent` as const,
       submit: (counter: number) => {
         if (counter > 0)

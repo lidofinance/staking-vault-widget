@@ -31,12 +31,19 @@ export const useTierVoting = () => {
 
     const { member: proposer, tierId } = proposal;
     const proposedTier = noTiersInfo.tiers.find((tier) => tier.id === tierId);
+    const createdByNodeOperator = isAddressEqual(proposer, address);
+    const createdByAdminOrRole = isAddressEqual(proposer, activeVault.owner);
     const isTheSameUser =
-      isAddressEqual(proposer, address) ||
-      (isAddressEqual(proposer, activeVault.dashboard.address) &&
-        (hasVaultConfigurationPermission || hasAdmin));
+      createdByNodeOperator ||
+      (createdByAdminOrRole && (hasVaultConfigurationPermission || hasAdmin));
 
-    return { proposal, proposedTier, isTheSameUser };
+    return {
+      proposal,
+      proposedTier,
+      isTheSameUser,
+      createdByNodeOperator,
+      createdByAdminOrRole,
+    };
   }, [
     activeVault,
     vaultTierInfo,

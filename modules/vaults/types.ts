@@ -107,15 +107,30 @@ export type TierConfirmationFnNames =
   | 'updateVaultShareLimit'
   | 'syncTier';
 
-export type ExtendTierConfirmation = {
-  vaultAddress: Address;
-  member: Address;
-  expiryTimestamp: bigint;
-  expiryDate: Date;
-  tierId: bigint;
-  functionName: TierConfirmationFnNames;
-  proposedVaultLimitStETH: bigint | undefined;
-};
+export type ExtendTierConfirmation =
+  | {
+      vaultAddress: Address;
+      member: Address;
+      expiryTimestamp: bigint;
+      expiryDate: Date;
+      tierId: bigint;
+      functionName: Extract<
+        'changeTier' | 'updateVaultShareLimit',
+        TierConfirmationFnNames
+      >;
+      proposedVaultLimitStETH: bigint;
+      proposedVaultLimitShares: bigint;
+    }
+  | {
+      vaultAddress: Address;
+      member: Address;
+      expiryTimestamp: bigint;
+      expiryDate: Date;
+      tierId: bigint;
+      functionName: Extract<'syncTier', TierConfirmationFnNames>;
+      proposedVaultLimitStETH: undefined;
+      proposedVaultLimitShares: undefined;
+    };
 
 export type VaultTierInfo = {
   lidoTVLSharesLimit: bigint;

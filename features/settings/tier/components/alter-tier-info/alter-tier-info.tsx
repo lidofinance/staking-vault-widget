@@ -51,10 +51,6 @@ export const AlterTierInfo = () => {
     return null;
   }
 
-  // update getConfirmationsInfo
-  // update getVaultTierConfirmation to handle more useful flow
-  // update apply changes flow (3 type of voting)
-
   return (
     <>
       <Wrapper>

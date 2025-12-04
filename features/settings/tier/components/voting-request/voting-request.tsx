@@ -23,7 +23,7 @@ import {
 
 const tierTexts = vaultTexts.actions.tier;
 
-export const RequestChangeLimit = () => {
+export const VotingRequest = () => {
   const [showAdditionalInfo, setAdditionalInfoVisibility] = useState(false);
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();

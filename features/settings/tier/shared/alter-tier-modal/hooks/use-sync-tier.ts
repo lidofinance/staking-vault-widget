@@ -7,6 +7,7 @@ import {
   useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
+  useVaultTierInfo,
   vaultTexts,
 } from 'modules/vaults';
 import {
@@ -18,7 +19,8 @@ import {
 import { useAlterTier } from 'features/settings/tier/hooks';
 
 export const useSyncTier = () => {
-  const { activeVault, refetch } = useVault();
+  const { activeVault } = useVault();
+  const { refetch } = useVaultTierInfo();
   const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();

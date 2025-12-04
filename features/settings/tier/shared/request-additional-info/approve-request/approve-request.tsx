@@ -1,70 +1,63 @@
-import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useCallback } from 'react';
+
+import { useNodeOperatorTiersInfo, useVaultTierInfo } from 'modules/vaults';
 
 import {
-  useVault,
-  useVaultConfirmingRoles,
-  useNodeOperatorTiersInfo,
-  useVaultTierInfo,
-  useVaultPermission,
-} from 'modules/vaults';
-
-import { useChangeTierRequest } from 'features/settings/tier/hooks';
-import { checkUserIsProposer } from 'features/settings/tier/const';
+  useConfirmTierVoting,
+  useTierVoting,
+} from 'features/settings/tier/hooks';
 
 import { ButtonStyled } from './styles';
-import { isBigint } from '../../../../../../utils';
 
 export const ApproveRequest = () => {
-  const { approveMovingTier, approving } = useChangeTierRequest();
-  const { data: vaultTierInfo, refetch } = useVaultTierInfo();
+  const {
+    approveMovingTier,
+    approveSyncTier,
+    approveUpdateMintingLimit,
+    approving,
+  } = useConfirmTierVoting();
+  const tierVoting = useTierVoting();
+  const { refetch } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
-  const { address } = useAccount();
-  const { activeVault } = useVault();
-  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
-  const { hasPermission: hasVaultConfigurationPermission } =
-    useVaultPermission('vaultConfiguration');
 
-  const proposal = vaultTierInfo?.proposals.lastProposal;
-  const hasAccessToApproving =
-    !!address &&
-    ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
-      (hasVaultConfigurationPermission &&
-        activeVault?.nodeOperator === proposal?.member) ||
-      hasAdmin);
-
-  const [isDashboardProposer, isNOProposer] = useMemo(() => {
-    const isDashboardProposer = checkUserIsProposer(
-      activeVault?.owner,
-      proposal?.member,
-    );
-
-    const isNOProposer = checkUserIsProposer(
-      activeVault?.nodeOperator,
-      proposal?.member,
-    );
-
-    return [isDashboardProposer, isNOProposer];
-  }, [activeVault, proposal?.member]);
+  const { proposal, isTheSameUser, proposedTier } = tierVoting ?? {};
 
   const handleApprove = useCallback(async () => {
-    const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
-    if (!isBigint(tierId) || !isBigint(mintingLimit)) return;
+    if (!proposal || !proposedTier) return;
+    const { functionName, proposedVaultLimitShares, proposedVaultLimitStETH } =
+      proposal;
 
-    await approveMovingTier(tierId, mintingLimit);
+    if (functionName === 'changeTier') {
+      await approveMovingTier(
+        proposedTier,
+        proposedVaultLimitShares,
+        proposedVaultLimitStETH,
+      );
+    } else if (functionName === 'updateVaultShareLimit') {
+      await approveUpdateMintingLimit(
+        proposedTier.id,
+        proposedVaultLimitShares,
+        proposedVaultLimitStETH,
+      );
+    } else if (functionName === 'syncTier') {
+      await approveSyncTier(proposedTier);
+    }
+
     await Promise.all([
       refetch({ cancelRefetch: true, throwOnError: false }),
       refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
     ]);
-  }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
+  }, [
+    approveMovingTier,
+    approveSyncTier,
+    approveUpdateMintingLimit,
+    refetch,
+    refetchNOTiers,
+    proposal,
+    proposedTier,
+  ]);
 
-  if (
-    !proposal ||
-    !hasAccessToApproving ||
-    (hasAdmin && isDashboardProposer) ||
-    (isNodeOperator && isNOProposer)
-  )
-    return null;
+  if (!proposal || !proposedTier || isTheSameUser) return null;
 
   return (
     <ButtonStyled

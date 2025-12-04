@@ -85,11 +85,7 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
   const { publicClient } = useLidoSDK();
 
   return useQuery({
-    queryKey: [
-      ...queryKeys.base,
-      'node-operator-tier-info',
-      activeVault?.blockNumber.toString(),
-    ],
+    queryKey: [...queryKeys.base, 'node-operator-tier-info'],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(

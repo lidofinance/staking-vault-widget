@@ -61,22 +61,35 @@ const enrichLastProposal = (
   proposal: Confirmation<TierConfirmationFnNames>,
   currentTierID: bigint,
   proposedVaultLimitStETH: bigint,
+  proposedVaultLimitShares: bigint,
 ): ExtendTierConfirmation => {
   const { member, expiryTimestamp, expiryDate, decodedData } = proposal;
 
   const { functionName, args } = decodedData;
   const tierId = functionName === 'changeTier' ? args[1] : currentTierID;
-  const vaultLimitStETH =
-    functionName !== 'syncTier' ? proposedVaultLimitStETH : undefined;
 
-  return {
+  const base = {
     vaultAddress: args[0],
     member,
     expiryTimestamp,
     expiryDate,
     tierId,
+  };
+
+  if (functionName === 'syncTier') {
+    return {
+      ...base,
+      functionName,
+      proposedVaultLimitStETH: undefined,
+      proposedVaultLimitShares: undefined,
+    };
+  }
+
+  return {
+    ...base,
     functionName,
-    proposedVaultLimitStETH: vaultLimitStETH,
+    proposedVaultLimitStETH,
+    proposedVaultLimitShares,
   };
 };
 
@@ -181,7 +194,12 @@ const getVaultTierInfo = async ({
   ]);
 
   const extendLastProposal = lastProposal
-    ? enrichLastProposal(lastProposal, tierId, proposedVaultLimitStETH)
+    ? enrichLastProposal(
+        lastProposal,
+        tierId,
+        proposedVaultLimitStETH,
+        proposedVaultLimitShares,
+      )
     : undefined;
 
   return {
@@ -296,11 +314,7 @@ export const useVaultTierInfo = () => {
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
-    queryKey: [
-      ...queryKeys.state,
-      'vault-tier-info',
-      activeVault?.blockNumber.toString(),
-    ],
+    queryKey: [...queryKeys.state, 'vault-tier-info'],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');
