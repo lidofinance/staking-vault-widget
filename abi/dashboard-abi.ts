@@ -150,6 +150,11 @@ export const dashboardAbi = [
     type: 'error',
   },
   {
+    inputs: [],
+    name: 'RoleRenouncementDisabled',
+    type: 'error',
+  },
+  {
     inputs: [
       {
         internalType: 'uint8',
@@ -1673,18 +1678,18 @@ export const dashboardAbi = [
     inputs: [
       {
         internalType: 'bytes32',
-        name: 'role',
+        name: '',
         type: 'bytes32',
       },
       {
         internalType: 'address',
-        name: 'callerConfirmation',
+        name: '',
         type: 'address',
       },
     ],
     name: 'renounceRole',
     outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'pure',
     type: 'function',
   },
   {
