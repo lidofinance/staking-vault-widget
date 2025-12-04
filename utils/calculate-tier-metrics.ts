@@ -9,7 +9,7 @@ import {
 type CalculatedMetricsArgs = {
   newTier?: Tier | null;
   vault: TierVault;
-  newVaultMintingLimit: bigint;
+  newVaultMintingLimit: bigint | undefined;
 };
 
 type CalculatedMetrics = {
@@ -25,7 +25,7 @@ type CalculatedMetrics = {
 export const calculateTierMetrics = ({
   newTier,
   vault,
-  newVaultMintingLimit,
+  newVaultMintingLimit = 0n,
 }: CalculatedMetricsArgs): CalculatedMetrics => {
   if (!newTier)
     return {
@@ -34,7 +34,7 @@ export const calculateTierMetrics = ({
     };
 
   const newTotalMintingCapacityBigInt = bigIntMin(
-    newVaultMintingLimit ?? 0n,
+    newVaultMintingLimit,
     vault.totalMintingCapacityStETH,
   );
   const newMintingCapacityValue = toStethValue(newTotalMintingCapacityBigInt);

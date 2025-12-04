@@ -1,5 +1,6 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { WEI_PER_ETHER } from 'consts/tx';
+import type { TierConfirmationFnNames } from '../types';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -162,8 +163,22 @@ export const vaultTexts = {
         },
       },
       settingsTitle: 'Tier settings',
-      requestMovingTierTitle: 'Request moving to',
-      requestChangeLimitTitle: 'Request to change minting limit',
+      tierVotingTitle: (
+        votingType: TierConfirmationFnNames,
+        additionalText: string,
+      ) => {
+        const typeTitles = {
+          changeTier: 'Request moving to',
+          updateVaultShareLimit: 'Request to change minting limit',
+          syncTier: 'Request to update',
+        };
+
+        if (['changeTier', 'syncTier'].includes(votingType)) {
+          return `${typeTitles[votingType]} ${additionalText}`;
+        }
+
+        return typeTitles[votingType];
+      },
       vaultMetricsTitle: 'Current vault metrics',
       request: {
         showButton: {

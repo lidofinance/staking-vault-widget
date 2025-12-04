@@ -1,17 +1,48 @@
 import { useMemo } from 'react';
+import { useAccount } from 'wagmi';
+import { isAddressEqual } from 'viem';
 
-import { useVaultTierInfo } from 'modules/vaults';
+import {
+  useVaultTierInfo,
+  useNodeOperatorTiersInfo,
+  useVault,
+  useVaultPermission,
+  useVaultConfirmingRoles,
+} from 'modules/vaults';
 
 export const useTierVoting = () => {
-  // const { data: noTiersInfo } = useNodeOperatorTiersInfo();
+  const { activeVault } = useVault();
+  const { data: noTiersInfo } = useNodeOperatorTiersInfo();
   const { data: vaultTierInfo } = useVaultTierInfo();
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
+  const { hasAdmin } = useVaultConfirmingRoles();
+  const { address } = useAccount();
 
   return useMemo(() => {
-    const proposal = vaultTierInfo?.proposals.lastProposal;
+    if (!activeVault || !vaultTierInfo || !noTiersInfo || !address) {
+      return null;
+    }
 
-    // console.log('useTierVoting::proposals', vaultTierInfo?.proposals);
-    // console.log('useTierVoting::noTiersInfo', noTiersInfo);
+    const proposal = vaultTierInfo.proposals.extendLastProposal;
+    if (!proposal) {
+      return null;
+    }
 
-    return { proposal };
-  }, [vaultTierInfo]);
+    const { member: proposer, tierId } = proposal;
+    const proposedTier = noTiersInfo.tiers.find((tier) => tier.id === tierId);
+    const isTheSameUser =
+      isAddressEqual(proposer, address) ||
+      (isAddressEqual(proposer, activeVault.dashboard.address) &&
+        (hasVaultConfigurationPermission || hasAdmin));
+
+    return { proposal, proposedTier, isTheSameUser };
+  }, [
+    activeVault,
+    vaultTierInfo,
+    noTiersInfo,
+    address,
+    hasVaultConfigurationPermission,
+    hasAdmin,
+  ]);
 };

@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { getAddress, type Abi, type Address } from 'viem';
+import { isAddressEqual, type Abi, type Address } from 'viem';
 
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
@@ -11,10 +11,15 @@ import {
   DEFAULT_TIER_ID,
   getLidoContract,
   getStEthContract,
+  type ExtendTierConfirmation,
+  type TierConfirmationFnNames,
 } from 'modules/vaults';
 import { ceilDivBigint, formatPercent, toEthValue, toStethValue } from 'utils';
 import { bigIntMax } from 'utils/bigint-math';
-import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
+import {
+  type Confirmation,
+  getConfirmationsInfo,
+} from 'utils/get-confirmations';
 
 import type { VaultTierInfoArgs, VaultTierInfo } from '../types';
 
@@ -27,28 +32,51 @@ const getVaultTierConfirmation = async (
   vaultAddress: Address,
 ): Promise<{
   confirmExpiry: bigint;
-  proposedVaultLimit: bigint;
-  lastProposal: Confirmation | undefined;
+  proposedVaultLimitShares: bigint;
+  lastProposal: Confirmation<TierConfirmationFnNames> | undefined;
 }> => {
-  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-    address,
-    publicClient,
-    abi,
-  );
+  const { confirmations, confirmExpiry } =
+    await getConfirmationsInfo<TierConfirmationFnNames>(
+      address,
+      publicClient,
+      abi,
+    );
 
-  const lastProposal = confirmations.findLast(
-    ({ decodedData }) =>
-      getAddress(decodedData.args[0] as Address) === getAddress(vaultAddress),
+  const lastProposal = confirmations.findLast(({ decodedData }) =>
+    isAddressEqual(decodedData.args[0], vaultAddress),
   );
 
   const index =
     lastProposal?.decodedData.functionName === 'updateVaultShareLimit' ? 1 : 2;
-  const proposedVaultLimit = lastProposal?.decodedData.args[index] ?? 0n;
+  const proposedVaultLimitShares = lastProposal?.decodedData.args[index] ?? 0n;
 
   return {
     confirmExpiry,
-    proposedVaultLimit,
+    proposedVaultLimitShares,
     lastProposal,
+  };
+};
+
+const enrichLastProposal = (
+  proposal: Confirmation<TierConfirmationFnNames>,
+  currentTierID: bigint,
+  proposedVaultLimitStETH: bigint,
+): ExtendTierConfirmation => {
+  const { member, expiryTimestamp, expiryDate, decodedData } = proposal;
+
+  const { functionName, args } = decodedData;
+  const tierId = functionName === 'changeTier' ? args[1] : currentTierID;
+  const vaultLimitStETH =
+    functionName !== 'syncTier' ? proposedVaultLimitStETH : undefined;
+
+  return {
+    vaultAddress: args[0],
+    member,
+    expiryTimestamp,
+    expiryDate,
+    tierId,
+    functionName,
+    proposedVaultLimitStETH: vaultLimitStETH,
   };
 };
 
@@ -124,7 +152,7 @@ const getVaultTierInfo = async ({
   const tierName =
     tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
 
-  const { confirmExpiry, lastProposal, proposedVaultLimit } =
+  const { confirmExpiry, lastProposal, proposedVaultLimitShares } =
     await getVaultTierConfirmation(
       operatorGrid.address,
       publicClient,
@@ -148,9 +176,13 @@ const getVaultTierInfo = async ({
     stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
-    stethContract.read.getPooledEthByShares([proposedVaultLimit]),
+    stethContract.read.getPooledEthByShares([proposedVaultLimitShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
+
+  const extendLastProposal = lastProposal
+    ? enrichLastProposal(lastProposal, tierId, proposedVaultLimitStETH)
+    : undefined;
 
   return {
     lidoTVLSharesLimit,
@@ -160,8 +192,9 @@ const getVaultTierInfo = async ({
     proposals: {
       confirmExpiry,
       lastProposal,
+      extendLastProposal,
       proposedVaultLimitStETH,
-      proposedVaultLimit,
+      proposedVaultLimitShares,
     },
     vault: {
       tierId,

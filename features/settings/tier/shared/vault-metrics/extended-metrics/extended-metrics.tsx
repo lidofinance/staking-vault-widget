@@ -1,19 +1,20 @@
 import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { toStethValue, calculateTierMetrics } from 'utils';
+import { calculateTierMetrics } from 'utils';
 import type { Tier } from 'modules/vaults';
+import { FormatToken } from 'shared/formatters';
 
 import { useTierData } from 'features/settings/tier/contexts';
 
+import { MintingCapacityTooltip } from './minting-capacity-tooltip';
 import { OldToNew } from './old-to-new';
 
 import { List, ListItem, ContentContainer } from './styles';
-import { MintingCapacityTooltip } from './minting-capacity-tooltip';
 
 type ExtendedMetricsProps = {
   selectedTier: Tier | null;
-  newVaultMintingLimit: bigint;
+  newVaultMintingLimit?: bigint;
   showRequestedVaultMintingLimit?: boolean;
 };
 
@@ -42,13 +43,19 @@ export const ExtendedMetrics = ({
 
   return (
     <List>
-      {showRequestedVaultMintingLimit && (
+      {showRequestedVaultMintingLimit && !!newVaultMintingLimit && (
         <ListItem>
           <Text size="xxs" color="secondary">
             Requested stVault minting limit
           </Text>
           <ContentContainer>
-            <Text size="xxs">{toStethValue(newVaultMintingLimit)}</Text>
+            <Text size="xxs">
+              <FormatToken
+                amount={newVaultMintingLimit}
+                maxDecimalDigits={2}
+                symbol="stETH"
+              />
+            </Text>
           </ContentContainer>
         </ListItem>
       )}

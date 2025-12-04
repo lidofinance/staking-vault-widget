@@ -10,33 +10,35 @@ export type FunctionArgsMap = {
   transferVaultOwnership: readonly [Address];
   changeTier: readonly [Address, bigint, bigint];
   updateVaultShareLimit: readonly [Address, bigint];
-  syncTier: readonly [Address]; // TODO: check params
+  syncTier: readonly [Address];
 };
 type FunctionName = keyof FunctionArgsMap;
-type DecodedData = {
-  [K in FunctionName]: {
+type DecodedData<FN extends FunctionName = FunctionName> = {
+  [K in FN]: {
     functionName: K;
     args: FunctionArgsMap[K];
   };
-}[FunctionName];
+}[FN];
 
-export type Confirmation = {
+export type Confirmation<FN extends FunctionName = FunctionName> = {
   member: Address;
   roleOrAddress: Hex;
   expiryTimestamp: bigint;
   expiryDate: Date;
   data: Hex;
-  decodedData: DecodedData;
+  decodedData: DecodedData<FN>;
 };
 
 const AVG_BLOCK_TIME_SEC = 12n;
 
-export const getConfirmationsInfo = async (
+export const getConfirmationsInfo = async <
+  FN extends FunctionName = FunctionName,
+>(
   address: Address,
   publicClient: RegisteredPublicClient,
   abi: Abi,
 ): Promise<{
-  confirmations: Confirmation[];
+  confirmations: Confirmation<FN>[];
   confirmationsCount: bigint[];
   confirmExpiry: bigint;
 }> => {
@@ -121,7 +123,7 @@ export const getConfirmationsInfo = async (
   );
 
   return {
-    confirmations,
+    confirmations: confirmations as Confirmation<FN>[],
     confirmationsCount,
     confirmExpiry,
   };

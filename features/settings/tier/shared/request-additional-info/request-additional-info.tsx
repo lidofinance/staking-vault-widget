@@ -1,7 +1,6 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
-import { Address } from 'viem';
 
-import type { Tier } from 'modules/vaults';
+import type { ExtendTierConfirmation, Tier } from 'modules/vaults';
 import { toStethValue } from 'utils';
 
 import { ExpiresInItem } from './content/expires-in-item';
@@ -24,19 +23,20 @@ import {
 
 type RequestAdditionalInfoProps = {
   proposedTier: Tier;
-  expiryTimestamp: bigint;
-  requestedBy: Address;
   vaultLiabilityStETH: bigint;
-  proposedVaultMintingLimitStETH: bigint;
+  proposal: ExtendTierConfirmation;
 };
 
 export const RequestAdditionalInfo = ({
   proposedTier,
-  expiryTimestamp,
-  requestedBy,
   vaultLiabilityStETH,
-  proposedVaultMintingLimitStETH,
+  proposal,
 }: RequestAdditionalInfoProps) => {
+  const {
+    proposedVaultLimitStETH,
+    expiryTimestamp,
+    member: requestedBy,
+  } = proposal;
   const tierMintingLimit = proposedTier.shareLimitStETH;
   const tierMintingLimitValue = toStethValue(tierMintingLimit);
   const tierRemainingCapacity =
@@ -47,7 +47,7 @@ export const RequestAdditionalInfo = ({
 
   // show proposed vault minting limit if it's different from the proposed tier minting limit
   const showProposedVaultMintingLimit =
-    proposedTier?.shareLimitStETH !== proposedVaultMintingLimitStETH;
+    proposedTier?.shareLimitStETH !== proposedVaultLimitStETH;
 
   return (
     <Wrapper>
@@ -80,7 +80,7 @@ export const RequestAdditionalInfo = ({
       <ListContainer>
         <ExtendedMetrics
           selectedTier={proposedTier}
-          newVaultMintingLimit={proposedVaultMintingLimitStETH}
+          newVaultMintingLimit={proposedVaultLimitStETH}
           showRequestedVaultMintingLimit={showProposedVaultMintingLimit}
         />
       </ListContainer>

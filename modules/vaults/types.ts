@@ -102,6 +102,21 @@ export type VaultTierInfoArgs = {
   vault: VaultBaseInfo;
 };
 
+export type TierConfirmationFnNames =
+  | 'changeTier'
+  | 'updateVaultShareLimit'
+  | 'syncTier';
+
+export type ExtendTierConfirmation = {
+  vaultAddress: Address;
+  member: Address;
+  expiryTimestamp: bigint;
+  expiryDate: Date;
+  tierId: bigint;
+  functionName: TierConfirmationFnNames;
+  proposedVaultLimitStETH: bigint | undefined;
+};
+
 export type VaultTierInfo = {
   lidoTVLSharesLimit: bigint;
   minimalReserve: bigint;
@@ -113,9 +128,10 @@ export type VaultTierInfo = {
   tier: Tier;
   proposals: {
     confirmExpiry: bigint;
-    lastProposal: Confirmation | undefined;
+    lastProposal: Confirmation<TierConfirmationFnNames> | undefined;
+    extendLastProposal: ExtendTierConfirmation | undefined;
     proposedVaultLimitStETH: bigint;
-    proposedVaultLimit: bigint;
+    proposedVaultLimitShares: bigint;
   };
 };
 

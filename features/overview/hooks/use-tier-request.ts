@@ -42,7 +42,7 @@ export const useTierRequest = () => {
       }),
       proposedTier,
       proposedVaultLimitStETH,
-      proposedVaultLimitShares: proposals.proposedVaultLimit,
+      proposedVaultLimitShares: proposals.proposedVaultLimitShares,
     };
   }, [vaultTierInfo, noTiersInfo]);
 };
