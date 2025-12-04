@@ -1,8 +1,13 @@
 import { useState, useCallback } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultConfirmingRoles, useVaultPermission } from 'modules/vaults';
+import {
+  useVaultConfirmingRoles,
+  useVaultPermission,
+  useVaultTierInfo,
+} from 'modules/vaults';
 import { ReactComponent as WarningTriangle } from 'assets/icons/warning-triangle.svg';
+import { isNumber } from 'utils';
 
 import { useAlterTier } from 'features/settings/tier/hooks';
 import {
@@ -21,6 +26,7 @@ import {
 
 export const AlterTierInfo = () => {
   const [showModal, setModalVisibility] = useState(false);
+  const { data: vaultTierInfo, isLoading } = useVaultTierInfo();
   const { data } = useAlterTier();
   const { hasChanges, alterTierList, id } = data ?? {};
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
@@ -35,7 +41,13 @@ export const AlterTierInfo = () => {
     [setModalVisibility],
   );
 
-  if (!hasChanges || !(hasAdmin || isNodeOperator || hasPermission)) {
+  if (
+    isLoading ||
+    !hasChanges ||
+    !(hasAdmin || isNodeOperator || hasPermission) ||
+    !isNumber(id) ||
+    vaultTierInfo?.proposals.extendLastProposal?.tierId === BigInt(id)
+  ) {
     return null;
   }
 
