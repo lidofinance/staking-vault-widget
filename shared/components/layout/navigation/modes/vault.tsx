@@ -6,13 +6,13 @@ import { useVault } from 'modules/vaults';
 import { AddressBadge } from 'shared/components/address-badge';
 import { appPaths } from 'consts/routing';
 
-import { NavigationLink } from '../navigation-link';
-import { BackAllVaults } from '../back-all-vaults';
-import { NavList, SelectedVaultWrapper } from '../styles';
-
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
+
+import { NavigationLink } from '../navigation-link';
+import { BackAllVaults } from '../back-all-vaults';
 import { VaultError } from '../vault-error';
+import { NavList, SelectedVaultWrapper } from '../styles';
 
 const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
   {
