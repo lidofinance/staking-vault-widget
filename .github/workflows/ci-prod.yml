@@ -1,13 +1,8 @@
 name: CI Prod Mainnet
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '.github/**'
-      - 'test/**'
+  release:
+    types: [released]
 
 permissions:
   contents: read
@@ -15,7 +10,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # needs: test
+#    needs: tests
     name: Build and deploy
     steps:
       - name: Prod deploy
@@ -23,9 +18,10 @@ jobs:
         env:
           APP_ID: ${{ secrets.APP_ID }}
           APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
-          TARGET_REPO: 'lidofinance/infra-mainnet'
-          TARGET_WORKFLOW: 'build_critical_staking_vault_widget.yaml'
-          TARGET: 'main'
+          TARGET_REPO: "lidofinance/infra-mainnet"
+          TAG: "${{ github.event.release.tag_name }}"
+          TARGET_WORKFLOW: "build_critical_staking_vault_widget.yaml"
+          TARGET: "main"
 
   tests:
     needs: deploy
