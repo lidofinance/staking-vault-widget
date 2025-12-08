@@ -1,5 +1,5 @@
 import { Formula, OverviewModal } from 'features/overview/shared';
-import { FormulaItem } from 'features/overview/types';
+import type { FormulaItem } from 'features/overview/types';
 import { useVaultOverview } from '../../../vault-overview';
 
 const formulasMap: Record<
@@ -21,6 +21,7 @@ const formulasMap: Record<
       label: '0.5%',
       type: 'variable',
       hasHighlight: false,
+      vaultIndicator: 'infraFee',
     },
     {
       label: '×',
@@ -48,6 +49,7 @@ const formulasMap: Record<
       label: '6%',
       type: 'variable',
       hasHighlight: false,
+      vaultIndicator: 'liquidityFee',
     },
     {
       label: '×',
@@ -85,6 +87,7 @@ const formulasMap: Record<
       label: '8%',
       type: 'variable',
       hasHighlight: false,
+      vaultIndicator: 'reservationFee',
     },
     {
       label: '×',
