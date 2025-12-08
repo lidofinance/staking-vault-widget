@@ -29,8 +29,8 @@ export const DashboardNotVerified = () => {
         <Text size="xs">
           The contract that owns StakingVault has bytecode different from the
           latest verified Dashboard contract implementation. This may be caused
-          by a legitimate upgrade or a malicious contract replacement. Please
-          verify the owner address manually, use{' '}
+          by a contract upgrade or a contract replacement. Please verify the
+          owner address manually, use{' '}
           <Link target="_blank" rel="noopener noreferrer" href={cliLink}>
             the CLI
           </Link>
