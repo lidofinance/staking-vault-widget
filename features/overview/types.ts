@@ -16,6 +16,7 @@ export type FormulaItem = {
   label: string;
   type: 'variable' | 'operation';
   hasHighlight: boolean;
+  vaultIndicator?: VaultOverviewContextKeys;
 };
 
 export type SectionData = {
