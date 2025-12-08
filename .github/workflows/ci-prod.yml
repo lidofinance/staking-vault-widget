@@ -21,7 +21,6 @@ jobs:
           TARGET_REPO: "lidofinance/infra-mainnet"
           TAG: "${{ github.event.release.tag_name }}"
           TARGET_WORKFLOW: "build_critical_staking_vault_widget.yaml"
-          TARGET: "main"
 
   tests:
     needs: deploy
