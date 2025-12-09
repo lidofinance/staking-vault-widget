@@ -21,6 +21,11 @@ export const useReportCalls = () => {
       if (!isReportFresh) {
         throw new ReportMissingError();
       }
+
+      return [];
+    }
+
+    if (report && isReportFresh) {
       return [];
     }
 
