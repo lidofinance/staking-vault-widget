@@ -32,7 +32,6 @@
     "@lidofinance/rpc": "^0.51.0",
     "@lidofinance/satanizer": "^0.51.0",
     "@openzeppelin/merkle-tree": "^1.0.8",
-    "@reef-knot/types": "^4.1.0",
     "@tanstack/react-query": "^5.81.5",
     "copy-to-clipboard": "^3.3.1",
     "cors": "^2.8.5",
@@ -63,6 +62,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@reef-knot/types": "4.2.0",
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@commitlint/prompt": "^17.4.4",
