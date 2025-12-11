@@ -6,7 +6,7 @@ import type {
 } from 'viem';
 
 import { useMutation } from '@tanstack/react-query';
-import { useConfig } from 'wagmi';
+import { useConfig, usePublicClient } from 'wagmi';
 import { useAA } from './use-aa';
 
 // @wagmi/core provides async wagmi actions
@@ -18,6 +18,7 @@ import {
   sendTransaction,
   waitForTransactionReceipt,
 } from '@wagmi/core';
+
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
@@ -58,6 +59,7 @@ export type TransactionResponse =
     };
 
 export const useSendTransaction = () => {
+  const publicClient = usePublicClient();
   const config = useConfig();
   const { address } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
@@ -182,10 +184,18 @@ export const useSendTransaction = () => {
             },
           });
 
+          const gas = await publicClient.estimateGas({
+            to: tx.to,
+            data: tx.data,
+            value: tx.value,
+            account: address,
+          });
+
           const txHash = await sendTransaction(config, {
             to: tx.to,
             data: tx.data,
             value: tx.value,
+            gas,
           });
 
           dispatchModal({

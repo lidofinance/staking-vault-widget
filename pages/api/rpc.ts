@@ -37,32 +37,38 @@ const allowedRPCMethods = [
   'net_version',
 ];
 
-const rpc = rpcFactory({
-  fetchRPC: trackedFetchRpcFactory({
-    registry: Metrics.registry,
-    prefix: METRICS_PREFIX,
-  }),
-  metrics: {
-    prefix: METRICS_PREFIX,
-    registry: Metrics.registry,
-  },
-  defaultChain: `${config.defaultChain}`,
-  providers: [1, ...config.supportedChains].reduce(
-    (acc, chain) => {
-      acc[chain] = secretConfig[`rpcUrls_${chain}`];
-      return acc;
+// FIX(dev mode): prevent duplicate metric registration inside rpcFactory by wrapping it in a globalThis singleton
+const g = globalThis as any;
+const rpc =
+  g.__rpcSingleton__ ??
+  rpcFactory({
+    fetchRPC: trackedFetchRpcFactory({
+      registry: Metrics.registry,
+      prefix: METRICS_PREFIX,
+    }),
+    metrics: {
+      prefix: METRICS_PREFIX,
+      registry: Metrics.registry,
     },
-    {} as Record<string, [string, ...string[]]>,
-  ),
+    defaultChain: `${config.defaultChain}`,
+    providers: [1, ...config.supportedChains].reduce(
+      (acc, chain) => {
+        acc[chain] = secretConfig[`rpcUrls_${chain}`];
+        return acc;
+      },
+      {} as Record<string, [string, ...string[]]>,
+    ),
 
-  validation: {
-    allowedRPCMethods,
-    maxBatchCount: config.PROVIDER_MAX_BATCH,
-    blockEmptyAddressGetLogs: true,
-    maxGetLogsRange: 20_000, // only 20k blocks size historical queries
-    maxResponseSize: 1_000_000, // 1mb max response
-  },
-});
+    validation: {
+      allowedRPCMethods,
+      maxBatchCount: config.PROVIDER_MAX_BATCH,
+      blockEmptyAddressGetLogs: true,
+      maxGetLogsRange: 20_000, // only 20k blocks size historical queries
+      maxResponseSize: 1_000_000, // 1mb max response
+    },
+  });
+
+if (!g.__rpcSingleton__) g.__rpcSingleton__ = rpc;
 
 export default wrapNextRequest([
   httpMethodGuard([HttpMethod.POST]),
