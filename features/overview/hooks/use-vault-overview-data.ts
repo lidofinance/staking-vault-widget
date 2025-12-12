@@ -9,7 +9,6 @@ import {
   useVault,
   fetchVaultMetrics,
   fetch7dApr,
-  VAULT_TOTAL_BASIS_POINTS,
   getLidoContract,
   getStEthContract,
   VAULTS_CONNECT_DEPOSIT,
@@ -27,6 +26,7 @@ import {
   toEthValue,
   toStethValue,
   getMintingConstraintType,
+  formatBasisPoint,
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
@@ -373,12 +373,8 @@ const selectOverviewData = ({
   const liabilityStETH = toStethValue(vaultData.liabilityStETH);
   const withdrawableEth = toEthValue(withdrawableEther);
   const balanceEth = toEthValue(balance);
-  const reserveRatio = formatPercent.format(
-    reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-  const rebalanceThreshold = formatPercent.format(
-    forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
-  );
+  const reserveRatio = formatBasisPoint(reserveRatioBP);
+  const rebalanceThreshold = formatBasisPoint(forcedRebalanceThresholdBP);
   const healthFactor = formatPercent.format(healthRatio / 100);
   const healthFactorNumber = healthRatio > 100000 ? Infinity : healthRatio;
   const utilizationRatio = formatPercent.format(
@@ -388,9 +384,7 @@ const selectOverviewData = ({
   const totalMintingCapacityStETH = toStethValue(
     vaultData.totalMintingCapacityStETH,
   );
-  const feeRate = formatPercent.format(
-    Number(nodeOperatorFee) / VAULT_TOTAL_BASIS_POINTS,
-  );
+  const feeRate = formatBasisPoint(Number(nodeOperatorFee));
   const pendingUnlock = overview.recentlyRepaid;
   const pendingUnlockEth = toEthValue(pendingUnlock > 0n ? pendingUnlock : 0n);
 
@@ -433,6 +427,9 @@ const selectOverviewData = ({
     nodeOperatorRewards,
     bottomLine,
     rebaseReward,
+    infraFee: formatBasisPoint(vaultData.infraFeeBP),
+    liquidityFee: formatBasisPoint(vaultData.liquidityFeeBP),
+    reservationFee: formatBasisPoint(vaultData.reservationFeeBP),
     totalMintingCapacity: vaultData.totalMintingCapacityStETH,
     totalValue: vaultData.totalValue,
     vaultLiability: vaultData.liabilityStETH,
