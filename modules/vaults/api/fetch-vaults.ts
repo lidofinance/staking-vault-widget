@@ -217,20 +217,24 @@ const fetchVaultsDataBatchRPC = async (
   };
 };
 
-const OFFSET_BY_ADDRESS = BigInt(0);
-const LIMIT_BY_ADDRESS = BigInt(200);
+const LIMIT_BY_ADDRESS = 200n;
 const fetchVaultsDataByAddressRPC = async (
   ctx: FetchVaultsContext,
   address: Address,
 ): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
   const { publicClient } = ctx;
   const vaultViewer = getVaultViewerContract(publicClient);
+  const vaultCount = await vaultViewer.read.vaultsCount();
+  const vaultAddresses: Address[] = [];
 
-  const vaultAddresses = await vaultViewer.read.vaultsByOwnerBatch([
-    address,
-    OFFSET_BY_ADDRESS,
-    LIMIT_BY_ADDRESS,
-  ]);
+  for (let i = 0n; i < vaultCount; i += LIMIT_BY_ADDRESS) {
+    const vaults = await vaultViewer.read.vaultsByOwnerBatch([
+      address,
+      BigInt(i),
+      LIMIT_BY_ADDRESS,
+    ]);
+    vaultAddresses.push(...vaults);
+  }
 
   const vaults = await Promise.all(
     vaultAddresses.map((vaultAddress) =>
