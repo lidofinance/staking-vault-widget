@@ -3,10 +3,10 @@ import invariant from 'tiny-invariant';
 
 import { useAccount } from 'wagmi';
 import { config } from 'config';
-import { ModalProvider } from 'providers/modal-provider';
 
 import { wagmiChainMap } from './web3-provider';
 import { LidoSDKProvider } from './lido-sdk';
+import type { SupportedChainIds } from '../types';
 
 type DappChainContextValue = {
   supportedChainIds: number[];
@@ -18,7 +18,7 @@ export type SupportedChainLabels = {
 };
 
 type UseDappChainValue = {
-  chainId: number;
+  chainId: SupportedChainIds;
   isSupportedChain: boolean;
   supportedChainLabels: SupportedChainLabels;
 } & DappChainContextValue;
@@ -47,10 +47,9 @@ export const useDappChain = (): UseDappChainValue => {
 
     return {
       ...context,
-      chainId:
-        walletChain && context.supportedChainIds.includes(walletChain)
-          ? walletChain
-          : config.defaultChain,
+      chainId: (walletChain && context.supportedChainIds.includes(walletChain)
+        ? walletChain
+        : config.defaultChain) as SupportedChainIds,
       isSupportedChain: walletChain
         ? context.supportedChainIds.includes(walletChain)
         : true,
@@ -76,9 +75,7 @@ export const SupportL1Chains: React.FC<React.PropsWithChildren> = ({
         [chainId],
       )}
     >
-      <LidoSDKProvider>
-        <ModalProvider>{children}</ModalProvider>
-      </LidoSDKProvider>
+      <LidoSDKProvider>{children}</LidoSDKProvider>
     </DappChainContext.Provider>
   );
 };

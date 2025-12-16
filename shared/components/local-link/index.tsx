@@ -8,7 +8,7 @@ import { LinkIpfs } from 'shared/components/link-ipfs';
 export const LocalLink: FC<PropsWithChildren<LinkProps>> = (props) => {
   const router = useRouter();
   const { ref, embed, app, theme } = router.query;
-  const { href, ...restProps } = props;
+  const { href, children, ...restProps } = props;
 
   const extraQuery = {} as Record<string, string>;
   // Not support case: ?ref=01234&ref=56789
@@ -27,7 +27,9 @@ export const LocalLink: FC<PropsWithChildren<LinkProps>> = (props) => {
         {...restProps}
         legacyBehavior={false}
         href={{ pathname: href, query: extraQuery }}
-      />
+      >
+        {children}
+      </Link>
     );
   }
 

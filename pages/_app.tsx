@@ -1,15 +1,9 @@
-import { memo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AppProps } from 'next/app';
 import 'nprogress/nprogress.css';
 import Head from 'next/head';
 
-import {
-  ToastContainer,
-  CookiesTooltip,
-  migrationAllowCookieToCrossDomainCookieClientSide,
-  migrationThemeCookiesToCrossDomainCookiesClientSide,
-} from '@lidofinance/lido-ui';
+import { ToastContainer, CookiesTooltip } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 import { withCsp } from 'config/csp';
@@ -17,14 +11,10 @@ import { SecurityStatusBanner } from 'features/ipfs';
 import { Providers } from 'providers';
 import { BackgroundGradient } from 'shared/components/background-gradient/background-gradient';
 import { ErrorBoundaryFallback } from 'shared/components/error-boundary';
+import { MigrationBannerTestnetV2 } from 'shared/components/banner';
 import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
-import { nprogress, COOKIES_ALLOWED_FULL_KEY } from 'utils';
-
-// Migrations old theme cookies to new cross domain cookies
-migrationThemeCookiesToCrossDomainCookiesClientSide();
-
-// Migrations old allow cookies to new cross domain cookies
-migrationAllowCookieToCrossDomainCookieClientSide(COOKIES_ALLOWED_FULL_KEY);
+import { nprogress } from 'utils';
+import { AddressValidationFile } from 'utils/address-validation';
 
 // Visualize route changes
 nprogress();
@@ -39,13 +29,17 @@ const App = (props: AppProps) => {
   );
 };
 
-const MemoApp = memo(App);
-
 const AppWrapper = (
-  props: AppProps<{ ___prefetch_manifest___?: object }>,
+  props: AppProps<{
+    ___prefetch_manifest___?: object;
+    __validation_file__?: AddressValidationFile;
+  }>,
 ): JSX.Element => {
   return (
-    <Providers prefetchedManifest={props.pageProps?.___prefetch_manifest___}>
+    <Providers
+      prefetchedManifest={props.pageProps?.___prefetch_manifest___}
+      validationFile={props.pageProps?.__validation_file__}
+    >
       {/* see https://nextjs.org/docs/messages/no-document-viewport-meta */}
       <Head>
         <meta
@@ -61,7 +55,8 @@ const AppWrapper = (
         }}
       />
       <ToastContainer />
-      <MemoApp {...props} />
+      <MigrationBannerTestnetV2 />
+      <App {...props} />
 
       <NoSsrWrapper>
         <CookiesTooltip privacyLink={`${config.rootOrigin}/privacy-notice`} />

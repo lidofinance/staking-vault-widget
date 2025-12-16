@@ -101,7 +101,7 @@ const runtimeMutableTransport = (
           // this is fallbackTransport specific field, used by WC connectors to extract rpc Urls
           // we can use defaultTransport because no injected transport
           transports: defaultTransport.value?.transports,
-          // providers that use this transport, use this to set onResponse callback for transport,
+          // create-vault-form-contexts that use this transport, use this to set onResponse callback for transport,
           onResponse: (fn: OnResponseFn) => (externalOnResponse = fn),
         },
       );
@@ -121,7 +121,7 @@ const runtimeMutableTransport = (
 
 // returns Viem transport map that uses browser wallet RPC provider when available fallbacked by our RPC and default RPCs
 export const useWeb3Transport = (
-  supportedChains: Chain[],
+  supportedChains: readonly Chain[],
   backendRpcMap: Record<number, string>,
 ) => {
   const { transportMap, setTransportMap } = useMemo(() => {

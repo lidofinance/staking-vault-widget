@@ -1,16 +1,19 @@
 import { useMemo } from 'react';
-import { getContract, type Address } from 'viem';
+import { getContract } from 'viem';
 import invariant from 'tiny-invariant';
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
 import { useQuery } from '@tanstack/react-query';
 
 import { AggregatorAbi } from 'abi/aggregator-abi';
-import { AGGREGATOR_STETH_USD_PRICE_FEED_BY_NETWORK } from 'consts/aggregator';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 import { useMainnetOnlyWagmi } from 'modules/web3';
+import { getContractAddress } from 'config';
 
 export const useEthUsd = (amount?: bigint) => {
   const { publicClientMainnet } = useMainnetOnlyWagmi();
+  const address = getContractAddress(
+    CHAINS.Mainnet,
+    'aggregatorEthUsdPriceFeed',
+  );
 
   const {
     data: price,
@@ -19,20 +22,14 @@ export const useEthUsd = (amount?: bigint) => {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ['eth-usd-price', publicClientMainnet],
-    enabled: !!publicClientMainnet,
-    ...STRATEGY_LAZY,
+    queryKey: ['eth-usd-price', publicClientMainnet, address],
+    enabled: !!(publicClientMainnet && address),
     // the async is needed here because the decimals will be requested soon
     queryFn: async () => {
-      invariant(
-        publicClientMainnet,
-        '[useEthUsd] The "publicClientMainnet" must be define',
-      );
+      invariant(address, '[useEthUsd] aggregator address is not defined');
 
       const contract = getContract({
-        address: AGGREGATOR_STETH_USD_PRICE_FEED_BY_NETWORK[
-          CHAINS.Mainnet
-        ] as Address,
+        address,
         abi: AggregatorAbi,
         client: {
           public: publicClientMainnet,

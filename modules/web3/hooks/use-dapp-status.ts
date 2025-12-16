@@ -5,11 +5,12 @@ import { useDappChain } from 'modules/web3/web3-provider/dapp-chain';
 export const useDappStatus = () => {
   const {
     address,
+    addresses,
     chainId: walletChainId,
     isConnected: isWalletConnected,
   } = useAccount();
 
-  // this can change between pages based on their dapp-chain context(or lack of)
+  // this can change between pages based on their dapp-chain contexts(or lack of)
   const dappChain = useDappChain();
 
   const { isSupportedChain, isChainTypeMatched } = dappChain;
@@ -29,5 +30,6 @@ export const useDappStatus = () => {
     isWalletConnected,
     walletChainId,
     address,
+    addresses,
   };
 };

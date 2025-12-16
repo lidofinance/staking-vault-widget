@@ -25,9 +25,8 @@ declare module 'next/config' {
       developmentMode: boolean;
 
       defaultChain: string;
-      rpcUrls_1: string | undefined;
-      rpcUrls_17000: string | undefined;
-      rpcUrls_11155111: string | undefined;
+      supportedChains: string;
+      [key: `rpcUrls_${number}`]: string;
 
       cspTrustedHosts: string | undefined;
       cspReportUri: string | undefined;
@@ -36,8 +35,12 @@ declare module 'next/config' {
       rateLimit: string;
       rateLimitTimeFrame: string;
 
-      ethAPIBasePath: string;
-      rewardsBackendAPI: string | undefined;
+      runStartupChecks: string | undefined;
+
+      devnetOverrides: string | undefined;
+
+      validationAPI: string | undefined;
+      validationFilePath: string | undefined;
     };
     publicRuntimeConfig: {
       basePath: string | undefined;

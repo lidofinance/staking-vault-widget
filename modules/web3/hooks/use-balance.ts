@@ -197,7 +197,7 @@ const useTokenBalance = (
   const { chainId } = useDappStatus();
   const { subscribeToTokenUpdates } = useLidoSDK();
 
-  const enabled = !!address;
+  const enabled = !!(address && contract);
 
   const balanceQuery = useReadContract({
     abi: contract?.abi,
@@ -274,6 +274,35 @@ export const useWstethBalance = ({
     enabled: !!mergedAccount && isSupportedChain,
     staleTime: Infinity,
     queryFn: () => wstETH.getContract(),
+  });
+
+  const balanceData = useTokenBalance(
+    contract!,
+    mergedAccount,
+    shouldSubscribeToUpdates,
+  );
+
+  return {
+    ...balanceData,
+    tokenAddress: contract ? contract.address : undefined,
+    isLoading: isLoading || balanceData.isLoading,
+  };
+};
+
+export const useWethBalance = ({
+  account,
+  shouldSubscribeToUpdates = true,
+}: UseBalanceProps = {}) => {
+  const { isSupportedChain, address } = useDappStatus();
+  const mergedAccount = account ?? address;
+  const { chainId } = useDappStatus();
+  const { wETH } = useLidoSDK();
+
+  const { data: contract, isLoading } = useQuery({
+    queryKey: ['weth-contract', chainId],
+    enabled: !!mergedAccount && isSupportedChain,
+    staleTime: Infinity,
+    queryFn: () => wETH.getContract(),
   });
 
   const balanceData = useTokenBalance(

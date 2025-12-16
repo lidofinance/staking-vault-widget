@@ -1,8 +1,11 @@
 import NextBundleAnalyzer from '@next/bundle-analyzer';
 import buildDynamics from './scripts/build-dynamics.mjs';
+
 import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs';
-import generateBuildId from './scripts/generate-build-id.mjs';
+import { generateBuildId } from './scripts/generate-build-id.mjs';
+import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
+import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -12,6 +15,7 @@ if (
   typeof window === 'undefined'
 ) {
   void startupCheckRPCs();
+  void startupCheckValidationFile();
 }
 
 // https://nextjs.org/docs/pages/api-reference/next-config-js/basePath
@@ -38,7 +42,6 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 export default withBundleAnalyzer({
   basePath,
   generateBuildId,
-
   // IPFS next.js configuration reference:
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,
@@ -141,9 +144,9 @@ export default withBundleAnalyzer({
 
     // ETH rpcs
     defaultChain: process.env.DEFAULT_CHAIN,
-    rpcUrls_1: process.env.EL_RPC_URLS_1,
-    rpcUrls_17000: process.env.EL_RPC_URLS_17000,
-    rpcUrls_11155111: process.env.EL_RPC_URLS_11155111,
+    supportedChains: process.env.SUPPORTED_CHAINS,
+    // uses SUPPORTED_CHAINS to extract all rpcURLs vars
+    ...populateRpcUrls(),
 
     cspTrustedHosts: process.env.CSP_TRUSTED_HOSTS,
     cspReportUri: process.env.CSP_REPORT_URI,
@@ -151,6 +154,11 @@ export default withBundleAnalyzer({
 
     rateLimit: process.env.RATE_LIMIT,
     rateLimitTimeFrame: process.env.RATE_LIMIT_TIME_FRAME,
+    runStartupChecks: process.env.RUN_STARTUP_CHECKS,
+    devnetOverrides: process.env.DEVNET_OVERRIDES,
+
+    validationAPI: process.env.VALIDATION_SERVICE_BASE_PATH,
+    validationFilePath: process.env.VALIDATION_FILE_PATH,
   },
 
   // ATTENTION: If you add a new variable you should declare it in `global.d.ts`

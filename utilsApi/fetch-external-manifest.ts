@@ -1,6 +1,6 @@
 import { Cache } from 'memory-cache';
 import { IPFS_MANIFEST_URL } from 'consts/external-links';
-import { responseTimeExternalMetricWrapper } from './fetchApiWrapper';
+import { responseTimeExternalMetricWrapper } from './fetch-api-wrapper';
 import { standardFetcher } from 'utils/standardFetcher';
 
 import { config } from 'config';
@@ -23,7 +23,7 @@ export const fetchExternalManifest = async () => {
 
   // for IPFS build we use local manifest
   // this allows local CID verification
-  if (config.ipfsMode) {
+  if (config.ipfsMode || !IPFS_MANIFEST_URL) {
     return {
       ___prefetch_manifest___: FallbackLocalManifest,
     };

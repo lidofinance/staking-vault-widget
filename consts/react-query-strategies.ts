@@ -12,6 +12,7 @@ export const STRATEGY_CONSTANT = {
 };
 
 export const STRATEGY_LAZY = {
+  gcTime: 60 * 60 * 1000, // 1 hour
   staleTime: 5 * 60 * 1000, // 5 minutes
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,

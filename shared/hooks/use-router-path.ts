@@ -1,21 +1,21 @@
 import { useRouter } from 'next/router';
 
 import { config } from 'config';
-import { HOME_PATH } from 'consts/urls';
+import { appPaths } from 'consts/routing';
 
 export const useRouterPath = () => {
   const router = useRouter();
 
   if (config.ipfsMode) {
-    if (!config.isClientSide) return HOME_PATH;
-    return location.hash.replace('#', '') || HOME_PATH;
+    if (!config.isClientSide) return appPaths.myVaults;
+    return location.hash.replace('#', '') || appPaths.myVaults;
   }
 
   // TODO: fix description
   // We can't' use `router.pathname` and `router.route` 'cause it's a mapping with file structure
   // example:
   // - /wrap                  --->  /wrap/[[...mode]]
-  // - /withdrawals/request/  --->  /withdrawals/[mode]
+  // - /supply/mint/  --->  /supply/[mode]
   // also we need to remove last character because `router.asPath` contain `/` as last character
   // example:
   // - /wrap                  ---> - /wrap/

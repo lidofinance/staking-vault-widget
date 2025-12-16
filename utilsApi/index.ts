@@ -1,3 +1,2 @@
-export * from './nextApiWrappers';
-export * from './fetchApiWrapper';
-export * from './gone';
+export * from './next-api-wrappers';
+export * from './fetch-api-wrapper';

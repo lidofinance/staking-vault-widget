@@ -1,5 +1,5 @@
 import { usePublicClient, useWalletClient, useWatchAsset } from 'wagmi';
-import { type Address, type PublicClient, getContract } from 'viem';
+import { type Address, getContract } from 'viem';
 
 import { ToastError, ToastInfo, Tooltip } from '@lidofinance/lido-ui';
 import { TokenToWalletStyle } from './styles';
@@ -37,7 +37,7 @@ export const TokenToWallet: TokenToWalletComponent = ({ address, ...rest }) => {
       const tokenContract = getContract({
         abi: ERC20_METADATA_ABI,
         address: address as Address,
-        client: client as PublicClient,
+        client,
       });
 
       const [decimals, symbol] = await Promise.all([
@@ -86,7 +86,7 @@ export const TokenToWallet: TokenToWalletComponent = ({ address, ...rest }) => {
   };
 
   return (
-    <Tooltip placement="bottomLeft" title="Add tokens to wallet">
+    <Tooltip placement="bottomLeft" title="Add token to wallet">
       <TokenToWalletStyle tabIndex={-1} onClick={onClickHandler} {...rest} />
     </Tooltip>
   );

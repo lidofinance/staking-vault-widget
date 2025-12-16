@@ -1,3 +1,4 @@
-// for dev and local testing you can set to 'http://localhost:3000/runtime/IPFS.json' and have file at /public/runtime/IPFS.json
-export const IPFS_MANIFEST_URL =
-  'https://raw.githubusercontent.com/lidofinance/staking-vault-widget/main/IPFS.json';
+// while the repo is not public, this will force to use build time config
+export const IPFS_MANIFEST_URL = '';
+
+export const FEEDBACK_SURVEY_URL = 'https://tally.so/r/3X9vYe';

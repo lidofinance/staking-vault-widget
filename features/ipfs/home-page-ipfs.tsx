@@ -1,16 +1,13 @@
 import { FC, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-import {
-  getPathWithoutFirstSlash,
-  HOME_PATH,
-  SETTINGS_PATH,
-} from 'consts/urls';
+import { getPathWithoutFirstSlash } from 'consts/urls';
 import NoSSRWrapper from 'shared/components/no-ssr-wrapper';
 import { usePrefixedReplace } from 'shared/hooks/use-prefixed-history';
 
-import { HomePage } from 'features/home';
-import SettingsPage from 'pages/settings';
+import { MyVaultsPage } from 'features/home';
+import { appPaths } from 'consts/routing';
+import { AllVaultsPage } from 'features/home/all-vaults';
 
 /**
  * We are using single index.html endpoint
@@ -20,8 +17,8 @@ import SettingsPage from 'pages/settings';
  */
 
 const IPFS_ROUTABLE_PAGES = [
-  // HOME_PATH not need here
-  getPathWithoutFirstSlash(SETTINGS_PATH),
+  // AppPaths.main not need here
+  getPathWithoutFirstSlash(appPaths.vaults.all),
 ];
 
 export const HomePageIpfs: FC = () => {
@@ -38,7 +35,7 @@ export const HomePageIpfs: FC = () => {
 
   useEffect(() => {
     if (parsedPath[0] && !IPFS_ROUTABLE_PAGES.includes(parsedPath[0])) {
-      void replace(HOME_PATH, router.query as Record<string, string>);
+      void replace(appPaths.vaults.all, router.query as Record<string, string>);
     }
   }, [replace, parsedPath, router.query]);
 
@@ -51,13 +48,14 @@ export const HomePageIpfs: FC = () => {
   let spaPage;
   // eslint-disable-next-line sonarjs/no-small-switch
   switch (parsedPath[0]) {
-    case getPathWithoutFirstSlash(SETTINGS_PATH): {
-      spaPage = <SettingsPage />;
+    case getPathWithoutFirstSlash(appPaths.vaults.all): {
+      // TODO: fix and get address in IPFS mode
+      spaPage = <AllVaultsPage />;
       break;
     }
 
     default: {
-      spaPage = <HomePage />;
+      spaPage = <MyVaultsPage />;
     }
   }
 

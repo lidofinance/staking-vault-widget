@@ -3,7 +3,6 @@ import { useController } from 'react-hook-form';
 import { InputAmount } from 'shared/components/input-amount';
 
 import { getTokenDisplayName } from 'utils/getTokenDisplayName';
-import { isValidationErrorTypeValidate } from 'shared/hook-form/validation/validation-error';
 
 type TokenAmountInputHookFormProps = Partial<
   React.ComponentProps<typeof InputAmount>
@@ -13,6 +12,7 @@ type TokenAmountInputHookFormProps = Partial<
   token: Parameters<typeof getTokenDisplayName>[0];
   fieldName: string;
   showErrorMessage?: boolean;
+  label?: string;
 };
 
 export const TokenAmountInputHookForm = ({
@@ -21,25 +21,33 @@ export const TokenAmountInputHookForm = ({
   token,
   fieldName,
   showErrorMessage = true,
+  label,
+  showRightDecorator,
   error: errorProp,
+  onBlur: onBlurProp,
   ...props
 }: TokenAmountInputHookFormProps) => {
   const {
-    field,
+    field: { onBlur, ...field },
     fieldState: { error },
   } = useController({ name: fieldName });
-  const hasErrorHighlight = isValidationErrorTypeValidate(error?.type);
+  const hasErrorHighlight = !!error;
   // allows to show error state without message
   const errorMessage = hasErrorHighlight && (error?.message || true);
   return (
     <InputAmount
       {...props}
       {...field}
+      onBlur={(e) => {
+        onBlur();
+        onBlurProp?.(e); // Call the onBlur prop if provided
+      }}
       disabled={props.disabled ?? field.disabled}
       error={errorProp ?? (showErrorMessage ? errorMessage : hasErrorHighlight)}
       isLocked={isLocked}
       maxValue={maxValue}
-      label={`${getTokenDisplayName(token)} amount`}
+      label={label ?? `${getTokenDisplayName(token)} amount`}
+      showRightDecorator={showRightDecorator}
       fullwidth
     />
   );

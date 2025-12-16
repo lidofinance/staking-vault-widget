@@ -19,7 +19,7 @@ const toBoolean = (val) => {
 export const ipfsMode = toBoolean(process.env.IPFS_MODE);
 
 /** @type string */
-export const selfOrigin = process.env.SELF_ORIGIN || 'https://stake.lido.fi';
+export const selfOrigin = process.env.SELF_ORIGIN || 'https://vaults.lido.fi';
 // Fix in the build time (build time don't have env vars)
 
 /** @type string */
@@ -45,21 +45,18 @@ export const blogOrigin = process.env.BLOG_ORIGIN || 'https://blog.lido.fi';
 
 // Keep fallback as in 'config/get-secret-config.ts'
 /** @type number */
-export const defaultChain = parseInt(process.env.DEFAULT_CHAIN, 10) || 17000;
+export const defaultChain = parseInt(process.env.DEFAULT_CHAIN, 10) || 560048;
 /** @type number[] */
 export const supportedChains = process.env?.SUPPORTED_CHAINS?.split(',').map(
   (chainId) => parseInt(chainId, 10),
-) ?? [17000];
+) ?? [560048];
 
-/** @type string[] */
-export const prefillUnsafeElRpcUrls1 =
-  process.env.PREFILL_UNSAFE_EL_RPC_URLS_1?.split(',') ?? [];
-/** @type string[] */
-export const prefillUnsafeElRpcUrls17000 =
-  process.env.PREFILL_UNSAFE_EL_RPC_URLS_17000?.split(',') ?? [];
-/** @type string[] */
-export const prefillUnsafeElRpcUrls11155111 =
-  process.env.PREFILL_UNSAFE_EL_RPC_URLS_11155111?.split(',') ?? [];
+/** @type Record<string,string[]> */
+export const prefillUnsafeElRpcUrls = supportedChains.reduce((acc, chain) => {
+  acc[`${chain}`] =
+    process.env[`PREFILL_UNSAFE_EL_RPC_URLS_${chain}`]?.split(',') ?? [];
+  return acc;
+}, {});
 
 /** @type boolean */
 export const enableQaHelpers = toBoolean(process.env.ENABLE_QA_HELPERS);
@@ -70,5 +67,14 @@ export const walletconnectProjectId = process.env.WALLETCONNECT_PROJECT_ID;
 export const matomoHost = process.env.MATOMO_URL;
 
 /** @type string */
-export const widgetApiBasePathForIpfs =
-  process.env.WIDGET_API_BASE_PATH_FOR_IPFS;
+export const devnetOverrides = process.env.DEVNET_OVERRIDES;
+
+/** @type string */
+export const vaultsApiBasePath = process.env.VAULTS_API_BASE_PATH;
+
+/** @type boolean */
+export const addressApiValidationEnabled =
+  !!process.env.VALIDATION_SERVICE_BASE_PATH;
+
+/** @type string */
+export const validationFilePath = process.env.VALIDATION_FILE_PATH;

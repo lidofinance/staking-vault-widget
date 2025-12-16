@@ -7,15 +7,13 @@ export type SecretConfigType = Modify<
   typeof serverRuntimeConfig,
   {
     defaultChain: number;
-
-    rpcUrls_1: [string, ...string[]];
-    rpcUrls_17000: [string, ...string[]];
-    rpcUrls_11155111: [string, ...string[]];
-
+    supportedChains: number[];
     // Dynamic keys like rpcUrls_<number>
-    [key: `rpcUrls_${number}`]: string[];
+    [key: `rpcUrls_${number}`]: [string, ...string[]];
 
     cspReportOnly: boolean;
+
+    runStartupChecks: boolean;
 
     rateLimit: number;
     rateLimitTimeFrame: number;
@@ -28,26 +26,29 @@ export type SecretConfigType = Modify<
 // Also you can note that 'getSecretConfig' is just a proxy for 'serverRuntimeConfig'
 // because we want similar approach with 'getConfig'
 export const getSecretConfig = (): SecretConfigType => {
+  const supportedChains = (
+    serverRuntimeConfig.supportedChains?.split(',') ?? []
+  ).map((chainId: string) => Number(chainId));
+
   return {
     ...serverRuntimeConfig,
 
-    // Keep fallback as in 'env-dynamics.mjs'
-    defaultChain: Number(serverRuntimeConfig.defaultChain) || 17000,
+    defaultChain: Number(serverRuntimeConfig.defaultChain) || 560048,
+    supportedChains,
 
-    // Hack: in the current implementation we can treat an empty array as a "tuple" (conditionally)
-    rpcUrls_1: (serverRuntimeConfig.rpcUrls_1?.split(',') ?? []) as [
-      string,
-      ...string[],
-    ],
-    rpcUrls_17000: (serverRuntimeConfig.rpcUrls_17000?.split(',') ?? []) as [
-      string,
-      ...string[],
-    ],
-    rpcUrls_11155111: (serverRuntimeConfig.rpcUrls_11155111?.split(',') ??
-      []) as [string, ...string[]],
+    // map dynamic rpc url envs per supported chains (with mainnet included)
+    ...[1, ...supportedChains].reduce(
+      (acc, chainId) => {
+        const rpcUrls =
+          serverRuntimeConfig[`rpcUrls_${chainId}`]?.split(',') ?? [];
+        acc[`rpcUrls_${chainId}`] = rpcUrls as [string, ...string[]];
+        return acc;
+      },
+      {} as Record<string, [string, ...string[]]>,
+    ),
 
     cspReportOnly: toBoolean(serverRuntimeConfig.cspReportOnly),
-
+    runStartupChecks: toBoolean(serverRuntimeConfig.runStartupChecks),
     rateLimit: Number(serverRuntimeConfig.rateLimit) || 100,
     rateLimitTimeFrame: Number(serverRuntimeConfig.rateLimitTimeFrame) || 60, // 1 minute;
   };

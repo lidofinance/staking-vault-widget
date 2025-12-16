@@ -2,6 +2,7 @@ import { Button, Modal } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
+import { useAddressValidation } from 'providers/address-validation-provider';
 
 import {
   WarningIcon,
@@ -20,6 +21,7 @@ type WarningContentOptions = {
   isVersionUnsafe: boolean;
   isNotVerifiable: boolean;
   isIpfs: boolean;
+  isNotValidAddress: boolean;
 };
 
 const warningContent = ({
@@ -27,6 +29,7 @@ const warningContent = ({
   isVersionUnsafe,
   isNotVerifiable,
   isIpfs,
+  isNotValidAddress,
 }: WarningContentOptions) => {
   switch (true) {
     // not veryfiable, only for IPFS
@@ -55,7 +58,8 @@ const warningContent = ({
       return {
         content: (
           <WarningText>
-            The Lido staking widget is currently down. A fix is in progress
+            The Lido staking vault widget is currently down. A fix is in
+            progress
           </WarningText>
         ),
         canClose: false,
@@ -65,8 +69,8 @@ const warningContent = ({
       return {
         content: (
           <WarningText>
-            This version of Lido staking widget has issues that could impact
-            your experience.
+            This version of Lido staking vault widget has issues that could
+            impact your experience.
           </WarningText>
         ),
         canClose: false,
@@ -87,6 +91,13 @@ const warningContent = ({
         ),
         canClose: true,
       };
+    case isNotValidAddress:
+      return {
+        content: (
+          <WarningBlock>Sorry, access is currently unavailable.</WarningBlock>
+        ),
+        canClose: false,
+      };
     default:
       return { content: null };
   }
@@ -101,19 +112,25 @@ export const SecurityStatusBanner = () => {
     isNotVerifiable,
     data,
   } = useVersionStatus();
+  const { isValidAddress, setIsValidAddress } = useAddressValidation();
 
   const { content, canClose, showTwitterLink } = warningContent({
     isUpdateAvailable,
     isVersionUnsafe,
     isNotVerifiable,
     isIpfs: config.ipfsMode,
+    isNotValidAddress: !isValidAddress,
   });
 
-  const showModal = !!content && !(canClose && areConditionsAccepted);
+  const showModal =
+    (!!content && !(canClose && areConditionsAccepted)) || !isValidAddress;
 
   return (
     <NoSsrWrapper>
-      <Modal open={showModal}>
+      <Modal
+        open={showModal}
+        onClose={!isValidAddress ? () => setIsValidAddress(true) : undefined}
+      >
         <Wrapper>
           <WarningIcon />
           {content}
@@ -128,7 +145,8 @@ export const SecurityStatusBanner = () => {
               </Button>
             </a>
           )}
-          {isUpdateAvailable && (
+          {/* We don't want to show this button if the address is not valid */}
+          {isUpdateAvailable && isValidAddress && (
             <a
               href={data.remoteCidLink ?? window.location.href}
               onClick={

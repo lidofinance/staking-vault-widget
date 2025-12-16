@@ -18,10 +18,17 @@ export type ManifestConfig = {
     };
   };
 };
-
+// TODO adjust for vaults routing
 export enum ManifestConfigPageEnum {
   main = '/',
+  overview = '/overview',
   settings = '/settings',
+  createVault = '/create-vault',
+  supply = '/supply',
+  adjustment = '/adjustment',
+  validators = '/validators',
+  claim = '/claim',
+  notFound = '/404',
 }
 
 export type ManifestConfigPage = `${ManifestConfigPageEnum}`;

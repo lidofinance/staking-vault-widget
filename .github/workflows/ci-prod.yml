@@ -1,0 +1,31 @@
+name: CI Prod Mainnet
+
+on:
+  release:
+    types: [released]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+#    needs: tests
+    name: Build and deploy
+    steps:
+      - name: Prod deploy
+        uses: lidofinance/dispatch-workflow@v1
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          TARGET_REPO: "lidofinance/infra-mainnet"
+          TAG: "${{ github.event.release.tag_name }}"
+          TARGET_WORKFLOW: "build_critical_staking_vault_widget.yaml"
+
+  tests:
+    needs: deploy
+    if: ${{ github.event.pull_request.draft == false }}
+    uses: ./.github/workflows/tests.yml
+    secrets: inherit
+    with:
+      stand_url: https://stvaults.lido.fi

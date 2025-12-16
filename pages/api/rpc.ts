@@ -4,7 +4,6 @@ import { rpcFactory } from '@lidofinance/next-pages';
 
 import { config, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
-import { CHAINS } from 'consts/chains';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
   rateLimit,
@@ -15,34 +14,11 @@ import {
   HttpMethod,
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
-import {
-  METRIC_CONTRACT_ADDRESSES,
-  METRIC_CONTRACT_EVENT_ADDRESSES,
-} from 'utilsApi/contractAddressesMetricsMap';
-
-const allowedCallAddresses: Record<string, string[]> = Object.entries(
-  METRIC_CONTRACT_ADDRESSES,
-).reduce(
-  (acc, [chainId, addresses]) => {
-    acc[chainId] = Object.keys(addresses);
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
-
-const allowedLogsAddresses: Record<string, string[]> = Object.entries(
-  METRIC_CONTRACT_EVENT_ADDRESSES,
-).reduce(
-  (acc, [chainId, addresses]) => {
-    acc[chainId] = Object.keys(addresses);
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
 
 const allowedRPCMethods = [
   'test',
   'eth_call',
+  //'eth_simulateV1', THIS METHOD MIGHT BE NEEDED FOR REPORT SIMULATION BUT DISABLED FOR SECURITY UNLESS REALLY NEEDED
   'eth_gasPrice',
   'eth_getCode',
   'eth_estimateGas',
@@ -57,6 +33,7 @@ const allowedRPCMethods = [
   'eth_sendRawTransaction',
   'eth_getLogs',
   'eth_chainId',
+
   'net_version',
 ];
 
@@ -70,15 +47,16 @@ const rpc = rpcFactory({
     registry: Metrics.registry,
   },
   defaultChain: `${config.defaultChain}`,
-  providers: {
-    [CHAINS.Mainnet]: secretConfig.rpcUrls_1,
-    [CHAINS.Holesky]: secretConfig.rpcUrls_17000,
-    [CHAINS.Sepolia]: secretConfig.rpcUrls_11155111,
-  },
+  providers: [1, ...config.supportedChains].reduce(
+    (acc, chain) => {
+      acc[chain] = secretConfig[`rpcUrls_${chain}`];
+      return acc;
+    },
+    {} as Record<string, [string, ...string[]]>,
+  ),
+
   validation: {
     allowedRPCMethods,
-    allowedCallAddresses,
-    allowedLogsAddresses,
     maxBatchCount: config.PROVIDER_MAX_BATCH,
     blockEmptyAddressGetLogs: true,
     maxGetLogsRange: 20_000, // only 20k blocks size historical queries
