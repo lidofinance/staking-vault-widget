@@ -19,8 +19,8 @@ const prepareDefaultValues = async (
   tierInfo: VaultTierData,
 ): Promise<TierSettingsFormValues> => {
   const { vault, tier } = tierInfo;
-
   const tierMintingCapacity = tier.shareLimitStETH - tier.liabilityStETH;
+
   const vaultMintingLimit =
     vault.stETHLimit > tierMintingCapacity
       ? tierMintingCapacity
@@ -49,7 +49,7 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
     disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
-    mode: 'all',
+    mode: 'onChange',
   });
 
   const onSubmit = useCallback(

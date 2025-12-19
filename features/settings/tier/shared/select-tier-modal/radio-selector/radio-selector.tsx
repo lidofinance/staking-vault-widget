@@ -10,8 +10,9 @@ import { CheckStyled, SelectorLabel, Selector } from './styles';
 type RadioSelectorOwnProps = {
   tierIdString: string;
   name: string;
+  currentValue: string;
   showSelector: boolean;
-  onChange: (e: ChangeEvent) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 export type RadioSelectorProps = PropsWithChildren<
@@ -19,7 +20,7 @@ export type RadioSelectorProps = PropsWithChildren<
 >;
 
 export const RadioSelector = forwardRef<HTMLInputElement, RadioSelectorProps>(
-  ({ tierIdString, children, showSelector, ...rest }, ref) => {
+  ({ tierIdString, children, showSelector, currentValue, ...rest }, ref) => {
     if (showSelector) {
       return (
         <SelectorLabel htmlFor={tierIdString}>
@@ -29,6 +30,7 @@ export const RadioSelector = forwardRef<HTMLInputElement, RadioSelectorProps>(
               id={tierIdString}
               type="radio"
               value={tierIdString}
+              defaultChecked={currentValue === tierIdString}
               {...rest}
               ref={ref}
             />

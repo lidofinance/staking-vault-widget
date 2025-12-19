@@ -108,6 +108,10 @@ const getVaultTierInfo = async ({
     hub,
     operatorGrid,
     isPendingConnect,
+    reserveRatioBP,
+    infraFeeBP,
+    liquidityFeeBP,
+    reservationFeeBP,
     ...rest
   } = vault;
 
@@ -133,16 +137,7 @@ const getVaultTierInfo = async ({
     ] as const,
   });
 
-  const [
-    _nodeOperator,
-    tierId,
-    vaultShareLimit,
-    vaultReserveRatioBP,
-    vaultForcedRebalanceThresholdBP,
-    vaultInfraFeeBP,
-    vaultLiquidityFeeBP,
-    vaultReservationFeeBP,
-  ] = vaultInfo;
+  const [_nodeOperator, tierId] = vaultInfo;
   const { liabilityShares: vaultLiabilityShares, minimalReserve } = vaultRecord;
 
   const [tier] = await readWithReport({
@@ -185,7 +180,7 @@ const getVaultTierInfo = async ({
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
     stethContract.read.getPooledEthByShares([vaultMintableShares]),
-    stethContract.read.getPooledEthByShares([vaultShareLimit]),
+    stethContract.read.getPooledEthByShares([shareLimit]),
     stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
@@ -222,12 +217,12 @@ const getVaultTierInfo = async ({
       stETHLimit: vaultStETHLimit,
       totalMintingCapacityStETH: vaultTotalMintingCapacityStETH,
       totalMintingCapacityShares: vaultTotalMintingCapacityShares,
-      reserveRatioBP: Number(vaultReserveRatioBP),
-      forcedRebalanceThresholdBP: Number(vaultForcedRebalanceThresholdBP),
-      infraFeeBP: Number(vaultInfraFeeBP),
-      liquidityFeeBP: Number(vaultLiquidityFeeBP),
-      reservationFeeBP: Number(vaultReservationFeeBP),
-      shareLimit: vaultShareLimit,
+      reserveRatioBP: Number(reserveRatioBP),
+      forcedRebalanceThresholdBP: Number(forcedRebalanceThresholdBP),
+      infraFeeBP: Number(infraFeeBP),
+      liquidityFeeBP: Number(liquidityFeeBP),
+      reservationFeeBP: Number(reservationFeeBP),
+      shareLimit,
       isPendingConnect,
     },
     tier: {

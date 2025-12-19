@@ -200,6 +200,7 @@ export const vaultTexts = {
         errors: {
           lessThanVaultLiability:
             'Requested minting limit is less than current stETH liability',
+          alreadySet: 'Requested minting limit already set',
         },
       },
     },
@@ -221,8 +222,12 @@ export const vaultTexts = {
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
       confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
-      confirmUpdateVaultShareLimit: (tierMintingLimit: string) =>
+      requestUpdateVaultShareLimitTitle:
+        `Requesting new minting limit` as const,
+      requestUpdateVaultShareLimitDescription: (tierMintingLimit: string) =>
         `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
+      awaitingRequestUpdateVaultShareLimit:
+        `Waiting for block confirmation for your request. This may take a few moments.` as const,
       approveChangeTierMintingLimit: (
         tierId: bigint,
         mintingLimitStETH: bigint,

@@ -9,7 +9,6 @@ import {
 import {
   useVault,
   vaultTexts,
-  GoToVault,
   useVaultConfirmingRoles,
   useVaultTierInfo,
   useNodeOperatorTiersInfo,
@@ -61,9 +60,13 @@ export const useEditTierSettings = () => {
 
         if (isUpdatingVaultShareLimit) {
           const loadingActionText =
-            vaultTexts.actions.settings.confirmUpdateVaultShareLimit(
+            vaultTexts.actions.settings.requestUpdateVaultShareLimitTitle;
+          const baseDescriptionText =
+            vaultTexts.actions.settings.requestUpdateVaultShareLimitDescription(
               toStethValue(vaultMintingLimit),
             );
+          const awaitingDescriptionText =
+            vaultTexts.actions.settings.awaitingRequestUpdateVaultShareLimit;
 
           if (isNodeOperator) {
             transactions.push({
@@ -72,6 +75,8 @@ export const useEditTierSettings = () => {
                 mintingLimitInShares,
               ]),
               loadingActionText,
+              baseDescriptionText,
+              awaitingDescriptionText,
             });
           } else {
             transactions.push({
@@ -126,17 +131,22 @@ export const useEditTierSettings = () => {
         const loadingTextBody = isUpdatingVaultShareLimit
           ? `to change vault minting limit with ${toStethValue(vaultMintingLimit)}`
           : `to move to ${selectedTier.tierName}`;
-        const completeTextHead = bothRequestingRoles ? 'Approve' : 'Request';
+
         const completeTextBody = isUpdatingVaultShareLimit
-          ? 'updating minting limit for vault'
-          : `${selectedTier.tierName}`;
+          ? 'New minting limit request'
+          : `Request for ${selectedTier.tierName}`;
+        const completeTextTail = bothRequestingRoles ? 'approved' : 'submitted';
+
+        const mainActionCompleteDescriptionText = isUpdatingVaultShareLimit
+          ? `Your request for new ${toStethValue(vaultMintingLimit)} minting limit has been submitted successfully. It is now pending confirmation from the ${isNodeOperator ? 'Vault Owner or the Role with permission' : 'Node Operator'}.`
+          : `Your request to move stVault to ${selectedTier.tierName} with a ${toStethValue(vaultMintingLimit)} minting limit has been submitted successfully. It is now pending confirmation from the ${isNodeOperator ? 'Vault Owner or the Role with permission' : 'Node Operator'}.`;
 
         const result = await withSuccess(
           sendTX({
             transactions,
             mainActionLoadingText: `${loadingTextHead} ${loadingTextBody}`,
-            mainActionCompleteText: `${completeTextHead} for ${completeTextBody} submitted`,
-            renderSuccessContent: GoToVault,
+            mainActionCompleteText: `${completeTextBody} ${completeTextTail}`,
+            mainActionCompleteDescriptionText,
             allowRetry: false,
           }),
         );
