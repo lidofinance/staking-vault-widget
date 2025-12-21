@@ -54,7 +54,7 @@ const fetchTiersForOperator = async ({
 
       const id = writableTierIds[index];
       const tierName =
-        id === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(id)}`;
+        id === DEFAULT_TIER_ID ? 'Default Tier' : `Tier ${Number(id)}`;
       return { ...tier, id, tierName, shareLimitStETH, liabilityStETH };
     }),
   );

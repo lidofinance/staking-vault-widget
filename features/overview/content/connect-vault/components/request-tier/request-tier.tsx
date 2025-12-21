@@ -21,13 +21,22 @@ export const RequestTier = () => {
     }
 
     return [
-      { label: 'Reserve ratio', value: metrics.reserveRatioBPValue },
+      {
+        label: 'Reserve ratio',
+        value: metrics.reserveRatioBP.newValue,
+      },
       {
         label: 'Forced rebalance threshold',
-        value: metrics.forcedRebalanceThresholdBPValue,
+        value: metrics.forcedRebalanceThresholdBP.newValue,
       },
-      { label: 'Lido infrastructure fee', value: metrics.infraFeeBPValue },
-      { label: 'Lido liquidity fee', value: metrics.liquidityFeeBPValue },
+      {
+        label: 'Lido infrastructure fee',
+        value: metrics.infraFeeBP.newValue,
+      },
+      {
+        label: 'Lido liquidity fee',
+        value: metrics.liquidityFeeBP.newValue,
+      },
     ];
   }, [metrics]);
 

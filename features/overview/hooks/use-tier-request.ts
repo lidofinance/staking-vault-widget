@@ -36,7 +36,7 @@ export const useTierRequest = () => {
 
     return {
       metrics: calculateTierMetrics({
-        newTier: proposedTier,
+        tier: proposedTier,
         vault: vaultTierInfo.vault,
         newVaultMintingLimit: proposedVaultLimitStETH,
       }),

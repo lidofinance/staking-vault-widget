@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { calculateTierMetrics } from 'utils';
-import type { Tier } from 'modules/vaults';
 import { FormatToken } from 'shared/formatters';
+import type { Tier } from 'modules/vaults';
 
 import { useTierData } from 'features/settings/tier/contexts';
 
@@ -16,131 +16,148 @@ type ExtendedMetricsProps = {
   selectedTier: Tier | null;
   newVaultMintingLimit?: bigint;
   showRequestedVaultMintingLimit?: boolean;
+  forceShowChanges?: boolean;
 };
 
 export const ExtendedMetrics = ({
   selectedTier,
   newVaultMintingLimit,
   showRequestedVaultMintingLimit = false,
+  forceShowChanges = false,
 }: ExtendedMetricsProps) => {
   const { values } = useTierData();
 
   const newMetrics = useMemo(() => {
-    const isSelectedNewTier =
-      selectedTier?.id.toString() !== values?.vault.tierId.toString();
+    if (!values) return;
 
-    if (!isSelectedNewTier || !values) return;
+    const tier = selectedTier || values.tier;
 
-    return {
-      ...calculateTierMetrics({
-        newTier: selectedTier,
-        vault: values.vault,
-        newVaultMintingLimit,
-      }),
-      newTier: selectedTier,
-    };
+    return calculateTierMetrics({
+      tier,
+      vault: values.vault,
+      newVaultMintingLimit,
+    });
   }, [selectedTier, values, newVaultMintingLimit]);
+
+  const showChanges = forceShowChanges || selectedTier?.id !== values?.tier.id;
 
   return (
     <List>
-      {showRequestedVaultMintingLimit && !!newVaultMintingLimit && (
-        <ListItem>
-          <Text size="xxs" color="secondary">
-            Requested stVault minting limit
-          </Text>
-          <ContentContainer>
-            <Text size="xxs">
-              <FormatToken
-                amount={newVaultMintingLimit}
-                maxDecimalDigits={2}
-                symbol="stETH"
-              />
+      {showRequestedVaultMintingLimit &&
+        !!newVaultMintingLimit &&
+        newVaultMintingLimit !== values?.vault.totalMintingCapacityStETH && (
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Requested stVault minting limit
             </Text>
-          </ContentContainer>
-        </ListItem>
+            <ContentContainer>
+              <Text size="xxs">
+                <FormatToken
+                  amount={newVaultMintingLimit}
+                  maxDecimalDigits={4}
+                  symbol="stETH"
+                />
+              </Text>
+            </ContentContainer>
+          </ListItem>
+        )}
+      {!!newMetrics && (
+        <>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              stVault minting capacity
+            </Text>
+            <ContentContainer>
+              <OldToNew
+                old={
+                  <FormatToken
+                    amount={newMetrics.totalMintingCapacity.oldValue}
+                    maxDecimalDigits={4}
+                    showAmountTip
+                    symbol="stETH"
+                  />
+                }
+                supposed={
+                  <FormatToken
+                    amount={newMetrics.totalMintingCapacity.newValue}
+                    maxDecimalDigits={4}
+                    showAmountTip
+                    symbol="stETH"
+                  />
+                }
+                isChanged={newMetrics.totalMintingCapacity.isChanged}
+              />
+              <MintingCapacityTooltip
+                tierId={selectedTier?.id ?? values?.vault.tierId}
+              />
+            </ContentContainer>
+          </ListItem>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Utilization ratio
+            </Text>
+            <ContentContainer>
+              {values?.vaultUtilizationRatioValue && (
+                <OldToNew
+                  old={newMetrics.utilization.oldValue}
+                  supposed={newMetrics.utilization.newValue}
+                  isChanged={newMetrics.utilization.isChanged}
+                />
+              )}
+            </ContentContainer>
+          </ListItem>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Reserve ratio
+            </Text>
+            <ContentContainer>
+              <OldToNew
+                old={newMetrics.reserveRatioBP.oldValue}
+                supposed={newMetrics.reserveRatioBP.newValue}
+                isChanged={showChanges && newMetrics.reserveRatioBP.isChanged}
+              />
+            </ContentContainer>
+          </ListItem>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Forced rebalance threshold
+            </Text>
+            <ContentContainer>
+              <OldToNew
+                old={newMetrics.forcedRebalanceThresholdBP.oldValue}
+                supposed={newMetrics.forcedRebalanceThresholdBP.newValue}
+                isChanged={
+                  showChanges && newMetrics.forcedRebalanceThresholdBP.isChanged
+                }
+              />
+            </ContentContainer>
+          </ListItem>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Lido infrastructure fee
+            </Text>
+            <ContentContainer>
+              <OldToNew
+                old={newMetrics.infraFeeBP.oldValue}
+                supposed={newMetrics.infraFeeBP.newValue}
+                isChanged={showChanges && newMetrics.infraFeeBP.isChanged}
+              />
+            </ContentContainer>
+          </ListItem>
+          <ListItem>
+            <Text size="xxs" color="secondary">
+              Lido liquidity fee
+            </Text>
+            <ContentContainer>
+              <OldToNew
+                old={newMetrics.liquidityFeeBP.oldValue}
+                supposed={newMetrics.liquidityFeeBP.newValue}
+                isChanged={showChanges && newMetrics.liquidityFeeBP.isChanged}
+              />
+            </ContentContainer>
+          </ListItem>
+        </>
       )}
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          stVault minting capacity
-        </Text>
-        <ContentContainer>
-          {values?.vaultTotalMintingCapacityStETHValue && (
-            <OldToNew
-              old={values?.vaultTotalMintingCapacityStETHValue ?? ''}
-              supposed={newMetrics?.newMintingCapacityValue}
-            />
-          )}
-
-          <MintingCapacityTooltip
-            tierId={newMetrics?.newTier?.id ?? values?.vault.tierId}
-          />
-        </ContentContainer>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          Utilization ratio
-        </Text>
-        <ContentContainer>
-          {values?.vaultUtilizationRatioValue && (
-            <OldToNew
-              old={values.vaultUtilizationRatioValue ?? ''}
-              supposed={newMetrics?.newUtilizationValue}
-            />
-          )}
-        </ContentContainer>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          Reserve ratio
-        </Text>
-        <ContentContainer>
-          {values?.vaultReserveRatioValue && selectedTier && (
-            <OldToNew
-              old={values.vaultReserveRatioValue ?? ''}
-              supposed={newMetrics?.reserveRatioBPValue}
-            />
-          )}
-        </ContentContainer>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          Forced rebalance threshold
-        </Text>
-        <ContentContainer>
-          {values?.vaultRebalanceThresholdValue && selectedTier && (
-            <OldToNew
-              old={values.vaultRebalanceThresholdValue ?? ''}
-              supposed={newMetrics?.forcedRebalanceThresholdBPValue}
-            />
-          )}
-        </ContentContainer>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          Lido infrastructure fee
-        </Text>
-        <ContentContainer>
-          {values?.vaultLidoInfraFeeValue && selectedTier && (
-            <OldToNew
-              old={values.vaultLidoInfraFeeValue ?? ''}
-              supposed={newMetrics?.infraFeeBPValue}
-            />
-          )}
-        </ContentContainer>
-      </ListItem>
-      <ListItem>
-        <Text size="xxs" color="secondary">
-          Lido liquidity fee
-        </Text>
-        <ContentContainer>
-          {values?.vaultLidoLiquidityFeeValue && selectedTier && (
-            <OldToNew
-              old={values.vaultLidoLiquidityFeeValue ?? ''}
-              supposed={newMetrics?.liquidityFeeBPValue}
-            />
-          )}
-        </ContentContainer>
-      </ListItem>
     </List>
   );
 };

@@ -6,6 +6,7 @@ import {
   type VaultBaseInfo,
   useVault,
   VAULT_TOTAL_BASIS_POINTS,
+  DEFAULT_TIER_ID,
 } from 'modules/vaults';
 import { formatPercent } from 'utils';
 
@@ -32,6 +33,7 @@ type AlterTierData = {
   liquidityFeeBP: number;
   reservationFeeBP: number;
   id: number;
+  tierName: string;
 };
 
 type AlterTierInfo = {
@@ -77,57 +79,66 @@ const getAlterTierInfo = async (
       liquidityFeeBP: Number(liquidityFeeBP),
       reservationFeeBP: Number(reservationFeeBP),
       id: Number(id),
+      tierName: id === DEFAULT_TIER_ID ? 'Default Tier' : `Tier ${Number(id)}`,
     },
   };
 };
 
 const selectAlterTierData = ({ vaultConnection, tier }: AlterTierInfo) => {
   const alterTierList: TierChanges[] = [];
+  const {
+    reserveRatioBP,
+    forcedRebalanceThresholdBP,
+    infraFeeBP,
+    liquidityFeeBP,
+    reservationFeeBP,
+    tierName,
+    id,
+  } = tier;
 
-  if (vaultConnection.reserveRatioBP !== tier.reserveRatioBP) {
+  if (vaultConnection.reserveRatioBP !== reserveRatioBP) {
     alterTierList.push({
       name: 'reserveRatio',
-      ...formatData(vaultConnection.reserveRatioBP, tier.reserveRatioBP),
+      ...formatData(vaultConnection.reserveRatioBP, reserveRatioBP),
     });
   }
 
   if (
-    vaultConnection.forcedRebalanceThresholdBP !==
-    tier.forcedRebalanceThresholdBP
+    vaultConnection.forcedRebalanceThresholdBP !== forcedRebalanceThresholdBP
   ) {
     alterTierList.push({
       name: 'forcedRebalanceThreshold',
       ...formatData(
         vaultConnection.forcedRebalanceThresholdBP,
-        tier.forcedRebalanceThresholdBP,
+        forcedRebalanceThresholdBP,
       ),
     });
   }
 
-  if (vaultConnection.infraFeeBP !== tier.infraFeeBP) {
+  if (vaultConnection.infraFeeBP !== infraFeeBP) {
     alterTierList.push({
       name: 'infraFee',
-      ...formatData(vaultConnection.infraFeeBP, tier.infraFeeBP),
+      ...formatData(vaultConnection.infraFeeBP, infraFeeBP),
     });
   }
 
-  if (vaultConnection.liquidityFeeBP !== tier.liquidityFeeBP) {
+  if (vaultConnection.liquidityFeeBP !== liquidityFeeBP) {
     alterTierList.push({
       name: 'liquidityFee',
-      ...formatData(vaultConnection.liquidityFeeBP, tier.liquidityFeeBP),
+      ...formatData(vaultConnection.liquidityFeeBP, liquidityFeeBP),
     });
   }
 
-  if (vaultConnection.reservationFeeBP !== tier.reservationFeeBP) {
+  if (vaultConnection.reservationFeeBP !== reservationFeeBP) {
     alterTierList.push({
       name: 'reservationFee',
-      ...formatData(vaultConnection.reservationFeeBP, tier.reservationFeeBP),
+      ...formatData(vaultConnection.reservationFeeBP, reservationFeeBP),
     });
   }
 
   const hasChanges = alterTierList.length > 0;
 
-  return { alterTierList, hasChanges, id: tier.id };
+  return { alterTierList, hasChanges, id, tierName };
 };
 
 export const useAlterTier = () => {

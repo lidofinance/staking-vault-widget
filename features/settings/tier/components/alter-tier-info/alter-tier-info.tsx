@@ -28,7 +28,7 @@ export const AlterTierInfo = () => {
   const [showModal, setModalVisibility] = useState(false);
   const { data: vaultTierInfo, isLoading } = useVaultTierInfo();
   const { data } = useAlterTier();
-  const { hasChanges, alterTierList, id } = data ?? {};
+  const { hasChanges, alterTierList, id, tierName } = data ?? {};
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
 
@@ -58,7 +58,7 @@ export const AlterTierInfo = () => {
           <TitleContainer>
             <WarningTriangle color="#EC8600" />
             <Text size="xs" strong>
-              Tier {id} update available
+              {tierName} update available
             </Text>
           </TitleContainer>
           <ListOfUpdates>

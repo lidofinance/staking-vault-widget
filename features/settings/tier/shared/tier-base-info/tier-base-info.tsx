@@ -2,7 +2,11 @@ import { FC, PropsWithChildren } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { FormatToken } from 'shared/formatters';
-import { formatPercent } from 'utils/formats';
+import {
+  formatPercent,
+  isOverKiloEth,
+  formatBigEthAmount,
+} from 'utils/formats';
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 import {
@@ -35,6 +39,7 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
   const reserveRatioValue = formatPercent.format(
     Number(reserveRatio) / VAULT_TOTAL_BASIS_POINTS,
   );
+  const available = tierStETHLimit - liabilityStETH;
 
   return (
     <Wrapper>
@@ -59,12 +64,16 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
               Minting limit
             </Text>
             <Text size="xxs">
-              <FormatToken
-                amount={tierStETHLimit}
-                maxDecimalDigits={3}
-                symbol="stETH"
-                data-testid="tierMintingLimit"
-              />
+              {isOverKiloEth(tierStETHLimit) ? (
+                formatBigEthAmount(tierStETHLimit, 'stETH')
+              ) : (
+                <FormatToken
+                  amount={tierStETHLimit}
+                  maxDecimalDigits={2}
+                  symbol="stETH"
+                  data-testid="tierMintingLimit"
+                />
+              )}
             </Text>
           </MintingLimit>
           {!!tierStETHLimit && (
@@ -73,19 +82,29 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                 Available &nbsp;
               </Text>
               <Text size="xxs">
-                <FormatToken
-                  amount={tierStETHLimit - liabilityStETH}
-                  maxDecimalDigits={3}
-                  data-testid="tierAvailableMinting"
-                />{' '}
+                {isOverKiloEth(available) ? (
+                  formatBigEthAmount(available, 'stETH')
+                ) : (
+                  <FormatToken
+                    amount={available}
+                    maxDecimalDigits={2}
+                    symbol="stETH"
+                    data-testid="tierMintingLimit"
+                  />
+                )}{' '}
               </Text>
               <Text size="xxs" color="secondary">
                 /{' '}
-                <FormatToken
-                  amount={tierStETHLimit}
-                  maxDecimalDigits={3}
-                  symbol="stETH"
-                />
+                {isOverKiloEth(tierStETHLimit) ? (
+                  formatBigEthAmount(tierStETHLimit, 'stETH')
+                ) : (
+                  <FormatToken
+                    amount={tierStETHLimit}
+                    maxDecimalDigits={2}
+                    symbol="stETH"
+                    data-testid="tierMintingLimit"
+                  />
+                )}
               </Text>
             </MintingAvailable>
           )}

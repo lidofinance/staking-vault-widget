@@ -42,9 +42,13 @@ const getVaultTierConfirmation = async (
       abi,
     );
 
-  const lastProposal = confirmations.findLast(({ decodedData }) =>
+  const vaultProposals = confirmations.filter(({ decodedData }) =>
     isAddressEqual(decodedData.args[0], vaultAddress),
   );
+  const syncTierProposal = vaultProposals.findLast(
+    ({ decodedData }) => decodedData.functionName === 'syncTier',
+  );
+  const lastProposal = syncTierProposal ?? vaultProposals.at(-1);
 
   const index =
     lastProposal?.decodedData.functionName === 'updateVaultShareLimit' ? 1 : 2;

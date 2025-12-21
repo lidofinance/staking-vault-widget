@@ -27,11 +27,11 @@ export const AlterTierModal: FC<AlterTierModalProps> = ({
     return null;
   }
 
-  const { id, alterTierList } = alterTierData;
+  const { tierName, alterTierList } = alterTierData;
 
   return (
     <Modal
-      title={`Tier ${id} update`}
+      title={`${tierName} update`}
       subtitle={<ModalSubtitle alterTierList={alterTierList} />}
       open={showModal}
       onClose={closeModal}
