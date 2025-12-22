@@ -39,18 +39,22 @@ export const useSyncTier = () => {
       const mainActionCompleteText =
         vaultTexts.actions.settings.completeSyncTier(id);
 
-      if (hasAdmin || hasPermission) {
-        tx.push({
-          ...activeVault.dashboard.encode.syncTier(),
-          loadingActionText,
-        });
-      }
+      const nodeOperatorSyncTierRequest = {
+        ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),
+        loadingActionText,
+      };
+
+      const roleOrAdminSyncTierRequest = {
+        ...activeVault.dashboard.encode.syncTier(),
+        loadingActionText,
+      };
 
       if (isNodeOperator) {
-        tx.push({
-          ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),
-          loadingActionText,
-        });
+        tx.push(nodeOperatorSyncTierRequest);
+      }
+
+      if (hasAdmin || hasPermission) {
+        tx.push(roleOrAdminSyncTierRequest);
       }
 
       const { success } = await withSuccess(

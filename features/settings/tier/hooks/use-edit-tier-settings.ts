@@ -13,6 +13,7 @@ import {
   useVaultTierInfo,
   useNodeOperatorTiersInfo,
   useReportCalls,
+  useVaultPermission,
 } from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
@@ -27,6 +28,7 @@ export const useEditTierSettings = () => {
   const prepareReportCalls = useReportCalls();
   const { shares } = useLidoSDK();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
 
   return {
     editTierSettings: useCallback(
@@ -54,7 +56,8 @@ export const useEditTierSettings = () => {
             ? selectedTier.shareLimit
             : await shares.convertToShares(BigInt(vaultMintingLimit));
 
-        const bothRequestingRoles = isNodeOperator && hasAdmin;
+        const bothRequestingRoles =
+          isNodeOperator && (hasAdmin || hasPermission);
         const isUpdatingVaultShareLimit =
           BigInt(selectedTierId) === tierInfo.vault.tierId;
 
@@ -85,14 +88,11 @@ export const useEditTierSettings = () => {
             ...texts,
           };
 
-          if (bothRequestingRoles) {
-            transactions.push(
-              nodeOperatorUpdateLimitRequest,
-              roleOrAdminUpdateLimitRequest,
-            );
-          } else if (isNodeOperator) {
+          if (isNodeOperator) {
             transactions.push(nodeOperatorUpdateLimitRequest);
-          } else {
+          }
+
+          if (hasAdmin || hasPermission) {
             transactions.push(roleOrAdminUpdateLimitRequest);
           }
         } else {
@@ -122,14 +122,11 @@ export const useEditTierSettings = () => {
 
           // if node operator, use operator grid contract
           // if not node operator, use dashboard contract
-          if (bothRequestingRoles) {
-            transactions.push(
-              nodeOperatorChangeTierRequest,
-              defaultAdminRequest,
-            );
-          } else if (isNodeOperator) {
+          if (isNodeOperator) {
             transactions.push(nodeOperatorChangeTierRequest);
-          } else {
+          }
+
+          if (hasAdmin || hasPermission) {
             transactions.push(defaultAdminRequest);
           }
         }
@@ -173,6 +170,7 @@ export const useEditTierSettings = () => {
         hasAdmin,
         isNodeOperator,
         prepareReportCalls,
+        hasPermission,
       ],
     ),
     ...rest,
