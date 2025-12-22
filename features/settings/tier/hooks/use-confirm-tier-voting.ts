@@ -152,8 +152,10 @@ export const useConfirmTierVoting = () => {
       setApproving(true);
       const transactions: TransactionEntry[] = [...prepareReportCalls()];
       const mainActionCompleteText =
-        vaultTexts.actions.settings.completeSyncTier(tier.id);
-      const loadingActionText = vaultTexts.actions.settings.syncTier(tier.id);
+        vaultTexts.actions.settings.completeSyncTier(tier.tierName);
+      const loadingActionText = vaultTexts.actions.settings.syncTier(
+        tier.tierName,
+      );
 
       // if node operator, use operator grid contract
       // if not node operator, use dashboard contract

@@ -73,6 +73,7 @@ const enrichLastProposal = (
   const tierId = functionName === 'changeTier' ? args[1] : currentTierID;
 
   const base = {
+    _id: crypto.randomUUID(),
     vaultAddress: args[0],
     member,
     expiryTimestamp,

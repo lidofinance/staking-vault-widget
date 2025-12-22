@@ -32,12 +32,12 @@ export const useSyncTier = () => {
       invariant(activeVault, '[useSyncTier] activeVault is undefined');
       invariant(alterTier, '[useSyncTier] alterTier is undefined');
 
-      const { id } = alterTier;
+      const { tierName } = alterTier;
       const tx: TransactionEntry[] = [];
 
-      const loadingActionText = vaultTexts.actions.settings.syncTier(id);
+      const loadingActionText = vaultTexts.actions.settings.syncTier(tierName);
       const mainActionCompleteText =
-        vaultTexts.actions.settings.completeSyncTier(id);
+        vaultTexts.actions.settings.completeSyncTier(tierName);
 
       const nodeOperatorSyncTierRequest = {
         ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),

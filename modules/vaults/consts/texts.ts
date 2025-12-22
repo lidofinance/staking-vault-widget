@@ -242,10 +242,9 @@ export const vaultTexts = {
         `Approving Tier ${tierId} change tier with ${toStethValue(mintingLimitStETH)} minting limit.` as const,
       completeChangeTier: (tierId: bigint, mintingLimitStETH: bigint) =>
         `Request for tier ${tierId} with ${toStethValue(mintingLimitStETH)} minting limit approved` as const,
-      syncTier: (tierId: number | bigint) =>
-        `Applying Tier ${tierId} updates` as const,
-      completeSyncTier: (tierId: number | bigint) =>
-        `Request to apply Tier ${tierId} updates was sent` as const,
+      syncTier: (tierName: string) => `Applying ${tierName} updates` as const,
+      completeSyncTier: (tierName: string) =>
+        `Request to apply ${tierName} updates was sent` as const,
       submit: (counter: number) => {
         if (counter > 0)
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;

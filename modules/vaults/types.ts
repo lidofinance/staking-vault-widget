@@ -109,6 +109,7 @@ export type TierConfirmationFnNames =
 
 export type ExtendTierConfirmation =
   | {
+      _id: string;
       vaultAddress: Address;
       member: Address;
       expiryTimestamp: bigint;
@@ -122,6 +123,7 @@ export type ExtendTierConfirmation =
       proposedVaultLimitShares: bigint;
     }
   | {
+      _id: string;
       vaultAddress: Address;
       member: Address;
       expiryTimestamp: bigint;
