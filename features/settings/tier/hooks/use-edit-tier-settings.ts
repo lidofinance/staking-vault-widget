@@ -37,7 +37,7 @@ export const useEditTierSettings = () => {
           '[useEditTierSettings] activeVault is undefined',
         );
 
-        const transactions: TransactionEntry[] = [];
+        const transactions: TransactionEntry[] = [...prepareReportCalls()];
         const { selectedTierId, vaultMintingLimit } = formValues;
 
         const selectedTier = nodeOperatorTiers?.tiers?.find(
@@ -59,44 +59,57 @@ export const useEditTierSettings = () => {
           BigInt(selectedTierId) === tierInfo.vault.tierId;
 
         if (isUpdatingVaultShareLimit) {
-          const loadingActionText =
-            vaultTexts.actions.settings.requestUpdateVaultShareLimitTitle;
-          const baseDescriptionText =
-            vaultTexts.actions.settings.requestUpdateVaultShareLimitDescription(
-              toStethValue(vaultMintingLimit),
-            );
-          const awaitingDescriptionText =
-            vaultTexts.actions.settings.awaitingRequestUpdateVaultShareLimit;
+          const texts = {
+            loadingActionText:
+              vaultTexts.actions.settings.requestUpdateVaultShareLimitTitle,
+            baseDescriptionText:
+              vaultTexts.actions.settings.requestUpdateVaultShareLimitDescription(
+                toStethValue(vaultMintingLimit),
+              ),
+            awaitingDescriptionText:
+              vaultTexts.actions.settings.awaitingRequestUpdateVaultShareLimit,
+          };
 
-          if (isNodeOperator) {
-            transactions.push({
-              ...activeVault.operatorGrid.encode.updateVaultShareLimit([
-                activeVault.address,
-                mintingLimitInShares,
-              ]),
-              loadingActionText,
-              baseDescriptionText,
-              awaitingDescriptionText,
-            });
+          const nodeOperatorUpdateLimitRequest = {
+            ...activeVault.operatorGrid.encode.updateVaultShareLimit([
+              activeVault.address,
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
+
+          const roleOrAdminUpdateLimitRequest = {
+            ...activeVault.dashboard.encode.updateShareLimit([
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
+
+          if (bothRequestingRoles) {
+            transactions.push(
+              nodeOperatorUpdateLimitRequest,
+              roleOrAdminUpdateLimitRequest,
+            );
+          } else if (isNodeOperator) {
+            transactions.push(nodeOperatorUpdateLimitRequest);
           } else {
-            transactions.push({
-              ...activeVault.dashboard.encode.updateShareLimit([
-                mintingLimitInShares,
-              ]),
-              loadingActionText,
-            });
+            transactions.push(roleOrAdminUpdateLimitRequest);
           }
         } else {
+          const texts = {
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          };
+
           const nodeOperatorChangeTierRequest = {
             ...activeVault.operatorGrid.encode.changeTier([
               activeVault.address,
               BigInt(selectedTierId),
               mintingLimitInShares,
             ]),
-            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-              selectedTierId,
-              toStethValue(vaultMintingLimit),
-            ),
+            ...texts,
           };
 
           const defaultAdminRequest = {
@@ -104,17 +117,13 @@ export const useEditTierSettings = () => {
               BigInt(selectedTierId),
               mintingLimitInShares,
             ]),
-            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-              selectedTierId,
-              toStethValue(vaultMintingLimit),
-            ),
+            ...texts,
           };
 
           // if node operator, use operator grid contract
           // if not node operator, use dashboard contract
           if (bothRequestingRoles) {
             transactions.push(
-              ...prepareReportCalls(),
               nodeOperatorChangeTierRequest,
               defaultAdminRequest,
             );
