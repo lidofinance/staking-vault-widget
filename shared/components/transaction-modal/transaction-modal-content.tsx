@@ -59,6 +59,7 @@ const getModalSubTitle = (state: TransactionModalState) => {
     case 'awaiting':
       return state.details.awaitingDescriptionText;
     case 'error':
+      return '';
     case 'success':
       return state.details.mainActionCompleteDescriptionText;
     default:
