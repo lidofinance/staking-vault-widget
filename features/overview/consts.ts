@@ -38,8 +38,7 @@ type OverviewArgs = {
   nodeOperatorDisbursableFee: bigint;
   totalMintingCapacityStethWei: bigint;
   unsettledLidoFees: bigint;
-  minimalReserve: bigint;
-  reportLiabilitySharesStETH: bigint;
+  reportMaxLiabilitySharesStETH: bigint;
 };
 
 export const calculateOverviewV2 = (args: OverviewArgs) => {
@@ -54,8 +53,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     nodeOperatorDisbursableFee,
     totalMintingCapacityStethWei,
     unsettledLidoFees,
-    minimalReserve,
-    reportLiabilitySharesStETH,
+    reportMaxLiabilitySharesStETH,
   } = args;
 
   const { healthRatio, isHealthy } = calculateHealth({
@@ -68,16 +66,9 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const totalLocked = locked + nodeOperatorDisbursableFee + unsettledLidoFees;
   const RR = BigInt(reserveRatioBP);
   const oneMinusRR = VAULT_TOTAL_BASIS_POINTS_BN - RR;
-  const collateral = bigIntMax(
-    minimalReserve,
-    ceilDivBigint(
-      liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN,
-      oneMinusRR,
-    ),
-  );
   const recentlyRepaid = bigIntMax(
     0n,
-    reportLiabilitySharesStETH - liabilitySharesInStethWei,
+    reportMaxLiabilitySharesStETH - liabilitySharesInStethWei,
   );
 
   const reservedByFormula =
@@ -108,7 +99,6 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     availableToWithdrawal,
     idleCapital,
     totalLocked,
-    collateral,
     recentlyRepaid,
     utilizationRatio,
     reserved,

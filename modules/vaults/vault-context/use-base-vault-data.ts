@@ -88,8 +88,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
           )
         : null;
 
-      const reportLiabilityShares = report?.liabilityShares ?? 0n;
-
       // we might not have a report even when fresh is not true
       const isReportMissing = !report && !isReportFresh;
 
@@ -138,7 +136,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
-        reportLiabilityShares,
         ...connection,
       };
     },

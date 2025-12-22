@@ -108,7 +108,7 @@ export const ImmediateWithdrawalModal = () => {
       >
         <ExtendedInfo>
           <ModalSection
-            title="Locked by Collateral"
+            title="Locked as Collateral"
             titleLeftDecorator={<NewLine />}
             amountValue={collateral}
             amountType="token"

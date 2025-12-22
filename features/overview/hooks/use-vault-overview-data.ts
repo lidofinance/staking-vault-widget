@@ -72,7 +72,7 @@ export type VaultInfo = VaultConnection &
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
-    reportLiabilitySharesStETH: bigint;
+    reportMaxLiabilitySharesStETH: bigint;
     obligationsShortfallValue: bigint;
     stETHToBurn: bigint;
     feesToSettle: bigint;
@@ -105,7 +105,6 @@ const getVaultData = async ({
     operatorGrid,
     report,
     isReportFresh,
-    reportLiabilityShares,
     lazyOracle,
     blockNumber,
     ...rest
@@ -164,7 +163,7 @@ const getVaultData = async ({
       dashboard.prepare.obligations(),
       hub.prepare.healthShortfallShares([vault.address]),
       hub.prepare.vaultRecord([vault.address]),
-      hub.prepare.locked([vault.address]),
+      dashboard.prepare.locked(),
       vaultContract.prepare.stagedBalance(),
       vaultContract.prepare.beaconChainDepositsPaused(),
     ] as const,
@@ -186,6 +185,7 @@ const getVaultData = async ({
 
   const lidoV3Contract = getLidoContract(publicClient);
   const stethContract = getStEthContract(publicClient);
+  const maxLiabilityShares = report?.maxLiabilityShares ?? 0n;
 
   const [
     liabilityStETH,
@@ -196,7 +196,7 @@ const getVaultData = async ({
     stETHToBurn,
     rebalanceStETH,
     redemptionStETH,
-    reportLiabilitySharesStETH,
+    reportMaxLiabilitySharesStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
@@ -207,7 +207,7 @@ const getVaultData = async ({
     stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
     stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
     stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([reportLiabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([maxLiabilityShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -225,7 +225,7 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    reportLiabilitySharesStETH,
+    reportMaxLiabilitySharesStETH,
     feeRate,
     shareLimit,
     forcedRebalanceThresholdBP,
@@ -281,7 +281,7 @@ const selectOverviewData = ({
     tierId,
     tierStETHLimit,
     minimalReserve,
-    reportLiabilitySharesStETH,
+    reportMaxLiabilitySharesStETH,
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
     disconnectInitiatedTs,
@@ -315,8 +315,7 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
-    minimalReserve,
-    reportLiabilitySharesStETH,
+    reportMaxLiabilitySharesStETH,
   });
 
   // Binding-constraint detection:
@@ -329,7 +328,7 @@ const selectOverviewData = ({
   // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
   const mintingConstraintBy = getMintingConstraintType({
     minimalReserve,
-    collateral: overview.collateral,
+    collateral: lockedEth,
     totalMintingCapacityShares,
     vaultShareLimit: shareLimit,
     tierShareLimit,
@@ -408,7 +407,7 @@ const selectOverviewData = ({
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
     feeRate,
-    collateral: overview.collateral,
+    collateral: lockedEth,
     pendingUnlockEth,
     pendingUnlock,
     isVaultConnected,
