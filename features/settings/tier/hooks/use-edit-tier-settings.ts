@@ -143,9 +143,17 @@ export const useEditTierSettings = () => {
           : `Request for ${selectedTier.tierName}`;
         const completeTextTail = bothRequestingRoles ? 'approved' : 'submitted';
 
-        const mainActionCompleteDescriptionText = isUpdatingVaultShareLimit
-          ? `Your request for new ${toStethValue(vaultMintingLimit)} minting limit has been submitted successfully. It is now pending confirmation from the ${isNodeOperator ? 'Vault Owner or the Role with permission' : 'Node Operator'}.`
-          : `Your request to move stVault to ${selectedTier.tierName} with a ${toStethValue(vaultMintingLimit)} minting limit has been submitted successfully. It is now pending confirmation from the ${isNodeOperator ? 'Vault Owner or the Role with permission' : 'Node Operator'}.`;
+        const role = isNodeOperator
+          ? 'Vault Owner or the Role with permission'
+          : 'Node Operator';
+
+        const actionDescription = isUpdatingVaultShareLimit
+          ? `request for new ${toStethValue(vaultMintingLimit)} minting limit`
+          : `request to move stVault to ${selectedTier.tierName} with a ${toStethValue(vaultMintingLimit)} minting limit`;
+
+        const mainActionCompleteDescriptionText = bothRequestingRoles
+          ? `Your ${actionDescription} has been approved successfully.`
+          : `Your ${actionDescription} has been submitted successfully. It is now pending confirmation from the ${role}.`;
 
         const result = await withSuccess(
           sendTX({

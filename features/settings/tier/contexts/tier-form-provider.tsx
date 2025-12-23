@@ -21,15 +21,10 @@ const prepareDefaultValues = async (
   const { vault, tier } = tierInfo;
   const tierMintingCapacity = tier.shareLimitStETH - tier.liabilityStETH;
 
-  const vaultMintingLimit =
-    vault.stETHLimit > tierMintingCapacity
-      ? tierMintingCapacity
-      : vault.stETHLimit;
-
   return {
     selectedTierId: vault.tierId.toString(),
-    selectedTierLimit: vault.stETHLimit,
-    vaultMintingLimit,
+    selectedTierLimit: tierMintingCapacity,
+    vaultMintingLimit: vault.stETHLimit,
   };
 };
 
@@ -70,7 +65,6 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
       formObject={formObject}
       onSubmit={onSubmit}
       retryEvent={retryEvent}
-      afterSubmitResetOptions={false}
     >
       {children}
     </FormController>

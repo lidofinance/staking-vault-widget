@@ -69,8 +69,9 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
                 Available &nbsp;
               </Text>
               <Text size="xxs">
-                <TierLimitAmount amount={available} />{' '}
+                <TierLimitAmount amount={available} />
               </Text>
+              &nbsp;
               <Text size="xxs" color="secondary">
                 / <TierLimitAmount amount={tierStETHLimit} />
               </Text>

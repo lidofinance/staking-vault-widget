@@ -14,6 +14,7 @@ import {
   useVaultConfirmingRoles,
   type Tier,
 } from 'modules/vaults';
+import { toStethValue } from 'utils';
 
 export const useConfirmTierVoting = () => {
   const [approving, setApproving] = useState(false);
@@ -43,6 +44,22 @@ export const useConfirmTierVoting = () => {
       const mainActionCompleteText =
         vaultTexts.actions.settings.completeChangeTier(id, mintingLimitStETH);
 
+      const mainActionCompleteDescriptionText = `Your request to move stVault to ${
+        tier.tierName
+      } with a ${toStethValue(
+        mintingLimitStETH,
+      )} minting limit has been approved successfully.`;
+
+      const texts = {
+        loadingActionText,
+        baseDescriptionText: `You’re approving to move stVault to ${
+          tier.tierName
+        } with a ${toStethValue(mintingLimitStETH)} minting limit.`,
+        awaitingDescriptionText: `stVault has been successfully moved to ${
+          tier.tierName
+        }, with a ${toStethValue(mintingLimitStETH)} minting limit applied.`,
+      };
+
       // if node operator, use operator grid contract
       // if not node operator, use dashboard contract
       if (isNodeOperator) {
@@ -52,12 +69,12 @@ export const useConfirmTierVoting = () => {
             id,
             mintingLimitShares,
           ]),
-          loadingActionText,
+          ...texts,
         });
       } else {
         transactions.push({
           ...activeVault.dashboard.encode.changeTier([id, mintingLimitShares]),
-          loadingActionText,
+          ...texts,
         });
       }
 
@@ -66,6 +83,7 @@ export const useConfirmTierVoting = () => {
           transactions,
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
+          mainActionCompleteDescriptionText,
           renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
@@ -104,6 +122,20 @@ export const useConfirmTierVoting = () => {
           mintingLimitStETH,
         );
 
+      const mainActionCompleteDescriptionText = `Your request for new ${toStethValue(
+        mintingLimitStETH,
+      )} minting limit has been approved successfully.`;
+
+      const texts = {
+        loadingActionText,
+        baseDescriptionText: `You’re approving to update stVault limit with ${toStethValue(
+          mintingLimitStETH,
+        )}.`,
+        awaitingDescriptionText: `stVault has been successfully updated with a ${toStethValue(
+          mintingLimitStETH,
+        )} minting limit.`,
+      };
+
       // if node operator, use operator grid contract
       // if not node operator, use dashboard contract
       if (isNodeOperator) {
@@ -112,14 +144,14 @@ export const useConfirmTierVoting = () => {
             activeVault.address,
             mintingLimitShares,
           ]),
-          loadingActionText,
+          ...texts,
         });
       } else {
         transactions.push({
           ...activeVault.dashboard.encode.updateShareLimit([
             mintingLimitShares,
           ]),
-          loadingActionText,
+          ...texts,
         });
       }
 
@@ -128,6 +160,7 @@ export const useConfirmTierVoting = () => {
           transactions,
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
+          mainActionCompleteDescriptionText,
           renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
@@ -157,17 +190,25 @@ export const useConfirmTierVoting = () => {
         tier.tierName,
       );
 
+      const mainActionCompleteDescriptionText = `Your request to sync stVault with ${tier.tierName} has been approved successfully.`;
+
+      const texts = {
+        loadingActionText,
+        baseDescriptionText: `You’re approving sync stVault and ${tier.tierName} with a new params.`,
+        awaitingDescriptionText: `stVault has been successfully synced with the ${tier.tierName}.`,
+      };
+
       // if node operator, use operator grid contract
       // if not node operator, use dashboard contract
       if (isNodeOperator) {
         transactions.push({
           ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),
-          loadingActionText,
+          ...texts,
         });
       } else {
         transactions.push({
           ...activeVault.dashboard.encode.syncTier(),
-          loadingActionText,
+          ...texts,
         });
       }
 
@@ -176,6 +217,7 @@ export const useConfirmTierVoting = () => {
           transactions,
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
+          mainActionCompleteDescriptionText,
           renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
