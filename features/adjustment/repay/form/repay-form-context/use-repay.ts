@@ -57,11 +57,15 @@ export const useRepay = () => {
             to: activeVault.dashboard.address,
           });
 
-          const needsAllowance = allowance < amount;
+          const txAmountAllowance = isSteth
+            ? await shares.convertToSteth(txAmount)
+            : amount;
+
+          const needsAllowance = allowance < txAmountAllowance;
           if (needsAllowance) {
             const approveCall = {
               ...(await tokenContract.populateApprove({
-                amount: amount,
+                amount: txAmountAllowance,
                 to: activeVault.dashboard.address,
               })),
               loadingActionText: vaultTexts.actions.approve.loading(token),
