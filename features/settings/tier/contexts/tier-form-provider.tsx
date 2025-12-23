@@ -7,6 +7,8 @@ import { useDappStatus } from 'modules/web3';
 import {
   useNodeOperatorTiersInfo,
   useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
   useVaultTierInfo,
   type VaultTierData,
 } from 'modules/vaults';
@@ -34,14 +36,20 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { refetch, data } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
+  const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
   const promisedTierInfo = useAwaiter(data).awaiter;
-
+  const isDisabledByRoles = !(isNodeOperator || hasAdmin || hasPermission);
   const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled:
+      !isDappActive ||
+      isPendingDisconnect ||
+      isPendingConnect ||
+      isDisabledByRoles,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
     mode: 'onChange',
