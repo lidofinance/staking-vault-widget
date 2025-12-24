@@ -8,6 +8,7 @@ import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
 import { Header } from './header';
 import { Main } from './main';
 import { Navigation } from './navigation';
+import { Cookie } from './cookie';
 import { Footer } from './footer';
 import { ChainBanner } from './chain-banner';
 import {
@@ -48,6 +49,7 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
         <LayoutSubTitleStyle>{subtitle}</LayoutSubTitleStyle>
         {children}
       </Main>
+      <Cookie />
       <Footer />
     </LayoutStyles>
   );
