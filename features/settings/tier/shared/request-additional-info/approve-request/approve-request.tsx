@@ -20,7 +20,7 @@ export const ApproveRequest = () => {
     approveUpdateMintingLimit,
     approving,
   } = useConfirmTierVoting();
-  const { refetchVault } = useVault();
+  const { refetch: refetchVault } = useVault();
   const tierVoting = useTierVoting();
   const { refetch } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
