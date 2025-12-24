@@ -75,7 +75,7 @@ export const RequestAdditionalInfo = ({
               </Text>
             </ContentContainer>
           </ListItem>
-          {!isEqualRemainingCapacity && (
+          {!isEqualRemainingCapacity && functionName === 'changeTier' && (
             <ListItem>
               <Text size="xxs" color="secondary">
                 Tier remaining capacity

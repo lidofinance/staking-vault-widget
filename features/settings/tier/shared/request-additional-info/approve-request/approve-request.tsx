@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 
-import { useNodeOperatorTiersInfo, useVaultTierInfo } from 'modules/vaults';
+import {
+  useNodeOperatorTiersInfo,
+  useVault,
+  useVaultTierInfo,
+} from 'modules/vaults';
 
 import {
   useConfirmTierVoting,
@@ -16,6 +20,7 @@ export const ApproveRequest = () => {
     approveUpdateMintingLimit,
     approving,
   } = useConfirmTierVoting();
+  const { refetchVault } = useVault();
   const tierVoting = useTierVoting();
   const { refetch } = useVaultTierInfo();
   const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
@@ -42,7 +47,7 @@ export const ApproveRequest = () => {
     } else if (functionName === 'syncTier') {
       await approveSyncTier(proposedTier);
     }
-
+    await refetchVault();
     await Promise.all([
       refetch({ cancelRefetch: true, throwOnError: false }),
       refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
@@ -53,6 +58,7 @@ export const ApproveRequest = () => {
     approveUpdateMintingLimit,
     refetch,
     refetchNOTiers,
+    refetchVault,
     proposal,
     proposedTier,
   ]);

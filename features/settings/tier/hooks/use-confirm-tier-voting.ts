@@ -1,5 +1,5 @@
-import invariant from 'tiny-invariant';
 import { useCallback, useState } from 'react';
+import invariant from 'tiny-invariant';
 
 import {
   useSendTransaction,
@@ -9,7 +9,6 @@ import {
 import {
   useVault,
   vaultTexts,
-  GoToVault,
   useReportCalls,
   useVaultConfirmingRoles,
   type Tier,
@@ -84,7 +83,6 @@ export const useConfirmTierVoting = () => {
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
           mainActionCompleteDescriptionText,
-          renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
       );
@@ -161,7 +159,6 @@ export const useConfirmTierVoting = () => {
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
           mainActionCompleteDescriptionText,
-          renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
       );
@@ -218,7 +215,6 @@ export const useConfirmTierVoting = () => {
           mainActionCompleteText,
           mainActionLoadingText: loadingActionText,
           mainActionCompleteDescriptionText,
-          renderSuccessContent: GoToVault,
           allowRetry: false,
         }),
       );
