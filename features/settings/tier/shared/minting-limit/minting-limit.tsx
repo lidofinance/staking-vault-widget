@@ -5,6 +5,7 @@ import { TokenAmountInputGroup } from 'shared/hook-form/controls';
 import { useTierData } from 'features/settings/tier/contexts';
 import { vaultTexts } from 'modules/vaults/consts';
 
+import { SectionLoader } from '../section-loader';
 import { PartitionContainer } from '../partition-container';
 import type { TierSettingsFormValues } from '../../types';
 
@@ -22,7 +23,7 @@ export const MintingLimit = () => {
     : vaultTexts.actions.tier.inputMintingLimit.titleNew;
 
   if (isLoadingVault) {
-    return null;
+    return <SectionLoader title={text} loaderHeight={56} />;
   }
 
   return (

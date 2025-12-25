@@ -9,12 +9,12 @@ import { TierPage } from './styles';
 export const TierSettings = () => {
   return (
     <TierDataProvider>
-      <TierPage>
-        <VotingRequest />
-        <TierFormProvider>
+      <TierFormProvider>
+        <TierPage>
+          <VotingRequest />
           <TierInfo />
-        </TierFormProvider>
-      </TierPage>
+        </TierPage>
+      </TierFormProvider>
     </TierDataProvider>
   );
 };

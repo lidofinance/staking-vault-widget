@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useVault } from 'modules/vaults';
+import { useVault, useVaultTierInfo } from 'modules/vaults';
 
 import {
   useConfirmTierVoting,
@@ -8,6 +8,7 @@ import {
 } from 'features/settings/tier/hooks';
 
 import { ButtonStyled } from './styles';
+import { useFormContext } from 'react-hook-form';
 
 export const ApproveRequest = () => {
   const {
@@ -17,12 +18,14 @@ export const ApproveRequest = () => {
     approving,
   } = useConfirmTierVoting();
   const { refetch: refetchVault } = useVault();
+  const { data: vaultTierInfo } = useVaultTierInfo();
+  const { reset: resetForm } = useFormContext();
   const tierVoting = useTierVoting();
 
   const { proposal, isTheSameUser, proposedTier } = tierVoting ?? {};
 
   const handleApprove = useCallback(async () => {
-    if (!proposal || !proposedTier) return;
+    if (!proposal || !proposedTier || !vaultTierInfo) return;
     const { functionName, proposedVaultLimitShares, proposedVaultLimitStETH } =
       proposal;
 
@@ -41,7 +44,18 @@ export const ApproveRequest = () => {
     } else if (functionName === 'syncTier') {
       await approveSyncTier(proposedTier);
     }
-    await refetchVault();
+
+    await refetchVault().then(() =>
+      resetForm({
+        selectedTierId: proposal.tierId.toString(),
+        selectedTierLimit:
+          proposedTier.shareLimitStETH - proposedTier.liabilityStETH,
+        vaultMintingLimit:
+          functionName !== 'syncTier'
+            ? proposal.proposedVaultLimitStETH
+            : vaultTierInfo.vault.stETHLimit,
+      }),
+    );
   }, [
     approveMovingTier,
     approveSyncTier,
@@ -49,6 +63,8 @@ export const ApproveRequest = () => {
     refetchVault,
     proposal,
     proposedTier,
+    resetForm,
+    vaultTierInfo,
   ]);
 
   if (!proposal || !proposedTier || isTheSameUser) return null;

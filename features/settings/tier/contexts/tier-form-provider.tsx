@@ -20,11 +20,11 @@ const prepareDefaultValues = async (
   tierInfo: VaultTierData,
 ): Promise<TierSettingsFormValues> => {
   const { vault, tier } = tierInfo;
-  const tierMintingCapacity = tier.shareLimitStETH - tier.liabilityStETH;
+  const tierMintingCapacityStEth = tier.shareLimitStETH - tier.liabilityStETH;
 
   return {
     selectedTierId: vault.tierId.toString(),
-    selectedTierLimit: tierMintingCapacity,
+    selectedTierLimit: tierMintingCapacityStEth,
     vaultMintingLimit: vault.stETHLimit,
   };
 };

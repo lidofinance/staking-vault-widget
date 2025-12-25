@@ -7,6 +7,7 @@ import { useTierData } from 'features/settings/tier/contexts';
 import { PartitionContainer } from '../partition-container';
 import { TierBaseInfo } from '../tier-base-info';
 import { SelectTierModal } from '../select-tier-modal';
+import { SectionLoader } from '../section-loader';
 
 import { TierSelector } from './styles';
 import { useFormState } from 'react-hook-form';
@@ -18,7 +19,7 @@ export const ChooseTier = () => {
   const { hasPermission } = useVaultPermission('vaultConfiguration');
   const accessPermission =
     !!(hasAdmin || hasPermission || isNodeOperator) && !disabled;
-  const { values, selectedTier } = useTierData();
+  const { values, selectedTier, isLoadingVault } = useTierData();
 
   const isActive =
     selectedTier?.id.toString() === values?.vault.tierId.toString();
@@ -29,7 +30,9 @@ export const ChooseTier = () => {
     [accessPermission],
   );
 
-  if (selectedTier === null) return null;
+  if (isLoadingVault || selectedTier === null) {
+    return <SectionLoader title="Choose Tier" loaderHeight={86} />;
+  }
 
   return (
     <PartitionContainer title="Choose Tier">
