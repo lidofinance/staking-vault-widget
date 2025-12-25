@@ -9,28 +9,13 @@ import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import type { TierSettingsFormValues } from './types';
 
-export const tierSettingsFormSchema = z
-  .object({
-    selectedTierId: z.string(),
-    selectedTierLimit: z.bigint(),
-    vaultMintingLimit: z
-      .bigint({ message: vaultTexts.common.errors.amount.required })
-      .min(1n, vaultTexts.common.errors.amount.min(0n)),
-  })
-  .superRefine((data, ctx) => {
-    if (data.vaultMintingLimit > data.selectedTierLimit) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_big,
-        maximum: data.selectedTierLimit,
-        inclusive: true,
-        type: 'bigint',
-        path: ['vaultMintingLimit'],
-        message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
-          data.selectedTierLimit,
-        ),
-      });
-    }
-  });
+export const tierSettingsFormSchema = z.object({
+  selectedTierId: z.string(),
+  selectedTierLimit: z.bigint(),
+  vaultMintingLimit: z
+    .bigint({ message: vaultTexts.common.errors.amount.required })
+    .min(1n, vaultTexts.common.errors.amount.min(0n)),
+});
 
 const baseTierValidation = zodResolver<
   TierSettingsFormValues,
@@ -71,6 +56,17 @@ export const tierSettingsFormResolver: Resolver<
       type: 'custom',
       message:
         vaultTexts.actions.tier.vaultMintingLimit.errors.lessThanVaultLiability,
+    };
+  }
+
+  const { tier } = context;
+  const availableTierMintingLimit = tier.shareLimitStETH - tier.liabilityStETH;
+  if (availableTierMintingLimit < values.vaultMintingLimit) {
+    errors.vaultMintingLimit = {
+      type: 'custom',
+      message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
+        availableTierMintingLimit,
+      ),
     };
   }
 

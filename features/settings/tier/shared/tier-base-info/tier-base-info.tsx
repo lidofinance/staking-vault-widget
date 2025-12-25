@@ -2,7 +2,7 @@ import type { FC, PropsWithChildren } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { formatPercent } from 'utils/formats';
-import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import { type Tier, VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 
 import {
   Wrapper,
@@ -17,25 +17,22 @@ import {
 import { TierLimitAmount } from './tier-limit-amount';
 
 type TierBaseInfoProps = {
-  tierName: string;
-  reserveRatio: number;
-  tierStETHLimit: bigint;
-  liabilityStETH: bigint;
+  tier: Tier | null;
   isActive: boolean;
 };
 
 export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
   children,
-  tierName,
-  reserveRatio,
-  tierStETHLimit,
-  liabilityStETH,
+  tier,
   isActive,
 }) => {
+  if (!tier) return null;
+
+  const { tierName, reserveRatioBP, shareLimitStETH, liabilityStETH } = tier;
   const reserveRatioValue = formatPercent.format(
-    Number(reserveRatio) / VAULT_TOTAL_BASIS_POINTS,
+    Number(reserveRatioBP) / VAULT_TOTAL_BASIS_POINTS,
   );
-  const available = tierStETHLimit - liabilityStETH;
+  const available = shareLimitStETH - liabilityStETH;
 
   return (
     <Wrapper>
@@ -60,10 +57,10 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
               Minting limit
             </Text>
             <Text size="xxs">
-              <TierLimitAmount amount={tierStETHLimit} />
+              <TierLimitAmount amount={shareLimitStETH} />
             </Text>
           </MintingLimit>
-          {!!tierStETHLimit && (
+          {!!shareLimitStETH && (
             <MintingAvailable>
               <Text size="xxs" color="secondary">
                 Available &nbsp;
@@ -73,7 +70,7 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
               </Text>
               &nbsp;
               <Text size="xxs" color="secondary">
-                / <TierLimitAmount amount={tierStETHLimit} />
+                / <TierLimitAmount amount={shareLimitStETH} />
               </Text>
             </MintingAvailable>
           )}

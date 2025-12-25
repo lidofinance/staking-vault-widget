@@ -30,25 +30,19 @@ export const ChooseTier = () => {
     [accessPermission],
   );
 
-  if (isLoadingVault || selectedTier === null) {
-    return <SectionLoader title="Choose Tier" loaderHeight={86} />;
-  }
-
   return (
-    <PartitionContainer title="Choose Tier">
+    <PartitionContainer
+      title="Choose Tier"
+      isLoading={isLoadingVault || selectedTier === null}
+      fallback={<SectionLoader loaderHeight={86} />}
+    >
       <TierSelector
         onClick={openModal}
         $showCursor={accessPermission}
         role="button"
         data-testid="chooseTierWrapper"
       >
-        <TierBaseInfo
-          tierName={selectedTier.tierName}
-          reserveRatio={selectedTier.reserveRatioBP}
-          tierStETHLimit={selectedTier.shareLimitStETH}
-          liabilityStETH={selectedTier.liabilityStETH}
-          isActive={isActive}
-        />
+        <TierBaseInfo tier={selectedTier} isActive={isActive} />
         {accessPermission && <ArrowRight />}
       </TierSelector>
       <SelectTierModal showModal={showModal} closeModal={closeModal} />

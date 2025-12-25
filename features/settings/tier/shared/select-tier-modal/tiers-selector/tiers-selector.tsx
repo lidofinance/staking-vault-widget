@@ -84,13 +84,7 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
             onChange={onChangeTier}
             data-testid={`tierId-${tier.id.toString()}`}
           >
-            <TierBaseInfo
-              tierName={tier.tierName}
-              reserveRatio={tier.reserveRatioBP}
-              tierStETHLimit={tier.shareLimitStETH}
-              liabilityStETH={tier.liabilityStETH}
-              isActive={isActive}
-            />
+            <TierBaseInfo tier={tier} isActive={isActive} />
           </RadioSelector>
         );
       })}

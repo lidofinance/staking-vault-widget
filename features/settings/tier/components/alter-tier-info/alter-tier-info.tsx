@@ -34,13 +34,14 @@ export const AlterTierInfo = () => {
 
   const closeModal = useCallback(() => setModalVisibility(false), []);
   const openModal = useCallback(() => setModalVisibility(true), []);
-
+  const extendLastProposal = vaultTierInfo?.proposals.extendLastProposal;
   if (
     isLoading ||
     !hasChanges ||
     !(hasAdmin || isNodeOperator || hasPermission) ||
     !isNumber(id) ||
-    vaultTierInfo?.proposals.extendLastProposal?.tierId === BigInt(id)
+    (extendLastProposal?.tierId === BigInt(id) &&
+      extendLastProposal.functionName === 'syncTier')
   ) {
     return null;
   }

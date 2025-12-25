@@ -22,12 +22,12 @@ export const MintingLimit = () => {
     ? vaultTexts.actions.tier.inputMintingLimit.titleCurrent
     : vaultTexts.actions.tier.inputMintingLimit.titleNew;
 
-  if (isLoadingVault) {
-    return <SectionLoader title={text} loaderHeight={56} />;
-  }
-
   return (
-    <PartitionContainer title={text}>
+    <PartitionContainer
+      title={text}
+      isLoading={isLoadingVault}
+      fallback={<SectionLoader loaderHeight={56} />}
+    >
       <TokenAmountInputGroup
         amountFieldName="vaultMintingLimit"
         label="stVault minting limit"
