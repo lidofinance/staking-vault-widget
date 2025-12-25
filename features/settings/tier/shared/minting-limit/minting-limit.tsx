@@ -9,7 +9,7 @@ import { PartitionContainer } from '../partition-container';
 import type { TierSettingsFormValues } from '../../types';
 
 export const MintingLimit = () => {
-  const { values } = useTierData();
+  const { values, isLoadingVault } = useTierData();
 
   const selectedTierId = useWatch<TierSettingsFormValues>({
     name: 'selectedTierId',
@@ -20,6 +20,10 @@ export const MintingLimit = () => {
   const text = isCurrentTier
     ? vaultTexts.actions.tier.inputMintingLimit.titleCurrent
     : vaultTexts.actions.tier.inputMintingLimit.titleNew;
+
+  if (isLoadingVault) {
+    return null;
+  }
 
   return (
     <PartitionContainer title={text}>

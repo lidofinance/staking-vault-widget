@@ -17,7 +17,14 @@ const configurationRoles = [
 export const TierFormAction = () => {
   const {
     watch,
-    formState: { isDirty, isSubmitting, isValid, defaultValues, disabled },
+    formState: {
+      isDirty,
+      isSubmitting,
+      isValid,
+      defaultValues,
+      disabled,
+      isLoading,
+    },
   } = useFormContext();
   const {
     hasConfirmingRole,
@@ -58,7 +65,7 @@ export const TierFormAction = () => {
     !disabled;
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
 
-  if (!showButton) {
+  if (!showButton || isLoading) {
     return null;
   }
 

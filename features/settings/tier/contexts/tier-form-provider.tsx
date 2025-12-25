@@ -5,7 +5,6 @@ import { FormController } from 'shared/hook-form/form-controller';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
 import {
-  useNodeOperatorTiersInfo,
   useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
@@ -32,10 +31,9 @@ const prepareDefaultValues = async (
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { activeVault } = useVault();
+  const { activeVault, refetch } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
-  const { refetch, data } = useVaultTierInfo();
-  const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
+  const { data } = useVaultTierInfo();
   const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
   const promisedTierInfo = useAwaiter(data).awaiter;
@@ -58,14 +56,10 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const onSubmit = useCallback(
     async (data: TierSettingsFormValues): Promise<boolean> => {
       const { result } = await editTierSettings(data);
-      await Promise.all([
-        refetch({ cancelRefetch: true, throwOnError: false }),
-        refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
-      ]);
-
+      await refetch({ cancelRefetch: true, throwOnError: false });
       return result.success;
     },
-    [editTierSettings, refetch, refetchNOTiers],
+    [editTierSettings, refetch],
   );
 
   return (

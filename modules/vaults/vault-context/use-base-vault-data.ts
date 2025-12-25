@@ -138,6 +138,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
+        blockNumberString: blockNumber.toString(),
         reportLiabilityShares,
         ...connection,
       };
