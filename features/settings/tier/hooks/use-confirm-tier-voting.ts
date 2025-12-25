@@ -43,20 +43,17 @@ export const useConfirmTierVoting = () => {
       const mainActionCompleteText =
         vaultTexts.actions.settings.completeChangeTier(id, mintingLimitStETH);
 
-      const mainActionCompleteDescriptionText = `Your request to move stVault to ${
+      const mainActionCompleteDescriptionText = `stVault has been successfully moved to ${
         tier.tierName
-      } with a ${toStethValue(
-        mintingLimitStETH,
-      )} minting limit has been approved successfully.`;
+      }, with a ${toStethValue(mintingLimitStETH)} minting limit applied.`;
 
       const texts = {
         loadingActionText,
         baseDescriptionText: `You’re approving to move stVault to ${
           tier.tierName
         } with a ${toStethValue(mintingLimitStETH)} minting limit.`,
-        awaitingDescriptionText: `stVault has been successfully moved to ${
-          tier.tierName
-        }, with a ${toStethValue(mintingLimitStETH)} minting limit applied.`,
+        awaitingDescriptionText:
+          'Waiting for block confirmation for your request. This may take a few moments.',
       };
 
       // if node operator, use operator grid contract
@@ -110,15 +107,9 @@ export const useConfirmTierVoting = () => {
       setApproving(true);
       const transactions: TransactionEntry[] = [...prepareReportCalls()];
       const loadingActionText =
-        vaultTexts.actions.settings.approveChangeTierMintingLimit(
-          tierId,
-          mintingLimitStETH,
-        );
+        vaultTexts.actions.settings.approveChangeTierMintingLimit;
       const mainActionCompleteText =
-        vaultTexts.actions.settings.completeChangeTierMintingLimit(
-          tierId,
-          mintingLimitStETH,
-        );
+        vaultTexts.actions.settings.completeChangeTierMintingLimit;
 
       const mainActionCompleteDescriptionText = `Your request for new ${toStethValue(
         mintingLimitStETH,
@@ -129,9 +120,8 @@ export const useConfirmTierVoting = () => {
         baseDescriptionText: `You’re approving to update stVault limit with ${toStethValue(
           mintingLimitStETH,
         )}.`,
-        awaitingDescriptionText: `stVault has been successfully updated with a ${toStethValue(
-          mintingLimitStETH,
-        )} minting limit.`,
+        awaitingDescriptionText:
+          'Waiting for block confirmation for your request. This may take a few moments.',
       };
 
       // if node operator, use operator grid contract
@@ -187,12 +177,13 @@ export const useConfirmTierVoting = () => {
         tier.tierName,
       );
 
-      const mainActionCompleteDescriptionText = `Your request to sync stVault with ${tier.tierName} has been approved successfully.`;
+      const mainActionCompleteDescriptionText = `stVault has been successfully synced with the ${tier.tierName}..`;
 
       const texts = {
         loadingActionText,
         baseDescriptionText: `You’re approving sync stVault and ${tier.tierName} with a new params.`,
-        awaitingDescriptionText: `stVault has been successfully synced with the ${tier.tierName}.`,
+        awaitingDescriptionText:
+          'Waiting for block confirmation for your request. This may take a few moments.',
       };
 
       // if node operator, use operator grid contract

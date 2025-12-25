@@ -45,8 +45,8 @@ export const RequestAdditionalInfo = ({
   const tierRemainingCapacity =
     proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
   const newTierRemainingCapacity = tierRemainingCapacity - vaultLiabilityStETH;
-  const isEqualRemainingCapacity =
-    newTierRemainingCapacity === tierRemainingCapacity;
+  const isDifferentRemainingCapacity =
+    newTierRemainingCapacity !== tierRemainingCapacity;
 
   // show proposed vault minting limit if it's different from the proposed tier minting limit
   const showProposedVaultMintingLimit =
@@ -75,7 +75,7 @@ export const RequestAdditionalInfo = ({
               </Text>
             </ContentContainer>
           </ListItem>
-          {!isEqualRemainingCapacity && functionName === 'changeTier' && (
+          {functionName === 'changeTier' && (
             <ListItem>
               <Text size="xxs" color="secondary">
                 Tier remaining capacity
@@ -96,6 +96,7 @@ export const RequestAdditionalInfo = ({
                       symbol="stETH"
                     />
                   }
+                  isChanged={isDifferentRemainingCapacity}
                 />
               </ContentContainer>
             </ListItem>

@@ -32,14 +32,8 @@ export const AlterTierInfo = () => {
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
 
-  const closeModal = useCallback(
-    () => setModalVisibility(false),
-    [setModalVisibility],
-  );
-  const openModal = useCallback(
-    () => setModalVisibility(true),
-    [setModalVisibility],
-  );
+  const closeModal = useCallback(() => setModalVisibility(false), []);
+  const openModal = useCallback(() => setModalVisibility(true), []);
 
   if (
     isLoading ||
@@ -81,7 +75,7 @@ export const AlterTierInfo = () => {
           </ModalButton>
         </div>
       </Wrapper>
-      <AlterTierModal showModal={showModal} closeModal={closeModal} />
+      <AlterTierModal isOpen={showModal} closeModal={closeModal} />
     </>
   );
 };

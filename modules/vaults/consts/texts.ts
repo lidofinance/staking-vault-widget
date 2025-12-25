@@ -228,16 +228,9 @@ export const vaultTexts = {
         `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
       awaitingRequestUpdateVaultShareLimit:
         `Waiting for block confirmation for your request. This may take a few moments.` as const,
-      approveChangeTierMintingLimit: (
-        tierId: bigint,
-        mintingLimitStETH: bigint,
-      ) =>
-        `Approving change Tier ${tierId} ${toStethValue(mintingLimitStETH)} minting limit.` as const,
-      completeChangeTierMintingLimit: (
-        tierId: bigint,
-        mintingLimitStETH: bigint,
-      ) =>
-        `Request to change Tier ${tierId} ${toStethValue(mintingLimitStETH)} limit approved.` as const,
+      approveChangeTierMintingLimit: `Approving change minting limit` as const,
+      completeChangeTierMintingLimit:
+        `Request to change tier minting limit is approved.` as const,
       approveSelectedTier: (tierId: bigint, mintingLimitStETH: bigint) =>
         `Approving Tier ${tierId} change tier with ${toStethValue(mintingLimitStETH)} minting limit.` as const,
       completeChangeTier: (tierId: bigint, mintingLimitStETH: bigint) =>

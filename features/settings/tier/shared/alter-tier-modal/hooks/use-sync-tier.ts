@@ -2,12 +2,10 @@ import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
 
 import {
-  GoToVault,
   useReportCalls,
   useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
-  useVaultTierInfo,
   vaultTexts,
 } from 'modules/vaults';
 import {
@@ -20,7 +18,6 @@ import { useAlterTier } from 'features/settings/tier/hooks';
 
 export const useSyncTier = () => {
   const { activeVault } = useVault();
-  const { refetch } = useVaultTierInfo();
   const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
@@ -63,11 +60,8 @@ export const useSyncTier = () => {
           forceAtomic: true,
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,
-          renderSuccessContent: GoToVault,
         }),
       );
-
-      await refetch();
 
       return success;
     }, [
@@ -78,7 +72,6 @@ export const useSyncTier = () => {
       isNodeOperator,
       hasPermission,
       alterTier,
-      refetch,
     ]),
     ...rest,
   };

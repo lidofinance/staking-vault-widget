@@ -1,6 +1,8 @@
 import { type FC, useCallback } from 'react';
 import { Button } from '@lidofinance/lido-ui';
 
+import { useVault } from 'modules/vaults';
+
 import { useSyncTier } from '../../hooks';
 
 type ApplyChangesProps = {
@@ -9,10 +11,13 @@ type ApplyChangesProps = {
 
 export const ApplyChanges: FC<ApplyChangesProps> = ({ closeModal }) => {
   const { syncTier } = useSyncTier();
+  const { refetch } = useVault();
+
   const onClick = useCallback(async () => {
-    await syncTier();
     closeModal();
-  }, [syncTier, closeModal]);
+    await syncTier();
+    await refetch();
+  }, [syncTier, refetch, closeModal]);
 
   return (
     <Button size="sm" onClick={onClick}>

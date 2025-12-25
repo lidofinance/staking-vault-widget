@@ -7,7 +7,6 @@ import {
   useVault,
   VAULT_TOTAL_BASIS_POINTS,
   DEFAULT_TIER_ID,
-  useVaultTierInfo,
 } from 'modules/vaults';
 import { formatPercent } from 'utils';
 
@@ -144,11 +143,13 @@ const selectAlterTierData = ({ vaultConnection, tier }: AlterTierInfo) => {
 
 export const useAlterTier = () => {
   const { activeVault, queryKeys } = useVault();
-  const { data: vaultTierInfo } = useVaultTierInfo();
-  const proposalId = vaultTierInfo?.proposals?.extendLastProposal?._id;
 
   return useQuery({
-    queryKey: [...queryKeys.state, 'alter-tier-info', proposalId],
+    queryKey: [
+      ...queryKeys.state,
+      'alter-tier-info',
+      activeVault?.blockNumberString,
+    ],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useAlterTier] activeVault is not defined');

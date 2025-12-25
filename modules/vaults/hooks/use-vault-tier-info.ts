@@ -107,7 +107,6 @@ const getVaultTierInfo = async ({
     dashboard,
     vault: vaultContract,
     nodeOperator,
-    withdrawalCredentials,
     forcedRebalanceThresholdBP,
     shareLimit,
     hub,

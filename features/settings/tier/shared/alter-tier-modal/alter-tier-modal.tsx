@@ -13,12 +13,12 @@ import {
 import { Container, DividerStyled } from './styles';
 
 type AlterTierModalProps = {
-  showModal: boolean;
+  isOpen: boolean;
   closeModal: () => void;
 };
 
 export const AlterTierModal: FC<AlterTierModalProps> = ({
-  showModal,
+  isOpen,
   closeModal,
 }) => {
   const { data: alterTierData } = useAlterTier();
@@ -33,7 +33,7 @@ export const AlterTierModal: FC<AlterTierModalProps> = ({
     <Modal
       title={`${tierName} update`}
       subtitle={<ModalSubtitle alterTierList={alterTierList} />}
-      open={showModal}
+      open={isOpen}
       onClose={closeModal}
       windowSize="md"
     >
