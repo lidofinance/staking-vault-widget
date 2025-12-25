@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { type Address } from 'viem';
+import type { Address } from 'viem';
 import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
 
 import { useVault } from 'modules/vaults';
+import { useLidoSDK } from 'modules/web3';
 import { AddressBadge } from 'shared/components/address-badge';
 import { appPaths } from 'consts/routing';
 
@@ -12,58 +13,75 @@ import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { NavigationLink } from '../navigation-link';
 import { BackAllVaults } from '../back-all-vaults';
 import { VaultError } from '../vault-error';
+import { getValidatorsLink } from '../const';
 import { NavList, SelectedVaultWrapper } from '../styles';
 
-const vaultRoutes = (vaultAddress: Address, overrideMode?: any) => [
-  {
-    title: 'Overview',
-    path: appPaths.vaults.vault(vaultAddress).overview,
-    icon: <MosaicIcon />,
-    exact: true,
-  },
-  {
-    title: 'Supply/Withdraw',
-    path: appPaths.vaults.vault(vaultAddress).eth(overrideMode ?? 'supply'),
-    icon: <Stake />,
-    exact: true,
-  },
-  {
-    title: 'Mint/Repay stETH',
-    path: appPaths.vaults.vault(vaultAddress).steth(overrideMode ?? 'mint'),
-    icon: <Withdraw />,
-    exact: true,
-  },
-  {
-    title: 'Validators',
-    path: 'https://hoodi.beaconcha.in/validators/deposits?q=', // TODO: get right link by network
-    icon: <External />,
-    exact: true,
-    external: true,
-  },
-  {
-    title: 'Claim Fees',
-    path: appPaths.vaults.vault(vaultAddress).claim,
-    icon: <Withdraw />,
-    exact: true,
-  },
-  {
-    title: 'Settings',
-    path: appPaths.vaults.vault(vaultAddress).settings(overrideMode || 'main'),
-    icon: <GearIcon />,
-    exact: true,
-  },
-];
+type VaultRoutesConfig = {
+  chainId?: number;
+  mode?: '[mode]';
+};
 
-const vaultPathnames = vaultRoutes('[vaultAddress]' as any, '[mode]').map(
+const vaultRoutes = (
+  vaultAddress: Address | '[vaultAddress]',
+  config?: VaultRoutesConfig,
+) => {
+  const { chainId, mode } = config ?? {};
+
+  return [
+    {
+      title: 'Overview',
+      path: appPaths.vaults.vault(vaultAddress).overview,
+      icon: <MosaicIcon />,
+      exact: true,
+    },
+    {
+      title: 'Supply/Withdraw',
+      path: appPaths.vaults.vault(vaultAddress).eth(mode ?? 'supply'),
+      icon: <Stake />,
+      exact: true,
+    },
+    {
+      title: 'Mint/Repay stETH',
+      path: appPaths.vaults.vault(vaultAddress).steth(mode ?? 'mint'),
+      icon: <Withdraw />,
+      exact: true,
+    },
+    {
+      title: 'Validators',
+      path: getValidatorsLink(chainId),
+      icon: <External />,
+      exact: true,
+      external: true,
+    },
+    {
+      title: 'Claim Fees',
+      path: appPaths.vaults.vault(vaultAddress).claim,
+      icon: <Withdraw />,
+      exact: true,
+    },
+    {
+      title: 'Settings',
+      path: appPaths.vaults.vault(vaultAddress).settings(mode ?? 'main'),
+      icon: <GearIcon />,
+      exact: true,
+    },
+  ];
+};
+
+const vaultPathnames = vaultRoutes('[vaultAddress]', { mode: '[mode]' }).map(
   ({ path }) => path,
 );
 
 export const VaultNavigation = () => {
   const { vaultAddress, activeVault } = useVault();
+  const { publicClient } = useLidoSDK();
 
   const availableRoutes = useMemo(
-    () => (vaultAddress ? vaultRoutes(vaultAddress) : []),
-    [vaultAddress],
+    () =>
+      vaultAddress
+        ? vaultRoutes(vaultAddress, { chainId: publicClient.chain.id })
+        : [],
+    [vaultAddress, publicClient.chain.id],
   );
 
   return (
