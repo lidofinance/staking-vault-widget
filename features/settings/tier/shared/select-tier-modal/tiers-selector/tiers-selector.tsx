@@ -26,8 +26,9 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
       const selectedTierId = e.currentTarget.value;
       const tier = tiers.find((tier) => tier.id.toString() === selectedTierId);
       if (tier) {
+        const availableForMinting = tier.shareLimitStETH - tier.liabilityStETH;
         // Update both values first to avoid validation race, then validate once
-        setValue('selectedTierLimit', tier.shareLimitStETH, {
+        setValue('selectedTierLimit', availableForMinting, {
           shouldDirty: true,
           shouldValidate: false,
         });
@@ -40,7 +41,7 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
 
           void trigger(['selectedTierLimit']);
         } else {
-          setValue('vaultMintingLimit', tier.shareLimitStETH, {
+          setValue('vaultMintingLimit', availableForMinting, {
             shouldDirty: true,
             shouldValidate: true,
           });
