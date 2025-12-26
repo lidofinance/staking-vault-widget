@@ -13,7 +13,7 @@ import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { NavigationLink } from '../navigation-link';
 import { BackAllVaults } from '../back-all-vaults';
 import { VaultError } from '../vault-error';
-import { getValidatorsLink } from '../const';
+import { validators } from '../const';
 import { NavList, SelectedVaultWrapper } from '../styles';
 
 type VaultRoutesConfig = {
@@ -25,7 +25,7 @@ const vaultRoutes = (
   vaultAddress: Address | '[vaultAddress]',
   config?: VaultRoutesConfig,
 ) => {
-  const { chainId, mode } = config ?? {};
+  const { chainId = 1, mode } = config ?? {};
 
   return [
     {
@@ -48,7 +48,7 @@ const vaultRoutes = (
     },
     {
       title: 'Validators',
-      path: getValidatorsLink(chainId),
+      path: validators[chainId],
       icon: <External />,
       exact: true,
       external: true,
