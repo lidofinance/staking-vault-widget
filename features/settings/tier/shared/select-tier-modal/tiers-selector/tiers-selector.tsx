@@ -40,14 +40,10 @@ export const TiersSelector: FC<TiersSelectorProps> = ({
 
           void trigger(['selectedTierLimit']);
         } else {
-          setValue(
-            'vaultMintingLimit',
-            tier.shareLimitStETH - tier.liabilityStETH,
-            {
-              shouldDirty: true,
-              shouldValidate: true,
-            },
-          );
+          setValue('vaultMintingLimit', tier.shareLimitStETH, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
 
           void trigger(['vaultMintingLimit', 'selectedTierLimit']);
         }
