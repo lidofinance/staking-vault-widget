@@ -59,13 +59,11 @@ export const tierSettingsFormResolver: Resolver<
     };
   }
 
-  const { tier } = context;
-  const availableTierMintingLimit = tier.shareLimitStETH - tier.liabilityStETH;
-  if (availableTierMintingLimit < values.vaultMintingLimit) {
+  if (values.selectedTierLimit < values.vaultMintingLimit) {
     errors.vaultMintingLimit = {
       type: 'custom',
       message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
-        availableTierMintingLimit,
+        values.selectedTierLimit,
       ),
     };
   }
