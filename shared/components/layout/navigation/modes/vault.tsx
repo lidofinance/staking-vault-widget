@@ -3,7 +3,6 @@ import type { Address } from 'viem';
 import { Stake, Withdraw, External } from '@lidofinance/lido-ui';
 
 import { useVault } from 'modules/vaults';
-import { useLidoSDK } from 'modules/web3';
 import { AddressBadge } from 'shared/components/address-badge';
 import { appPaths } from 'consts/routing';
 
@@ -13,11 +12,10 @@ import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { NavigationLink } from '../navigation-link';
 import { BackAllVaults } from '../back-all-vaults';
 import { VaultError } from '../vault-error';
-import { validators } from '../const';
+import { getValidatorsLink } from '../const';
 import { NavList, SelectedVaultWrapper } from '../styles';
 
 type VaultRoutesConfig = {
-  chainId?: number;
   mode?: '[mode]';
 };
 
@@ -25,7 +23,7 @@ const vaultRoutes = (
   vaultAddress: Address | '[vaultAddress]',
   config?: VaultRoutesConfig,
 ) => {
-  const { chainId = 1, mode } = config ?? {};
+  const { mode } = config ?? {};
 
   return [
     {
@@ -48,7 +46,7 @@ const vaultRoutes = (
     },
     {
       title: 'Validators',
-      path: validators[chainId],
+      path: getValidatorsLink(),
       icon: <External />,
       exact: true,
       external: true,
@@ -74,14 +72,10 @@ const vaultPathnames = vaultRoutes('[vaultAddress]', { mode: '[mode]' }).map(
 
 export const VaultNavigation = () => {
   const { vaultAddress, activeVault } = useVault();
-  const { publicClient } = useLidoSDK();
 
   const availableRoutes = useMemo(
-    () =>
-      vaultAddress
-        ? vaultRoutes(vaultAddress, { chainId: publicClient.chain.id })
-        : [],
-    [vaultAddress, publicClient.chain.id],
+    () => (vaultAddress ? vaultRoutes(vaultAddress) : []),
+    [vaultAddress],
   );
 
   return (
