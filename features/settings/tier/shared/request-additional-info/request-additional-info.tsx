@@ -1,7 +1,7 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
-import { Address } from 'viem';
 
-import type { Tier } from 'modules/vaults';
+import { FormatToken } from 'shared/formatters';
+import type { ExtendTierConfirmation, Tier } from 'modules/vaults';
 
 import { ExpiresInItem } from './content/expires-in-item';
 import { RequestBy } from './content/request-by';
@@ -11,9 +11,9 @@ import {
   ExtendedMetrics,
   OldToNew,
 } from 'features/settings/tier/shared/vault-metrics/extended-metrics';
+import { useTierData } from '../../contexts';
 
-import { toStethValue } from 'utils';
-
+import { ApproveRequest } from './approve-request';
 import {
   ContentContainer,
   List,
@@ -21,36 +21,41 @@ import {
   ListItem,
   Wrapper,
 } from './styles';
-import { useEditTierSettings } from '../../hooks';
-import { ApproveRequest } from './approve-request/approve-request';
 
 type RequestAdditionalInfoProps = {
   proposedTier: Tier;
-  expiryTimestamp: bigint;
-  requestedBy: Address;
   vaultLiabilityStETH: bigint;
-  proposedVaultMintingLimitStETH: bigint;
+  proposal: ExtendTierConfirmation;
 };
 
 export const RequestAdditionalInfo = ({
   proposedTier,
-  expiryTimestamp,
-  requestedBy,
   vaultLiabilityStETH,
-  proposedVaultMintingLimitStETH,
+  proposal,
 }: RequestAdditionalInfoProps) => {
-  useEditTierSettings();
+  const { values } = useTierData();
+
+  const {
+    functionName,
+    proposedVaultLimitStETH,
+    expiryTimestamp,
+    member: requestedBy,
+  } = proposal;
   const tierMintingLimit = proposedTier.shareLimitStETH;
-  const tierMintingLimitValue = toStethValue(tierMintingLimit);
   const tierRemainingCapacity =
     proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
   const newTierRemainingCapacity = tierRemainingCapacity - vaultLiabilityStETH;
-  const tierRemainingCapacityValue = toStethValue(tierRemainingCapacity, false);
-  const newTierRemainingCapacityValue = toStethValue(newTierRemainingCapacity);
+  const isDifferentRemainingCapacity =
+    newTierRemainingCapacity !== tierRemainingCapacity;
 
   // show proposed vault minting limit if it's different from the proposed tier minting limit
   const showProposedVaultMintingLimit =
-    proposedTier?.shareLimitStETH !== proposedVaultMintingLimitStETH;
+    proposedTier?.shareLimitStETH !== proposedVaultLimitStETH;
+
+  const vaultLimitStETH =
+    functionName === 'syncTier'
+      ? values?.vault.totalMintingCapacityStETH
+      : proposedVaultLimitStETH;
 
   return (
     <Wrapper>
@@ -61,20 +66,41 @@ export const RequestAdditionalInfo = ({
               Tier minting limit
             </Text>
             <ContentContainer>
-              <Text size="xxs">{tierMintingLimitValue}</Text>
+              <Text size="xxs">
+                <FormatToken
+                  amount={tierMintingLimit}
+                  maxDecimalDigits={4}
+                  symbol="stETH"
+                />
+              </Text>
             </ContentContainer>
           </ListItem>
-          <ListItem>
-            <Text size="xxs" color="secondary">
-              Tier remaining capacity
-            </Text>
-            <ContentContainer>
-              <OldToNew
-                old={tierRemainingCapacityValue}
-                supposed={newTierRemainingCapacityValue}
-              />
-            </ContentContainer>
-          </ListItem>
+          {functionName === 'changeTier' && (
+            <ListItem>
+              <Text size="xxs" color="secondary">
+                Tier remaining capacity
+              </Text>
+              <ContentContainer>
+                <OldToNew
+                  old={
+                    <FormatToken
+                      amount={tierRemainingCapacity}
+                      maxDecimalDigits={4}
+                      symbol="stETH"
+                    />
+                  }
+                  supposed={
+                    <FormatToken
+                      amount={newTierRemainingCapacity}
+                      maxDecimalDigits={4}
+                      symbol="stETH"
+                    />
+                  }
+                  isChanged={isDifferentRemainingCapacity}
+                />
+              </ContentContainer>
+            </ListItem>
+          )}
         </List>
       </ListContainer>
       <Divider />
@@ -83,8 +109,9 @@ export const RequestAdditionalInfo = ({
       <ListContainer>
         <ExtendedMetrics
           selectedTier={proposedTier}
-          newVaultMintingLimit={proposedVaultMintingLimitStETH}
+          newVaultMintingLimit={vaultLimitStETH}
           showRequestedVaultMintingLimit={showProposedVaultMintingLimit}
+          forceShowChanges
         />
       </ListContainer>
       <Divider />

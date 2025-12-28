@@ -43,6 +43,7 @@ export type HubReportData = {
 
 export type VaultBaseInfo = {
   blockNumber: bigint;
+  blockNumberString: string;
   reportLiabilityShares: bigint;
   address: Address;
   vault: ReturnType<typeof getStakingVaultContract>;
@@ -102,6 +103,38 @@ export type VaultTierInfoArgs = {
   vault: VaultBaseInfo;
 };
 
+export type TierConfirmationFnNames =
+  | 'changeTier'
+  | 'updateVaultShareLimit'
+  | 'syncTier';
+
+export type ExtendTierConfirmation =
+  | {
+      _id: string;
+      vaultAddress: Address;
+      member: Address;
+      expiryTimestamp: bigint;
+      expiryDate: Date;
+      tierId: bigint;
+      functionName: Extract<
+        'changeTier' | 'updateVaultShareLimit',
+        TierConfirmationFnNames
+      >;
+      proposedVaultLimitStETH: bigint;
+      proposedVaultLimitShares: bigint;
+    }
+  | {
+      _id: string;
+      vaultAddress: Address;
+      member: Address;
+      expiryTimestamp: bigint;
+      expiryDate: Date;
+      tierId: bigint;
+      functionName: Extract<'syncTier', TierConfirmationFnNames>;
+      proposedVaultLimitStETH: undefined;
+      proposedVaultLimitShares: undefined;
+    };
+
 export type VaultTierInfo = {
   lidoTVLSharesLimit: bigint;
   minimalReserve: bigint;
@@ -113,9 +146,10 @@ export type VaultTierInfo = {
   tier: Tier;
   proposals: {
     confirmExpiry: bigint;
-    lastProposal: Confirmation | undefined;
+    lastProposal: Confirmation<TierConfirmationFnNames> | undefined;
+    extendLastProposal: ExtendTierConfirmation | undefined;
     proposedVaultLimitStETH: bigint;
-    proposedVaultLimit: bigint;
+    proposedVaultLimitShares: bigint;
   };
 };
 

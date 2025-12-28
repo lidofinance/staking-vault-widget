@@ -54,7 +54,7 @@ const fetchTiersForOperator = async ({
 
       const id = writableTierIds[index];
       const tierName =
-        id === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(id)}`;
+        id === DEFAULT_TIER_ID ? 'Default Tier' : `Tier ${Number(id)}`;
       return { ...tier, id, tierName, shareLimitStETH, liabilityStETH };
     }),
   );
@@ -85,7 +85,11 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
   const { publicClient } = useLidoSDK();
 
   return useQuery({
-    queryKey: [...queryKeys.base, 'node-operator-tier-info'],
+    queryKey: [
+      ...queryKeys.base,
+      'node-operator-tier-info',
+      activeVault?.blockNumberString,
+    ],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(

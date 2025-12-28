@@ -5,8 +5,9 @@ import { FormController } from 'shared/hook-form/form-controller';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
 import {
-  useNodeOperatorTiersInfo,
   useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
   useVaultTierInfo,
   type VaultTierData,
 } from 'modules/vaults';
@@ -19,50 +20,46 @@ const prepareDefaultValues = async (
   tierInfo: VaultTierData,
 ): Promise<TierSettingsFormValues> => {
   const { vault, tier } = tierInfo;
-
-  const tierMintingCapacity = tier.shareLimitStETH - tier.liabilityStETH;
-  const vaultMintingLimit =
-    vault.stETHLimit > tierMintingCapacity
-      ? tierMintingCapacity
-      : vault.stETHLimit;
+  const tierMintingCapacityStEth = tier.shareLimitStETH - tier.liabilityStETH;
 
   return {
     selectedTierId: vault.tierId.toString(),
-    selectedTierLimit: vault.stETHLimit,
-    vaultMintingLimit,
+    selectedTierLimit: tierMintingCapacityStEth,
+    vaultMintingLimit: vault.stETHLimit,
   };
 };
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { activeVault } = useVault();
+  const { activeVault, refetch } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
-  const { refetch, data } = useVaultTierInfo();
-  const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
+  const { data } = useVaultTierInfo();
+  const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
   const promisedTierInfo = useAwaiter(data).awaiter;
-
+  const isDisabledByRoles = !(isNodeOperator || hasAdmin || hasPermission);
   const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled:
+      !isDappActive ||
+      isPendingDisconnect ||
+      isPendingConnect ||
+      isDisabledByRoles,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
-    mode: 'all',
+    mode: 'onChange',
   });
 
   const onSubmit = useCallback(
     async (data: TierSettingsFormValues): Promise<boolean> => {
       const { result } = await editTierSettings(data);
-      await Promise.all([
-        refetch({ cancelRefetch: true, throwOnError: false }),
-        refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
-      ]);
-
+      await refetch({ cancelRefetch: true, throwOnError: false });
       return result.success;
     },
-    [editTierSettings, refetch, refetchNOTiers],
+    [editTierSettings, refetch],
   );
 
   return (
@@ -70,7 +67,6 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
       formObject={formObject}
       onSubmit={onSubmit}
       retryEvent={retryEvent}
-      afterSubmitResetOptions={false}
     >
       {children}
     </FormController>
