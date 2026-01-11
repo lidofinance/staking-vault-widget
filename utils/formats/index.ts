@@ -6,3 +6,4 @@ export * from './from-to-format';
 export * from './format-balance';
 export * from './format-time';
 export * from './format-basis-point';
+export * from './format-eth';

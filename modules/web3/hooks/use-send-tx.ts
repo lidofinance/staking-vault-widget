@@ -32,12 +32,15 @@ export type TransactionEntry = {
   data: Hex;
   value?: bigint;
   loadingActionText?: string;
+  baseDescriptionText?: string;
+  awaitingDescriptionText?: string;
 };
 
 export type SendTransactionArguments = {
   transactions: TransactionEntry[] | (() => Promise<TransactionEntry[]>);
   mainActionLoadingText: string;
   mainActionCompleteText: string;
+  mainActionCompleteDescriptionText?: string;
   forceAtomic?: boolean;
   forceLegacy?: boolean;
   allowRetry?: boolean;
@@ -77,6 +80,7 @@ export const useSendTransaction = () => {
       transactions,
       mainActionCompleteText,
       mainActionLoadingText,
+      mainActionCompleteDescriptionText,
       forceAtomic,
       forceLegacy,
       allowRetry = true,
@@ -103,6 +107,8 @@ export const useSendTransaction = () => {
           onRetry: allowRetry ? retryFire : undefined,
           details: {
             actionCompleteText: mainActionCompleteText,
+            mainActionCompleteDescriptionText:
+              mainActionCompleteDescriptionText,
             actionLoadingText: mainActionLoadingText,
             renderSuccessContent,
           },
@@ -136,6 +142,8 @@ export const useSendTransaction = () => {
             stage: 'signing',
             details: {
               actionCompleteText: mainActionCompleteText,
+              mainActionCompleteDescriptionText:
+                mainActionCompleteDescriptionText,
               actionLoadingText: mainActionLoadingText,
             },
           });
@@ -181,6 +189,7 @@ export const useSendTransaction = () => {
             stage: 'signing',
             details: {
               actionLoadingText: tx.loadingActionText ?? mainActionLoadingText,
+              baseDescriptionText: tx.baseDescriptionText,
             },
           });
 
@@ -203,6 +212,7 @@ export const useSendTransaction = () => {
             stage: 'awaiting',
             details: {
               transactionId: txHash,
+              awaitingDescriptionText: tx.awaitingDescriptionText,
             },
           });
           const txReceipt = await waitForTransactionReceipt(config, {
@@ -222,7 +232,9 @@ export const useSendTransaction = () => {
         dispatchModal({
           type: 'stage',
           stage: 'success',
-          details: { transactionResult },
+          details: {
+            transactionResult,
+          },
         });
 
         return transactionResult;

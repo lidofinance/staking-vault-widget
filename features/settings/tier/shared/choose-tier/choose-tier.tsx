@@ -7,6 +7,7 @@ import { useTierData } from 'features/settings/tier/contexts';
 import { PartitionContainer } from '../partition-container';
 import { TierBaseInfo } from '../tier-base-info';
 import { SelectTierModal } from '../select-tier-modal';
+import { SectionLoader } from '../section-loader';
 
 import { TierSelector } from './styles';
 import { useFormState } from 'react-hook-form';
@@ -18,7 +19,7 @@ export const ChooseTier = () => {
   const { hasPermission } = useVaultPermission('vaultConfiguration');
   const accessPermission =
     !!(hasAdmin || hasPermission || isNodeOperator) && !disabled;
-  const { values, selectedTier } = useTierData();
+  const { values, selectedTier, isLoadingVault } = useTierData();
 
   const isActive =
     selectedTier?.id.toString() === values?.vault.tierId.toString();
@@ -29,23 +30,19 @@ export const ChooseTier = () => {
     [accessPermission],
   );
 
-  if (selectedTier === null) return null;
-
   return (
-    <PartitionContainer title="Choose Tier">
+    <PartitionContainer
+      title="Choose Tier"
+      isLoading={isLoadingVault || selectedTier === null}
+      fallback={<SectionLoader loaderHeight={86} />}
+    >
       <TierSelector
         onClick={openModal}
         $showCursor={accessPermission}
         role="button"
         data-testid="chooseTierWrapper"
       >
-        <TierBaseInfo
-          tierName={selectedTier.tierName}
-          reserveRatio={selectedTier.reserveRatioBP}
-          tierStETHLimit={selectedTier.shareLimitStETH}
-          liabilityStETH={selectedTier.liabilityStETH}
-          isActive={isActive}
-        />
+        <TierBaseInfo tier={selectedTier} isActive={isActive} />
         {accessPermission && <ArrowRight />}
       </TierSelector>
       <SelectTierModal showModal={showModal} closeModal={closeModal} />

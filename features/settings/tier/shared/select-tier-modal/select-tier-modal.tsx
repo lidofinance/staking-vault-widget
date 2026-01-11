@@ -26,6 +26,7 @@ export const SelectTierModal: FC<SelectTierModalProps> = ({
 
   const isOnlyDefaultTier = tiers?.length === 1 && tiers[0].id === 0n;
 
+  // TODO: remove after release
   // temporary disable RRR for now
   const isDisabledRRR = true;
 

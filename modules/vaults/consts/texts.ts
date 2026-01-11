@@ -1,5 +1,7 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { WEI_PER_ETHER } from 'consts/tx';
+import type { TierConfirmationFnNames } from '../types';
+import { toStethValue } from '../../../utils';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -162,7 +164,22 @@ export const vaultTexts = {
         },
       },
       settingsTitle: 'Tier settings',
-      requestTitle: 'Request moving to',
+      tierVotingTitle: (
+        votingType: TierConfirmationFnNames,
+        additionalText: string,
+      ) => {
+        const typeTitles = {
+          changeTier: 'Request moving to',
+          updateVaultShareLimit: 'Request to change minting limit',
+          syncTier: 'Request to update',
+        };
+
+        if (['changeTier', 'syncTier'].includes(votingType)) {
+          return `${typeTitles[votingType]} ${additionalText}`;
+        }
+
+        return typeTitles[votingType];
+      },
       vaultMetricsTitle: 'Current vault metrics',
       request: {
         showButton: {
@@ -183,6 +200,7 @@ export const vaultTexts = {
         errors: {
           lessThanVaultLiability:
             'Requested minting limit is less than current stETH liability',
+          alreadySet: 'Requested minting limit already set',
         },
       },
     },
@@ -204,8 +222,22 @@ export const vaultTexts = {
         `${action} ${expiryHours} hours Confirmation Lifetime` as const,
       confirmSelectedTier: (tierId: string, tierMintingLimit: string) =>
         `You’re requesting to move stVault to Tier ${tierId} with a ${tierMintingLimit} minting limit.` as const,
-      approveSelectedTier: (tierId: bigint) =>
-        `Approving Tier ${tierId} settings.` as const,
+      requestUpdateVaultShareLimitTitle:
+        `Requesting new minting limit` as const,
+      requestUpdateVaultShareLimitDescription: (tierMintingLimit: string) =>
+        `You’re requesting to change stVault minting limit with ${tierMintingLimit}` as const,
+      awaitingRequestUpdateVaultShareLimit:
+        `Waiting for block confirmation for your request. This may take a few moments.` as const,
+      approveChangeTierMintingLimit: `Approving change minting limit` as const,
+      completeChangeTierMintingLimit:
+        `Request to change tier minting limit is approved.` as const,
+      approveSelectedTier: (tierId: bigint, mintingLimitStETH: bigint) =>
+        `Approving Tier ${tierId} change tier with ${toStethValue(mintingLimitStETH)} minting limit.` as const,
+      completeChangeTier: (tierId: bigint, mintingLimitStETH: bigint) =>
+        `Request for tier ${tierId} with ${toStethValue(mintingLimitStETH)} minting limit approved` as const,
+      syncTier: (tierName: string) => `Applying ${tierName} updates` as const,
+      completeSyncTier: (tierName: string) =>
+        `Request to apply ${tierName} updates was sent` as const,
       submit: (counter: number) => {
         if (counter > 0)
           return `Submit ${counter} transaction${counter > 1 ? 's' : ''}`;

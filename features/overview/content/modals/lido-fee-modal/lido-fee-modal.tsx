@@ -33,6 +33,16 @@ const formulasMap: Record<
       type: 'variable',
       hasHighlight: true,
     },
+    {
+      label: '×',
+      type: 'operation',
+      hasHighlight: false,
+    },
+    {
+      label: 'Lido Core APR',
+      type: 'variable',
+      hasHighlight: true,
+    },
   ],
   liquidityFee: [
     {

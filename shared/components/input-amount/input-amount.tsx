@@ -49,8 +49,10 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
     },
     ref,
   ) => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const defaultValue = useMemo(() => (value ? formatEther(value) : ''), []);
+    const defaultValue = useMemo(
+      () => (typeof value === 'bigint' ? formatEther(value) : ''),
+      [], // eslint-disable-line react-hooks/exhaustive-deps
+    );
 
     const lastInputValue = useRef(defaultValue);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -135,9 +137,14 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
         input.value = '';
       } else {
         const parsedValue = parseEtherSafe(input.value);
-        // only change string state if casted values differ
-        // this allows user to enter 0.100 without immediate change to 0.1
-        if (parsedValue !== value) {
+
+        if (value === 0n && parsedValue === value) {
+          // fix for initial value if value === 0n
+          input.value = formatEther(parsedValue);
+          lastInputValue.current = input.value;
+        } else if (parsedValue !== value) {
+          // only change string state if casted values differ
+          // this allows user to enter 0.100 without immediate change to 0.1
           input.value = formatEther(value);
           // prevents rollback to incorrect value in onChange
           lastInputValue.current = input.value;

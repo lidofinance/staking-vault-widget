@@ -9,11 +9,11 @@ import {
 import {
   useVault,
   vaultTexts,
-  GoToVault,
   useVaultConfirmingRoles,
   useVaultTierInfo,
   useNodeOperatorTiersInfo,
   useReportCalls,
+  useVaultPermission,
 } from 'modules/vaults';
 import { toStethValue } from 'utils';
 import { useLidoSDK } from 'modules/web3';
@@ -28,6 +28,7 @@ export const useEditTierSettings = () => {
   const prepareReportCalls = useReportCalls();
   const { shares } = useLidoSDK();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
 
   return {
     editTierSettings: useCallback(
@@ -38,7 +39,7 @@ export const useEditTierSettings = () => {
           '[useEditTierSettings] activeVault is undefined',
         );
 
-        const transactions: TransactionEntry[] = [];
+        const transactions: TransactionEntry[] = [...prepareReportCalls()];
         const { selectedTierId, vaultMintingLimit } = formValues;
 
         const selectedTier = nodeOperatorTiers?.tiers?.find(
@@ -55,54 +56,111 @@ export const useEditTierSettings = () => {
             ? selectedTier.shareLimit
             : await shares.convertToShares(BigInt(vaultMintingLimit));
 
-        const bothRequestingRoles = isNodeOperator && hasAdmin;
+        const bothRequestingRoles =
+          isNodeOperator && (hasAdmin || hasPermission);
+        const isUpdatingVaultShareLimit =
+          BigInt(selectedTierId) === tierInfo.vault.tierId;
 
-        const nodeOperatorRequest = {
-          ...activeVault.operatorGrid.encode.changeTier([
-            activeVault.address,
-            BigInt(selectedTierId),
-            mintingLimitInShares,
-          ]),
-          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-            selectedTierId,
-            toStethValue(vaultMintingLimit),
-          ),
-        };
+        if (isUpdatingVaultShareLimit) {
+          const texts = {
+            loadingActionText:
+              vaultTexts.actions.settings.requestUpdateVaultShareLimitTitle,
+            baseDescriptionText:
+              vaultTexts.actions.settings.requestUpdateVaultShareLimitDescription(
+                toStethValue(vaultMintingLimit),
+              ),
+            awaitingDescriptionText:
+              vaultTexts.actions.settings.awaitingRequestUpdateVaultShareLimit,
+          };
 
-        const defaultAdminRequest = {
-          ...activeVault.dashboard.encode.changeTier([
-            BigInt(selectedTierId),
-            mintingLimitInShares,
-          ]),
-          loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
-            selectedTierId,
-            toStethValue(vaultMintingLimit),
-          ),
-        };
+          const nodeOperatorUpdateLimitRequest = {
+            ...activeVault.operatorGrid.encode.updateVaultShareLimit([
+              activeVault.address,
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
 
-        // if node operator, use operator grid contract
-        // if not node operator, use dashboard contract
-        if (bothRequestingRoles) {
-          transactions.push(
-            ...prepareReportCalls(),
-            nodeOperatorRequest,
-            defaultAdminRequest,
-          );
-        } else if (isNodeOperator) {
-          transactions.push(nodeOperatorRequest);
+          const roleOrAdminUpdateLimitRequest = {
+            ...activeVault.dashboard.encode.updateShareLimit([
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
+
+          if (isNodeOperator) {
+            transactions.push(nodeOperatorUpdateLimitRequest);
+          }
+
+          if (hasAdmin || hasPermission) {
+            transactions.push(roleOrAdminUpdateLimitRequest);
+          }
         } else {
-          transactions.push(defaultAdminRequest);
+          const texts = {
+            loadingActionText: vaultTexts.actions.settings.confirmSelectedTier(
+              selectedTierId,
+              toStethValue(vaultMintingLimit),
+            ),
+          };
+
+          const nodeOperatorChangeTierRequest = {
+            ...activeVault.operatorGrid.encode.changeTier([
+              activeVault.address,
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
+
+          const defaultAdminRequest = {
+            ...activeVault.dashboard.encode.changeTier([
+              BigInt(selectedTierId),
+              mintingLimitInShares,
+            ]),
+            ...texts,
+          };
+
+          // if node operator, use operator grid contract
+          // if not node operator, use dashboard contract
+          if (isNodeOperator) {
+            transactions.push(nodeOperatorChangeTierRequest);
+          }
+
+          if (hasAdmin || hasPermission) {
+            transactions.push(defaultAdminRequest);
+          }
         }
 
-        const loadingText = bothRequestingRoles ? 'Approving' : 'Requesting';
-        const completeText = bothRequestingRoles ? 'Approve' : 'Request';
+        const loadingTextHead = bothRequestingRoles
+          ? 'Approving'
+          : 'Requesting';
+        const loadingTextBody = isUpdatingVaultShareLimit
+          ? `to change vault minting limit with ${toStethValue(vaultMintingLimit)}`
+          : `to move to ${selectedTier.tierName}`;
+
+        const completeTextBody = isUpdatingVaultShareLimit
+          ? 'New minting limit request'
+          : `Request for ${selectedTier.tierName}`;
+        const completeTextTail = bothRequestingRoles ? 'approved' : 'submitted';
+
+        const role = isNodeOperator
+          ? 'Vault Owner or the Role with permission'
+          : 'Node Operator';
+
+        const actionDescription = isUpdatingVaultShareLimit
+          ? `request for new ${toStethValue(vaultMintingLimit)} minting limit`
+          : `request to move stVault to ${selectedTier.tierName} with a ${toStethValue(vaultMintingLimit)} minting limit`;
+
+        const mainActionCompleteDescriptionText = bothRequestingRoles
+          ? `Your ${actionDescription} has been approved successfully.`
+          : `Your ${actionDescription} has been submitted successfully. It is now pending confirmation from the ${role}.`;
 
         const result = await withSuccess(
           sendTX({
             transactions,
-            mainActionLoadingText: `${loadingText} to move to ${selectedTier.tierName}`,
-            mainActionCompleteText: `${completeText} for ${selectedTier.tierName} submitted`,
-            renderSuccessContent: GoToVault,
+            mainActionLoadingText: `${loadingTextHead} ${loadingTextBody}`,
+            mainActionCompleteText: `${completeTextBody} ${completeTextTail}`,
+            mainActionCompleteDescriptionText,
             allowRetry: false,
           }),
         );
@@ -120,6 +178,7 @@ export const useEditTierSettings = () => {
         hasAdmin,
         isNodeOperator,
         prepareReportCalls,
+        hasPermission,
       ],
     ),
     ...rest,

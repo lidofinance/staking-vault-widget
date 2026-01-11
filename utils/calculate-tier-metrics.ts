@@ -1,77 +1,103 @@
 import { Tier, TierVault } from 'modules/vaults';
 import { bigIntMin } from 'utils/bigint-math';
-import { formatPercent, toStethValue } from 'utils';
+import { formatPercent, formatBasisPoint } from 'utils';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULT_TOTAL_BASIS_POINTS_BN,
 } from 'modules/vaults';
 
 type CalculatedMetricsArgs = {
-  newTier?: Tier | null;
+  tier?: Tier | null;
   vault: TierVault;
-  newVaultMintingLimit: bigint;
+  newVaultMintingLimit: bigint | undefined;
+};
+
+type MetricComparison<T> = {
+  oldValue: T;
+  newValue: T;
+  isChanged: boolean;
 };
 
 type CalculatedMetrics = {
-  newMintingCapacityValue?: string;
-  newUtilizationValue?: string;
-  forcedRebalanceThresholdBPValue?: string;
-  reserveRatioBPValue?: string;
-  infraFeeBPValue?: string;
-  liquidityFeeBPValue?: string;
-  reservationFeeBPValue?: string;
+  totalMintingCapacity: MetricComparison<bigint>;
+  utilization: MetricComparison<string>;
+  forcedRebalanceThresholdBP: MetricComparison<string>;
+  reserveRatioBP: MetricComparison<string>;
+  infraFeeBP: MetricComparison<string>;
+  liquidityFeeBP: MetricComparison<string>;
+  reservationFeeBP: MetricComparison<string>;
+};
+
+const compareAndFormat = (
+  vaultValue: number,
+  tierValue: number,
+): MetricComparison<string> => {
+  const oldValue = formatBasisPoint(vaultValue);
+  const newValue = formatBasisPoint(tierValue);
+  return {
+    oldValue,
+    newValue,
+    isChanged: vaultValue !== tierValue,
+  };
+};
+
+const calculateUtilization = (
+  liabilityStETH: bigint,
+  totalMintingCapacityStETH: bigint,
+): number => {
+  if (totalMintingCapacityStETH === 0n) return 0;
+
+  return (
+    Number(
+      (liabilityStETH * VAULT_TOTAL_BASIS_POINTS_BN) /
+        totalMintingCapacityStETH,
+    ) / VAULT_TOTAL_BASIS_POINTS
+  );
 };
 
 export const calculateTierMetrics = ({
-  newTier,
+  tier,
   vault,
-  newVaultMintingLimit,
-}: CalculatedMetricsArgs): CalculatedMetrics => {
-  if (!newTier)
-    return {
-      newMintingCapacityValue: undefined,
-      newUtilizationValue: undefined,
-    };
+  newVaultMintingLimit = 0n,
+}: CalculatedMetricsArgs): CalculatedMetrics | undefined => {
+  if (!tier) return undefined;
 
   const newTotalMintingCapacityBigInt = bigIntMin(
     newVaultMintingLimit ?? 0n,
     vault.totalMintingCapacityStETH,
   );
-  const newMintingCapacityValue = toStethValue(newTotalMintingCapacityBigInt);
 
-  const newUtilizationValue = formatPercent.format(
-    newTotalMintingCapacityBigInt === 0n
-      ? 0
-      : Number(
-          ((vault.liabilityStETH ?? 0n) * VAULT_TOTAL_BASIS_POINTS_BN) /
-            newTotalMintingCapacityBigInt,
-        ) / VAULT_TOTAL_BASIS_POINTS,
+  const oldUtilization = calculateUtilization(
+    vault.liabilityStETH,
+    vault.totalMintingCapacityStETH,
   );
-
-  const forcedRebalanceThresholdBPValue = formatPercent.format(
-    newTier.forcedRebalanceThresholdBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-  const reserveRatioBPValue = formatPercent.format(
-    newTier.reserveRatioBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-
-  const infraFeeBPValue = formatPercent.format(
-    newTier.infraFeeBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-  const liquidityFeeBPValue = formatPercent.format(
-    newTier.liquidityFeeBP / VAULT_TOTAL_BASIS_POINTS,
-  );
-  const reservationFeeBPValue = formatPercent.format(
-    newTier.reservationFeeBP / VAULT_TOTAL_BASIS_POINTS,
+  const newUtilization = calculateUtilization(
+    vault.liabilityStETH,
+    newTotalMintingCapacityBigInt,
   );
 
   return {
-    newMintingCapacityValue,
-    newUtilizationValue,
-    forcedRebalanceThresholdBPValue,
-    reserveRatioBPValue,
-    infraFeeBPValue,
-    liquidityFeeBPValue,
-    reservationFeeBPValue,
+    totalMintingCapacity: {
+      oldValue: vault.totalMintingCapacityStETH,
+      newValue: newTotalMintingCapacityBigInt,
+      isChanged:
+        vault.totalMintingCapacityStETH !== newTotalMintingCapacityBigInt,
+    },
+    utilization: {
+      oldValue: formatPercent.format(oldUtilization),
+      newValue: formatPercent.format(newUtilization),
+      isChanged: oldUtilization !== newUtilization,
+    },
+    forcedRebalanceThresholdBP: compareAndFormat(
+      vault.forcedRebalanceThresholdBP,
+      tier.forcedRebalanceThresholdBP,
+    ),
+    reserveRatioBP: compareAndFormat(vault.reserveRatioBP, tier.reserveRatioBP),
+    infraFeeBP: compareAndFormat(vault.infraFeeBP, tier.infraFeeBP),
+    liquidityFeeBP: compareAndFormat(vault.liquidityFeeBP, tier.liquidityFeeBP),
+    reservationFeeBP: compareAndFormat(
+      vault.reservationFeeBP,
+      tier.reservationFeeBP,
+    ),
   };
 };

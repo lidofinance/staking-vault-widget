@@ -4,7 +4,7 @@ import { useEstimateGas } from 'wagmi';
 import { useFormContext, useFormState } from 'react-hook-form';
 
 import {
-  TransactionEntry,
+  type TransactionEntry,
   useSendTransaction,
   withSuccess,
   useDappStatus,

@@ -1,7 +1,4 @@
-import {
-  RequestChangeLimit,
-  TierInfo,
-} from 'features/settings/tier/components';
+import { VotingRequest, TierInfo } from 'features/settings/tier/components';
 import {
   TierDataProvider,
   TierFormProvider,
@@ -12,12 +9,12 @@ import { TierPage } from './styles';
 export const TierSettings = () => {
   return (
     <TierDataProvider>
-      <TierPage>
-        <RequestChangeLimit />
-        <TierFormProvider>
+      <TierFormProvider>
+        <TierPage>
+          <VotingRequest />
           <TierInfo />
-        </TierFormProvider>
-      </TierPage>
+        </TierPage>
+      </TierFormProvider>
     </TierDataProvider>
   );
 };
