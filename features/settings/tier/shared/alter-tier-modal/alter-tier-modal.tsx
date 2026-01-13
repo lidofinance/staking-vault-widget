@@ -36,9 +36,10 @@ export const AlterTierModal: FC<AlterTierModalProps> = ({
       open={isOpen}
       onClose={closeModal}
       windowSize="md"
+      data-testid="syncTier-modal"
     >
       <DividerStyled />
-      <Container>
+      <Container data-testid="syncTier-modal-content">
         <TierLimits />
         <DividerStyled />
         <BaseMetrics />
