@@ -5,7 +5,6 @@ import {
   useVaultConfirmingRoles,
   MultiplePermissionedSubmitButton,
   useVaultPermission,
-  useVaultTierInfo,
   VAULTS_ALL_ROLES,
 } from 'modules/vaults';
 
@@ -18,7 +17,14 @@ const configurationRoles = [
 export const TierFormAction = () => {
   const {
     watch,
-    formState: { isDirty, isSubmitting, isValid, defaultValues, disabled },
+    formState: {
+      isDirty,
+      isSubmitting,
+      isValid,
+      defaultValues,
+      disabled,
+      isLoading,
+    },
   } = useFormContext();
   const {
     hasConfirmingRole,
@@ -26,9 +32,9 @@ export const TierFormAction = () => {
     hasNodeOperatorManager,
     isNodeOperator,
   } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('vaultConfiguration');
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
 
-  const { data: vaultTierInfo } = useVaultTierInfo();
   const [selectedTierId, vaultMintingLimit] = watch([
     'selectedTierId',
     'vaultMintingLimit',
@@ -54,14 +60,12 @@ export const TierFormAction = () => {
     (hasConfirmingRole ||
       hasAdmin ||
       hasNodeOperatorManager ||
-      hasPermission ||
+      hasVaultConfigurationPermission ||
       isNodeOperator) &&
-    !disabled &&
-    selectedTierId &&
-    vaultTierInfo?.tier.id !== BigInt(selectedTierId);
+    !disabled;
   const buttonDisabled = !isDirty || isSubmitting || !isValid;
 
-  if (!showButton) {
+  if (!showButton || isLoading) {
     return null;
   }
 

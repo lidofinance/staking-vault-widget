@@ -1,16 +1,18 @@
 import { FC } from 'react';
+import invariant from 'tiny-invariant';
+
+import { isNumber } from 'utils';
 
 import { TextBold } from './styles';
 
-import { ConfirmDataItemProps } from './types';
-import invariant from 'tiny-invariant';
+import type { ConfirmDataItemProps } from './types';
 
 export const ConfirmTime: FC<ConfirmDataItemProps> = ({
   payload,
   dataTestId,
 }) => {
   invariant(
-    typeof payload === 'number' || typeof payload === 'string',
+    isNumber(payload) || typeof payload === 'string',
     'Payload must be a string | number',
   );
   return (

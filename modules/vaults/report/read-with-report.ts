@@ -108,10 +108,15 @@ export const readWithReport = async <
     // Extract block number from last result and remove it from results
     const multicallBlockNumber = allResults[allResults.length - 1] as bigint;
     const [, ...results] = allResults.slice(0, -1);
+    const outline =
+      'text-shadow:0 1px 1px rgba(0,0,0,.6),0 0 2px rgba(255,255,255,.35)';
     // eslint-disable-next-line no-console
     console.log(
-      'multicall executed at block:',
-      multicallBlockNumber.toString(),
+      '%cMULTICALL%c ▶ %cexecuted at block:%c ' + multicallBlockNumber,
+      'background:#22c55e;color:#0b1220;padding:2px 8px;border-radius:6px;font-weight:900',
+      `color:#22c55e;font-weight:900;${outline}`,
+      `background:rgba(0,0,0,.35);color:#f8fafc;padding:2px 6px;border-radius:6px;font-weight:700;${outline}`,
+      `background:rgba(0,0,0,.55);color:#a7f3d0;padding:2px 6px;border-radius:6px;font-weight:900;${outline}`,
     );
 
     return results as MulticallReturnType<TContracts, false>;

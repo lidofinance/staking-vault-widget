@@ -1,70 +1,73 @@
-import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useCallback } from 'react';
+
+import { useVault, useVaultTierInfo } from 'modules/vaults';
 
 import {
-  useVault,
-  useVaultConfirmingRoles,
-  useNodeOperatorTiersInfo,
-  useVaultTierInfo,
-  useVaultPermission,
-} from 'modules/vaults';
-
-import { useChangeTierRequest } from 'features/settings/tier/hooks';
-import { checkUserIsProposer } from 'features/settings/tier/const';
+  useConfirmTierVoting,
+  useTierVoting,
+} from 'features/settings/tier/hooks';
 
 import { ButtonStyled } from './styles';
-import { isBigint } from '../../../../../../utils';
+import { useFormContext } from 'react-hook-form';
 
 export const ApproveRequest = () => {
-  const { approveMovingTier, approving } = useChangeTierRequest();
-  const { data: vaultTierInfo, refetch } = useVaultTierInfo();
-  const { refetch: refetchNOTiers } = useNodeOperatorTiersInfo();
-  const { address } = useAccount();
-  const { activeVault } = useVault();
-  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
-  const { hasPermission: hasVaultConfigurationPermission } =
-    useVaultPermission('vaultConfiguration');
+  const {
+    approveMovingTier,
+    approveSyncTier,
+    approveUpdateMintingLimit,
+    approving,
+  } = useConfirmTierVoting();
+  const { refetch: refetchVault } = useVault();
+  const { data: vaultTierInfo } = useVaultTierInfo();
+  const { reset: resetForm } = useFormContext();
+  const tierVoting = useTierVoting();
 
-  const proposal = vaultTierInfo?.proposals.lastProposal;
-  const hasAccessToApproving =
-    !!address &&
-    ((isNodeOperator && activeVault?.nodeOperator !== proposal?.member) ||
-      (hasVaultConfigurationPermission &&
-        activeVault?.nodeOperator === proposal?.member) ||
-      hasAdmin);
-
-  const [isDashboardProposer, isNOProposer] = useMemo(() => {
-    const isDashboardProposer = checkUserIsProposer(
-      activeVault?.owner,
-      proposal?.member,
-    );
-
-    const isNOProposer = checkUserIsProposer(
-      activeVault?.nodeOperator,
-      proposal?.member,
-    );
-
-    return [isDashboardProposer, isNOProposer];
-  }, [activeVault, proposal?.member]);
+  const { proposal, isTheSameUser, proposedTier } = tierVoting ?? {};
 
   const handleApprove = useCallback(async () => {
-    const [_, tierId, mintingLimit] = proposal?.decodedData.args ?? [];
-    if (!isBigint(tierId) || !isBigint(mintingLimit)) return;
+    if (!proposal || !proposedTier || !vaultTierInfo) return;
+    const { functionName, proposedVaultLimitShares, proposedVaultLimitStETH } =
+      proposal;
 
-    await approveMovingTier(tierId, mintingLimit);
-    await Promise.all([
-      refetch({ cancelRefetch: true, throwOnError: false }),
-      refetchNOTiers({ cancelRefetch: true, throwOnError: false }),
-    ]);
-  }, [approveMovingTier, refetch, refetchNOTiers, proposal]);
+    if (functionName === 'changeTier') {
+      await approveMovingTier(
+        proposedTier,
+        proposedVaultLimitShares,
+        proposedVaultLimitStETH,
+      );
+    } else if (functionName === 'updateVaultShareLimit') {
+      await approveUpdateMintingLimit(
+        proposedTier.id,
+        proposedVaultLimitShares,
+        proposedVaultLimitStETH,
+      );
+    } else if (functionName === 'syncTier') {
+      await approveSyncTier(proposedTier);
+    }
 
-  if (
-    !proposal ||
-    !hasAccessToApproving ||
-    (hasAdmin && isDashboardProposer) ||
-    (isNodeOperator && isNOProposer)
-  )
-    return null;
+    await refetchVault().then(() =>
+      resetForm({
+        selectedTierId: proposal.tierId.toString(),
+        selectedTierLimit:
+          proposedTier.shareLimitStETH - proposedTier.liabilityStETH,
+        vaultMintingLimit:
+          functionName !== 'syncTier'
+            ? proposal.proposedVaultLimitStETH
+            : vaultTierInfo.vault.stETHLimit,
+      }),
+    );
+  }, [
+    approveMovingTier,
+    approveSyncTier,
+    approveUpdateMintingLimit,
+    refetchVault,
+    proposal,
+    proposedTier,
+    resetForm,
+    vaultTierInfo,
+  ]);
+
+  if (!proposal || !proposedTier || isTheSameUser) return null;
 
   return (
     <ButtonStyled

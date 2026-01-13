@@ -4,6 +4,7 @@ import {
   ContentWrapper,
   SectionContainer,
 } from 'features/settings/shared/components';
+import { AlterTierInfo } from 'features/settings/tier/components/alter-tier-info';
 import {
   ChooseTier,
   Title,
@@ -19,6 +20,7 @@ export const TierInfo = () => {
         <Title data-testid="title" as="h2">
           {vaultTexts.actions.tier.settingsTitle}
         </Title>
+        <AlterTierInfo />
         <ChooseTier />
         <MintingLimit />
         <VaultMetrics />

@@ -16,7 +16,10 @@ export type ModalRenderSuccessContent = (props: {
 
 type TransactionModalDetails = {
   actionLoadingText: string;
+  baseDescriptionText?: string;
+  awaitingDescriptionText?: string;
   actionCompleteText: string;
+  mainActionCompleteDescriptionText?: string;
   renderSuccessContent?: ModalRenderSuccessContent;
   errorText?: string;
   errorDescription?: string;
