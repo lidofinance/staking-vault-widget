@@ -76,7 +76,7 @@ export const RequestAdditionalInfo = ({
             </ContentContainer>
           </ListItem>
           {functionName === 'changeTier' && (
-            <ListItem>
+            <ListItem data-testid="tierRequest-tierRemainingCapacity-listItem">
               <Text size="xxs" color="secondary">
                 Tier remaining capacity
               </Text>
