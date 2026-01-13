@@ -56,13 +56,17 @@ export const TierBaseInfo: FC<PropsWithChildren<TierBaseInfoProps>> = ({
             <Text size="xxs" color="secondary">
               Minting limit
             </Text>
-            <Text size="xxs">
+            <Text size="xxs" data-testid="tierMintingLimit">
               <TierLimitAmount amount={shareLimitStETH} />
             </Text>
           </MintingLimit>
           {!!shareLimitStETH && (
             <MintingAvailable>
-              <Text size="xxs" color="secondary">
+              <Text
+                size="xxs"
+                color="secondary"
+                data-testid="tierAvailableMinting"
+              >
                 Available &nbsp;
               </Text>
               <Text size="xxs">

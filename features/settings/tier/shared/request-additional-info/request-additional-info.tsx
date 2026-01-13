@@ -61,12 +61,12 @@ export const RequestAdditionalInfo = ({
     <Wrapper>
       <ListContainer>
         <List>
-          <ListItem>
+          <ListItem data-testid="tierRequest-tierMintingLimit-listItem">
             <Text size="xxs" color="secondary">
               Tier minting limit
             </Text>
             <ContentContainer>
-              <Text size="xxs">
+              <Text size="xxs" data-testid="tierRequest-tierMintingLimit">
                 <FormatToken
                   amount={tierMintingLimit}
                   maxDecimalDigits={4}
@@ -97,6 +97,7 @@ export const RequestAdditionalInfo = ({
                     />
                   }
                   isChanged={isDifferentRemainingCapacity}
+                  dataTestId="tierRequest-tierRemainingCapacity"
                 />
               </ContentContainer>
             </ListItem>
@@ -112,24 +113,25 @@ export const RequestAdditionalInfo = ({
           newVaultMintingLimit={vaultLimitStETH}
           showRequestedVaultMintingLimit={showProposedVaultMintingLimit}
           forceShowChanges
+          dataTestId="tierRequest"
         />
       </ListContainer>
       <Divider />
       <ListContainer>
         <List>
-          <ListItem>
+          <ListItem data-testid="tierRequest-requestBy-listItem">
             <Text size="xxs" color="secondary">
               Request by
             </Text>
-            <ContentContainer>
+            <ContentContainer data-testid="tierRequest-requestBy">
               <RequestBy address={requestedBy} />
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem data-testid="tierRequest-expiresIn-listItem">
             <Text size="xxs" color="secondary">
               Expires in
             </Text>
-            <ContentContainer>
+            <ContentContainer data-testid="tierRequest-expiresIn">
               <ExpiresInItem expiryTimestamp={expiryTimestamp} />
             </ContentContainer>
           </ListItem>
