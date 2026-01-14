@@ -157,7 +157,10 @@ export const useSendTransaction = () => {
           // tx status is ambiguous in this case
           let callStatus: WaitForCallsStatusReturnType;
           try {
-            callStatus = await waitForCallsStatus(config, { id });
+            callStatus = await waitForCallsStatus(config, {
+              id,
+              timeout: 2 * 60 * 1000, // two minutes for tx to complete
+            });
           } catch (error) {
             throw new SendTxGetStatusError(error);
           }
