@@ -23,7 +23,7 @@ import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
-import { DisplayableError } from 'modules/vaults';
+import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
 import { useAddressValidation } from 'providers/address-validation-provider';
 import { useDappStatus } from 'modules/web3';
 
@@ -140,7 +140,10 @@ export const useSendTransaction = () => {
             },
           });
 
-          const { id } = await sendCalls(config, { calls, forceAtomic });
+          const { id } = await sendCalls(config, {
+            calls,
+            forceAtomic,
+          });
 
           dispatchModal({
             type: 'stage',
@@ -150,7 +153,14 @@ export const useSendTransaction = () => {
             },
           });
 
-          const callStatus = await waitForCallsStatus(config, { id });
+          // special handling when we were unable to get status
+          // tx status is ambiguous in this case
+          let callStatus: WaitForCallsStatusReturnType;
+          try {
+            callStatus = await waitForCallsStatus(config, { id });
+          } catch (error) {
+            throw new SendTxGetStatusError(error);
+          }
 
           // TODO: async check if user want to retry with legacy flow
           if (callStatus.status === 'failure') {
@@ -227,12 +237,16 @@ export const useSendTransaction = () => {
 
         return transactionResult;
       } catch (error) {
-        const errorText =
-          error instanceof DisplayableError ? error.message : undefined;
+        const displayError =
+          error instanceof DisplayableError ? error : undefined;
         dispatchModal({
           type: 'stage',
           stage: 'error',
-          details: { errorText },
+          allowRetry: displayError?.isRetryable,
+          details: {
+            errorText: displayError?.message,
+            errorTitle: displayError?.errorTitle,
+          },
         });
         console.error(`[useSendTransaction] TX Error`, error);
         throw error;

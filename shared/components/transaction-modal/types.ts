@@ -19,7 +19,7 @@ type TransactionModalDetails = {
   actionCompleteText: string;
   renderSuccessContent?: ModalRenderSuccessContent;
   errorText?: string;
-  errorDescription?: string;
+  errorTitle?: string;
   // txHash or callId depending on isBatch
   transactionId?: string;
   transactionResult?: TransactionResponse;
@@ -44,6 +44,7 @@ export type TransactionModalAction =
   | {
       type: 'stage';
       stage: Exclude<TransactionModalStage, 'none'>;
+      allowRetry?: boolean;
       details?: Partial<TransactionModalDetails>;
     };
 

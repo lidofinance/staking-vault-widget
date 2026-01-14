@@ -43,7 +43,7 @@ const getModalTitle = (state: TransactionModalState) => {
     case 'awaiting':
       return state.details.actionLoadingText;
     case 'error':
-      return 'Transaction error';
+      return state.details.errorTitle ?? 'Transaction error';
     case 'success':
       return state.details.actionCompleteText;
     default:
