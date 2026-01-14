@@ -15,9 +15,9 @@ type MintingCapacityTooltipProps = {
 const texts: Record<MintingConstraintType, string> = {
   minimalReserve: 'Constrained by Minimal reserve',
   reserveRatio: 'Constrained by Reserve ratio',
-  vault: 'Constrained by total stVaults remaining capacity',
-  tier: 'Constrained by tier remaining capacity',
-  group: 'Constrained by node operator remaining capacity',
+  vault: 'Constrained by Total stVaults remaining capacity',
+  tier: 'Constrained by Tier remaining capacity',
+  group: 'Constrained by Node Operator remaining capacity',
   lido: 'Constrained by stVault minting limit',
 };
 

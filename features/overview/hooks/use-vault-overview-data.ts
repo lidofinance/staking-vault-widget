@@ -85,6 +85,7 @@ export type VaultInfo = VaultConnection &
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
     beaconChainDepositsPaused: boolean;
+    isReportFresh: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -249,6 +250,7 @@ const getVaultData = async ({
     redemptionShares,
     redemptionStETH,
     beaconChainDepositsPaused,
+    isReportFresh,
     ...rest,
     ...restVaultRecord,
   };
@@ -300,6 +302,7 @@ const selectOverviewData = ({
     rebalanceShares,
     rebalanceStETH,
     beaconChainDepositsPaused,
+    isReportFresh,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -461,6 +464,7 @@ const selectOverviewData = ({
     rebalanceStETH,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
+    isReportFresh,
   };
 };
 

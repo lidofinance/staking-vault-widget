@@ -67,10 +67,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         publicClient.getBlockNumber(),
       ]);
 
-      // TODO: remove after monitoring error with InvalidProof()
-      // eslint-disable-next-line no-console
-      console.log('getting report data for block:', blockNumber);
-
       const [
         latestHubReportTimestamp,
         latestDataRefSlot,
@@ -136,6 +132,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
+        blockNumberString: blockNumber.toString(),
         ...connection,
       };
     },

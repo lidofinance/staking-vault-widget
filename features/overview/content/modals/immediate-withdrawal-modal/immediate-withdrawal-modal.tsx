@@ -41,6 +41,7 @@ export const ImmediateWithdrawalModal = () => {
     withdrawableEther,
     balance,
     pendingUnlock,
+    isReportFresh,
     minimalReserve,
     stagedBalanceWei,
     isSlashingHappened,
@@ -115,7 +116,9 @@ export const ImmediateWithdrawalModal = () => {
             amountSymbol="ETH"
             dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
           >
-            {!!pendingUnlock && <PendingUnlock amount={pendingUnlock} />}
+            {!!pendingUnlock && !isReportFresh && (
+              <PendingUnlock amount={pendingUnlock} />
+            )}
             {!!minimalReserve && mintingConstraintBy === 'minimalReserve' && (
               <MinimalReserveLock amount={minimalReserve} />
             )}

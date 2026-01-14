@@ -7,10 +7,12 @@ const templateAreas = {
     'header header header'
     'error error error'
     'nav content empty'
+    'cookie cookie cookie'
     'footer footer footer';`,
   default: `
     'header header header'
     'nav content empty'
+    'cookie cookie cookie'
     'footer footer footer';`,
 };
 
@@ -19,10 +21,12 @@ const tabletTemplateAreas = {
     'header header'
     'error error'
     'nav content'
+    'cookie cookie'
     'footer footer';`,
   default: `
     'header header'
     'nav content'
+    'cookie cookie'
     'footer footer';`,
 };
 
@@ -31,10 +35,12 @@ const mobileTemplateAreas = {
     'header'
     'error'
     'content'
+    'cookie'
     'footer';`,
   default: `
     'header'
     'content'
+    'cookie'
     'footer';`,
 };
 

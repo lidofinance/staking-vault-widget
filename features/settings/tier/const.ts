@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FieldErrors, Resolver } from 'react-hook-form';
+import type { FieldErrors, Resolver, ResolverResult } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
 import { type Address, isAddressEqual } from 'viem';
@@ -9,28 +9,13 @@ import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import type { TierSettingsFormValues } from './types';
 
-export const tierSettingsFormSchema = z
-  .object({
-    selectedTierId: z.string(),
-    selectedTierLimit: z.bigint(),
-    vaultMintingLimit: z
-      .bigint({ message: vaultTexts.common.errors.amount.required })
-      .min(1n, vaultTexts.common.errors.amount.min(0n)),
-  })
-  .superRefine((data, ctx) => {
-    if (data.vaultMintingLimit > data.selectedTierLimit) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.too_big,
-        maximum: data.selectedTierLimit,
-        inclusive: true,
-        type: 'bigint',
-        path: ['vaultMintingLimit'],
-        message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
-          data.selectedTierLimit,
-        ),
-      });
-    }
-  });
+export const tierSettingsFormSchema = z.object({
+  selectedTierId: z.string(),
+  selectedTierLimit: z.bigint(),
+  vaultMintingLimit: z
+    .bigint({ message: vaultTexts.common.errors.amount.required })
+    .min(1n, vaultTexts.common.errors.amount.min(0n)),
+});
 
 const baseTierValidation = zodResolver<
   TierSettingsFormValues,
@@ -59,19 +44,51 @@ export const tierSettingsFormResolver: Resolver<
   );
 
   const context = await awaitWithTimeout(awaitableContext, 5000);
-  if (context && context.vault.liabilityStETH >= values.vaultMintingLimit) {
-    (
-      baseResult.errors as FieldErrors<TierSettingsFormValues>
-    ).vaultMintingLimit = {
+
+  if (!context) {
+    return baseResult;
+  }
+
+  const errors = baseResult.errors as FieldErrors<TierSettingsFormValues>;
+
+  if (context.vault.liabilityStETH >= values.vaultMintingLimit) {
+    errors.vaultMintingLimit = {
       type: 'custom',
       message:
         vaultTexts.actions.tier.vaultMintingLimit.errors.lessThanVaultLiability,
     };
-
-    return baseResult;
   }
 
-  return baseResult;
+  if (values.selectedTierLimit < values.vaultMintingLimit) {
+    errors.vaultMintingLimit = {
+      type: 'custom',
+      message: vaultTexts.actions.tier.inputMintingLimit.errors.max(
+        values.selectedTierLimit,
+      ),
+    };
+  }
+
+  if (
+    context.vault.stETHLimit === values.vaultMintingLimit &&
+    String(context.vault.tierId) === values.selectedTierId
+  ) {
+    errors.vaultMintingLimit = {
+      type: 'custom',
+      message: vaultTexts.actions.tier.vaultMintingLimit.errors.alreadySet,
+    };
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return {
+      values: {},
+      errors,
+    } as ResolverResult<TierSettingsFormValues, TierSettingsFormValues>;
+  }
+
+  return {
+    values,
+    errors: {},
+  } as ResolverResult<TierSettingsFormValues, TierSettingsFormValues>;
 };
 
 export const checkUserIsProposer = (
@@ -83,4 +100,12 @@ export const checkUserIsProposer = (
   }
 
   return isAddressEqual(dashboard, proposer);
+};
+
+export const ALTER_TIER_LABELS = {
+  reserveRatio: 'Reserve Ratio',
+  forcedRebalanceThreshold: 'Forced Rebalance Threshold',
+  infraFee: 'Infra Fee',
+  liquidityFee: 'Liquidity Fee',
+  reservationFee: 'Reservation Fee',
 };
