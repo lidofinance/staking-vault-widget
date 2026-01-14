@@ -57,7 +57,7 @@ type VaultEntryRaw = {
   updatedAt: string;
   blockNumber: number;
   isReportFresh: boolean;
-  isQuarantineActive: false;
+  isQuarantineActive: boolean;
   quarantinePendingTotalValueIncrease: string;
   quarantineStartTimestamp: number;
   quarantineEndTimestamp: number;
@@ -101,7 +101,7 @@ export type VaultEntry = {
   updatedAt: Date;
   blockNumber: number;
   isReportFresh: boolean;
-  isQuarantineActive: false;
+  isQuarantineActive: boolean;
   quarantinePendingTotalValueIncrease: bigint;
   quarantineStartTimestamp: number;
   quarantineEndTimestamp: number;
