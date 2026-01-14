@@ -57,6 +57,10 @@ type VaultEntryRaw = {
   updatedAt: string;
   blockNumber: number;
   isReportFresh: boolean;
+  isQuarantineActive: false;
+  quarantinePendingTotalValueIncrease: string;
+  quarantineStartTimestamp: number;
+  quarantineEndTimestamp: number;
   rebaseReward: string;
   grossStakingRewards: string;
   nodeOperatorRewards: string;
@@ -64,6 +68,9 @@ type VaultEntryRaw = {
   netStakingRewards: string;
   grossStakingAprPercent: number;
   netStakingAprPercent: number;
+  grossStakingAprSma: number;
+  netStakingAprSma: number;
+  carrySpreadAprSma: number;
   bottomLine: string;
   carrySpreadAprPercent: number;
   lastReport: {
@@ -94,6 +101,10 @@ export type VaultEntry = {
   updatedAt: Date;
   blockNumber: number;
   isReportFresh: boolean;
+  isQuarantineActive: false;
+  quarantinePendingTotalValueIncrease: bigint;
+  quarantineStartTimestamp: number;
+  quarantineEndTimestamp: number;
   rebaseReward: bigint;
   grossStakingRewards: bigint;
   nodeOperatorRewards: bigint;
@@ -101,6 +112,9 @@ export type VaultEntry = {
   netStakingRewards: bigint;
   grossStakingAprPercent: number;
   netStakingAprPercent: number;
+  grossStakingAprSma: number;
+  netStakingAprSma: number;
+  carrySpreadAprSma: number;
   bottomLine: bigint;
   carrySpreadAprPercent: number;
   lastReport: {
@@ -351,6 +365,12 @@ const normalizeResponse = (
       updatedAt: vault.updatedAt ? new Date(vault.updatedAt) : undefined,
       blockNumber: vault.blockNumber,
       isReportFresh: vault.isReportFresh,
+      isQuarantineActive: vault.isQuarantineActive,
+      quarantinePendingTotalValueIncrease: optBigInt(
+        vault.quarantinePendingTotalValueIncrease,
+      ),
+      quarantineStartTimestamp: vault.quarantineStartTimestamp,
+      quarantineEndTimestamp: vault.quarantineEndTimestamp,
       rebaseReward: optBigInt(vault.rebaseReward),
       grossStakingRewards: optBigInt(vault.grossStakingRewards),
       nodeOperatorRewards: optBigInt(vault.nodeOperatorRewards),
@@ -358,6 +378,9 @@ const normalizeResponse = (
       netStakingRewards: optBigInt(vault.netStakingRewards),
       grossStakingAprPercent: vault.grossStakingAprPercent,
       netStakingAprPercent: vault.netStakingAprPercent,
+      grossStakingAprSma: vault.grossStakingAprSma,
+      netStakingAprSma: vault.netStakingAprSma,
+      carrySpreadAprSma: vault.carrySpreadAprSma,
       bottomLine: optBigInt(vault.bottomLine),
       carrySpreadAprPercent: vault.carrySpreadAprPercent,
       lastReport: vault.lastReport?.fee
