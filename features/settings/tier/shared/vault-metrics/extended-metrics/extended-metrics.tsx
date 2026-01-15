@@ -17,6 +17,7 @@ type ExtendedMetricsProps = {
   newVaultMintingLimit?: bigint;
   showRequestedVaultMintingLimit?: boolean;
   forceShowChanges?: boolean;
+  dataTestId?: string;
 };
 
 export const ExtendedMetrics = ({
@@ -24,6 +25,7 @@ export const ExtendedMetrics = ({
   newVaultMintingLimit,
   showRequestedVaultMintingLimit = false,
   forceShowChanges = false,
+  dataTestId,
 }: ExtendedMetricsProps) => {
   const { values } = useTierData();
 
@@ -46,12 +48,25 @@ export const ExtendedMetrics = ({
       {showRequestedVaultMintingLimit &&
         !!newVaultMintingLimit &&
         newVaultMintingLimit !== values?.vault.totalMintingCapacityStETH && (
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId
+                ? `${dataTestId}-requestedStVaultMintingLimit-listItem`
+                : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Requested stVault minting limit
             </Text>
             <ContentContainer>
-              <Text size="xxs">
+              <Text
+                size="xxs"
+                data-testid={
+                  dataTestId
+                    ? `${dataTestId}-requestedStVaultMintingLimit`
+                    : undefined
+                }
+              >
                 <FormatToken
                   amount={newVaultMintingLimit}
                   maxDecimalDigits={4}
@@ -63,7 +78,13 @@ export const ExtendedMetrics = ({
         )}
       {!!newMetrics && (
         <>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId
+                ? `${dataTestId}-stVaultMintingCapacity-listItem`
+                : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               stVault minting capacity
             </Text>
@@ -86,13 +107,22 @@ export const ExtendedMetrics = ({
                   />
                 }
                 isChanged={newMetrics.totalMintingCapacity.isChanged}
+                dataTestId={
+                  dataTestId
+                    ? `${dataTestId}-stVaultMintingCapacity`
+                    : undefined
+                }
               />
               <MintingCapacityTooltip
                 tierId={selectedTier?.id ?? values?.vault.tierId}
               />
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId ? `${dataTestId}-utilizationRatio-listItem` : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Utilization ratio
             </Text>
@@ -102,11 +132,18 @@ export const ExtendedMetrics = ({
                   old={newMetrics.utilization.oldValue}
                   supposed={newMetrics.utilization.newValue}
                   isChanged={newMetrics.utilization.isChanged}
+                  dataTestId={
+                    dataTestId ? `${dataTestId}-utilizationRatio` : undefined
+                  }
                 />
               )}
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId ? `${dataTestId}-reserveRatio-listItem` : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Reserve ratio
             </Text>
@@ -115,10 +152,19 @@ export const ExtendedMetrics = ({
                 old={newMetrics.reserveRatioBP.oldValue}
                 supposed={newMetrics.reserveRatioBP.newValue}
                 isChanged={showChanges && newMetrics.reserveRatioBP.isChanged}
+                dataTestId={
+                  dataTestId ? `${dataTestId}-reserveRatio` : undefined
+                }
               />
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId
+                ? `${dataTestId}-forcedRebalanceThreshold-listItem`
+                : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Forced rebalance threshold
             </Text>
@@ -129,10 +175,19 @@ export const ExtendedMetrics = ({
                 isChanged={
                   showChanges && newMetrics.forcedRebalanceThresholdBP.isChanged
                 }
+                dataTestId={
+                  dataTestId
+                    ? `${dataTestId}-forcedRebalanceThreshold`
+                    : undefined
+                }
               />
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId ? `${dataTestId}-infraFee-listItem` : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Lido infrastructure fee
             </Text>
@@ -141,10 +196,15 @@ export const ExtendedMetrics = ({
                 old={newMetrics.infraFeeBP.oldValue}
                 supposed={newMetrics.infraFeeBP.newValue}
                 isChanged={showChanges && newMetrics.infraFeeBP.isChanged}
+                dataTestId={dataTestId ? `${dataTestId}-infraFee` : undefined}
               />
             </ContentContainer>
           </ListItem>
-          <ListItem>
+          <ListItem
+            data-testid={
+              dataTestId ? `${dataTestId}-liquidityFee-listItem` : undefined
+            }
+          >
             <Text size="xxs" color="secondary">
               Lido liquidity fee
             </Text>
@@ -153,6 +213,9 @@ export const ExtendedMetrics = ({
                 old={newMetrics.liquidityFeeBP.oldValue}
                 supposed={newMetrics.liquidityFeeBP.newValue}
                 isChanged={showChanges && newMetrics.liquidityFeeBP.isChanged}
+                dataTestId={
+                  dataTestId ? `${dataTestId}-liquidityFee` : undefined
+                }
               />
             </ContentContainer>
           </ListItem>

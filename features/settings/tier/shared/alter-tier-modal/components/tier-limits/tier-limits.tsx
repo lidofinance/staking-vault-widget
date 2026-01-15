@@ -15,16 +15,23 @@ export const TierLimits = () => {
   const { tierLiabilityStETH, tierStETHLimit } = tierInfoData;
 
   return (
-    <Container>
+    <Container data-testid="syncTier-modal-tierLimits">
       <InfoItem>
-        <Text size="xxs">Tier minting limit</Text>
-        <Text size="xxs">
+        <Text size="xxs" data-testid="syncTier-modal-tierMintingLimit-title">
+          Tier minting limit
+        </Text>
+        <Text size="xxs" data-testid="syncTier-modal-tierMintingLimit">
           <FormatToken amount={tierStETHLimit} symbol="stETH" />
         </Text>
       </InfoItem>
       <InfoItem>
-        <Text size="xxs">Tier remaining capacity</Text>
-        <Text size="xxs">
+        <Text
+          size="xxs"
+          data-testid="syncTier-modal-tierRemainingCapacity-title"
+        >
+          Tier remaining capacity
+        </Text>
+        <Text size="xxs" data-testid="syncTier-modal-tierRemainingCapacity">
           <FormatToken
             amount={tierStETHLimit - tierLiabilityStETH}
             symbol="stETH"

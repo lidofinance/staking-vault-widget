@@ -11,8 +11,11 @@ type ModalSubtitleProps = {
 
 export const ModalSubtitle: FC<ModalSubtitleProps> = ({ alterTierList }) => {
   return (
-    <Container>
-      <AlterTierChanges alterTierList={alterTierList} />
+    <Container data-testid="syncTier-modal-subtitle">
+      <AlterTierChanges
+        alterTierList={alterTierList}
+        dataTestId="syncTier-modal-subtitle"
+      />
     </Container>
   );
 };

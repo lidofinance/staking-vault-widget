@@ -86,7 +86,7 @@ export const VotingRequest = () => {
         <ButtonStyled
           variant="ghost"
           onClick={() => setAdditionalInfoVisibility(!showAdditionalInfo)}
-          data-testid="reviewRequestBtn"
+          data-testid="toggleRequestDetailsButton"
         >
           {buttonText}
         </ButtonStyled>
