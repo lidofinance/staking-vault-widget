@@ -708,6 +708,12 @@ export const vaultTexts = {
         dashboard: 'Recipient cannot be stVault Dashboard',
       },
 
+      tx: {
+        getStatus:
+          'Could not locate transaction status but your transcation could still be sent. Please check your wallet for details.',
+        getStatusTitle: 'Transaction Status Unavailable',
+      },
+
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,

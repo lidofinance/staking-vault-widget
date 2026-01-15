@@ -5,6 +5,7 @@ const errorTexts = vaultTexts.common.errors.vault;
 export class DisplayableError extends Error {
   public originalError?: Error;
   public isRetryable: boolean;
+  public errorTitle?: string;
 
   constructor(message: string, isRetryable = true, originalError?: Error) {
     super(message);
@@ -18,6 +19,15 @@ export class DisplayableError extends Error {
   }
 }
 
+//
+
+export class SendTxGetStatusError extends DisplayableError {
+  constructor(error?: unknown) {
+    super(vaultTexts.common.errors.tx.getStatus, false, error as Error);
+    this.name = 'SendTxGetStatusError';
+    this.errorTitle = vaultTexts.common.errors.tx.getStatusTitle;
+  }
+}
 // Vault Fetch
 
 export class VaultAddressError extends DisplayableError {

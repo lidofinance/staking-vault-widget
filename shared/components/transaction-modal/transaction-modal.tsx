@@ -52,6 +52,8 @@ const reducer = (
         ...state,
         isOpen: true,
         stage: action.stage,
+        // allowRetry false can override previous onRetry setting
+        onRetry: action.allowRetry === false ? undefined : state.onRetry,
         details: {
           ...state.details,
           ...(action.details ?? {}),
