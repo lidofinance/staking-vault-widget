@@ -31,6 +31,7 @@ type OverviewArgs = {
   totalValue: bigint;
   reserveRatioBP: number;
   liabilitySharesInStethWei: bigint;
+  currentLiabilityStETH: bigint;
   forceRebalanceThresholdBP: number;
   withdrawableEther: bigint;
   balance: bigint;
@@ -46,6 +47,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     totalValue,
     reserveRatioBP,
     liabilitySharesInStethWei,
+    currentLiabilityStETH,
     forceRebalanceThresholdBP,
     withdrawableEther,
     balance,
@@ -68,7 +70,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const oneMinusRR = VAULT_TOTAL_BASIS_POINTS_BN - RR;
   const recentlyRepaid = bigIntMax(
     0n,
-    reportMaxLiabilitySharesStETH - liabilitySharesInStethWei,
+    reportMaxLiabilitySharesStETH - currentLiabilityStETH,
   );
 
   const reservedByFormula =

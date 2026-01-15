@@ -54,6 +54,7 @@ export type VaultInfo = VaultConnection &
     totalValue: bigint;
     liabilityShares: bigint;
     liabilityStETH: bigint;
+    currentLiabilityStETH: bigint;
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
@@ -111,6 +112,8 @@ const getVaultData = async ({
     ...rest
   } = vault;
 
+  const vaultAddress = vault.address;
+
   const [
     balance,
     totalValue,
@@ -139,9 +142,9 @@ const getVaultData = async ({
       dashboard.prepare.feeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
-      operatorGrid.prepare.vaultTierInfo([vault.address]),
+      operatorGrid.prepare.vaultTierInfo([vaultAddress]),
       operatorGrid.prepare.group([vault.nodeOperator]),
-      lazyOracle.prepare.vaultQuarantine([vault.address]),
+      lazyOracle.prepare.vaultQuarantine([vaultAddress]),
     ] as const,
     blockNumber,
   });
@@ -162,14 +165,19 @@ const getVaultData = async ({
     contracts: [
       dashboard.prepare.obligationsShortfallValue(),
       dashboard.prepare.obligations(),
-      hub.prepare.healthShortfallShares([vault.address]),
-      hub.prepare.vaultRecord([vault.address]),
+      hub.prepare.healthShortfallShares([vaultAddress]),
+      hub.prepare.vaultRecord([vaultAddress]),
       dashboard.prepare.locked(),
       vaultContract.prepare.stagedBalance(),
       vaultContract.prepare.beaconChainDepositsPaused(),
     ] as const,
     blockNumber,
   });
+
+  const vaultRecordCurrent = isReportFresh
+    ? vaultRecord
+    : await hub.read.vaultRecord([vaultAddress]);
+  const { liabilityShares: currentLiabilityShares } = vaultRecordCurrent;
 
   const {
     liabilityShares,
@@ -190,6 +198,7 @@ const getVaultData = async ({
 
   const [
     liabilityStETH,
+    currentLiabilityStETH,
     mintableStETH,
     stETHLimit,
     totalMintingCapacityStETH,
@@ -201,6 +210,7 @@ const getVaultData = async ({
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([currentLiabilityShares]),
     stethContract.read.getPooledEthByShares([mintableShares]),
     stethContract.read.getPooledEthByShares([shareLimit]),
     stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
@@ -217,6 +227,7 @@ const getVaultData = async ({
     nodeOperator,
     totalValue,
     liabilityStETH,
+    currentLiabilityStETH,
     mintableStETH,
     mintableShares,
     stETHLimit,
@@ -311,6 +322,7 @@ const selectOverviewData = ({
     totalValue: vaultData.totalValue,
     reserveRatioBP,
     liabilitySharesInStethWei: vaultData.liabilityStETH,
+    currentLiabilityStETH: vaultData.currentLiabilityStETH,
     forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
     withdrawableEther,
     balance,

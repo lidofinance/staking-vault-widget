@@ -41,11 +41,11 @@ export const ImmediateWithdrawalModal = () => {
     withdrawableEther,
     balance,
     pendingUnlock,
-    isReportFresh,
     minimalReserve,
     stagedBalanceWei,
     isSlashingHappened,
     mintingConstraintBy,
+    isReportFresh,
   } = values || {};
   const { chartData, notWithdrawableAmount } = useWithdrawChart();
 
@@ -59,7 +59,7 @@ export const ImmediateWithdrawalModal = () => {
               <FormatToken
                 amount={totalValue}
                 maxDecimalDigits={8}
-                symbol={'ETH'}
+                symbol="ETH"
               />
             </Text>
           </ChartHeading>
@@ -80,7 +80,7 @@ export const ImmediateWithdrawalModal = () => {
                 <FormatToken
                   amount={withdrawableEther}
                   maxDecimalDigits={4}
-                  symbol={'ETH'}
+                  symbol="ETH"
                 />
               </Text>
             </ListItem>
@@ -92,7 +92,7 @@ export const ImmediateWithdrawalModal = () => {
                 <FormatToken
                   amount={notWithdrawableAmount}
                   maxDecimalDigits={4}
-                  symbol={'ETH'}
+                  symbol="ETH"
                 />
               </Text>
             </ListItem>
@@ -116,7 +116,7 @@ export const ImmediateWithdrawalModal = () => {
             amountSymbol="ETH"
             dataTestId={`${dataTestIdPrefix}-totalValueSection-lockedByCollateralSubsection`}
           >
-            {!!pendingUnlock && !isReportFresh && (
+            {!!pendingUnlock && isReportFresh && (
               <PendingUnlock amount={pendingUnlock} />
             )}
             {!!minimalReserve && mintingConstraintBy === 'minimalReserve' && (
