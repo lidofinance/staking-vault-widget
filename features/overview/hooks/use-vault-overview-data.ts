@@ -73,7 +73,7 @@ export type VaultInfo = VaultConnection &
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
-    reportMaxLiabilitySharesStETH: bigint;
+    currentMaxLiabilityStETH: bigint;
     obligationsShortfallValue: bigint;
     stETHToBurn: bigint;
     feesToSettle: bigint;
@@ -177,7 +177,10 @@ const getVaultData = async ({
   const vaultRecordCurrent = isReportFresh
     ? vaultRecord
     : await hub.read.vaultRecord([vaultAddress]);
-  const { liabilityShares: currentLiabilityShares } = vaultRecordCurrent;
+  const {
+    liabilityShares: currentLiabilityShares,
+    maxLiabilityShares: currentMaxLiabilityShares,
+  } = vaultRecordCurrent;
 
   const {
     liabilityShares,
@@ -194,7 +197,6 @@ const getVaultData = async ({
 
   const lidoV3Contract = getLidoContract(publicClient);
   const stethContract = getStEthContract(publicClient);
-  const maxLiabilityShares = report?.maxLiabilityShares ?? 0n;
 
   const [
     liabilityStETH,
@@ -206,7 +208,7 @@ const getVaultData = async ({
     stETHToBurn,
     rebalanceStETH,
     redemptionStETH,
-    reportMaxLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     lidoTVLSharesLimit,
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
@@ -218,7 +220,7 @@ const getVaultData = async ({
     stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
     stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
     stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([maxLiabilityShares]),
+    stethContract.read.getPooledEthBySharesRoundUp([currentMaxLiabilityShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
 
@@ -237,7 +239,7 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    reportMaxLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     feeRate,
     shareLimit,
     forcedRebalanceThresholdBP,
@@ -294,7 +296,7 @@ const selectOverviewData = ({
     tierId,
     tierStETHLimit,
     minimalReserve,
-    reportMaxLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
     disconnectInitiatedTs,
@@ -330,7 +332,7 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
-    reportMaxLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
   });
 
   // Binding-constraint detection:

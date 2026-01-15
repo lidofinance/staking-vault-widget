@@ -39,7 +39,7 @@ type OverviewArgs = {
   nodeOperatorDisbursableFee: bigint;
   totalMintingCapacityStethWei: bigint;
   unsettledLidoFees: bigint;
-  reportMaxLiabilitySharesStETH: bigint;
+  currentMaxLiabilityStETH: bigint;
 };
 
 export const calculateOverviewV2 = (args: OverviewArgs) => {
@@ -55,7 +55,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     nodeOperatorDisbursableFee,
     totalMintingCapacityStethWei,
     unsettledLidoFees,
-    reportMaxLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
   } = args;
 
   const { healthRatio, isHealthy } = calculateHealth({
@@ -70,7 +70,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
   const oneMinusRR = VAULT_TOTAL_BASIS_POINTS_BN - RR;
   const recentlyRepaid = bigIntMax(
     0n,
-    reportMaxLiabilitySharesStETH - currentLiabilityStETH,
+    currentMaxLiabilityStETH - currentLiabilityStETH,
   );
 
   const reservedByFormula =
