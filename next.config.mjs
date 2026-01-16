@@ -29,6 +29,7 @@ export const CACHE_CONTROL_HEADER = 'x-cache-control';
 export const CACHE_CONTROL_PAGES = [
   '/manifest.json',
   '/favicon:size*',
+  '/vaults/:vaultAddress*',
   '/',
   '/settings',
 ];
