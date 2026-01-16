@@ -98,7 +98,7 @@ export const NetAprModal = () => {
     netStakingRewards,
     grossStakingRewards,
     nodeOperatorRewards,
-    unsettledLidoFees,
+    vaultMetrics,
   } = values || {};
 
   return (
@@ -142,7 +142,7 @@ export const NetAprModal = () => {
       <SectionDivider />
       <ModalSection
         title={netApr.lidoFees.title}
-        amountValue={unsettledLidoFees}
+        amountValue={vaultMetrics?.dailyLidoFees}
         amountType="token"
         amountSymbol="ETH"
         description={netApr.lidoFees.description}
