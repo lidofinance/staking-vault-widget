@@ -43,11 +43,27 @@ const getModalTitle = (state: TransactionModalState) => {
     case 'awaiting':
       return state.details.actionLoadingText;
     case 'error':
-      return 'Transaction error';
+      return state.details.errorTitle ?? 'Transaction error';
     case 'success':
       return state.details.actionCompleteText;
     default:
       return 'Transaction';
+  }
+};
+
+const getModalSubTitle = (state: TransactionModalState) => {
+  switch (state.stage) {
+    case 'collecting':
+    case 'signing':
+      return state.details.baseDescriptionText;
+    case 'awaiting':
+      return state.details.awaitingDescriptionText;
+    case 'error':
+      return '';
+    case 'success':
+      return state.details.mainActionCompleteDescriptionText;
+    default:
+      return '';
   }
 };
 
@@ -70,11 +86,14 @@ const getMainContent = (
         </Text>
       );
     case 'awaiting':
-      return (
-        <Text color="secondary" size="xxs">
-          Awaiting block confirmation
-        </Text>
-      );
+      if (!state.details.awaitingDescriptionText) {
+        return (
+          <Text color="secondary" size="xxs">
+            Awaiting block confirmation
+          </Text>
+        );
+      }
+      return null;
     case 'success':
       return (
         renderSuccessContent &&
@@ -132,6 +151,7 @@ export const TransactionModalContent = () => {
       center
       titleIcon={getIconComponent(state)}
       title={getModalTitle(state)}
+      subtitle={getModalSubTitle(state)}
       open={state.isOpen && state.stage !== 'none'}
       onClose={() => {
         dispatchModal({ type: 'close' });

@@ -62,7 +62,7 @@ const tableHeaders = [
   },
   {
     title: 'Net Staking APR',
-    sortKey: 'netStakingAprPercent',
+    sortKey: 'netStakingAprSma',
   },
   {
     title: 'Carry Spread',
@@ -81,7 +81,7 @@ const PLACEHOLDER_VAULT: VaultEntry = {
   liabilityStETH: 0n,
   healthFactor: 0,
   carrySpreadAprPercent: 0,
-  netStakingAprPercent: 0,
+  netStakingAprSma: 0,
   bottomLine: 0n,
 };
 
@@ -121,7 +121,7 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
         align="right"
         data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : undefined}
       >
-        <PercentCell value={vault.netStakingAprPercent} />
+        <PercentCell value={vault.netStakingAprSma} />
       </TableCell>
       <TableCell
         align="right"

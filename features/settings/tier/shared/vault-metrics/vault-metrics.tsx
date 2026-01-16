@@ -25,6 +25,7 @@ export const VaultMetrics = () => {
         <ExtendedMetrics
           selectedTier={selectedTier}
           newVaultMintingLimit={vaultMintingLimit as bigint}
+          dataTestId="currentVaultMetrics"
         />
       </Wrapper>
     </PartitionContainer>

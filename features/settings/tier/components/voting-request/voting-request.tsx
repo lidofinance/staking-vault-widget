@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { Text, Divider } from '@lidofinance/lido-ui';
-import { useAccount } from 'wagmi';
 
 import {
   useVaultConfirmingRoles,
-  useNodeOperatorTiersInfo,
   useVaultTierInfo,
   vaultTexts,
   useVaultPermission,
@@ -12,6 +10,7 @@ import {
 
 import { SectionContainer } from 'features/settings/shared/components';
 import { Title, RequestAdditionalInfo } from 'features/settings/tier/shared';
+import { useTierVoting } from 'features/settings/tier/hooks';
 
 import { ExpiresInItem } from 'features/settings/tier/shared/request-additional-info/content/expires-in-item/expires-in-item';
 
@@ -22,46 +21,46 @@ import {
   ButtonStyled,
 } from './styles';
 
-export const RequestChangeLimit = () => {
+const tierTexts = vaultTexts.actions.tier;
+
+export const VotingRequest = () => {
   const [showAdditionalInfo, setAdditionalInfoVisibility] = useState(false);
-  const { data: noTiersInfo } = useNodeOperatorTiersInfo();
   const { data: vaultTierInfo } = useVaultTierInfo();
-  const { address } = useAccount();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission: hasVaultConfigurationPermission } =
     useVaultPermission('vaultConfiguration');
+  const tierVoting = useTierVoting();
+  if (!tierVoting) {
+    return null;
+  }
 
-  const proposal = vaultTierInfo?.proposals.lastProposal;
-  const proposedTierId = proposal?.decodedData.args[1];
-  const proposedVaultMintingLimitStETH =
-    vaultTierInfo?.proposals.proposedVaultLimitStETH;
-  const proposedTier = noTiersInfo?.tiers.find(
-    (tier) => tier.id === proposedTierId,
-  );
-  const proposer = proposal?.member;
-  const isTheSameUser = proposer === address;
+  const { proposal, proposedTier, isTheSameUser } = tierVoting;
 
   if (
+    !proposal ||
     !proposedTier ||
+    !vaultTierInfo ||
     vaultTierInfo?.vault.isPendingConnect ||
     !(isNodeOperator || hasAdmin || hasVaultConfigurationPermission)
   )
     return null;
 
   const buttonText = showAdditionalInfo
-    ? vaultTexts.actions.tier.request.showButton.hide
+    ? tierTexts.request.showButton.hide
     : isTheSameUser
-      ? vaultTexts.actions.tier.request.showButton.show
-      : vaultTexts.actions.tier.request.showButton.review;
+      ? tierTexts.request.showButton.show
+      : tierTexts.request.showButton.review;
 
-  const isShowAdditionalInfoComp =
-    showAdditionalInfo && proposal && !!proposedVaultMintingLimitStETH;
+  const headingText = tierTexts.tierVotingTitle(
+    proposal.functionName,
+    proposedTier.tierName,
+  );
 
   return (
     <RequestWrapper data-testid="requestWrapper">
       <HeadingSection>
         <Title as="h2" data-testid="title">
-          {vaultTexts.actions.tier.requestTitle} {proposedTier?.tierName}
+          {headingText}
         </Title>
         <ExpiresContainer>
           <Text data-testid="expiresInLabel" size="xxs">
@@ -69,19 +68,17 @@ export const RequestChangeLimit = () => {
           </Text>
           <ExpiresInItem
             data-testid="expiresInValue"
-            expiryTimestamp={proposal?.expiryTimestamp}
+            expiryTimestamp={proposal.expiryTimestamp}
             strong
           />
         </ExpiresContainer>
       </HeadingSection>
       <Divider />
-      {isShowAdditionalInfoComp && (
+      {showAdditionalInfo && (
         <RequestAdditionalInfo
           proposedTier={proposedTier}
-          expiryTimestamp={proposal.expiryTimestamp}
-          requestedBy={proposal.member}
-          vaultLiabilityStETH={vaultTierInfo?.vault.liabilityStETH}
-          proposedVaultMintingLimitStETH={proposedVaultMintingLimitStETH}
+          proposal={proposal}
+          vaultLiabilityStETH={vaultTierInfo.vault.liabilityStETH}
         />
       )}
       <Divider />
@@ -89,7 +86,7 @@ export const RequestChangeLimit = () => {
         <ButtonStyled
           variant="ghost"
           onClick={() => setAdditionalInfoVisibility(!showAdditionalInfo)}
-          data-testid="reviewRequestBtn"
+          data-testid="toggleRequestDetailsButton"
         >
           {buttonText}
         </ButtonStyled>

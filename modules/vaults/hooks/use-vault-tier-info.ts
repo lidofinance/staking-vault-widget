@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { getAddress, type Abi, type Address } from 'viem';
+import { isAddressEqual, type Abi, type Address } from 'viem';
 
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
@@ -11,10 +11,15 @@ import {
   DEFAULT_TIER_ID,
   getLidoContract,
   getStEthContract,
+  type ExtendTierConfirmation,
+  type TierConfirmationFnNames,
 } from 'modules/vaults';
 import { ceilDivBigint, formatPercent, toEthValue, toStethValue } from 'utils';
 import { bigIntMax } from 'utils/bigint-math';
-import { Confirmation, getConfirmationsInfo } from 'utils/get-confirmations';
+import {
+  type Confirmation,
+  getConfirmationsInfo,
+} from 'utils/get-confirmations';
 
 import type { VaultTierInfoArgs, VaultTierInfo } from '../types';
 
@@ -27,25 +32,69 @@ const getVaultTierConfirmation = async (
   vaultAddress: Address,
 ): Promise<{
   confirmExpiry: bigint;
-  proposedVaultLimit: bigint;
-  lastProposal: Confirmation | undefined;
+  proposedVaultLimitShares: bigint;
+  lastProposal: Confirmation<TierConfirmationFnNames> | undefined;
 }> => {
-  const { confirmations, confirmExpiry } = await getConfirmationsInfo(
-    address,
-    publicClient,
-    abi,
-  );
+  const { confirmations, confirmExpiry } =
+    await getConfirmationsInfo<TierConfirmationFnNames>(
+      address,
+      publicClient,
+      abi,
+    );
 
-  const lastProposal = confirmations.findLast(
-    ({ decodedData }) =>
-      getAddress(decodedData.args[0] as Address) === getAddress(vaultAddress),
+  const vaultProposals = confirmations.filter(({ decodedData }) =>
+    isAddressEqual(decodedData.args[0], vaultAddress),
   );
-  const proposedVaultLimit = lastProposal?.decodedData.args[2] ?? 0n;
+  const syncTierProposal = vaultProposals.findLast(
+    ({ decodedData }) => decodedData.functionName === 'syncTier',
+  );
+  const lastProposal = syncTierProposal ?? vaultProposals.at(-1);
+
+  const index =
+    lastProposal?.decodedData.functionName === 'updateVaultShareLimit' ? 1 : 2;
+  const proposedVaultLimitShares = lastProposal?.decodedData.args[index] ?? 0n;
 
   return {
     confirmExpiry,
-    proposedVaultLimit,
+    proposedVaultLimitShares,
     lastProposal,
+  };
+};
+
+const enrichLastProposal = (
+  proposal: Confirmation<TierConfirmationFnNames>,
+  currentTierID: bigint,
+  proposedVaultLimitStETH: bigint,
+  proposedVaultLimitShares: bigint,
+): ExtendTierConfirmation => {
+  const { member, expiryTimestamp, expiryDate, decodedData } = proposal;
+
+  const { functionName, args } = decodedData;
+  const tierId = functionName === 'changeTier' ? args[1] : currentTierID;
+
+  const base = {
+    _id: crypto.randomUUID(),
+    vaultAddress: args[0],
+    member,
+    expiryTimestamp,
+    expiryDate,
+    tierId,
+  };
+
+  if (functionName === 'syncTier') {
+    return {
+      ...base,
+      functionName,
+      proposedVaultLimitStETH: undefined,
+      proposedVaultLimitShares: undefined,
+    };
+  }
+
+  return {
+    ...base,
+    functionName,
+    proposedVaultLimitStETH,
+    proposedVaultLimitShares,
   };
 };
 
@@ -58,12 +107,15 @@ const getVaultTierInfo = async ({
     dashboard,
     vault: vaultContract,
     nodeOperator,
-    withdrawalCredentials,
     forcedRebalanceThresholdBP,
     shareLimit,
     hub,
     operatorGrid,
     isPendingConnect,
+    reserveRatioBP,
+    infraFeeBP,
+    liquidityFeeBP,
+    reservationFeeBP,
     ...rest
   } = vault;
 
@@ -89,16 +141,7 @@ const getVaultTierInfo = async ({
     ] as const,
   });
 
-  const [
-    _nodeOperator,
-    tierId,
-    vaultShareLimit,
-    vaultReserveRatioBP,
-    vaultForcedRebalanceThresholdBP,
-    vaultInfraFeeBP,
-    vaultLiquidityFeeBP,
-    vaultReservationFeeBP,
-  ] = vaultInfo;
+  const [_nodeOperator, tierId] = vaultInfo;
   const { liabilityShares: vaultLiabilityShares, minimalReserve } = vaultRecord;
 
   const [tier] = await readWithReport({
@@ -121,7 +164,7 @@ const getVaultTierInfo = async ({
   const tierName =
     tierId === DEFAULT_TIER_ID ? 'Default' : `Tier ${Number(tierId)}`;
 
-  const { confirmExpiry, lastProposal, proposedVaultLimit } =
+  const { confirmExpiry, lastProposal, proposedVaultLimitShares } =
     await getVaultTierConfirmation(
       operatorGrid.address,
       publicClient,
@@ -141,13 +184,22 @@ const getVaultTierInfo = async ({
   ] = await Promise.all([
     stethContract.read.getPooledEthBySharesRoundUp([vaultLiabilityShares]),
     stethContract.read.getPooledEthByShares([vaultMintableShares]),
-    stethContract.read.getPooledEthByShares([vaultShareLimit]),
+    stethContract.read.getPooledEthByShares([shareLimit]),
     stethContract.read.getPooledEthByShares([vaultTotalMintingCapacityShares]),
     stethContract.read.getPooledEthByShares([tierShareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
-    stethContract.read.getPooledEthByShares([proposedVaultLimit]),
+    stethContract.read.getPooledEthByShares([proposedVaultLimitShares]),
     lidoV3Contract.read.getMaxMintableExternalShares(),
   ]);
+
+  const extendLastProposal = lastProposal
+    ? enrichLastProposal(
+        lastProposal,
+        tierId,
+        proposedVaultLimitStETH,
+        proposedVaultLimitShares,
+      )
+    : undefined;
 
   return {
     lidoTVLSharesLimit,
@@ -157,8 +209,9 @@ const getVaultTierInfo = async ({
     proposals: {
       confirmExpiry,
       lastProposal,
+      extendLastProposal,
       proposedVaultLimitStETH,
-      proposedVaultLimit,
+      proposedVaultLimitShares,
     },
     vault: {
       tierId,
@@ -168,12 +221,12 @@ const getVaultTierInfo = async ({
       stETHLimit: vaultStETHLimit,
       totalMintingCapacityStETH: vaultTotalMintingCapacityStETH,
       totalMintingCapacityShares: vaultTotalMintingCapacityShares,
-      reserveRatioBP: Number(vaultReserveRatioBP),
-      forcedRebalanceThresholdBP: Number(vaultForcedRebalanceThresholdBP),
-      infraFeeBP: Number(vaultInfraFeeBP),
-      liquidityFeeBP: Number(vaultLiquidityFeeBP),
-      reservationFeeBP: Number(vaultReservationFeeBP),
-      shareLimit: vaultShareLimit,
+      reserveRatioBP: Number(reserveRatioBP),
+      forcedRebalanceThresholdBP: Number(forcedRebalanceThresholdBP),
+      infraFeeBP: Number(infraFeeBP),
+      liquidityFeeBP: Number(liquidityFeeBP),
+      reservationFeeBP: Number(reservationFeeBP),
+      shareLimit,
       isPendingConnect,
     },
     tier: {
@@ -260,7 +313,11 @@ export const useVaultTierInfo = () => {
   const { activeVault, queryKeys } = useVault();
 
   return useQuery({
-    queryKey: [...queryKeys.state, 'vault-tier-info'],
+    queryKey: [
+      ...queryKeys.state,
+      'vault-tier-info',
+      activeVault?.blockNumberString,
+    ],
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useVaultTierInfo] activeVault is not defined');
