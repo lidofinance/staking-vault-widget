@@ -1,8 +1,10 @@
 import type { FC } from 'react';
 import { useFormContext, useFormState } from 'react-hook-form';
 import { useRouter } from 'next/router';
+import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import { appPaths } from 'consts/routing';
+import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 import {
@@ -28,6 +30,7 @@ export const MainSettingsAction: FC = () => {
     const isValid = await trigger(undefined, { shouldFocus: true });
     if (!isValid) return;
 
+    trackEvent(...MATOMO_CLICK_EVENTS.clickContinueCreatingVault);
     setValue('step', CREATE_VAULT_FORM_STEPS.confirm);
   };
 

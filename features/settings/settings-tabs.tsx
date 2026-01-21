@@ -1,9 +1,14 @@
-import { FC, useCallback } from 'react';
+import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { Address } from 'viem';
+import { trackEvent } from '@lidofinance/analytics-matomo';
+import type { Address } from 'viem';
 
 import { ToggleSwitch } from 'shared/components/toggle';
 import { appPaths } from 'consts/routing';
+import {
+  MATOMO_CLICK_EVENTS_TYPES,
+  MATOMO_CLICK_EVENTS,
+} from 'consts/matomo-click-events';
 
 import { EditMainSettings } from './main';
 import { PermissionsSettings } from './permissions';
@@ -24,6 +29,12 @@ const settingsTabsMap: Record<SettingsPaths, FC> = {
   tier: TierSettings,
 };
 
+const tabsEventMap = {
+  main: MATOMO_CLICK_EVENTS_TYPES.clickSettingsMainSettingsTab,
+  permissions: MATOMO_CLICK_EVENTS_TYPES.clickSettingsPermissionsTab,
+  tier: MATOMO_CLICK_EVENTS_TYPES.clickSettingsTierTab,
+} as const;
+
 export const SettingsTabs = () => {
   const router = useRouter();
   const { mode, vaultAddress } = router.query as AdjustmentTabPageParams;
@@ -31,6 +42,8 @@ export const SettingsTabs = () => {
 
   const changeTab = useCallback(
     (mode: SETTINGS_PATHS) => {
+      trackEvent(...MATOMO_CLICK_EVENTS[tabsEventMap[mode]]);
+
       void router.push(
         {
           pathname: appPaths.vaults.vault(vaultAddress).settings(mode),
