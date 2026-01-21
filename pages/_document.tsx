@@ -51,18 +51,18 @@ export default class MyDocument extends Document {
 
   // TODO: add meta title and description
   get metaTitle(): string {
-    return 'Vault | Lido';
+    return 'stVaults | Lido';
   }
 
   get metaDescription(): string {
-    return 'Vault | Lido';
+    return 'stVaults are an open platform for creating custom vaults powered by stETH. The stVaults Web UI enables creating and managing vaults, and monitoring performance and health metrics.';
   }
 
   get metaPreviewImgUrl(): string {
     const origin = config.ipfsMode
-      ? 'https://staking-vault.lido.fi'
+      ? 'https://stvaults.lido.fi'
       : config.selfOrigin;
-    return `${origin}/lido-preview.png`;
+    return `${origin}/lido-preview.jpg`;
   }
 
   render(): JSX.Element {

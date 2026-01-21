@@ -9,7 +9,7 @@ export const AllVaultsPage = () => {
   return (
     <Layout containerSize="content">
       <Head>
-        <title>Vault | Lido</title>
+        <title>stVaults | Lido</title>
       </Head>
       <PageWrapper>
         <AllVaults />

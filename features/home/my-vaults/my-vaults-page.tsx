@@ -11,7 +11,7 @@ export const MyVaultsPage: FC = () => {
   return (
     <Layout containerSize="content">
       <Head>
-        <title>Vault | Lido</title>
+        <title>stVaults | Lido</title>
       </Head>
       <PageWrapper>
         <MyVaults />
