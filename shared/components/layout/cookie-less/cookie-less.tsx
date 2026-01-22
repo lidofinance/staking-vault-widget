@@ -1,10 +1,8 @@
 import Link from 'next/link';
 
-import { config } from 'config';
-
 import { CookieText, CookieWrapper } from './styles';
 
-export const Cookie = () => {
+export const CookieLess = () => {
   return (
     <CookieWrapper>
       <CookieText size="xxs" color="secondary">
@@ -13,7 +11,7 @@ export const Cookie = () => {
         only. For more info read{' '}
         <Link
           target="_blank"
-          href={`${config.rootOrigin}/privacy-notice`}
+          href="https://lido.fi/privacy-notice"
           rel="noopener noreferrer"
         >
           Privacy Notice
