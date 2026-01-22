@@ -75,7 +75,7 @@ export const MATOMO_CLICK_EVENTS: Record<
   [MATOMO_CLICK_EVENTS_TYPES.clickContinueCreatingVault]: [
     'stVaults_Widget',
     'Push "Continue" on creating vault',
-    'stvaults_widget__continue_creating_vault',
+    'stvaults_widget_continue_creating_vault',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault]: [
     'stVaults_Widget',
