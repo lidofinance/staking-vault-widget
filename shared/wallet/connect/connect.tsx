@@ -12,7 +12,7 @@ export const Connect: FC<ButtonProps> = (props) => {
   const { connect } = useConnect();
 
   const handleClick = wrapWithEventTrack(
-    MATOMO_CLICK_EVENTS.connectWallet,
+    MATOMO_CLICK_EVENTS.walletConnected,
     useCallback(() => {
       if (!isWalletConnectionAllowed) return;
       void connect();
