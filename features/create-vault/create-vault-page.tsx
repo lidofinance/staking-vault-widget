@@ -14,7 +14,7 @@ export const CreateVaultPage: FC = () => {
       title="Creating new vault"
     >
       <Head>
-        <title>Create Vault | Lido</title>
+        <title>Create stVaults | Lido</title>
       </Head>
       <PageWrapper>
         <CreateVaultForm />
