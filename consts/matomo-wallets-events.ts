@@ -18,9 +18,6 @@ type MetricProps = Pick<
   Pick<ReefKnotConfig, 'onAutoConnect' | 'onReconnect'>;
 
 export const walletMetricProps: MetricProps = {
-  onConnectSuccess: () => {
-    trackEvent(...MATOMO_CLICK_EVENTS.walletConnected);
-  },
   onAutoConnect: () => {
     trackEvent(...MATOMO_CLICK_EVENTS.walletAutoConnected);
   },
