@@ -124,22 +124,22 @@ export const MATOMO_CLICK_EVENTS: Record<
   [MATOMO_CLICK_EVENTS_TYPES.clickOverviewUnstakedBalancePopup]: [
     'stVaults_Widget_Overview',
     'Push "Unstaked Balance" popup',
-    'stvaults_widget_overview_withdrawable_eth_popup',
+    'stvaults_widget_overview_unstaked_balance_popup',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickOverviewWithdrawableETHPopup]: [
     'stVaults_Widget_Overview',
     'Push "Withdrawable ETH" popup',
-    'stvaults_widget_overview_no_fee_popup',
+    'stvaults_widget_overview_withdrawable_eth_popup',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickOverviewNOFeePopup]: [
     'stVaults_Widget_Overview',
     'Push "NO fee" popup',
-    'stvaults_widget_overview_withdrawable_eth_popup',
+    'stvaults_widget_overview_no_fee_popup',
   ],
   [MATOMO_CLICK_EVENTS_TYPES.clickOverviewLidoFeesPopup]: [
     'stVaults_Widget_Overview',
     'Push "Lido fees" popup',
-    'stvaults_widget_overview__lido_fees_popup',
+    'stvaults_widget_overview_lido_fees_popup',
   ],
 
   // Settings
