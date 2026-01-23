@@ -1,6 +1,12 @@
 import { useCallback } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-import { useVault, useVaultTierInfo } from 'modules/vaults';
+import {
+  useVault,
+  useVaultConfirmingRoles,
+  useVaultTierInfo,
+  vaultTexts,
+} from 'modules/vaults';
 
 import {
   useConfirmTierVoting,
@@ -8,7 +14,8 @@ import {
 } from 'features/settings/tier/hooks';
 
 import { ButtonStyled } from './styles';
-import { useFormContext } from 'react-hook-form';
+
+const texts = vaultTexts.actions.tier;
 
 export const ApproveRequest = () => {
   const {
@@ -21,28 +28,21 @@ export const ApproveRequest = () => {
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { reset: resetForm } = useFormContext();
   const tierVoting = useTierVoting();
-
-  const { proposal, isTheSameUser, proposedTier } = tierVoting ?? {};
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
+  const hasBothRoles = hasAdmin && isNodeOperator;
+  const { proposal, isTheSameUser, proposedTier, isLiabilityOverLimit } =
+    tierVoting ?? {};
 
   const handleApprove = useCallback(async () => {
     if (!proposal || !proposedTier || !vaultTierInfo) return;
-    const { functionName, proposedVaultLimitShares, proposedVaultLimitStETH } =
-      proposal;
+    const { functionName } = proposal;
 
     if (functionName === 'changeTier') {
-      await approveMovingTier(
-        proposedTier,
-        proposedVaultLimitShares,
-        proposedVaultLimitStETH,
-      );
+      await approveMovingTier();
     } else if (functionName === 'updateVaultShareLimit') {
-      await approveUpdateMintingLimit(
-        proposedTier.id,
-        proposedVaultLimitShares,
-        proposedVaultLimitStETH,
-      );
+      await approveUpdateMintingLimit();
     } else if (functionName === 'syncTier') {
-      await approveSyncTier(proposedTier);
+      await approveSyncTier();
     }
 
     await refetchVault().then(() =>
@@ -67,15 +67,20 @@ export const ApproveRequest = () => {
     vaultTierInfo,
   ]);
 
-  if (!proposal || !proposedTier || isTheSameUser) return null;
+  const approveButtonText = isLiabilityOverLimit
+    ? texts.request.approveButton.capacityExceeded
+    : texts.request.approveButton.approve;
+
+  if (!proposal || !proposedTier || (!hasBothRoles && isTheSameUser))
+    return null;
 
   return (
     <ButtonStyled
       onClick={handleApprove}
-      disabled={approving}
+      disabled={isLiabilityOverLimit || approving}
       data-testid="approveButton"
     >
-      Approve
+      {approveButtonText}
     </ButtonStyled>
   );
 };
