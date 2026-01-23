@@ -38,9 +38,10 @@ export const useTierVoting = () => {
       (createdByAdminOrRole && (hasVaultConfigurationPermission || hasAdmin));
 
     const vaultLiabilityStETH = vaultTierInfo.vault.liabilityStETH;
-    const availableLimitStETH =
-      proposedTier.shareLimitStETH - proposedTier.liabilityStETH;
-    const isLiabilityOverLimit = vaultLiabilityStETH > availableLimitStETH;
+    const isLiabilityOverLimit = proposedTier
+      ? vaultLiabilityStETH >
+        proposedTier.shareLimitStETH - proposedTier.liabilityStETH
+      : false;
 
     return {
       proposal,
