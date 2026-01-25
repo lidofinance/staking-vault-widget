@@ -1,1 +1,0 @@
-export { ClaimForm } from './form';

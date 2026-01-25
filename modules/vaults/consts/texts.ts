@@ -123,15 +123,15 @@ export const vaultTexts = {
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
     },
-    claim: {
+    disburse: {
       title: 'Disburse Node Operator fee',
-      available: `Available to claim`,
+      available: `Available to disburse`,
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
         `Disburse ${balance(claimableAmount)}ETH` as const,
-      notEnoughEther: `Not enough unlocked ETH to claim` as const,
-      loading: `Claiming node operator fee`,
-      completed: `Claimed node operator fee`,
+      notEnoughEther: `Not enough unlocked ETH to disburse` as const,
+      loading: `Disbursing node operator fee`,
+      completed: `Disbursed node operator fee`,
     },
     weth: {
       loadingUnwrap: 'Unwrapping wETH',

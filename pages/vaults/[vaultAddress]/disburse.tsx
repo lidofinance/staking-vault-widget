@@ -5,9 +5,9 @@ import { Layout } from 'shared/components';
 import { vaultTexts } from 'modules/vaults';
 import { getPageTitle } from 'utils';
 
-import { ClaimPage } from 'features/disburse';
+import { DisbursePage } from 'features/disburse';
 
-const text = vaultTexts.actions.claim;
+const text = vaultTexts.actions.disburse;
 
 const Disburse: FC = () => {
   return (
@@ -15,7 +15,7 @@ const Disburse: FC = () => {
       <Head>
         <title>{getPageTitle(text.title)}</title>
       </Head>
-      <ClaimPage />
+      <DisbursePage />
     </Layout>
   );
 };

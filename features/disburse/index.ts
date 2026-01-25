@@ -1,1 +1,1 @@
-export { ClaimPage } from './claim-page';
+export { DisbursePage } from './disburse-page';
