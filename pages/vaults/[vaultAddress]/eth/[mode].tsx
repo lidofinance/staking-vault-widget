@@ -1,10 +1,12 @@
 import type { FC } from 'react';
 import Head from 'next/head';
-import { Address } from 'viem';
+import { useRouter } from 'next/router';
+import type { Address } from 'viem';
 
 import { Layout } from 'shared/components';
+import { getPageTitle } from 'utils';
+
 import { FundingTabs } from 'features/funding';
-import { useRouter } from 'next/router';
 
 type FundingModePageParams = {
   mode: 'supply' | 'withdraw';
@@ -18,7 +20,7 @@ const Funding: FC = () => {
   return (
     <Layout navigationMode="vault" title={title} containerSize="content">
       <Head>
-        <title>{title} | Lido</title>
+        <title>{getPageTitle(title)}</title>
       </Head>
 
       <FundingTabs mode={mode} />

@@ -124,10 +124,11 @@ export const vaultTexts = {
         `Withdraw ${balance(amount)}${token}` as const,
     },
     claim: {
+      title: 'Disburse Node Operator fee',
       available: `Available to claim`,
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
-        `Claim ${balance(claimableAmount)}ETH` as const,
+        `Disburse ${balance(claimableAmount)}ETH` as const,
       notEnoughEther: `Not enough unlocked ETH to claim` as const,
       loading: `Claiming node operator fee`,
       completed: `Claimed node operator fee`,
@@ -738,5 +739,6 @@ export const vaultTexts = {
       stETH: 'stETH',
       wstETH: 'wstETH',
     },
+    pageTitle: '| stVaults | Lido',
   },
 } as const;
