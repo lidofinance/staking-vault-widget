@@ -10,7 +10,6 @@ import {
   withSuccess,
   useDappStatus,
 } from 'modules/web3';
-import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
 import {
   MATOMO_CLICK_EVENTS,
   MATOMO_CLICK_EVENTS_TYPES,
@@ -73,7 +72,7 @@ export const useCreateVault = () => {
 };
 
 export const useEstimateGasCreateVault = () => {
-  const { chainId } = useDappStatus();
+  const { chainId, address } = useDappStatus();
   const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
   const { getValues } = useFormContext<CreateVaultSchema>();
   const { isValid } = useFormState();
@@ -86,7 +85,7 @@ export const useEstimateGasCreateVault = () => {
   return useEstimateGas({
     to: vaultFactoryAddress,
     data: txData?.data,
-    account: ESTIMATE_ACCOUNT,
+    account: address,
     value: txData?.value,
     query: {
       enabled: !!txData,
