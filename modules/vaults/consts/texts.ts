@@ -123,14 +123,15 @@ export const vaultTexts = {
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
     },
-    claim: {
-      available: `Available to claim`,
+    disburse: {
+      title: 'Disburse Node Operator fee',
+      available: `Available to disburse`,
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
-        `Claim ${balance(claimableAmount)}ETH` as const,
-      notEnoughEther: `Not enough unlocked ETH to claim` as const,
-      loading: `Claiming node operator fee`,
-      completed: `Claimed node operator fee`,
+        `Disburse ${balance(claimableAmount)}ETH` as const,
+      notEnoughEther: `Not enough unlocked ETH to disburse` as const,
+      loading: `Disbursing node operator fee`,
+      completed: `Disbursed node operator fee`,
     },
     weth: {
       loadingUnwrap: 'Unwrapping wETH',
@@ -743,5 +744,6 @@ export const vaultTexts = {
       stETH: 'stETH',
       wstETH: 'wstETH',
     },
+    pageTitle: '| stVaults | Lido',
   },
 } as const;

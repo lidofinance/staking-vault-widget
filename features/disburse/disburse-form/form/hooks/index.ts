@@ -1,2 +1,2 @@
-export * from './use-claim';
+export * from './use-disburse';
 export * from './use-claim-data';

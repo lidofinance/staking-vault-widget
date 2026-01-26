@@ -11,8 +11,8 @@ export const getValidatorsLink = (): string => {
 };
 
 export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
-  '/': MATOMO_CLICK_EVENTS_TYPES.clickNaviAllVaults,
-  '/vaults': MATOMO_CLICK_EVENTS_TYPES.clickNaviMyVaults,
+  '/': MATOMO_CLICK_EVENTS_TYPES.clickNaviMyVaults,
+  '/vaults': MATOMO_CLICK_EVENTS_TYPES.clickNaviAllVaults,
   '/vaults/[vaultAddress]': MATOMO_CLICK_EVENTS_TYPES.clickNaviOverview,
   '/vaults/[vaultAddress]/eth/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSupplyWithdraw,

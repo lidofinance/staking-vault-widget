@@ -1,13 +1,13 @@
 import { Claimable } from './claimable';
-import { ClaimInputs } from './claim-inputs';
+import { DisburseInputs } from './disburse-inputs';
 import { SubmitButton } from './submit-button';
 import { FormContainer } from './styles';
 
-export const ClaimForm = () => {
+export const DisburseForm = () => {
   return (
     <FormContainer data-testid="claimForm">
       <Claimable />
-      <ClaimInputs />
+      <DisburseInputs />
       <SubmitButton />
     </FormContainer>
   );

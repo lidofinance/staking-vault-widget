@@ -254,7 +254,7 @@ export const VaultTable: FC<VaultTableProps> = ({
     (e: MouseEvent<HTMLTableRowElement>) => {
       const vaultAddress = e.currentTarget.dataset.address;
       if (vaultAddress && isAddress(vaultAddress)) {
-        trackEvent(...MATOMO_CLICK_EVENTS.clickNaviMyVaults);
+        trackEvent(...MATOMO_CLICK_EVENTS.clickNaviOverview);
         void router.push(appPaths.vaults.vault(vaultAddress).overview);
       }
     },

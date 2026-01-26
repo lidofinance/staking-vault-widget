@@ -2,10 +2,12 @@ import { FC } from 'react';
 import Head from 'next/head';
 import { ServicePage } from '@lidofinance/lido-ui';
 
+import { getPageTitle } from 'utils';
+
 const Page404: FC = () => (
   <ServicePage title="500">
     <Head>
-      <title>Lido | Internal Server Error</title>
+      <title>{getPageTitle('Internal Server Error')}</title>
     </Head>
     Internal Server Error
   </ServicePage>

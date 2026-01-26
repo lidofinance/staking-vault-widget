@@ -9,7 +9,7 @@ import {
 } from 'modules/vaults';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
-export const useClaim = () => {
+export const useDisburse = () => {
   const [isSubmitting, setSubmitting] = useState(false);
   const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
@@ -17,12 +17,12 @@ export const useClaim = () => {
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
-    claim: useCallback(async () => {
+    disburse: useCallback(async () => {
       invariant(owner, '[useClaim] owner is undefined');
       setSubmitting(true);
 
-      const loadingActionText = vaultTexts.actions.claim.loading;
-      const mainActionCompleteText = vaultTexts.actions.claim.completed;
+      const loadingActionText = vaultTexts.actions.disburse.loading;
+      const mainActionCompleteText = vaultTexts.actions.disburse.completed;
 
       const claimCall = {
         ...activeVault.dashboard.encode.disburseFee(),
