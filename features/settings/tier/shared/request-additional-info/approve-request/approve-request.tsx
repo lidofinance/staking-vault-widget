@@ -48,8 +48,7 @@ export const ApproveRequest = () => {
     await refetchVault().then(() =>
       resetForm({
         selectedTierId: proposal.tierId.toString(),
-        selectedTierLimit:
-          proposedTier.shareLimitStETH - proposedTier.liabilityStETH,
+        selectedTierLimit: proposedTier.shareLimitStETH,
         vaultMintingLimit:
           functionName !== 'syncTier'
             ? proposal.proposedVaultLimitStETH
