@@ -12,3 +12,4 @@ export * from './ceil-div-bigint';
 export * from './calculate-tier-metrics';
 export * from './is-bigint';
 export * from './is-number';
+export * from './get-page-title';

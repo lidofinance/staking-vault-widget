@@ -4,15 +4,15 @@ import { vaultTexts } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
 import { ConnectWalletButton } from 'shared/wallet';
 
-import { useClaim, useClaimData } from './hooks';
+import { useDisburse, useClaimData } from './hooks';
 
 export const SubmitButton = () => {
   const { isDappActive } = useDappStatus();
-  const { claim, isSubmitting } = useClaim();
+  const { disburse, isSubmitting } = useDisburse();
   const { claimableFeeQuery, invalidateClaimData } = useClaimData();
 
   const handleClaim = async () => {
-    await claim();
+    await disburse();
     await invalidateClaimData();
   };
 
@@ -37,8 +37,10 @@ export const SubmitButton = () => {
         onClick={handleClaim}
       >
         {isNotEnoughEther
-          ? vaultTexts.actions.claim.notEnoughEther
-          : vaultTexts.actions.claim.claimButton(claimableFeeQuery.data?.noFee)}
+          ? vaultTexts.actions.disburse.notEnoughEther
+          : vaultTexts.actions.disburse.claimButton(
+              claimableFeeQuery.data?.noFee,
+            )}
       </Button>
     </ConnectWalletButton>
   );

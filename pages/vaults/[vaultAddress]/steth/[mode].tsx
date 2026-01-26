@@ -1,10 +1,12 @@
 import type { FC } from 'react';
 import Head from 'next/head';
 import { Address } from 'viem';
+import { useRouter } from 'next/router';
+
+import { Layout } from 'shared/components';
+import { getPageTitle } from 'utils';
 
 import { AdjustmentTabs } from 'features/adjustment';
-import { Layout } from 'shared/components';
-import { useRouter } from 'next/router';
 
 type AdjustmentModePageParams = {
   mode: 'mint' | 'repay';
@@ -18,7 +20,7 @@ const Adjustment: FC = () => {
   return (
     <Layout navigationMode="vault" title={title} containerSize="content">
       <Head>
-        <title>{title} | Lido</title>
+        <title>{getPageTitle(title)}</title>
       </Head>
       <AdjustmentTabs isMintTab={mode === 'mint'} />
     </Layout>

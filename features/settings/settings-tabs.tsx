@@ -1,6 +1,7 @@
 import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { trackEvent } from '@lidofinance/analytics-matomo';
+import Head from 'next/head';
 import type { Address } from 'viem';
 
 import { ToggleSwitch } from 'shared/components/toggle';
@@ -9,6 +10,7 @@ import {
   MATOMO_CLICK_EVENTS_TYPES,
   MATOMO_CLICK_EVENTS,
 } from 'consts/matomo-click-events';
+import { getPageTitle } from 'utils';
 
 import { EditMainSettings } from './main';
 import { PermissionsSettings } from './permissions';
@@ -35,6 +37,12 @@ const tabsEventMap = {
   tier: MATOMO_CLICK_EVENTS_TYPES.clickSettingsTierTab,
 } as const;
 
+const titleMap: Record<SETTINGS_PATHS, string> = {
+  main: 'Settings',
+  permissions: 'Permissions',
+  tier: 'Tier Settings',
+};
+
 export const SettingsTabs = () => {
   const router = useRouter();
   const { mode, vaultAddress } = router.query as AdjustmentTabPageParams;
@@ -60,6 +68,9 @@ export const SettingsTabs = () => {
 
   return (
     <PageWrapper>
+      <Head>
+        <title>{getPageTitle(titleMap[mode])}</title>
+      </Head>
       <ToggleSwitch
         options={settingsToggleList}
         defaultValue={mode}
