@@ -188,6 +188,11 @@ export const vaultTexts = {
           review: 'Review request',
           hide: 'Hide details',
         },
+        approveButton: {
+          capacityExceeded:
+            'stVault Liability exceeds available Tier stETH capacity.',
+          approve: 'Approve',
+        },
       },
       inputMintingLimit: {
         titleCurrent: 'stVault minting limit',
