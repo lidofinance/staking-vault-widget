@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import {
   useVault,
   useVaultConfirmingRoles,
+  useVaultPermission,
   useVaultTierInfo,
   vaultTexts,
 } from 'modules/vaults';
@@ -29,7 +30,10 @@ export const ApproveRequest = () => {
   const { reset: resetForm } = useFormContext();
   const tierVoting = useTierVoting();
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
-  const hasBothRoles = hasAdmin && isNodeOperator;
+  const { hasPermission: hasVaultConfigurationPermission } =
+    useVaultPermission('vaultConfiguration');
+  const hasBothRoles =
+    (hasAdmin || hasVaultConfigurationPermission) && isNodeOperator;
   const { proposal, isTheSameUser, proposedTier, isLiabilityOverLimit } =
     tierVoting ?? {};
 

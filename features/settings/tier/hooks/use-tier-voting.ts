@@ -29,7 +29,7 @@ export const useTierVoting = () => {
       return null;
     }
 
-    const { member: proposer, tierId } = proposal;
+    const { member: proposer, tierId, proposedVaultLimitStETH } = proposal;
     const proposedTier = noTiersInfo.tiers.find((tier) => tier.id === tierId);
     const createdByNodeOperator = isAddressEqual(proposer, address);
     const createdByAdminOrRole = isAddressEqual(proposer, activeVault.owner);
@@ -40,7 +40,9 @@ export const useTierVoting = () => {
     const vaultLiabilityStETH = vaultTierInfo.vault.liabilityStETH;
     const isLiabilityOverLimit = proposedTier
       ? vaultLiabilityStETH >
-        proposedTier.shareLimitStETH - proposedTier.liabilityStETH
+          proposedTier.shareLimitStETH - proposedTier.liabilityStETH ||
+        (typeof proposedVaultLimitStETH === 'bigint' &&
+          vaultLiabilityStETH > proposedVaultLimitStETH)
       : false;
 
     return {
