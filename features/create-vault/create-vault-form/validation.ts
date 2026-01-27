@@ -22,6 +22,9 @@ const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} hours o
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = {
   message: 'Only number is valid',
 };
+const INVALID_INT_NUMBER_DATA_OBJECT_MESSAGE = {
+  message: 'Only integer number is valid',
+};
 const INVALID_BASIS_POINTS_MESSAGE = {
   message: 'Min step 0.001%',
 };
@@ -93,6 +96,7 @@ export const createVaultSchema = z.object({
   confirmExpiry: numberSchema(
     z
       .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
+      .int(INVALID_INT_NUMBER_DATA_OBJECT_MESSAGE)
       .min(MIN_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MIN_MESSAGE)
       .max(MAX_CONFIRM_EXPIRY, INVALID_NUMBER_EXPIRY_MAX_MESSAGE),
   ),
