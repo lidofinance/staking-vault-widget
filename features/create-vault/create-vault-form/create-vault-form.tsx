@@ -46,7 +46,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
         step: CREATE_VAULT_FORM_STEPS.main,
       },
       disabled: !isDappActive,
-      mode: 'onBlur',
+      mode: 'all',
       shouldUnregister: false,
       resolver: zodResolver<CreateVaultFormValues, unknown, CreateVaultSchema>(
         createVaultSchema,
