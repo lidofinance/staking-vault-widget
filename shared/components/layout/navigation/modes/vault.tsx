@@ -52,8 +52,8 @@ const vaultRoutes = (
       external: true,
     },
     {
-      title: 'Claim Fees',
-      path: appPaths.vaults.vault(vaultAddress).claim,
+      title: 'Node Operator fee',
+      path: appPaths.vaults.vault(vaultAddress).disburse,
       icon: <Withdraw />,
       exact: true,
     },

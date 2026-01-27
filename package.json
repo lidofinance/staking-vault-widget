@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
-    "@lidofinance/analytics-matomo": "^0.51.0",
+    "@lidofinance/analytics-matomo": "^0.56.0",
     "@lidofinance/api-metrics": "^0.51.0",
     "@lidofinance/api-rpc": "^0.51.0",
     "@lidofinance/lido-ethereum-sdk": "4.5.1",

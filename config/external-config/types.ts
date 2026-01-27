@@ -27,7 +27,7 @@ export enum ManifestConfigPageEnum {
   supply = '/supply',
   adjustment = '/adjustment',
   validators = '/validators',
-  claim = '/claim',
+  disburse = '/disburse',
   notFound = '/404',
 }
 

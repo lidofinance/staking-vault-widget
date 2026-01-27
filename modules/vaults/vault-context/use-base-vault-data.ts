@@ -31,7 +31,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
-    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS,
+    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS * 30, // 30 mins
     retry(failureCount, error) {
       // retry only if the error is not our custom error
       return failureCount < 3 && !(error instanceof DisplayableError);
@@ -66,18 +66,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         lazyOracle.read.latestReportData(),
         publicClient.getBlockNumber(),
       ]);
-
-      // TODO: remove after monitoring error with InvalidProof()
-      const outline =
-        'text-shadow:0 1px 1px rgba(0,0,0,.6),0 0 2px rgba(255,255,255,.35)';
-      // eslint-disable-next-line no-console
-      console.log(
-        '%cREPORT%c ▶ %creport data for block:%c ' + blockNumber,
-        'background:#22c55e;color:#0b1220;padding:2px 8px;border-radius:6px;font-weight:900',
-        `color:#22c55e;font-weight:900;${outline}`,
-        `background:rgba(0,0,0,.35);color:#f8fafc;padding:2px 6px;border-radius:6px;font-weight:700;${outline}`,
-        `background:rgba(0,0,0,.55);color:#a7f3d0;padding:2px 6px;border-radius:6px;font-weight:900;${outline}`,
-      );
 
       const [
         latestHubReportTimestamp,

@@ -1,5 +1,6 @@
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
+import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import { FormController } from 'shared/hook-form/form-controller';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -11,6 +12,7 @@ import {
   useVaultTierInfo,
   type VaultTierData,
 } from 'modules/vaults';
+import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 
 import { useEditTierSettings } from 'features/settings/tier/hooks';
 import { tierSettingsFormResolver } from 'features/settings/tier/const';
@@ -20,11 +22,10 @@ const prepareDefaultValues = async (
   tierInfo: VaultTierData,
 ): Promise<TierSettingsFormValues> => {
   const { vault, tier } = tierInfo;
-  const tierMintingCapacityStEth = tier.shareLimitStETH - tier.liabilityStETH;
 
   return {
     selectedTierId: vault.tierId.toString(),
-    selectedTierLimit: tierMintingCapacityStEth,
+    selectedTierLimit: tier.shareLimitStETH,
     vaultMintingLimit: vault.stETHLimit,
   };
 };
@@ -55,6 +56,8 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: TierSettingsFormValues): Promise<boolean> => {
+      trackEvent(...MATOMO_CLICK_EVENTS.clickSettingsSubmitTierTab);
+
       const { result } = await editTierSettings(data);
       await refetch({ cancelRefetch: true, throwOnError: false });
       return result.success;
