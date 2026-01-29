@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { Text } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
-import { toEthValue, toStethValue } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { SectionDivider } from '../styles';
-import { ActionButton, ActionContainer, ActionWrapper } from './styles';
+import { ActionContainer } from './styles';
+import { Action } from './action';
+
+const healthEmergencyGuideLink =
+  'https://docs.lido.fi/run-on-lido/stvaults/operational-and-management-guides/health-emergency-guide';
 
 export const RepayObligations = () => {
   const router = useRouter();
@@ -23,39 +25,44 @@ export const RepayObligations = () => {
     return [
       {
         title: 'Increase Total Value',
-        buttonText: `Supply ${toEthValue(obligationsShortfallValue)}`,
+        children: 'Supply',
+        symbol: 'ETH',
+        amount: obligationsShortfallValue,
         onClick: () =>
           router.push(appPaths.vaults.vault(address).eth('supply')),
       },
       {
         title: 'Decrease stETH Liability',
-        buttonText: `Repay ${toStethValue(stETHToBurn)}`,
+        children: 'Repay',
+        symbol: 'stETH',
+        amount: stETHToBurn,
         onClick: () =>
           router.push(appPaths.vaults.vault(address).steth('repay')),
+      },
+      {
+        title: 'Decrease Total Value and stETH Liability',
+        children: 'Learn how to rebalance',
+        onClick: () => window.open(healthEmergencyGuideLink, '_blank'),
       },
     ];
   }, [stETHToBurn, obligationsShortfallValue, router, address]);
 
   return (
     <ActionContainer>
-      {actions.map(({ onClick, buttonText, title }, index) => {
-        const showDivider = actions.length !== index + 1;
+      {actions.map(({ title, amount, symbol, children, onClick }, index) => {
+        const showDivider = index !== actions.length - 1;
 
         return (
           <>
-            <ActionWrapper key={title}>
-              <Text size="xxs" strong>
-                {title}
-              </Text>
-              <ActionButton
-                onClick={onClick}
-                size="xs"
-                variant="outlined"
-                color="secondary"
-              >
-                {buttonText}
-              </ActionButton>
-            </ActionWrapper>
+            <Action
+              key={title}
+              title={title}
+              amount={amount}
+              onClick={onClick}
+              symbol={symbol}
+            >
+              {children}
+            </Action>
             {showDivider && <SectionDivider type="vertical" />}
           </>
         );

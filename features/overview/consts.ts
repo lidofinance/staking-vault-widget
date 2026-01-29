@@ -2,6 +2,8 @@ import { calculateHealth, ceilDivBigint } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
+export const UTILIZATION_RATIO_THRESHOLD = 100.01;
+
 export const modals = [
   'totalValue',
   'healthFactorNumber',
