@@ -1,8 +1,8 @@
 import type { FC, PropsWithChildren } from 'react';
-import { Text } from '@lidofinance/lido-ui';
+import { Text, Tooltip } from '@lidofinance/lido-ui';
 
 import { FormatToken } from 'shared/formatters';
-import { isBigint } from 'utils';
+import { isBigint, useFormattedBalance } from 'utils';
 
 import { ActionButton, ActionWrapper } from './styles';
 
@@ -20,7 +20,11 @@ export const Action: FC<PropsWithChildren<ActionProps>> = ({
   onClick,
   children,
 }) => {
-  return (
+  const isPayable = isBigint(amount) && !!symbol;
+  const { actual } = useFormattedBalance(amount);
+  const tooltipTitle = `${actual} ${symbol}`;
+
+  const content = (
     <ActionWrapper>
       <Text size="xxs" strong>
         {title}
@@ -31,14 +35,26 @@ export const Action: FC<PropsWithChildren<ActionProps>> = ({
         variant="outlined"
         color="secondary"
       >
-        {children}
-        {isBigint(amount) && symbol && (
-          <>
-            {' '}
-            <FormatToken amount={amount} symbol={symbol} maxDecimalDigits={4} />
-          </>
-        )}
+        <>
+          {children}
+          {isPayable && (
+            <>
+              {' '}
+              <FormatToken
+                amount={amount}
+                symbol={symbol}
+                maxDecimalDigits={4}
+              />
+            </>
+          )}
+        </>
       </ActionButton>
     </ActionWrapper>
+  );
+
+  return (
+    <>
+      {isPayable ? <Tooltip title={tooltipTitle}>{content}</Tooltip> : content}
+    </>
   );
 };

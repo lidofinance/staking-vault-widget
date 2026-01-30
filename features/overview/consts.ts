@@ -42,6 +42,7 @@ type OverviewArgs = {
   unsettledLidoFees: bigint;
   minimalReserve: bigint;
   reportLiabilitySharesStETH: bigint;
+  feeObligation: bigint;
 };
 
 export const calculateOverviewV2 = (args: OverviewArgs) => {
@@ -58,6 +59,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     unsettledLidoFees,
     minimalReserve,
     reportLiabilitySharesStETH,
+    feeObligation,
   } = args;
 
   const { healthRatio, isHealthy } = calculateHealth({
@@ -104,6 +106,14 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
             100n,
         ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
+  // repay-obligations
+  const supply =
+    liabilitySharesInStethWei + reserved - totalValue + feeObligation;
+
+  const repay =
+    (liabilitySharesInStethWei + reserved - totalValue + feeObligation) *
+    (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(reserveRatioBP));
+
   return {
     healthRatio,
     isHealthy,
@@ -115,5 +125,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     utilizationRatio,
     reserved,
     totalMintingCapacityStethWei,
+    supply,
+    repay,
   };
 };

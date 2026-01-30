@@ -15,7 +15,7 @@ export const CapacityExceeded = () => {
 
   if (
     !isNumber(utilizationRatioNumber) ||
-    utilizationRatioNumber <= UTILIZATION_RATIO_THRESHOLD ||
+    utilizationRatioNumber < UTILIZATION_RATIO_THRESHOLD ||
     (isNumber(healthFactorNumber) && healthFactorNumber < 100)
   ) {
     return null;
