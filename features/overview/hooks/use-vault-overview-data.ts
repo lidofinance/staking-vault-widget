@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 
-import { calculateHealth } from 'utils';
+import { calculateHealth, formatToPercentWithDivider } from 'utils';
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
@@ -27,7 +27,6 @@ import {
   toStethValue,
   getMintingConstraintType,
   formatBasisPoint,
-  isNumber,
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
@@ -353,13 +352,10 @@ const selectOverviewData = ({
     bottomLine,
   } = vaultMetrics || {};
 
-  const netApr =
-    vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100);
+  const netApr = formatToPercentWithDivider(vault7dApr?.netStakingApr.sma);
 
   const carrySpreadAprNumber = vault7dApr?.carrySpreadApr.sma;
-  const carrySpreadApr =
-    isNumber(carrySpreadAprNumber) &&
-    formatPercent.format(carrySpreadAprNumber / 100);
+  const carrySpreadApr = formatToPercentWithDivider(carrySpreadAprNumber);
 
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
