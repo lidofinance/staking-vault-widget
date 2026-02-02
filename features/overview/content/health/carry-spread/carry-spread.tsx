@@ -6,15 +6,16 @@ import {
   ChartProportionBorderSize,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
 import { Hint, InlineLoader } from 'shared/components';
-import { getCarrySpreadColor } from 'utils';
 
 import { useHealthChart } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextWrapper } from '../../styles';
-import { ContentWrapper, ChartContainer } from './styles';
+import { ContentWrapper, ChartContainer, CarrySpreadPercent } from './styles';
 
+vaultTexts;
 export const CarrySpread = () => {
   const { isLoadingVault, values } = useVaultOverview();
   const { chartData } = useHealthChart(values?.healthFactorNumber);
@@ -43,20 +44,20 @@ export const CarrySpread = () => {
                 positive spread raises the Health Factor, while a negative
                 spread lowers it.
                 <br />
-                It’s calculated as the estimated yearly return from staking in
-                the stVault after subtracting fees and stETH liability growth
-                from stETH rebasing.
+                It reflects the estimated annual return from staking in the
+                stVault, after subtracting fees and stETH liability growth from
+                rebasing — averaged over the past 7 days.
               </>
             }
           />
-          <Text
-            size="xxs"
+          <CarrySpreadPercent
             strong
-            style={{ color: getCarrySpreadColor(values?.carrySpreadApr) }}
+            size="xxs"
+            $percent={values?.carrySpreadAprNumber}
             data-testid="carrySpreadApr"
           >
             {values?.carrySpreadApr ?? '-'}
-          </Text>
+          </CarrySpreadPercent>
         </TextWrapper>
       </ContentWrapper>
     </InlineLoader>

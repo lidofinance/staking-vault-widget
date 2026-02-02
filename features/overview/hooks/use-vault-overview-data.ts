@@ -27,6 +27,7 @@ import {
   toStethValue,
   getMintingConstraintType,
   formatBasisPoint,
+  isNumber,
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
@@ -353,13 +354,12 @@ const selectOverviewData = ({
   } = vaultMetrics || {};
 
   const netApr =
-    (vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100)) ??
-    undefined;
+    vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100);
 
+  const carrySpreadAprNumber = vault7dApr?.carrySpreadApr.sma;
   const carrySpreadApr =
-    (vaultMetrics &&
-      formatPercent.format(vaultMetrics.carrySpreadAprPercent / 100)) ??
-    undefined;
+    isNumber(carrySpreadAprNumber) &&
+    formatPercent.format(carrySpreadAprNumber / 100);
 
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
@@ -441,6 +441,7 @@ const selectOverviewData = ({
     isPausedByFees: feesToSettle > WEI_PER_ETHER,
     netStakingRewards,
     carrySpreadApr,
+    carrySpreadAprNumber,
     vaultData,
     vaultMetrics,
     vaultQuarantineState,
