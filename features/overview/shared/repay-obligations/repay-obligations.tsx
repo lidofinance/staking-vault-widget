@@ -6,13 +6,11 @@ import { vaultTexts } from 'modules/vaults';
 import { isBigint } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { HEALTH_EMERGENCY_GUIDE_LINK } from 'features/overview/consts';
 
 import { SectionDivider } from '../styles';
 import { ActionContainer } from './styles';
 import { Action } from './action';
-
-const healthEmergencyGuideLink =
-  'https://docs.lido.fi/run-on-lido/stvaults/operational-and-management-guides/health-emergency-guide';
 
 const texts = vaultTexts.metrics.capacityExceeded;
 
@@ -53,7 +51,7 @@ export const RepayObligations = () => {
     items.push({
       title: texts.actions.learnMore.title,
       children: texts.actions.learnMore.children,
-      onClick: () => window.open(healthEmergencyGuideLink, '_blank'),
+      onClick: () => window.open(HEALTH_EMERGENCY_GUIDE_LINK, '_blank'),
     });
 
     return items;
