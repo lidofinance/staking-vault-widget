@@ -334,18 +334,20 @@ export const vaultTexts = {
       description:
         "The stVault's stETH minting capacity has been exceeded, indicating an imbalanced minted stETH Liability as constrained by the stVault's Reserve Ratio. You are strongly recommended to take one of the following actions:",
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
-      actions: [
-        {
-          name: 'supply',
+      actions: {
+        supply: {
           title: 'Increase Total Value',
-          getText: (amount: string) => `Supply ${amount}`,
+          children: 'Supply',
         },
-        {
-          name: 'repay',
+        repay: {
           title: 'Decrease stETH Liability',
-          getText: (amount: string) => `Repay ${amount}`,
+          children: 'Repay',
         },
-      ],
+        learnMore: {
+          title: 'Decrease Total Value and stETH Liability',
+          children: 'Learn how to rebalance',
+        },
+      },
     },
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',

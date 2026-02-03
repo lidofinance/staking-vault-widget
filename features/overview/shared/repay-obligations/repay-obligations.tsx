@@ -1,61 +1,78 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { Text } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
-import { toEthValue, toStethValue } from 'utils';
+import { vaultTexts } from 'modules/vaults';
+import { isBigint } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
+import { HEALTH_EMERGENCY_GUIDE_LINK } from 'features/overview/consts';
 
 import { SectionDivider } from '../styles';
-import { ActionButton, ActionContainer, ActionWrapper } from './styles';
+import { ActionContainer } from './styles';
+import { Action } from './action';
+
+const texts = vaultTexts.metrics.capacityExceeded;
 
 export const RepayObligations = () => {
   const router = useRouter();
   const { values } = useVaultOverview();
-  const { stETHToBurn, obligationsShortfallValue, address } = values ?? {};
+  const { address, supplyETH, repayStETH } = values ?? {};
 
   const actions = useMemo(() => {
     if (!address) {
       return [];
     }
 
-    return [
-      {
-        title: 'Increase Total Value',
-        buttonText: `Supply ${toEthValue(obligationsShortfallValue)}`,
+    const items = [];
+
+    if (isBigint(supplyETH) && supplyETH >= 0n) {
+      items.push({
+        title: texts.actions.supply.title,
+        children: texts.actions.supply.children,
+        symbol: 'ETH',
+        amount: supplyETH,
         onClick: () =>
           router.push(appPaths.vaults.vault(address).eth('supply')),
-      },
-      {
-        title: 'Decrease stETH Liability',
-        buttonText: `Repay ${toStethValue(stETHToBurn)}`,
+      });
+    }
+
+    if (isBigint(repayStETH) && repayStETH >= 0n) {
+      items.push({
+        title: texts.actions.repay.title,
+        children: texts.actions.repay.children,
+        symbol: 'stETH',
+        amount: repayStETH,
         onClick: () =>
           router.push(appPaths.vaults.vault(address).steth('repay')),
-      },
-    ];
-  }, [stETHToBurn, obligationsShortfallValue, router, address]);
+      });
+    }
+
+    items.push({
+      title: texts.actions.learnMore.title,
+      children: texts.actions.learnMore.children,
+      onClick: () => window.open(HEALTH_EMERGENCY_GUIDE_LINK, '_blank'),
+    });
+
+    return items;
+  }, [supplyETH, repayStETH, router, address]);
 
   return (
     <ActionContainer>
-      {actions.map(({ onClick, buttonText, title }, index) => {
-        const showDivider = actions.length !== index + 1;
+      {actions.map(({ title, amount, symbol, children, onClick }, index) => {
+        const showDivider = index !== actions.length - 1;
 
         return (
           <>
-            <ActionWrapper key={title}>
-              <Text size="xxs" strong>
-                {title}
-              </Text>
-              <ActionButton
-                onClick={onClick}
-                size="xs"
-                variant="outlined"
-                color="secondary"
-              >
-                {buttonText}
-              </ActionButton>
-            </ActionWrapper>
+            <Action
+              key={title}
+              title={title}
+              amount={amount}
+              onClick={onClick}
+              symbol={symbol}
+            >
+              {children}
+            </Action>
             {showDivider && <SectionDivider type="vertical" />}
           </>
         );
