@@ -107,12 +107,16 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
         ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
   // repay-obligations
-  const supply =
-    liabilitySharesInStethWei + reserved - totalValue + feeObligation;
+  const repay = bigIntMax(
+    0n,
+    liabilitySharesInStethWei -
+      ((totalValue - feeObligation) * oneMinusRR) / VAULT_TOTAL_BASIS_POINTS_BN,
+  );
 
-  const repay =
-    (liabilitySharesInStethWei + reserved - totalValue + feeObligation) *
-    (VAULT_TOTAL_BASIS_POINTS_BN - BigInt(reserveRatioBP));
+  const supply = bigIntMax(
+    0n,
+    (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR,
+  );
 
   return {
     healthRatio,
