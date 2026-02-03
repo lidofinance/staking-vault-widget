@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import {
+  useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
   useVaultTierInfo,
@@ -26,6 +27,7 @@ import {
 
 export const AlterTierInfo = () => {
   const [showModal, setModalVisibility] = useState(false);
+  const { activeVault } = useVault();
   const { data: vaultTierInfo, isLoading } = useVaultTierInfo();
   const { data } = useAlterTier();
   const { hasChanges, alterTierList, id, tierName } = data ?? {};
@@ -40,6 +42,7 @@ export const AlterTierInfo = () => {
     !hasChanges ||
     !(hasAdmin || isNodeOperator || hasPermission) ||
     !isNumber(id) ||
+    activeVault?.isPendingConnect ||
     (extendLastProposal?.tierId === BigInt(id) &&
       extendLastProposal.functionName === 'syncTier')
   ) {

@@ -68,7 +68,7 @@ const tableHeaders = [
   },
   {
     title: 'Carry Spread',
-    sortKey: 'carrySpreadAprPercent',
+    sortKey: 'carrySpreadAprSma',
   },
   {
     title: 'Health factor',
@@ -82,7 +82,7 @@ const PLACEHOLDER_VAULT: VaultEntry = {
   totalValue: 0n,
   liabilityStETH: 0n,
   healthFactor: 0,
-  carrySpreadAprPercent: 0,
+  carrySpreadAprSma: 0,
   netStakingAprSma: 0,
   bottomLine: 0n,
 };
@@ -131,7 +131,7 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
           dataTestId ? `${dataTestId}-carrySpreadAprCell` : undefined
         }
       >
-        <PercentCell value={vault.carrySpreadAprPercent} />
+        <PercentCell value={vault.carrySpreadAprSma} />
       </TableCell>
       <TableCell
         align="right"

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { formatPercent } from 'utils';
+import { formatToPercentWithDivider } from 'utils';
 
 import { Percent } from './styles';
 import { DATA_UNAVAILABLE } from 'consts/text';
@@ -17,7 +17,7 @@ export const PercentCell: FC<PercentCellProps> = ({ value, color, strong }) => {
 
   return (
     <Percent color={color} strong={strong}>
-      {formatPercent.format(value / 100)}
+      {formatToPercentWithDivider(value)}
     </Percent>
   );
 };
