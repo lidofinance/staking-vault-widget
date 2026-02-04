@@ -38,6 +38,32 @@ export const encodeReportCall = (
   ]);
 };
 
+const readWithoutReport = async <
+  TContracts extends readonly (ContractFunctionParameters & {
+    from?: Address;
+  })[],
+>({
+  publicClient,
+  contracts,
+}: Pick<ReadWithReportArgs<TContracts>, 'publicClient' | 'contracts'>): Promise<
+  MulticallReturnType<TContracts, false>
+> => {
+  // if there is only 1 call we can use readContract directly to avoid multicall overhead
+  if (contracts.length === 1) {
+    return [
+      await publicClient.readContract({
+        ...contracts[0],
+      }),
+    ] as unknown as MulticallReturnType<TContracts, false>;
+  }
+
+  // fallback multicall when no report is provided
+  return (await publicClient.multicall({
+    contracts: contracts as any,
+    allowFailure: false,
+  })) as unknown as MulticallReturnType<TContracts, false>;
+};
+
 export const readWithReport = async <
   TContracts extends readonly (ContractFunctionParameters & {
     from?: Address; // this is NOOP for eth_call multicall, but may work with simulateV1
@@ -78,7 +104,6 @@ export const readWithReport = async <
     // ],
 
     const lazyOracle = getLazyOracleContract(publicClient);
-
     const reportCall = lazyOracle.prepare.updateVaultData([
       report.vault,
       report.totalValueWei,
@@ -97,29 +122,20 @@ export const readWithReport = async <
       functionName: 'getBlockNumber',
     } as const;
 
-    const allResults = await publicClient.multicall({
-      contracts: [reportCall, ...contracts, getBlockNumberCall] as any,
-      batchSize: 0, // this forces to use single call batch for all calls
-      allowFailure: false,
-      blockNumber,
-    });
+    try {
+      const allResults = await publicClient.multicall({
+        contracts: [reportCall, ...contracts, getBlockNumberCall] as any,
+        batchSize: 0, // this forces to use single call batch for all calls
+        allowFailure: false,
+        blockNumber,
+      });
 
-    const [, ...results] = allResults.slice(0, -1);
-    return results as MulticallReturnType<TContracts, false>;
+      const [, ...results] = allResults.slice(0, -1);
+      return results as MulticallReturnType<TContracts, false>;
+    } catch {
+      return readWithoutReport({ publicClient, contracts });
+    }
   }
 
-  // if there is only 1 call we can use readContract directly to avoid multicall overhead
-  if (contracts.length === 1) {
-    return [
-      await publicClient.readContract({
-        ...contracts[0],
-      }),
-    ] as unknown as MulticallReturnType<TContracts, false>;
-  }
-
-  // fallback multicall when no report is provided
-  return publicClient.multicall({
-    contracts: contracts as any,
-    allowFailure: false,
-  }) as unknown as MulticallReturnType<TContracts, false>;
+  return readWithoutReport({ publicClient, contracts });
 };

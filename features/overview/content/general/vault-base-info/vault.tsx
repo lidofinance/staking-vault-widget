@@ -3,7 +3,13 @@ import { Identicon, Text } from '@lidofinance/lido-ui';
 import Link from 'next/link';
 import { zeroAddress } from 'viem';
 
-import { useVault, VAULT_TOTAL_BASIS_POINTS, vaultTexts } from 'modules/vaults';
+import {
+  useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
+  VAULT_TOTAL_BASIS_POINTS,
+  vaultTexts,
+} from 'modules/vaults';
 import { AddressPopover } from 'shared/components/address-badge/address-popover';
 import { formatPercent } from 'utils';
 
@@ -23,6 +29,8 @@ const { general } = vaultTexts.metrics;
 export const Vault = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { activeVault } = useVault();
+  const { hasPermission } = useVaultPermission('vaultConfiguration');
+  const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
 
   const {
     address,
@@ -36,6 +44,7 @@ export const Vault = () => {
     (reserveRatioBP ?? 0) / VAULT_TOTAL_BASIS_POINTS,
   );
   const diameter = useIdenticonSize();
+  const hasPermissionToUpdateTier = hasPermission || hasAdmin || isNodeOperator;
 
   return (
     <VaultContainer data-testid="vaultInfo">
@@ -71,9 +80,11 @@ export const Vault = () => {
             <Text size="xxs" color="secondary" data-testid="RR">
               {reserveRatio} {general.reserveRatio}
             </Text>
-            <Link href={`/vaults/${address}/settings/tier`}>
-              {general.action}
-            </Link>
+            {hasPermissionToUpdateTier && (
+              <Link href={`/vaults/${address}/settings/tier`}>
+                {general.action}
+              </Link>
+            )}
           </VaultRR>
         )}
       </VaultBaseInfo>
