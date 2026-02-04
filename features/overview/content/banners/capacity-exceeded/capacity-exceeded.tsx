@@ -1,7 +1,9 @@
 import { vaultTexts } from 'modules/vaults';
+import { isNumber } from 'utils';
 
 import { NoticeContainer, RepayObligations } from 'features/overview/shared';
-import { useVaultOverview } from '../../../vault-overview';
+import { useVaultOverview } from 'features/overview/vault-overview';
+import { UTILIZATION_RATIO_THRESHOLD } from 'features/overview/consts';
 
 const {
   capacityExceeded: { title, description, note },
@@ -12,9 +14,9 @@ export const CapacityExceeded = () => {
   const { utilizationRatioNumber, healthFactorNumber } = values ?? {};
 
   if (
-    !utilizationRatioNumber ||
-    utilizationRatioNumber <= 100 ||
-    (!!healthFactorNumber && healthFactorNumber < 100)
+    !isNumber(utilizationRatioNumber) ||
+    utilizationRatioNumber < UTILIZATION_RATIO_THRESHOLD ||
+    (isNumber(healthFactorNumber) && healthFactorNumber < 100)
   ) {
     return null;
   }

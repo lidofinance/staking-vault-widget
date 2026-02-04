@@ -24,7 +24,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
-    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS,
+    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS * 30, // 30 mins
     retry(failureCount, error) {
       // retry only if the error is not our custom error
       return failureCount < 3 && !(error instanceof DisplayableError);

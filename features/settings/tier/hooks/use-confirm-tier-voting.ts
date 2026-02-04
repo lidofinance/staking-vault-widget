@@ -11,9 +11,10 @@ import {
   vaultTexts,
   useReportCalls,
   useVaultConfirmingRoles,
-  type Tier,
 } from 'modules/vaults';
 import { toStethValue } from 'utils';
+
+import { useTierVoting } from './use-tier-voting';
 
 export const useConfirmTierVoting = () => {
   const [approving, setApproving] = useState(false);
@@ -21,203 +22,241 @@ export const useConfirmTierVoting = () => {
   const { isNodeOperator } = useVaultConfirmingRoles();
   const prepareReportCalls = useReportCalls();
   const { sendTX, ...rest } = useSendTransaction();
+  const tierVoting = useTierVoting();
 
-  const approveMovingTier = useCallback(
-    async (
-      tier: Tier,
-      mintingLimitShares: bigint,
-      mintingLimitStETH: bigint,
-    ) => {
-      invariant(
-        activeVault,
-        '[useConfirmTierVoting::approveMovingTier] activeVault is undefined',
-      );
+  const approveMovingTier = useCallback(async () => {
+    invariant(
+      activeVault,
+      '[useConfirmTierVoting::approveMovingTier] activeVault is undefined',
+    );
+    invariant(
+      tierVoting,
+      '[useConfirmTierVoting::approveMovingTier] tierVoting is undefined',
+    );
 
-      setApproving(true);
-      const { id } = tier;
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
-      const loadingActionText = vaultTexts.actions.settings.approveSelectedTier(
-        id,
-        mintingLimitStETH,
-      );
-      const mainActionCompleteText =
-        vaultTexts.actions.settings.completeChangeTier(id, mintingLimitStETH);
+    const { proposal, proposedTier: tier, createdByAdminOrRole } = tierVoting;
 
-      const mainActionCompleteDescriptionText = `stVault has been successfully moved to ${
+    invariant(
+      tier,
+      '[useConfirmTierVoting::approveMovingTier] tier is undefined',
+    );
+
+    const {
+      proposedVaultLimitShares: mintingLimitShares,
+      proposedVaultLimitStETH: mintingLimitStETH,
+    } = proposal;
+
+    invariant(
+      mintingLimitShares,
+      '[useConfirmTierVoting::approveMovingTier] mintingLimitShares is undefined',
+    );
+    invariant(
+      mintingLimitStETH,
+      '[useConfirmTierVoting::approveMovingTier] mintingLimitStETH is undefined',
+    );
+
+    setApproving(true);
+    const { id } = tier;
+    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const loadingActionText = vaultTexts.actions.settings.approveSelectedTier(
+      id,
+      mintingLimitStETH,
+    );
+    const mainActionCompleteText =
+      vaultTexts.actions.settings.completeChangeTier(id, mintingLimitStETH);
+
+    const mainActionCompleteDescriptionText = `stVault has been successfully moved to ${
+      tier.tierName
+    }, with a ${toStethValue(mintingLimitStETH)} minting limit applied.`;
+
+    const texts = {
+      loadingActionText,
+      baseDescriptionText: `You’re approving to move stVault to ${
         tier.tierName
-      }, with a ${toStethValue(mintingLimitStETH)} minting limit applied.`;
+      } with a ${toStethValue(mintingLimitStETH)} minting limit.`,
+      awaitingDescriptionText:
+        'Waiting for block confirmation for your request. This may take a few moments.',
+    };
 
-      const texts = {
-        loadingActionText,
-        baseDescriptionText: `You’re approving to move stVault to ${
-          tier.tierName
-        } with a ${toStethValue(mintingLimitStETH)} minting limit.`,
-        awaitingDescriptionText:
-          'Waiting for block confirmation for your request. This may take a few moments.',
-      };
+    // if node operator, use operator grid contract
+    // if not node operator, use dashboard contract
+    if (isNodeOperator && createdByAdminOrRole) {
+      transactions.push({
+        ...activeVault.operatorGrid.encode.changeTier([
+          activeVault.address,
+          id,
+          mintingLimitShares,
+        ]),
+        ...texts,
+      });
+    } else {
+      transactions.push({
+        ...activeVault.dashboard.encode.changeTier([id, mintingLimitShares]),
+        ...texts,
+      });
+    }
 
-      // if node operator, use operator grid contract
-      // if not node operator, use dashboard contract
-      if (isNodeOperator) {
-        transactions.push({
-          ...activeVault.operatorGrid.encode.changeTier([
-            activeVault.address,
-            id,
-            mintingLimitShares,
-          ]),
-          ...texts,
-        });
-      } else {
-        transactions.push({
-          ...activeVault.dashboard.encode.changeTier([id, mintingLimitShares]),
-          ...texts,
-        });
-      }
+    const result = await withSuccess(
+      sendTX({
+        transactions,
+        mainActionCompleteText,
+        mainActionLoadingText: loadingActionText,
+        mainActionCompleteDescriptionText,
+        allowRetry: false,
+      }),
+    );
 
-      const result = await withSuccess(
-        sendTX({
-          transactions,
-          mainActionCompleteText,
-          mainActionLoadingText: loadingActionText,
-          mainActionCompleteDescriptionText,
-          allowRetry: false,
-        }),
-      );
+    setApproving(false);
 
-      setApproving(false);
+    return {
+      result,
+    };
+  }, [activeVault, sendTX, prepareReportCalls, isNodeOperator, tierVoting]);
 
-      return {
-        result,
-      };
-    },
-    [activeVault, sendTX, prepareReportCalls, isNodeOperator],
-  );
+  const approveUpdateMintingLimit = useCallback(async () => {
+    invariant(
+      activeVault,
+      '[useConfirmTierVoting::approveUpdateMintingLimit] activeVault is undefined',
+    );
+    invariant(
+      tierVoting,
+      '[useConfirmTierVoting::approveUpdateMintingLimit] tierVoting is undefined',
+    );
 
-  const approveUpdateMintingLimit = useCallback(
-    async (
-      tierId: bigint,
-      mintingLimitShares: bigint,
-      mintingLimitStETH: bigint,
-    ) => {
-      invariant(
-        activeVault,
-        '[useConfirmTierVoting::approveUpdateMintingLimit] activeVault is undefined',
-      );
+    const { proposal, createdByAdminOrRole } = tierVoting;
+    const {
+      proposedVaultLimitShares: mintingLimitShares,
+      proposedVaultLimitStETH: mintingLimitStETH,
+    } = proposal;
 
-      setApproving(true);
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
-      const loadingActionText =
-        vaultTexts.actions.settings.approveChangeTierMintingLimit;
-      const mainActionCompleteText =
-        vaultTexts.actions.settings.completeChangeTierMintingLimit;
+    invariant(
+      mintingLimitShares,
+      '[useConfirmTierVoting::approveUpdateMintingLimit] mintingLimitShares is undefined',
+    );
+    invariant(
+      mintingLimitStETH,
+      '[useConfirmTierVoting::approveUpdateMintingLimit] mintingLimitStETH is undefined',
+    );
 
-      const mainActionCompleteDescriptionText = `Your request for new ${toStethValue(
+    setApproving(true);
+    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const loadingActionText =
+      vaultTexts.actions.settings.approveChangeTierMintingLimit;
+    const mainActionCompleteText =
+      vaultTexts.actions.settings.completeChangeTierMintingLimit;
+
+    const mainActionCompleteDescriptionText = `Your request for new ${toStethValue(
+      mintingLimitStETH,
+    )} minting limit has been approved successfully.`;
+
+    const texts = {
+      loadingActionText,
+      baseDescriptionText: `You’re approving to update stVault limit with ${toStethValue(
         mintingLimitStETH,
-      )} minting limit has been approved successfully.`;
+      )}.`,
+      awaitingDescriptionText:
+        'Waiting for block confirmation for your request. This may take a few moments.',
+    };
 
-      const texts = {
-        loadingActionText,
-        baseDescriptionText: `You’re approving to update stVault limit with ${toStethValue(
-          mintingLimitStETH,
-        )}.`,
-        awaitingDescriptionText:
-          'Waiting for block confirmation for your request. This may take a few moments.',
-      };
+    // if node operator, use operator grid contract
+    // if not node operator, use dashboard contract
+    if (isNodeOperator && createdByAdminOrRole) {
+      transactions.push({
+        ...activeVault.operatorGrid.encode.updateVaultShareLimit([
+          activeVault.address,
+          mintingLimitShares,
+        ]),
+        ...texts,
+      });
+    } else {
+      transactions.push({
+        ...activeVault.dashboard.encode.updateShareLimit([mintingLimitShares]),
+        ...texts,
+      });
+    }
 
-      // if node operator, use operator grid contract
-      // if not node operator, use dashboard contract
-      if (isNodeOperator) {
-        transactions.push({
-          ...activeVault.operatorGrid.encode.updateVaultShareLimit([
-            activeVault.address,
-            mintingLimitShares,
-          ]),
-          ...texts,
-        });
-      } else {
-        transactions.push({
-          ...activeVault.dashboard.encode.updateShareLimit([
-            mintingLimitShares,
-          ]),
-          ...texts,
-        });
-      }
+    const result = await withSuccess(
+      sendTX({
+        transactions,
+        mainActionCompleteText,
+        mainActionLoadingText: loadingActionText,
+        mainActionCompleteDescriptionText,
+        allowRetry: false,
+      }),
+    );
 
-      const result = await withSuccess(
-        sendTX({
-          transactions,
-          mainActionCompleteText,
-          mainActionLoadingText: loadingActionText,
-          mainActionCompleteDescriptionText,
-          allowRetry: false,
-        }),
-      );
+    setApproving(false);
 
-      setApproving(false);
+    return {
+      result,
+    };
+  }, [activeVault, sendTX, prepareReportCalls, isNodeOperator, tierVoting]);
 
-      return {
-        result,
-      };
-    },
-    [activeVault, sendTX, prepareReportCalls, isNodeOperator],
-  );
+  const approveSyncTier = useCallback(async () => {
+    invariant(
+      activeVault,
+      '[useConfirmTierVoting::approveSyncTier] activeVault is undefined',
+    );
+    invariant(
+      tierVoting,
+      '[useConfirmTierVoting::approveSyncTier] tierVoting is undefined',
+    );
 
-  const approveSyncTier = useCallback(
-    async (tier: Tier) => {
-      invariant(
-        activeVault,
-        '[useConfirmTierVoting::approveSyncTier] activeVault is undefined',
-      );
+    const { proposedTier: tier, createdByAdminOrRole } = tierVoting;
 
-      setApproving(true);
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
-      const mainActionCompleteText =
-        vaultTexts.actions.settings.completeSyncTier(tier.tierName);
-      const loadingActionText = vaultTexts.actions.settings.syncTier(
-        tier.tierName,
-      );
+    invariant(
+      tier,
+      '[useConfirmTierVoting::approveSyncTier] tier is undefined',
+    );
 
-      const mainActionCompleteDescriptionText = `stVault has been successfully synced with the ${tier.tierName}..`;
+    setApproving(true);
+    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const mainActionCompleteText = vaultTexts.actions.settings.completeSyncTier(
+      tier.tierName,
+    );
+    const loadingActionText = vaultTexts.actions.settings.syncTier(
+      tier.tierName,
+    );
 
-      const texts = {
-        loadingActionText,
-        baseDescriptionText: `You’re approving sync stVault and ${tier.tierName} with a new params.`,
-        awaitingDescriptionText:
-          'Waiting for block confirmation for your request. This may take a few moments.',
-      };
+    const mainActionCompleteDescriptionText = `stVault has been successfully synced with the ${tier.tierName}..`;
 
-      // if node operator, use operator grid contract
-      // if not node operator, use dashboard contract
-      if (isNodeOperator) {
-        transactions.push({
-          ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),
-          ...texts,
-        });
-      } else {
-        transactions.push({
-          ...activeVault.dashboard.encode.syncTier(),
-          ...texts,
-        });
-      }
+    const texts = {
+      loadingActionText,
+      baseDescriptionText: `You’re approving sync stVault and ${tier.tierName} with a new params.`,
+      awaitingDescriptionText:
+        'Waiting for block confirmation for your request. This may take a few moments.',
+    };
 
-      const result = await withSuccess(
-        sendTX({
-          transactions,
-          mainActionCompleteText,
-          mainActionLoadingText: loadingActionText,
-          mainActionCompleteDescriptionText,
-          allowRetry: false,
-        }),
-      );
+    // if node operator, use operator grid contract
+    // if not node operator, use dashboard contract
+    if (isNodeOperator && createdByAdminOrRole) {
+      transactions.push({
+        ...activeVault.operatorGrid.encode.syncTier([activeVault.address]),
+        ...texts,
+      });
+    } else {
+      transactions.push({
+        ...activeVault.dashboard.encode.syncTier(),
+        ...texts,
+      });
+    }
 
-      setApproving(false);
+    const result = await withSuccess(
+      sendTX({
+        transactions,
+        mainActionCompleteText,
+        mainActionLoadingText: loadingActionText,
+        mainActionCompleteDescriptionText,
+        allowRetry: false,
+      }),
+    );
 
-      return {
-        result,
-      };
-    },
-    [activeVault, sendTX, prepareReportCalls, isNodeOperator],
-  );
+    setApproving(false);
+
+    return {
+      result,
+    };
+  }, [activeVault, sendTX, prepareReportCalls, isNodeOperator, tierVoting]);
 
   return {
     approving,

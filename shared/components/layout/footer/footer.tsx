@@ -39,20 +39,20 @@ const getVersionInfo = () => {
 
 const { label, link } = getVersionInfo();
 
+const termsOfUseLink = `${config.rootOrigin}/terms-of-use`;
+const privacyNoticeLink = `${config.rootOrigin}/privacy-notice`;
+
 export const Footer: FC = () => {
   return (
     <FooterStyle size="full" forwardedAs="footer">
       <LogoLidoStyle />
-      <FooterLink
-        data-testid="termsOfUse"
-        href={`${config.rootOrigin}/terms-of-use`}
-      >
+      <FooterLink data-testid="termsOfUse" href={termsOfUseLink}>
         Terms of Use
       </FooterLink>
       <LinkDivider />
       <FooterLink
         data-testid="privacyNotice"
-        href={`${config.rootOrigin}/privacy-notice`}
+        href={privacyNoticeLink}
         $marginRight="auto"
       >
         Privacy Notice

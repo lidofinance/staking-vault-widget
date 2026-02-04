@@ -2,7 +2,6 @@ import { z } from 'zod';
 import type { FieldErrors, Resolver, ResolverResult } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import invariant from 'tiny-invariant';
-import { type Address, isAddressEqual } from 'viem';
 
 import { vaultTexts, type VaultTierData } from 'modules/vaults';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
@@ -89,17 +88,6 @@ export const tierSettingsFormResolver: Resolver<
     values,
     errors: {},
   } as ResolverResult<TierSettingsFormValues, TierSettingsFormValues>;
-};
-
-export const checkUserIsProposer = (
-  dashboard: Address | undefined,
-  proposer: Address | undefined,
-) => {
-  if (!dashboard || !proposer) {
-    return false;
-  }
-
-  return isAddressEqual(dashboard, proposer);
 };
 
 export const ALTER_TIER_LABELS = {

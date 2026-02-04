@@ -1,5 +1,8 @@
 import type { FC } from 'react';
 
+import { HEALTH_EMERGENCY_GUIDE_LINK } from 'features/overview/consts';
+
+import { LearnMore } from '../learn-more';
 import { ListItem, ListItemContent } from '../styles';
 import { TextStyled } from '../../../styles';
 
@@ -17,8 +20,7 @@ export const SupplyOrRepay: FC<SupplyOrRepayProps> = ({ isNotHealth }) => {
       <ListItemContent>
         <TextStyled size="xxs">
           Supply ETH, repay stETH, or perform rebalance to restore Health
-          Factor.
-          {/* TODO: add Learn more. */}
+          Factor. <LearnMore link={HEALTH_EMERGENCY_GUIDE_LINK} />
         </TextStyled>
       </ListItemContent>
     </ListItem>
