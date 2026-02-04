@@ -64,6 +64,7 @@ export const useSupply = () => {
                 ]),
               ],
               publicClient,
+              lazyOracle: activeVault.lazyOracle,
               report: activeVault.report,
               isReportFresh: activeVault.isReportFresh,
             });

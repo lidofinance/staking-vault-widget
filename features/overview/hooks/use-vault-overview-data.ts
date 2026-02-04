@@ -124,6 +124,7 @@ const getVaultData = async ({
     vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
+    lazyOracle,
     report,
     isReportFresh,
     contracts: [
@@ -157,6 +158,7 @@ const getVaultData = async ({
     beaconChainDepositsPaused,
   ] = await readWithReport({
     publicClient,
+    lazyOracle,
     report,
     isReportFresh,
     contracts: [

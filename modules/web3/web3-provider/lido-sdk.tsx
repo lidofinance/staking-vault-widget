@@ -17,7 +17,10 @@ import {
 import { LidoSDKWrap } from '@lidofinance/lido-ethereum-sdk/wrap';
 import { LidoSDKWithdraw } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { LidoSDKStatistics } from '@lidofinance/lido-ethereum-sdk/statistics';
-import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
+import {
+  LidoSDKShares,
+  LidoSDKVaultModule,
+} from '@lidofinance/lido-ethereum-sdk';
 // EXTRA MODULE
 import { LidoSDKwETH } from 'modules/vaults/contracts/weth';
 
@@ -38,6 +41,7 @@ type LidoSDKContextValue = {
   wrap: LidoSDKWrap;
   withdraw: LidoSDKWithdraw;
   statistics: LidoSDKStatistics;
+  vaultModule: LidoSDKVaultModule;
   publicClient: RegisteredPublicClient;
   walletClient?: RegisteredWalletClient;
   subscribeToTokenUpdates: ReturnType<typeof useTokenTransferSubscription>;
@@ -102,6 +106,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
     const wrap = new LidoSDKWrap({ core });
     const withdraw = new LidoSDKWithdraw({ core });
     const statistics = new LidoSDKStatistics({ core });
+    const vaultModule = new LidoSDKVaultModule({ core });
 
     return {
       chainId: core.chainId,
@@ -116,6 +121,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       statistics,
       publicClient,
       walletClient,
+      vaultModule,
       subscribeToTokenUpdates: subscribe,
     };
   }, [chainId, publicClient, subscribe, walletClient]);

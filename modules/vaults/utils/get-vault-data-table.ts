@@ -1,16 +1,18 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
 
 import { calculateHealth } from 'utils';
+import { getStEthContract } from 'modules/vaults';
+
 import {
-  getDashboardContract,
-  getStEthContract,
-  getVaultHubContract,
-} from 'modules/vaults';
+  LidoSDKVaultEntity,
+  LidoSDKVaultModule,
+} from '@lidofinance/lido-ethereum-sdk';
 
 import type { RegisteredPublicClient } from 'modules/web3';
 
 type VaultDataArgs = {
   publicClient: RegisteredPublicClient;
+  vaultModule: LidoSDKVaultModule;
   vaultAddress: Address;
 };
 
@@ -26,9 +28,15 @@ export type VaultTableInfo = {
 
 export const getVaultDataTable = async ({
   publicClient,
+  vaultModule,
   vaultAddress,
 }: VaultDataArgs): Promise<VaultTableInfo> => {
-  const vaultHub = getVaultHubContract(publicClient);
+  const vaultHub = await vaultModule.contracts.getContractVaultHub();
+  const vaultEntity = new LidoSDKVaultEntity({
+    vaultAddress,
+    skipDashboardCheck: true,
+    bus: vaultModule,
+  });
   const stethContract = getStEthContract(publicClient);
 
   const { owner, forcedRebalanceThresholdBP } =
@@ -40,7 +48,7 @@ export const getVaultDataTable = async ({
     );
   }
 
-  const dashboardContract = getDashboardContract(owner, publicClient);
+  const dashboardContract = await vaultEntity.getDashboardContract();
 
   const [totalValue, liabilityShares] = await Promise.all([
     dashboardContract.read.totalValue(),

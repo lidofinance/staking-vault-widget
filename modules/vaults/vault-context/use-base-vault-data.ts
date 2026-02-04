@@ -10,23 +10,16 @@ import {
 } from 'modules/vaults';
 
 import {
-  getLazyOracleContract,
-  getDashboardContract,
-  getStakingVaultContract,
-  getVaultHubContract,
-  getOperatorGridContract,
-  getPredepositGuaranteeContract,
-} from '../contracts';
-import {
   DisplayableError,
   vaultQueryKeys,
   VAULT_REPORT_REFETCH_INTERVAL_MS,
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
+import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk';
 
 export const useBaseVaultData = (vaultAddress: Address | undefined) => {
-  const { publicClient } = useLidoSDK();
+  const { publicClient, vaultModule } = useLidoSDK();
   const base = vaultQueryKeys(vaultAddress).stateBase;
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
@@ -39,9 +32,17 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
 
-      const hub = getVaultHubContract(publicClient);
-      const lazyOracle = getLazyOracleContract(publicClient);
-      const vault = getStakingVaultContract(vaultAddress, publicClient);
+      const vaultEntity = new LidoSDKVaultEntity({
+        bus: vaultModule,
+        vaultAddress,
+        skipDashboardCheck: true,
+      });
+
+      const [hub, lazyOracle, vault] = await Promise.all([
+        vaultModule.contracts.getContractVaultHub(),
+        vaultModule.contracts.getContractLazyOracle(),
+        vaultEntity.getVaultContract(),
+      ]);
 
       const [
         vaultOwner,
@@ -94,6 +95,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
       const isDashboard = await checkIsDashboard(
         publicClient,
         supposedDashboardAddress,
+        vaultModule,
       );
 
       // TODO: reword to support multiple factories
@@ -101,15 +103,15 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         throw new VaultOwnerNotDashboardError();
       }
 
-      const dashboard = getDashboardContract(
-        supposedDashboardAddress,
-        publicClient,
-      );
-      const operatorGrid = getOperatorGridContract(publicClient);
-      const predepositGuarantee = getPredepositGuaranteeContract(publicClient);
+      const [operatorGrid, predepositGuarantee, dashboard] = await Promise.all([
+        vaultModule.contracts.getContractOperatorGrid(),
+        vaultModule.contracts.getContractPredepositGuarantee(),
+        vaultEntity.getDashboardContract(),
+      ]);
 
       return {
         address: vaultAddress,
+        vaultEntity,
         vault,
         vaultOwner,
         dashboard,

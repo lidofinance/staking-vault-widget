@@ -7,8 +7,9 @@ import {
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
 import { type RegisteredPublicClient } from 'modules/web3';
 
-import { getLazyOracleContract } from '../contracts';
-import type { VaultReportType } from '../types';
+import type { VaultBaseInfo, VaultReportType } from '../types';
+
+type LazyOracleContract = VaultBaseInfo['lazyOracle'];
 
 type ReadWithReportArgs<
   TContracts extends
@@ -17,6 +18,7 @@ type ReadWithReportArgs<
   })[],
 > = {
   publicClient: RegisteredPublicClient;
+  lazyOracle: LazyOracleContract;
   contracts: TContracts;
   report: VaultReportType | null;
   isReportFresh: boolean;
@@ -24,10 +26,10 @@ type ReadWithReportArgs<
 };
 
 export const encodeReportCall = (
-  publicClient: RegisteredPublicClient,
+  lazyOracle: LazyOracleContract,
   report: VaultReportType,
 ) => {
-  return getLazyOracleContract(publicClient).encode.updateVaultData([
+  return lazyOracle.encode.updateVaultData([
     report.vault,
     report.totalValueWei,
     report.fee,
@@ -44,6 +46,7 @@ export const readWithReport = async <
   })[],
 >({
   publicClient,
+  lazyOracle,
   report,
   isReportFresh,
   contracts,
@@ -76,8 +79,6 @@ export const readWithReport = async <
     //     ],
     //   },
     // ],
-
-    const lazyOracle = getLazyOracleContract(publicClient);
 
     const reportCall = lazyOracle.prepare.updateVaultData([
       report.vault,

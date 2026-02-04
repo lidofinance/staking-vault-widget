@@ -16,6 +16,7 @@ export const useLiability = () => {
 
       const [liabilityShares] = await readWithReport({
         publicClient,
+        lazyOracle: activeVault.lazyOracle,
         report: activeVault.report,
         isReportFresh: activeVault.isReportFresh,
         contracts: [activeVault.dashboard.prepare.liabilityShares()] as const,
