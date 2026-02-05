@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import {
+  useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
   useVaultTierInfo,
@@ -26,6 +27,7 @@ import {
 
 export const AlterTierInfo = () => {
   const [showModal, setModalVisibility] = useState(false);
+  const { activeVault } = useVault();
   const { data: vaultTierInfo, isLoading } = useVaultTierInfo();
   const { data } = useAlterTier();
   const { hasChanges, alterTierList, id, tierName } = data ?? {};
@@ -40,6 +42,7 @@ export const AlterTierInfo = () => {
     !hasChanges ||
     !(hasAdmin || isNodeOperator || hasPermission) ||
     !isNumber(id) ||
+    activeVault?.isPendingConnect ||
     (extendLastProposal?.tierId === BigInt(id) &&
       extendLastProposal.functionName === 'syncTier')
   ) {
@@ -48,19 +51,25 @@ export const AlterTierInfo = () => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper data-testid="syncTier-banner">
         <InfoContainer>
           <TitleContainer>
             <WarningTriangle color="#EC8600" />
-            <Text size="xs" strong>
+            <Text size="xs" strong data-testid="syncTier-banner-title">
               {tierName} update available
             </Text>
           </TitleContainer>
-          <ListOfUpdates>
+          <ListOfUpdates data-testid="syncTier-banner-listOfUpdates">
             {!!alterTierList && (
-              <AlterTierChanges alterTierList={alterTierList} />
+              <AlterTierChanges
+                alterTierList={alterTierList}
+                dataTestId="syncTier-banner"
+              />
             )}
-            <TextStyled size="xxs">
+            <TextStyled
+              size="xxs"
+              data-testid="syncTier-banner-applyChanges-text"
+            >
               Apply the new settings to take effect.
             </TextStyled>
           </ListOfUpdates>
@@ -71,6 +80,7 @@ export const AlterTierInfo = () => {
             variant="outlined"
             color="secondary"
             onClick={openModal}
+            data-testid="syncTier-banner-reviewSubmitButton"
           >
             Review
           </ModalButton>

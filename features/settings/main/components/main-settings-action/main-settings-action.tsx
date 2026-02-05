@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { type FC, useMemo } from 'react';
 import { useFormContext, useFormState } from 'react-hook-form';
 import { Button } from '@lidofinance/lido-ui';
 
@@ -8,7 +8,7 @@ import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 import { useDepositorRolesPermissions } from 'features/settings/main/hooks';
-import { MainSettingsFormValidatedValues } from 'features/settings/main/types';
+import type { MainSettingsFormValidatedValues } from 'features/settings/main/types';
 
 import { Container } from './styled';
 

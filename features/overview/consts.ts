@@ -2,6 +2,10 @@ import { calculateHealth, ceilDivBigint } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
+export const UTILIZATION_RATIO_THRESHOLD = 100.01;
+export const HEALTH_EMERGENCY_GUIDE_LINK =
+  'https://docs.lido.fi/run-on-lido/stvaults/operational-and-management-guides/health-emergency-guide';
+
 export const modals = [
   'totalValue',
   'healthFactorNumber',
@@ -39,6 +43,7 @@ type OverviewArgs = {
   nodeOperatorDisbursableFee: bigint;
   totalMintingCapacityStethWei: bigint;
   unsettledLidoFees: bigint;
+  feeObligation: bigint;
   currentMaxLiabilityStETH: bigint;
 };
 
@@ -55,6 +60,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     nodeOperatorDisbursableFee,
     totalMintingCapacityStethWei,
     unsettledLidoFees,
+    feeObligation,
     currentMaxLiabilityStETH,
   } = args;
 
@@ -95,6 +101,18 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
             100n,
         ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
+  // repay-obligations
+  const repay = bigIntMax(
+    0n,
+    liabilitySharesInStethWei -
+      ((totalValue - feeObligation) * oneMinusRR) / VAULT_TOTAL_BASIS_POINTS_BN,
+  );
+
+  const supply = bigIntMax(
+    0n,
+    (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR,
+  );
+
   return {
     healthRatio,
     isHealthy,
@@ -105,5 +123,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     utilizationRatio,
     reserved,
     totalMintingCapacityStethWei,
+    supply,
+    repay,
   };
 };

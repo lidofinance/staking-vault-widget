@@ -1,6 +1,12 @@
+import { type FC, useCallback } from 'react';
 import Link from 'next/link';
-import { ListItem, NavLink } from './styles';
 import { useRouter } from 'next/router';
+import { trackEvent } from '@lidofinance/analytics-matomo';
+
+import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+
+import { routsClickEventsMap } from './const';
+import { ListItem, NavLink } from './styles';
 
 export type NavigationLinkProps = {
   title: string;
@@ -10,19 +16,23 @@ export type NavigationLinkProps = {
   external?: boolean;
 };
 
-export const NavigationLink = ({
+export const NavigationLink: FC<NavigationLinkProps> = ({
   title,
   icon,
   path,
   customPathname,
   external,
-}: NavigationLinkProps) => {
+}) => {
   const { pathname } = useRouter();
+  const routePath = customPathname ?? path;
+  const isActive = pathname === routePath;
 
-  const isActive = pathname === (customPathname ?? path);
+  const trackClickEvent = useCallback(() => {
+    trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[routePath]]);
+  }, [routePath]);
 
   return (
-    <ListItem key={path}>
+    <ListItem onClick={trackClickEvent} key={path}>
       <Link href={path} target={external ? '_blank' : undefined}>
         <NavLink active={isActive}>
           {icon}

@@ -17,15 +17,3 @@ export const getHealthFactorColor = (healthFactor?: string | number) => {
   if (healthFactorNumber >= VAULT_HEALTH_PERCENT_RED) return '#E14D4D';
   return 'darkRed';
 };
-
-export const getCarrySpreadColor = (carrySpread?: string) => {
-  if (!carrySpread) return '';
-  let carrySpreadNumber = 0;
-
-  if (typeof carrySpread === 'string')
-    carrySpreadNumber = Number(carrySpread.split('%')[0]);
-  else carrySpreadNumber = carrySpread;
-
-  if (carrySpreadNumber < 0) return 'darkRed';
-  return '#53BA95';
-};

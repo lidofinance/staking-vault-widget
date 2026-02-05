@@ -40,7 +40,11 @@ export const RequestTier = () => {
     ];
   }, [metrics]);
 
-  if (!metrics || !proposedTier || !proposedVaultLimitStETH) {
+  if (
+    !metrics ||
+    !proposedTier ||
+    typeof proposedVaultLimitStETH !== 'bigint'
+  ) {
     return null;
   }
 

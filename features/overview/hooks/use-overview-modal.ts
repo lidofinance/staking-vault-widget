@@ -1,11 +1,28 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
+import {
+  MATOMO_CLICK_EVENTS_TYPES,
+  MATOMO_CLICK_EVENTS,
+} from 'consts/matomo-click-events';
 
 import { modals } from 'features/overview/consts';
 import type { OverviewModalItem } from 'features/overview/types';
-import { useVault } from 'modules/vaults';
+
+const modalEventMap = {
+  totalValue: MATOMO_CLICK_EVENTS_TYPES.clickOverviewTotalValuePopup,
+  healthFactorNumber: MATOMO_CLICK_EVENTS_TYPES.clickOverviewHealthFactorPopup,
+  netApr: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNetStakingAPRPopup,
+  balance: MATOMO_CLICK_EVENTS_TYPES.clickOverviewUnstakedBalancePopup,
+  withdrawableEther:
+    MATOMO_CLICK_EVENTS_TYPES.clickOverviewWithdrawableETHPopup,
+  undisbursedNodeOperatorFee: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNOFeePopup,
+  unsettledLidoFees: MATOMO_CLICK_EVENTS_TYPES.clickOverviewLidoFeesPopup,
+  vaultLiability: MATOMO_CLICK_EVENTS_TYPES.clickOverviewStETHLiabilityPopup,
+} as const;
 
 export const useOverviewModal = () => {
   const router = useRouter();
@@ -23,6 +40,7 @@ export const useOverviewModal = () => {
     (modal: OverviewModalItem) => {
       if (!vaultAddress) return;
 
+      trackEvent(...MATOMO_CLICK_EVENTS[modalEventMap[modal]]);
       const pathname = appPaths.vaults.vault(vaultAddress).overview;
       void router.push({ pathname, query: { modal } }, undefined, {
         shallow: true,

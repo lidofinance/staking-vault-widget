@@ -1,6 +1,13 @@
+import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { trackEvent } from '@lidofinance/analytics-matomo';
+
 import { vaultListQueryKeys, fetchVaults } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
+import {
+  MATOMO_CLICK_EVENTS,
+  MATOMO_CLICK_EVENTS_TYPES,
+} from 'consts/matomo-click-events';
 
 import { useVaultListParams } from '../use-vault-list-params';
 
@@ -8,6 +15,18 @@ export const useMyVaultsList = () => {
   const { address } = useDappStatus();
   const { publicClient } = useLidoSDK();
   const { isReady, params, setPage, setSort } = useVaultListParams();
+
+  const setPageWithEvent = useCallback(
+    (newPage: number) => {
+      trackEvent(
+        ...MATOMO_CLICK_EVENTS[
+          MATOMO_CLICK_EVENTS_TYPES.clickPaginationButtonMyVaults
+        ],
+      );
+      setPage(newPage);
+    },
+    [setPage],
+  );
 
   const query = useQuery({
     queryKey: [
@@ -28,7 +47,7 @@ export const useMyVaultsList = () => {
     ...query,
     isLoading: query.isLoading || query.isPlaceholderData,
     page: params.page,
-    setPage,
+    setPage: setPageWithEvent,
     vaults: query.data?.data,
     pagesCount: query.data?.pagesCount,
     nextUpdateAt: query.data?.nextUpdateAt,

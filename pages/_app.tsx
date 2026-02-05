@@ -3,7 +3,7 @@ import { AppProps } from 'next/app';
 import 'nprogress/nprogress.css';
 import Head from 'next/head';
 
-import { ToastContainer, CookiesTooltip } from '@lidofinance/lido-ui';
+import { ToastContainer } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 import { withCsp } from 'config/csp';
@@ -12,7 +12,6 @@ import { Providers } from 'providers';
 import { BackgroundGradient } from 'shared/components/background-gradient/background-gradient';
 import { ErrorBoundaryFallback } from 'shared/components/error-boundary';
 import { MigrationBannerTestnetV2 } from 'shared/components/banner';
-import NoSsrWrapper from 'shared/components/no-ssr-wrapper';
 import { nprogress } from 'utils';
 import { AddressValidationFile } from 'utils/address-validation';
 
@@ -57,10 +56,6 @@ const AppWrapper = (
       <ToastContainer />
       <MigrationBannerTestnetV2 />
       <App {...props} />
-
-      <NoSsrWrapper>
-        <CookiesTooltip privacyLink={`${config.rootOrigin}/privacy-notice`} />
-      </NoSsrWrapper>
 
       <SecurityStatusBanner />
     </Providers>

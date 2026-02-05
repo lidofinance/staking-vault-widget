@@ -123,14 +123,15 @@ export const vaultTexts = {
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
     },
-    claim: {
-      available: `Available to claim`,
+    disburse: {
+      title: 'Disburse Node Operator fee',
+      available: `Available to disburse`,
       addressLabel: `Rewards address`,
       claimButton: (claimableAmount?: bigint | null) =>
-        `Claim ${balance(claimableAmount)}ETH` as const,
-      notEnoughEther: `Not enough unlocked ETH to claim` as const,
-      loading: `Claiming node operator fee`,
-      completed: `Claimed node operator fee`,
+        `Disburse ${balance(claimableAmount)}ETH` as const,
+      notEnoughEther: `Not enough unlocked ETH to disburse` as const,
+      loading: `Disbursing node operator fee`,
+      completed: `Disbursed node operator fee`,
     },
     weth: {
       loadingUnwrap: 'Unwrapping wETH',
@@ -186,6 +187,11 @@ export const vaultTexts = {
           show: 'See details',
           review: 'Review request',
           hide: 'Hide details',
+        },
+        approveButton: {
+          capacityExceeded:
+            'stVault Liability exceeds available Tier stETH capacity.',
+          approve: 'Approve',
         },
       },
       inputMintingLimit: {
@@ -328,18 +334,20 @@ export const vaultTexts = {
       description:
         "The stVault's stETH minting capacity has been exceeded, indicating an imbalanced minted stETH Liability as constrained by the stVault's Reserve Ratio. You are strongly recommended to take one of the following actions:",
       note: 'Note: Rebalance allows Supply ETH and Repay stETH in one batch transaction',
-      actions: [
-        {
-          name: 'supply',
+      actions: {
+        supply: {
           title: 'Increase Total Value',
-          getText: (amount: string) => `Supply ${amount}`,
+          children: 'Supply',
         },
-        {
-          name: 'repay',
+        repay: {
           title: 'Decrease stETH Liability',
-          getText: (amount: string) => `Repay ${amount}`,
+          children: 'Repay',
         },
-      ],
+        learnMore: {
+          title: 'Decrease Total Value and stETH Liability',
+          children: 'Learn how to rebalance',
+        },
+      },
     },
     thresholdExceeded: {
       title: 'Forced rebalance threshold exceeded',
@@ -708,6 +716,12 @@ export const vaultTexts = {
         dashboard: 'Recipient cannot be stVault Dashboard',
       },
 
+      tx: {
+        getStatus:
+          'Could not locate transaction status but your transcation could still be sent. Please check your wallet for details.',
+        getStatusTitle: 'Transaction Status Unavailable',
+      },
+
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
@@ -732,5 +746,6 @@ export const vaultTexts = {
       stETH: 'stETH',
       wstETH: 'wstETH',
     },
+    pageTitle: '| stVaults | Lido',
   },
 } as const;

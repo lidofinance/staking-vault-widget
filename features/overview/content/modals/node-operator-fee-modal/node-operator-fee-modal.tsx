@@ -15,7 +15,7 @@ export const NodeOperatorFeeModal = () => {
   const navigate = useCallback(() => {
     if (!vaultAddress) return;
 
-    void router.push(appPaths.vaults.vault(vaultAddress).claim);
+    void router.push(appPaths.vaults.vault(vaultAddress).disburse);
   }, [router, vaultAddress]);
 
   return (

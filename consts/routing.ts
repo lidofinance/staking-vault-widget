@@ -5,15 +5,15 @@ export const appPaths = {
   vaults: {
     all: '/vaults',
     create: '/vaults/create',
-    vault: (vaultAddress: Address) =>
+    vault: (vaultAddress: Address | '[vaultAddress]') =>
       ({
         overview: `/vaults/${vaultAddress}`,
-        eth: (mode: 'supply' | 'withdraw') =>
+        eth: (mode: '[mode]' | 'supply' | 'withdraw') =>
           `/vaults/${vaultAddress}/eth/${mode}` as const,
-        steth: (mode: 'mint' | 'repay') =>
+        steth: (mode: '[mode]' | 'mint' | 'repay') =>
           `/vaults/${vaultAddress}/steth/${mode}` as const,
-        claim: `/vaults/${vaultAddress}/claim`,
-        settings: (mode: 'main' | 'permissions' | 'tier') =>
+        disburse: `/vaults/${vaultAddress}/disburse`,
+        settings: (mode: '[mode]' | 'main' | 'permissions' | 'tier') =>
           `/vaults/${vaultAddress}/settings/${mode}`,
         validators: `/vaults/${vaultAddress}/validators`,
       }) as const,

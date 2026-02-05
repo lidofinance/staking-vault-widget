@@ -6,7 +6,7 @@ import type {
 } from 'viem';
 
 import { useMutation } from '@tanstack/react-query';
-import { useConfig } from 'wagmi';
+import { useConfig, usePublicClient } from 'wagmi';
 import { useAA } from './use-aa';
 
 // @wagmi/core provides async wagmi actions
@@ -18,11 +18,12 @@ import {
   sendTransaction,
   waitForTransactionReceipt,
 } from '@wagmi/core';
+
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
-import { DisplayableError } from 'modules/vaults';
+import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
 import { useAddressValidation } from 'providers/address-validation-provider';
 import { useDappStatus } from 'modules/web3';
 
@@ -61,6 +62,7 @@ export type TransactionResponse =
     };
 
 export const useSendTransaction = () => {
+  const publicClient = usePublicClient();
   const config = useConfig();
   const { address } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
@@ -146,7 +148,10 @@ export const useSendTransaction = () => {
             },
           });
 
-          const { id } = await sendCalls(config, { calls, forceAtomic });
+          const { id } = await sendCalls(config, {
+            calls,
+            forceAtomic,
+          });
 
           dispatchModal({
             type: 'stage',
@@ -156,7 +161,17 @@ export const useSendTransaction = () => {
             },
           });
 
-          const callStatus = await waitForCallsStatus(config, { id });
+          // special handling when we were unable to get status
+          // tx status is ambiguous in this case
+          let callStatus: WaitForCallsStatusReturnType;
+          try {
+            callStatus = await waitForCallsStatus(config, {
+              id,
+              timeout: 2 * 60 * 1000, // two minutes for tx to complete
+            });
+          } catch (error) {
+            throw new SendTxGetStatusError(error);
+          }
 
           // TODO: async check if user want to retry with legacy flow
           if (callStatus.status === 'failure') {
@@ -191,10 +206,18 @@ export const useSendTransaction = () => {
             },
           });
 
+          const gas = await publicClient.estimateGas({
+            to: tx.to,
+            data: tx.data,
+            value: tx.value,
+            account: address,
+          });
+
           const txHash = await sendTransaction(config, {
             to: tx.to,
             data: tx.data,
             value: tx.value,
+            gas,
           });
 
           dispatchModal({
@@ -229,12 +252,16 @@ export const useSendTransaction = () => {
 
         return transactionResult;
       } catch (error) {
-        const errorText =
-          error instanceof DisplayableError ? error.message : undefined;
+        const displayError =
+          error instanceof DisplayableError ? error : undefined;
         dispatchModal({
           type: 'stage',
           stage: 'error',
-          details: { errorText },
+          allowRetry: displayError?.isRetryable,
+          details: {
+            errorText: displayError?.message,
+            errorTitle: displayError?.errorTitle,
+          },
         });
         console.error(`[useSendTransaction] TX Error`, error);
         throw error;

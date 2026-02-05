@@ -9,6 +9,8 @@ import { PDGPolicyBlock } from './styles';
 const pdgPolicyTexts = vaultTexts.actions.settings.fields.pdgPolicy;
 const lip5Url =
   'https://github.com/lidofinance/lido-improvement-proposals/blob/develop/LIPS/lip-5.md';
+const learnMoreUrl =
+  'https://docs.lido.fi/run-on-lido/stvaults/tech-documentation/pdg';
 
 // TODO: add "Learn more."  to text
 export const PdgPolicy: FC = () => {
@@ -24,7 +26,11 @@ export const PdgPolicy: FC = () => {
           LIP-5
         </Link>
         . The PDG policy defines which operations are permitted under this
-        mechanism.
+        mechanism.{' '}
+        <Link href={learnMoreUrl} target="_blank" rel="noopener noreferrer">
+          Learn more
+        </Link>
+        .
       </Text>
       <RadioPdgSelector vaultKey="pdgPolicy" />
     </PDGPolicyBlock>

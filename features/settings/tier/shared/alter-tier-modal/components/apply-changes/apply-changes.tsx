@@ -20,7 +20,11 @@ export const ApplyChanges: FC<ApplyChangesProps> = ({ closeModal }) => {
   }, [syncTier, refetch, closeModal]);
 
   return (
-    <Button size="sm" onClick={onClick}>
+    <Button
+      size="sm"
+      onClick={onClick}
+      data-testid="syncTier-modal-applyChangesButton"
+    >
       Apply changes
     </Button>
   );

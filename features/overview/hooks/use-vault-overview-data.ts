@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 
-import { calculateHealth } from 'utils';
+import { calculateHealth, formatToPercentWithDivider } from 'utils';
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
@@ -319,6 +319,7 @@ const selectOverviewData = ({
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
+  const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
 
   const overview = calculateOverviewV2({
     totalValue: vaultData.totalValue,
@@ -333,6 +334,7 @@ const selectOverviewData = ({
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
     currentMaxLiabilityStETH,
+    feeObligation,
   });
 
   // Binding-constraint detection:
@@ -368,21 +370,16 @@ const selectOverviewData = ({
     bottomLine,
   } = vaultMetrics || {};
 
-  const netApr =
-    (vault7dApr && formatPercent.format(vault7dApr.netStakingApr.sma / 100)) ??
-    undefined;
+  const netApr = formatToPercentWithDivider(vault7dApr?.netStakingApr.sma);
 
-  const carrySpreadApr =
-    (vaultMetrics &&
-      formatPercent.format(vaultMetrics.carrySpreadAprPercent / 100)) ??
-    undefined;
+  const carrySpreadAprNumber = vault7dApr?.carrySpreadApr.sma;
+  const carrySpreadApr = formatToPercentWithDivider(carrySpreadAprNumber);
 
   const tierLimitStETH = toStethValue(tierStETHLimit);
   const remainingMintingCapacityStETH = toStethValue(mintableStETH);
   const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
   const unsettledLidoFeesEth = toEthValue(unsettledLidoFees);
 
-  const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
   const feeObligationEth = toEthValue(feeObligation);
   const totalValueETH = toEthValue(vaultData.totalValue);
   const totalLocked = toEthValue(lockedEth + nodeOperatorUnclaimedFee);
@@ -457,6 +454,7 @@ const selectOverviewData = ({
     isPausedByFees: feesToSettle > WEI_PER_ETHER,
     netStakingRewards,
     carrySpreadApr,
+    carrySpreadAprNumber,
     vaultData,
     vaultMetrics,
     vaultQuarantineState,
@@ -478,6 +476,8 @@ const selectOverviewData = ({
     rebalanceStETH,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
+    supplyETH: overview.supply,
+    repayStETH: overview.repay,
     isReportFresh,
   };
 };

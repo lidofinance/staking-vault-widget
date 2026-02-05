@@ -12,16 +12,24 @@ type MainInfoProps = {
 
 export const MainInfo: FC<MainInfoProps> = ({ alterTierList }) => {
   return (
-    <Container>
+    <Container data-testid="syncTier-modal-mainInfo">
       {alterTierList.map(({ name, prev, next }) => (
-        <InfoRow key={name}>
-          <Text size="xxs">{ALTER_TIER_LABELS[name]}</Text>
+        <InfoRow key={name} data-testid={`syncTier-modal-${name}-row`}>
+          <Text size="xxs" data-testid={`syncTier-modal-${name}-title`}>
+            {ALTER_TIER_LABELS[name]}
+          </Text>
           <Indicators>
-            <Text size="xxs" color="secondary">
+            <Text
+              size="xxs"
+              color="secondary"
+              data-testid={`syncTier-modal-${name}-before`}
+            >
               {prev}
             </Text>
             <ArrowRight />
-            <Text size="xxs">{next}</Text>
+            <Text size="xxs" data-testid={`syncTier-modal-${name}-after`}>
+              {next}
+            </Text>
           </Indicators>
         </InfoRow>
       ))}

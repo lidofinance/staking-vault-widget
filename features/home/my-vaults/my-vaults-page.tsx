@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import Head from 'next/head';
 
 import { Layout } from 'shared/components';
+import { getPageTitle } from 'utils';
 
 import { MyVaults } from './my-vaults';
 
@@ -11,7 +12,7 @@ export const MyVaultsPage: FC = () => {
   return (
     <Layout containerSize="content">
       <Head>
-        <title>Vault | Lido</title>
+        <title>{getPageTitle('My Vaults')}</title>
       </Head>
       <PageWrapper>
         <MyVaults />

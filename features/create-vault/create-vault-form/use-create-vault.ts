@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import invariant from 'tiny-invariant';
 import { useEstimateGas } from 'wagmi';
 import { useFormContext, useFormState } from 'react-hook-form';
+import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import {
   type TransactionEntry,
@@ -9,7 +10,10 @@ import {
   withSuccess,
   useDappStatus,
 } from 'modules/web3';
-import { ESTIMATE_ACCOUNT } from 'config/groups/web3';
+import {
+  MATOMO_CLICK_EVENTS,
+  MATOMO_CLICK_EVENTS_TYPES,
+} from 'consts/matomo-click-events';
 import { getContractAddress } from 'config';
 import { vaultTexts } from 'modules/vaults';
 
@@ -29,6 +33,12 @@ export const useCreateVault = () => {
           vaultFactoryAddress,
           '[useCreateVaultWihDashboard] vaultFactoryAddress is not defined',
         );
+        trackEvent(
+          ...MATOMO_CLICK_EVENTS[
+            MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault
+          ],
+        );
+
         const { data, value } = schemaToTx(values);
 
         const tx: TransactionEntry = {
@@ -38,7 +48,7 @@ export const useCreateVault = () => {
           value,
         };
 
-        return await withSuccess(
+        const success = await withSuccess(
           sendTX({
             transactions: [tx],
             mainActionCompleteText: vaultTexts.actions.createVault.completed,
@@ -46,6 +56,14 @@ export const useCreateVault = () => {
             renderSuccessContent: ModalCTA,
           }),
         );
+
+        trackEvent(
+          ...MATOMO_CLICK_EVENTS[
+            MATOMO_CLICK_EVENTS_TYPES.finalisingCreatingVault
+          ],
+        );
+
+        return success;
       },
       [chainId, sendTX],
     ),
@@ -54,7 +72,7 @@ export const useCreateVault = () => {
 };
 
 export const useEstimateGasCreateVault = () => {
-  const { chainId } = useDappStatus();
+  const { chainId, address } = useDappStatus();
   const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
   const { getValues } = useFormContext<CreateVaultSchema>();
   const { isValid } = useFormState();
@@ -67,7 +85,7 @@ export const useEstimateGasCreateVault = () => {
   return useEstimateGas({
     to: vaultFactoryAddress,
     data: txData?.data,
-    account: ESTIMATE_ACCOUNT,
+    account: address,
     value: txData?.value,
     query: {
       enabled: !!txData,

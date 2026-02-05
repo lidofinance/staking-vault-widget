@@ -1,13 +1,15 @@
-import { FC, useCallback } from 'react';
-import { isAddress, zeroAddress } from 'viem';
-import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
+import { type FC, type MouseEvent, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
+import { trackEvent } from '@lidofinance/analytics-matomo';
+import { isAddress, zeroAddress } from 'viem';
 
 import { FormatToken } from 'shared/formatters';
 import { appPaths } from 'consts/routing';
+import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 import { AddressBadge } from 'shared/components';
 import { getHealthFactorColor } from 'utils';
-import { type FetchVaultsParams, VaultEntry } from 'modules/vaults';
+import type { FetchVaultsParams, VaultEntry } from 'modules/vaults';
 
 import { ReindexState } from 'features/home/reindex-state';
 import { PercentCell, HeaderCell } from './cells';
@@ -62,11 +64,11 @@ const tableHeaders = [
   },
   {
     title: 'Net Staking APR',
-    sortKey: 'netStakingAprPercent',
+    sortKey: 'netStakingAprSma',
   },
   {
     title: 'Carry Spread',
-    sortKey: 'carrySpreadAprPercent',
+    sortKey: 'carrySpreadAprSma',
   },
   {
     title: 'Health factor',
@@ -80,8 +82,8 @@ const PLACEHOLDER_VAULT: VaultEntry = {
   totalValue: 0n,
   liabilityStETH: 0n,
   healthFactor: 0,
-  carrySpreadAprPercent: 0,
-  netStakingAprPercent: 0,
+  carrySpreadAprSma: 0,
+  netStakingAprSma: 0,
   bottomLine: 0n,
 };
 
@@ -121,7 +123,7 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
         align="right"
         data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : undefined}
       >
-        <PercentCell value={vault.netStakingAprPercent} />
+        <PercentCell value={vault.netStakingAprSma} />
       </TableCell>
       <TableCell
         align="right"
@@ -129,7 +131,7 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
           dataTestId ? `${dataTestId}-carrySpreadAprCell` : undefined
         }
       >
-        <PercentCell value={vault.carrySpreadAprPercent} />
+        <PercentCell value={vault.carrySpreadAprSma} />
       </TableCell>
       <TableCell
         align="right"
@@ -249,9 +251,10 @@ export const VaultTable: FC<VaultTableProps> = ({
   const showPagination = !!(pagesCount && pagesCount > 1 && setPage);
 
   const onRowClick = useCallback(
-    (e: React.MouseEvent<HTMLTableRowElement>) => {
+    (e: MouseEvent<HTMLTableRowElement>) => {
       const vaultAddress = e.currentTarget.dataset.address;
       if (vaultAddress && isAddress(vaultAddress)) {
+        trackEvent(...MATOMO_CLICK_EVENTS.clickNaviOverview);
         void router.push(appPaths.vaults.vault(vaultAddress).overview);
       }
     },
@@ -259,7 +262,7 @@ export const VaultTable: FC<VaultTableProps> = ({
   );
 
   const onSortClick = useCallback(
-    (e: React.MouseEvent<HTMLTableCellElement>) => {
+    (e: MouseEvent<HTMLTableCellElement>) => {
       const columnKey = e.currentTarget.dataset.sortKey as
         | FetchVaultsParams['sortBy']
         | undefined;
