@@ -10,7 +10,6 @@ import {
   fetchVaultMetrics,
   fetch7dApr,
   getLidoContract,
-  getStEthContract,
   VAULTS_CONNECT_DEPOSIT,
   type VaultApiMetrics,
   type VaultBaseInfo,
@@ -30,10 +29,15 @@ import {
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 
 type VaultDataArgs = {
-  publicClient: RegisteredPublicClient;
   vault: VaultBaseInfo;
+};
+
+type VaultDataCtx = {
+  publicClient: RegisteredPublicClient;
+  lidoSDKShares: LidoSDKShares;
 };
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
@@ -89,10 +93,10 @@ export type VaultInfo = VaultConnection &
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
 
-const getVaultData = async ({
-  publicClient,
-  vault,
-}: VaultDataArgs): Promise<VaultInfo> => {
+const getVaultData = async (
+  { vault }: VaultDataArgs,
+  { publicClient, lidoSDKShares }: VaultDataCtx,
+): Promise<VaultInfo> => {
   const {
     address,
     dashboard,
@@ -187,7 +191,6 @@ const getVaultData = async ({
   const { shareLimit: groupShareLimit } = group;
 
   const lidoV3Contract = getLidoContract(publicClient);
-  const stethContract = getStEthContract(publicClient);
 
   const [
     liabilityStETH,
@@ -199,19 +202,20 @@ const getVaultData = async ({
     rebalanceStETH,
     redemptionStETH,
     reportLiabilitySharesStETH,
-    lidoTVLSharesLimit,
-  ] = await Promise.all([
-    stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
-    stethContract.read.getPooledEthByShares([mintableShares]),
-    stethContract.read.getPooledEthByShares([shareLimit]),
-    stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
-    stethContract.read.getPooledEthByShares([tierShareLimit]),
-    stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
-    stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([reportLiabilityShares]),
-    lidoV3Contract.read.getMaxMintableExternalShares(),
+  ] = await lidoSDKShares.convertBatchSharesToSteth([
+    { amount: liabilityShares, roundUp: true },
+    mintableShares,
+    shareLimit,
+    totalMintingCapacityShares,
+    tierShareLimit,
+    { amount: sharesToBurn, roundUp: true },
+    { amount: rebalanceShares, roundUp: true },
+    { amount: redemptionShares, roundUp: true },
+    { amount: reportLiabilityShares, roundUp: true },
   ]);
+
+  const lidoTVLSharesLimit =
+    await lidoV3Contract.read.getMaxMintableExternalShares();
 
   return {
     address,
@@ -468,7 +472,7 @@ const selectOverviewData = ({
 };
 
 export const useVaultOverviewData = () => {
-  const { publicClient } = useLidoSDK();
+  const { publicClient, shares } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
   const query = useQuery({
@@ -487,7 +491,10 @@ export const useVaultOverviewData = () => {
       );
 
       const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
-        getVaultData({ publicClient, vault: activeVault }),
+        getVaultData(
+          { vault: activeVault },
+          { publicClient, lidoSDKShares: shares },
+        ),
         fetchVaultMetrics({ vaultAddress: activeVault.address }).catch(
           (error) => {
             console.warn(
