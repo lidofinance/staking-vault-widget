@@ -41,7 +41,6 @@ export type VaultBaseInfo = {
   vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
   blockNumberString: string;
-  reportLiabilityShares: bigint;
   address: Address;
   vault: Awaited<ReturnType<LidoSDKVaultContracts['getContractVault']>>;
   hub: Awaited<ReturnType<LidoSDKVaultContracts['getContractVaultHub']>>;
