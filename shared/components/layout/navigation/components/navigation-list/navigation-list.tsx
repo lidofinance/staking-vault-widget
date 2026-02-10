@@ -9,7 +9,7 @@ type NavigationsProps = {
   routes: NavigationRoutes[];
 };
 
-export const Navigations: FC<NavigationsProps> = ({ routes }) => {
+export const NavigationList: FC<NavigationsProps> = ({ routes }) => {
   const { activeVault } = useVault();
 
   if (!activeVault) {

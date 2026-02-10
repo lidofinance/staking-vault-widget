@@ -1,17 +1,11 @@
-import {
-  type FC,
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import { type FC, useMemo } from 'react';
 
 import { useVault } from 'modules/vaults';
 import { ReactComponent as BurgerIcon } from 'assets/icons/burger-icon.svg';
 
-import { Navigations } from 'shared/components/layout/navigation/components';
+import { NavigationList } from 'shared/components/layout/navigation/components';
 import { vaultRoutes } from 'shared/components/layout/navigation/const';
+import { useMobileMenu } from 'shared/components/layout/navigation/hooks';
 
 import {
   Container,
@@ -23,8 +17,7 @@ import {
 
 export const MenuMobile: FC = () => {
   const { vaultAddress } = useVault();
-  const [showMenu, setMobileMenuVisibility] = useState(false);
-  const ref = useRef();
+  const { ref, isOpen, close, toggle } = useMobileMenu();
   const routesForMenu = useMemo(
     () =>
       vaultAddress
@@ -33,41 +26,17 @@ export const MenuMobile: FC = () => {
     [vaultAddress],
   );
 
-  useEffect(() => {
-    const listenClose = (event: MouseEvent) => {
-      const isClickInside = !!ref.current?.contains(event.target);
-      if (showMenu && !isClickInside) {
-        setMobileMenuVisibility(false);
-      }
-    };
-
-    document.addEventListener('click', listenClose);
-
-    return () => {
-      document.removeEventListener('click', listenClose);
-    };
-  }, [showMenu]);
-
-  const onCloseMenu = useCallback(() => {
-    setMobileMenuVisibility(false);
-  }, []);
-
-  const onToggleMenu = (e) => {
-    e.stopPropagation();
-    setMobileMenuVisibility(!showMenu);
-  };
-
   return (
-    <MenuItem ref={ref} onClick={onCloseMenu}>
-      <WrapperButton onClick={onToggleMenu}>
-        <Container $active={showMenu}>
+    <MenuItem ref={ref} onClick={close}>
+      <WrapperButton onClick={toggle}>
+        <Container $active={isOpen}>
           <BurgerIcon />
           <span>Other</span>
         </Container>
       </WrapperButton>
-      <HiddenNavContainer $showMenu={showMenu}>
+      <HiddenNavContainer $showMenu={isOpen}>
         <HiddenNav>
-          <Navigations routes={routesForMenu} />
+          <NavigationList routes={routesForMenu} />
         </HiddenNav>
       </HiddenNavContainer>
     </MenuItem>

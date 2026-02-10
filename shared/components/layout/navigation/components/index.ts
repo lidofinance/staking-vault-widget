@@ -1,6 +1,6 @@
 export { NavigationLink } from './navigation-link';
 export { BackAllVaults } from './back-all-vaults';
 export { MenuMobile } from './menu-mobile';
-export { MenuDesktop } from './menu-desktop';
-export { Navigations } from './navigations';
+export { MenuAll } from './menu-all';
+export { NavigationList } from './navigation-list';
 export { VaultNavigationList } from './vault-navigation';

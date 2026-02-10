@@ -3,11 +3,10 @@ import { useBreakpoint } from '@lidofinance/lido-ui';
 
 import { useVault } from 'modules/vaults';
 
-import { Navigations } from 'shared/components/layout/navigation/components';
+import { NavigationList } from 'shared/components/layout/navigation/components';
 import { vaultRoutes } from 'shared/components/layout/navigation/const';
 
-// TODO: rename to MenuAll
-export const MenuDesktop = () => {
+export const MenuAll = () => {
   const { vaultAddress } = useVault();
   const isMobile = useBreakpoint('lg');
 
@@ -21,5 +20,5 @@ export const MenuDesktop = () => {
     );
   }, [vaultAddress, isMobile]);
 
-  return <Navigations routes={availableRoutes} />;
+  return <NavigationList routes={availableRoutes} />;
 };

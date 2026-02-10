@@ -9,6 +9,10 @@ export const HeaderStyle = styled((props) => <Container {...props} />)`
   padding-bottom: var(--header-padding-y);
   display: flex;
   align-items: center;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    padding-inline: 0;
+  }
 `;
 
 export const HeaderActionsStyle = styled.div`
