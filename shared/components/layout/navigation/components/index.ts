@@ -4,3 +4,5 @@ export { MenuMobile } from './menu-mobile';
 export { MenuAll } from './menu-all';
 export { NavigationList } from './navigation-list';
 export { VaultNavigationList } from './vault-navigation';
+export { AllVaultsMobile } from './all-vaults-mobile';
+export { AllVaultsDesktop } from './all-vaults-desktop';

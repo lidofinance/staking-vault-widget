@@ -1,17 +1,19 @@
+import type { FC } from 'react';
+
 import { useVault } from 'modules/vaults';
 import { AddressBadge } from 'shared/components/address-badge';
 
-import { BackAllVaults, VaultNavigationList } from '../components';
+import { AllVaultsDesktop, VaultNavigationList } from '../components';
 import { VaultError } from '../vault-error';
 
 import { SelectedVaultWrapper } from '../styles';
 
-export const VaultNavigation = () => {
+export const VaultNavigation: FC = () => {
   const { vaultAddress } = useVault();
 
   return (
     <>
-      <BackAllVaults />
+      <AllVaultsDesktop />
       <SelectedVaultWrapper>
         <AddressBadge
           bgColor="transparent"

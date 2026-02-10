@@ -16,7 +16,7 @@ import {
 } from './styles';
 
 export const MenuMobile: FC = () => {
-  const { vaultAddress } = useVault();
+  const { vaultAddress, activeVault } = useVault();
   const { ref, isOpen, close, toggle } = useMobileMenu();
   const routesForMenu = useMemo(
     () =>
@@ -25,6 +25,10 @@ export const MenuMobile: FC = () => {
         : [],
     [vaultAddress],
   );
+
+  if (!activeVault) {
+    return null;
+  }
 
   return (
     <MenuItem ref={ref} onClick={close}>

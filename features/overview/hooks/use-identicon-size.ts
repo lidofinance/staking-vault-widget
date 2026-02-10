@@ -1,29 +1,8 @@
-import { useState, useEffect } from 'react';
-
-import { devicesHeaderMedia } from 'styles/global';
-
-const matchTabletMedia = () => {
-  if ('matchMedia' in globalThis) {
-    return globalThis.matchMedia(devicesHeaderMedia.tablet).matches;
-  }
-
-  return false;
-};
+import { NAV_TABLET_MAX_WIDTH } from 'styles/constants';
+import { useMatchMedia } from 'shared/hooks';
 
 export const useIdenticonSize = (tabletDiameter = 56, defaultDiameter = 72) => {
-  const [diameter, setDiameter] = useState(() =>
-    matchTabletMedia() ? tabletDiameter : defaultDiameter,
-  );
+  const { isMatched } = useMatchMedia(NAV_TABLET_MAX_WIDTH);
 
-  useEffect(() => {
-    const resizeListener = () => {
-      setDiameter(matchTabletMedia() ? tabletDiameter : defaultDiameter);
-    };
-
-    window.addEventListener('resize', resizeListener);
-
-    return () => window.removeEventListener('resize', resizeListener);
-  }, [tabletDiameter, defaultDiameter]);
-
-  return diameter;
+  return isMatched ? tabletDiameter : defaultDiameter;
 };

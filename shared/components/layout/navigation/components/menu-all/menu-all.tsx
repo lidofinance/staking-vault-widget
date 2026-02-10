@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
-import { useBreakpoint } from '@lidofinance/lido-ui';
 
 import { useVault } from 'modules/vaults';
+import { useMatchMedia } from 'shared/hooks';
+import { NAV_MOBILE_MAX_WIDTH } from 'styles/constants';
 
 import { NavigationList } from 'shared/components/layout/navigation/components';
 import { vaultRoutes } from 'shared/components/layout/navigation/const';
 
 export const MenuAll = () => {
   const { vaultAddress } = useVault();
-  const isMobile = useBreakpoint('lg');
+  const { isMatched } = useMatchMedia(NAV_MOBILE_MAX_WIDTH);
 
   const availableRoutes = useMemo(() => {
     if (!vaultAddress) {
@@ -16,9 +17,9 @@ export const MenuAll = () => {
     }
 
     return vaultRoutes(vaultAddress).filter(
-      ({ inMobileMenu }) => !isMobile || !inMobileMenu,
+      ({ inMobileMenu }) => !isMatched || !inMobileMenu,
     );
-  }, [vaultAddress, isMobile]);
+  }, [vaultAddress, isMatched]);
 
   return <NavigationList routes={availableRoutes} />;
 };

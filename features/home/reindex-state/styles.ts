@@ -9,14 +9,14 @@ export const ReindexStateContainer = styled.div`
   justify-content: flex-end;
   height: 21px;
   gap: 8px;
+
+  @media ${devicesHeaderMedia.mobile} {
+    align-self: flex-start;
+  }
 `;
 
 export const TextWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.xs}px;
-
-  @media ${devicesHeaderMedia.mobile} {
-    max-width: 155px;
-  }
 `;

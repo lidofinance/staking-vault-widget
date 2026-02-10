@@ -2,8 +2,6 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { ArrowBack } from '@lidofinance/lido-ui';
 
-import { devicesHeaderMedia } from 'styles/global';
-
 export const AllVaults = styled(Link)`
   display: flex;
   align-items: center;
@@ -28,10 +26,6 @@ export const AllVaults = styled(Link)`
     svg {
       opacity: 1;
     }
-  }
-
-  @media ${devicesHeaderMedia.mobile} {
-    display: none;
   }
 `;
 
