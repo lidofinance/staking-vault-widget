@@ -1,6 +1,6 @@
-export { Button } from './button/button';
-export { ConnectWalletButton } from './button-with-children/connect-wallet-button';
-export { Card, CardRow, CardBalance, CardAccount } from './card/card';
-export { Connect } from './connect/connect';
-export { Fallback } from './fallback/fallback';
-export { DisabledButton } from './disabled-button/disabled-button';
+export { WalletButton } from './wallet-button';
+export { ConnectWalletButton } from './button-with-children';
+export { Card, CardRow, CardBalance, CardAccount } from './card';
+export { Connect } from './connect';
+export { Fallback } from './fallback';
+export { DisabledButton } from './disabled-button';

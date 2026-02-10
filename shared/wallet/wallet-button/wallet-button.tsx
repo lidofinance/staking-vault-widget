@@ -6,7 +6,7 @@ import { FormatToken } from 'shared/formatters';
 import { useDappStatus, useEthereumBalance } from 'modules/web3';
 import { InlineLoader } from 'shared/components';
 
-import { AddressBadge } from '../components/address-badge/address-badge';
+import { AddressBadge } from '../components';
 import { useWalletModal } from '../wallet-modal/use-wallet-modal';
 
 import {
@@ -15,7 +15,7 @@ import {
   WalledButtonBalanceStyle,
 } from './styles';
 
-export const Button: FC<ButtonProps> = (props) => {
+export const WalletButton: FC<ButtonProps> = (props) => {
   const { onClick, ...rest } = props;
 
   const isMobile = useBreakpoint('md');
