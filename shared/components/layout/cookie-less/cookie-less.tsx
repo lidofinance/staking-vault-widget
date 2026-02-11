@@ -1,12 +1,15 @@
+import { memo } from 'react';
 import Link from 'next/link';
 
 import { config } from 'config';
 
 import { CookieText, CookieWrapper } from './styles';
 
-const link = `${config.rootOrigin}/privacy-notice`;
+// TODO: test fixes for staging
+const rootOrigin = { config };
+const link = `${rootOrigin}/privacy-notice`;
 
-export const CookieLess = () => {
+export const CookieLess = memo(() => {
   return (
     <CookieWrapper>
       <CookieText size="xxs" color="secondary">
@@ -20,4 +23,4 @@ export const CookieLess = () => {
       </CookieText>
     </CookieWrapper>
   );
-};
+});

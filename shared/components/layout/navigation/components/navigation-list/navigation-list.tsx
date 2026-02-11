@@ -6,7 +6,7 @@ import { NavigationLink } from 'shared/components/layout/navigation/components';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
 
 type NavigationsProps = {
-  routes: NavigationRoutes[];
+  routes: (NavigationRoutes & { pathname?: string })[];
 };
 
 export const NavigationList: FC<NavigationsProps> = ({ routes }) => {
@@ -18,7 +18,7 @@ export const NavigationList: FC<NavigationsProps> = ({ routes }) => {
 
   return (
     <>
-      {routes.map(({ title, path, icon, external }) => {
+      {routes.map(({ title, path, icon, pathname, external }) => {
         const isValidatorsLink = title === 'Validators';
         const appPath =
           isValidatorsLink && activeVault
@@ -31,6 +31,7 @@ export const NavigationList: FC<NavigationsProps> = ({ routes }) => {
             icon={icon}
             title={title}
             path={appPath}
+            pathname={pathname}
             external={external}
           />
         );

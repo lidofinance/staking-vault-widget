@@ -6,3 +6,4 @@ export { NavigationList } from './navigation-list';
 export { VaultNavigationList } from './vault-navigation';
 export { AllVaultsMobile } from './all-vaults-mobile';
 export { AllVaultsDesktop } from './all-vaults-desktop';
+export { NavigationContainer } from './navigation-container';

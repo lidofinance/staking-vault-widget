@@ -1,4 +1,4 @@
-import { type FC, type ReactNode, useCallback, useMemo } from 'react';
+import { type FC, type ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { trackEvent } from '@lidofinance/analytics-matomo';
@@ -9,18 +9,16 @@ import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { ReactComponent as MintRepay } from 'assets/icons/mint.svg';
 import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 
-import {
-  routsClickEventsMap,
-  vaultPathnames,
-} from 'shared/components/layout/navigation/const';
+import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
 
 import { ListItem, NavLink } from './styles';
 
 export type NavigationLinkProps = {
+  icon: NavigationRoutes['icon'];
   title: string;
   path: string;
-  icon: NavigationRoutes['icon'];
+  pathname?: string;
   external?: boolean;
 };
 
@@ -38,21 +36,16 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
   icon,
   path,
   external,
+  pathname: pathnameInfo,
 }) => {
   const { pathname } = useRouter();
+  const routeInfo = pathnameInfo ?? path;
   const pathIcon = iconsMap[icon];
+  const isActivePath = routeInfo === pathname;
 
   const trackClickEvent = useCallback(() => {
     trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[pathname]]);
   }, [pathname]);
-
-  const isActivePath = useMemo(
-    () =>
-      vaultPathnames.some((pathInfo) => {
-        return pathInfo.title === title && pathInfo.path === pathname;
-      }),
-    [title, pathname],
-  );
 
   return (
     <ListItem onClick={trackClickEvent} key={path}>

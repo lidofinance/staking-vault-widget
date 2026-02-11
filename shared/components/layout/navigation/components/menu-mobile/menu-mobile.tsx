@@ -4,7 +4,10 @@ import { useVault } from 'modules/vaults';
 import { ReactComponent as BurgerIcon } from 'assets/icons/burger-icon.svg';
 
 import { NavigationList } from 'shared/components/layout/navigation/components';
-import { vaultRoutes } from 'shared/components/layout/navigation/const';
+import {
+  vaultPathnames,
+  vaultRoutes,
+} from 'shared/components/layout/navigation/const';
 import { useMobileMenu } from 'shared/components/layout/navigation/hooks';
 
 import {
@@ -21,7 +24,15 @@ export const MenuMobile: FC = () => {
   const routesForMenu = useMemo(
     () =>
       vaultAddress
-        ? vaultRoutes(vaultAddress).filter(({ inMobileMenu }) => inMobileMenu)
+        ? vaultRoutes(vaultAddress)
+            .filter(({ inMobileMenu }) => inMobileMenu)
+            .map((route) => {
+              const pathInfo = vaultPathnames.find(
+                (pathInfo) => pathInfo.title === route.title,
+              );
+
+              return { ...route, pathname: pathInfo?.path ?? '' };
+            })
         : [],
     [vaultAddress],
   );
