@@ -161,6 +161,7 @@ const QueryStatus = ({
   refetch,
 }: QueryStatusProps) => {
   let content: JSX.Element | null = null;
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (true) {
     case isError:
       content = (
