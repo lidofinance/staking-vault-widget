@@ -2398,10 +2398,10 @@
   dependencies:
     typescript "^4.7"
 
-"@lidofinance/lido-ethereum-sdk@4.6.0-alpha.6":
-  version "4.6.0-alpha.6"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.6.0-alpha.6.tgz#f708580c5e48a23691618f1f12c668d5e795bb5f"
-  integrity sha512-g4u2c+yuNRrzDJCHX9fsKvI6U39vGZezmy90lk1fNjv91jnSDD6oKC2sbq2pbroRzHImNn+o5OH4W/5RcjfMQA==
+"@lidofinance/lido-ethereum-sdk@4.7.0":
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.7.0.tgz#1843cdcdea5d29c138b912a239a2087697f8a69f"
+  integrity sha512-mw4SyclQzYTxsGa43thBM/WiaWnP/0urfXOkasOJvWd18Oxc1Bd+WXo9YQfqk5T5k5qZqofbdJb4zsrCgP1ZjQ==
   dependencies:
     "@ethersproject/bytes" "^5.7.0"
     "@openzeppelin/merkle-tree" "^1.0.8"
