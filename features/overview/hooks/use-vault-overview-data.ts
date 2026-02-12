@@ -10,7 +10,6 @@ import {
   fetchVaultMetrics,
   fetch7dApr,
   getLidoContract,
-  getStEthContract,
   VAULTS_CONNECT_DEPOSIT,
   type VaultApiMetrics,
   type VaultBaseInfo,
@@ -30,10 +29,15 @@ import {
 } from 'utils';
 
 import { calculateOverviewV2 } from 'features/overview/consts';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 
 type VaultDataArgs = {
-  publicClient: RegisteredPublicClient;
   vault: VaultBaseInfo;
+};
+
+type VaultDataCtx = {
+  publicClient: RegisteredPublicClient;
+  lidoSDKShares: LidoSDKShares;
 };
 
 type VaultRecordWithoutDelta = Omit<VaultRecord, 'inOutDelta'>;
@@ -54,6 +58,7 @@ export type VaultInfo = VaultConnection &
     totalValue: bigint;
     liabilityShares: bigint;
     liabilityStETH: bigint;
+    currentLiabilityStETH: bigint;
     mintableStETH: bigint;
     mintableShares: bigint;
     stETHLimit: bigint;
@@ -72,7 +77,7 @@ export type VaultInfo = VaultConnection &
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
-    reportLiabilitySharesStETH: bigint;
+    currentMaxLiabilityStETH: bigint;
     obligationsShortfallValue: bigint;
     stETHToBurn: bigint;
     feesToSettle: bigint;
@@ -85,14 +90,15 @@ export type VaultInfo = VaultConnection &
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
     beaconChainDepositsPaused: boolean;
+    isReportFresh: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
 
-const getVaultData = async ({
-  publicClient,
-  vault,
-}: VaultDataArgs): Promise<VaultInfo> => {
+const getVaultData = async (
+  { vault }: VaultDataArgs,
+  { publicClient, lidoSDKShares }: VaultDataCtx,
+): Promise<VaultInfo> => {
   const {
     address,
     dashboard,
@@ -105,11 +111,12 @@ const getVaultData = async ({
     operatorGrid,
     report,
     isReportFresh,
-    reportLiabilityShares,
     lazyOracle,
     blockNumber,
     ...rest
   } = vault;
+
+  const vaultAddress = vault.address;
 
   const [
     balance,
@@ -124,6 +131,7 @@ const getVaultData = async ({
     vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
+    lazyOracle,
     report,
     isReportFresh,
     contracts: [
@@ -139,9 +147,9 @@ const getVaultData = async ({
       dashboard.prepare.feeRate(),
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
-      operatorGrid.prepare.vaultTierInfo([vault.address]),
+      operatorGrid.prepare.vaultTierInfo([vaultAddress]),
       operatorGrid.prepare.group([vault.nodeOperator]),
-      lazyOracle.prepare.vaultQuarantine([vault.address]),
+      lazyOracle.prepare.vaultQuarantine([vaultAddress]),
     ] as const,
     blockNumber,
   });
@@ -157,19 +165,28 @@ const getVaultData = async ({
     beaconChainDepositsPaused,
   ] = await readWithReport({
     publicClient,
+    lazyOracle,
     report,
     isReportFresh,
     contracts: [
       dashboard.prepare.obligationsShortfallValue(),
       dashboard.prepare.obligations(),
-      hub.prepare.healthShortfallShares([vault.address]),
-      hub.prepare.vaultRecord([vault.address]),
-      hub.prepare.locked([vault.address]),
+      hub.prepare.healthShortfallShares([vaultAddress]),
+      hub.prepare.vaultRecord([vaultAddress]),
+      dashboard.prepare.locked(),
       vaultContract.prepare.stagedBalance(),
       vaultContract.prepare.beaconChainDepositsPaused(),
     ] as const,
     blockNumber,
   });
+
+  const vaultRecordCurrent = isReportFresh
+    ? vaultRecord
+    : await hub.read.vaultRecord([vaultAddress]);
+  const {
+    liabilityShares: currentLiabilityShares,
+    maxLiabilityShares: currentMaxLiabilityShares,
+  } = vaultRecordCurrent;
 
   const {
     liabilityShares,
@@ -185,10 +202,10 @@ const getVaultData = async ({
   const { shareLimit: groupShareLimit } = group;
 
   const lidoV3Contract = getLidoContract(publicClient);
-  const stethContract = getStEthContract(publicClient);
 
   const [
     liabilityStETH,
+    currentLiabilityStETH,
     mintableStETH,
     stETHLimit,
     totalMintingCapacityStETH,
@@ -196,26 +213,29 @@ const getVaultData = async ({
     stETHToBurn,
     rebalanceStETH,
     redemptionStETH,
-    reportLiabilitySharesStETH,
-    lidoTVLSharesLimit,
-  ] = await Promise.all([
-    stethContract.read.getPooledEthBySharesRoundUp([liabilityShares]),
-    stethContract.read.getPooledEthByShares([mintableShares]),
-    stethContract.read.getPooledEthByShares([shareLimit]),
-    stethContract.read.getPooledEthByShares([totalMintingCapacityShares]),
-    stethContract.read.getPooledEthByShares([tierShareLimit]),
-    stethContract.read.getPooledEthBySharesRoundUp([sharesToBurn]),
-    stethContract.read.getPooledEthBySharesRoundUp([rebalanceShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([redemptionShares]),
-    stethContract.read.getPooledEthBySharesRoundUp([reportLiabilityShares]),
-    lidoV3Contract.read.getMaxMintableExternalShares(),
+    currentMaxLiabilityStETH,
+  ] = await lidoSDKShares.convertBatchSharesToSteth([
+    { amount: liabilityShares, roundUp: true },
+    { amount: currentLiabilityShares, roundUp: true },
+    mintableShares,
+    shareLimit,
+    totalMintingCapacityShares,
+    tierShareLimit,
+    { amount: sharesToBurn, roundUp: true },
+    { amount: rebalanceShares, roundUp: true },
+    { amount: redemptionShares, roundUp: true },
+    { amount: currentMaxLiabilityShares, roundUp: true },
   ]);
+
+  const lidoTVLSharesLimit =
+    await lidoV3Contract.read.getMaxMintableExternalShares();
 
   return {
     address,
     nodeOperator,
     totalValue,
     liabilityStETH,
+    currentLiabilityStETH,
     mintableStETH,
     mintableShares,
     stETHLimit,
@@ -225,7 +245,7 @@ const getVaultData = async ({
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
-    reportLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     feeRate,
     shareLimit,
     forcedRebalanceThresholdBP,
@@ -249,6 +269,7 @@ const getVaultData = async ({
     redemptionShares,
     redemptionStETH,
     beaconChainDepositsPaused,
+    isReportFresh,
     ...rest,
     ...restVaultRecord,
   };
@@ -281,7 +302,7 @@ const selectOverviewData = ({
     tierId,
     tierStETHLimit,
     minimalReserve,
-    reportLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     beaconChainDepositsPauseIntent,
     vaultQuarantineState,
     disconnectInitiatedTs,
@@ -300,6 +321,7 @@ const selectOverviewData = ({
     rebalanceShares,
     rebalanceStETH,
     beaconChainDepositsPaused,
+    isReportFresh,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -309,6 +331,7 @@ const selectOverviewData = ({
     totalValue: vaultData.totalValue,
     reserveRatioBP,
     liabilitySharesInStethWei: vaultData.liabilityStETH,
+    currentLiabilityStETH: vaultData.currentLiabilityStETH,
     forceRebalanceThresholdBP: vaultData.forcedRebalanceThresholdBP,
     withdrawableEther,
     balance,
@@ -316,8 +339,7 @@ const selectOverviewData = ({
     nodeOperatorDisbursableFee: nodeOperatorUnclaimedFee,
     totalMintingCapacityStethWei: vaultData.totalMintingCapacityStETH,
     unsettledLidoFees,
-    minimalReserve,
-    reportLiabilitySharesStETH,
+    currentMaxLiabilityStETH,
     feeObligation,
   });
 
@@ -331,7 +353,7 @@ const selectOverviewData = ({
   // Example: RR=100, vault=80, tier=90, group=85, Lido=120 => binding is 'vault'.
   const mintingConstraintBy = getMintingConstraintType({
     minimalReserve,
-    collateral: overview.collateral,
+    collateral: lockedEth,
     totalMintingCapacityShares,
     vaultShareLimit: shareLimit,
     tierShareLimit,
@@ -405,7 +427,7 @@ const selectOverviewData = ({
     undisbursedNodeOperatorFeeEth,
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
     feeRate,
-    collateral: overview.collateral,
+    collateral: lockedEth,
     pendingUnlockEth,
     pendingUnlock,
     isVaultConnected,
@@ -462,11 +484,12 @@ const selectOverviewData = ({
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,
     repayStETH: overview.repay,
+    isReportFresh,
   };
 };
 
 export const useVaultOverviewData = () => {
-  const { publicClient } = useLidoSDK();
+  const { publicClient, shares } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
   const query = useQuery({
@@ -485,7 +508,10 @@ export const useVaultOverviewData = () => {
       );
 
       const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
-        getVaultData({ publicClient, vault: activeVault }),
+        getVaultData(
+          { vault: activeVault },
+          { publicClient, lidoSDKShares: shares },
+        ),
         fetchVaultMetrics({ vaultAddress: activeVault.address }).catch(
           (error) => {
             console.warn(

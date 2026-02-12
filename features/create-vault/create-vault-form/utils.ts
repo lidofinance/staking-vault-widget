@@ -1,6 +1,6 @@
 import { encodeFunctionData, parseEventLogs } from 'viem';
 
-import { VaultFactoryAbi } from 'abi/vault-factory';
+import { VaultFactoryAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 import {
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_CONNECT_DEPOSIT,

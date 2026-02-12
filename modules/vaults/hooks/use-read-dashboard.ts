@@ -75,6 +75,7 @@ export const useReadDashboard = <
       return (
         await readWithReport({
           publicClient,
+          lazyOracle: activeVault.lazyOracle,
           contracts: [contractData],
           report: applyReport ? activeVault.report : null,
           isReportFresh: activeVault.isReportFresh,

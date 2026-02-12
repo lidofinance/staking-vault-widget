@@ -9,17 +9,19 @@ import { LidoLocatorAbi } from '@lidofinance/lido-ethereum-sdk/core';
 import { StethAbi } from '@lidofinance/lido-ethereum-sdk/stake';
 import { WithdrawalQueueAbi } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { WstethABI } from '@lidofinance/lido-ethereum-sdk/wrap';
+import {
+  VaultFactoryAbi,
+  VaultHubAbi,
+  LazyOracleAbi,
+  OperatorGridAbi,
+  VaultViewerAbi,
+  PredepositGuaranteeAbi,
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { AggregatorAbi } from 'abi/aggregator-abi';
 import { ENSResolverAbi } from 'abi/ens-resolver-abi';
 import { ENSRegistryAbi } from 'abi/ens-registry-abi';
-import { VaultViewerAbi } from 'abi/vault-viewer';
-import { PredepositGuaranteeAbi } from 'abi/predeposit-guarantee';
-import { VaultHubAbi } from 'abi/vault-hub';
-import { VaultFactoryAbi } from 'abi/vault-factory';
 import { WethABI } from 'abi/weth-abi';
-import { LazyOracleAbi } from 'abi/lazy-oracle';
-import { OperatorGridAbi } from 'abi/operator-grid';
 
 export const METRIC_CONTRACT_ABIS = {
   [CONTRACTS.lido]: StethAbi,
