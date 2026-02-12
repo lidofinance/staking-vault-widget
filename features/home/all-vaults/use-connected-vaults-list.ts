@@ -14,7 +14,7 @@ import { useVaultListParams } from '../use-vault-list-params';
 
 export const useConnectedVaultsList = () => {
   const { params, isReady, setPage, setSort } = useVaultListParams();
-  const { publicClient } = useLidoSDK();
+  const { publicClient, vaultModule } = useLidoSDK();
   const setPageWithEvent = useCallback(
     (newPage: number) => {
       trackEvent(
@@ -34,7 +34,8 @@ export const useConnectedVaultsList = () => {
     ] as const,
     placeholderData: keepPreviousData,
     enabled: isReady,
-    queryFn: async ({ queryKey }) => fetchVaults({ publicClient }, queryKey[3]),
+    queryFn: async ({ queryKey }) =>
+      fetchVaults({ publicClient, vaultModule }, queryKey[3]),
   });
 
   const isAPI = !!query.data?.isAPI;

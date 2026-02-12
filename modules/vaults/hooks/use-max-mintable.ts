@@ -36,6 +36,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
 
       const [maxMintableShares] = await readWithReport({
         publicClient,
+        lazyOracle: activeVault.lazyOracle,
         report: activeVault.report,
         isReportFresh: activeVault.isReportFresh,
         contracts: [

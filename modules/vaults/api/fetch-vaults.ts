@@ -4,13 +4,12 @@ import { calculateHealth } from 'utils';
 import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient } from 'modules/web3';
-
 import {
-  getDashboardContract,
-  getStEthContract,
-  getVaultHubContract,
-  getVaultViewerContract,
-} from '../contracts';
+  LidoSDKVaultEntity,
+  LidoSDKVaultModule,
+} from '@lidofinance/lido-ethereum-sdk';
+
+import { getStEthContract } from '../contracts';
 import { vaultApiRoutes } from '../consts';
 
 export type FetchVaultsParams = {
@@ -36,6 +35,7 @@ export type FetchVaultsParams = {
 
 export type FetchVaultsContext = {
   publicClient: RegisteredPublicClient;
+  vaultModule: LidoSDKVaultModule;
 };
 
 type VaultEntryRaw = {
@@ -156,10 +156,15 @@ export type FetchVaultsResult = {
 };
 
 const fetchVaultRPC = async (
-  { publicClient }: FetchVaultsContext,
+  { publicClient, vaultModule }: FetchVaultsContext,
   vaultAddress: Address,
 ): Promise<VaultEntryRaw> => {
-  const vaultHub = getVaultHubContract(publicClient);
+  const vaultHub = await vaultModule.contracts.getContractVaultHub();
+  const vaultEntity = new LidoSDKVaultEntity({
+    vaultAddress,
+    skipDashboardCheck: true,
+    bus: vaultModule,
+  });
   const { owner, forcedRebalanceThresholdBP } =
     await vaultHub.read.vaultConnection([vaultAddress]);
 
@@ -167,7 +172,7 @@ const fetchVaultRPC = async (
     throw new Error(`[fetchVaultRPC] no such vault connected: ${vaultAddress}`);
   }
 
-  const dashboardContract = getDashboardContract(owner, publicClient);
+  const dashboardContract = await vaultEntity.getDashboardContract();
 
   const [totalValue, liabilityShares] = await Promise.all([
     dashboardContract.read.totalValue(),
@@ -196,11 +201,11 @@ const fetchVaultRPC = async (
 };
 
 const fetchVaultsDataBatchRPC = async (
-  { publicClient }: FetchVaultsContext,
+  { vaultModule }: FetchVaultsContext,
   offset: bigint,
   limit: bigint,
 ): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
-  const vaultViewer = getVaultViewerContract(publicClient);
+  const vaultViewer = await vaultModule.contracts.getContractVaultViewer();
   const [vaultsData, totalVaultsCount] = await Promise.all([
     vaultViewer.read.vaultsDataBatch([offset, limit]),
     vaultViewer.read.vaultsCount(),
@@ -236,8 +241,8 @@ const fetchVaultsDataByAddressRPC = async (
   ctx: FetchVaultsContext,
   address: Address,
 ): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
-  const { publicClient } = ctx;
-  const vaultViewer = getVaultViewerContract(publicClient);
+  const { vaultModule } = ctx;
+  const vaultViewer = await vaultModule.contracts.getContractVaultViewer();
   const vaultCount = await vaultViewer.read.vaultsCount();
   const vaultAddresses: Address[] = [];
 

@@ -116,6 +116,7 @@ const getVaultTierInfo = async ({
     infraFeeBP,
     liquidityFeeBP,
     reservationFeeBP,
+    lazyOracle,
     ...rest
   } = vault;
 
@@ -130,6 +131,7 @@ const getVaultTierInfo = async ({
     vaultInfo,
   ] = await readWithReport({
     publicClient,
+    lazyOracle,
     report: vault.report,
     isReportFresh: vault.isReportFresh,
     contracts: [
@@ -146,6 +148,7 @@ const getVaultTierInfo = async ({
 
   const [tier] = await readWithReport({
     publicClient,
+    lazyOracle,
     report: vault.report,
     isReportFresh: vault.isReportFresh,
     contracts: [operatorGrid.prepare.tier([tierId])],

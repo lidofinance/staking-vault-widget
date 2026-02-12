@@ -29,6 +29,7 @@ export const useClaimData = () => {
         report: activeVault.report,
         isReportFresh: activeVault.isReportFresh,
         publicClient,
+        lazyOracle: activeVault.lazyOracle,
         contracts: [
           activeVault.dashboard.prepare.accruedFee(),
           activeVault.hub.prepare.withdrawableValue([activeVault.address]),

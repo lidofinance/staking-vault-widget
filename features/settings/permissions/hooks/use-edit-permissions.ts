@@ -4,7 +4,6 @@ import { getAddress } from 'viem';
 
 import {
   type TransactionEntry,
-  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -13,7 +12,6 @@ import {
   vaultTexts,
   GoToVault,
   VAULTS_ALL_ROLES_MAP,
-  getPredepositGuaranteeContract,
 } from 'modules/vaults';
 
 import { usePermissionsFormData } from './use-permissions-form-data';
@@ -24,7 +22,6 @@ import type {
 } from '../types';
 
 export const useEditPermissions = () => {
-  const { publicClient } = useLidoSDK();
   const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
   const { data: permissionsData } = usePermissionsFormData();
@@ -41,7 +38,7 @@ export const useEditPermissions = () => {
           '[useEditPermissions] permissionsData is not defined',
         );
 
-        const pdgContract = getPredepositGuaranteeContract(publicClient);
+        const pdgContract = activeVault.predepositGuarantee;
 
         const { rolesSchema, noGuarantor, noDepositor } = values;
         const { toGrant, toRevoke } = Object.entries(rolesSchema).reduce<{
@@ -115,7 +112,7 @@ export const useEditPermissions = () => {
           }),
         );
       },
-      [activeVault, sendTX, permissionsData, publicClient],
+      [activeVault, sendTX, permissionsData],
     ),
     ...rest,
   };
