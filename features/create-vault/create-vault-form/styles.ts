@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { Block, Button, H2 } from '@lidofinance/lido-ui';
 
+import { devicesHeaderMedia } from 'styles/global';
+
 export const FormBlock = styled(Block)`
   display: flex;
   flex-direction: column;
@@ -31,6 +33,11 @@ export const ActionButtonContainer = styled.section`
 
   & > button {
     flex: 1 1 50% !important;
+  }
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: column-reverse;
+    gap: ${({ theme }) => theme.spaceMap.xl}px;
   }
 `;
 

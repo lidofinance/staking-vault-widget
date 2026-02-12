@@ -113,6 +113,18 @@ export const TableRow = styled(Tr)`
   &:has(td):nth-child(odd):not(:hover) {
     background-color: var(--custom-background-secondary);
   }
+
+  @media ${devicesHeaderMedia.mobile} {
+    & td:first-child,
+    & th:first-child {
+      padding-left: ${({ theme }) => theme.spaceMap.sm}px;
+    }
+
+    & td:last-child,
+    & th:last-child {
+      padding-right: ${({ theme }) => theme.spaceMap.sm}px;
+    }
+  }
 `;
 
 export const SpacerRow = styled(Tr).attrs({ ariaHidden: true })`
