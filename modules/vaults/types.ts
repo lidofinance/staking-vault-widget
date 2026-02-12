@@ -1,15 +1,11 @@
-import type { VaultHubAbi } from 'abi/vault-hub';
 import type { Address, Hex, ReadContractReturnType } from 'viem';
-import {
-  getDashboardContract,
-  getStakingVaultContract,
-  getVaultHubContract,
-  getOperatorGridContract,
-  getLazyOracleContract,
-  getPredepositGuaranteeContract,
-} from './contracts';
 import type { RegisteredPublicClient } from '../web3';
 import type { Confirmation } from '../../utils/get-confirmations';
+import {
+  LidoSDKVaultContracts,
+  LidoSDKVaultEntity,
+} from '@lidofinance/lido-ethereum-sdk';
+import { VaultHubAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
@@ -42,16 +38,24 @@ export type HubReportData = {
 };
 
 export type VaultBaseInfo = {
+  vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
   blockNumberString: string;
-  reportLiabilityShares: bigint;
   address: Address;
-  vault: ReturnType<typeof getStakingVaultContract>;
-  hub: ReturnType<typeof getVaultHubContract>;
-  dashboard: ReturnType<typeof getDashboardContract>;
-  operatorGrid: ReturnType<typeof getOperatorGridContract>;
-  lazyOracle: ReturnType<typeof getLazyOracleContract>;
-  predepositGuarantee: ReturnType<typeof getPredepositGuaranteeContract>;
+  vault: Awaited<ReturnType<LidoSDKVaultContracts['getContractVault']>>;
+  hub: Awaited<ReturnType<LidoSDKVaultContracts['getContractVaultHub']>>;
+  dashboard: Awaited<
+    ReturnType<LidoSDKVaultContracts['getContractVaultDashboard']>
+  >;
+  operatorGrid: Awaited<
+    ReturnType<LidoSDKVaultContracts['getContractOperatorGrid']>
+  >;
+  lazyOracle: Awaited<
+    ReturnType<LidoSDKVaultContracts['getContractLazyOracle']>
+  >;
+  predepositGuarantee: Awaited<
+    ReturnType<LidoSDKVaultContracts['getContractPredepositGuarantee']>
+  >;
   nodeOperator: Address;
   vaultOwner: Address;
   withdrawalCredentials: Hex;

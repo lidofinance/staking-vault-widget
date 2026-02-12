@@ -2,11 +2,7 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import { Address } from 'viem';
 
-import {
-  getPredepositGuaranteeContract,
-  useVault,
-  VAULTS_ALL_ROLES_MAP,
-} from 'modules/vaults';
+import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
 import { EDITABLE_ROLES_LIST } from '../consts';
@@ -74,7 +70,7 @@ export const usePermissionsFormData = () => {
         ),
       });
 
-      const pdgContract = getPredepositGuaranteeContract(publicClient);
+      const pdgContract = activeVault.predepositGuarantee;
       const [noGuarantor, noDepositor] = await Promise.all([
         pdgContract.read.nodeOperatorGuarantor([activeVault.nodeOperator]),
         pdgContract.read.nodeOperatorDepositor([activeVault.nodeOperator]),
