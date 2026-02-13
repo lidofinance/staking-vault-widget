@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dev": "NODE_ENV=development node server.mjs",
     "dev:ipfs": "IPFS_MODE=true next dev",
@@ -25,7 +28,7 @@
     "@lidofinance/api-metrics": "^0.51.0",
     "@lidofinance/api-rpc": "^0.51.0",
     "@lidofinance/lido-ethereum-sdk": "4.7.0",
-    "@lidofinance/lido-ui": "^3.34.0",
+    "@lidofinance/lido-ui": "^3.42.0",
     "@lidofinance/next-api-wrapper": "^0.51.0",
     "@lidofinance/next-ip-rate-limit": "^0.51.0",
     "@lidofinance/next-pages": "^0.51.0",
@@ -105,6 +108,7 @@
     "lint-staged": "^13.2.3",
     "playwright": "1.56.1",
     "prettier": "^3.0.1",
+    "string-replace-loader": "^3.3.0",
     "ts-jest": "^29.1.0",
     "typescript": "5.8.3",
     "url-loader": "^4.1.1",
