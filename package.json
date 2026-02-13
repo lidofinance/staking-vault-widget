@@ -56,11 +56,10 @@
     "react-hook-form": "^7.56.4",
     "react-is": "^18.2.0",
     "react-transition-group": "^4.4.2",
-    "reef-knot": "7.4.2",
+    "reef-knot": "7.5.0",
     "styled-components": "^5.3.5",
     "tiny-invariant": "^1.1.0",
-    "uuid": "^8.3.2",
-    "viem": "2.31.6",
+    "viem": "2.45.3",
     "wagmi": "2.15.6",
     "zod": "^3.24.2"
   },
