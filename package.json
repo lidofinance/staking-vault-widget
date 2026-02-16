@@ -23,9 +23,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@base-org/account": "^2.5.2",
     "@coinbase/wallet-sdk": "^4.3.7",
-    "@gemini-wallet/core": "^0.3.2",
     "@hookform/resolvers": "^5.0.1",
     "@lidofinance/analytics-matomo": "^0.56.0",
     "@lidofinance/api-metrics": "^0.51.0",
@@ -54,7 +52,6 @@
     "next-logger": "^3.0.2",
     "next-secure-headers": "^2.2.0",
     "nprogress": "^0.2.0",
-    "porto": "~0.2.37",
     "prom-client": "^14.0.1",
     "raw-loader": "^4.0.2",
     "react": "^18.2.0",
