@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 import { Table, Tbody, Tr, Th, Td } from '@lidofinance/lido-ui';
 
+import { devicesHeaderMedia } from 'styles/global';
+
 export const TableContainer = styled.div`
   width: 100%;
   display: flex;
@@ -19,6 +21,11 @@ export const TableTitleContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: column;
+    gap: ${({ theme }) => theme.spaceMap.sm}px;
+  }
 `;
 
 export const TableTitle = styled.div<{ counter?: number }>`
@@ -105,6 +112,18 @@ export const TableRow = styled(Tr)`
 
   &:has(td):nth-child(odd):not(:hover) {
     background-color: var(--custom-background-secondary);
+  }
+
+  @media ${devicesHeaderMedia.mobile} {
+    & td:first-child,
+    & th:first-child {
+      padding-left: ${({ theme }) => theme.spaceMap.sm}px;
+    }
+
+    & td:last-child,
+    & th:last-child {
+      padding-right: ${({ theme }) => theme.spaceMap.sm}px;
+    }
   }
 `;
 

@@ -69,7 +69,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   }
 `;
 
-export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`
+export const LayoutTitle = styled((props) => <H1 {...props} />)`
   font-weight: 700;
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   margin-bottom: 0.2em;
@@ -81,7 +81,7 @@ export const LayoutTitleStyle = styled((props) => <H1 {...props} />)`
   }
 `;
 
-export const LayoutSubTitleStyle = styled.h4`
+export const LayoutSubTitle = styled.h4`
   font-weight: 500;
   color: var(--lido-color-textSecondary);
   margin-bottom: ${({ theme }) => theme.spaceMap.md}px;
