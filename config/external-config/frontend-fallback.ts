@@ -8,7 +8,7 @@ import {
   isManifestValid,
 } from 'config/external-config';
 
-import FallbackLocalManifest from 'IPFS.json' assert { type: 'json' };
+import FallbackLocalManifest from 'IPFS.json';
 
 export const getBackwardCompatibleConfig = (
   config: ManifestEntry['config'],

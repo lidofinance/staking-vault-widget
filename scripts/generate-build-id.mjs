@@ -1,4 +1,4 @@
-import buildInfo from '../build-info.json' assert { type: 'json' };
+import buildInfo from '../build-info.json' with { type: 'json' };
 
 export const generateBuildId = () => {
   const commit = buildInfo.commit;

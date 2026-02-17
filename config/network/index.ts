@@ -9,9 +9,9 @@ import { getPreConfig } from 'config/get-preconfig';
 import type { API_NAMES, CONTRACT_NAMES, NetworkConfig } from './const';
 
 // Main deployments
-import mainnetSet from 'networks/mainnet.json' assert { type: 'json' };
+import mainnetSet from 'networks/mainnet.json';
 // Public
-import hoodiSet from 'networks/hoodi.json' assert { type: 'json' };
+import hoodiSet from 'networks/hoodi.json';
 
 // reexport types and const
 export type { CONTRACT_NAMES, NetworkConfig } from './const';
