@@ -44,8 +44,9 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
   const isActivePath = routeInfo === pathname;
 
   const trackClickEvent = useCallback(() => {
-    trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[pathname]]);
-  }, [pathname]);
+    const key = external ? routeInfo : pathname;
+    trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[key]]);
+  }, [pathname, external, routeInfo]);
 
   return (
     <ListItem onClick={trackClickEvent} key={path}>

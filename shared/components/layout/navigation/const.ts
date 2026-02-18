@@ -23,8 +23,7 @@ export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSupplyWithdraw,
   '/vaults/[vaultAddress]/steth/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviMintRepayStETH,
-  'https://hoodi.beaconcha.in/validators/deposits?q=':
-    MATOMO_CLICK_EVENTS_TYPES.clickNaviValidators,
+  [getValidatorsLink()]: MATOMO_CLICK_EVENTS_TYPES.clickNaviValidators,
   '/vaults/[vaultAddress]/disburse': MATOMO_CLICK_EVENTS_TYPES.clickNaviNOFee,
   '/vaults/[vaultAddress]/settings/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSettings,
