@@ -7,7 +7,7 @@ import { config } from 'config';
 import { useUserConfig } from 'config/user-config';
 import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
 import { useDappStatus } from 'modules/web3';
-import { Button, Connect } from 'shared/wallet';
+import { Connect, WalletButton } from 'shared/wallet';
 import NoSSRWrapper from 'shared/components/no-ssr-wrapper';
 import { getChainColor } from 'utils/get-chain-color';
 
@@ -47,7 +47,7 @@ const HeaderWallet: FC = () => {
         </>
       )}
       {address ? (
-        <Button data-testid="accountSectionHeader" />
+        <WalletButton data-testid="accountSectionHeader" />
       ) : (
         <Connect size="sm" />
       )}

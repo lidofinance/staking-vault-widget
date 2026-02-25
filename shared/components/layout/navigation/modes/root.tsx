@@ -1,21 +1,20 @@
 import { appPaths } from 'consts/routing';
-import { Stake } from '@lidofinance/lido-ui';
 
-import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
-import { NavigationLink } from '../navigation-link';
-import { NavList } from '../styles';
+import { NavigationLink } from '../components';
+import { NavigationRoutes } from '../types';
+import { NavList } from '../components/vault-navigation/styles';
 
-const HomeRoutes = [
+const homeRoutes: NavigationRoutes[] = [
   {
     title: 'My vaults',
     path: appPaths.myVaults,
-    icon: <MosaicIcon />,
+    icon: 'mosaic',
     exact: true,
   },
   {
     title: 'All Vaults',
     path: appPaths.vaults.all,
-    icon: <Stake />,
+    icon: 'stake',
     exact: true,
   },
 ];
@@ -23,7 +22,7 @@ const HomeRoutes = [
 export const RootNavigation = () => {
   return (
     <NavList>
-      {HomeRoutes.map(({ title, path, icon }) => {
+      {homeRoutes.map(({ title, path, icon }) => {
         return (
           <NavigationLink icon={icon} title={title} path={path} key={path} />
         );

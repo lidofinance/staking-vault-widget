@@ -7,13 +7,13 @@ import { useErrorMessage } from 'shared/wallet/fallback/useErrorMessage';
 import { IPFSInfoBox } from 'features/ipfs/ipfs-info-box';
 import { Header } from './header';
 import { Main } from './main';
-import { Navigation } from './navigation';
+import { Navigation, AllVaultsMobile } from './navigation';
 import { CookieLess } from './cookie-less';
 import { Footer } from './footer';
 import { ChainBanner } from './chain-banner';
 import {
-  LayoutTitleStyle,
-  LayoutSubTitleStyle,
+  LayoutTitle,
+  LayoutSubTitle,
   IPFSInfoBoxOnlyMobileAndPortableWrapper,
   LayoutStyles,
 } from './styles';
@@ -45,8 +45,9 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
             <IPFSInfoBox />
           </IPFSInfoBoxOnlyMobileAndPortableWrapper>
         )}
-        <LayoutTitleStyle>{title}</LayoutTitleStyle>
-        <LayoutSubTitleStyle>{subtitle}</LayoutSubTitleStyle>
+        <AllVaultsMobile />
+        <LayoutTitle>{title}</LayoutTitle>
+        <LayoutSubTitle>{subtitle}</LayoutSubTitle>
         {children}
       </Main>
       <CookieLess />
