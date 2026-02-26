@@ -1,5 +1,10 @@
 import type { FC } from 'react';
-import { Text, Copy, External, Address } from '@lidofinance/lido-ui';
+import { Text } from '@lidofinance/lido-ui';
+
+import { CopyAddress } from 'shared/components';
+
+import { AddressWithTooltip, ExternalLinkIcon } from './components';
+import { Container, Content } from './styles';
 
 type ContractAddressProps = {
   title: string;
@@ -11,13 +16,15 @@ export const ContractAddress: FC<ContractAddressProps> = ({
   address,
 }) => {
   return (
-    <div>
-      <Text>{title}</Text>
-      <div>
-        <Address address={address} />
-        <Copy />
-        <External />
-      </div>
-    </div>
+    <Container>
+      <Text size="xs" strong>
+        {title}
+      </Text>
+      <Content>
+        <AddressWithTooltip address={address} />
+        <CopyAddress address={address} />
+        <ExternalLinkIcon address={address} />
+      </Content>
+    </Container>
   );
 };

@@ -25,7 +25,12 @@ export const Content = styled(Block)`
 
 export const VaultAddressesWrapper = styled(Content)`
   gap: 12px 16px;
-  margin-top: 28px;
+  max-width: 868px;
+  margin: 28px auto 0;
   padding: ${({ theme }) => theme.spaceMap.xxl}px;
   border-radius: 20px;
+
+  @media ${devicesHeaderMedia.mobile} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
 `;

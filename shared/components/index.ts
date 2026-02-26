@@ -29,3 +29,4 @@ export {
   type RadioInputProps,
 } from './radio-input';
 export { InlineLoader } from './value-with-loader';
+export { CopyAddress } from './copy-address';

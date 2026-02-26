@@ -17,6 +17,7 @@ import {
   VaultDisconnected,
   ConnectVault,
   RetryFetching,
+  VaultAddresses,
 } from './content';
 import { useVaultOverviewData } from './hooks';
 
@@ -103,10 +104,7 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
         <ConnectVault />
       </OverviewContentWrapper>
       <VaultAddressesWrapper>
-        <span>addr 1</span>
-        <span>addr 2</span>
-        <span>addr 3</span>
-        <span>addr 4</span>
+        <VaultAddresses />
       </VaultAddressesWrapper>
     </VaultOverviewContext.Provider>
   );
