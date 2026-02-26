@@ -17,7 +17,7 @@ export const InlineLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
   height,
 }) => {
   if (isLoading) return <InlineLoaderStyled width={width} height={height} />;
-  if (children === undefined) return placeholder || null;
+  if (children === undefined) return placeholder ?? null;
 
   return children;
 };

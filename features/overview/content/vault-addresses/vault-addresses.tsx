@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { useVault } from 'modules/vaults';
+import { InlineLoader } from 'shared/components';
 
 import { ContractAddress } from '../../shared';
 
@@ -11,24 +12,22 @@ export const VaultAddresses = () => {
   const { dashboard, lazyOracle, hub, operatorGrid } = activeVault ?? {};
 
   const contractInfoList = useMemo(() => {
-    if (!dashboard || !lazyOracle || !hub || !operatorGrid) return [];
-
     return [
       {
         title: 'Dashboard',
-        address: dashboard.address,
+        address: dashboard?.address,
       },
       {
         title: 'VaultHub',
-        address: lazyOracle.address,
+        address: lazyOracle?.address,
       },
       {
         title: 'LazyOracle',
-        address: hub.address,
+        address: hub?.address,
       },
       {
         title: 'OperatorGrid',
-        address: operatorGrid.address,
+        address: operatorGrid?.address,
       },
     ];
   }, [dashboard, lazyOracle, hub, operatorGrid]);
@@ -38,7 +37,14 @@ export const VaultAddresses = () => {
       <Title>Vault addresses</Title>
       <Content>
         {contractInfoList.map(({ title, address }) => (
-          <ContractAddress key={address} title={title} address={address} />
+          <InlineLoader
+            key={title}
+            isLoading={!address}
+            height={80}
+            width={320}
+          >
+            <ContractAddress title={title} address={address} />
+          </InlineLoader>
         ))}
       </Content>
     </Container>

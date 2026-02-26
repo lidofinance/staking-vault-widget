@@ -10,7 +10,7 @@ export const AddressWithTooltip: FC<AddressWithTooltipProps> = ({
 }) => {
   return (
     <Tooltip title={address}>
-      <Address symbols={9} address={address} />
+      <Address symbols={9} address={address.toLowerCase()} />
     </Tooltip>
   );
 };

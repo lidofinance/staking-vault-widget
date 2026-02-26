@@ -8,13 +8,17 @@ import { Container, Content } from './styles';
 
 type ContractAddressProps = {
   title: string;
-  address: string;
+  address: string | undefined;
 };
 
 export const ContractAddress: FC<ContractAddressProps> = ({
   title,
   address,
 }) => {
+  if (!address) {
+    return null;
+  }
+
   return (
     <Container>
       <Text size="xs" strong>
