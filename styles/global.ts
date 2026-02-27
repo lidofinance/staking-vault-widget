@@ -97,8 +97,6 @@ const GlobalStyle = createGlobalStyle`
     &:hover {
       color: var(--lido-color-primaryHover);
     }
-
-
   }
 `;
 
