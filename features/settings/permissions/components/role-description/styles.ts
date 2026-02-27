@@ -9,7 +9,7 @@ export const RoleDescriptionWrapper = styled.div`
   text-wrap: auto;
 
   & > span {
-    line-height: 24px;
+    line-height: 20px;
     color: ${({ theme }) => theme.colors.text};
   }
 `;
@@ -23,4 +23,18 @@ export const WarningIcon = styled(Question)`
   &:hover {
     color: ${({ theme }) => theme.colors.text};
   }
+`;
+
+export const ContractRole = styled.p`
+  margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: 'Fira Code', monospace;
+  font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  word-break: break-word;
+  color: ${({ theme }) => theme.colors.text};
 `;

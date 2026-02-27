@@ -1,16 +1,18 @@
-import { FC } from 'react';
+import { type FC } from 'react';
+import { Tooltip, Text } from '@lidofinance/lido-ui';
 
-import { Tooltip } from '@lidofinance/lido-ui';
-import { WarningIcon, RoleDescriptionWrapper } from './styles';
+import { ROLES_TO_CONTRACT_CONSTANT } from 'modules/vaults';
+import { WarningIcon, RoleDescriptionWrapper, ContractRole } from './styles';
 
-export interface RoleDescriptionProps {
+export type RoleDescriptionProps = {
   description: string;
   tooltip: string;
+  contractRole?: (typeof ROLES_TO_CONTRACT_CONSTANT)[keyof typeof ROLES_TO_CONTRACT_CONSTANT];
   dataTestId?: string;
-}
+};
 
 export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
-  const { description, tooltip, dataTestId } = props;
+  const { description, tooltip, dataTestId, contractRole } = props;
 
   return (
     <RoleDescriptionWrapper
@@ -18,13 +20,16 @@ export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
         dataTestId ? `${dataTestId}-roleDescriptionWrapper` : undefined
       }
     >
-      <span
+      {contractRole && <ContractRole>{contractRole}</ContractRole>}
+      <Text
+        size="xxs"
+        as="span"
         data-testid={
           dataTestId ? `${dataTestId}-roleDescriptionText` : undefined
         }
       >
         {description}
-      </span>
+      </Text>
       <Tooltip placement="right" offset="xs" title={tooltip}>
         <WarningIcon />
       </Tooltip>

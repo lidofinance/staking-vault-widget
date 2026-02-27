@@ -2,6 +2,7 @@ import { useFormState } from 'react-hook-form';
 
 import {
   useVaultPermission,
+  ROLES_TO_CONTRACT_CONSTANT,
   VAULT_OWNER_ROLES,
   VAULT_ROOT_ROLES,
   VAULTS_NO_ROLES,
@@ -65,6 +66,7 @@ export const VaultPermissions = ({
               <RoleDescription
                 description={title}
                 tooltip={hint}
+                contractRole={ROLES_TO_CONTRACT_CONSTANT[role]}
                 dataTestId={`${dataTestId}-${role}`}
               />
               <AddressBlock

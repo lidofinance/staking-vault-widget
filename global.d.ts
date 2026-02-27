@@ -16,6 +16,11 @@ declare module '*.svg' {
   export default content;
 }
 
+declare module '*.ttf' {
+  const content: string;
+  export default content;
+}
+
 declare module 'next/config' {
   type ConfigTypes = () => {
     // some properties may be confusing, but that's okay - "serverRuntimeConfig" accepts "process.env" without modification and/or validation.
