@@ -5,8 +5,7 @@ import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
-import { useDappStatus } from 'modules/web3';
-import { Connect } from 'shared/wallet';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 import {
@@ -20,7 +19,6 @@ export const MainSettingsAction: FC = () => {
   const router = useRouter();
   const { trigger, setValue } = useFormContext<CreateVaultSchema>();
   const { isValidating, isValid } = useFormState<CreateVaultSchema>();
-  const { isDappActive } = useDappStatus();
 
   const isSubmitDisabled = isValidating || !isValid;
 
@@ -37,34 +35,28 @@ export const MainSettingsAction: FC = () => {
     setValue('step', CREATE_VAULT_FORM_STEPS.confirm);
   };
 
-  if (!isDappActive) {
-    return (
-      <ActionButtonContainer>
-        <Connect />
-      </ActionButtonContainer>
-    );
-  }
-
   return (
     <ActionButtonContainer>
-      <ActionButton
-        type="button"
-        variant="outlined"
-        onClick={handleNavigateToRoot}
-        fullwidth
-        data-testid="createVault-cancelButton"
-      >
-        Cancel
-      </ActionButton>
-      <ActionButton
-        type="button"
-        onClick={handleSetNextStep}
-        disabled={isSubmitDisabled}
-        fullwidth
-        data-testid="createVault-continueButton"
-      >
-        Continue
-      </ActionButton>
+      <ConnectWalletButton>
+        <ActionButton
+          type="button"
+          variant="outlined"
+          onClick={handleNavigateToRoot}
+          fullwidth
+          data-testid="createVault-cancelButton"
+        >
+          Cancel
+        </ActionButton>
+        <ActionButton
+          type="button"
+          onClick={handleSetNextStep}
+          disabled={isSubmitDisabled}
+          fullwidth
+          data-testid="createVault-continueButton"
+        >
+          Continue
+        </ActionButton>
+      </ConnectWalletButton>
     </ActionButtonContainer>
   );
 };
