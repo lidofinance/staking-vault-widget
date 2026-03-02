@@ -76,7 +76,9 @@ export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [
   'proveUnknownValidatorsRole',
 ] as const;
 
-export const ROLES_TO_CONTRACT_CONSTANT = {
+export const ROLES_TO_CONTRACT_CONSTANT: {
+  [K in VAULT_OWNER_ROLES | VAULTS_NO_ROLES]: string;
+} = {
   supplier: 'FUND_ROLE',
   withdrawer: 'WITHDRAW_ROLE',
   minter: 'MINT_ROLE',
@@ -92,4 +94,4 @@ export const ROLES_TO_CONTRACT_CONSTANT = {
   feeExemptRole: 'NODE_OPERATOR_FEE_EXEMPT_ROLE',
   unguaranteedDepositRole: 'NODE_OPERATOR_UNGUARANTEED_DEPOSIT_ROLE',
   proveUnknownValidatorsRole: 'NODE_OPERATOR_PROVE_UNKNOWN_VALIDATOR_ROLE',
-} as const satisfies { [K in VAULT_OWNER_ROLES | VAULTS_NO_ROLES]: string };
+};
