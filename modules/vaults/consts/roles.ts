@@ -92,4 +92,4 @@ export const ROLES_TO_CONTRACT_CONSTANT = {
   feeExemptRole: 'NODE_OPERATOR_FEE_EXEMPT_ROLE',
   unguaranteedDepositRole: 'NODE_OPERATOR_UNGUARANTEED_DEPOSIT_ROLE',
   proveUnknownValidatorsRole: 'NODE_OPERATOR_PROVE_UNKNOWN_VALIDATOR_ROLE',
-} as const;
+} as const satisfies { [K in VAULT_OWNER_ROLES | VAULTS_NO_ROLES]: string };
