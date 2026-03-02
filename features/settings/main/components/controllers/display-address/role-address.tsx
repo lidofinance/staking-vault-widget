@@ -72,6 +72,7 @@ export const RoleAddress: FC<RoleAddressProps> = ({
           bgColor={bgColor}
           symbols={21}
           dataTestId={dataTestId}
+          showPopover
         />
       )}
     </AddressWrapper>

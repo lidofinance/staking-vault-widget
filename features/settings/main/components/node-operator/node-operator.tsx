@@ -3,7 +3,7 @@ import { useVault, vaultTexts } from 'modules/vaults';
 import { useFormState } from 'react-hook-form';
 import { Text } from '@lidofinance/lido-ui';
 
-import { AddressBadge } from 'shared/components';
+import { AddressBadge, InlineLoader } from 'shared/components';
 import { Skeleton } from 'features/settings/main/styles';
 
 import { Wrapper } from './styles';
@@ -19,16 +19,15 @@ export const NodeOperator: FC = () => {
       <Text size="xs" strong data-testid="nodeOperator-title">
         {texts.title}
       </Text>
-      {isLoading ? (
-        <Skeleton />
-      ) : (
+      <InlineLoader isLoading={isLoading} loader={<Skeleton />}>
         <AddressBadge
           weight={400}
           address={activeVault?.nodeOperator}
           symbols={21}
           dataTestId="nodeOperator"
+          showPopover
         />
-      )}
+      </InlineLoader>
     </Wrapper>
   );
 };
