@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { devicesHeaderMedia } from 'styles/global';
+
 export const PermissionContainer = styled.article`
   display: flex;
   flex-direction: column;
@@ -21,6 +23,12 @@ export const PermissionRoleWrapper = styled.div<{
 
   &:last-child {
     border-bottom: none;
+  }
+
+  @media ${devicesHeaderMedia.mobile} {
+    flex-direction: column;
+    gap: ${({ theme }) => theme.spaceMap.lg}px;
+    align-items: initial;
   }
 `;
 

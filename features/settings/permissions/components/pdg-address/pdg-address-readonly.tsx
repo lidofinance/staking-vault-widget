@@ -18,5 +18,5 @@ export const PDGAddressReadonly: FC<ReadonlyModeProps> = ({
   const fieldData = useWatch<EditPermissionsSchema, PGDRolesKeys>({
     name: formFieldName,
   });
-  return <AddressBadge symbols={10} address={fieldData} showPopover />;
+  return <AddressBadge symbols={6} address={fieldData} showPopover />;
 };

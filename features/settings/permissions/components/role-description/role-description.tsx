@@ -1,8 +1,15 @@
-import { type FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { Tooltip, Text } from '@lidofinance/lido-ui';
 
 import { ROLES_TO_CONTRACT_CONSTANT } from 'modules/vaults';
-import { WarningIcon, RoleDescriptionWrapper, ContractRole } from './styles';
+import { getTestId } from 'utils';
+
+import {
+  WarningIcon,
+  RoleDescriptionWrapper,
+  ContractRole,
+  NonBreakableText,
+} from './styles';
 
 export type RoleDescriptionProps = {
   description: string;
@@ -11,28 +18,39 @@ export type RoleDescriptionProps = {
   dataTestId?: string;
 };
 
+const splitDescription = (description: string) => {
+  const words = description.split(' ').filter(Boolean);
+  return {
+    descriptionText: words.toSpliced(0, -1).join(' '),
+    lastWord: words.at(-1) ?? '',
+  };
+};
+
 export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
   const { description, tooltip, dataTestId, contractRole } = props;
+  const { descriptionText, lastWord } = useMemo(
+    () => splitDescription(description),
+    [description],
+  );
 
   return (
     <RoleDescriptionWrapper
-      data-testid={
-        dataTestId ? `${dataTestId}-roleDescriptionWrapper` : undefined
-      }
+      data-testid={getTestId(dataTestId, 'roleDescriptionWrapper')}
     >
       {contractRole && <ContractRole>{contractRole}</ContractRole>}
       <Text
         size="xxs"
         as="span"
-        data-testid={
-          dataTestId ? `${dataTestId}-roleDescriptionText` : undefined
-        }
+        data-testid={getTestId(dataTestId, 'roleDescriptionText')}
       >
-        {description}
+        {descriptionText}{' '}
+        <NonBreakableText>
+          {lastWord}
+          <Tooltip placement="right" offset="xs" title={tooltip}>
+            <WarningIcon />
+          </Tooltip>
+        </NonBreakableText>
       </Text>
-      <Tooltip placement="right" offset="xs" title={tooltip}>
-        <WarningIcon />
-      </Tooltip>
     </RoleDescriptionWrapper>
   );
 };
