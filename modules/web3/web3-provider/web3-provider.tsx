@@ -39,9 +39,21 @@ import type {
 } from '../types';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
-const WALLETS_PINNED: WalletIdsEthereum[] = [
-  'binanceWallet',
+const WALLETS_PINNED: WalletIdsEthereum[] = ['browserExtension'];
+
+const WALLETS_SHOWN: WalletIdsEthereum[] = [
   'browserExtension',
+  'metaMask',
+  'okx',
+  'ledgerHID',
+  'ledgerLive',
+  'walletConnect',
+  'bitget',
+  'imToken',
+  'ambire',
+  'safe',
+  'dappBrowserInjected',
+  'coinbaseSmartWallet',
 ];
 
 export const wagmiChainMap = Object.values(WagmiChains).reduce(
@@ -182,6 +194,7 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
       ...getDefaultWalletsModalConfig(),
       ...walletMetricProps,
       walletsPinned: WALLETS_PINNED,
+      walletsShown: WALLETS_SHOWN,
     });
   }, [
     backendRPC,
