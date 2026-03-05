@@ -127,7 +127,7 @@ export const ImmediateWithdrawalModal = () => {
             )}
           </ModalSection>
           <ModalSection
-            title="Fee obligations"
+            title="Total fee obligations"
             titleLeftDecorator={<NewLine />}
             amountValue={feeObligation}
             amountType="token"

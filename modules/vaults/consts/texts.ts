@@ -451,7 +451,7 @@ export const vaultTexts = {
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     feeRate: {
-      title: 'Node Operator Fee',
+      title: 'Node Operator daily fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
@@ -484,7 +484,7 @@ export const vaultTexts = {
             'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase.',
         },
         bottomLine: {
-          title: 'stVault bottom line',
+          title: 'stVault Daily Bottom Line',
           description:
             'The final amount of rewards earned by the vault owner in the vault perimeter.  Calculated as difference between the Net Staking Rewards and the stETH Liability growth:',
         },
@@ -494,7 +494,7 @@ export const vaultTexts = {
             'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
         },
         stethRebase: {
-          title: 'stETH Rebase',
+          title: 'stETH Daily Rebase',
           description:
             'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
         },
@@ -513,12 +513,12 @@ export const vaultTexts = {
       },
       netApr: {
         netStakingRewards: {
-          title: 'Net staking rewards',
+          title: 'Net daily staking rewards',
           description:
             'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
         },
         grossStakingRewards: {
-          title: 'Gross staking rewards',
+          title: 'Gross daily staking rewards',
           description:
             'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
@@ -528,7 +528,7 @@ export const vaultTexts = {
             'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
         },
         lidoFees: {
-          title: 'Lido fees',
+          title: 'Lido daily fees',
           description:
             'The amount of accumulated but not yet claimed Lido fees. This amount of ETH increases the amount of total locked ETH.',
         },
