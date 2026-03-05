@@ -27,11 +27,7 @@ import type {
   SectionData,
 } from './types';
 
-import {
-  Content,
-  OverviewContentWrapper,
-  VaultAddressesWrapper,
-} from './styles';
+import { Content, OverviewContentWrapper } from './styles';
 
 type MetricText = {
   title: string;
@@ -103,9 +99,7 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
         </Content>
         <ConnectVault />
       </OverviewContentWrapper>
-      <VaultAddressesWrapper>
-        <VaultAddresses />
-      </VaultAddressesWrapper>
+      <VaultAddresses />
     </VaultOverviewContext.Provider>
   );
 };

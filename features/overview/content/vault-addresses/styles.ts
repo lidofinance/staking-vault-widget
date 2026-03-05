@@ -1,7 +1,21 @@
 import styled from 'styled-components';
-import { H2 } from '@lidofinance/lido-ui';
+import { H2, Block } from '@lidofinance/lido-ui';
 
 import { devicesHeaderMedia } from 'styles/global';
+
+export const VaultAddressesWrapper = styled(Block)`
+  display: flex;
+  flex-direction: column;
+  max-width: 868px;
+  width: 100%;
+  margin: 28px auto 0;
+  padding: ${({ theme }) => theme.spaceMap.xxl}px;
+  border-radius: 20px;
+
+  @media ${devicesHeaderMedia.tablet} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
+`;
 
 export const Container = styled.section`
   display: flex;

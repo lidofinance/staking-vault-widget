@@ -5,11 +5,12 @@ import { InlineLoader } from 'shared/components';
 
 import { ContractAddress } from '../../shared';
 
-import { Container, Content, Title } from './styles';
+import { Container, Content, Title, VaultAddressesWrapper } from './styles';
 
 export const VaultAddresses = () => {
   const { activeVault } = useVault();
-  const { dashboard, lazyOracle, hub, operatorGrid } = activeVault ?? {};
+  const { dashboard, lazyOracle, hub, operatorGrid, isVaultDisconnected } =
+    activeVault ?? {};
 
   const contractInfoList = useMemo(() => {
     return [
@@ -19,11 +20,11 @@ export const VaultAddresses = () => {
       },
       {
         title: 'VaultHub',
-        address: lazyOracle?.address,
+        address: hub?.address,
       },
       {
         title: 'LazyOracle',
-        address: hub?.address,
+        address: lazyOracle?.address,
       },
       {
         title: 'OperatorGrid',
@@ -32,21 +33,27 @@ export const VaultAddresses = () => {
     ];
   }, [dashboard, lazyOracle, hub, operatorGrid]);
 
+  if (isVaultDisconnected) {
+    return null;
+  }
+
   return (
-    <Container>
-      <Title>Vault addresses</Title>
-      <Content>
-        {contractInfoList.map(({ title, address }) => (
-          <InlineLoader
-            key={title}
-            isLoading={!address}
-            height={80}
-            width={320}
-          >
-            <ContractAddress title={title} address={address} />
-          </InlineLoader>
-        ))}
-      </Content>
-    </Container>
+    <VaultAddressesWrapper>
+      <Container>
+        <Title>Vault addresses</Title>
+        <Content>
+          {contractInfoList.map(({ title, address }) => (
+            <InlineLoader
+              key={title}
+              isLoading={!address}
+              height={80}
+              width={320}
+            >
+              <ContractAddress title={title} address={address} />
+            </InlineLoader>
+          ))}
+        </Content>
+      </Container>
+    </VaultAddressesWrapper>
   );
 };
