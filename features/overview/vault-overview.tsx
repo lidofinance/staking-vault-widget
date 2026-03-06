@@ -17,6 +17,7 @@ import {
   VaultDisconnected,
   ConnectVault,
   RetryFetching,
+  VaultAddresses,
 } from './content';
 import { useVaultOverviewData } from './hooks';
 
@@ -98,6 +99,7 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
         </Content>
         <ConnectVault />
       </OverviewContentWrapper>
+      <VaultAddresses />
     </VaultOverviewContext.Provider>
   );
 };
