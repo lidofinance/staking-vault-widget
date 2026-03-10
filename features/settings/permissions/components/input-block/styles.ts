@@ -6,6 +6,10 @@ export const InputBlockWrapper = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
   width: 100%;
+
+  & label {
+    width: 100%;
+  }
 `;
 
 export const AddAddress = styled(ButtonIcon)`

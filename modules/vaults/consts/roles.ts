@@ -75,3 +75,23 @@ export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [
   'unguaranteedDepositRole',
   'proveUnknownValidatorsRole',
 ] as const;
+
+export const ROLES_TO_CONTRACT_CONSTANT: {
+  [K in VAULT_OWNER_ROLES | VAULTS_NO_ROLES]: string;
+} = {
+  supplier: 'FUND_ROLE',
+  withdrawer: 'WITHDRAW_ROLE',
+  minter: 'MINT_ROLE',
+  repayer: 'BURN_ROLE',
+  rebalancer: 'REBALANCE_ROLE',
+  depositsPauser: 'PAUSE_BEACON_CHAIN_DEPOSITS_ROLE',
+  depositsResumer: 'RESUME_BEACON_CHAIN_DEPOSITS_ROLE',
+  validatorExitRequester: 'REQUEST_VALIDATOR_EXIT_ROLE',
+  validatorWithdrawalTrigger: 'TRIGGER_VALIDATOR_WITHDRAWAL_ROLE',
+  volunataryDisconnecter: 'VOLUNTARY_DISCONNECT_ROLE',
+  vaultConfiguration: 'VAULT_CONFIGURATION_ROLE',
+  assetCollector: 'COLLECT_VAULT_ERC20_ROLE',
+  feeExemptRole: 'NODE_OPERATOR_FEE_EXEMPT_ROLE',
+  unguaranteedDepositRole: 'NODE_OPERATOR_UNGUARANTEED_DEPOSIT_ROLE',
+  proveUnknownValidatorsRole: 'NODE_OPERATOR_PROVE_UNKNOWN_VALIDATOR_ROLE',
+};
