@@ -3,7 +3,7 @@ import type { FC, PropsWithChildren, ReactNode } from 'react';
 import { InlineLoaderStyled } from './styles';
 
 type InlineLoaderProps = {
-  isLoading: boolean;
+  isLoading: boolean | undefined;
   width?: number;
   height?: number;
   placeholder?: ReactNode;
