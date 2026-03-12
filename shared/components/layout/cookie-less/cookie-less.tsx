@@ -5,8 +5,7 @@ import { config } from 'config';
 
 import { CookieText, CookieWrapper } from './styles';
 
-// TODO: test fixes for staging
-const rootOrigin = { config };
+const { rootOrigin } = config;
 const link = `${rootOrigin}/privacy-notice`;
 
 export const CookieLess = memo(() => {
