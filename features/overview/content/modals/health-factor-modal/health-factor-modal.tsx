@@ -24,6 +24,8 @@ import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { ChartContainer, HealthFactorHint, List, ListItem } from './styles';
 
+import { SectionContent } from '../styles';
+
 const formulasMap: Record<'carrySpread' | 'bottomLine', FormulaItem[]> = {
   carrySpread: [
     {
@@ -179,10 +181,12 @@ export const HealthFactorModal = () => {
         description={health.carrySpread.description}
         dataTestId={`${dataTestIdPrefix}-carrySpreadSection`}
       >
-        <Formula
-          list={formulasMap.carrySpread}
-          dataTestId={`${dataTestIdPrefix}-carrySpreadSection-formula`}
-        />
+        <SectionContent>
+          <Formula
+            list={formulasMap.carrySpread}
+            dataTestId={`${dataTestIdPrefix}-carrySpreadSection-formula`}
+          />
+        </SectionContent>
       </ModalSection>
       <SectionDivider />
       <ModalSection
@@ -193,10 +197,12 @@ export const HealthFactorModal = () => {
         description={health.bottomLine.description}
         dataTestId={`${dataTestIdPrefix}-bottomLineSection`}
       >
-        <Formula
-          list={formulasMap.bottomLine}
-          dataTestId={`${dataTestIdPrefix}-bottomLineSection-formula`}
-        />
+        <SectionContent>
+          <Formula
+            list={formulasMap.bottomLine}
+            dataTestId={`${dataTestIdPrefix}-bottomLineSection-formula`}
+          />
+        </SectionContent>
       </ModalSection>
       <SectionDivider />
       <ModalSection
