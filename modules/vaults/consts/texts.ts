@@ -677,16 +677,16 @@ export const vaultTexts = {
       hint: 'Allows claiming accumulated Node Operator’s fee.\nClaimer provides an address to receive fees.',
     },
     feeExemptRole: {
-      title: "Node operator's sub-role for fee exemptions",
-      hint: "Node operator's sub-role for fee exemptions",
+      title: `Node operator's sub-role for fee exemptions`,
+      hint: `Any ETH appearing on validators outside of stVaults mechanisms (e.g. side deposits or consolidations) is treated as rewards, and the Node Operator Fee applies. To classify ETH as a deposit instead, the Node Operator can adjust the validator balance accordingly.`,
     },
     unguaranteedDepositRole: {
-      title: "Node operator's sub-role for unguaranteed deposit",
-      hint: "Node operator's sub-role for unguaranteed deposit",
+      title: `Node operator's sub-role for unguaranteed deposit`,
+      hint: `If PDG Policy is set to ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will perform unguaranteed deposits to validators.`,
     },
     proveUnknownValidatorsRole: {
-      title: "Node operator's sub-role for proving unknown validators",
-      hint: "Node operator's sub-role for proving unknown validators",
+      title: `Node operator's sub-role for proving unknown validators`,
+      hint: `If PDG Policy is set to ALLOW_PROVE or ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will prove unknown validators to PDG.`,
     },
     guarantor: {
       title: 'Guarantor',
