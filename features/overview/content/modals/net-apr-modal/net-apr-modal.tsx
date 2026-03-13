@@ -9,6 +9,8 @@ import {
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
+import { SectionContent } from '../styles';
+
 const formulasMap: Record<'netApr' | 'netRewards', FormulaItem[]> = {
   netApr: [
     {
@@ -116,10 +118,12 @@ export const NetAprModal = () => {
         description={netApr.netStakingRewards.description}
         dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection`}
       >
-        <Formula
-          list={formulasMap.netRewards}
-          dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection-formula`}
-        />
+        <SectionContent>
+          <Formula
+            list={formulasMap.netRewards}
+            dataTestId={`${dataTestIdPrefix}-netStakingRewardsSection-formula`}
+          />
+        </SectionContent>
       </ModalSection>
       <SectionDivider />
       <ModalSection

@@ -481,15 +481,15 @@ export const vaultTexts = {
         carrySpread: {
           title: 'Carry Spread',
           description:
-            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase.',
+            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase. Averaged over the past 7 days.',
         },
         bottomLine: {
           title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner in the vault perimeter.  Calculated as difference between the Net Staking Rewards and the stETH Liability growth:',
+            'The final amount of rewards earned by the vault owner in the vault perimeter. Calculated as difference between the Net Staking Rewards and the stETH Liability growth:',
         },
         netStakingRewards: {
-          title: 'Net staking rewards',
+          title: 'Net daily staking rewards',
           description:
             'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
         },
@@ -523,7 +523,7 @@ export const vaultTexts = {
             'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
         noFee: {
-          title: 'Node Operator Fee',
+          title: 'Node Operator daily fee',
           description:
             'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
         },
