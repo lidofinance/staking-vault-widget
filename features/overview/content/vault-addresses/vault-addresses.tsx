@@ -47,7 +47,7 @@ export const VaultAddresses = () => {
               key={title}
               isLoading={!address}
               height={80}
-              width={320}
+              width={240}
             >
               <ContractAddress title={title} address={address} />
             </InlineLoader>
