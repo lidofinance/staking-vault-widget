@@ -84,7 +84,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
     if (!parsing.success) return null;
 
     const address = parsing.data;
-    const mainText = showEnsName && ensName ? ensName : address;
+    const mainText = showEnsName && ensName ? ensName : address.toLowerCase();
 
     const mainContent = (
       <PillContainer

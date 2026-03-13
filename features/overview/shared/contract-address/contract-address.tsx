@@ -19,15 +19,17 @@ export const ContractAddress: FC<ContractAddressProps> = ({
     return null;
   }
 
+  const lowerCaseAddress = address.toLowerCase();
+
   return (
     <Container>
       <Text size="xs" strong>
         {title}
       </Text>
       <Content>
-        <AddressWithTooltip address={address} />
-        <CopyAddress address={address} />
-        <ExternalLinkIcon address={address} />
+        <AddressWithTooltip address={lowerCaseAddress} />
+        <CopyAddress address={lowerCaseAddress} />
+        <ExternalLinkIcon address={lowerCaseAddress} />
       </Content>
     </Container>
   );
