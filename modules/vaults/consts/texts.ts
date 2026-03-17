@@ -405,9 +405,9 @@ export const vaultTexts = {
     },
     healthFactorNumber: {
       title: 'Health factor',
-      hint: 'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.\nThe Health Factor value equal to 100% is defined by the Forced Rebalance Threshold meaning that on the Health Factor falling under 100% the vault becomes subject to forced rebalancing.',
+      hint: 'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.\nThe Health Factor value equal to 100% is defined by the Forced Rebalance Threshold meaning that on the Health Factor falling under 100% the vault becomes subject to forced rebalancing.',
       description:
-        'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.',
+        'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     vaultLiability: {
@@ -486,7 +486,7 @@ export const vaultTexts = {
         bottomLine: {
           title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner in the vault perimeter. Calculated as difference between the Net Staking Rewards and the stETH Liability growth:',
+            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability grow driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
         },
         netStakingRewards: {
           title: 'Net daily staking rewards',
