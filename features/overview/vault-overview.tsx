@@ -12,7 +12,6 @@ import { vaultTexts } from 'modules/vaults';
 
 import {
   OverviewContent,
-  ReportState,
   General,
   VaultDisconnected,
   ConnectVault,
@@ -90,7 +89,6 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
   return (
     <VaultOverviewContext.Provider value={value}>
       <OverviewContentWrapper>
-        <ReportState />
         <Content>
           <General />
           <VaultDisconnected />

@@ -48,7 +48,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   position: relative;
   display: grid;
   grid-template-rows: min-content 1fr;
-  grid-template-columns: 166px 1fr 166px;
+  grid-template-columns: 260px 1fr 160px;
   grid-template-areas: ${({ isError }) =>
     templateAreas[isError ? 'withError' : 'default']};
   grid-column-gap: 0;
@@ -57,7 +57,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   height: auto;
 
   @media ${devicesHeaderMedia.tablet} {
-    grid-template-columns: 166px 1fr;
+    grid-template-columns: 200px 1fr;
     grid-template-areas: ${({ isError }) =>
       tabletTemplateAreas[isError ? 'withError' : 'default']};
   }

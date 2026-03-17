@@ -1,14 +1,24 @@
-import { AddressBadge } from 'shared/components/address-badge';
+import { Identicon } from '@lidofinance/lido-ui';
+
+import { ReportState } from 'shared/components';
 import { useVault } from 'modules/vaults';
 
-import { CurrentVaultWrapper } from './styles';
+import { CurrentVaultWrapper, Content, AddressStyled } from './styles';
 
 export const CurrentVault = () => {
   const { vaultAddress } = useVault();
 
+  if (!vaultAddress) {
+    return null;
+  }
+
   return (
     <CurrentVaultWrapper>
-      <AddressBadge bgColor="transparent" address={vaultAddress} symbols={5} />
+      <Identicon address={vaultAddress} diameter={40} />
+      <Content>
+        <AddressStyled address={vaultAddress} symbols={4} />
+        <ReportState />
+      </Content>
     </CurrentVaultWrapper>
   );
 };
