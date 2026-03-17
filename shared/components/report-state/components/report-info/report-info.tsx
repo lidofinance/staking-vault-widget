@@ -27,7 +27,7 @@ export const ReportInfo: FC<ReportInfoProps> = ({ isFresh, report }) => {
     <Content>
       <Description>
         <TextContent size="xxs">
-          Last applied: {formatCustomDate(Number(report.timestamp))}
+          Last report: {formatCustomDate(Number(report.timestamp))}
         </TextContent>
         <TextContent size="xxs">
           <Link
