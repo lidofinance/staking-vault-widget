@@ -40,6 +40,9 @@ export const ReportInfo: FC<ReportInfoProps> = ({ isFresh, report }) => {
           </Link>
         </TextContent>
       </Description>
+      <TextContent size="xxs">
+        Displayed metrics are based on simulated report data.
+      </TextContent>
       {!isFresh && (
         <ConnectWalletButton size="xs">
           <Action>
