@@ -65,10 +65,12 @@ const tableHeaders = [
   {
     title: 'Net Staking APR',
     sortKey: 'netStakingAprSma',
+    hint: 'Estimated yearly return after fees, excluding stETH liability growth from rebasing. Based on the 7-day moving average APR. Past performance doesn’t guarantee future results.',
   },
   {
     title: 'Carry Spread',
     sortKey: 'carrySpreadAprSma',
+    hint: 'Carry Spread shows whether the Health Factor is improving or weakening over time. A positive spread raises it, and a negative spread lowers it.\nIt is the estimated annual staking return in stVault, minus fees and stETH liability growth from rebasing, averaged over the last 7 days.',
   },
   {
     title: 'Health factor',

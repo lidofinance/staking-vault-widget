@@ -5,6 +5,7 @@ import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
 import {
@@ -36,24 +37,26 @@ export const MainSettingsAction: FC = () => {
 
   return (
     <ActionButtonContainer>
-      <ActionButton
-        type="button"
-        variant="outlined"
-        onClick={handleNavigateToRoot}
-        fullwidth
-        data-testid="createVault-cancelButton"
-      >
-        Cancel
-      </ActionButton>
-      <ActionButton
-        type="button"
-        onClick={handleSetNextStep}
-        disabled={isSubmitDisabled}
-        fullwidth
-        data-testid="createVault-continueButton"
-      >
-        Continue
-      </ActionButton>
+      <ConnectWalletButton>
+        <ActionButton
+          type="button"
+          variant="outlined"
+          onClick={handleNavigateToRoot}
+          fullwidth
+          data-testid="createVault-cancelButton"
+        >
+          Cancel
+        </ActionButton>
+        <ActionButton
+          type="button"
+          onClick={handleSetNextStep}
+          disabled={isSubmitDisabled}
+          fullwidth
+          data-testid="createVault-continueButton"
+        >
+          Continue
+        </ActionButton>
+      </ConnectWalletButton>
     </ActionButtonContainer>
   );
 };

@@ -34,6 +34,7 @@ export const NodeOperatorFeeRecipient: FC = () => {
           address={mainSettingsData?.feeRecipient}
           symbols={21}
           dataTestId="feeRecipient"
+          showPopover
         />
       )}
     </Wrapper>

@@ -12,11 +12,11 @@ import { vaultTexts } from 'modules/vaults';
 
 import {
   OverviewContent,
-  ReportState,
   General,
   VaultDisconnected,
   ConnectVault,
   RetryFetching,
+  VaultAddresses,
 } from './content';
 import { useVaultOverviewData } from './hooks';
 
@@ -89,7 +89,6 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
   return (
     <VaultOverviewContext.Provider value={value}>
       <OverviewContentWrapper>
-        <ReportState />
         <Content>
           <General />
           <VaultDisconnected />
@@ -98,6 +97,7 @@ export const VaultOverview: FC<PropsWithChildren> = () => {
         </Content>
         <ConnectVault />
       </OverviewContentWrapper>
+      <VaultAddresses />
     </VaultOverviewContext.Provider>
   );
 };

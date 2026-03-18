@@ -11,6 +11,10 @@ export const NavList = styled.ul`
   margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
   list-style-type: none;
 
+  svg {
+    margin-right: 8px;
+  }
+
   @media ${devicesHeaderMedia.mobile} {
     flex-direction: row;
     justify-content: space-around;
@@ -18,5 +22,9 @@ export const NavList = styled.ul`
     width: 100%;
     margin-top: 0;
     gap: 8px;
+
+    svg {
+      margin-right: 0;
+    }
   }
 `;

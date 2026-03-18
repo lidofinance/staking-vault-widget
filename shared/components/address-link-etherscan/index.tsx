@@ -1,1 +1,1 @@
-export * from './tx-link-etherscan';
+export * from './address-link-etherscan';

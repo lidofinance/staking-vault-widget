@@ -405,9 +405,9 @@ export const vaultTexts = {
     },
     healthFactorNumber: {
       title: 'Health factor',
-      hint: 'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.\nThe Health Factor value equal to 100% is defined by the Forced Rebalance Threshold meaning that on the Health Factor falling under 100% the vault becomes subject to forced rebalancing.',
+      hint: 'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.\nThe Health Factor value equal to 100% is defined by the Forced Rebalance Threshold meaning that on the Health Factor falling under 100% the vault becomes subject to forced rebalancing.',
       description:
-        'Health Factor of the vault that demonstrates the economic state of the vault. It shows how the stETH Liability is collateralized by Total value.',
+        'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     vaultLiability: {
@@ -451,7 +451,7 @@ export const vaultTexts = {
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     feeRate: {
-      title: 'Node Operator Fee',
+      title: 'Node Operator daily fee',
       hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
@@ -481,20 +481,20 @@ export const vaultTexts = {
         carrySpread: {
           title: 'Carry Spread',
           description:
-            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase.',
+            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase. Averaged over the past 7 days.',
         },
         bottomLine: {
-          title: 'stVault bottom line',
+          title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner in the vault perimeter.  Calculated as difference between the Net Staking Rewards and the stETH Liability growth:',
+            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability grow driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
         },
         netStakingRewards: {
-          title: 'Net staking rewards',
+          title: 'Net daily staking rewards',
           description:
             'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
         },
         stethRebase: {
-          title: 'stETH Rebase',
+          title: 'stETH Daily Rebase',
           description:
             'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
         },
@@ -513,22 +513,22 @@ export const vaultTexts = {
       },
       netApr: {
         netStakingRewards: {
-          title: 'Net staking rewards',
+          title: 'Net daily staking rewards',
           description:
             'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
         },
         grossStakingRewards: {
-          title: 'Gross staking rewards',
+          title: 'Gross daily staking rewards',
           description:
             'The amount of rewards earned by the validators expressed as a percentage of the vault total value, before fees deductions.',
         },
         noFee: {
-          title: 'Node Operator Fee',
+          title: 'Node Operator daily fee',
           description:
             'The share of Gross staking rewards that the Node Operator charges for provided validation service.',
         },
         lidoFees: {
-          title: 'Lido fees',
+          title: 'Lido daily fees',
           description:
             'The amount of accumulated but not yet claimed Lido fees. This amount of ETH increases the amount of total locked ETH.',
         },
@@ -677,16 +677,16 @@ export const vaultTexts = {
       hint: 'Allows claiming accumulated Node Operator’s fee.\nClaimer provides an address to receive fees.',
     },
     feeExemptRole: {
-      title: "Node operator's sub-role for fee exemptions",
-      hint: "Node operator's sub-role for fee exemptions",
+      title: `Node operator's sub-role for fee exemptions`,
+      hint: `Any ETH appearing on validators outside of stVaults mechanisms (e.g. side deposits or consolidations) is treated as rewards, and the Node Operator Fee applies. To classify ETH as a deposit instead, the Node Operator can adjust the validator balance accordingly.`,
     },
     unguaranteedDepositRole: {
-      title: "Node operator's sub-role for unguaranteed deposit",
-      hint: "Node operator's sub-role for unguaranteed deposit",
+      title: `Node operator's sub-role for unguaranteed deposit`,
+      hint: `If PDG Policy is set to ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will perform unguaranteed deposits to validators.`,
     },
     proveUnknownValidatorsRole: {
-      title: "Node operator's sub-role for proving unknown validators",
-      hint: "Node operator's sub-role for proving unknown validators",
+      title: `Node operator's sub-role for proving unknown validators`,
+      hint: `If PDG Policy is set to ALLOW_PROVE or ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will prove unknown validators to PDG.`,
     },
     guarantor: {
       title: 'Guarantor',

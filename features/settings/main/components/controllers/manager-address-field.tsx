@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import { useFieldArray, useFormState } from 'react-hook-form';
+import invariant from 'tiny-invariant';
 
 import { useVaultPermission } from 'modules/vaults';
 import { Hint } from 'shared/components';
@@ -14,7 +15,6 @@ import {
   MainSettingsOverview,
   ManagersKeys,
 } from 'features/settings/main/types';
-import invariant from 'tiny-invariant';
 
 type InputResolverProps = Omit<MainSettingsOverview, 'name'> & {
   name: ManagersKeys;

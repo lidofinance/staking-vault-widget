@@ -1,10 +1,10 @@
-import { FC } from 'react';
-import { InlineLoader } from '@lidofinance/lido-ui';
+import { type FC, useMemo } from 'react';
 
+import { InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
 import { isBigint } from 'utils';
 
-import { LoaderWrapper, ContentText } from './styles';
+import { ContentText } from './styles';
 
 export interface ItemValueProps {
   content: string | number | undefined | boolean | bigint;
@@ -16,33 +16,31 @@ export interface ItemValueProps {
 
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
   const { content, isLoading, color, textSize = 'xl', symbol = '' } = props;
-  const contentView = isBigint(content) ? (
-    <FormatToken
-      amount={content}
-      maxDecimalDigits={4}
-      showAmountTip={false}
-      symbol={symbol}
-    />
-  ) : (
-    content
+  const contentView = useMemo(
+    () =>
+      isBigint(content) ? (
+        <FormatToken
+          amount={content}
+          maxDecimalDigits={4}
+          showAmountTip={false}
+          symbol={symbol}
+        />
+      ) : (
+        content
+      ),
+    [content, symbol],
   );
 
   return (
-    <>
-      {isLoading ? (
-        <LoaderWrapper>
-          <InlineLoader />
-        </LoaderWrapper>
-      ) : (
-        <ContentText
-          data-testid="blockValue"
-          size={textSize}
-          style={{ color }}
-          strong
-        >
-          {contentView || '-'}
-        </ContentText>
-      )}
-    </>
+    <InlineLoader isLoading={isLoading} width={100} height={28}>
+      <ContentText
+        data-testid="blockValue"
+        size={textSize}
+        style={{ color }}
+        strong
+      >
+        {contentView || '-'}
+      </ContentText>
+    </InlineLoader>
   );
 };

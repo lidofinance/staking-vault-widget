@@ -45,11 +45,6 @@ export const Title = styled.div`
   gap: ${({ theme }) => theme.spaceMap.xs}px;
 `;
 
-export const LoaderWrapper = styled.div`
-  padding-top: ${({ theme }) => theme.spaceMap.sm}px;
-  padding-bottom: 10px;
-`;
-
 export const ContentText = styled(Text)<TextProps>`
   text-wrap: nowrap;
   @media ${devicesHeaderMedia.mobile} {

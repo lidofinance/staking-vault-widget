@@ -49,7 +49,7 @@ jobs:
           PREFILL_UNSAFE_EL_RPC_URLS_560048: ${{ secrets.PREFILL_UNSAFE_EL_RPC_URLS_560048 }}
           PREFILL_UNSAFE_EL_RPC_URLS_11155111: ${{ secrets.PREFILL_UNSAFE_EL_RPC_URLS_11155111 }}
           WALLETCONNECT_PROJECT_ID: ${{ secrets.WALLETCONNECT_PROJECT_ID }}
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ipfs_folder }}
           path: ${{ env.ipfs_folder }}

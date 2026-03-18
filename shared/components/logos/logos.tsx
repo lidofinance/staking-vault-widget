@@ -8,9 +8,11 @@ import { LogoLidoStyle } from './styles';
 
 export type LogoComponent = FC<Omit<SVGProps<SVGSVGElement>, 'ref'>>;
 
+const { rootOrigin } = config;
+
 export const LogoLido: FC<HTMLAttributes<HTMLDivElement>> = (props) => (
   <LogoLidoStyle {...props}>
-    <Link href={config.rootOrigin}>
+    <Link href={rootOrigin}>
       <LidoLogo data-testid="lidoLogo" />
     </Link>
   </LogoLidoStyle>
