@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { devicesHeaderMedia } from 'styles/global';
 
 export const Nav = styled.nav<{ $hide: boolean }>`
-  --nav-size: 154px;
+  --nav-size: 260px;
   grid-area: nav;
   z-index: 6;
   display: flex;
@@ -14,10 +14,6 @@ export const Nav = styled.nav<{ $hide: boolean }>`
   width: var(--nav-size);
   transition: width var(--nav-transition-duration)
     var(--nav-transition-timing-function);
-
-  svg {
-    margin-right: 8px;
-  }
 
   @media ${devicesHeaderMedia.mobile} {
     position: fixed;
@@ -32,9 +28,5 @@ export const Nav = styled.nav<{ $hide: boolean }>`
     border-start-end-radius: 12px;
     border-start-start-radius: 12px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-
-    svg {
-      margin-right: 0;
-    }
   }
 `;

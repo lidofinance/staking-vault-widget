@@ -1,9 +1,9 @@
 import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { formatCustomDate } from 'features/overview/consts';
-
+import { formatCustomDate } from 'utils/formats';
 import { InlineLoader } from 'shared/components';
+
 import { ReindexStateContainer, TextWrapper } from './styles';
 
 type ReindexStateProps = {

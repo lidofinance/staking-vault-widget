@@ -7,6 +7,8 @@ export const Container = styled.nav`
 
   @media ${devicesHeaderMedia.mobile} {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-block: ${({
       theme: {
         spaceMap: { sm, lg },

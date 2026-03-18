@@ -8,3 +8,4 @@ export {
 export { useReadDashboard } from './use-read-dashboard';
 export * from './use-no-tiers';
 export * from './use-vault-tier-info';
+export * from './use-send-report';

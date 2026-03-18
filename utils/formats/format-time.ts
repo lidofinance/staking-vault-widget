@@ -30,3 +30,17 @@ export const formatSecondsToHours = (
   if (minutes === 0) return `${hours} ${getTimePostfix(isShort, 'hours')}`;
   return `${hours}h ${minutes}m`;
 };
+
+const customDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: false,
+  timeZoneName: 'shortOffset',
+});
+
+export const formatCustomDate = (ts: number): string => {
+  const ms = Math.abs(ts) < 1e11 ? ts * 1000 : ts;
+  return customDateFormatter.format(new Date(ms));
+};

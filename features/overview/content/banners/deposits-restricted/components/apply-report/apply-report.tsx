@@ -1,10 +1,9 @@
 import { type FC, useCallback } from 'react';
 
-import { useVault } from 'modules/vaults';
+import { useVault, useSendReport } from 'modules/vaults';
 import { FormatToken } from 'shared/formatters';
 import { WEI_PER_ETHER } from 'consts/tx';
 
-import { useSendReport } from 'features/overview/hooks';
 import { ListItem, ListItemContent } from '../styles';
 import { ButtonLink } from './styles';
 import { TextStyled } from '../../../styles';

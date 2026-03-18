@@ -3,9 +3,9 @@ import { Text } from '@lidofinance/lido-ui';
 import { useVault } from 'modules/vaults';
 import { DATA_UNAVAILABLE } from 'consts/text';
 import { InlineLoader } from 'shared/components';
+import { formatCustomDate } from 'utils/formats';
 
 import { OverviewModal } from 'features/overview/shared';
-import { formatCustomDate } from 'features/overview/consts';
 
 export const VaultBalanceModal = () => {
   const { data, isPending, error } = useVault();

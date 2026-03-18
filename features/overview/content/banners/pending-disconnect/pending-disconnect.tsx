@@ -1,7 +1,7 @@
-import { useVault, vaultTexts } from 'modules/vaults';
+import { useVault, useSendReport, vaultTexts } from 'modules/vaults';
 
 import { NoticeContainer } from 'features/overview/shared';
-import { useSendReport } from 'features/overview/hooks';
+import {} from 'features/overview/hooks';
 import { ApplyButton } from './styles';
 
 const texts = vaultTexts.metrics.pendingDisconnect;

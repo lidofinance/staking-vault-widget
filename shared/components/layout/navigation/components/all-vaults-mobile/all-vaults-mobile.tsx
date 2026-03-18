@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 
 import { BackAllVaults } from '../back-all-vaults';
+import { Report } from './components';
 
 import { Container } from './styles';
 
@@ -16,6 +17,7 @@ export const AllVaultsMobile = () => {
   return (
     <Container>
       <BackAllVaults />
+      <Report tooltipPlacement="leftTop" />
     </Container>
   );
 };
