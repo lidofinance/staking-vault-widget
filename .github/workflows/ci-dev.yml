@@ -18,7 +18,7 @@ jobs:
     # needs: test
     name: Build and deploy
     steps:
-      - name: Sepolia testnet deploy
+      - name: Hoodi testnet deploy
         uses: lidofinance/dispatch-workflow@v1
         env:
           APP_ID: ${{ secrets.APP_ID }}
