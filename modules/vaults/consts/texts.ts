@@ -612,6 +612,18 @@ export const vaultTexts = {
         },
       },
     },
+    banners: {
+      outdatedMetrics: {
+        title: (date: string) =>
+          `Validator Balance Spike Detected — Metrics as of ${date}`,
+        description: (date: string) =>
+          `A balance spike was detected on one or more validators, likely caused
+        by a side deposit or consolidation event. Due to current UI
+        limitations, today's metrics — Rewards, APR, Carry Spread, and
+        others — cannot be calculated accurately for this day. Data shown
+        reflects the last valid snapshot: ${date}.`,
+      },
+    },
   },
   // configuration for vault roles
   roles: {

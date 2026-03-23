@@ -484,6 +484,8 @@ const selectOverviewData = ({
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,
     repayStETH: overview.repay,
+    outdatedReportData: vault7dApr?.outdated,
+    dateOfLastReport: vault7dApr?.range.toTimestamp,
     isReportFresh,
   };
 };
