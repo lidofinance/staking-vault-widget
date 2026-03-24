@@ -69,6 +69,7 @@ export const getConfirmationsInfo = async <
     });
   }
 
+  // get all logs without filtering by role, because Operator Grid uses addresses instead of roles
   const logs = (
     await Promise.all(
       ranges.map(({ fromBlock, toBlock }) =>
