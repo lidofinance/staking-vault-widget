@@ -4,6 +4,7 @@ import { CapitalQuarantined } from './capital-quarantined';
 import { CapacityExceeded } from './capacity-exceeded';
 import { ThresholdExceeded } from './threshold-exceeded';
 import { DepositsRestricted } from './deposits-restricted';
+import { OutdatedMetrics } from './outdated-metrics';
 
 import { BannerContainer } from './styles';
 
@@ -16,6 +17,7 @@ export const Banners = () => {
       <CapacityExceeded />
       <ThresholdExceeded />
       <DepositsRestricted />
+      <OutdatedMetrics />
     </BannerContainer>
   );
 };
