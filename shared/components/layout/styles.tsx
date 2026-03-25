@@ -56,7 +56,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   min-height: 100vh;
   height: auto;
 
-  @media ${devicesHeaderMedia.tablet} {
+  @media ${devicesHeaderMedia.laptop} {
     grid-template-columns: 200px 1fr;
     grid-template-areas: ${({ isError }) =>
       tabletTemplateAreas[isError ? 'withError' : 'default']};
