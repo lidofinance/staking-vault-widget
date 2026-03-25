@@ -52,17 +52,38 @@ export const getConfirmationsInfo = async <
     contract.read.getConfirmExpiry(),
     publicClient.getBlockNumber(),
   ]);
+
   const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
   const fromBlock = currentBlock - confirmExpireInBlocks;
 
+  const safeBlockSize = 10_000n; // safe for rpc calls
+  const ranges: Array<Record<'fromBlock' | 'toBlock', bigint>> = [];
+
+  for (let start = fromBlock; start <= currentBlock; start += safeBlockSize) {
+    ranges.push({
+      fromBlock: start,
+      toBlock:
+        start + safeBlockSize - 1n <= currentBlock
+          ? start + safeBlockSize - 1n
+          : currentBlock,
+    });
+  }
+
   // get all logs without filtering by role, because Operator Grid uses addresses instead of roles
-  const logs = await publicClient.getContractEvents({
-    address: contract.address,
-    abi: contract.abi,
-    eventName: 'RoleMemberConfirmed',
-    fromBlock,
-    strict: true,
-  });
+  const logs = (
+    await Promise.all(
+      ranges.map(({ fromBlock, toBlock }) =>
+        publicClient.getContractEvents({
+          address: contract.address,
+          abi: contract.abi,
+          eventName: 'RoleMemberConfirmed',
+          strict: true,
+          fromBlock,
+          toBlock,
+        }),
+      ),
+    )
+  ).flat();
 
   let confirmations = logs
     // filter out confirmations that are already expired
