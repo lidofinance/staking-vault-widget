@@ -20,6 +20,7 @@ export type Apr7dSeries = {
 };
 
 export type Vault7DApr = {
+  outdated: boolean;
   days: number;
   count: number;
   range: TimestampRange;
