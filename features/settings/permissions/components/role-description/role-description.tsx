@@ -20,6 +20,7 @@ export type RoleDescriptionProps = {
 
 const splitDescription = (description: string) => {
   const words = description.split(' ').filter(Boolean);
+
   if (words.length === 1) {
     return {
       descriptionText: words[0],
@@ -27,8 +28,8 @@ const splitDescription = (description: string) => {
   }
 
   return {
-    descriptionText: words.toSpliced(0, -1).join(' '),
-    lastWord: words.at(-1) ?? '',
+    descriptionText: words.slice(0, -1).join(' '),
+    lastWord: words[words.length - 1] ?? '',
   };
 };
 
