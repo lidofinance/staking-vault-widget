@@ -1,8 +1,8 @@
-# Liquid Staking Vault Widget
+# stVaults Widget
 
 ### Prerequisites
 
-- Node.js v20+
+- Node.js v24+
 - Yarn package manager v1
 
 This project requires an .env file which is distributed via private communication channels. A sample can be found in .env.example
