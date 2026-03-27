@@ -48,7 +48,7 @@ export const useCreateVault = () => {
           value,
         };
 
-        const success = await withSuccess(
+        const result = await withSuccess(
           sendTX({
             transactions: [tx],
             mainActionCompleteText: vaultTexts.actions.createVault.completed,
@@ -57,13 +57,15 @@ export const useCreateVault = () => {
           }),
         );
 
-        trackEvent(
-          ...MATOMO_CLICK_EVENTS[
-            MATOMO_CLICK_EVENTS_TYPES.finalisingCreatingVault
-          ],
-        );
+        if (result.success) {
+          trackEvent(
+            ...MATOMO_CLICK_EVENTS[
+              MATOMO_CLICK_EVENTS_TYPES.finalisingCreatingVault
+            ],
+          );
+        }
 
-        return success;
+        return result;
       },
       [chainId, sendTX],
     ),
