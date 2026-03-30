@@ -7,6 +7,7 @@ type GetMintingConstraintTypeArgs = {
   tierId: bigint;
   groupShareLimit: bigint;
   lidoTVLSharesLimit: bigint;
+  totalValue: bigint;
 };
 
 export type MintingConstraintType =
@@ -26,6 +27,7 @@ export const getMintingConstraintType = ({
   tierId,
   groupShareLimit,
   lidoTVLSharesLimit,
+  totalValue,
 }: GetMintingConstraintTypeArgs): MintingConstraintType => {
   const isDefaultTier = tierId === 0n;
 
@@ -40,7 +42,7 @@ export const getMintingConstraintType = ({
 
   // Base scenario when collateral ==== minimalReserve (1 ETH),
   // in this case withdrawal will be constrained by minimalReserve (connection deposit)
-  if (minimalReserve === collateral) {
+  if (totalValue === minimalReserve && minimalReserve === collateral) {
     return 'minimalReserve';
   }
 
