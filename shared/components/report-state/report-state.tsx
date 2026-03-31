@@ -14,8 +14,11 @@ type ReportStateProps = {
 
 export const ReportState: FC<ReportStateProps> = ({ tooltipPlacement }) => {
   const { isLoading, error, activeVault } = useVault();
-  const { isPendingConnect, isVaultDisconnected, isReportFresh } =
-    activeVault ?? {};
+  const {
+    isPendingConnect,
+    isVaultDisconnected,
+    isReportFresh = true,
+  } = activeVault ?? {};
 
   if (!activeVault || isPendingConnect || isVaultDisconnected) {
     return null;
