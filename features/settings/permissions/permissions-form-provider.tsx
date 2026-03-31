@@ -8,7 +8,7 @@ import { useVault } from 'modules/vaults';
 import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
-import { FormController } from 'shared/hook-form/form-controller';
+import { FormController, useDisableForm } from 'shared/hook-form';
 
 import { editPermissionsSchema } from './consts';
 import { useEditPermissions, usePermissionsFormData } from './hooks';
@@ -19,17 +19,17 @@ import { FormAndContentWrapper } from './styles';
 export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
-  const { invalidateVaultConfig, activeVault } = useVault();
+  const { invalidateVaultConfig } = useVault();
   const { isDappActive } = useDappStatus();
   const { data: rolesList, refetch } = usePermissionsFormData();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
+  const disabled = useDisableForm();
 
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () => asyncPermissions.awaiter,
     resolver: zodResolver(editPermissionsSchema),
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled: !isDappActive || disabled,
     mode: 'all',
   });
 

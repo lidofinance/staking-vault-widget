@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { trackEvent } from '@lidofinance/analytics-matomo';
 
 import { useDappStatus } from 'modules/web3';
-import { FormController } from 'shared/hook-form/form-controller';
+import { FormController, useDisableForm } from 'shared/hook-form';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
@@ -22,14 +22,13 @@ import type {
 export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const {
-    activeVault,
     invalidateVaultConfig,
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const { data, refetch } = useMainSettingsFormData();
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
+  const disabled = useDisableForm();
 
   const promisedSettingsData = useAwaiter(data).awaiter;
 
@@ -40,7 +39,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   >({
     defaultValues: async () =>
       await promisedSettingsData.then(prepareDefaultValues),
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled: !isDappActive || disabled,
     resolver: mainSettingsFormResolver,
     context: promisedSettingsData,
     mode: 'all',

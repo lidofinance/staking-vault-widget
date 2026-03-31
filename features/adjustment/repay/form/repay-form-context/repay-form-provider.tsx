@@ -9,7 +9,7 @@ import {
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
-import { useVault } from 'modules/vaults';
+import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 
 import { useRepay } from './use-repay';
@@ -45,9 +45,8 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     maxRepayableWstETH,
   } = useRepayFormData();
   const { isDappActive } = useDappStatus();
-  const { activeVault } = useVault();
+  const disabled = useDisableForm();
   const { burn, retryEvent } = useRepay();
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     RepayFormFieldValues,
@@ -61,7 +60,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     mode: 'onTouched',
     context: validationContext,
     resolver: repayFormResolver,
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled: !isDappActive || disabled,
   });
 
   const token = formObject.watch('token');
