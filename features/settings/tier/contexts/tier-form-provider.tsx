@@ -2,7 +2,7 @@ import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { trackEvent } from '@lidofinance/analytics-matomo';
 
-import { FormController } from 'shared/hook-form/form-controller';
+import { FormController, useDisableForm } from 'shared/hook-form';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
 import {
@@ -32,23 +32,19 @@ const prepareDefaultValues = async (
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { activeVault, refetch } = useVault();
+  const { refetch } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { data } = useVaultTierInfo();
   const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
+  const disabled = useDisableForm();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
   const promisedTierInfo = useAwaiter(data).awaiter;
   const isDisabledByRoles = !(isNodeOperator || hasAdmin || hasPermission);
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<TierSettingsFormValues>({
     defaultValues: async () =>
       await promisedTierInfo.then(prepareDefaultValues),
-    disabled:
-      !isDappActive ||
-      isPendingDisconnect ||
-      isPendingConnect ||
-      isDisabledByRoles,
+    disabled: !isDappActive || disabled || isDisabledByRoles,
     context: promisedTierInfo,
     resolver: tierSettingsFormResolver,
     mode: 'onChange',
