@@ -2417,7 +2417,7 @@
 
 "@lidofinance/analytics-matomo@^0.56.0":
   version "0.56.0"
-  resolved "https://registry.npmjs.org/@lidofinance/analytics-matomo/-/analytics-matomo-0.56.0.tgz"
+  resolved "https://registry.yarnpkg.com/@lidofinance/analytics-matomo/-/analytics-matomo-0.56.0.tgz#48ab44457635f878783c52e2b80f8ce98a09e149"
   integrity sha512-uUcNauwkOVCYkwbUyLm6PnSEBQ2H9b+XAiRz6fMm2mrpoxyoZLmbfxCU2Ekg1hpnpFWcFlNW/G9bTQeopFhAbA==
 
 "@lidofinance/api-metrics@^0.51.0":
