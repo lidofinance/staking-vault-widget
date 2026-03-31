@@ -10,8 +10,7 @@ import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
-import { useVault } from 'modules/vaults';
-
+import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 import { useWithdraw } from 'features/funding/withdraw/form/hooks';
 
@@ -42,14 +41,13 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { isDappActive } = useDappStatus();
-  const { activeVault } = useVault();
   const { withdraw, retryEvent } = useWithdraw();
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
   const {
     validationContext,
     withdrawableEtherQuery,
     invalidateWithdrawFormData,
   } = useWithdrawValidationContext();
+  const disabled = useDisableForm();
 
   const formObject = useForm<
     WithdrawFormFieldValues,
@@ -62,7 +60,7 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
       recipient: '',
     },
     mode: 'onTouched',
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled: !isDappActive || disabled,
     context: validationContext,
     resolver: withdrawFormResolver,
   });
