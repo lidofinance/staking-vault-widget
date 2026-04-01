@@ -40,6 +40,7 @@ export const MintingCapacityTooltip: FC<MintingCapacityTooltipProps> = ({
     tierShareLimit: selectedTier.shareLimit,
     groupShareLimit: noTiersInfo.group.shareLimit,
     lidoTVLSharesLimit: vaultTierInfo.lidoTVLSharesLimit,
+    totalValue: vaultTierInfo.vault.totalValue,
     tierId,
   });
 

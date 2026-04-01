@@ -360,6 +360,7 @@ const selectOverviewData = ({
     tierId,
     groupShareLimit,
     lidoTVLSharesLimit,
+    totalValue: vaultData.totalValue,
   });
 
   const { healthRatio } = calculateHealth({

@@ -11,8 +11,8 @@ import invariant from 'tiny-invariant';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useDappStatus } from 'modules/web3';
-import { type MaxMintableResult, useVault } from 'modules/vaults';
-
+import { type MaxMintableResult } from 'modules/vaults';
+import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 
 import { mintFormResolver } from './validation';
@@ -46,12 +46,10 @@ export const useMintFormData = () => {
 
 export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { activeVault } = useVault();
   const { validationContext, mintableQuery, invalidateMintData } =
     useMintData();
-
+  const disabled = useDisableForm();
   const { mint, retryEvent } = useMint();
-  const { isPendingDisconnect, isPendingConnect } = activeVault ?? {};
 
   const formObject = useForm<
     MintFormFieldValues,
@@ -63,7 +61,7 @@ export const MintFormProvider: FC<{ children: ReactNode }> = ({ children }) => {
       token: 'stETH',
       recipient: '',
     },
-    disabled: !isDappActive || isPendingDisconnect || isPendingConnect,
+    disabled: !isDappActive || disabled,
     mode: 'onTouched',
     resolver: mintFormResolver,
     context: validationContext,
