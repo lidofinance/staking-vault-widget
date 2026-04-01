@@ -11,6 +11,7 @@ import {
   MATOMO_CLICK_EVENTS,
 } from 'consts/matomo-click-events';
 import { getPageTitle } from 'utils';
+import { DisconnectedVault } from 'shared/components';
 
 import { EditMainSettings } from './main';
 import { PermissionsSettings } from './permissions';
@@ -71,6 +72,7 @@ export const SettingsTabs = () => {
       <Head>
         <title>{getPageTitle(titleMap[mode])}</title>
       </Head>
+      <DisconnectedVault />
       <ToggleSwitch
         options={settingsToggleList}
         defaultValue={mode}
