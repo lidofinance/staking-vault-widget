@@ -14,12 +14,16 @@ type ReportStateProps = {
 
 export const ReportState: FC<ReportStateProps> = ({ tooltipPlacement }) => {
   const { isLoading, error, activeVault } = useVault();
+  const {
+    isPendingConnect,
+    isVaultDisconnected,
+    isReportFresh = true,
+  } = activeVault ?? {};
 
-  if (!activeVault || activeVault.isPendingConnect) {
+  if (!activeVault || isPendingConnect || isVaultDisconnected) {
     return null;
   }
 
-  const { isReportFresh } = activeVault;
   const text = isReportFresh
     ? 'Oracle report up to date'
     : 'Oracle report outdated';

@@ -11,7 +11,6 @@ import { SecurityStatusBanner } from 'features/ipfs';
 import { Providers } from 'providers';
 import { BackgroundGradient } from 'shared/components/background-gradient/background-gradient';
 import { ErrorBoundaryFallback } from 'shared/components/error-boundary';
-import { MigrationBannerTestnetV2 } from 'shared/components/banner';
 import { nprogress } from 'utils';
 import { AddressValidationFile } from 'utils/address-validation';
 
@@ -54,7 +53,6 @@ const AppWrapper = (
         }}
       />
       <ToastContainer />
-      <MigrationBannerTestnetV2 />
       <App {...props} />
 
       <SecurityStatusBanner />
