@@ -72,10 +72,13 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
           liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN,
           oneMinusRR,
         ) - liabilitySharesInStethWei;
-  const reserved = bigIntMin(
-    totalValue - liabilitySharesInStethWei,
-    reservedByFormula,
-  );
+
+  // Prevent underflow
+  const valueMinusLiability =
+    totalValue > liabilitySharesInStethWei
+      ? totalValue - liabilitySharesInStethWei
+      : 0n;
+  const reserved = bigIntMin(valueMinusLiability, reservedByFormula);
 
   // Prevent division by 0
   const utilizationRatio =
@@ -87,17 +90,21 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
             100n,
         ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
+  // Prevent underflow
+  const effectiveTotalValue =
+    totalValue > feeObligation ? totalValue - feeObligation : 0n;
+
   // repay-obligations
   const repay = bigIntMax(
     0n,
     liabilitySharesInStethWei -
-      ((totalValue - feeObligation) * oneMinusRR) / VAULT_TOTAL_BASIS_POINTS_BN,
+      (effectiveTotalValue * oneMinusRR) / VAULT_TOTAL_BASIS_POINTS_BN,
   );
 
-  const supply = bigIntMax(
-    0n,
-    (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR,
-  );
+  const supply =
+    oneMinusRR === 0n
+      ? 0n
+      : bigIntMax(0n, (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR);
 
   return {
     healthRatio,

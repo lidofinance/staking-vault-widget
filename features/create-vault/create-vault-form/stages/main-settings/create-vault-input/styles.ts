@@ -34,25 +34,6 @@ export const InputNotes = styled.p`
   }
 `;
 
-// AddressInput
-
-export const AddressInputWrapper = styled.div`
-  position: relative;
-  flex-grow: 1;
-`;
-
-export const EtherScanLink = styled.span`
-  position: absolute;
-  top: 6px;
-  right: ${({ theme }) => theme.spaceMap.md}px;
-  z-index: 5;
-  width: fit-content;
-
-  & > a {
-    text-wrap: nowrap;
-  }
-`;
-
 export const AddressList = styled.div`
   display: flex;
   flex-direction: column;

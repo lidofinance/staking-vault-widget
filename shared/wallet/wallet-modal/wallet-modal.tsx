@@ -7,16 +7,16 @@ import {
   Copy,
   Address,
 } from '@lidofinance/lido-ui';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import { useConnectorInfo, useDisconnect } from 'reef-knot/core-react';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { config } from 'config';
 import type { ModalComponentType } from 'providers/modal-provider';
 import { useCopyToClipboard } from 'shared/hooks';
 import { useDappStatus } from 'modules/web3';
 import { getEtherscanAddressLink } from 'utils/etherscan';
 import { openWindow } from 'utils/open-window';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import {
   WalletModalContentStyle,
@@ -35,7 +35,7 @@ export const WalletModal: ModalComponentType = ({ onClose, ...props }) => {
 
   const handleDisconnect = useCallback(() => {
     disconnect?.();
-    trackEvent(...MATOMO_CLICK_EVENTS.disconnectWalletManually);
+    trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.disconnectWalletManually);
     onClose?.();
   }, [disconnect, onClose]);
 

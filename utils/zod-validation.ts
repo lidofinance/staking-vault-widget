@@ -1,9 +1,11 @@
 import { z } from 'zod';
-import { type Address, isAddress, isAddressEqual } from 'viem';
+import { type Address, isAddress, isAddressEqual, zeroAddress } from 'viem';
 
 import { vaultTexts } from 'modules/vaults/consts';
 
-const validateAddress = (value: string | null) => !!(value && isAddress(value));
+// Prevent assigning roles to zero address
+const validateAddress = (value: string | null) =>
+  !!(value && isAddress(value) && !isAddressEqual(value, zeroAddress));
 
 export const addressSchema = z
   .string()

@@ -134,8 +134,11 @@ export const readWithReport = async <
 
       const [, ...results] = allResults.slice(0, -1);
       return results as MulticallReturnType<TContracts, false>;
-    } catch {
-      return readWithoutReport({ publicClient, contracts });
+    } catch (error) {
+      console.warn(
+        '[readWithReport] Report multicall failed, falling back to stale on-chain state.',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
     }
   }
 

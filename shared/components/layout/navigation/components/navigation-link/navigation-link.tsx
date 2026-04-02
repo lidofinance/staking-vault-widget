@@ -1,13 +1,12 @@
 import { type FC, type ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import { Stake, Withdraw, Validators } from '@lidofinance/lido-ui';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { ReactComponent as MintRepay } from 'assets/icons/mint.svg';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
 
 import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
@@ -44,7 +43,7 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
   const isActivePath = routeInfo === pathname;
 
   const trackClickEvent = useCallback(() => {
-    trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[routeInfo]]);
+    trackMatomoEvent(routsClickEventsMap[routeInfo]);
   }, [routeInfo]);
 
   return (

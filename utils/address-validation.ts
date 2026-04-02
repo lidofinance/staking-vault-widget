@@ -1,11 +1,4 @@
-import { Address, isAddress } from 'viem';
-
-const regex = new RegExp('[-a-zA-Z0-9@._]{1,256}.eth');
-
-export const isValidEns = (ens: string) => regex.test(ens);
-
-export const isValidAnyAddress = (input: string): input is Address =>
-  isAddress(input);
+import { Address } from 'viem';
 
 // TODO: move to utilsApi?
 export interface AddressValidationFile {
