@@ -1,12 +1,12 @@
 import { type FC, type MouseEvent, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Loader, Pagination, Text, Thead } from '@lidofinance/lido-ui';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import { isAddress, zeroAddress } from 'viem';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { FormatToken } from 'shared/formatters';
 import { appPaths } from 'consts/routing';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { AddressBadge } from 'shared/components';
 import { getHealthFactorColor } from 'utils';
 import type { FetchVaultsParams, VaultEntry } from 'modules/vaults';
@@ -256,7 +256,7 @@ export const VaultTable: FC<VaultTableProps> = ({
     (e: MouseEvent<HTMLTableRowElement>) => {
       const vaultAddress = e.currentTarget.dataset.address;
       if (vaultAddress && isAddress(vaultAddress)) {
-        trackEvent(...MATOMO_CLICK_EVENTS.clickNaviOverview);
+        trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickNaviOverview);
         void router.push(appPaths.vaults.vault(vaultAddress).overview);
       }
     },

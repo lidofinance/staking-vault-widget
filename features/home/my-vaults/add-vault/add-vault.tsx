@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useConnect } from 'reef-knot/core-react';
 import { Plus } from '@lidofinance/lido-ui';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { useDappStatus } from 'modules/web3';
 
 import { ConnectWalletButton, AddVaultButton } from './styles';
@@ -19,7 +19,7 @@ export const AddVault = () => {
   };
 
   const handleNavigate = () => {
-    trackEvent(...MATOMO_CLICK_EVENTS.clickCreateNewVault);
+    trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickCreateNewVault);
     void router.push(appPaths.vaults.create);
   };
 

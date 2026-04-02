@@ -21,13 +21,6 @@ export const getEtherscanTxLink = (chainId: number, hash: string): string => {
   return getEtherscanLink(chainId, hash, ETHERSCAN_ENTITIES.TX);
 };
 
-export const getEtherscanTokenLink = (
-  chainId: number,
-  hash: string,
-): string => {
-  return getEtherscanLink(chainId, hash, ETHERSCAN_ENTITIES.TOKEN);
-};
-
 export const getEtherscanAddressLink = (
   chainId: number,
   hash: string,

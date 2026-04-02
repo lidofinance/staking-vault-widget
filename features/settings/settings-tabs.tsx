@@ -1,15 +1,12 @@
 import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import Head from 'next/head';
 import type { Address } from 'viem';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { ToggleSwitch } from 'shared/components/toggle';
 import { appPaths } from 'consts/routing';
-import {
-  MATOMO_CLICK_EVENTS_TYPES,
-  MATOMO_CLICK_EVENTS,
-} from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { getPageTitle } from 'utils';
 import { DisconnectedVault } from 'shared/components';
 
@@ -51,7 +48,7 @@ export const SettingsTabs = () => {
 
   const changeTab = useCallback(
     (mode: SETTINGS_PATHS) => {
-      trackEvent(...MATOMO_CLICK_EVENTS[tabsEventMap[mode]]);
+      trackMatomoEvent(tabsEventMap[mode]);
 
       void router.push(
         {

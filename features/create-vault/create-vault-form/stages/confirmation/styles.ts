@@ -22,13 +22,6 @@ export const TextBold = styled.span`
   justify-self: end;
 `;
 
-export const Wrapper = styled.article`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
-  width: 100%;
-`;
-
 export const ConfirmInfoTitle = styled.h3`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;

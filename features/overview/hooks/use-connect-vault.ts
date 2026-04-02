@@ -15,6 +15,15 @@ export const useConnectVault = () => {
   return {
     connectVault: useCallback(async () => {
       invariant(activeVault, '[useConnectVault] activeVault is not defined');
+      invariant(
+        activeVault.isPendingConnect,
+        '[useConnectVault] vault is not in isPendingConnect state',
+      );
+      // Prevent sending ETH to a non-dashboard contract (phishing protection)
+      invariant(
+        !activeVault.isVaultDisconnected,
+        '[useConnectVault] vault owner is not a valid dashboard contract',
+      );
 
       const { data, value } = dataToTx(proposedTier, proposedVaultLimitShares);
 

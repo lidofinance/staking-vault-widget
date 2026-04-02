@@ -1,11 +1,11 @@
 import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useDappStatus } from 'modules/web3';
 import { useVault } from 'modules/vaults';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController, useDisableForm } from 'shared/hook-form';
@@ -37,7 +37,9 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
   const onSubmit = useCallback(
     async (values: EditPermissionsSchema): Promise<boolean> => {
-      trackEvent(...MATOMO_CLICK_EVENTS.clickSettingsSubmitPermissionsTab);
+      trackMatomoEvent(
+        MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitPermissionsTab,
+      );
 
       const { success } = await editPermissions(values);
       const [, { data: newData }] = await Promise.all([

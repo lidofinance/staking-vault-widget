@@ -1,13 +1,13 @@
 import { Text } from '@lidofinance/lido-ui';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { AllVaults, ArrowBackStyled } from './styles';
 
 const trackAllVaultsPageEvent = () => {
-  trackEvent(...MATOMO_CLICK_EVENTS.clickNaviAllVaults);
+  trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickNaviAllVaults);
 };
 
 export const BackAllVaults = () => (
