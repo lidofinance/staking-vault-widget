@@ -7,6 +7,7 @@ import {
   vaultTexts,
   useVaultPermission,
 } from 'modules/vaults';
+import { useDisableForm } from 'shared/hook-form';
 
 import { SectionContainer } from 'features/settings/shared/components';
 import { Title, RequestAdditionalInfo } from 'features/settings/tier/shared';
@@ -30,7 +31,9 @@ export const VotingRequest = () => {
   const { hasPermission: hasVaultConfigurationPermission } =
     useVaultPermission('vaultConfiguration');
   const tierVoting = useTierVoting();
-  if (!tierVoting) {
+  const disable = useDisableForm();
+
+  if (!tierVoting || disable) {
     return null;
   }
 
