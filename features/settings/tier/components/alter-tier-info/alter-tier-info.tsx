@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import {
-  useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
   useVaultTierInfo,
 } from 'modules/vaults';
+import { useDisableForm } from 'shared/hook-form';
 import { ReactComponent as WarningTriangle } from 'assets/icons/warning-triangle.svg';
 import { isNumber } from 'utils';
 
@@ -27,12 +27,12 @@ import {
 
 export const AlterTierInfo = () => {
   const [showModal, setModalVisibility] = useState(false);
-  const { activeVault } = useVault();
   const { data: vaultTierInfo, isLoading } = useVaultTierInfo();
   const { data } = useAlterTier();
   const { hasChanges, alterTierList, id, tierName } = data ?? {};
   const { hasAdmin, isNodeOperator } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('vaultConfiguration');
+  const disable = useDisableForm();
 
   const closeModal = useCallback(() => setModalVisibility(false), []);
   const openModal = useCallback(() => setModalVisibility(true), []);
@@ -42,7 +42,7 @@ export const AlterTierInfo = () => {
     !hasChanges ||
     !(hasAdmin || isNodeOperator || hasPermission) ||
     !isNumber(id) ||
-    activeVault?.isPendingConnect ||
+    disable ||
     (extendLastProposal?.tierId === BigInt(id) &&
       extendLastProposal.functionName === 'syncTier')
   ) {
