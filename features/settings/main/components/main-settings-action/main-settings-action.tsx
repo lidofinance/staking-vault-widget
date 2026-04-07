@@ -55,7 +55,20 @@ export const MainSettingsAction: FC = () => {
     const confirmExpiryFormValue =
       confirmExpiry === 'custom' ? confirmExpiryCustom : confirmExpiry;
 
-    if (feeRecipient !== mainSettingsData?.feeRecipient) {
+    // TODO: remove after test runs
+    // eslint-disable-next-line no-console
+    console.log(
+      '=========================== START ===========================',
+    );
+
+    if (feeRecipient && feeRecipient !== mainSettingsData?.feeRecipient) {
+      // eslint-disable-next-line no-console
+      console.log('[MAIN SETTINGS] FeeRecipientForm', feeRecipient);
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] FeeRecipientData',
+        mainSettingsData?.feeRecipient,
+      );
       counter++;
     }
 
@@ -63,28 +76,74 @@ export const MainSettingsAction: FC = () => {
       feeRate === 'custom' ? feeRateCustom : feeRate;
 
     if (
-      nodeOperatorFeeRateFormValue !== '' &&
+      nodeOperatorFeeRateFormValue &&
       nodeOperatorFeeRateFormValue !==
         mainSettingsData?.nodeOperatorFeeRateCurrent
     ) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] NOFeeRateFormValue',
+        nodeOperatorFeeRateFormValue,
+      );
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] NOFeeRateDataValue',
+        mainSettingsData?.nodeOperatorFeeRateCurrent,
+      );
       counter++;
     }
 
     if (
-      confirmExpiryFormValue !== '' &&
+      confirmExpiryFormValue &&
       confirmExpiryFormValue !== mainSettingsData?.confirmExpiryCurrent
     ) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] ConfirmExpiryFormValue',
+        confirmExpiryFormValue,
+      );
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] ConfirmExpiryDataValue',
+        mainSettingsData?.confirmExpiryCurrent,
+      );
       counter++;
     }
 
-    if (isDepositAllowed !== mainSettingsData?.isDepositAllowed) {
+    if (
+      typeof isDepositAllowed === 'boolean' &&
+      isDepositAllowed !== mainSettingsData?.isDepositAllowed
+    ) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] IsDepositAllowedFormValue',
+        isDepositAllowed,
+      );
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] IsDepositAllowedDataValue',
+        mainSettingsData?.isDepositAllowed,
+      );
       counter++;
     }
 
-    if (pdgPolicy !== mainSettingsData?.pdgPolicy) {
+    if (pdgPolicy && pdgPolicy !== mainSettingsData?.pdgPolicy) {
+      // eslint-disable-next-line no-console
+      console.log('[MAIN SETTINGS] PDGPolicyFormValue', pdgPolicy);
+      // eslint-disable-next-line no-console
+      console.log(
+        '[MAIN SETTINGS] PDGPolicyDataValue',
+        mainSettingsData?.pdgPolicy,
+      );
       counter++;
     }
 
+    // eslint-disable-next-line no-console
+    console.log('[MAIN SETTINGS] final counter value', counter);
+    // eslint-disable-next-line no-console
+    console.log(
+      '=========================== *END* ===========================',
+    );
     return counter;
   }, [
     formFields,
