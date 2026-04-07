@@ -26,7 +26,7 @@ export const RepayObligations = () => {
 
     const items = [];
 
-    if (isBigint(supplyETH) && supplyETH >= 0n) {
+    if (isBigint(supplyETH) && supplyETH > 0n) {
       items.push({
         title: texts.actions.supply.title,
         children: texts.actions.supply.children,
@@ -37,7 +37,7 @@ export const RepayObligations = () => {
       });
     }
 
-    if (isBigint(repayStETH) && repayStETH >= 0n) {
+    if (isBigint(repayStETH) && repayStETH > 0n) {
       items.push({
         title: texts.actions.repay.title,
         children: texts.actions.repay.children,
