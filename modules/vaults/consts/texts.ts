@@ -313,6 +313,28 @@ export const vaultTexts = {
       },
       clearChanges: 'Clear changes',
     },
+    validators: {
+      title: 'stVaults Validarors overview',
+      addValidator: {
+        title: 'Prove and add validator via Predeposit guarantee',
+        description:
+          'Predeposit Guarantee is a mechanism that enables a fully non-custodial stVault setup and seamless top-ups of active validators through the stVaults UI.',
+        action: 'Add validator',
+        linkToDocs: 'Learn more',
+      },
+      table: {
+        placeholder: {
+          title: 'No validators found',
+          description:
+            'Once validators are running, they will be displayed here',
+        },
+        menu: {
+          partialWithdrawal: 'Partial withdrawal',
+          topUpValidator: 'Top up validator',
+          withdrawToStVault: 'Withdraw to stVault',
+        },
+      },
+    },
   },
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed

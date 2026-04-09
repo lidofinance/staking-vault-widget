@@ -1,3 +1,5 @@
+import type { Address } from 'viem';
+
 export type VaultsParams = {
   limit: number;
   offset: number;
@@ -5,6 +7,13 @@ export type VaultsParams = {
   direction?: string;
   role?: string;
   address?: string;
+};
+
+export type ValidatorsParams = {
+  limit: number;
+  offset: number;
+  orderBy?: string;
+  direction?: string;
 };
 
 export const vaultApiRoutes = {
@@ -26,4 +35,21 @@ export const vaultApiRoutes = {
     `${basePath}/v1/vaults/${vaultAddress}/apr/sma`,
   vaultReport: (basePath: string, vaultAddress: string, cid: string) =>
     `${basePath}/v1/report/${cid}/${vaultAddress}`,
+};
+
+export const validatorsApiRoutes = {
+  validators: (
+    basePath: string,
+    vaultAddress: Address,
+    params: ValidatorsParams,
+  ) => {
+    const { limit, offset, orderBy, direction } = params;
+    const queryParams = new URLSearchParams({
+      limit: String(limit),
+      offset: String(offset),
+      ...(orderBy && { orderBy }),
+      ...(direction && { direction }),
+    });
+    return `${basePath}/v1/${vaultAddress}/validators?${queryParams.toString()}`;
+  },
 };
