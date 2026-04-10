@@ -9,7 +9,7 @@ import {
 const DEFAULT_PARAMS: FetchValidatorsParams = {
   page: 1,
   orderBy: 'index',
-  direction: 'desc',
+  direction: 'DESC',
   limit: VALIDATORS_PER_PAGE,
 };
 
@@ -18,12 +18,8 @@ const queryToParams = (
 ): FetchValidatorsParams => {
   return {
     page: Number(query.page) || DEFAULT_PARAMS.page,
-    orderBy:
-      (query.orderBy as FetchValidatorsParams['orderBy']) ||
-      DEFAULT_PARAMS.orderBy,
-    direction:
-      (query.direction as FetchValidatorsParams['direction']) ||
-      DEFAULT_PARAMS.direction,
+    orderBy: query.orderBy as FetchValidatorsParams['orderBy'],
+    direction: query.direction as FetchValidatorsParams['direction'],
     limit: DEFAULT_PARAMS.limit,
   };
 };

@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { vaultTexts } from 'modules/vaults';
 
 import type { ValidatorsModalItem } from 'features/validators/types';
+import { VALIDATOR_MODALS } from 'features/validators/const';
 
 type ValidatorMenuActionItem = {
   hasPermission: boolean;
@@ -19,17 +20,17 @@ export const useValidatorMenuActions = () => {
       {
         hasPermission: true,
         label: topUpValidator,
-        modal: 'topUpValidator',
+        modal: VALIDATOR_MODALS.topUpValidator,
       },
       {
         hasPermission: true,
         label: partialWithdrawal,
-        modal: 'partialWithdrawal',
+        modal: VALIDATOR_MODALS.partialWithdrawal,
       },
       {
         hasPermission: true,
         label: withdrawToStVault,
-        modal: 'fullWithdrawal',
+        modal: VALIDATOR_MODALS.fullWithdrawal,
       },
     ],
     [],

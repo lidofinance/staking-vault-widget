@@ -1,8 +1,8 @@
 import { type FC, useCallback } from 'react';
 import { PopupMenuItem } from '@lidofinance/lido-ui';
 
+import { useValidatorModal } from 'features/validators/contexts';
 import type { ValidatorsModalItem } from 'features/validators/types';
-import { useValidatorModal } from 'features/validators/shared/hooks';
 
 type ValidatorMenuActionProps = {
   label: string;

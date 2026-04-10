@@ -1,7 +1,6 @@
-import type { Hex, Address } from 'viem';
+import { Hex, Address, parseGwei } from 'viem';
 
 import { getApiURL } from 'config';
-import { optBigint } from 'utils/opt-bigint';
 
 import { validatorsApiRoutes } from '../consts';
 
@@ -9,7 +8,7 @@ export type FetchValidatorsParams = {
   page: number;
   limit: number;
   orderBy: 'index' | 'pubkey' | 'balance' | 'status';
-  direction: 'asc' | 'desc';
+  direction: 'ASC' | 'DESC';
 };
 
 type ValidatorsDTO = {
@@ -105,7 +104,7 @@ const fetchValidatorsApi = async (
 const optDate = (
   date: string | number | null | undefined,
 ): Date | undefined => {
-  return date != null ? new Date(Number(date)) : undefined;
+  return date != null ? new Date(date) : undefined;
 };
 
 const optValue = <T>(value: T | null | undefined): T | undefined => {
@@ -125,7 +124,7 @@ const normalizeResponse = (
     data: response.data.map((validator) => ({
       pubkey: validator.pubkey,
       index: validator.index,
-      balance: optBigint(validator.balance),
+      balance: parseGwei(validator.balance),
       status: optValue(validator.status),
       activatedAt: optDate(validator.activatedAt),
       exitedAt: optDate(validator.exitedAt),

@@ -1,5 +1,7 @@
 import type { Address } from 'viem';
 
+import { isNumber } from 'utils';
+
 export type VaultsParams = {
   limit: number;
   offset: number;
@@ -10,8 +12,8 @@ export type VaultsParams = {
 };
 
 export type ValidatorsParams = {
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
   orderBy?: string;
   direction?: string;
 };
@@ -44,12 +46,12 @@ export const validatorsApiRoutes = {
     params: ValidatorsParams,
   ) => {
     const { limit, offset, orderBy, direction } = params;
-    const queryParams = new URLSearchParams({
-      limit: String(limit),
-      offset: String(offset),
-      ...(orderBy && { orderBy }),
-      ...(direction && { direction }),
-    });
-    return `${basePath}/v1/${vaultAddress}/validators?${queryParams.toString()}`;
+    const url = new URL(`/v1/vaults/${vaultAddress}/validators`, basePath);
+
+    Object.entries({ limit, offset, orderBy, direction })
+      .filter(([_, value]) => !!value || isNumber(value))
+      .map(([key, value]) => url.searchParams.set(key, `${value}`));
+
+    return url;
   },
 };

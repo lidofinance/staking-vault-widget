@@ -1,3 +1,3 @@
-import { validatorsModals } from 'features/validators/const';
+import { VALIDATOR_MODALS } from 'features/validators/const';
 
-export type ValidatorsModalItem = (typeof validatorsModals)[number];
+export type ValidatorsModalItem = keyof typeof VALIDATOR_MODALS;

@@ -22,7 +22,7 @@ export const AddValidator = () => {
           </Text>
           <Text size="xs" color="secondary">
             {description}{' '}
-            <Link href="#" target="_blank">
+            <Link href="#" target="_blank" rel="noreferrer noopener">
               {linkToDocs}
             </Link>
           </Text>

@@ -1,11 +1,23 @@
-import { ValidatorsTableProvider } from 'features/validators/contexts';
-import { Container, ValidatorsTable } from 'features/validators/shared';
+import {
+  ValidatorModalProvider,
+  ValidatorsTableProvider,
+} from 'features/validators/contexts';
+import {
+  Container,
+  TopupModal,
+  ValidatorsTable,
+  WithdrawToVaultModal,
+} from 'features/validators/shared';
 
 export const Validators = () => {
   return (
     <Container>
       <ValidatorsTableProvider>
-        <ValidatorsTable />
+        <ValidatorModalProvider>
+          <ValidatorsTable />
+          <TopupModal />
+          <WithdrawToVaultModal />
+        </ValidatorModalProvider>
       </ValidatorsTableProvider>
     </Container>
   );

@@ -13,7 +13,7 @@ export const ValidatorIndex: FC<ValidatorIndexProps> = ({ index }) => {
   return (
     <Td>
       {isNumber(index) ? (
-        <ValidatorState type="index" indexOrPubkey={`#${index}`} />
+        <ValidatorState type="index" indexOrPubkey={`${index}`} />
       ) : (
         '-'
       )}
