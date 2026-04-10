@@ -313,6 +313,42 @@ export const vaultTexts = {
       },
       clearChanges: 'Clear changes',
     },
+    validators: {
+      title: 'stVaults Validarors overview',
+      addValidator: {
+        title: 'Prove and add validator via Predeposit guarantee',
+        description:
+          'Predeposit Guarantee is a mechanism that enables a fully non-custodial stVault setup and seamless top-ups of active validators through the stVaults UI.',
+        action: 'Add validator',
+        linkToDocs: 'Learn more',
+      },
+      table: {
+        placeholder: {
+          title: 'No validators found',
+          description:
+            'Once validators are running, they will be displayed here',
+        },
+        menu: {
+          partialWithdrawal: 'Partial withdrawal',
+          topUpValidator: 'Top up validator',
+          withdrawToStVault: 'Withdraw to stVault',
+        },
+      },
+      modals: {
+        withdrawal: {
+          title: 'Withdraw ETH from validator to stVault',
+          description:
+            'You can withdraw a portion of ETH (while leaving a minimum of 32 ETH on the validator balance) or the full amount from the validator. The exact time when the withdrawn ETH appears in the stVault Not-Staked Balance depends on the current Ethereum exit queue.',
+          availableToWithdraw: 'Available to withdraw',
+          estimatedFee: 'Estimated withdrawal fee',
+          action: 'Withdraw to stVault',
+          partialWarning:
+            "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
+          fullWarning: (amount: bigint) =>
+            `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount).trimmed} ETH) will be withdrawn.`,
+        },
+      },
+    },
   },
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed

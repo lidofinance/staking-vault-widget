@@ -1,5 +1,4 @@
 import { type FC, useCallback } from 'react';
-
 import { Copy, Tooltip, ToastSuccess } from '@lidofinance/lido-ui';
 
 import { truncateAddress } from 'utils';

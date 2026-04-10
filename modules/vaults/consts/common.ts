@@ -24,3 +24,6 @@ export const MAX_CONFIRM_EXPIRY = 24 * 30;
 export const MAX_CONFIRM_EXPIRY_SECONDS = 24 * 30 * 3600;
 
 export const DEFAULT_TIER_ID = 0n;
+
+// validators
+export const VALIDATORS_PER_PAGE = 10;

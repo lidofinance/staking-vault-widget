@@ -18,3 +18,13 @@ export type {
   Apr7dSeries,
   Vault7DApr,
 } from './fetch-7d-apr';
+
+export { fetchValidators, VALIDATOR_STATUSES } from './fetch-validators';
+export type {
+  FetchValidatorsParams,
+  FetchValidatorsResult,
+  ValidatorsEntry,
+  ValidatorsOrderByEnum,
+  ValidatorsOrderBy,
+  ValidatorStatus,
+} from './fetch-validators';
