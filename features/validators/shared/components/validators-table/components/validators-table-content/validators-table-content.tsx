@@ -81,9 +81,9 @@ const ValidatorTableRowContent = ({ validator }: ValidatorTableRowProps) => {
 
 const toUIsortDir = (dir?: FetchValidatorsParams['direction']) => {
   switch (dir) {
-    case 'desc':
+    case 'DESC':
       return 'ASC';
-    case 'asc':
+    case 'ASC':
       return 'DESC';
     default:
       return undefined;
@@ -112,9 +112,9 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
       if (!columnKey) return;
 
       if (columnKey === orderBy) {
-        setSort?.(columnKey, direction === 'asc' ? 'desc' : 'asc');
+        setSort?.(columnKey, direction === 'ASC' ? 'DESC' : 'ASC');
       } else {
-        setSort?.(columnKey, 'desc');
+        setSort?.(columnKey, 'DESC');
       }
     },
     [setSort, orderBy, direction],
