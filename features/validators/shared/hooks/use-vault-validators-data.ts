@@ -34,17 +34,30 @@ export const useVaultValidatorsData = () => {
     },
   });
 
+  const data = query.data ?? ({} as FetchValidatorsResult);
+
   return {
     ...query,
     isLoading: query.isPending || query.isPlaceholderData,
-    page: params.page,
-    validators: query.data?.data,
-    totalPages: query.data?.totalPages,
-    orderBy: params.orderBy,
-    direction: params.direction,
-    hasNextPage: query.data?.hasNextPage,
-    hasPreviousPage: query.data?.hasPreviousPage,
-    nextOffset: query.data?.nextOffset,
+    // meta data
+    meta: data.meta,
+
+    // validators list
+    validators: data.table,
+
+    // pagination
+    direction: data.direction,
+    orderBy: data.orderBy,
+    page: data.page,
+    total: data.total,
+    offset: data.offset,
+    limit: data.limit,
+    remaining: data.remaining,
+    totalPages: data.totalPages,
+    hasNextPage: data.hasNextPage,
+    hasPreviousPage: data.hasPreviousPage,
+    nextOffset: data.nextOffset,
+    previousOffset: data.previousOffset,
     setSort,
     setPage,
   };

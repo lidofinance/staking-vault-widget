@@ -3,14 +3,14 @@ import { Pagination } from '@lidofinance/lido-ui';
 
 import { isNumber } from 'utils';
 
-import { useValidatorsTable } from 'features/validators/contexts';
+import { useValidators } from 'features/validators/contexts';
 
 type TablePaginationProps = {
   dataTestId: string;
 };
 
 export const TablePagination: FC<TablePaginationProps> = ({ dataTestId }) => {
-  const { totalPages, setPage, page } = useValidatorsTable();
+  const { totalPages, setPage, page } = useValidators();
   const showPagination =
     isNumber(totalPages) && totalPages > 1 && isNumber(page);
 

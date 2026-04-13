@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 
+import { ValidatorModalProvider } from 'features/validators/contexts';
+
 import {
   FilterPubkeyIndex,
   FilterByStatus,
@@ -18,7 +20,9 @@ export const ValidatorsTable: FC = () => {
         <FilterByStatus dataTestId={dataTestId} />
       </SearchContainer>
       <ScrollableContainer>
-        <ValidatorsTableContent dataTestId={dataTestId} />
+        <ValidatorModalProvider>
+          <ValidatorsTableContent dataTestId={dataTestId} />
+        </ValidatorModalProvider>
       </ScrollableContainer>
       <TablePagination dataTestId={dataTestId} />
     </TableContainer>

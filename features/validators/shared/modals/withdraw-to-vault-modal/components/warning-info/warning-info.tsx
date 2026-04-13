@@ -1,19 +1,26 @@
+import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
-import { WEI_PER_ETHER } from 'consts/tx';
 import { ReactComponent as WarningRing } from 'assets/icons/warning-ring.svg';
 
-import { useValidatorModal } from 'features/validators/contexts';
 import { VALIDATOR_MODALS } from 'features/validators/const';
+import type { ValidatorsModalItem } from 'features/validators/types';
 
 import { IconWrapper, WarmingContainer } from './styles';
+
+type WarningInfoProps = {
+  currentModal: ValidatorsModalItem;
+  balance: bigint;
+};
 
 const { partialWarning, fullWarning } =
   vaultTexts.actions.validators.modals.withdrawal;
 
-export const WarningInfo = () => {
-  const { currentModal } = useValidatorModal();
+export const WarningInfo: FC<WarningInfoProps> = ({
+  currentModal,
+  balance,
+}) => {
   const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
 
   return (
@@ -21,9 +28,7 @@ export const WarningInfo = () => {
       <IconWrapper>
         <WarningRing />
       </IconWrapper>
-      <Text size="xxs">
-        {isFull ? fullWarning(WEI_PER_ETHER) : partialWarning}
-      </Text>
+      <Text size="xxs">{isFull ? fullWarning(balance) : partialWarning}</Text>
     </WarmingContainer>
   );
 };

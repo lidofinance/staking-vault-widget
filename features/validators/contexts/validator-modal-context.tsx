@@ -7,15 +7,22 @@ import {
   useMemo,
   useState,
 } from 'react';
+import type { Hex } from 'viem';
 import invariant from 'tiny-invariant';
 
-import { useVault } from 'modules/vaults';
+import { TopupModal, WithdrawToVaultModal } from 'features/validators/shared';
 
 import type { ValidatorsModalItem } from 'features/validators/types';
 
-type ValidatorModalContextValue = {
-  currentModal: ValidatorsModalItem | null;
-  openModal: (modal: ValidatorsModalItem) => void;
+export type ModalData = {
+  currentModal: ValidatorsModalItem;
+  pubKey: Hex;
+  index: number;
+  balance: bigint;
+};
+
+export type ValidatorModalContextValue = {
+  openModal: (modal: ModalData) => void;
   closeModal: () => void;
 };
 
@@ -35,32 +42,27 @@ export const useValidatorModal = () => {
 };
 
 export const ValidatorModalProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { vaultAddress } = useVault();
-  const [currentModal, setCurrentModal] = useState<ValidatorsModalItem | null>(
-    null,
-  );
+  const [modalData, setCurrentModal] = useState<ModalData | null>(null);
 
-  const openModal = useCallback(
-    (modal: ValidatorsModalItem) => {
-      if (!vaultAddress) return;
-      setCurrentModal(modal);
-    },
-    [vaultAddress],
-  );
+  const openModal = useCallback((payload: ModalData) => {
+    setCurrentModal(payload);
+  }, []);
 
   const closeModal = useCallback(() => {
-    if (!vaultAddress) return;
     setCurrentModal(null);
-  }, [vaultAddress]);
+  }, []);
 
   const value = useMemo(
-    () => ({ currentModal, openModal, closeModal }),
-    [closeModal, currentModal, openModal],
+    () => ({ openModal, closeModal }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return (
     <ValidatorModalContext.Provider value={value}>
       {children}
+      <TopupModal modalData={modalData} onCloseModal={closeModal} />
+      <WithdrawToVaultModal modalData={modalData} onCloseModal={closeModal} />
     </ValidatorModalContext.Provider>
   );
 };

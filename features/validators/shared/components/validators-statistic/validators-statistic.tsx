@@ -10,7 +10,7 @@ import { StatisticContainer, Title } from './styles';
 type ValidatorsStatisticProps = {
   title: string;
   hint: string;
-  amount: bigint;
+  amount: bigint | undefined;
 };
 
 export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
@@ -28,10 +28,16 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
         </Text>
         <TooltipHint hint={hint} />
       </Title>
-      <Text size="lg" strong>
-        <FormatToken amount={amount} maxDecimalDigits={4} symbol="ETH" />
-      </Text>
-      <InlineLoader isLoading={isLoading || !usdAmount}>
+      <InlineLoader
+        isLoading={typeof amount !== 'bigint'}
+        height={28}
+        width={56}
+      >
+        <Text size="lg" strong>
+          <FormatToken amount={amount} maxDecimalDigits={4} symbol="ETH" />
+        </Text>
+      </InlineLoader>
+      <InlineLoader isLoading={isLoading || !usdAmount} height={20} width={80}>
         <Text size="xxs" strong style={{ textTransform: 'uppercase' }}>
           <FormatPrice amount={usdAmount as number} />
         </Text>

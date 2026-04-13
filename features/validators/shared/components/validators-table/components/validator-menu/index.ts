@@ -1,1 +1,1 @@
-export { ValidatorMenu } from './validator-menu';
+export { ValidatorMenuAction } from './validator-menu-action';

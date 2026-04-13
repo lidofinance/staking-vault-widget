@@ -7,15 +7,15 @@ import { StatusContainer, StatusText } from './styles';
 
 type StatusChipProps = {
   status: ValidatorStatus;
-  volume?: number;
+  value?: number;
 };
 
-export const StatusChip: FC<StatusChipProps> = ({ volume, status }) => {
+export const StatusChip: FC<StatusChipProps> = ({ value, status }) => {
   return (
     <StatusContainer $status={status}>
-      {typeof volume === 'number' && (
+      {typeof value === 'number' && (
         <Text size="xxs" as="span">
-          {volume}
+          {value}
         </Text>
       )}
       <StatusText $status={status}>{status}</StatusText>

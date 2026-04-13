@@ -1,24 +1,27 @@
-import {
-  ValidatorModalProvider,
-  ValidatorsTableProvider,
-} from 'features/validators/contexts';
+import { CircleLoader } from 'shared/components';
+
 import {
   Container,
-  TopupModal,
+  TablePlaceholder,
   ValidatorsTable,
-  WithdrawToVaultModal,
 } from 'features/validators/shared';
+import { useValidators } from 'features/validators/contexts';
 
 export const Validators = () => {
+  const { isLoading } = useValidators();
+
+  // TODO: return to CircleLoader
+  // showBy={!!value.validators}
   return (
     <Container>
-      <ValidatorsTableProvider>
-        <ValidatorModalProvider>
-          <ValidatorsTable />
-          <TopupModal />
-          <WithdrawToVaultModal />
-        </ValidatorModalProvider>
-      </ValidatorsTableProvider>
+      <CircleLoader
+        isLoading={isLoading}
+        size="medium"
+        height="156px"
+        placeholder={<TablePlaceholder />}
+      >
+        <ValidatorsTable />
+      </CircleLoader>
     </Container>
   );
 };

@@ -50,27 +50,44 @@ export enum ValidatorsOrderByEnum {
   STATUS = 'status',
 }
 
-export type ValidatorsOrderBy = keyof typeof ValidatorsOrderByEnum;
+export type ValidatorsOrderBy = `${ValidatorsOrderByEnum}`;
 
-type ValidatorsApiResponse = {
+export type ValidatorsApiMeta = {
+  totalBalance: string;
+  blockNumber: number;
+  timestamp: number;
+  byStatus: Record<ValidatorStatus, number>;
+};
+
+export type ValidatorsApiPagination = {
+  direction: 'ASC' | 'DESC';
   orderBy: ValidatorsOrderBy;
   page: number;
+  total: number;
+  offset: number;
+  limit: number;
+  remaining: number;
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   nextOffset: number | null;
+  previousOffset: number | null;
+};
+
+type ValidatorsApiResponse = {
   data: ValidatorsDTO[];
+  pagination: ValidatorsApiPagination;
+  meta: ValidatorsApiMeta;
+};
+
+export type FetchValidatorsMeta = Omit<ValidatorsApiMeta, 'totalBalance'> & {
+  totalBalance: bigint;
 };
 
 export type FetchValidatorsResult = {
-  orderBy: ValidatorsOrderBy;
-  page: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  nextOffset: number | null;
-  data: ValidatorsEntry[];
-};
+  meta: FetchValidatorsMeta;
+  table: ValidatorsEntry[];
+} & ValidatorsApiPagination;
 
 const fetchValidatorsApi = async (
   vaultAddress: Address,
@@ -115,13 +132,14 @@ const normalizeResponse = (
   response: ValidatorsApiResponse,
 ): FetchValidatorsResult => {
   return {
-    orderBy: response.orderBy,
-    page: response.page,
-    totalPages: response.totalPages,
-    hasNextPage: response.hasNextPage,
-    hasPreviousPage: response.hasPreviousPage,
-    nextOffset: response.nextOffset,
-    data: response.data.map((validator) => ({
+    ...response.pagination,
+    meta: {
+      totalBalance: parseGwei(response.meta.totalBalance),
+      blockNumber: response.meta.blockNumber,
+      timestamp: response.meta.timestamp,
+      byStatus: response.meta.byStatus,
+    },
+    table: response.data.map((validator) => ({
       pubkey: validator.pubkey,
       index: validator.index,
       balance: parseGwei(validator.balance),

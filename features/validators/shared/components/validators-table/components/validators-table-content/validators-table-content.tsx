@@ -1,10 +1,9 @@
 import { type FC, type MouseEvent, useCallback } from 'react';
-import { zeroAddress } from 'viem';
 import { Text, Thead } from '@lidofinance/lido-ui';
 
 import type { ValidatorsEntry, FetchValidatorsParams } from 'modules/vaults';
 
-import { useValidatorsTable } from 'features/validators/contexts';
+import { useValidators } from 'features/validators/contexts';
 
 import {
   MenuCell,
@@ -50,15 +49,6 @@ const tableHeaders: TableHeader[] = [
   },
 ];
 
-const PLACEHOLDER_VALIDATOR: ValidatorsEntry = {
-  pubkey: zeroAddress,
-  balance: 0n,
-  activatedAt: new Date(),
-  exitedAt: new Date(),
-  index: 0,
-  status: 'pending_initialised',
-};
-
 type ValidatorTableRowProps = {
   validator: ValidatorsEntry;
 };
@@ -74,7 +64,7 @@ const ValidatorTableRowContent = ({ validator }: ValidatorTableRowProps) => {
         activateDate={validator.activatedAt}
         exitDate={validator.exitedAt}
       />
-      <MenuCell />
+      <MenuCell validator={validator} />
     </>
   );
 };
@@ -98,7 +88,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
   dataTestId,
 }) => {
   const { validators, isLoading, isError, orderBy, direction, setSort } =
-    useValidatorsTable();
+    useValidators();
 
   const isEmpty = (validators?.length ?? 0) === 0;
   const showTable = !(!isLoading && !isError && isEmpty);
@@ -124,7 +114,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     return null;
   }
 
-  const rows = validators?.length ? validators : [PLACEHOLDER_VALIDATOR];
+  const rows = validators?.length ? validators : [];
 
   return (
     <TableStyled>

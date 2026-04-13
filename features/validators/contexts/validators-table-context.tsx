@@ -6,21 +6,19 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
-import { CircleLoader } from 'shared/components';
-
-import { useVaultValidatorsData, TablePlaceholder } from '../shared';
+import { useVaultValidatorsData } from '../shared';
 
 type ValidatorsTableContextValue = ReturnType<typeof useVaultValidatorsData>;
 
 const ValidatorsTableContext =
   createContext<ValidatorsTableContextValue | null>(null);
 
-export const useValidatorsTable = () => {
+export const useValidators = () => {
   const context = useContext(ValidatorsTableContext);
 
   invariant(
     context,
-    '[useValidatorsTable] must be used within ValidatorsTableProvider',
+    '[useValidators] must be used within ValidatorsTableProvider',
   );
 
   return context;
@@ -31,18 +29,9 @@ export const ValidatorsTableProvider: FC<PropsWithChildren> = ({
 }) => {
   const value = useVaultValidatorsData();
 
-  // TODO: return to CircleLoader
-  // showBy={!!value.validators}
   return (
     <ValidatorsTableContext.Provider value={value}>
-      <CircleLoader
-        isLoading={value.isLoading}
-        size="medium"
-        height="156px"
-        placeholder={<TablePlaceholder />}
-      >
-        {children}
-      </CircleLoader>
+      {children}
     </ValidatorsTableContext.Provider>
   );
 };

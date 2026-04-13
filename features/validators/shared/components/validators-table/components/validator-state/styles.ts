@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Text, Copy, Link } from '@lidofinance/lido-ui';
+import { Text, Copy } from '@lidofinance/lido-ui';
 
 export const StateContainer = styled.div`
   display: flex;
@@ -18,6 +18,10 @@ export const CopyButton = styled.button`
   cursor: pointer;
   appearance: none;
 
+  svg {
+    fill: ${({ theme }) => theme.colors.textSecondary};
+  }
+
   &:hover svg {
     fill: ${({ theme }) => theme.colors.primaryHover};
   }
@@ -33,17 +37,4 @@ export const TextStyled = styled(Text)`
   max-width: 104px;
   text-overflow: ellipsis;
   overflow: clip;
-`;
-
-export const LinkStyled = styled(Link)`
-  display: flex;
-  color: ${({ theme }) => theme.colors.secondary};
-
-  &:visited {
-    color: ${({ theme }) => theme.colors.secondary};
-  }
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primaryHover};
-  }
 `;

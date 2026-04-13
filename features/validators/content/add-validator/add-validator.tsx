@@ -1,6 +1,10 @@
 import { Text, Link } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import {
+  useVaultConfirmingRoles,
+  useVaultPermission,
+  vaultTexts,
+} from 'modules/vaults';
 
 import { Container } from 'features/validators/shared';
 
@@ -10,9 +14,18 @@ const { title, description, action, linkToDocs } =
   vaultTexts.actions.validators.addValidator;
 
 export const AddValidator = () => {
-  // TODO: add hook
-  // TODO: add link
-  // TODO: show only for NO
+  const { isNodeOperator } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('proveUnknownValidatorsRole');
+  const isValidatorsV2 = false;
+
+  // TODO: remove isValidatorsV2 for second iteration
+  if (
+    (!(isNodeOperator || hasPermission) || isNodeOperator || hasPermission) &&
+    !isValidatorsV2
+  ) {
+    return null;
+  }
+
   return (
     <Container>
       <Content>

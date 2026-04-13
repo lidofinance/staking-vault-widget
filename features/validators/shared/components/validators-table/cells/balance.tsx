@@ -11,7 +11,7 @@ export const BalanceCell: FC<BalanceCellProps> = ({ amount }) => {
   return (
     <Td>
       <Text size="xxs">
-        <FormatToken amount={amount} maxDecimalDigits={2} symbol="ETH" />
+        <FormatToken amount={amount} maxDecimalDigits={2} />
       </Text>
     </Td>
   );

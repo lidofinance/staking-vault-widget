@@ -347,6 +347,20 @@ export const vaultTexts = {
           fullWarning: (amount: bigint) =>
             `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount).trimmed} ETH) will be withdrawn.`,
         },
+        topUp: {
+          title: 'Top up validator',
+          description:
+            'You can top-up this validator by ETH available on the stVault Balance.',
+          availableToTopup: 'Available to top up',
+          estimatedFee: 'Estimated withdrawal fee',
+          action: 'Top up validator',
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are topping up the validator #${index} with ${formatBalance(amount).trimmed} ETH`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `The validator #${index} has been topped up with ${formatBalance(amount).trimmed} ETH`,
+          },
+        },
       },
     },
   },

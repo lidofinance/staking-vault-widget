@@ -1,28 +1,19 @@
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ValidatorsStatistic, LastUpdated } from 'features/validators/shared';
+import { useValidators } from 'features/validators/contexts';
 
-import { ValidatorsStatistic } from 'features/validators/shared';
 import { Wrapper } from './styles';
 
-const fakeData = [
-  {
-    title: 'Deposited on validators',
-    hint: 'Lorem ipsum set amet',
-    amount: WEI_PER_ETHER,
-  },
-  {
-    title: 'In a queue',
-    hint: 'Lorem ipsum set amet',
-    amount: WEI_PER_ETHER + WEI_PER_ETHER,
-  },
-];
-
 export const AmountStatistic = () => {
-  // TODO: get data from context
+  const { meta } = useValidators();
+
   return (
     <Wrapper>
-      {fakeData.map((statistic) => (
-        <ValidatorsStatistic key={statistic.title} {...statistic} />
-      ))}
+      <ValidatorsStatistic
+        title="Deposited on validators"
+        hint="Lorem ipsum set amet"
+        amount={meta?.totalBalance}
+      />
+      <LastUpdated timestamp={meta?.timestamp} />
     </Wrapper>
   );
 };
