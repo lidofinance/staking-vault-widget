@@ -89,7 +89,8 @@ export type FetchValidatorsMeta = Omit<ValidatorsApiMeta, 'totalBalance'> & {
 export type FetchValidatorsResult = {
   meta: FetchValidatorsMeta;
   table: ValidatorsEntry[];
-} & ValidatorsApiPagination;
+  pagination: ValidatorsApiPagination;
+};
 
 const fetchValidatorsApi = async (
   vaultAddress: Address,
@@ -134,7 +135,7 @@ const normalizeResponse = (
   response: ValidatorsApiResponse,
 ): FetchValidatorsResult => {
   return {
-    ...response.pagination,
+    pagination: { ...response.pagination },
     meta: {
       totalBalance: parseGwei(response.meta.totalBalance),
       blockNumber: response.meta.blockNumber,

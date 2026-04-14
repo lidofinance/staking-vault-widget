@@ -30,7 +30,7 @@ export const useSubmitTopup = () => {
         invariant(activeVault, '[useSubmitTopup] activeVault is undefined');
         invariant(
           !disabled,
-          '[useSubmitTopup] form has been disabled for any tranactions',
+          '[useSubmitTopup] form has been disabled for any transactions',
         );
 
         const mainActionLoadingText = loadingText(index, amount);

@@ -1,9 +1,11 @@
 import { z } from 'zod';
-import { type Address, isAddress, isAddressEqual } from 'viem';
+import { type Address, type Hex, isAddress, isAddressEqual, isHex } from 'viem';
 
 import { vaultTexts } from 'modules/vaults/consts';
 
 const validateAddress = (value: string | null) => !!(value && isAddress(value));
+const validatePubkey = (value: string | null) =>
+  !!(value && isHex(value) && value.length === 98);
 
 export const addressSchema = z
   .string()
@@ -15,6 +17,17 @@ export const addressSchema = z
   .refine(validateAddress, {
     message: vaultTexts.common.errors.address.invalid,
   }) as z.ZodType<Address>;
+
+export const pubkeySchema = z
+  .string()
+  .nonempty({
+    message: vaultTexts.common.errors.pubkey.required,
+  })
+  .trim()
+  .transform((value) => value.toLocaleLowerCase() as Hex)
+  .refine(validatePubkey, {
+    message: vaultTexts.common.errors.pubkey.invalid,
+  }) as z.ZodType<Hex>;
 
 export const amountSchema = z
   .bigint({ message: vaultTexts.common.errors.amount.required })

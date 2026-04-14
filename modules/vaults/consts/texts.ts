@@ -346,6 +346,12 @@ export const vaultTexts = {
             "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
           fullWarning: (amount: bigint) =>
             `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount).trimmed} ETH) will be withdrawn.`,
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are withdrawing ${formatBalance(amount).trimmed} ETH from the validator #${index}`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `${formatBalance(amount).trimmed} ETH has been withdrawn from the validator #${index}`,
+          },
         },
         topUp: {
           title: 'Top up validator',
@@ -776,6 +782,10 @@ export const vaultTexts = {
         invalid: 'Invalid ethereum address',
         vault: 'Recipient cannot be stVault',
         dashboard: 'Recipient cannot be stVault Dashboard',
+      },
+      pubkey: {
+        required: 'Validator public key is required',
+        invalid: 'Invalid validator public key',
       },
 
       tx: {
