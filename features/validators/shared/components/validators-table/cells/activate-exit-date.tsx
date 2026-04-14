@@ -1,7 +1,9 @@
 import type { FC } from 'react';
-import { Td, Text } from '@lidofinance/lido-ui';
+import { Text } from '@lidofinance/lido-ui';
 
 import { formatDate } from 'utils';
+
+import { TdStyled } from './styles';
 
 type ActivateExitDateProps = {
   activateDate: Date | undefined;
@@ -16,7 +18,7 @@ export const ActivateExitDate: FC<ActivateExitDateProps> = ({
   const isExitDateExist = typeof exitDate === 'object';
 
   return (
-    <Td>
+    <TdStyled>
       <Text size="xxs">
         {isActivateDateExist ? formatDate(activateDate) : '-'}{' '}
         {isExitDateExist && '/'}
@@ -26,6 +28,6 @@ export const ActivateExitDate: FC<ActivateExitDateProps> = ({
           {formatDate(exitDate)}
         </Text>
       )}
-    </Td>
+    </TdStyled>
   );
 };

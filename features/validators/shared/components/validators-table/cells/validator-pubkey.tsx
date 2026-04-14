@@ -1,7 +1,8 @@
 import type { FC } from 'react';
-import { Td } from '@lidofinance/lido-ui';
 
 import { ValidatorState } from '../components';
+
+import { TdStyled } from './styles';
 
 type ValidatorPubkeyProps = {
   pubkey: string;
@@ -9,8 +10,8 @@ type ValidatorPubkeyProps = {
 
 export const ValidatorPubkey: FC<ValidatorPubkeyProps> = ({ pubkey }) => {
   return (
-    <Td>
+    <TdStyled>
       <ValidatorState type="pubkey" indexOrPubkey={pubkey} />
-    </Td>
+    </TdStyled>
   );
 };

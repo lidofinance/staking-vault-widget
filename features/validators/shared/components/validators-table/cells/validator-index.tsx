@@ -1,9 +1,10 @@
 import type { FC } from 'react';
-import { Td } from '@lidofinance/lido-ui';
 
 import { isNumber } from 'utils';
 
 import { ValidatorState } from '../components';
+
+import { TdStyled } from './styles';
 
 type ValidatorIndexProps = {
   index: number;
@@ -11,12 +12,12 @@ type ValidatorIndexProps = {
 
 export const ValidatorIndex: FC<ValidatorIndexProps> = ({ index }) => {
   return (
-    <Td>
+    <TdStyled>
       {isNumber(index) ? (
         <ValidatorState type="index" indexOrPubkey={`${index}`} />
       ) : (
         '-'
       )}
-    </Td>
+    </TdStyled>
   );
 };

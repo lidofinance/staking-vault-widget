@@ -1,7 +1,7 @@
 import { CircleLoader } from 'shared/components';
 
 import {
-  Container,
+  Section,
   TablePlaceholder,
   ValidatorsTable,
 } from 'features/validators/shared';
@@ -11,7 +11,7 @@ export const Validators = () => {
   const { isLoading, validators } = useValidators();
 
   return (
-    <Container>
+    <Section>
       <CircleLoader
         isLoading={isLoading}
         showBy={!!validators}
@@ -21,6 +21,6 @@ export const Validators = () => {
       >
         <ValidatorsTable />
       </CircleLoader>
-    </Container>
+    </Section>
   );
 };

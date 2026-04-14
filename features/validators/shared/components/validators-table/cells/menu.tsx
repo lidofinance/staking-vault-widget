@@ -1,10 +1,14 @@
 import type { FC } from 'react';
-import { Td, PopupMenu, ButtonIcon } from '@lidofinance/lido-ui';
+import { PopupMenu, ButtonIcon } from '@lidofinance/lido-ui';
 
 import type { ValidatorsEntry } from 'modules/vaults';
 import { ReactComponent as MenuIcon } from 'assets/icons/menu.svg';
+import { useMatchMedia } from 'shared/hooks';
+import { NAV_MOBILE_MAX_WIDTH } from 'styles/constants';
 
 import { ValidatorMenuAction } from '../components';
+
+import { TdStyled } from './styles';
 
 import {
   useValidatorMenuActions,
@@ -19,9 +23,11 @@ export const MenuCell: FC<MenuCellProps> = ({ validator }) => {
   const { popupVisible, ref, openPopup, closePopup } =
     useValidatorMenuVisibility();
   const actions = useValidatorMenuActions();
+  const { isMatched } = useMatchMedia(NAV_MOBILE_MAX_WIDTH);
+  const popupPlacement = isMatched ? 'leftBottom' : 'bottomLeft';
 
   return (
-    <Td>
+    <TdStyled>
       <>
         <ButtonIcon
           ref={ref}
@@ -38,6 +44,7 @@ export const MenuCell: FC<MenuCellProps> = ({ validator }) => {
           style={{
             width: 160,
           }}
+          placement={popupPlacement}
           variant="default"
         >
           {actions.map(({ label, modal, hasPermission }) => (
@@ -52,6 +59,6 @@ export const MenuCell: FC<MenuCellProps> = ({ validator }) => {
           ))}
         </PopupMenu>
       </>
-    </Td>
+    </TdStyled>
   );
 };

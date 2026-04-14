@@ -4,4 +4,4 @@ export { ValidatorsTable } from './validators-table';
 export { TablePlaceholder } from './table-placeholder';
 export { SatelliteBeaconchaLink } from './satellite-beaconcha-link';
 export { LastUpdated } from './last-updated';
-export { Container } from './styles';
+export { Section } from './section';

@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { devicesHeaderMedia } from 'styles/global';
+
 export const Container = styled.section`
   display: flex;
   flex-direction: column;
@@ -8,4 +10,8 @@ export const Container = styled.section`
   padding: ${({ theme }) => theme.spaceMap.xxl}px;
   background-color: ${({ theme }) => theme.colors.foreground};
   border-radius: ${({ theme }) => theme.borderRadiusesMap.xl}px;
+
+  @media ${devicesHeaderMedia.mobile} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
 `;

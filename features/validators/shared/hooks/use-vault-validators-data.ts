@@ -8,11 +8,9 @@ import {
 } from 'modules/vaults';
 
 import { useValidatorListParams } from './use-validator-list-params';
-import type { Address } from 'viem';
 
 type selectValidatorDataArgs = {
   contract: {
-    feeRecipient: Address;
     pdgPolicy: string;
     beaconChainDepositsPauseIntent: boolean;
   };
@@ -53,12 +51,12 @@ export const useVaultValidatorsData = () => {
         '[useVaultValidatorsData] activeVault is not defined',
       );
 
-      const [feeRecipient, pdgPolicy, { beaconChainDepositsPauseIntent }] =
-        await Promise.all([
-          activeVault.dashboard.read.feeRecipient(),
+      const [pdgPolicy, { beaconChainDepositsPauseIntent }] = await Promise.all(
+        [
           activeVault.dashboard.read.pdgPolicy(),
           activeVault.hub.read.vaultConnection([activeVault.address]),
-        ]);
+        ],
+      );
 
       const response = await fetchValidators(activeVault.address, {
         ...params,
@@ -68,7 +66,6 @@ export const useVaultValidatorsData = () => {
         ...(response ?? {}),
         contract: {
           pdgPolicy: `${pdgPolicy}`,
-          feeRecipient,
           beaconChainDepositsPauseIntent,
         },
       };
@@ -102,7 +99,6 @@ export const useVaultValidatorsData = () => {
     previousOffset: data.pagination?.previousOffset,
 
     // contracts data
-    feeRecipient: data.contract?.feeRecipient,
     pdgPolicy: data.contract?.pdgPolicy,
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,

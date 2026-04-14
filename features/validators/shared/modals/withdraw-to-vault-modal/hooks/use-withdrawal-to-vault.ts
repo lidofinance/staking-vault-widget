@@ -9,14 +9,14 @@ import {
 } from 'modules/vaults';
 import {
   TransactionEntry,
+  useDappStatus,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
 
-import { useValidators } from 'features/validators/contexts';
+import type { WithdrawalFormValidatedValues } from '../types';
 
-import { WithdrawalFormValidatedValues } from '../types';
 const { loadingText, mainCompleteText } =
   vaultTexts.actions.validators.modals.withdrawal.txModal;
 
@@ -25,7 +25,7 @@ export const useWithdrawalToVault = () => {
   const disabled = useDisableForm();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
-  const { feeRecipient } = useValidators();
+  const { address } = useDappStatus();
 
   const withdrawToVault = useCallback(
     async ({ amount, index, pubkey }: WithdrawalFormValidatedValues) => {
@@ -35,8 +35,8 @@ export const useWithdrawalToVault = () => {
         '[useWithdrawalToVault] form has been disabled for any transactions',
       );
       invariant(
-        feeRecipient,
-        '[useWithdrawalToVault] fee recipient is undefined',
+        address,
+        '[useWithdrawalToVault] fee recipient address is undefined',
       );
 
       const mainActionLoadingText = loadingText(index, amount);
@@ -50,7 +50,7 @@ export const useWithdrawalToVault = () => {
           ...activeVault.dashboard.encode.triggerValidatorWithdrawals([
             pubkey,
             [amount],
-            feeRecipient,
+            address,
           ]),
           loadingActionText: mainActionLoadingText,
         });
@@ -69,7 +69,7 @@ export const useWithdrawalToVault = () => {
 
       return success;
     },
-    [activeVault, prepareReportCalls, sendTX, disabled, feeRecipient],
+    [activeVault, prepareReportCalls, sendTX, disabled, address],
   );
 
   return {

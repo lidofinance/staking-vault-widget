@@ -1,6 +1,7 @@
 import { type FC, type MouseEvent, useCallback } from 'react';
 import { Text, Thead } from '@lidofinance/lido-ui';
 
+import { ReactComponent as TopBottomArrows } from 'assets/icons/top-bottom-arrows.svg';
 import type { ValidatorsEntry, FetchValidatorsParams } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
@@ -13,12 +14,14 @@ import {
   ValidatorIndex,
   ValidatorPubkey,
 } from '../../cells';
+
 import {
   TableStyled,
   TableBody,
   TableRow,
   TableHeaderCell,
-} from '../../styles';
+  TableHeaderCellContent,
+} from './styles';
 
 type TableHeader = {
   title: string;
@@ -34,7 +37,7 @@ const tableHeaders: TableHeader[] = [
     title: 'Public key',
   },
   {
-    title: 'CL Status',
+    title: 'Status',
     sortKey: 'status',
   },
   {
@@ -67,17 +70,6 @@ const ValidatorTableRowContent = ({ validator }: ValidatorTableRowProps) => {
       <MenuCell validator={validator} />
     </>
   );
-};
-
-const toUIsortDir = (dir?: FetchValidatorsParams['direction']) => {
-  switch (dir) {
-    case 'DESC':
-      return 'ASC';
-    case 'ASC':
-      return 'DESC';
-    default:
-      return undefined;
-  }
 };
 
 type ValidatorsTableProps = {
@@ -125,12 +117,14 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
               data-sort-key={sortKey}
               align="left"
               onClick={sortKey ? onSortClick : undefined}
-              sortDir={sortKey === orderBy ? toUIsortDir(direction) : undefined}
               key={title}
             >
-              <Text size="xxs" strong>
-                {title}
-              </Text>
+              <TableHeaderCellContent>
+                <Text size="xxs" strong>
+                  {title}
+                </Text>
+                {sortKey && <TopBottomArrows />}
+              </TableHeaderCellContent>
             </TableHeaderCell>
           ))}
         </TableRow>
@@ -151,12 +145,6 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
             </TableRow>
           );
         })}
-        {/*<QueryStatus*/}
-        {/*  isLoading={isLoading}*/}
-        {/*  isEmpty={isEmpty}*/}
-        {/*  isError={isError}*/}
-        {/*  refetch={refetch}*/}
-        {/*/>*/}
       </TableBody>
     </TableStyled>
   );

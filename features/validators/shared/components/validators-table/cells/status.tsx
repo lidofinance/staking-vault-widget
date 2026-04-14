@@ -1,9 +1,10 @@
 import type { FC } from 'react';
-import { Td } from '@lidofinance/lido-ui';
 
 import type { ValidatorStatus } from 'modules/vaults';
 
 import { StatusChip } from 'features/validators/shared/components';
+
+import { TdStyled } from './styles';
 
 type StatusCellProps = {
   status: ValidatorStatus | undefined;
@@ -11,9 +12,9 @@ type StatusCellProps = {
 
 export const StatusCell: FC<StatusCellProps> = ({ status }) => {
   return (
-    <Td>
+    <TdStyled>
       {/*{status}*/}
       {status ? <StatusChip status={status} /> : '-'}
-    </Td>
+    </TdStyled>
   );
 };

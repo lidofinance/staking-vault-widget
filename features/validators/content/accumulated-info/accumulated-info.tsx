@@ -1,12 +1,12 @@
-import { Container } from 'features/validators/shared';
+import { Section } from 'features/validators/shared';
 
 import { AmountStatistic, AggregateStatuses } from './components';
 
 export const AccumulatedInfo = () => {
   return (
-    <Container>
+    <Section>
       <AmountStatistic />
       <AggregateStatuses />
-    </Container>
+    </Section>
   );
 };

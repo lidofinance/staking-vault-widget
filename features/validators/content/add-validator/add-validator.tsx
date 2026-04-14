@@ -6,7 +6,7 @@ import {
   vaultTexts,
 } from 'modules/vaults';
 
-import { Container } from 'features/validators/shared';
+import { Section } from 'features/validators/shared';
 
 import { ButtonStyled, Content, TextWrapper } from './styles';
 
@@ -27,7 +27,7 @@ export const AddValidator = () => {
   }
 
   return (
-    <Container>
+    <Section>
       <Content>
         <TextWrapper>
           <Text size="sm" strong>
@@ -44,6 +44,6 @@ export const AddValidator = () => {
           {action}
         </ButtonStyled>
       </Content>
-    </Container>
+    </Section>
   );
 };

@@ -1,10 +1,12 @@
 import { type FC, useMemo, useCallback } from 'react';
 
-import { Select, Option } from '@lidofinance/lido-ui';
+import { Option } from '@lidofinance/lido-ui';
 
 import { ValidatorStatus } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
+
+import { SelectStyled } from './styles';
 
 type FilterByStatusProps = {
   dataTestId: string;
@@ -24,7 +26,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
   );
 
   return (
-    <Select
+    <SelectStyled
       onChange={onChange}
       placeholder="Status"
       value={undefined}
@@ -36,6 +38,6 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
           {status}
         </Option>
       ))}
-    </Select>
+    </SelectStyled>
   );
 };
