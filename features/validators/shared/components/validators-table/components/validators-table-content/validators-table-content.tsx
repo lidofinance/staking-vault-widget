@@ -5,6 +5,7 @@ import { ReactComponent as TopBottomArrows } from 'assets/icons/top-bottom-arrow
 import type { ValidatorsEntry, FetchValidatorsParams } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
+import { useShowTableMenu } from '../../../../hooks';
 
 import {
   MenuCell,
@@ -54,9 +55,13 @@ const tableHeaders: TableHeader[] = [
 
 type ValidatorTableRowProps = {
   validator: ValidatorsEntry;
+  hideTableMenu: boolean;
 };
 
-const ValidatorTableRowContent = ({ validator }: ValidatorTableRowProps) => {
+const ValidatorTableRowContent = ({
+  validator,
+  hideTableMenu,
+}: ValidatorTableRowProps) => {
   return (
     <>
       <ValidatorIndex index={validator.index} />
@@ -67,7 +72,7 @@ const ValidatorTableRowContent = ({ validator }: ValidatorTableRowProps) => {
         activateDate={validator.activatedAt}
         exitDate={validator.exitedAt}
       />
-      <MenuCell validator={validator} />
+      {!hideTableMenu && <MenuCell validator={validator} />}
     </>
   );
 };
@@ -81,6 +86,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
 }) => {
   const { validators, isLoading, isError, orderBy, direction, setSort } =
     useValidators();
+  const { hideTableMenu } = useShowTableMenu();
 
   const isEmpty = (validators?.length ?? 0) === 0;
   const showTable = !(!isLoading && !isError && isEmpty);
@@ -112,21 +118,27 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     <TableStyled>
       <Thead>
         <TableRow>
-          {tableHeaders.map(({ title, sortKey }) => (
-            <TableHeaderCell
-              data-sort-key={sortKey}
-              align="left"
-              onClick={sortKey ? onSortClick : undefined}
-              key={title}
-            >
-              <TableHeaderCellContent>
-                <Text size="xxs" strong>
-                  {title}
-                </Text>
-                {sortKey && <TopBottomArrows />}
-              </TableHeaderCellContent>
-            </TableHeaderCell>
-          ))}
+          {tableHeaders.map(({ title, sortKey }, index) => {
+            if (hideTableMenu && tableHeaders.length - 1 === index) {
+              return null;
+            }
+
+            return (
+              <TableHeaderCell
+                data-sort-key={sortKey}
+                align="left"
+                onClick={sortKey ? onSortClick : undefined}
+                key={title}
+              >
+                <TableHeaderCellContent>
+                  <Text size="xxs" strong>
+                    {title}
+                  </Text>
+                  {sortKey && <TopBottomArrows />}
+                </TableHeaderCellContent>
+              </TableHeaderCell>
+            );
+          })}
         </TableRow>
       </Thead>
       <TableBody>
@@ -141,7 +153,10 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
                 dataTestId ? `${dataTestId}-validator-${pubkey}` : null
               }
             >
-              <ValidatorTableRowContent validator={validator} />
+              <ValidatorTableRowContent
+                validator={validator}
+                hideTableMenu={hideTableMenu}
+              />
             </TableRow>
           );
         })}
