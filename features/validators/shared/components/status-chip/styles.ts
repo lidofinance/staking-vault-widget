@@ -4,6 +4,8 @@ import { Theme } from '@lidofinance/lido-ui';
 import { getColorTransparency } from 'styles';
 import type { ValidatorStatus } from 'modules/vaults';
 
+import { getValidatorStatusTextColor } from 'features/validators/utils';
+
 const getBackgroundColor = ({
   $status,
   theme,
@@ -23,30 +25,6 @@ const getBackgroundColor = ({
     pending_initialised: colors.foreground,
     pending_queued: colors.foreground,
     exited_unslashed: colors.foreground,
-  };
-
-  return statusList[$status];
-};
-
-const getTextColor = ({
-  $status,
-  theme,
-}: {
-  $status: ValidatorStatus;
-  theme: Theme;
-}) => {
-  const { colors } = theme;
-
-  const statusList: Record<ValidatorStatus, string> = {
-    active_ongoing: colors.success,
-    active_exiting: colors.warning,
-    active_slashed: colors.error,
-    exited_slashed: colors.error,
-    withdrawal_possible: colors.primary,
-    withdrawal_done: colors.textSecondary,
-    pending_initialised: colors.text,
-    pending_queued: colors.text,
-    exited_unslashed: colors.text,
   };
 
   return statusList[$status];
@@ -85,5 +63,5 @@ export const StatusContainer = styled.div<{ $status: ValidatorStatus }>`
 export const StatusText = styled.span<{ $status: ValidatorStatus }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
-  color: ${getTextColor};
+  color: ${getValidatorStatusTextColor};
 `;

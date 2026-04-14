@@ -4,7 +4,7 @@ import type { Hex } from 'viem';
 
 import { FormatToken } from 'shared/formatters';
 
-import { SatelliteBeaconchaLink } from '../../../components';
+import { SatelliteBeaconchaLink } from '../index';
 import {
   BalanceInfo,
   BalanceRow,

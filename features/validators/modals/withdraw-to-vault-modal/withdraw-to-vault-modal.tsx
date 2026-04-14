@@ -3,16 +3,15 @@ import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
 
-import type { ModalData } from 'features/validators/contexts';
-import { VALIDATOR_MODALS } from 'features/validators//const';
-
-import { WithdrawalType, WarningInfo, WithdrawalAction } from './components';
-
 import {
   AvailableBalance,
   ContentContainer,
   ValidatorInfo,
-} from '../components';
+} from 'features/validators/shared';
+import type { ModalData } from 'features/validators/contexts';
+import { VALIDATOR_MODALS } from 'features/validators/const';
+
+import { WithdrawalType, WarningInfo, WithdrawalAction } from './components';
 
 type WithdrawToVaultModalProps = {
   modalData: ModalData | null;

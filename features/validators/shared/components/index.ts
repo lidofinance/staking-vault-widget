@@ -5,3 +5,6 @@ export { TablePlaceholder } from './table-placeholder';
 export { SatelliteBeaconchaLink } from './satellite-beaconcha-link';
 export { LastUpdated } from './last-updated';
 export { Section } from './section';
+export { AvailableBalance } from './available-balance';
+export { ContentContainer } from './content-container';
+export { ValidatorInfo } from './validator-info';

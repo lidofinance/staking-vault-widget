@@ -34,9 +34,11 @@ export const ValidatorState: FC<ValidatorStateProps> = ({
   return (
     <StateContainer>
       <TextStyled size="xxs">{content}</TextStyled>
-      <Text color="secondary">
-        <SatelliteBeaconchaLink indexOrPubkey={indexOrPubkey} />
-      </Text>
+      <Tooltip title="Beaconcha.in">
+        <Text color="secondary">
+          <SatelliteBeaconchaLink indexOrPubkey={indexOrPubkey} />
+        </Text>
+      </Tooltip>
       <CopyButton onClick={handleCopy}>
         <Tooltip title={`Copy ${type}`}>
           <CopyIconStyled />

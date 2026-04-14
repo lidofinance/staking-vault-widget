@@ -5,12 +5,11 @@ import { vaultTexts } from 'modules/vaults';
 
 import { VALIDATOR_MODALS } from 'features/validators/const';
 import type { ModalData } from 'features/validators/contexts';
-
 import {
   AvailableBalance,
   ContentContainer,
   ValidatorInfo,
-} from '../components';
+} from 'features/validators/shared';
 
 import { TopupModalForm } from './content';
 

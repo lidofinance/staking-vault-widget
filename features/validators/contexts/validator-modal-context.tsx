@@ -10,7 +10,7 @@ import {
 import type { Hex } from 'viem';
 import invariant from 'tiny-invariant';
 
-import { TopupModal, WithdrawToVaultModal } from 'features/validators/shared';
+import { TopupModal, WithdrawToVaultModal } from 'features/validators/modals';
 
 import type { ValidatorsModalItem } from 'features/validators/types';
 
