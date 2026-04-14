@@ -31,7 +31,7 @@ export const useVaultValidatorsData = () => {
     setPage,
     setSort,
     setFilterByStatus,
-    setFilterByPubKey,
+    setFilterByPubKeyOrIndex,
   } = useValidatorListParams();
 
   const query = useQuery({
@@ -110,6 +110,6 @@ export const useVaultValidatorsData = () => {
     setSort,
     setPage,
     setFilterByStatus,
-    setFilterByPubKey,
+    setFilterByPubKeyOrIndex,
   };
 };

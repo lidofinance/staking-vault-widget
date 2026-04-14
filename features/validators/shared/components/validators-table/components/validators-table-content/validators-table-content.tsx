@@ -2,7 +2,11 @@ import { type FC, type MouseEvent, useCallback } from 'react';
 import { Text, Thead } from '@lidofinance/lido-ui';
 
 import { ReactComponent as TopBottomArrows } from 'assets/icons/top-bottom-arrows.svg';
-import type { ValidatorsEntry, FetchValidatorsParams } from 'modules/vaults';
+import {
+  ValidatorsEntry,
+  FetchValidatorsParams,
+  ValidatorsOrderByEnum,
+} from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
 import { useShowTableMenu } from '../../../../hooks';
@@ -32,18 +36,18 @@ type TableHeader = {
 const tableHeaders: TableHeader[] = [
   {
     title: 'Index',
-    sortKey: 'index',
+    sortKey: ValidatorsOrderByEnum.INDEX,
   },
   {
     title: 'Public key',
   },
   {
     title: 'Status',
-    sortKey: 'status',
+    sortKey: ValidatorsOrderByEnum.STATUS,
   },
   {
     title: 'Actual balance',
-    sortKey: 'balance',
+    sortKey: ValidatorsOrderByEnum.BALANCE,
   },
   {
     title: 'Activated / exited',

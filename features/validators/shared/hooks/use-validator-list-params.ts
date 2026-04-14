@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import type { Hex } from 'viem';
+import { isHex, type Hex } from 'viem';
+import invariant from 'tiny-invariant';
 
 import { appPaths } from 'consts/routing';
 import {
@@ -8,7 +9,11 @@ import {
   useVault,
   VALIDATORS_PER_PAGE,
 } from 'modules/vaults';
-import invariant from 'tiny-invariant';
+
+import {
+  numberRegex,
+  VALIDATOR_PUBKEY_LENGTH,
+} from 'features/validators/const';
 
 const DEFAULT_PARAMS: FetchValidatorsParams = {
   page: 1,
@@ -17,17 +22,55 @@ const DEFAULT_PARAMS: FetchValidatorsParams = {
   limit: VALIDATORS_PER_PAGE,
   status: 'all',
   pubkey: undefined,
+  index: undefined,
+};
+
+const getQueryParam = (value: string | string[] | undefined) => {
+  return Array.isArray(value) ? value[0] : value;
+};
+
+const parseValidatorPubkey = (
+  value: string | string[] | undefined,
+): Hex | undefined => {
+  const queryValue = getQueryParam(value)?.trim().toLowerCase();
+
+  if (
+    !queryValue ||
+    !isHex(queryValue) ||
+    queryValue.length !== VALIDATOR_PUBKEY_LENGTH
+  ) {
+    return;
+  }
+
+  return queryValue;
+};
+
+const parseValidatorIndex = (value: string | string[] | undefined) => {
+  const queryValue = getQueryParam(value);
+
+  if (!queryValue || !numberRegex.test(queryValue)) {
+    return;
+  }
+
+  const index = Number(queryValue);
+
+  if (!Number.isSafeInteger(index)) {
+    return;
+  }
+
+  return index;
 };
 
 const queryToParams = (
   query: Record<string, string | string[] | undefined>,
 ): FetchValidatorsParams => {
   return {
-    page: Number(query.page) || DEFAULT_PARAMS.page,
+    page: Number(getQueryParam(query.page)) || DEFAULT_PARAMS.page,
     orderBy: query.orderBy as FetchValidatorsParams['orderBy'],
     direction: query.direction as FetchValidatorsParams['direction'],
     limit: DEFAULT_PARAMS.limit,
-    pubkey: query.pubkey as FetchValidatorsParams['pubkey'],
+    pubkey: parseValidatorPubkey(query.pubkey),
+    index: parseValidatorIndex(query.index),
     status: query.status as FetchValidatorsParams['status'],
   };
 };
@@ -50,6 +93,9 @@ const paramsToQuery = (
   }
   if (params.pubkey !== DEFAULT_PARAMS.pubkey) {
     query.pubkey = params.pubkey as Hex;
+  }
+  if (params.index !== DEFAULT_PARAMS.index) {
+    query.index = String(params.index);
   }
   return query;
 };
@@ -104,9 +150,9 @@ export const useValidatorListParams = () => {
     [params, pushParams],
   );
 
-  const setFilterByPubKey = useCallback(
-    (pubkey: FetchValidatorsParams['pubkey']) => {
-      void pushParams({ ...params, pubkey });
+  const setFilterByPubKeyOrIndex = useCallback(
+    ({ pubkey, index }: Pick<FetchValidatorsParams, 'pubkey' | 'index'>) => {
+      void pushParams({ ...params, pubkey, index, page: 1 });
     },
     [params, pushParams],
   );
@@ -117,6 +163,6 @@ export const useValidatorListParams = () => {
     setPage,
     setSort,
     setFilterByStatus,
-    setFilterByPubKey,
+    setFilterByPubKeyOrIndex,
   };
 };

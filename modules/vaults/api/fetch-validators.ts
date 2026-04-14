@@ -11,6 +11,7 @@ export type FetchValidatorsParams = {
   direction: 'ASC' | 'DESC';
   status: ValidatorStatus | 'all';
   pubkey?: Hex;
+  index?: number;
 };
 
 type ValidatorsDTO = {
@@ -109,6 +110,8 @@ const fetchValidatorsApi = async (
       orderBy: params.orderBy,
       direction: params.direction,
       status: params.status,
+      pubkey: params.pubkey,
+      index: params.index,
     }),
   );
 

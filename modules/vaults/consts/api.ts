@@ -17,6 +17,8 @@ export type ValidatorsParams = {
   orderBy?: string;
   direction?: string;
   status?: string;
+  pubkey?: string;
+  index?: number;
 };
 
 export const vaultApiRoutes = {
@@ -46,10 +48,10 @@ export const validatorsApiRoutes = {
     vaultAddress: Address,
     params: ValidatorsParams,
   ) => {
-    const { limit, offset, orderBy, direction, status } = params;
+    const { limit, offset, orderBy, direction, status, pubkey, index } = params;
     const url = new URL(`/v1/vaults/${vaultAddress}/validators`, basePath);
 
-    Object.entries({ limit, offset, orderBy, direction, status })
+    Object.entries({ limit, offset, orderBy, direction, status, pubkey, index })
       .filter(([_, value]) => !!value || isNumber(value))
       .map(([key, value]) => url.searchParams.set(key, `${value}`));
 
