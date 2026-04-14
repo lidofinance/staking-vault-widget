@@ -108,6 +108,7 @@ const fetchValidatorsApi = async (
       limit: params.limit,
       orderBy: params.orderBy,
       direction: params.direction,
+      status: params.status,
     }),
   );
 

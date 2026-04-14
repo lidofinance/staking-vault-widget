@@ -13,7 +13,7 @@ type FilterByStatusProps = {
 };
 
 export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
-  const { meta, setFilterByStatus } = useValidators();
+  const { meta, setFilterByStatus, params } = useValidators();
 
   const statuses = useMemo(
     () => Object.keys(meta?.byStatus ?? {}) as ValidatorStatus[],
@@ -29,7 +29,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
     <SelectStyled
       onChange={onChange}
       placeholder="Status"
-      value={undefined}
+      value={params.status}
       data-testid={`${dataTestId}-filter-pubkey-index`}
     >
       <Option value="all">all</Option>

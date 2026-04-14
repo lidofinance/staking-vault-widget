@@ -94,9 +94,9 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
       if (!columnKey) return;
 
       if (columnKey === orderBy) {
-        setSort?.(columnKey, direction === 'ASC' ? 'DESC' : 'ASC');
+        setSort(columnKey, direction === 'ASC' ? 'DESC' : 'ASC');
       } else {
-        setSort?.(columnKey, 'DESC');
+        setSort(columnKey, 'DESC');
       }
     },
     [setSort, orderBy, direction],

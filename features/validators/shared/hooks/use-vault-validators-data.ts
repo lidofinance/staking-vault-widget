@@ -103,6 +103,9 @@ export const useVaultValidatorsData = () => {
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
 
+    // query params
+    params,
+
     // query functions
     setSort,
     setPage,

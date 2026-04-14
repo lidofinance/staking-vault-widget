@@ -13,7 +13,7 @@ import invariant from 'tiny-invariant';
 const DEFAULT_PARAMS: FetchValidatorsParams = {
   page: 1,
   orderBy: 'index',
-  direction: 'DESC',
+  direction: 'ASC',
   limit: VALIDATORS_PER_PAGE,
   status: 'all',
   pubkey: undefined,
@@ -45,7 +45,7 @@ const paramsToQuery = (
   if (params.direction !== DEFAULT_PARAMS.direction) {
     query.direction = params.direction;
   }
-  if (params.status !== DEFAULT_PARAMS.status) {
+  if (params.status && params.status !== DEFAULT_PARAMS.status) {
     query.status = params.status;
   }
   if (params.pubkey !== DEFAULT_PARAMS.pubkey) {
