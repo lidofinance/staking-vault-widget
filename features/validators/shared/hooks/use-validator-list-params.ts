@@ -1,16 +1,22 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import type { Hex } from 'viem';
 
+import { appPaths } from 'consts/routing';
 import {
   type FetchValidatorsParams,
+  useVault,
   VALIDATORS_PER_PAGE,
 } from 'modules/vaults';
+import invariant from 'tiny-invariant';
 
 const DEFAULT_PARAMS: FetchValidatorsParams = {
   page: 1,
   orderBy: 'index',
   direction: 'DESC',
   limit: VALIDATORS_PER_PAGE,
+  status: 'all',
+  pubkey: undefined,
 };
 
 const queryToParams = (
@@ -21,6 +27,8 @@ const queryToParams = (
     orderBy: query.orderBy as FetchValidatorsParams['orderBy'],
     direction: query.direction as FetchValidatorsParams['direction'],
     limit: DEFAULT_PARAMS.limit,
+    pubkey: query.pubkey as FetchValidatorsParams['pubkey'],
+    status: query.status as FetchValidatorsParams['status'],
   };
 };
 
@@ -37,17 +45,29 @@ const paramsToQuery = (
   if (params.direction !== DEFAULT_PARAMS.direction) {
     query.direction = params.direction;
   }
+  if (params.status !== DEFAULT_PARAMS.status) {
+    query.status = params.status;
+  }
+  if (params.pubkey !== DEFAULT_PARAMS.pubkey) {
+    query.pubkey = params.pubkey as Hex;
+  }
   return query;
 };
 
 export const useValidatorListParams = () => {
-  const { query, isReady, push, pathname } = useRouter();
-
+  const { query, isReady, push } = useRouter();
+  const { vaultAddress } = useVault();
   const params = useMemo(() => queryToParams(query), [query]);
 
   const pushParams = useCallback(
     (params: FetchValidatorsParams) => {
+      invariant(
+        vaultAddress,
+        '[useValidatorListParams] vault address is not defined',
+      );
+
       const queryParams = paramsToQuery(params);
+      const pathname = appPaths.vaults.vault(vaultAddress).validators;
       return push(
         {
           pathname,
@@ -57,7 +77,7 @@ export const useValidatorListParams = () => {
         { shallow: true },
       );
     },
-    [pathname, push],
+    [vaultAddress, push],
   );
 
   const setPage = useCallback(
@@ -77,5 +97,26 @@ export const useValidatorListParams = () => {
     [params, pushParams],
   );
 
-  return { isReady, params, setPage, setSort };
+  const setFilterByStatus = useCallback(
+    (status: FetchValidatorsParams['status']) => {
+      void pushParams({ ...params, status });
+    },
+    [params, pushParams],
+  );
+
+  const setFilterByPubKey = useCallback(
+    (pubkey: FetchValidatorsParams['pubkey']) => {
+      void pushParams({ ...params, pubkey });
+    },
+    [params, pushParams],
+  );
+
+  return {
+    isReady,
+    params,
+    setPage,
+    setSort,
+    setFilterByStatus,
+    setFilterByPubKey,
+  };
 };

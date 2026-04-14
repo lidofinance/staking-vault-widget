@@ -9,7 +9,7 @@ import { StatisticContainer, Title } from './styles';
 
 type ValidatorsStatisticProps = {
   title: string;
-  hint: string;
+  hint?: string;
   amount: bigint | undefined;
 };
 
@@ -26,7 +26,7 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
         <Text size="xxs" color="secondary">
           {title}
         </Text>
-        <TooltipHint hint={hint} />
+        {!!hint && <TooltipHint hint={hint} />}
       </Title>
       <InlineLoader
         isLoading={typeof amount !== 'bigint'}

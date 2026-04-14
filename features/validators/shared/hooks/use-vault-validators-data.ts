@@ -11,7 +11,14 @@ import { useValidatorListParams } from './use-validator-list-params';
 
 export const useVaultValidatorsData = () => {
   const { activeVault, queryKeys } = useVault();
-  const { params, isReady, setPage, setSort } = useValidatorListParams();
+  const {
+    params,
+    isReady,
+    setPage,
+    setSort,
+    setFilterByStatus,
+    setFilterByPubKey,
+  } = useValidatorListParams();
 
   const query = useQuery<FetchValidatorsResult | undefined>({
     queryKey: [
@@ -60,5 +67,7 @@ export const useVaultValidatorsData = () => {
     previousOffset: data.previousOffset,
     setSort,
     setPage,
+    setFilterByStatus,
+    setFilterByPubKey,
   };
 };

@@ -1,4 +1,4 @@
-import { Hex, Address, parseGwei } from 'viem';
+import { type Hex, type Address, parseGwei } from 'viem';
 
 import { getApiURL } from 'config';
 
@@ -9,6 +9,8 @@ export type FetchValidatorsParams = {
   limit: number;
   orderBy: 'index' | 'pubkey' | 'balance' | 'status';
   direction: 'ASC' | 'DESC';
+  status: ValidatorStatus | 'all';
+  pubkey?: Hex;
 };
 
 type ValidatorsDTO = {

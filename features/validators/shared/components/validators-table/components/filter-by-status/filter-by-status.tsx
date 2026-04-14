@@ -1,25 +1,37 @@
-import type { FC } from 'react';
+import { type FC, useMemo, useCallback } from 'react';
 
 import { Select, Option } from '@lidofinance/lido-ui';
 
-import { VALIDATOR_STATUSES } from 'modules/vaults';
+import { ValidatorStatus } from 'modules/vaults';
+
+import { useValidators } from 'features/validators/contexts';
 
 type FilterByStatusProps = {
   dataTestId: string;
 };
 
-const optionsList = Object.values(VALIDATOR_STATUSES);
-
 export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
-  // TODO: move text to vaultTexts
+  const { meta, setFilterByStatus } = useValidators();
+
+  const statuses = useMemo(
+    () => Object.keys(meta?.byStatus ?? {}) as ValidatorStatus[],
+    [meta?.byStatus],
+  );
+
+  const onChange = useCallback(
+    (option: string | number) => setFilterByStatus(option as ValidatorStatus),
+    [setFilterByStatus],
+  );
+
   return (
     <Select
-      onChange={function noRefCheck() {}}
+      onChange={onChange}
       placeholder="Status"
       value={undefined}
       data-testid={`${dataTestId}-filter-pubkey-index`}
     >
-      {optionsList.map((status) => (
+      <Option value="all">all</Option>
+      {statuses.map((status) => (
         <Option key={status} value={status}>
           {status}
         </Option>

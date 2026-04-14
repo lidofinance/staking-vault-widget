@@ -10,7 +10,6 @@ export const AmountStatistic = () => {
     <Wrapper>
       <ValidatorsStatistic
         title="Deposited on validators"
-        hint="Lorem ipsum set amet"
         amount={meta?.totalBalance}
       />
       <LastUpdated timestamp={meta?.timestamp} />
