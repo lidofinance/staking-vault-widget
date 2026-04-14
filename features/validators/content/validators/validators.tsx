@@ -13,7 +13,7 @@ export const Validators = () => {
   return (
     <Section>
       <CircleLoader
-        isLoading={isLoading}
+        isLoading={isLoading && !validators}
         showBy={!!validators}
         size="medium"
         height="156px"
