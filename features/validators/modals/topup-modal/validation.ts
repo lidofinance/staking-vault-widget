@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
-import { maxAmountSchema } from 'utils/zod-validation';
+import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
 
 import type {
   TopUpFormFieldValues,
@@ -17,6 +17,7 @@ export const topUpFormSchema = ({
   return z.object({
     amount: maxAmountSchema(availableBalance),
     index: z.number(),
+    pubkey: pubkeySchema,
   });
 };
 

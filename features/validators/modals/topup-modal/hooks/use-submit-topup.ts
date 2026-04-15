@@ -26,7 +26,7 @@ export const useSubmitTopup = () => {
 
   return {
     topUp: useCallback(
-      async ({ amount, index }: TopUpFormValidatedValues) => {
+      async ({ amount, index, pubkey }: TopUpFormValidatedValues) => {
         invariant(activeVault, '[useSubmitTopup] activeVault is undefined');
         invariant(
           !disabled,
@@ -40,7 +40,9 @@ export const useSubmitTopup = () => {
           const calls: TransactionEntry[] = [...prepareReportCalls()];
 
           calls.push({
-            ...activeVault.dashboard.encode['burnShares']([amount]),
+            ...activeVault.predepositGuarantee.encode.topUpExistingValidators([
+              [{ pubkey, amount }],
+            ]),
             loadingActionText: mainActionLoadingText,
           });
           return calls;

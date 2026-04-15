@@ -1,10 +1,11 @@
 import type { FC } from 'react';
 import { Modal, Text } from '@lidofinance/lido-ui';
 
+import { FormatToken } from 'shared/formatters';
 import { vaultTexts } from 'modules/vaults';
 
 import { VALIDATOR_MODALS } from 'features/validators/const';
-import type { ModalData } from 'features/validators/contexts';
+import { ModalData, useValidators } from 'features/validators/contexts';
 import {
   AvailableBalance,
   ContentContainer,
@@ -25,6 +26,7 @@ export const TopupModal: FC<TopupModalProps> = ({
   modalData,
   onCloseModal,
 }) => {
+  const { availableBalance } = useValidators();
   if (!modalData) {
     return null;
   }
@@ -41,9 +43,20 @@ export const TopupModal: FC<TopupModalProps> = ({
     >
       <ContentContainer>
         <Text size="xs">{description}</Text>
-        <ValidatorInfo pubKey={pubKey} index={index} balance={balance} />
-        <AvailableBalance title={availableToTopup} amount={balance} />
-        <TopupModalForm index={index} balance={balance} />
+        <ValidatorInfo pubKey={pubKey} index={index} balance={balance}>
+          <Text size="xxs" color="secondary">
+            Available stVault Balance
+          </Text>
+          <Text size="xxs" strong>
+            <FormatToken amount={availableBalance} symbol="ETH" />
+          </Text>
+        </ValidatorInfo>
+        <AvailableBalance title={availableToTopup} amount={availableBalance} />
+        <TopupModalForm
+          index={index}
+          pubkey={pubKey}
+          balance={availableBalance}
+        />
       </ContentContainer>
     </Modal>
   );

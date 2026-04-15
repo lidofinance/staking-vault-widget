@@ -17,7 +17,7 @@ export const BaseInfo = styled.article`
 export const BalanceInfo = styled.article`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.xs}px;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
 
 export const ParamContainer = styled.div`

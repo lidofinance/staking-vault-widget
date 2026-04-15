@@ -12,6 +12,7 @@ import { useValidatorListParams } from './use-validator-list-params';
 type selectValidatorDataArgs = {
   contract: {
     pdgPolicy: string;
+    availableBalance: bigint;
     beaconChainDepositsPauseIntent: boolean;
   };
   meta?: FetchValidatorsResult['meta'];
@@ -51,12 +52,12 @@ export const useVaultValidatorsData = () => {
         '[useVaultValidatorsData] activeVault is not defined',
       );
 
-      const [pdgPolicy, { beaconChainDepositsPauseIntent }] = await Promise.all(
-        [
+      const [pdgPolicy, availableBalance, { beaconChainDepositsPauseIntent }] =
+        await Promise.all([
           activeVault.dashboard.read.pdgPolicy(),
+          activeVault.vault.read.availableBalance(),
           activeVault.hub.read.vaultConnection([activeVault.address]),
-        ],
-      );
+        ]);
 
       const response = await fetchValidators(activeVault.address, {
         ...params,
@@ -66,6 +67,7 @@ export const useVaultValidatorsData = () => {
         ...(response ?? {}),
         contract: {
           pdgPolicy: `${pdgPolicy}`,
+          availableBalance,
           beaconChainDepositsPauseIntent,
         },
       };
@@ -100,6 +102,7 @@ export const useVaultValidatorsData = () => {
 
     // contracts data
     pdgPolicy: data.contract?.pdgPolicy,
+    availableBalance: data.contract?.availableBalance,
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
 

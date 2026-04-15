@@ -59,7 +59,9 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
       <Divider />
       <BalanceInfo>
         <BalanceRow>
-          <Text size="xxs">Validator actual balance</Text>
+          <Text size="xxs" color="secondary">
+            Validator actual balance
+          </Text>
           <Text size="xxs" strong>
             <FormatToken amount={balance} symbol="ETH" />
           </Text>

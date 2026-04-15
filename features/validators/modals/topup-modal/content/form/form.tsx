@@ -1,6 +1,7 @@
 import { type FC, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Eth } from '@lidofinance/lido-ui';
+import type { Hex } from 'viem';
 
 import {
   FormController,
@@ -9,6 +10,7 @@ import {
 } from 'shared/hook-form';
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
@@ -23,11 +25,12 @@ import { FormContainer } from './styles';
 type FormProps = {
   balance: bigint;
   index: number;
+  pubkey: Hex;
 };
 
 const { action } = vaultTexts.actions.validators.modals.topUp;
 
-export const TopupModalForm: FC<FormProps> = ({ balance, index }) => {
+export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
   const {
     invalidateVaultConfig,
     invalidateVaultState,
@@ -46,6 +49,7 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index }) => {
     defaultValues: {
       amount: null,
       index,
+      pubkey,
     },
     disabled: !isDappActive || disabled,
     resolver: topUpFormResolver,
@@ -83,7 +87,9 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index }) => {
           fullwidth
         />
         {/*TODO: use button with connect option*/}
-        <Button fullwidth>{action}</Button>
+        <ConnectWalletButton>
+          <Button fullwidth>{action}</Button>
+        </ConnectWalletButton>
       </FormContainer>
     </FormController>
   );

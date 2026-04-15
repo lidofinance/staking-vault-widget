@@ -12,4 +12,5 @@ export type TopUpFormValidatedValues = z.infer<
 export type TopUpFormFieldValues = {
   amount: TopUpFormValidatedValues['amount'] | null;
   index: TopUpFormValidatedValues['index'] | null;
+  pubkey: TopUpFormValidatedValues['pubkey'] | null;
 };
