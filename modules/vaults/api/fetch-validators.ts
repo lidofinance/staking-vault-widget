@@ -7,9 +7,9 @@ import { validatorsApiRoutes } from '../consts';
 export type FetchValidatorsParams = {
   page: number;
   limit: number;
-  orderBy: 'index' | 'pubkey' | 'balance' | 'status';
+  orderBy: 'index' | 'pubkey' | 'balance' | 'status' | 'activatedAt';
   direction: 'ASC' | 'DESC';
-  status: ValidatorStatus | 'all';
+  status?: ValidatorStatus;
   pubkey?: Hex;
   index?: number;
 };
@@ -18,7 +18,7 @@ type ValidatorsDTO = {
   pubkey: Hex;
   index: number;
   balance: string;
-  status: ValidatorStatus | null;
+  status: ValidatorStatus;
   activatedAt: string | null;
   exitedAt: string | null;
 };
@@ -27,7 +27,7 @@ export type ValidatorsEntry = {
   pubkey: Hex;
   index: number;
   balance: bigint;
-  status: ValidatorStatus | undefined;
+  status: ValidatorStatus;
   activatedAt: Date | undefined;
   exitedAt: Date | undefined;
 };
@@ -51,6 +51,7 @@ export enum ValidatorsOrderByEnum {
   PUBKEY = 'pubkey',
   BALANCE = 'balance',
   STATUS = 'status',
+  ACTIVATED_AT = 'activatedAt',
 }
 
 export type ValidatorsOrderBy = `${ValidatorsOrderByEnum}`;
@@ -131,10 +132,6 @@ const optDate = (
   return date != null ? new Date(date) : undefined;
 };
 
-const optValue = <T>(value: T | null | undefined): T | undefined => {
-  return value ?? undefined;
-};
-
 const normalizeResponse = (
   response: ValidatorsApiResponse,
 ): FetchValidatorsResult => {
@@ -150,7 +147,7 @@ const normalizeResponse = (
       pubkey: validator.pubkey,
       index: validator.index,
       balance: parseGwei(validator.balance),
-      status: optValue(validator.status),
+      status: validator.status,
       activatedAt: optDate(validator.activatedAt),
       exitedAt: optDate(validator.exitedAt),
     })),

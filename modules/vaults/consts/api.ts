@@ -1,5 +1,7 @@
 import type { Address } from 'viem';
 
+import type { ValidatorStatus } from '../api/fetch-validators';
+
 import { isNumber } from 'utils';
 
 export type VaultsParams = {
@@ -16,7 +18,7 @@ export type ValidatorsParams = {
   offset?: number;
   orderBy?: string;
   direction?: string;
-  status?: string;
+  status?: ValidatorStatus;
   pubkey?: string;
   index?: number;
 };

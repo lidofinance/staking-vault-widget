@@ -50,6 +50,7 @@ const tableHeaders: TableHeader[] = [
   },
   {
     title: 'Activated / exited',
+    sortKey: ValidatorsOrderByEnum.ACTIVATED_AT,
   },
   {
     title: '',

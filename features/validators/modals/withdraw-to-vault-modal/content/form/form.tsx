@@ -1,6 +1,6 @@
 import { type FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Eth, Text } from '@lidofinance/lido-ui';
+import { Button, Eth } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
 
 import {
@@ -9,13 +9,15 @@ import {
   useDisableForm,
 } from 'shared/hook-form';
 import { ConnectWalletButton } from 'shared/wallet';
-import { FormatToken } from 'shared/formatters';
 import { WEI_PER_ETHER } from 'consts/tx';
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
-import { ValidatorPdgStage } from 'features/validators/shared';
+import {
+  AvailableBalance,
+  ValidatorPdgStage,
+} from 'features/validators/shared';
 
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
@@ -24,12 +26,8 @@ import type {
   WithdrawalFormValidationContext,
   WithdrawalFormValidatedValues,
 } from '../../types';
-import {
-  ActionContainer,
-  FeeContent,
-} from '../../components/withdrawal-action/styles';
 
-import { FormContainer } from './styles';
+import { FormContainer, ActionContainer } from './styles';
 
 type FormProps = {
   isPartial: boolean;
@@ -122,14 +120,10 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
           />
         )}
         <ActionContainer>
-          <FeeContent>
-            <Text size="xxs" color="secondary">
-              {estimatedFee}
-            </Text>
-            <Text size="xxs">
-              <FormatToken amount={WEI_PER_ETHER / 1000n} symbol="ETH" />
-            </Text>
-          </FeeContent>
+          <AvailableBalance
+            title={estimatedFee}
+            amount={WEI_PER_ETHER / 1000n}
+          />
           <ConnectWalletButton>
             <Button disabled={formState.disabled} fullwidth>
               {actionText}

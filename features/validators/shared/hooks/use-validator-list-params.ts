@@ -6,9 +6,13 @@ import invariant from 'tiny-invariant';
 import { appPaths } from 'consts/routing';
 import {
   type FetchValidatorsParams,
+  type ValidatorStatus,
+  VALIDATOR_STATUSES,
+  ValidatorsOrderByEnum,
   useVault,
   VALIDATORS_PER_PAGE,
 } from 'modules/vaults';
+import { isNumber } from 'utils';
 
 import {
   numberRegex,
@@ -20,16 +24,92 @@ const DEFAULT_PARAMS: FetchValidatorsParams = {
   orderBy: 'index',
   direction: 'ASC',
   limit: VALIDATORS_PER_PAGE,
-  status: 'all',
+  status: undefined,
   pubkey: undefined,
   index: undefined,
 };
+
+export type ValidatorStatusFilter = ValidatorStatus | 'all';
+
+const VALID_DIRECTIONS: Set<FetchValidatorsParams['direction']> = new Set([
+  'ASC',
+  'DESC',
+]);
+const VALID_STATUSES = new Set(Object.values(VALIDATOR_STATUSES)) as Set<
+  FetchValidatorsParams['status']
+>;
+const VALID_ORDER_BY = new Set(Object.values(ValidatorsOrderByEnum)) as Set<
+  FetchValidatorsParams['orderBy']
+>;
 
 const getQueryParam = (value: string | string[] | undefined) => {
   return Array.isArray(value) ? value[0] : value;
 };
 
-const parseValidatorPubkey = (
+const validatePage = (
+  value: string | string[] | number | undefined,
+): number | undefined => {
+  const queryValue = isNumber(value) ? String(value) : getQueryParam(value);
+
+  if (!queryValue || !numberRegex.test(queryValue)) {
+    return;
+  }
+
+  const page = Number(queryValue);
+
+  if (!Number.isSafeInteger(page) || page < 1) {
+    return;
+  }
+
+  return page;
+};
+
+const validateOrderBy = (
+  value: string | string[] | undefined,
+): FetchValidatorsParams['orderBy'] | undefined => {
+  const queryValue = getQueryParam(value);
+
+  if (
+    !queryValue ||
+    !VALID_ORDER_BY.has(queryValue as FetchValidatorsParams['orderBy'])
+  ) {
+    return;
+  }
+
+  return queryValue as FetchValidatorsParams['orderBy'];
+};
+
+const validateDirection = (
+  value: string | string[] | undefined,
+): FetchValidatorsParams['direction'] | undefined => {
+  const queryValue = getQueryParam(value);
+
+  if (
+    !queryValue ||
+    !VALID_DIRECTIONS.has(queryValue as FetchValidatorsParams['direction'])
+  ) {
+    return;
+  }
+
+  return queryValue as FetchValidatorsParams['direction'];
+};
+
+const validateStatus = (
+  value: string | string[] | undefined,
+): FetchValidatorsParams['status'] | undefined => {
+  const queryValue = getQueryParam(value);
+
+  if (
+    !queryValue ||
+    !VALID_STATUSES.has(queryValue as FetchValidatorsParams['status'])
+  ) {
+    return;
+  }
+
+  return queryValue as FetchValidatorsParams['status'];
+};
+
+const validatePubkey = (
   value: string | string[] | undefined,
 ): Hex | undefined => {
   const queryValue = getQueryParam(value)?.trim().toLowerCase();
@@ -45,8 +125,10 @@ const parseValidatorPubkey = (
   return queryValue;
 };
 
-const parseValidatorIndex = (value: string | string[] | undefined) => {
-  const queryValue = getQueryParam(value);
+const validateIndex = (
+  value: string | string[] | number | undefined,
+): number | undefined => {
+  const queryValue = isNumber(value) ? String(value) : getQueryParam(value);
 
   if (!queryValue || !numberRegex.test(queryValue)) {
     return;
@@ -54,7 +136,7 @@ const parseValidatorIndex = (value: string | string[] | undefined) => {
 
   const index = Number(queryValue);
 
-  if (!Number.isSafeInteger(index)) {
+  if (!Number.isSafeInteger(index) || index < 0) {
     return;
   }
 
@@ -65,13 +147,13 @@ const queryToParams = (
   query: Record<string, string | string[] | undefined>,
 ): FetchValidatorsParams => {
   return {
-    page: Number(getQueryParam(query.page)) || DEFAULT_PARAMS.page,
-    orderBy: query.orderBy as FetchValidatorsParams['orderBy'],
-    direction: query.direction as FetchValidatorsParams['direction'],
+    page: validatePage(query.page) ?? DEFAULT_PARAMS.page,
+    orderBy: validateOrderBy(query.orderBy) ?? DEFAULT_PARAMS.orderBy,
+    direction: validateDirection(query.direction) ?? DEFAULT_PARAMS.direction,
     limit: DEFAULT_PARAMS.limit,
-    pubkey: parseValidatorPubkey(query.pubkey),
-    index: parseValidatorIndex(query.index),
-    status: query.status as FetchValidatorsParams['status'],
+    pubkey: validatePubkey(query.pubkey),
+    index: validateIndex(query.index),
+    status: validateStatus(query.status) ?? DEFAULT_PARAMS.status,
   };
 };
 
@@ -79,23 +161,30 @@ const paramsToQuery = (
   params: FetchValidatorsParams,
 ): Record<string, string | undefined> => {
   const query: Record<string, string> = {};
-  if (params.page !== DEFAULT_PARAMS.page) {
-    query.page = String(params.page);
+  const page = validatePage(params.page);
+  const orderBy = validateOrderBy(params.orderBy);
+  const direction = validateDirection(params.direction);
+  const status = validateStatus(params.status);
+  const pubkey = validatePubkey(params.pubkey);
+  const index = validateIndex(params.index);
+
+  if (page != null && page !== DEFAULT_PARAMS.page) {
+    query.page = String(page);
   }
-  if (params.orderBy !== DEFAULT_PARAMS.orderBy) {
-    query.orderBy = params.orderBy;
+  if (orderBy && orderBy !== DEFAULT_PARAMS.orderBy) {
+    query.orderBy = orderBy;
   }
-  if (params.direction !== DEFAULT_PARAMS.direction) {
-    query.direction = params.direction;
+  if (direction && direction !== DEFAULT_PARAMS.direction) {
+    query.direction = direction;
   }
-  if (params.status && params.status !== DEFAULT_PARAMS.status) {
-    query.status = params.status;
+  if (status && status !== DEFAULT_PARAMS.status) {
+    query.status = status;
   }
-  if (params.pubkey !== DEFAULT_PARAMS.pubkey) {
-    query.pubkey = params.pubkey as Hex;
+  if (pubkey && pubkey !== DEFAULT_PARAMS.pubkey) {
+    query.pubkey = pubkey;
   }
-  if (params.index !== DEFAULT_PARAMS.index) {
-    query.index = String(params.index);
+  if (index != null && index !== DEFAULT_PARAMS.index) {
+    query.index = String(index);
   }
   return query;
 };
@@ -144,8 +233,12 @@ export const useValidatorListParams = () => {
   );
 
   const setFilterByStatus = useCallback(
-    (status: FetchValidatorsParams['status']) => {
-      void pushParams({ ...params, status });
+    (status: ValidatorStatusFilter | undefined) => {
+      void pushParams({
+        ...params,
+        status: status === 'all' ? undefined : status,
+        page: 1,
+      });
     },
     [params, pushParams],
   );

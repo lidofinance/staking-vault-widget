@@ -16,7 +16,7 @@ export const WarmingContainer = styled.footer`
   }) => getColorTransparency(warning, '20%')};
 `;
 
-export const IconWrapper = styled.footer`
+export const IconWrapper = styled.div`
   width: fit-content;
   height: fit-content;
 `;

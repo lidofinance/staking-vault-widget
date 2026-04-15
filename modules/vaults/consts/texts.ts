@@ -314,7 +314,7 @@ export const vaultTexts = {
       clearChanges: 'Clear changes',
     },
     validators: {
-      title: 'stVaults Validarors overview',
+      title: 'stVaults Validators overview',
       addValidator: {
         title: 'Prove and add validator via Predeposit guarantee',
         description:

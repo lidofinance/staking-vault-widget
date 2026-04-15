@@ -1,7 +1,7 @@
 import { type FC, useMemo, useCallback } from 'react';
 import { Option } from '@lidofinance/lido-ui';
 
-import { ValidatorStatus } from 'modules/vaults';
+import { type ValidatorStatus } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
 
@@ -21,7 +21,9 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
 
   const onChange = useCallback(
     (option: string | number) => {
-      return setFilterByStatus(option as ValidatorStatus);
+      return setFilterByStatus(
+        option === 'all' ? undefined : (option as ValidatorStatus),
+      );
     },
     [setFilterByStatus],
   );
@@ -30,7 +32,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
     <SelectStyled
       onChange={onChange}
       placeholder="Status"
-      value={params.status}
+      value={params.status ?? 'all'}
       data-testid={`${dataTestId}-filter-pubkey-index`}
     >
       <Option value="all">all</Option>

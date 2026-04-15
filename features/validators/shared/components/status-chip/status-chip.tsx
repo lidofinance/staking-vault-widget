@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import type { ValidatorStatus } from 'modules/vaults';
+import { isNumber } from 'utils';
 
 import { StatusContainer, StatusText } from './styles';
 
@@ -13,7 +14,7 @@ type StatusChipProps = {
 export const StatusChip: FC<StatusChipProps> = ({ value, status }) => {
   return (
     <StatusContainer $status={status}>
-      {typeof value === 'number' && (
+      {isNumber(value) && (
         <Text size="xxs" as="span">
           {value}
         </Text>
