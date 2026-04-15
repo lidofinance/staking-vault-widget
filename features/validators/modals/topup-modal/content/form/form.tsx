@@ -13,6 +13,7 @@ import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
 
 import { useValidators } from 'features/validators/contexts';
+import { ValidatorPdgStage } from 'features/validators/shared';
 
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
@@ -25,14 +26,12 @@ import type {
 import { FormContainer } from './styles';
 
 type FormProps = {
-  balance: bigint;
-  index: number;
   pubkey: Hex;
 };
 
 const { action } = vaultTexts.actions.validators.modals.topUp;
 
-export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
+export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   const {
     invalidateVaultConfig,
     invalidateVaultState,
@@ -40,9 +39,14 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
   } = useVault();
   // TODO: check if deposits paused
   const disabled = useDisableForm();
-  const { hasDepositorPermission } = useValidators();
+  const {
+    hasDepositorPermission,
+    beaconChainDepositsPaused,
+    getValidatorByPubkey,
+  } = useValidators();
   const { isDappActive } = useDappStatus();
   const { topUp, retryEvent } = useSubmitTopup();
+  const { index, balance, pdgStage } = getValidatorByPubkey(pubkey);
 
   const formObject = useForm<
     TopUpFormFieldValues,
@@ -54,7 +58,12 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
       index,
       pubkey,
     },
-    disabled: !isDappActive || disabled || !hasDepositorPermission,
+    disabled:
+      !isDappActive ||
+      disabled ||
+      !hasDepositorPermission ||
+      pdgStage !== ValidatorPdgStage.ACTIVATED ||
+      beaconChainDepositsPaused,
     resolver: topUpFormResolver,
     context: { availableBalance: balance },
     mode: 'all',
@@ -89,7 +98,6 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
           maxAmount={balance}
           fullwidth
         />
-        {/*TODO: use button with connect option*/}
         <ConnectWalletButton>
           <Button disabled={formObject.formState.disabled} fullwidth>
             {action}

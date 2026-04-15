@@ -31,7 +31,11 @@ type selectValidatorDataArgs = {
   contract: {
     pdgPolicy: string;
     availableBalance: bigint;
+    obligationsShortfallValue: bigint;
     beaconChainDepositsPauseIntent: boolean;
+    beaconChainDepositsPaused: boolean;
+    isVaultInJail: boolean;
+    isReportFresh: boolean;
     depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
@@ -92,8 +96,12 @@ export const useVaultValidatorsData = () => {
       const [
         pdgPolicy,
         availableBalance,
+        // By user
         { beaconChainDepositsPauseIntent },
         depositor,
+        beaconChainDepositsPaused,
+        isVaultInJail,
+        obligationsShortfallValue,
       ] = await Promise.all([
         activeVault.dashboard.read.pdgPolicy(),
         activeVault.vault.read.availableBalance(),
@@ -101,6 +109,9 @@ export const useVaultValidatorsData = () => {
         activeVault.predepositGuarantee.read.nodeOperatorDepositor([
           activeVault.nodeOperator,
         ]),
+        activeVault.vault.read.beaconChainDepositsPaused(),
+        activeVault.operatorGrid.read.isVaultInJail([activeVault.address]),
+        activeVault.hub.read.obligationsShortfallValue([activeVault.address]),
       ]);
 
       const response = await fetchValidators(activeVault.address, {
@@ -130,7 +141,11 @@ export const useVaultValidatorsData = () => {
           pdgPolicy: `${pdgPolicy}`,
           availableBalance,
           beaconChainDepositsPauseIntent,
+          beaconChainDepositsPaused,
           depositor,
+          isVaultInJail,
+          obligationsShortfallValue,
+          isReportFresh: activeVault.isReportFresh,
         },
       };
     },
@@ -183,6 +198,10 @@ export const useVaultValidatorsData = () => {
     availableBalance: data.contract?.availableBalance,
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
+    beaconChainDepositsPaused: data.contract?.beaconChainDepositsPaused,
+    isVaultInJail: data.contract?.isVaultInJail,
+    isReportFresh: data.contract?.isReportFresh,
+    obligationsShortfallValue: data.contract?.obligationsShortfallValue,
     depositor: data.contract?.depositor,
     isAdmin: !!hasAdmin,
     hasWithdrawalPermission: hasPermission,

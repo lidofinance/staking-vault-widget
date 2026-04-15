@@ -51,11 +51,7 @@ export const TopupModal: FC<TopupModalProps> = ({
           </Text>
         </ValidatorInfo>
         <AvailableBalance title={availableToTopup} amount={availableBalance} />
-        <TopupModalForm
-          index={index}
-          pubkey={pubKey}
-          balance={availableBalance}
-        />
+        <TopupModalForm pubkey={pubKey} />
       </ContentContainer>
     </Modal>
   );

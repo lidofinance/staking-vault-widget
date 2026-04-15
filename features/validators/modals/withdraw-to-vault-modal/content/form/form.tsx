@@ -14,10 +14,7 @@ import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
-import {
-  AvailableBalance,
-  ValidatorPdgStage,
-} from 'features/validators/shared';
+import { AvailableBalance } from 'features/validators/shared';
 
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
@@ -46,12 +43,18 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
-  const { hasWithdrawalPermission, getValidatorByPubkey } = useValidators();
+  const {
+    hasWithdrawalPermission,
+    isVaultInJail,
+    isReportFresh,
+    getValidatorByPubkey,
+    obligationsShortfallValue,
+  } = useValidators();
   const disabled = useDisableForm();
   const { isDappActive } = useDappStatus();
   const { withdrawToVault, retryEvent } = useWithdrawalToVault();
   const actionText = isPartial ? actionPartial : actionFull;
-  const { index, balance, pdgStage } = getValidatorByPubkey(pubkey);
+  const { index, balance } = getValidatorByPubkey(pubkey);
 
   const formObject = useForm<
     WithdrawalFormFieldValues,
@@ -67,7 +70,9 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       !isDappActive ||
       !hasWithdrawalPermission ||
       disabled ||
-      pdgStage !== ValidatorPdgStage.ACTIVATED,
+      !isReportFresh ||
+      (isPartial && isVaultInJail) ||
+      (isPartial && obligationsShortfallValue > 0n),
     resolver: withdrawalFormResolver,
     context: { availableAmount: balance, isPartial },
     mode: 'all',
