@@ -54,8 +54,7 @@ export const ValidatorModalProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const value = useMemo(
     () => ({ openModal, closeModal }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [openModal, closeModal],
   );
 
   return (
