@@ -11,7 +11,8 @@ import {
 import type { ModalData } from 'features/validators/contexts';
 import { VALIDATOR_MODALS } from 'features/validators/const';
 
-import { WithdrawalType, WarningInfo, WithdrawalAction } from './components';
+import { WithdrawalType, WarningInfo } from './components';
+import { WithdrawToVaultModalForm } from './content';
 
 type WithdrawToVaultModalProps = {
   modalData: ModalData | null;
@@ -29,7 +30,7 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
     return null;
   }
 
-  const { currentModal, pubKey, index, balance } = modalData ?? {};
+  const { currentModal, pubKey, index, balance } = modalData;
 
   const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
   const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
@@ -47,7 +48,12 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
         <WithdrawalType modalData={modalData} />
         <WarningInfo currentModal={currentModal} balance={balance} />
         <AvailableBalance title={availableToWithdraw} amount={balance} />
-        <WithdrawalAction />
+        <WithdrawToVaultModalForm
+          balance={balance}
+          index={index}
+          isPartial={isPartial}
+          pubkey={pubKey}
+        />
       </ContentContainer>
     </Modal>
   );

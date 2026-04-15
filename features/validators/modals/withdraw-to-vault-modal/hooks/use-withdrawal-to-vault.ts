@@ -1,5 +1,6 @@
-import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
+import invariant from 'tiny-invariant';
+import { formatGwei } from 'viem';
 
 import {
   useVault,
@@ -8,7 +9,7 @@ import {
   useReportCalls,
 } from 'modules/vaults';
 import {
-  TransactionEntry,
+  type TransactionEntry,
   useDappStatus,
   useSendTransaction,
   withSuccess,
@@ -39,17 +40,18 @@ export const useWithdrawalToVault = () => {
         '[useWithdrawalToVault] fee recipient address is undefined',
       );
 
+      const amountInGwei = BigInt(formatGwei(amount));
+
       const mainActionLoadingText = loadingText(index, amount);
       const mainActionCompleteText = mainCompleteText(index, amount);
 
       const prepareTransactions = async () => {
         const calls: TransactionEntry[] = [...prepareReportCalls()];
 
-        // TODO format amount from wei to gwei
         calls.push({
           ...activeVault.dashboard.encode.triggerValidatorWithdrawals([
             pubkey,
-            [amount],
+            [amountInGwei],
             address,
           ]),
           loadingActionText: mainActionLoadingText,

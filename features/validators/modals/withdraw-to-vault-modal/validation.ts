@@ -11,11 +11,20 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
+const WEI_PER_GWEI = 1_000_000_000n;
+const amountStepError = 'Amount must be a multiple of 1 gwei';
+
 export const withdrawalFormSchema = ({
   availableAmount,
+  isPartial,
 }: WithdrawalFormValidationContext) => {
   return z.object({
-    amount: maxAmountSchema(availableAmount),
+    amount: isPartial
+      ? maxAmountSchema(availableAmount).refine(
+          (value) => value % WEI_PER_GWEI === 0n,
+          amountStepError,
+        )
+      : z.literal(0n),
     index: z.number(),
     pubkey: pubkeySchema,
   });

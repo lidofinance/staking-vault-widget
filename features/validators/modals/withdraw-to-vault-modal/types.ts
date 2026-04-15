@@ -3,6 +3,7 @@ import type { withdrawalFormSchema } from './validation';
 
 export type WithdrawalFormValidationContext = {
   availableAmount: bigint;
+  isPartial: boolean;
 };
 
 export type WithdrawalFormValidatedValues = z.infer<
