@@ -1,8 +1,4 @@
-import {
-  AccumulatedInfo,
-  Validators,
-  AddValidator,
-} from 'features/validators/content';
+import { AccumulatedInfo, Validators } from 'features/validators/content';
 import { ValidatorsTableProvider } from 'features/validators/contexts';
 
 import { PageWrapper } from './styles';
@@ -12,7 +8,6 @@ export const ValidatorsPage = () => {
     <PageWrapper>
       <ValidatorsTableProvider>
         <AccumulatedInfo />
-        <AddValidator />
         <Validators />
       </ValidatorsTableProvider>
     </PageWrapper>

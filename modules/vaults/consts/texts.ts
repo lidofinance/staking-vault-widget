@@ -315,13 +315,6 @@ export const vaultTexts = {
     },
     validators: {
       title: 'stVaults Validators overview',
-      addValidator: {
-        title: 'Prove and add validator via Predeposit guarantee',
-        description:
-          'Predeposit Guarantee is a mechanism that enables a fully non-custodial stVault setup and seamless top-ups of active validators through the stVaults UI.',
-        action: 'Add validator',
-        linkToDocs: 'Learn more',
-      },
       table: {
         placeholder: {
           title: 'No validators found',
