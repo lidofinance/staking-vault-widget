@@ -9,7 +9,6 @@ import {
 } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
-import { useShowTableMenu } from '../../../../hooks';
 
 import {
   MenuCell,
@@ -88,9 +87,15 @@ type ValidatorsTableProps = {
 export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
   dataTestId,
 }) => {
-  const { validators, isLoading, isError, orderBy, direction, setSort } =
-    useValidators();
-  const { hideTableMenu } = useShowTableMenu();
+  const {
+    validators,
+    isLoading,
+    isError,
+    orderBy,
+    direction,
+    setSort,
+    hideTableMenu,
+  } = useValidators();
 
   const isEmpty = (validators?.length ?? 0) === 0;
   const showTable = !(!isLoading && !isError && isEmpty);

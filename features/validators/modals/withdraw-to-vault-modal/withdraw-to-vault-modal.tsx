@@ -2,6 +2,7 @@ import type { FC } from 'react';
 import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 import {
   AvailableBalance,
@@ -31,7 +32,7 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   }
 
   const { currentModal, pubKey, index, balance } = modalData;
-
+  const availableToPartialWithdraw = balance - WEI_PER_ETHER * 32n;
   const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
   const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
 
@@ -47,9 +48,14 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
         <ValidatorInfo pubKey={pubKey} index={index} balance={balance} />
         <WithdrawalType modalData={modalData} />
         <WarningInfo currentModal={currentModal} balance={balance} />
-        <AvailableBalance title={availableToWithdraw} amount={balance} />
+        {isPartial && (
+          <AvailableBalance
+            title={availableToWithdraw}
+            amount={availableToPartialWithdraw}
+          />
+        )}
         <WithdrawToVaultModalForm
-          balance={balance}
+          balance={availableToPartialWithdraw}
           index={index}
           isPartial={isPartial}
           pubkey={pubKey}

@@ -1,5 +1,4 @@
 import { type FC, useCallback } from 'react';
-import { Switcher, SwitcherItem } from '@lidofinance/lido-ui';
 
 import {
   type ModalData,
@@ -7,7 +6,7 @@ import {
 } from 'features/validators/contexts';
 import { VALIDATOR_MODALS } from 'features/validators/const';
 
-import { TypeWrapper } from './styles';
+import { SwitcherItemStyled, SwitcherStyled } from './styles';
 
 type WithdrawalTypeProps = {
   modalData: ModalData;
@@ -34,15 +33,13 @@ export const WithdrawalType: FC<WithdrawalTypeProps> = ({ modalData }) => {
   }, [openModal, modalData]);
 
   return (
-    <TypeWrapper>
-      <Switcher>
-        <SwitcherItem active={isPartial} onClick={openPartialWithdrawal}>
-          Partial withdrawal
-        </SwitcherItem>
-        <SwitcherItem active={isFull} onClick={openFullWithdrawal}>
-          Full withdrawal
-        </SwitcherItem>
-      </Switcher>
-    </TypeWrapper>
+    <SwitcherStyled>
+      <SwitcherItemStyled active={isPartial} onClick={openPartialWithdrawal}>
+        Partial withdrawal
+      </SwitcherItemStyled>
+      <SwitcherItemStyled active={isFull} onClick={openFullWithdrawal}>
+        Full withdrawal
+      </SwitcherItemStyled>
+    </SwitcherStyled>
   );
 };

@@ -4,7 +4,7 @@ import { vaultTexts } from 'modules/vaults';
 
 import type { ValidatorsModalItem } from 'features/validators/types';
 import { VALIDATOR_MODALS } from 'features/validators/const';
-import { useShowTableMenu } from './use-show-table-menu';
+import { useValidators } from 'features/validators/contexts';
 
 type ValidatorMenuActionItem = {
   hasPermission: boolean;
@@ -16,12 +16,13 @@ const { topUpValidator, partialWithdrawal, withdrawToStVault } =
   vaultTexts.actions.validators.table.menu;
 
 export const useValidatorMenuActions = () => {
-  const { isAdmin, isDepositor, hasWithdrawalPermission } = useShowTableMenu();
+  const { isAdmin, hasDepositorPermission, hasWithdrawalPermission } =
+    useValidators();
 
   return useMemo<ValidatorMenuActionItem[]>(
     () => [
       {
-        hasPermission: isDepositor,
+        hasPermission: hasDepositorPermission,
         label: topUpValidator,
         modal: VALIDATOR_MODALS.topUpValidator,
       },
@@ -36,6 +37,6 @@ export const useValidatorMenuActions = () => {
         modal: VALIDATOR_MODALS.fullWithdrawal,
       },
     ],
-    [isAdmin, isDepositor, hasWithdrawalPermission],
+    [isAdmin, hasDepositorPermission, hasWithdrawalPermission],
   );
 };

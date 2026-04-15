@@ -33,7 +33,6 @@ export const TopupModal: FC<TopupModalProps> = ({
 
   const { currentModal, pubKey, index, balance } = modalData;
 
-  // TODO: get vault balance available for top up
   return (
     <Modal
       open={VALIDATOR_MODALS.topUpValidator === currentModal}

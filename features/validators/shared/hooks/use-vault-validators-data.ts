@@ -1,11 +1,16 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
+import { type Address, isAddress, isAddressEqual } from 'viem';
 
 import {
   fetchValidators,
   useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
   type FetchValidatorsResult,
 } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
+import { useDisableForm } from 'shared/hook-form';
 
 import { useValidatorListParams } from './use-validator-list-params';
 
@@ -14,6 +19,7 @@ type selectValidatorDataArgs = {
     pdgPolicy: string;
     availableBalance: bigint;
     beaconChainDepositsPauseIntent: boolean;
+    depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
   table?: FetchValidatorsResult['table'];
@@ -26,6 +32,10 @@ const selectValidatorData = (data: selectValidatorDataArgs) => data;
 
 export const useVaultValidatorsData = () => {
   const { activeVault, queryKeys } = useVault();
+  const { address, isDappActive } = useDappStatus();
+  const disabled = useDisableForm();
+  const { hasAdmin } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('validatorWithdrawalTrigger');
   const {
     params,
     isReady,
@@ -52,12 +62,19 @@ export const useVaultValidatorsData = () => {
         '[useVaultValidatorsData] activeVault is not defined',
       );
 
-      const [pdgPolicy, availableBalance, { beaconChainDepositsPauseIntent }] =
-        await Promise.all([
-          activeVault.dashboard.read.pdgPolicy(),
-          activeVault.vault.read.availableBalance(),
-          activeVault.hub.read.vaultConnection([activeVault.address]),
-        ]);
+      const [
+        pdgPolicy,
+        availableBalance,
+        { beaconChainDepositsPauseIntent },
+        depositor,
+      ] = await Promise.all([
+        activeVault.dashboard.read.pdgPolicy(),
+        activeVault.vault.read.availableBalance(),
+        activeVault.hub.read.vaultConnection([activeVault.address]),
+        activeVault.predepositGuarantee.read.nodeOperatorDepositor([
+          activeVault.nodeOperator,
+        ]),
+      ]);
 
       const response = await fetchValidators(activeVault.address, {
         ...params,
@@ -69,6 +86,7 @@ export const useVaultValidatorsData = () => {
           pdgPolicy: `${pdgPolicy}`,
           availableBalance,
           beaconChainDepositsPauseIntent,
+          depositor,
         },
       };
     },
@@ -76,6 +94,12 @@ export const useVaultValidatorsData = () => {
   });
 
   const data = query.data ?? ({} as ValidatorData);
+  const isDepositor =
+    !!address &&
+    isAddress(data.contract?.depositor) &&
+    isAddressEqual(data.contract.depositor, address);
+  const hideTableMenu =
+    disabled || !isDappActive || !(hasAdmin || hasPermission || isDepositor);
 
   return {
     ...query,
@@ -105,6 +129,11 @@ export const useVaultValidatorsData = () => {
     availableBalance: data.contract?.availableBalance,
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
+    depositor: data.contract?.depositor,
+    isAdmin: !!hasAdmin,
+    hasWithdrawalPermission: hasPermission,
+    hasDepositorPermission: isDepositor,
+    hideTableMenu,
 
     // query params
     params,
