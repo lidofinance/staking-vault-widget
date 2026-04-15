@@ -1,4 +1,4 @@
-import { type FC, useCallback } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Eth } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
@@ -37,16 +37,19 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
-  // TODO: check if deposits paused
   const disabled = useDisableForm();
   const {
     hasDepositorPermission,
     beaconChainDepositsPaused,
+    availableBalance,
     getValidatorByPubkey,
   } = useValidators();
   const { isDappActive } = useDappStatus();
   const { topUp, retryEvent } = useSubmitTopup();
-  const { index, balance, pdgStage } = getValidatorByPubkey(pubkey);
+  const { index, pdgStage } = useMemo(
+    () => getValidatorByPubkey(pubkey),
+    [getValidatorByPubkey, pubkey],
+  );
 
   const formObject = useForm<
     TopUpFormFieldValues,
@@ -65,7 +68,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       pdgStage !== ValidatorPdgStage.ACTIVATED ||
       beaconChainDepositsPaused,
     resolver: topUpFormResolver,
-    context: { availableBalance: balance },
+    context: { availableBalance },
     mode: 'all',
   });
 
@@ -95,7 +98,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           amountFieldName="amount"
           label="ETH amount"
           leftDecorator={<Eth />}
-          maxAmount={balance}
+          maxAmount={availableBalance}
           fullwidth
         />
         <ConnectWalletButton>

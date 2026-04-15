@@ -157,14 +157,7 @@ const normalizeResponse = (
 export const fetchValidators = async (
   vaultAddress: Address,
   params: FetchValidatorsParams,
-): Promise<FetchValidatorsResult | undefined> => {
-  try {
-    const result = await fetchValidatorsApi(vaultAddress, params);
-    return normalizeResponse(result);
-  } catch (error) {
-    console.warn(
-      '[fetchValidators] Error fetching connected vaults from api:',
-      error,
-    );
-  }
+): Promise<FetchValidatorsResult> => {
+  const result = await fetchValidatorsApi(vaultAddress, params);
+  return normalizeResponse(result);
 };

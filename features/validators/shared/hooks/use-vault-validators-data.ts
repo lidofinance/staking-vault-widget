@@ -125,7 +125,6 @@ export const useVaultValidatorsData = () => {
                 await activeVault.predepositGuarantee.read.validatorStatus([
                   validator.pubkey,
                 ]);
-
               return {
                 ...validator,
                 pdgStage,
