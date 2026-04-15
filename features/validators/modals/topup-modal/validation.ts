@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 import type {
   TopUpFormFieldValues,
@@ -11,11 +12,18 @@ import type {
   TopUpFormValidationContext,
 } from './types';
 
+const PREDEPOSIT_AMOUNT = WEI_PER_ETHER; // predeposit amount === 1 eth
+const ACTIVATION_DEPOSIT_AMOUNT = 31n * WEI_PER_ETHER; // amount of ether to be deposited after the predeposit to activate the validator
+const MAX_TOPUP_AMOUNT =
+  2048n * WEI_PER_ETHER - ACTIVATION_DEPOSIT_AMOUNT - PREDEPOSIT_AMOUNT;
+
 export const topUpFormSchema = ({
   availableBalance,
 }: TopUpFormValidationContext) => {
+  const maxAmount =
+    availableBalance > MAX_TOPUP_AMOUNT ? MAX_TOPUP_AMOUNT : availableBalance;
   return z.object({
-    amount: maxAmountSchema(availableBalance),
+    amount: maxAmountSchema(maxAmount),
     index: z.number(),
     pubkey: pubkeySchema,
   });

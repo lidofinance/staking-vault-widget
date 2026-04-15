@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { formatGwei } from 'viem';
 
 import {
   useVault,
@@ -15,6 +14,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
+import { WEI_PER_GWEI } from 'consts/tx';
 
 import type { WithdrawalFormValidatedValues } from '../types';
 
@@ -40,7 +40,7 @@ export const useWithdrawalToVault = () => {
         '[useWithdrawalToVault] fee recipient address is undefined',
       );
 
-      const amountInGwei = BigInt(formatGwei(amount));
+      const amountInGwei = amount / WEI_PER_GWEI;
 
       const mainActionLoadingText = loadingText(index, amount);
       const mainActionCompleteText = mainCompleteText(index, amount);

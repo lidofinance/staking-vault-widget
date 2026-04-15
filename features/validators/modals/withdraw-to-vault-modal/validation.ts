@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
+import { WEI_PER_GWEI } from 'consts/tx';
 
 import {
   WithdrawalFormFieldValues,
@@ -11,8 +12,7 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
-const WEI_PER_GWEI = 1_000_000_000n;
-const amountStepError = 'Amount must be a multiple of 1 gwei';
+const amountStepError = 'Amount must be above of 1 gwei';
 
 export const withdrawalFormSchema = ({
   availableAmount,

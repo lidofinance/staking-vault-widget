@@ -23,6 +23,8 @@ type WithdrawToVaultModalProps = {
 const { title, description, availableToWithdraw } =
   vaultTexts.actions.validators.modals.withdrawal;
 
+const MIN_ACTIVATION_BALANCE = WEI_PER_ETHER * 32n;
+
 export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   modalData,
   onCloseModal,
@@ -32,7 +34,8 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   }
 
   const { currentModal, pubKey, index, balance } = modalData;
-  const availableToPartialWithdraw = balance - WEI_PER_ETHER * 32n;
+  const availableToPartialWithdraw =
+    balance >= MIN_ACTIVATION_BALANCE ? balance - MIN_ACTIVATION_BALANCE : 0n;
   const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
   const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
 
@@ -54,12 +57,7 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
             amount={availableToPartialWithdraw}
           />
         )}
-        <WithdrawToVaultModalForm
-          balance={availableToPartialWithdraw}
-          index={index}
-          isPartial={isPartial}
-          pubkey={pubKey}
-        />
+        <WithdrawToVaultModalForm isPartial={isPartial} pubkey={pubKey} />
       </ContentContainer>
     </Modal>
   );

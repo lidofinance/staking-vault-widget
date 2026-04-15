@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
-import { type Address, isAddress, isAddressEqual } from 'viem';
+import { type Address, type Hex, isAddress, isAddressEqual } from 'viem';
 
 import {
   fetchValidators,
@@ -13,6 +13,19 @@ import { useDappStatus } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
 
 import { useValidatorListParams } from './use-validator-list-params';
+import { useCallback } from 'react';
+
+export enum ValidatorPdgStage {
+  NONE,
+  PREDEPOSITED,
+  PROVEN,
+  ACTIVATED,
+  COMPENSATED,
+}
+
+type ValidatorWithPdgStage = FetchValidatorsResult['table'][number] & {
+  pdgStage: ValidatorPdgStage;
+};
 
 type selectValidatorDataArgs = {
   contract: {
@@ -22,13 +35,27 @@ type selectValidatorDataArgs = {
     depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
-  table?: FetchValidatorsResult['table'];
+  table?: ValidatorWithPdgStage[];
   pagination?: FetchValidatorsResult['pagination'];
 };
 
 export type ValidatorData = ReturnType<typeof selectValidatorData>;
 
 const selectValidatorData = (data: selectValidatorDataArgs) => data;
+
+const getValidatorByPubkey = (
+  validators: ValidatorWithPdgStage[],
+  pubkey: Hex,
+): ValidatorWithPdgStage => {
+  const validator = validators.find((item) => item.pubkey === pubkey);
+
+  invariant(
+    validator,
+    `[useVaultValidatorsData] Validator with pubkey ${pubkey} not found`,
+  );
+
+  return validator;
+};
 
 export const useVaultValidatorsData = () => {
   const { activeVault, queryKeys } = useVault();
@@ -80,8 +107,25 @@ export const useVaultValidatorsData = () => {
         ...params,
       });
 
+      const tableWithPdgStage = response
+        ? await Promise.all(
+            response.table.map(async (validator) => {
+              const { stage: pdgStage } =
+                await activeVault.predepositGuarantee.read.validatorStatus([
+                  validator.pubkey,
+                ]);
+
+              return {
+                ...validator,
+                pdgStage,
+              };
+            }),
+          )
+        : undefined;
+
       return {
         ...(response ?? {}),
+        table: tableWithPdgStage,
         contract: {
           pdgPolicy: `${pdgPolicy}`,
           availableBalance,
@@ -108,7 +152,17 @@ export const useVaultValidatorsData = () => {
     meta: data.meta,
 
     // validators list
-    validators: data.table,
+    validators: data?.table,
+    getValidatorByPubkey: useCallback(
+      (pubkey: ValidatorWithPdgStage['pubkey']) => {
+        invariant(
+          data.table,
+          '[getValidatorByPubkey] validators list is undefined',
+        );
+        return getValidatorByPubkey(data.table, pubkey);
+      },
+      [data?.table],
+    ),
 
     // pagination
     direction: data.pagination?.direction,

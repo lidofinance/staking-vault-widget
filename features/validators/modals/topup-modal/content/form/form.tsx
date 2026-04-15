@@ -12,6 +12,8 @@ import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
 
+import { useValidators } from 'features/validators/contexts';
+
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
 import type {
@@ -38,6 +40,7 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
   } = useVault();
   // TODO: check if deposits paused
   const disabled = useDisableForm();
+  const { hasDepositorPermission } = useValidators();
   const { isDappActive } = useDappStatus();
   const { topUp, retryEvent } = useSubmitTopup();
 
@@ -51,7 +54,7 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
       index,
       pubkey,
     },
-    disabled: !isDappActive || disabled,
+    disabled: !isDappActive || disabled || !hasDepositorPermission,
     resolver: topUpFormResolver,
     context: { availableBalance: balance },
     mode: 'all',
@@ -88,7 +91,9 @@ export const TopupModalForm: FC<FormProps> = ({ balance, index, pubkey }) => {
         />
         {/*TODO: use button with connect option*/}
         <ConnectWalletButton>
-          <Button fullwidth>{action}</Button>
+          <Button disabled={formObject.formState.disabled} fullwidth>
+            {action}
+          </Button>
         </ConnectWalletButton>
       </FormContainer>
     </FormController>

@@ -14,6 +14,9 @@ import { WEI_PER_ETHER } from 'consts/tx';
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 
+import { useValidators } from 'features/validators/contexts';
+import { ValidatorPdgStage } from 'features/validators/shared';
+
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
 import type {
@@ -29,18 +32,14 @@ import {
 import { FormContainer } from './styles';
 
 type FormProps = {
-  balance: bigint;
-  index: number;
   isPartial: boolean;
   pubkey: Hex;
 };
 
-const { estimatedFee, action } =
+const { estimatedFee, actionFull, actionPartial } =
   vaultTexts.actions.validators.modals.withdrawal;
 
 export const WithdrawToVaultModalForm: FC<FormProps> = ({
-  balance,
-  index,
   isPartial,
   pubkey,
 }) => {
@@ -49,9 +48,12 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
+  const { hasWithdrawalPermission, getValidatorByPubkey } = useValidators();
   const disabled = useDisableForm();
   const { isDappActive } = useDappStatus();
   const { withdrawToVault, retryEvent } = useWithdrawalToVault();
+  const actionText = isPartial ? actionPartial : actionFull;
+  const { index, balance, pdgStage } = getValidatorByPubkey(pubkey);
 
   const formObject = useForm<
     WithdrawalFormFieldValues,
@@ -63,13 +65,17 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       index,
       pubkey,
     },
-    disabled: !isDappActive || disabled,
+    disabled:
+      !isDappActive ||
+      !hasWithdrawalPermission ||
+      disabled ||
+      pdgStage !== ValidatorPdgStage.ACTIVATED,
     resolver: withdrawalFormResolver,
     context: { availableAmount: balance, isPartial },
     mode: 'all',
   });
 
-  const { reset } = formObject;
+  const { reset, formState } = formObject;
 
   useEffect(() => {
     reset({
@@ -125,7 +131,9 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
             </Text>
           </FeeContent>
           <ConnectWalletButton>
-            <Button fullwidth>{action}</Button>
+            <Button disabled={formState.disabled} fullwidth>
+              {actionText}
+            </Button>
           </ConnectWalletButton>
         </ActionContainer>
       </FormContainer>
