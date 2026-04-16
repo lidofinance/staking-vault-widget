@@ -32,7 +32,7 @@ type FormProps = {
 const { actionActive, actionDisabled, validatorWithoutPDG } =
   vaultTexts.actions.validators.modals.topUp;
 const { docsOrigin } = config;
-const pdgDocsLink = `${docsOrigin}/run-on-lido/stvaults/tech-documentation/pdg`;
+const pdgDocsLink = `${docsOrigin}/run-on-lido/stvaults/tech-documentation/pdg/#pdg-shortcut`;
 
 export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   const {
