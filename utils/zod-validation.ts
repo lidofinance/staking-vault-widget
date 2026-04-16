@@ -13,7 +13,7 @@ export const addressSchema = z
     message: vaultTexts.common.errors.address.required,
   })
   .trim()
-  .transform((value) => value.toLocaleLowerCase() as Address)
+  .transform((value) => value.toLowerCase() as Address)
   .refine(validateAddress, {
     message: vaultTexts.common.errors.address.invalid,
   }) as z.ZodType<Address>;
@@ -24,7 +24,7 @@ export const pubkeySchema = z
     message: vaultTexts.common.errors.pubkey.required,
   })
   .trim()
-  .transform((value) => value.toLocaleLowerCase() as Hex)
+  .transform((value) => value.toLowerCase() as Hex)
   .refine(validatePubkey, {
     message: vaultTexts.common.errors.pubkey.invalid,
   }) as z.ZodType<Hex>;
