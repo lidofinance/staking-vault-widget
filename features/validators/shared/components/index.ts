@@ -8,3 +8,5 @@ export { Section } from './section';
 export { AvailableBalance } from './available-balance';
 export { ContentContainer } from './content-container';
 export { ValidatorInfo } from './validator-info';
+export { WarningInfo } from './warning-info';
+export { ModalFormButton } from './modal-form-button';

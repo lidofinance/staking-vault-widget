@@ -336,6 +336,7 @@ export const vaultTexts = {
           estimatedFee: 'Estimated withdrawal fee',
           actionFull: 'Force exit validator',
           actionPartial: 'Withdraw to stVault',
+          actionDisabled: 'Withdraw unavailable',
           partialWarning:
             "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
           fullWarning: (amount: bigint) =>
@@ -353,7 +354,9 @@ export const vaultTexts = {
             'You can top-up this validator by ETH available on the stVault Balance.',
           availableToTopup: 'Available to top up',
           estimatedFee: 'Estimated withdrawal fee',
-          action: 'Top up validator',
+          actionActive: 'Top up validator',
+          actionDisabled: 'Top up unavailable',
+          validatorWithoutPDG: `Top-ups are unavailable for this validator because it has not been proven for Predeposit Guarantee. To enable top-ups in this interface, please prove the validator.`,
           txModal: {
             loadingText: (index: number, amount: bigint) =>
               `You are topping up the validator #${index} with ${formatBalance(amount).trimmed} ETH`,

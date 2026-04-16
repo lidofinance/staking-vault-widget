@@ -8,11 +8,12 @@ import {
   AvailableBalance,
   ContentContainer,
   ValidatorInfo,
+  WarningInfo,
 } from 'features/validators/shared';
 import type { ModalData } from 'features/validators/contexts';
 import { VALIDATOR_MODALS } from 'features/validators/const';
 
-import { WithdrawalType, WarningInfo } from './components';
+import { WithdrawalType } from './components';
 import { WithdrawToVaultModalForm } from './content';
 
 type WithdrawToVaultModalProps = {
@@ -21,6 +22,9 @@ type WithdrawToVaultModalProps = {
 };
 
 const { title, description, availableToWithdraw } =
+  vaultTexts.actions.validators.modals.withdrawal;
+
+const { partialWarning, fullWarning } =
   vaultTexts.actions.validators.modals.withdrawal;
 
 const MIN_ACTIVATION_BALANCE = WEI_PER_ETHER * 32n;
@@ -50,7 +54,9 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
         <Text size="xs">{description}</Text>
         <ValidatorInfo pubKey={pubKey} index={index} balance={balance} />
         <WithdrawalType modalData={modalData} />
-        <WarningInfo currentModal={currentModal} balance={balance} />
+        <WarningInfo>
+          {isPartial ? partialWarning : fullWarning(balance)}
+        </WarningInfo>
         {isPartial && (
           <AvailableBalance
             title={availableToWithdraw}

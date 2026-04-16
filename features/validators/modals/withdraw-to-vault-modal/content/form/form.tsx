@@ -1,6 +1,6 @@
 import { type FC, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Eth } from '@lidofinance/lido-ui';
+import { Eth } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
 
 import {
@@ -9,12 +9,11 @@ import {
   useDisableForm,
 } from 'shared/hook-form';
 import { ConnectWalletButton } from 'shared/wallet';
-import { WEI_PER_ETHER } from 'consts/tx';
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
-import { AvailableBalance } from 'features/validators/shared';
+import { AvailableBalance, ModalFormButton } from 'features/validators/shared';
 
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
@@ -31,7 +30,7 @@ type FormProps = {
   pubkey: Hex;
 };
 
-const { estimatedFee, actionFull, actionPartial } =
+const { estimatedFee, actionFull, actionPartial, actionDisabled } =
   vaultTexts.actions.validators.modals.withdrawal;
 
 export const WithdrawToVaultModalForm: FC<FormProps> = ({
@@ -46,14 +45,13 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   const {
     hasWithdrawalPermission,
     isVaultInJail,
-    isReportFresh,
     getValidatorByPubkey,
     obligationsShortfallValue,
+    validatorWithdrawalFee,
   } = useValidators();
   const disabled = useDisableForm();
   const { isDappActive } = useDappStatus();
   const { withdrawToVault, retryEvent } = useWithdrawalToVault();
-  const actionText = isPartial ? actionPartial : actionFull;
   const { index, balance } = getValidatorByPubkey(pubkey);
 
   const formObject = useForm<
@@ -70,7 +68,6 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       !isDappActive ||
       !hasWithdrawalPermission ||
       disabled ||
-      !isReportFresh ||
       (isPartial && isVaultInJail) ||
       (isPartial && obligationsShortfallValue > 0n),
     resolver: withdrawalFormResolver,
@@ -79,6 +76,8 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   });
 
   const { reset, formState } = formObject;
+  const actionAvailable = isPartial ? actionPartial : actionFull;
+  const actionText = formState.disabled ? actionDisabled : actionAvailable;
 
   useEffect(() => {
     reset({
@@ -127,12 +126,12 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
         <ActionContainer>
           <AvailableBalance
             title={estimatedFee}
-            amount={WEI_PER_ETHER / 1000n}
+            amount={validatorWithdrawalFee}
           />
           <ConnectWalletButton>
-            <Button disabled={formState.disabled} fullwidth>
+            <ModalFormButton disabled={formState.disabled} fullwidth>
               {actionText}
-            </Button>
+            </ModalFormButton>
           </ConnectWalletButton>
         </ActionContainer>
       </FormContainer>

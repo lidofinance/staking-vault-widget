@@ -1,8 +1,9 @@
 import { type FC, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Eth } from '@lidofinance/lido-ui';
+import { Eth, Link } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
 
+import { config } from 'config';
 import {
   FormController,
   TokenAmountInputGroup,
@@ -13,8 +14,7 @@ import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
 
 import { useValidators } from 'features/validators/contexts';
-import { ValidatorPdgStage } from 'features/validators/shared';
-
+import { WarningInfo, ModalFormButton } from 'features/validators/shared';
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
 import type {
@@ -29,7 +29,10 @@ type FormProps = {
   pubkey: Hex;
 };
 
-const { action } = vaultTexts.actions.validators.modals.topUp;
+const { actionActive, actionDisabled, validatorWithoutPDG } =
+  vaultTexts.actions.validators.modals.topUp;
+const { docsOrigin } = config;
+const pdgDocsLink = `${docsOrigin}/run-on-lido/stvaults/tech-documentation/pdg`;
 
 export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   const {
@@ -46,7 +49,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   } = useValidators();
   const { isDappActive } = useDappStatus();
   const { topUp, retryEvent } = useSubmitTopup();
-  const { index, pdgStage } = useMemo(
+  const { index, isValidatorInPDG } = useMemo(
     () => getValidatorByPubkey(pubkey),
     [getValidatorByPubkey, pubkey],
   );
@@ -65,7 +68,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       !isDappActive ||
       disabled ||
       !hasDepositorPermission ||
-      pdgStage !== ValidatorPdgStage.ACTIVATED ||
+      !isValidatorInPDG ||
       beaconChainDepositsPaused,
     resolver: topUpFormResolver,
     context: { availableBalance },
@@ -101,10 +104,15 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           maxAmount={availableBalance}
           fullwidth
         />
+        {!isValidatorInPDG && (
+          <WarningInfo>
+            {validatorWithoutPDG} <Link href={pdgDocsLink}>Learn more</Link>
+          </WarningInfo>
+        )}
         <ConnectWalletButton>
-          <Button disabled={formObject.formState.disabled} fullwidth>
-            {action}
-          </Button>
+          <ModalFormButton disabled={formObject.formState.disabled} fullwidth>
+            {formObject.formState.disabled ? actionDisabled : actionActive}
+          </ModalFormButton>
         </ConnectWalletButton>
       </FormContainer>
     </FormController>

@@ -25,6 +25,7 @@ export enum ValidatorPdgStage {
 
 type ValidatorWithPdgStage = FetchValidatorsResult['table'][number] & {
   pdgStage: ValidatorPdgStage;
+  isValidatorInPDG: boolean;
 };
 
 type selectValidatorDataArgs = {
@@ -32,10 +33,10 @@ type selectValidatorDataArgs = {
     pdgPolicy: string;
     availableBalance: bigint;
     obligationsShortfallValue: bigint;
+    validatorWithdrawalFee: bigint;
     beaconChainDepositsPauseIntent: boolean;
     beaconChainDepositsPaused: boolean;
     isVaultInJail: boolean;
-    isReportFresh: boolean;
     depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
@@ -102,6 +103,7 @@ export const useVaultValidatorsData = () => {
         beaconChainDepositsPaused,
         isVaultInJail,
         obligationsShortfallValue,
+        validatorWithdrawalFee,
       ] = await Promise.all([
         activeVault.dashboard.read.pdgPolicy(),
         activeVault.vault.read.availableBalance(),
@@ -112,6 +114,7 @@ export const useVaultValidatorsData = () => {
         activeVault.vault.read.beaconChainDepositsPaused(),
         activeVault.operatorGrid.read.isVaultInJail([activeVault.address]),
         activeVault.hub.read.obligationsShortfallValue([activeVault.address]),
+        activeVault.vault.read.calculateValidatorWithdrawalFee([1n]),
       ]);
 
       const response = await fetchValidators(activeVault.address, {
@@ -128,6 +131,7 @@ export const useVaultValidatorsData = () => {
               return {
                 ...validator,
                 pdgStage,
+                isValidatorInPDG: pdgStage !== ValidatorPdgStage.NONE,
               };
             }),
           )
@@ -144,7 +148,7 @@ export const useVaultValidatorsData = () => {
           depositor,
           isVaultInJail,
           obligationsShortfallValue,
-          isReportFresh: activeVault.isReportFresh,
+          validatorWithdrawalFee,
         },
       };
     },
@@ -195,11 +199,11 @@ export const useVaultValidatorsData = () => {
     // contracts data
     pdgPolicy: data.contract?.pdgPolicy,
     availableBalance: data.contract?.availableBalance,
+    validatorWithdrawalFee: data.contract?.validatorWithdrawalFee,
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
     beaconChainDepositsPaused: data.contract?.beaconChainDepositsPaused,
     isVaultInJail: data.contract?.isVaultInJail,
-    isReportFresh: data.contract?.isReportFresh,
     obligationsShortfallValue: data.contract?.obligationsShortfallValue,
     depositor: data.contract?.depositor,
     isAdmin: !!hasAdmin,
