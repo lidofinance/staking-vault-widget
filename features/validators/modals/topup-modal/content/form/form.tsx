@@ -110,7 +110,11 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           </WarningInfo>
         )}
         <ConnectWalletButton>
-          <ModalFormButton disabled={formObject.formState.disabled} fullwidth>
+          <ModalFormButton
+            type="submit"
+            disabled={formObject.formState.disabled}
+            fullwidth
+          >
             {formObject.formState.disabled ? actionDisabled : actionActive}
           </ModalFormButton>
         </ConnectWalletButton>

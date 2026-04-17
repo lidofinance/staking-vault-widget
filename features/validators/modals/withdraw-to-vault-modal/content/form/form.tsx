@@ -27,6 +27,7 @@ import { FormContainer, ActionContainer } from './styles';
 
 type FormProps = {
   isPartial: boolean;
+  availableToPartialWithdraw: bigint;
   pubkey: Hex;
 };
 
@@ -36,6 +37,7 @@ const { estimatedFee, actionFull, actionPartial, actionDisabled } =
 export const WithdrawToVaultModalForm: FC<FormProps> = ({
   isPartial,
   pubkey,
+  availableToPartialWithdraw,
 }) => {
   const {
     invalidateVaultConfig,
@@ -119,7 +121,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
             amountFieldName="amount"
             label="ETH amount"
             leftDecorator={<Eth />}
-            maxAmount={balance}
+            maxAmount={availableToPartialWithdraw}
             fullwidth
           />
         )}
@@ -129,7 +131,11 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
             amount={validatorWithdrawalFee}
           />
           <ConnectWalletButton>
-            <ModalFormButton disabled={formState.disabled} fullwidth>
+            <ModalFormButton
+              type="submit"
+              disabled={formState.disabled}
+              fullwidth
+            >
               {actionText}
             </ModalFormButton>
           </ConnectWalletButton>

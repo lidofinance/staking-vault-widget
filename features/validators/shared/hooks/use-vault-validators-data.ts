@@ -70,6 +70,7 @@ export const useVaultValidatorsData = () => {
   const { hasPermission } = useVaultPermission('validatorWithdrawalTrigger');
   const {
     params,
+    isParamsDefault,
     isReady,
     setPage,
     setSort,
@@ -213,6 +214,7 @@ export const useVaultValidatorsData = () => {
 
     // query params
     params,
+    isParamsDefault,
 
     // query functions
     setSort,

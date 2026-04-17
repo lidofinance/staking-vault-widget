@@ -63,7 +63,11 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
             amount={availableToPartialWithdraw}
           />
         )}
-        <WithdrawToVaultModalForm isPartial={isPartial} pubkey={pubKey} />
+        <WithdrawToVaultModalForm
+          isPartial={isPartial}
+          availableToPartialWithdraw={availableToPartialWithdraw}
+          pubkey={pubKey}
+        />
       </ContentContainer>
     </Modal>
   );

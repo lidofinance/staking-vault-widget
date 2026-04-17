@@ -97,7 +97,7 @@ export type FetchValidatorsResult = {
 const fetchValidatorsApi = async (
   vaultAddress: Address,
   params: FetchValidatorsParams,
-) => {
+): Promise<ValidatorsApiResponse> => {
   const apiUrl = getApiURL('validatorsApiBasePath');
 
   if (!apiUrl) {

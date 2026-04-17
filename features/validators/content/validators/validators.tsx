@@ -8,13 +8,13 @@ import {
 import { useValidators } from 'features/validators/contexts';
 
 export const Validators = () => {
-  const { isLoading, validators } = useValidators();
+  const { isLoading, validators, isParamsDefault } = useValidators();
 
   return (
     <Section>
       <CircleLoader
-        isLoading={isLoading && !validators}
-        showBy={!!validators}
+        isLoading={isLoading}
+        showBy={!(validators?.length === 0 && isParamsDefault)}
         size="medium"
         height="156px"
         placeholder={<TablePlaceholder />}

@@ -4,7 +4,7 @@ import { useValidators } from 'features/validators/contexts';
 import { Wrapper } from './styles';
 
 export const AmountStatistic = () => {
-  const { meta } = useValidators();
+  const { meta, isLoading } = useValidators();
 
   return (
     <Wrapper>
@@ -12,7 +12,7 @@ export const AmountStatistic = () => {
         title="Deposited on validators"
         amount={meta?.totalBalance}
       />
-      <LastUpdated timestamp={meta?.timestamp} />
+      <LastUpdated timestamp={meta?.timestamp} isLoading={isLoading} />
     </Wrapper>
   );
 };

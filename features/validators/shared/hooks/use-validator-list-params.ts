@@ -189,10 +189,25 @@ const paramsToQuery = (
   return query;
 };
 
+export const checkIsParamsDefault = (params: FetchValidatorsParams) => {
+  return (
+    params.page === DEFAULT_PARAMS.page &&
+    params.limit === DEFAULT_PARAMS.limit &&
+    params.status === DEFAULT_PARAMS.status &&
+    params.pubkey === DEFAULT_PARAMS.pubkey &&
+    params.index === DEFAULT_PARAMS.index
+  );
+};
+
 export const useValidatorListParams = () => {
   const { query, isReady, push } = useRouter();
   const { vaultAddress } = useVault();
-  const params = useMemo(() => queryToParams(query), [query]);
+  const { params, isParamsDefault } = useMemo(() => {
+    const params = queryToParams(query);
+    const isParamsDefault = checkIsParamsDefault(params);
+
+    return { params, isParamsDefault };
+  }, [query]);
 
   const pushParams = useCallback(
     (params: FetchValidatorsParams) => {
@@ -253,6 +268,7 @@ export const useValidatorListParams = () => {
   return {
     isReady,
     params,
+    isParamsDefault,
     setPage,
     setSort,
     setFilterByStatus,
