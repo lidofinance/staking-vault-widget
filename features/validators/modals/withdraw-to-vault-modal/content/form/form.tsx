@@ -1,4 +1,4 @@
-import { type FC, useCallback, useEffect } from 'react';
+import { type FC, useCallback, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Eth } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
@@ -54,7 +54,10 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   const disabled = useDisableForm();
   const { isDappActive } = useDappStatus();
   const { withdrawToVault, retryEvent } = useWithdrawalToVault();
-  const { index, balance } = getValidatorByPubkey(pubkey);
+  const { index, balance } = useMemo(
+    () => getValidatorByPubkey(pubkey),
+    [getValidatorByPubkey, pubkey],
+  );
 
   const formObject = useForm<
     WithdrawalFormFieldValues,

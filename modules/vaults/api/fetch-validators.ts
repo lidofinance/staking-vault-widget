@@ -118,7 +118,7 @@ const fetchValidatorsApi = async (
 
   if (!response.ok) {
     throw new Error(
-      `[fetchValidatorsApi] Failed to fetch vaults from API: ${response.status} ${response.statusText}`,
+      `[fetchValidatorsApi] Failed to fetch validators from API: ${response.status} ${response.statusText}`,
     );
   }
   const result = await response.json();

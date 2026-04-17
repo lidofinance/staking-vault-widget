@@ -13,7 +13,7 @@ export const CopyAddress: FC<CopyAddressProps> = ({ address }) => {
   const handleCopy = useCallback(() => {
     if (!address) return;
     void navigator.clipboard.writeText(address);
-    ToastSuccess(`Address ${truncateAddress({ address })} have been copied`);
+    ToastSuccess(`Address ${truncateAddress({ address })} has been copied`);
   }, [address]);
 
   return (
