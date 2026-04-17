@@ -1,3 +1,9 @@
+import type { Address } from 'viem';
+
+import type { ValidatorStatus } from '../api/fetch-validators';
+
+import { isNumber } from 'utils';
+
 export type VaultsParams = {
   limit: number;
   offset: number;
@@ -5,6 +11,16 @@ export type VaultsParams = {
   direction?: string;
   role?: string;
   address?: string;
+};
+
+export type ValidatorsParams = {
+  limit?: number;
+  offset?: number;
+  orderBy?: string;
+  direction?: string;
+  status?: ValidatorStatus;
+  pubkey?: string;
+  index?: number;
 };
 
 export const vaultApiRoutes = {
@@ -26,4 +42,21 @@ export const vaultApiRoutes = {
     `${basePath}/v1/vaults/${vaultAddress}/apr/sma`,
   vaultReport: (basePath: string, vaultAddress: string, cid: string) =>
     `${basePath}/v1/report/${cid}/${vaultAddress}`,
+};
+
+export const validatorsApiRoutes = {
+  validators: (
+    basePath: string,
+    vaultAddress: Address,
+    params: ValidatorsParams,
+  ) => {
+    const { limit, offset, orderBy, direction, status, pubkey, index } = params;
+    const url = new URL(`/v1/vaults/${vaultAddress}/validators`, basePath);
+
+    Object.entries({ limit, offset, orderBy, direction, status, pubkey, index })
+      .filter(([_, value]) => !!value || isNumber(value))
+      .forEach(([key, value]) => url.searchParams.set(key, `${value}`));
+
+    return url;
+  },
 };

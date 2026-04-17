@@ -44,3 +44,7 @@ export const formatCustomDate = (ts: number): string => {
   const ms = Math.abs(ts) < 1e11 ? ts * 1000 : ts;
   return customDateFormatter.format(new Date(ms));
 };
+
+export const formatDate = (date: Date): string => {
+  return customDateFormatter.format(date);
+};

@@ -28,7 +28,8 @@ export {
   RadioWithInput,
   type RadioInputProps,
 } from './radio-input';
-export { InlineLoader } from './value-with-loader';
+export { InlineLoader, CircleLoader } from './value-with-loader';
 export { CopyAddress } from './copy-address';
 export { ReportState } from './report-state';
+export { TooltipHint } from './tooltip-hint';
 export * from './banners';

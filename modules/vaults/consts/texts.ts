@@ -313,6 +313,70 @@ export const vaultTexts = {
       },
       clearChanges: 'Clear changes',
     },
+    validators: {
+      title: 'stVaults Validators overview',
+      table: {
+        header: {
+          index: 'Index',
+          pubKey: 'Public key',
+          status: 'Status',
+          actualBalance: 'Actual balance',
+          activatedExited: 'Activated / exited',
+          menu: '',
+        },
+        noValidatorsFound: 'No validators found',
+        placeholder: {
+          title: 'No validators found',
+          description:
+            'Once validators are running, they will be displayed here',
+          errorDescription:
+            'Failed to load validator data. Please try again later',
+        },
+        menu: {
+          partialWithdrawal: 'Partial withdrawal',
+          topUpValidator: 'Top up validator',
+          withdrawToStVault: 'Withdraw to stVault',
+        },
+      },
+      modals: {
+        withdrawal: {
+          title: 'Withdraw ETH from validator to stVault',
+          description:
+            'You can withdraw a portion of ETH (while leaving a minimum of 32 ETH on the validator balance) or the full amount from the validator. The exact time when the withdrawn ETH appears in the stVault Not-Staked Balance depends on the current Ethereum exit queue.',
+          availableToWithdraw: 'Available to withdraw',
+          estimatedFee: 'Estimated withdrawal fee',
+          actionFull: 'Force exit validator',
+          actionPartial: 'Withdraw to stVault',
+          actionDisabled: 'Withdraw unavailable',
+          partialWarning:
+            "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
+          fullWarning: (amount: bigint) =>
+            `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount).trimmed} ETH) will be withdrawn.`,
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are withdrawing ${formatBalance(amount).trimmed} ETH from the validator #${index}`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `${formatBalance(amount).trimmed} ETH has been withdrawn from the validator #${index}`,
+          },
+        },
+        topUp: {
+          title: 'Top up validator',
+          description:
+            'You can top-up this validator by ETH available on the stVault Balance.',
+          availableToTopup: 'Available to top up',
+          estimatedFee: 'Estimated withdrawal fee',
+          actionActive: 'Top up validator',
+          actionDisabled: 'Top up unavailable',
+          validatorWithoutPDG: `Top-ups are unavailable for this validator because it has not been proven for Predeposit Guarantee. To enable top-ups in this interface, please prove the validator.`,
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are topping up the validator #${index} with ${formatBalance(amount).trimmed} ETH`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `The validator #${index} has been topped up with ${formatBalance(amount).trimmed} ETH`,
+          },
+        },
+      },
+    },
   },
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
@@ -726,6 +790,10 @@ export const vaultTexts = {
         invalid: 'Invalid ethereum address',
         vault: 'Recipient cannot be stVault',
         dashboard: 'Recipient cannot be stVault Dashboard',
+      },
+      pubkey: {
+        required: 'Validator public key is required',
+        invalid: 'Invalid validator public key',
       },
 
       tx: {

@@ -1,6 +1,9 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
 
 import { calculateHealth } from 'utils';
+import { optBigint } from 'utils/opt-bigint';
+import { optNumber } from 'utils/opt-number';
+
 import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient } from 'modules/web3';
@@ -323,14 +326,6 @@ const fetchConnectedVaultsApi = async (
   return { ...result, isAPI: true };
 };
 
-const optBigInt = (value: string | undefined | null): bigint | undefined => {
-  return value ? BigInt(value) : undefined;
-};
-
-const optNumber = (value: string | undefined): number | undefined => {
-  return value ? Number(value) : undefined;
-};
-
 const normalizeResponse = (
   response: VaultsApiResponse,
   params: FetchVaultsParams,
@@ -352,51 +347,51 @@ const normalizeResponse = (
       ...vault,
       ens: vault.ens ?? undefined,
       customName: vault.customName ?? undefined,
-      totalValue: optBigInt(vault.totalValue),
-      liabilityStETH: optBigInt(vault.liabilityStETH),
-      liabilityShares: optBigInt(vault.liabilityShares),
+      totalValue: optBigint(vault.totalValue),
+      liabilityStETH: optBigint(vault.liabilityStETH),
+      liabilityShares: optBigint(vault.liabilityShares),
       healthFactor:
         Number(vault.healthFactor) > 10_00 ||
         vault.healthFactor?.toLowerCase() === 'infinity'
           ? Infinity
           : optNumber(vault.healthFactor),
-      shareLimit: optBigInt(vault.shareLimit),
+      shareLimit: optBigint(vault.shareLimit),
       reserveRatioBP: vault.reserveRatioBP,
       forcedRebalanceThresholdBP: vault.forcedRebalanceThresholdBP,
       infraFeeBP: vault.infraFeeBP,
       liquidityFeeBP: vault.liquidityFeeBP,
       reservationFeeBP: vault.reservationFeeBP,
-      feeRate: optBigInt(vault.feeRate),
+      feeRate: optBigint(vault.feeRate),
       updatedAt: vault.updatedAt ? new Date(vault.updatedAt) : undefined,
       blockNumber: vault.blockNumber,
       isReportFresh: vault.isReportFresh,
       isQuarantineActive: vault.isQuarantineActive,
-      quarantinePendingTotalValueIncrease: optBigInt(
+      quarantinePendingTotalValueIncrease: optBigint(
         vault.quarantinePendingTotalValueIncrease,
       ),
       quarantineStartTimestamp: vault.quarantineStartTimestamp,
       quarantineEndTimestamp: vault.quarantineEndTimestamp,
-      rebaseReward: optBigInt(vault.rebaseReward),
-      grossStakingRewards: optBigInt(vault.grossStakingRewards),
-      nodeOperatorRewards: optBigInt(vault.nodeOperatorRewards),
-      dailyLidoFees: optBigInt(vault.dailyLidoFees),
-      netStakingRewards: optBigInt(vault.netStakingRewards),
+      rebaseReward: optBigint(vault.rebaseReward),
+      grossStakingRewards: optBigint(vault.grossStakingRewards),
+      nodeOperatorRewards: optBigint(vault.nodeOperatorRewards),
+      dailyLidoFees: optBigint(vault.dailyLidoFees),
+      netStakingRewards: optBigint(vault.netStakingRewards),
       grossStakingAprPercent: vault.grossStakingAprPercent,
       netStakingAprPercent: vault.netStakingAprPercent,
       grossStakingAprSma: vault.grossStakingAprSma,
       netStakingAprSma: vault.netStakingAprSma,
       carrySpreadAprSma: vault.carrySpreadAprSma,
-      bottomLine: optBigInt(vault.bottomLine),
+      bottomLine: optBigint(vault.bottomLine),
       carrySpreadAprPercent: vault.carrySpreadAprPercent,
       lastReport: vault.lastReport?.fee
         ? {
-            fee: optBigInt(vault.lastReport?.fee) as bigint,
-            inOutDelta: optBigInt(vault.lastReport?.inOutDelta) as bigint,
-            totalValueWei: optBigInt(vault.lastReport?.totalValueWei) as bigint,
-            liabilityShares: optBigInt(
+            fee: optBigint(vault.lastReport?.fee),
+            inOutDelta: optBigint(vault.lastReport?.inOutDelta) as bigint,
+            totalValueWei: optBigint(vault.lastReport?.totalValueWei) as bigint,
+            liabilityShares: optBigint(
               vault.lastReport?.liabilityShares,
             ) as bigint,
-            slashingReserve: optBigInt(
+            slashingReserve: optBigint(
               vault.lastReport?.slashingReserve,
             ) as bigint,
           }

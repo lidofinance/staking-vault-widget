@@ -1,6 +1,6 @@
 import type { Address } from 'viem';
 
-const API_LIST = ['vaultsApiBasePath'] as const;
+const API_LIST = ['vaultsApiBasePath', 'validatorsApiBasePath'] as const;
 
 const CONTRACT_LIST = [
   'lido',
