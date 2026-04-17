@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
+import { bigIntMin } from 'utils/bigint-math';
 import { WEI_PER_ETHER } from 'consts/tx';
 
 import type {
@@ -20,8 +21,7 @@ const MAX_TOPUP_AMOUNT =
 export const topUpFormSchema = ({
   availableBalance,
 }: TopUpFormValidationContext) => {
-  const maxAmount =
-    availableBalance > MAX_TOPUP_AMOUNT ? MAX_TOPUP_AMOUNT : availableBalance;
+  const maxAmount = bigIntMin(availableBalance, MAX_TOPUP_AMOUNT);
   return z.object({
     amount: maxAmountSchema(maxAmount),
     index: z.number(),

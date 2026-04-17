@@ -3,6 +3,7 @@ import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
 import { WEI_PER_ETHER } from 'consts/tx';
+import { bigIntMax } from 'utils/bigint-math';
 
 import {
   AvailableBalance,
@@ -38,8 +39,10 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   }
 
   const { currentModal, pubKey, index, balance } = modalData;
-  const availableToPartialWithdraw =
-    balance >= MIN_ACTIVATION_BALANCE ? balance - MIN_ACTIVATION_BALANCE : 0n;
+  const availableToPartialWithdraw = bigIntMax(
+    0n,
+    balance - MIN_ACTIVATION_BALANCE,
+  );
   const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
   const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
 
