@@ -16,12 +16,8 @@ export const ApplyReport: FC<ApplyReportProps> = ({ lidoFees }) => {
   const { activeVault } = useVault();
   const { applyReport } = useSendReport();
   const onSendReport = useCallback(() => applyReport(), [applyReport]);
-
-  if (
-    !lidoFees ||
-    lidoFees < WEI_PER_ETHER ||
-    !activeVault?.isReportAvailable
-  ) {
+  const isReportAvailable = !!activeVault?.isReportAvailable;
+  if (!lidoFees || lidoFees < WEI_PER_ETHER) {
     return null;
   }
 
@@ -29,11 +25,21 @@ export const ApplyReport: FC<ApplyReportProps> = ({ lidoFees }) => {
     <ListItem>
       <ListItemContent>
         <TextStyled size="xxs">
-          <ButtonLink role="button" onClick={onSendReport}>
-            Apply the latest Oracle report
-          </ButtonLink>{' '}
-          to automatically settle <FormatToken amount={lidoFees} symbol="ETH" />{' '}
-          in Lido fees.
+          {isReportAvailable ? (
+            <>
+              <ButtonLink role="button" onClick={onSendReport}>
+                Apply the latest Oracle report
+              </ButtonLink>{' '}
+              to automatically settle{' '}
+              <FormatToken amount={lidoFees} symbol="ETH" /> in Lido fees.
+            </>
+          ) : (
+            <>
+              Wait for the next Oracle report, then apply it to automatically
+              settle <FormatToken amount={lidoFees} symbol="ETH" /> in Lido
+              fees.
+            </>
+          )}
           {/* TODO: add learn more link */}
         </TextStyled>
       </ListItemContent>
