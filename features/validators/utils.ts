@@ -22,5 +22,6 @@ export const getValidatorStatusTextColor = ({
     exited_unslashed: colors.textSecondary,
   };
 
-  return statusList[$status];
+  const statusColor = statusList[$status];
+  return statusColor ? statusColor : colors.text;
 };

@@ -1,12 +1,20 @@
 import styled from 'styled-components';
-import { Select, Option } from '@lidofinance/lido-ui';
+import { Select, Option, SelectProps } from '@lidofinance/lido-ui';
 
 import { devicesHeaderMedia } from 'styles/global';
 import type { ValidatorStatus } from 'modules/vaults';
 
 import { getValidatorStatusTextColor } from 'features/validators/utils';
 
-export const SelectStyled = styled(Select)`
+type SelectStyledProps = {
+  $status: ValidatorStatus;
+} & SelectProps;
+
+export const SelectStyled = styled(Select)<SelectStyledProps>`
+  & input {
+    color: ${getValidatorStatusTextColor};
+  }
+
   @media ${devicesHeaderMedia.mobile} {
     width: 100%;
   }

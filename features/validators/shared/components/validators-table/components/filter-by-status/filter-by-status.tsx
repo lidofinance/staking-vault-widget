@@ -32,6 +32,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
     <SelectStyled
       onChange={onChange}
       placeholder="Status"
+      $status={params.status}
       value={params.status ?? 'all'}
       data-testid={`${dataTestId}-filter-pubkey-index`}
     >
