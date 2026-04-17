@@ -1,6 +1,9 @@
-import { type Hex, type Address, parseGwei } from 'viem';
+import { z } from 'zod';
+import { type Hex, type Address, isHex, parseGwei } from 'viem';
 
 import { getApiURL } from 'config';
+
+import { numberRegex } from 'features/validators/const';
 
 import { validatorsApiRoutes } from '../consts';
 
@@ -60,7 +63,7 @@ export type ValidatorsApiMeta = {
   totalBalance: string;
   blockNumber: number;
   timestamp: number;
-  byStatus: Record<ValidatorStatus, number>;
+  byStatus: Partial<Record<ValidatorStatus, number>>;
 };
 
 export type ValidatorsApiPagination = {
@@ -83,6 +86,68 @@ type ValidatorsApiResponse = {
   pagination: ValidatorsApiPagination;
   meta: ValidatorsApiMeta;
 };
+
+const validatorStatusSchema = z.nativeEnum(VALIDATOR_STATUSES);
+const digitsOnlyStringSchema = z
+  .string()
+  .regex(numberRegex, 'Expected digits-only string');
+const apiDateTimeStringSchema = z.string().datetime({ offset: true });
+
+const hexSchema = z.custom<Hex>(
+  (value) => typeof value === 'string' && isHex(value),
+  'Expected hex value',
+);
+
+const validatorsByStatusSchema: z.ZodType<ValidatorsApiMeta['byStatus']> =
+  z.object({
+    active_ongoing: z.number().optional(),
+    active_exiting: z.number().optional(),
+    active_slashed: z.number().optional(),
+    exited_slashed: z.number().optional(),
+    withdrawal_possible: z.number().optional(),
+    withdrawal_done: z.number().optional(),
+    pending_initialised: z.number().optional(),
+    pending_queued: z.number().optional(),
+    exited_unslashed: z.number().optional(),
+  });
+
+const validatorsDTOSchema: z.ZodType<ValidatorsDTO> = z.object({
+  pubkey: hexSchema,
+  index: z.number(),
+  balance: digitsOnlyStringSchema,
+  status: validatorStatusSchema,
+  activatedAt: apiDateTimeStringSchema.nullable(),
+  exitedAt: apiDateTimeStringSchema.nullable(),
+});
+
+const validatorsApiPaginationSchema: z.ZodType<ValidatorsApiPagination> =
+  z.object({
+    direction: z.enum(['ASC', 'DESC']),
+    orderBy: z.nativeEnum(ValidatorsOrderByEnum),
+    page: z.number(),
+    total: z.number(),
+    offset: z.number(),
+    limit: z.number(),
+    remaining: z.number(),
+    totalPages: z.number(),
+    hasNextPage: z.boolean(),
+    hasPreviousPage: z.boolean(),
+    nextOffset: z.number().nullable(),
+    previousOffset: z.number().nullable(),
+  });
+
+const validatorsApiMetaSchema: z.ZodType<ValidatorsApiMeta> = z.object({
+  totalBalance: digitsOnlyStringSchema,
+  blockNumber: z.number(),
+  timestamp: z.number(),
+  byStatus: validatorsByStatusSchema,
+});
+
+const validatorsApiResponseSchema: z.ZodType<ValidatorsApiResponse> = z.object({
+  data: z.array(validatorsDTOSchema),
+  pagination: validatorsApiPaginationSchema,
+  meta: validatorsApiMetaSchema,
+});
 
 export type FetchValidatorsMeta = Omit<ValidatorsApiMeta, 'totalBalance'> & {
   totalBalance: bigint;
@@ -122,8 +187,7 @@ const fetchValidatorsApi = async (
     );
   }
   const result = await response.json();
-
-  return { ...result };
+  return validatorsApiResponseSchema.parse(result);
 };
 
 const optDate = (

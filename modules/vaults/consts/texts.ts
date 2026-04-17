@@ -329,6 +329,8 @@ export const vaultTexts = {
           title: 'No validators found',
           description:
             'Once validators are running, they will be displayed here',
+          errorDescription:
+            'Failed to load validator data. Please try again later',
         },
         menu: {
           partialWithdrawal: 'Partial withdrawal',
