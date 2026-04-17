@@ -22,9 +22,9 @@ const getBackgroundColor = ({
     exited_slashed: getColorTransparency(colors.error, '20%'),
     withdrawal_possible: getColorTransparency(colors.primary, '20%'),
     withdrawal_done: colors.foreground,
-    pending_initialised: colors.foreground,
-    pending_queued: colors.foreground,
-    exited_unslashed: colors.foreground,
+    pending_initialised: colors.backgroundSecondary,
+    pending_queued: colors.backgroundSecondary,
+    exited_unslashed: colors.backgroundSecondary,
   };
 
   return statusList[$status];
@@ -37,12 +37,7 @@ const getBorder = ({
   $status: ValidatorStatus;
   theme: Theme;
 }) => {
-  const statusesWithBorder = [
-    'withdrawal_done',
-    'pending_initialised',
-    'pending_queued',
-    'exited_unslashed',
-  ];
+  const statusesWithBorder = ['withdrawal_done'];
 
   return statusesWithBorder.includes($status)
     ? `1px solid ${theme.colors.border}`
@@ -63,5 +58,6 @@ export const StatusContainer = styled.div<{ $status: ValidatorStatus }>`
 export const StatusText = styled.span<{ $status: ValidatorStatus }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
+  font-weight: normal;
   color: ${getValidatorStatusTextColor};
 `;
