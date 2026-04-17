@@ -7,7 +7,7 @@ import type { ValidatorStatus } from 'modules/vaults';
 import { getValidatorStatusTextColor } from 'features/validators/utils';
 
 type SelectStyledProps = {
-  $status: ValidatorStatus;
+  $status: ValidatorStatus | undefined;
 } & SelectProps;
 
 export const SelectStyled = styled(Select)<SelectStyledProps>`

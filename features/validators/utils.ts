@@ -5,7 +5,7 @@ export const getValidatorStatusTextColor = ({
   $status,
   theme,
 }: {
-  $status: ValidatorStatus;
+  $status: ValidatorStatus | undefined;
   theme: Theme;
 }) => {
   const { colors } = theme;
@@ -22,6 +22,5 @@ export const getValidatorStatusTextColor = ({
     exited_unslashed: colors.textSecondary,
   };
 
-  const statusColor = statusList[$status];
-  return statusColor ? statusColor : colors.text;
+  return $status ? statusList[$status] : colors.text;
 };

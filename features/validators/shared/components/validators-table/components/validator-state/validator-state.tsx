@@ -1,5 +1,5 @@
 import { type FC, useCallback } from 'react';
-import { Tooltip, ToastSuccess, Text } from '@lidofinance/lido-ui';
+import { Tooltip, ToastSuccess, Text, ToastError } from '@lidofinance/lido-ui';
 
 import { truncateAddress } from 'utils';
 
@@ -20,34 +20,38 @@ export const ValidatorState: FC<ValidatorStateProps> = ({
   indexOrPubkey,
   type,
 }) => {
-  const content = type === 'index' ? `#${indexOrPubkey}` : indexOrPubkey;
+  const isTypeIndex = type === 'index';
+  const content = isTypeIndex ? `#${indexOrPubkey}` : indexOrPubkey;
 
   const handleCopy = useCallback(() => {
     try {
       void navigator.clipboard.writeText(indexOrPubkey);
-      const info =
-        type === 'pubkey'
-          ? truncateAddress({ address: indexOrPubkey })
-          : indexOrPubkey;
-      ToastSuccess(`Validator's ${type} ${info} has been copied`);
-    } catch (e) {
-      console.error('Cannot copy index or pubkey', e);
+      const info = truncateAddress({ address: indexOrPubkey });
+      ToastSuccess(`Validator's pubkey ${info} has been copied`);
+    } catch (err) {
+      if (err instanceof Error) {
+        ToastError(`Cannot copy pubkey ${err.message}`);
+      }
     }
-  }, [indexOrPubkey, type]);
+  }, [indexOrPubkey]);
 
   return (
     <StateContainer>
       <TextStyled size="xxs">{content}</TextStyled>
-      <Tooltip title="Beaconcha.in">
-        <Text color="secondary">
-          <SatelliteBeaconchaLink indexOrPubkey={indexOrPubkey} />
-        </Text>
-      </Tooltip>
-      <CopyButton onClick={handleCopy}>
-        <Tooltip title={`Copy ${type}`}>
-          <CopyIconStyled />
-        </Tooltip>
-      </CopyButton>
+      {!isTypeIndex && (
+        <>
+          <Tooltip title="Beaconcha.in">
+            <Text color="secondary">
+              <SatelliteBeaconchaLink indexOrPubkey={indexOrPubkey} />
+            </Text>
+          </Tooltip>
+          <CopyButton onClick={handleCopy}>
+            <Tooltip title={`Copy ${type}`}>
+              <CopyIconStyled />
+            </Tooltip>
+          </CopyButton>
+        </>
+      )}
     </StateContainer>
   );
 };
