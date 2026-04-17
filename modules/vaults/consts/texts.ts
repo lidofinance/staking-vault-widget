@@ -316,6 +316,15 @@ export const vaultTexts = {
     validators: {
       title: 'stVaults Validators overview',
       table: {
+        header: {
+          index: 'Index',
+          pubKey: 'Public key',
+          status: 'Status',
+          actualBalance: 'Actual balance',
+          activatedExited: 'Activated / exited',
+          menu: '',
+        },
+        noValidatorsFound: 'No validators found',
         placeholder: {
           title: 'No validators found',
           description:

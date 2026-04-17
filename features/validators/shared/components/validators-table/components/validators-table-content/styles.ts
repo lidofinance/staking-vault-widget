@@ -57,3 +57,14 @@ export const TableRow = styled(Tr)`
     }
   }
 `;
+
+export const EmptyStateCell = styled.td`
+  height: 187px;
+  padding: ${({ theme }) => theme.spaceMap.xxl}px;
+  text-align: center;
+  vertical-align: middle;
+
+  @media ${devicesHeaderMedia.mobile} {
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+  }
+`;

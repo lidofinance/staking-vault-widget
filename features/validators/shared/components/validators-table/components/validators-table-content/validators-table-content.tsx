@@ -3,9 +3,10 @@ import { Text, Thead } from '@lidofinance/lido-ui';
 
 import { ReactComponent as TopBottomArrows } from 'assets/icons/top-bottom-arrows.svg';
 import {
-  ValidatorsEntry,
-  FetchValidatorsParams,
+  type ValidatorsEntry,
+  type FetchValidatorsParams,
   ValidatorsOrderByEnum,
+  vaultTexts,
 } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
@@ -25,6 +26,7 @@ import {
   TableRow,
   TableHeaderCell,
   TableHeaderCellContent,
+  EmptyStateCell,
 } from './styles';
 
 type TableHeader = {
@@ -32,28 +34,30 @@ type TableHeader = {
   sortKey?: FetchValidatorsParams['orderBy'];
 };
 
+const { noValidatorsFound, header } = vaultTexts.actions.validators.table;
+
 const tableHeaders: TableHeader[] = [
   {
-    title: 'Index',
+    title: header.index,
     sortKey: ValidatorsOrderByEnum.INDEX,
   },
   {
-    title: 'Public key',
+    title: header.pubKey,
   },
   {
-    title: 'Status',
+    title: header.status,
     sortKey: ValidatorsOrderByEnum.STATUS,
   },
   {
-    title: 'Actual balance',
+    title: header.actualBalance,
     sortKey: ValidatorsOrderByEnum.BALANCE,
   },
   {
-    title: 'Activated / exited',
+    title: header.activatedExited,
     sortKey: ValidatorsOrderByEnum.ACTIVATED_AT,
   },
   {
-    title: '',
+    title: header.menu,
   },
 ];
 
@@ -81,6 +85,18 @@ const ValidatorTableRowContent = ({
   );
 };
 
+const ValidatorNotFound = ({ columnCount }: { columnCount: number }) => {
+  return (
+    <TableRow>
+      <EmptyStateCell colSpan={columnCount}>
+        <Text size="xxs" color="secondary">
+          {noValidatorsFound}
+        </Text>
+      </EmptyStateCell>
+    </TableRow>
+  );
+};
+
 type ValidatorsTableProps = {
   dataTestId: string;
 };
@@ -97,9 +113,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     setSort,
     hideTableMenu,
   } = useValidators();
-
   const isEmpty = (validators?.length ?? 0) === 0;
-  const showTable = !(!isLoading && !isError && isEmpty);
 
   const onSortClick = useCallback(
     (e: MouseEvent<HTMLTableCellElement>) => {
@@ -118,11 +132,11 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     [setSort, orderBy, direction],
   );
 
-  if (!showTable) {
-    return null;
-  }
-
   const rows = validators?.length ? validators : [];
+  const shouldShowEmptyState = !isLoading && !isError && isEmpty;
+  const columnCount = hideTableMenu
+    ? tableHeaders.length - 1
+    : tableHeaders.length;
 
   return (
     <TableStyled>
@@ -170,6 +184,9 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
             </TableRow>
           );
         })}
+        {shouldShowEmptyState && (
+          <ValidatorNotFound columnCount={columnCount} />
+        )}
       </TableBody>
     </TableStyled>
   );
