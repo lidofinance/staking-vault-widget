@@ -36,7 +36,6 @@ type selectValidatorDataArgs = {
     validatorWithdrawalFee: bigint;
     beaconChainDepositsPauseIntent: boolean;
     beaconChainDepositsPaused: boolean;
-    isVaultInJail: boolean;
     depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
@@ -102,7 +101,6 @@ export const useVaultValidatorsData = () => {
         { beaconChainDepositsPauseIntent },
         depositor,
         beaconChainDepositsPaused,
-        isVaultInJail,
         obligationsShortfallValue,
         validatorWithdrawalFee,
       ] = await Promise.all([
@@ -113,7 +111,6 @@ export const useVaultValidatorsData = () => {
           activeVault.nodeOperator,
         ]),
         activeVault.vault.read.beaconChainDepositsPaused(),
-        activeVault.operatorGrid.read.isVaultInJail([activeVault.address]),
         activeVault.hub.read.obligationsShortfallValue([activeVault.address]),
         activeVault.vault.read.calculateValidatorWithdrawalFee([1n]),
       ]);
@@ -147,7 +144,6 @@ export const useVaultValidatorsData = () => {
           beaconChainDepositsPauseIntent,
           beaconChainDepositsPaused,
           depositor,
-          isVaultInJail,
           obligationsShortfallValue,
           validatorWithdrawalFee,
         },
@@ -204,7 +200,6 @@ export const useVaultValidatorsData = () => {
     beaconChainDepositsPauseIntent:
       data.contract?.beaconChainDepositsPauseIntent,
     beaconChainDepositsPaused: data.contract?.beaconChainDepositsPaused,
-    isVaultInJail: data.contract?.isVaultInJail,
     obligationsShortfallValue: data.contract?.obligationsShortfallValue,
     depositor: data.contract?.depositor,
     isAdmin: !!hasAdmin,

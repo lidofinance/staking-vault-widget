@@ -2,12 +2,14 @@ import type { FC } from 'react';
 import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
-import { WEI_PER_ETHER } from 'consts/tx';
 import { bigIntMax } from 'utils/bigint-math';
 
 import { ContentContainer, ValidatorInfo } from 'features/validators/shared';
 import type { ModalData } from 'features/validators/contexts';
-import { VALIDATOR_MODALS } from 'features/validators/const';
+import {
+  MIN_ACTIVATION_BALANCE,
+  VALIDATOR_MODALS,
+} from 'features/validators/const';
 
 import { WithdrawalType } from './components';
 import { WithdrawToVaultModalForm } from './content';
@@ -18,8 +20,6 @@ type WithdrawToVaultModalProps = {
 };
 
 const { title, description } = vaultTexts.actions.validators.modals.withdrawal;
-
-const MIN_ACTIVATION_BALANCE = WEI_PER_ETHER * 32n;
 
 export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   modalData,

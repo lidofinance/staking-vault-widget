@@ -3,6 +3,7 @@ import type { withdrawalFormSchema } from './validation';
 
 export type WithdrawalFormValidationContext = {
   availableAmount: bigint;
+  obligationsShortfallValue: bigint;
   isPartial: boolean;
 };
 

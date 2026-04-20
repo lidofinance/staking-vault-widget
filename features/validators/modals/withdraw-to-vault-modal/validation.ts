@@ -5,6 +5,7 @@ import type { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
 import { WEI_PER_GWEI } from 'consts/tx';
+import { formatBalance } from 'utils';
 
 import {
   WithdrawalFormFieldValues,
@@ -12,18 +13,23 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
-const amountStepError = 'Value must be divisible by 1 gwei';
+const amountGweiError = 'Value must be divisible by 1 gwei';
+const amountObligationError = (obligation: bigint) =>
+  `Value must be greater than your obligation ${formatBalance(obligation).trimmed} ETH`;
 
 export const withdrawalFormSchema = ({
   availableAmount,
   isPartial,
+  obligationsShortfallValue,
 }: WithdrawalFormValidationContext) => {
   return z.object({
     amount: isPartial
-      ? maxAmountSchema(availableAmount).refine(
-          (value) => value % WEI_PER_GWEI === 0n,
-          amountStepError,
-        )
+      ? maxAmountSchema(availableAmount)
+          .refine((value) => value > WEI_PER_GWEI, amountGweiError)
+          .refine(
+            (value) => value > obligationsShortfallValue,
+            amountObligationError(obligationsShortfallValue),
+          )
       : z.literal(0n),
     index: z.number(),
     pubkey: pubkeySchema,
