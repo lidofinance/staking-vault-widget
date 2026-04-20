@@ -1,9 +1,8 @@
 import { type FC, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { Eth, Link } from '@lidofinance/lido-ui';
+import { Eth } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
 
-import { config } from 'config';
 import {
   FormController,
   TokenAmountInputGroup,
@@ -14,9 +13,11 @@ import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
 
 import { useValidators } from 'features/validators/contexts';
-import { WarningInfo, ModalFormButton } from 'features/validators/shared';
+import { ModalFormButton } from 'features/validators/shared';
+
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
+import { DepositPaused, NotInPdg } from '../../components';
 import type {
   TopUpFormFieldValues,
   TopUpFormValidationContext,
@@ -29,10 +30,8 @@ type FormProps = {
   pubkey: Hex;
 };
 
-const { actionActive, actionDisabled, validatorWithoutPDG } =
+const { actionActive, actionDisabled } =
   vaultTexts.actions.validators.modals.topUp;
-const { docsOrigin } = config;
-const pdgDocsLink = `${docsOrigin}/run-on-lido/stvaults/tech-documentation/pdg/#pdg-shortcut`;
 
 export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   const {
@@ -104,11 +103,8 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           maxAmount={availableBalance}
           fullwidth
         />
-        {!isValidatorInPDG && (
-          <WarningInfo>
-            {validatorWithoutPDG} <Link href={pdgDocsLink}>Learn more</Link>
-          </WarningInfo>
-        )}
+        <NotInPdg isValidatorInPDG={isValidatorInPDG} />
+        <DepositPaused beaconChainDepositsPaused={beaconChainDepositsPaused} />
         <ConnectWalletButton>
           <ModalFormButton
             type="submit"

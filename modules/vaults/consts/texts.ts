@@ -368,6 +368,7 @@ export const vaultTexts = {
           actionActive: 'Top up validator',
           actionDisabled: 'Top up unavailable',
           validatorWithoutPDG: `Top-ups are unavailable for this validator because it has not been proven for Predeposit Guarantee. To enable top-ups in this interface, please prove the validator.`,
+          depositPaused: `Top-ups are unavailable due to temporary restrictions on deposits from the stVault Balance to validators.`,
           txModal: {
             loadingText: (index: number, amount: bigint) =>
               `You are topping up the validator #${index} with ${formatBalance(amount).trimmed} ETH`,

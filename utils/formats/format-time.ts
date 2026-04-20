@@ -40,6 +40,16 @@ const customDateFormatter = new Intl.DateTimeFormat('en-US', {
   timeZoneName: 'shortOffset',
 });
 
+const isoDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false,
+});
+
 export const formatCustomDate = (ts: number): string => {
   const ms = Math.abs(ts) < 1e11 ? ts * 1000 : ts;
   return customDateFormatter.format(new Date(ms));
@@ -47,4 +57,8 @@ export const formatCustomDate = (ts: number): string => {
 
 export const formatDate = (date: Date): string => {
   return customDateFormatter.format(date);
+};
+
+export const formatDateToISO = (date: Date): string => {
+  return isoDateFormatter.format(date).replace(',', '');
 };

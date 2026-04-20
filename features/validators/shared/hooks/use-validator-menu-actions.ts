@@ -16,46 +16,27 @@ const { topUpValidator, partialWithdrawal, withdrawToStVault } =
   vaultTexts.actions.validators.table.menu;
 
 export const useValidatorMenuActions = () => {
-  const {
-    isAdmin,
-    hasDepositorPermission,
-    hasWithdrawalPermission,
-    beaconChainDepositsPaused,
-    isVaultInJail,
-    obligationsShortfallValue,
-  } = useValidators();
+  const { isAdmin, hasDepositorPermission, hasWithdrawalPermission } =
+    useValidators();
 
   return useMemo<ValidatorMenuActionItem[]>(
     () => [
       {
-        hasPermission: hasDepositorPermission && !beaconChainDepositsPaused,
+        hasPermission: hasDepositorPermission,
         label: topUpValidator,
         modal: VALIDATOR_MODALS.topUpValidator,
       },
       {
-        hasPermission:
-          (isAdmin || hasWithdrawalPermission) &&
-          !isVaultInJail &&
-          obligationsShortfallValue === 0n,
+        hasPermission: isAdmin || hasWithdrawalPermission,
         label: partialWithdrawal,
         modal: VALIDATOR_MODALS.partialWithdrawal,
       },
       {
-        hasPermission:
-          (isAdmin || hasWithdrawalPermission) &&
-          !isVaultInJail &&
-          obligationsShortfallValue === 0n,
+        hasPermission: isAdmin || hasWithdrawalPermission,
         label: withdrawToStVault,
         modal: VALIDATOR_MODALS.fullWithdrawal,
       },
     ],
-    [
-      isAdmin,
-      hasDepositorPermission,
-      hasWithdrawalPermission,
-      beaconChainDepositsPaused,
-      isVaultInJail,
-      obligationsShortfallValue,
-    ],
+    [isAdmin, hasDepositorPermission, hasWithdrawalPermission],
   );
 };

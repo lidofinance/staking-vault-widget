@@ -13,7 +13,11 @@ import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 
 import { useValidators } from 'features/validators/contexts';
-import { AvailableBalance, ModalFormButton } from 'features/validators/shared';
+import {
+  AvailableBalance,
+  ModalFormButton,
+  WarningInfo,
+} from 'features/validators/shared';
 
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
@@ -24,6 +28,7 @@ import type {
 } from '../../types';
 
 import { FormContainer, ActionContainer } from './styles';
+import { ObligationExists, VaultInJail } from '../../components';
 
 type FormProps = {
   isPartial: boolean;
@@ -31,8 +36,15 @@ type FormProps = {
   pubkey: Hex;
 };
 
-const { estimatedFee, actionFull, actionPartial, actionDisabled } =
-  vaultTexts.actions.validators.modals.withdrawal;
+const {
+  estimatedFee,
+  actionFull,
+  actionPartial,
+  actionDisabled,
+  partialWarning,
+  fullWarning,
+  availableToWithdraw,
+} = vaultTexts.actions.validators.modals.withdrawal;
 
 export const WithdrawToVaultModalForm: FC<FormProps> = ({
   isPartial,
@@ -119,14 +131,29 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       afterSubmitResetOptions={false}
     >
       <FormContainer>
+        {!formState.disabled && (
+          <WarningInfo>
+            {isPartial ? partialWarning : fullWarning(balance)}
+          </WarningInfo>
+        )}
         {isPartial && (
-          <TokenAmountInputGroup
-            amountFieldName="amount"
-            label="ETH amount"
-            leftDecorator={<Eth />}
-            maxAmount={availableToPartialWithdraw}
-            fullwidth
-          />
+          <>
+            <AvailableBalance
+              title={availableToWithdraw}
+              amount={availableToPartialWithdraw}
+            />
+            <TokenAmountInputGroup
+              amountFieldName="amount"
+              label="ETH amount"
+              leftDecorator={<Eth />}
+              maxAmount={availableToPartialWithdraw}
+              fullwidth
+            />
+            <ObligationExists
+              obligationsShortfallValue={obligationsShortfallValue}
+            />
+            <VaultInJail isVaultInJail={isVaultInJail} />
+          </>
         )}
         <ActionContainer>
           <AvailableBalance

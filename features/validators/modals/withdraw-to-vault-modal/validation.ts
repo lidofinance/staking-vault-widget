@@ -12,7 +12,7 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
-const amountStepError = 'Amount must be multiple of 1 gwei';
+const amountStepError = 'Value must be divisible by 1 gwei';
 
 export const withdrawalFormSchema = ({
   availableAmount,

@@ -80,7 +80,9 @@ const ValidatorTableRowContent = ({
         activateDate={validator.activatedAt}
         exitDate={validator.exitedAt}
       />
-      {!hideTableMenu && <MenuCell validator={validator} />}
+      {!(hideTableMenu || validator.status !== 'active_ongoing') && (
+        <MenuCell validator={validator} />
+      )}
     </>
   );
 };
