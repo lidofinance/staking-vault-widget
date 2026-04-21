@@ -36,6 +36,7 @@ type selectValidatorDataArgs = {
     validatorWithdrawalFee: bigint;
     beaconChainDepositsPauseIntent: boolean;
     beaconChainDepositsPaused: boolean;
+    isVaultInJail: boolean;
     depositor: Address;
   };
   meta?: FetchValidatorsResult['meta'];
@@ -103,6 +104,7 @@ export const useVaultValidatorsData = () => {
         beaconChainDepositsPaused,
         obligationsShortfallValue,
         validatorWithdrawalFee,
+        isVaultInJail,
       ] = await Promise.all([
         activeVault.dashboard.read.pdgPolicy(),
         activeVault.vault.read.availableBalance(),
@@ -113,6 +115,7 @@ export const useVaultValidatorsData = () => {
         activeVault.vault.read.beaconChainDepositsPaused(),
         activeVault.hub.read.obligationsShortfallValue([activeVault.address]),
         activeVault.vault.read.calculateValidatorWithdrawalFee([1n]),
+        activeVault.operatorGrid.read.isVaultInJail([activeVault.address]),
       ]);
 
       const response = await fetchValidators(activeVault.address, {
@@ -146,6 +149,7 @@ export const useVaultValidatorsData = () => {
           depositor,
           obligationsShortfallValue,
           validatorWithdrawalFee,
+          isVaultInJail,
         },
       };
     },
@@ -202,6 +206,7 @@ export const useVaultValidatorsData = () => {
     beaconChainDepositsPaused: data.contract?.beaconChainDepositsPaused,
     obligationsShortfallValue: data.contract?.obligationsShortfallValue,
     depositor: data.contract?.depositor,
+    isVaultInJail: data.contract?.isVaultInJail,
     isAdmin: !!hasAdmin,
     hasWithdrawalPermission: hasPermission,
     hasDepositorPermission: isDepositor,

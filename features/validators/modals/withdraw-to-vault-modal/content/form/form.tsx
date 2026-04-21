@@ -22,6 +22,7 @@ import { MIN_ACTIVATION_BALANCE } from 'features/validators/const';
 
 import { useWithdrawalToVault } from '../../hooks';
 import { withdrawalFormResolver } from '../../validation';
+import { VaultInJail } from '../../components';
 import type {
   WithdrawalFormFieldValues,
   WithdrawalFormValidationContext,
@@ -61,6 +62,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
     getValidatorByPubkey,
     obligationsShortfallValue,
     validatorWithdrawalFee,
+    isVaultInJail,
   } = useValidators();
   const disabled = useDisableForm();
   const { isDappActive } = useDappStatus();
@@ -84,6 +86,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       !isDappActive ||
       !hasWithdrawalPermission ||
       (isPartial && balance < MIN_ACTIVATION_BALANCE) ||
+      (isPartial && isVaultInJail) ||
       disabled,
     resolver: withdrawalFormResolver,
     context: { availableAmount: balance, isPartial, obligationsShortfallValue },
@@ -147,6 +150,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
               maxAmount={availableToPartialWithdraw}
               fullwidth
             />
+            <VaultInJail isVaultInJail={isVaultInJail} />
           </>
         )}
         <ActionContainer>

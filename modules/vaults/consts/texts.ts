@@ -347,6 +347,8 @@ export const vaultTexts = {
           actionFull: 'Force exit validator',
           actionPartial: 'Withdraw to stVault',
           actionDisabled: 'Withdraw unavailable',
+          vaultIsJail:
+            'Operation is restricted. Vault jailed. Partial Withdrawal temporary unavailable.',
           partialWarning:
             "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
           fullWarning: (amount: bigint) =>
