@@ -12,7 +12,7 @@ type ValidatorMenuActionItem = {
   modal: ValidatorsModalItem;
 };
 
-const { topUpValidator, partialWithdrawal, withdrawToStVault } =
+const { topUpValidator, withdrawToStVault } =
   vaultTexts.actions.validators.table.menu;
 
 export const useValidatorMenuActions = () => {
@@ -28,13 +28,8 @@ export const useValidatorMenuActions = () => {
       },
       {
         hasPermission: isAdmin || hasWithdrawalPermission,
-        label: partialWithdrawal,
-        modal: VALIDATOR_MODALS.partialWithdrawal,
-      },
-      {
-        hasPermission: isAdmin || hasWithdrawalPermission,
         label: withdrawToStVault,
-        modal: VALIDATOR_MODALS.fullWithdrawal,
+        modal: VALIDATOR_MODALS.withdrawalToVault,
       },
     ],
     [isAdmin, hasDepositorPermission, hasWithdrawalPermission],

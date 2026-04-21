@@ -333,7 +333,6 @@ export const vaultTexts = {
             'Failed to load validator data. Please try again later',
         },
         menu: {
-          partialWithdrawal: 'Partial withdrawal',
           topUpValidator: 'Top up validator',
           withdrawToStVault: 'Withdraw to stVault',
         },

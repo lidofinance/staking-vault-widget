@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useState, useCallback } from 'react';
 import { Modal, Text } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
@@ -25,29 +25,37 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
   modalData,
   onCloseModal,
 }) => {
+  const [withdrawalType, setWithdrawalType] = useState<'partial' | 'full'>(
+    'partial',
+  );
+
+  const handleCloseModal = useCallback(() => {
+    onCloseModal();
+    setWithdrawalType('partial');
+  }, [onCloseModal]);
+
   if (!modalData) {
     return null;
   }
 
   const { currentModal, pubKey, index, balance } = modalData;
+  const isPartial = withdrawalType === 'partial';
   const availableToPartialWithdraw = bigIntMax(
     0n,
     balance - MIN_ACTIVATION_BALANCE,
   );
-  const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
-  const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
 
   return (
     <Modal
-      open={isPartial || isFull}
-      onClose={onCloseModal}
+      open={VALIDATOR_MODALS.withdrawalToVault === currentModal}
+      onClose={handleCloseModal}
       windowSize="md"
       title={title}
     >
       <ContentContainer>
         <Text size="xs">{description}</Text>
         <ValidatorInfo pubKey={pubKey} index={index} balance={balance} />
-        <WithdrawalType modalData={modalData} />
+        <WithdrawalType value={withdrawalType} onChange={setWithdrawalType} />
         <WithdrawToVaultModalForm
           isPartial={isPartial}
           availableToPartialWithdraw={availableToPartialWithdraw}

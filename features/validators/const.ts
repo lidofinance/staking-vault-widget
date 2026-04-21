@@ -1,8 +1,7 @@
 import { WEI_PER_ETHER } from 'consts/tx';
 
 export enum VALIDATOR_MODALS {
-  partialWithdrawal = 'partialWithdrawal',
-  fullWithdrawal = 'fullWithdrawal',
+  withdrawalToVault = 'withdrawalToVault',
   topUpValidator = 'topUpValidator',
 }
 

@@ -1,40 +1,31 @@
 import { type FC, useCallback } from 'react';
 
-import {
-  type ModalData,
-  useValidatorModal,
-} from 'features/validators/contexts';
-import { VALIDATOR_MODALS } from 'features/validators/const';
-
 import { SwitcherItemStyled, SwitcherStyled } from './styles';
 
+export type WithdrawalVariant = 'partial' | 'full';
+
 type WithdrawalTypeProps = {
-  modalData: ModalData;
+  value: WithdrawalVariant;
+  onChange: (value: WithdrawalVariant) => void;
 };
 
-export const WithdrawalType: FC<WithdrawalTypeProps> = ({ modalData }) => {
-  const { openModal } = useValidatorModal();
-  const { currentModal } = modalData;
-  const isPartial = VALIDATOR_MODALS.partialWithdrawal === currentModal;
-  const isFull = VALIDATOR_MODALS.fullWithdrawal === currentModal;
+export const WithdrawalType: FC<WithdrawalTypeProps> = ({
+  value,
+  onChange,
+}) => {
+  const isFull = value === 'full';
 
   const openPartialWithdrawal = useCallback(() => {
-    openModal({
-      ...modalData,
-      currentModal: VALIDATOR_MODALS.partialWithdrawal,
-    });
-  }, [openModal, modalData]);
+    onChange('partial');
+  }, [onChange]);
 
   const openFullWithdrawal = useCallback(() => {
-    openModal({
-      ...modalData,
-      currentModal: VALIDATOR_MODALS.fullWithdrawal,
-    });
-  }, [openModal, modalData]);
+    onChange('full');
+  }, [onChange]);
 
   return (
     <SwitcherStyled>
-      <SwitcherItemStyled active={isPartial} onClick={openPartialWithdrawal}>
+      <SwitcherItemStyled active={!isFull} onClick={openPartialWithdrawal}>
         Partial withdrawal
       </SwitcherItemStyled>
       <SwitcherItemStyled active={isFull} onClick={openFullWithdrawal}>
