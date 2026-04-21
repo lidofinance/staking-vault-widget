@@ -22,7 +22,7 @@ const getBackgroundColor = ({
     exited_slashed: getColorTransparency(colors.error, '20%'),
     withdrawal_possible: getColorTransparency(colors.primary, '20%'),
     withdrawal_done: colors.foreground,
-    pending_initialised: colors.backgroundSecondary,
+    pending_initialized: colors.backgroundSecondary,
     pending_queued: colors.backgroundSecondary,
     exited_unslashed: colors.backgroundSecondary,
   };

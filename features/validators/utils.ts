@@ -17,7 +17,7 @@ export const getValidatorStatusTextColor = ({
     exited_slashed: colors.error,
     withdrawal_possible: colors.primary,
     withdrawal_done: colors.textSecondary,
-    pending_initialised: colors.textSecondary,
+    pending_initialized: colors.textSecondary,
     pending_queued: colors.textSecondary,
     exited_unslashed: colors.textSecondary,
   };
