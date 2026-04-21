@@ -42,7 +42,7 @@ export enum VALIDATOR_STATUSES {
   exited_slashed = 'exited_slashed',
   withdrawal_possible = 'withdrawal_possible',
   withdrawal_done = 'withdrawal_done',
-  pending_initialised = 'pending_initialised',
+  pending_initialized = 'pending_initialized',
   pending_queued = 'pending_queued',
   exited_unslashed = 'exited_unslashed',
 }
@@ -106,7 +106,7 @@ const validatorsByStatusSchema: z.ZodType<ValidatorsApiMeta['byStatus']> =
     exited_slashed: z.number().optional(),
     withdrawal_possible: z.number().optional(),
     withdrawal_done: z.number().optional(),
-    pending_initialised: z.number().optional(),
+    pending_initialized: z.number().optional(),
     pending_queued: z.number().optional(),
     exited_unslashed: z.number().optional(),
   });
