@@ -39,7 +39,11 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
           />
         </Text>
       </InlineLoader>
-      <InlineLoader isLoading={isLoading} height={20} width={80}>
+      <InlineLoader
+        isLoading={isLoading || !isBigint(amount)}
+        height={20}
+        width={80}
+      >
         <Text size="xxs" strong style={{ textTransform: 'uppercase' }}>
           <FormatPrice amount={usdAmount} />
         </Text>
