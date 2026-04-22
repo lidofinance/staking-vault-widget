@@ -34,6 +34,7 @@ export const useWithdrawalToVault = () => {
       index,
       pubkey,
       validatorWithdrawalFee,
+      balance,
     }: WithdrawalFormValidatedValues) => {
       invariant(activeVault, '[useWithdrawalToVault] activeVault is undefined');
       invariant(
@@ -46,9 +47,10 @@ export const useWithdrawalToVault = () => {
       );
 
       const amountInGwei = amount / WEI_PER_GWEI;
+      const withdrawalAmount = amount > 0n ? amount : balance;
 
-      const mainActionLoadingText = loadingText(index, amount);
-      const mainActionCompleteText = mainCompleteText(index, amount);
+      const mainActionLoadingText = loadingText(index, withdrawalAmount);
+      const mainActionCompleteText = mainCompleteText(index, withdrawalAmount);
 
       const prepareTransactions = async () => {
         const calls: TransactionEntry[] = [...prepareReportCalls()];

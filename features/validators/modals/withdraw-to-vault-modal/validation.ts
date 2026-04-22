@@ -34,6 +34,7 @@ export const withdrawalFormSchema = ({
     index: z.number(),
     pubkey: pubkeySchema,
     validatorWithdrawalFee: z.bigint(),
+    balance: z.bigint(),
   });
 };
 

@@ -37,6 +37,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           <PubKeyWrapper>
             <Text size="xs" strong>
               <Address
+                as="span"
                 address={pubKey}
                 symbols={4}
                 style={{ fontWeight: 700 }}
