@@ -11,13 +11,14 @@ import {
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
+import { WEI_PER_ETHER } from 'consts/tx';
 
 import { useValidators } from 'features/validators/contexts';
 import { ModalFormButton } from 'features/validators/shared';
 
 import { useSubmitTopup } from '../../hooks';
 import { topUpFormResolver } from '../../validation';
-import { DepositPaused, NotInPdg } from '../../components';
+import { DepositPaused, NotInPdg, LowBalance } from '../../components';
 import type {
   TopUpFormFieldValues,
   TopUpFormValidationContext,
@@ -68,6 +69,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       disabled ||
       !hasDepositorPermission ||
       !isValidatorInPDG ||
+      availableBalance < WEI_PER_ETHER ||
       beaconChainDepositsPaused,
     resolver: topUpFormResolver,
     context: { availableBalance },
@@ -105,6 +107,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
         />
         <NotInPdg isValidatorInPDG={isValidatorInPDG} />
         <DepositPaused beaconChainDepositsPaused={beaconChainDepositsPaused} />
+        <LowBalance availableBalance={availableBalance} />
         <ConnectWalletButton>
           <ModalFormButton
             type="submit"

@@ -352,12 +352,12 @@ export const vaultTexts = {
           partialWarning:
             "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
           fullWarning: (amount: bigint) =>
-            `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount).trimmed} ETH) will be withdrawn.`,
+            `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH) will be withdrawn.`,
           txModal: {
             loadingText: (index: number, amount: bigint) =>
-              `You are withdrawing ${formatBalance(amount).trimmed} ETH from the validator #${index}`,
+              `You are withdrawing ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH from the validator #${index}`,
             mainCompleteText: (index: number, amount: bigint) =>
-              `${formatBalance(amount).trimmed} ETH has been withdrawn from the validator #${index}`,
+              `${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH has been withdrawn from the validator #${index}`,
           },
         },
         topUp: {
@@ -370,11 +370,13 @@ export const vaultTexts = {
           actionDisabled: 'Top up unavailable',
           validatorWithoutPDG: `Top-ups are unavailable for this validator because it has not been proven for Predeposit Guarantee. To enable top-ups in this interface, please prove the validator.`,
           depositPaused: `Top-ups are unavailable due to temporary restrictions on deposits from the stVault Balance to validators.`,
+          availableBalanceLow: (amount: bigint) =>
+            `Top-ups are unavailable due to low available balance ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
           txModal: {
             loadingText: (index: number, amount: bigint) =>
-              `You are topping up the validator #${index} with ${formatBalance(amount).trimmed} ETH`,
+              `You are topping up the validator #${index} with ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
             mainCompleteText: (index: number, amount: bigint) =>
-              `The validator #${index} has been topped up with ${formatBalance(amount).trimmed} ETH`,
+              `The validator #${index} has been topped up with ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
           },
         },
       },
