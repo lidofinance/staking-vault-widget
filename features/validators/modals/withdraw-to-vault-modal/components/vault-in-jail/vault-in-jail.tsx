@@ -22,7 +22,7 @@ export const VaultInJail: FC<VaultInJailProps> = ({ isVaultInJail }) => {
 
   return (
     <WarningInfo>
-      {vaultIsJail}. <Link href={docsLink}>Learn more</Link>
+      {vaultIsJail} <Link href={docsLink}>Learn more</Link>
     </WarningInfo>
   );
 };
