@@ -29,7 +29,12 @@ export const useWithdrawalToVault = () => {
   const { address } = useDappStatus();
 
   const withdrawToVault = useCallback(
-    async ({ amount, index, pubkey }: WithdrawalFormValidatedValues) => {
+    async ({
+      amount,
+      index,
+      pubkey,
+      validatorWithdrawalFee,
+    }: WithdrawalFormValidatedValues) => {
       invariant(activeVault, '[useWithdrawalToVault] activeVault is undefined');
       invariant(
         !disabled,
@@ -54,8 +59,10 @@ export const useWithdrawalToVault = () => {
             [amountInGwei],
             address,
           ]),
+          value: validatorWithdrawalFee,
           loadingActionText: mainActionLoadingText,
         });
+
         return calls;
       };
 

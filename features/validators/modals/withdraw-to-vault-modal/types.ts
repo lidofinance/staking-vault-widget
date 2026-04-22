@@ -15,4 +15,5 @@ export type WithdrawalFormFieldValues = {
   amount: WithdrawalFormValidatedValues['amount'] | null;
   index: WithdrawalFormValidatedValues['index'];
   pubkey: WithdrawalFormValidatedValues['pubkey'];
+  validatorWithdrawalFee: WithdrawalFormValidatedValues['validatorWithdrawalFee'];
 };

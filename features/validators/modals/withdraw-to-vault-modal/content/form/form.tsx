@@ -81,6 +81,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       amount: isPartial ? null : 0n,
       index,
       pubkey,
+      validatorWithdrawalFee,
     },
     disabled:
       !isDappActive ||
@@ -102,8 +103,9 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       amount: isPartial ? null : 0n,
       index,
       pubkey,
+      validatorWithdrawalFee,
     });
-  }, [index, isPartial, pubkey, reset]);
+  }, [index, isPartial, pubkey, reset, validatorWithdrawalFee]);
 
   const onSubmit = useCallback(
     async (formData: WithdrawalFormValidatedValues) => {

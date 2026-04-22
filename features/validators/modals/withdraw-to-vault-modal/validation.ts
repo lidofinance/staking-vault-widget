@@ -33,6 +33,7 @@ export const withdrawalFormSchema = ({
       : z.literal(0n),
     index: z.number(),
     pubkey: pubkeySchema,
+    validatorWithdrawalFee: z.bigint(),
   });
 };
 
