@@ -91,7 +91,11 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       (isPartial && isVaultInJail) ||
       disabled,
     resolver: withdrawalFormResolver,
-    context: { availableAmount: balance, isPartial, obligationsShortfallValue },
+    context: {
+      availableAmount: isPartial ? availableToPartialWithdraw : balance,
+      isPartial,
+      obligationsShortfallValue,
+    },
     mode: 'all',
   });
 
