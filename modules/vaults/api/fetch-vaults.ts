@@ -1,6 +1,6 @@
 import { isAddressEqual, zeroAddress, type Address } from 'viem';
 
-import { calculateHealth } from 'utils';
+import { calculateHealth, isString } from 'utils';
 import { optBigint } from 'utils/opt-bigint';
 import { optNumber } from 'utils/opt-number';
 
@@ -383,9 +383,9 @@ const normalizeResponse = (
       carrySpreadAprSma: vault.carrySpreadAprSma,
       bottomLine: optBigint(vault.bottomLine),
       carrySpreadAprPercent: vault.carrySpreadAprPercent,
-      lastReport: vault.lastReport?.fee
+      lastReport: isString(vault.lastReport?.fee)
         ? {
-            fee: optBigint(vault.lastReport?.fee),
+            fee: optBigint(vault.lastReport.fee),
             inOutDelta: optBigint(vault.lastReport?.inOutDelta) as bigint,
             totalValueWei: optBigint(vault.lastReport?.totalValueWei) as bigint,
             liabilityShares: optBigint(

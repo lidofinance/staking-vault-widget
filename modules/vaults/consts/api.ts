@@ -57,6 +57,6 @@ export const validatorsApiRoutes = {
       .filter(([_, value]) => !!value || isNumber(value))
       .forEach(([key, value]) => url.searchParams.set(key, `${value}`));
 
-    return url;
+    return `${url}`;
   },
 };

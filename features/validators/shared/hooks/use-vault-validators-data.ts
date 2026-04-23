@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
 import { type Address, type Hex, isAddress, isAddressEqual } from 'viem';
@@ -13,7 +14,6 @@ import { useDappStatus } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
 
 import { useValidatorListParams } from './use-validator-list-params';
-import { useCallback } from 'react';
 
 export enum ValidatorPdgStage {
   NONE,

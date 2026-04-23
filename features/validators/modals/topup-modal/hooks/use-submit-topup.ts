@@ -1,5 +1,5 @@
-import invariant from 'tiny-invariant';
 import { useCallback } from 'react';
+import invariant from 'tiny-invariant';
 
 import {
   useVault,
@@ -13,8 +13,9 @@ import {
   withSuccess,
 } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
-import { TopUpFormValidatedValues } from '../types';
-import { WEI_PER_GWEI } from '../../../../../consts/tx';
+import { WEI_PER_GWEI } from 'consts/tx';
+
+import type { TopUpFormValidatedValues } from '../types';
 
 const { loadingText, mainCompleteText } =
   vaultTexts.actions.validators.modals.topUp.txModal;

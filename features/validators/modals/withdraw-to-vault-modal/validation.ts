@@ -13,7 +13,7 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
-const amountGweiError = 'Value must be divisible by 1 gwei';
+const amountGweiError = 'Value must be greater than 1 gwei';
 const amountObligationError = (obligation: bigint) =>
   `Value must be greater than your obligation ${formatBalance(obligation).trimmed} ETH`;
 

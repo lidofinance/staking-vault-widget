@@ -34,7 +34,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
       placeholder="Status"
       $status={params.status}
       value={params.status ?? 'all'}
-      data-testid={`${dataTestId}-filter-pubkey-index`}
+      data-testid={`${dataTestId}-filter-status`}
     >
       <Option value="all">all</Option>
       {statuses.map((status) => (

@@ -23,7 +23,7 @@ export const ValidatorMenuAction: FC<ValidatorMenuActionProps> = ({
 }) => {
   const { openModal } = useValidatorModal();
 
-  const onClose = useCallback(() => {
+  const onCloseMenu = useCallback(() => {
     const { pubkey, balance, index } = validator;
 
     openModal({ currentModal: modal, balance, pubKey: pubkey, index });
@@ -34,5 +34,5 @@ export const ValidatorMenuAction: FC<ValidatorMenuActionProps> = ({
     return null;
   }
 
-  return <PopupMenuItem onClick={onClose}>{label}</PopupMenuItem>;
+  return <PopupMenuItem onClick={onCloseMenu}>{label}</PopupMenuItem>;
 };

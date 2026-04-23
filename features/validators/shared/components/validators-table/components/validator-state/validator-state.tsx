@@ -23,9 +23,9 @@ export const ValidatorState: FC<ValidatorStateProps> = ({
   const isTypeIndex = type === 'index';
   const content = isTypeIndex ? `#${indexOrPubkey}` : indexOrPubkey;
 
-  const handleCopy = useCallback(() => {
+  const handleCopy = useCallback(async () => {
     try {
-      void navigator.clipboard.writeText(indexOrPubkey);
+      await navigator.clipboard.writeText(indexOrPubkey);
       const info = truncateAddress({ address: indexOrPubkey });
       ToastSuccess(`Validator's pubkey ${info} has been copied`);
     } catch (err) {
