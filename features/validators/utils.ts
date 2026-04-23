@@ -1,5 +1,18 @@
 import type { Theme } from '@lidofinance/lido-ui';
 import type { ValidatorStatus } from 'modules/vaults';
+import { BEACONCHA_LINK_BY_NETWORK } from './const';
+
+type BeaconchaChainId = keyof typeof BEACONCHA_LINK_BY_NETWORK;
+
+export const getBeaconchaBaseUrlByChainId = (
+  chainId: number | undefined,
+): string => {
+  if (!chainId || !(chainId in BEACONCHA_LINK_BY_NETWORK)) {
+    return '#';
+  }
+
+  return BEACONCHA_LINK_BY_NETWORK[chainId as BeaconchaChainId];
+};
 
 export const getValidatorStatusTextColor = ({
   $status,

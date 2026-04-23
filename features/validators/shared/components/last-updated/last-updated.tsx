@@ -1,12 +1,12 @@
 import { type FC, useMemo } from 'react';
 import { Text, Link } from '@lidofinance/lido-ui';
 
-import { useLidoSDK } from 'modules/web3';
 import { useVault } from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 import { formatDate, isNumber } from 'utils';
+import { config } from 'config';
 
-import { BEACONCHA_LINK_BY_NETWORK } from 'features/validators/const';
+import { getBeaconchaBaseUrlByChainId } from 'features/validators/utils';
 
 import { LastUpdatedContainer } from './styles';
 
@@ -15,8 +15,9 @@ type LastUpdatedProps = {
   isLoading: boolean;
 };
 
+const { defaultChain: chainId } = config;
+
 export const LastUpdated: FC<LastUpdatedProps> = ({ timestamp, isLoading }) => {
-  const { publicClient } = useLidoSDK();
   const { activeVault } = useVault();
 
   const link = useMemo(() => {
@@ -24,9 +25,9 @@ export const LastUpdated: FC<LastUpdatedProps> = ({ timestamp, isLoading }) => {
       return '#';
     }
 
-    const chainId = publicClient.chain.id as 1 | 560048;
-    return `${BEACONCHA_LINK_BY_NETWORK[chainId]}/validators/deposits?q=${activeVault.withdrawalCredentials}`;
-  }, [publicClient.chain.id, activeVault]);
+    const baseUrl = getBeaconchaBaseUrlByChainId(chainId);
+    return `${baseUrl}/validators/deposits?q=${activeVault.withdrawalCredentials}`;
+  }, [activeVault]);
 
   return (
     <LastUpdatedContainer>

@@ -87,7 +87,7 @@ export const useVaultValidatorsData = () => {
     ] as const,
     enabled: isReady,
     refetchOnMount: true,
-    staleTime: 0,
+    staleTime: 300000, // 5 min,
     placeholderData: keepPreviousData,
     queryFn: async () => {
       invariant(

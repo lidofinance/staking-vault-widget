@@ -13,7 +13,7 @@ import {
   WithdrawalFormValidationContext,
 } from './types';
 
-const amountGweiError = 'Value must be greater than 1 gwei';
+const amountGweiError = 'Value must be greater than 1 gwei (0.000000001 ETH)';
 const amountObligationError = (obligation: bigint) =>
   `Value must be greater than your obligation ${formatBalance(obligation).trimmed} ETH`;
 

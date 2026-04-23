@@ -5,7 +5,7 @@ export enum VALIDATOR_MODALS {
   topUpValidator = 'topUpValidator',
 }
 
-export const BEACONCHA_LINK_BY_NETWORK = {
+export const BEACONCHA_LINK_BY_NETWORK: Record<1 | 560048, string> = {
   [1]: 'https://beaconcha.in',
   [560048]: 'https://hoodi.beaconcha.in',
 };
