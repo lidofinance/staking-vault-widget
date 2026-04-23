@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
-import { WEI_PER_GWEI } from 'consts/tx';
+import { ONE_GWEI } from 'consts/tx';
 import { formatBalance } from 'utils';
 
 import {
@@ -25,7 +25,7 @@ export const withdrawalFormSchema = ({
   return z.object({
     amount: isPartial
       ? maxAmountSchema(availableAmount)
-          .refine((value) => value > WEI_PER_GWEI, amountGweiError)
+          .refine((value) => value > ONE_GWEI, amountGweiError)
           .refine(
             (value) => value > obligationsShortfallValue,
             amountObligationError(obligationsShortfallValue),

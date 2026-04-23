@@ -2,7 +2,7 @@ import { type FC, useCallback } from 'react';
 
 import { useVault, useSendReport } from 'modules/vaults';
 import { FormatToken } from 'shared/formatters';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 
 import { ListItem, ListItemContent } from '../styles';
 import { ButtonLink } from './styles';
@@ -17,7 +17,7 @@ export const ApplyReport: FC<ApplyReportProps> = ({ lidoFees }) => {
   const { applyReport } = useSendReport();
   const onSendReport = useCallback(() => applyReport(), [applyReport]);
   const isReportAvailable = !!activeVault?.isReportAvailable;
-  if (!lidoFees || lidoFees < WEI_PER_ETHER) {
+  if (!lidoFees || lidoFees < ONE_ETHER) {
     return null;
   }
 

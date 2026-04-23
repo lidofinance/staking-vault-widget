@@ -1,4 +1,4 @@
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 import { isBigint } from 'utils';
 
 import { NoticeContainer } from 'features/overview/shared';
@@ -24,7 +24,7 @@ export const DepositsRestricted = () => {
 
   if (
     !healthFactorNumber ||
-    ((!isBigint(feesToSettle) || feesToSettle < WEI_PER_ETHER) &&
+    ((!isBigint(feesToSettle) || feesToSettle < ONE_ETHER) &&
       (!isBigint(redemptionStETH) || redemptionStETH === 0n)) ||
     !beaconChainDepositsPaused
   ) {
