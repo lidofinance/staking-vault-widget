@@ -18,7 +18,6 @@ export type NavigationLinkProps = {
   title: string;
   path: string;
   pathname?: string;
-  external?: boolean;
 };
 
 const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
@@ -34,7 +33,6 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
   title,
   icon,
   path,
-  external,
   pathname: pathnameInfo,
 }) => {
   const { pathname } = useRouter();
@@ -48,7 +46,7 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
 
   return (
     <ListItem onClick={trackClickEvent} key={path}>
-      <Link href={path} target={external ? '_blank' : undefined}>
+      <Link href={path}>
         <NavLink active={isActivePath}>
           {pathIcon}
           <span>{title}</span>

@@ -4,7 +4,6 @@ export type NavigationRoutes = {
   icon: 'gear' | 'withdraw' | 'validators' | 'mint' | 'mosaic' | 'stake';
   exact: boolean;
   inMobileMenu?: boolean;
-  external?: boolean;
 };
 
 export type VaultRoutesConfig = {

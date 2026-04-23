@@ -1,5 +1,4 @@
 import { type FC, useCallback } from 'react';
-
 import { Copy, Tooltip, ToastSuccess } from '@lidofinance/lido-ui';
 
 import { truncateAddress } from 'utils';
@@ -14,7 +13,7 @@ export const CopyAddress: FC<CopyAddressProps> = ({ address }) => {
   const handleCopy = useCallback(() => {
     if (!address) return;
     void navigator.clipboard.writeText(address);
-    ToastSuccess(`Address ${truncateAddress({ address })} have been copied`);
+    ToastSuccess(`Address ${truncateAddress({ address })} has been copied`);
   }, [address]);
 
   return (

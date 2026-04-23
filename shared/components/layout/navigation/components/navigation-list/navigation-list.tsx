@@ -18,24 +18,15 @@ export const NavigationList: FC<NavigationsProps> = ({ routes }) => {
 
   return (
     <>
-      {routes.map(({ title, path, icon, pathname, external }) => {
-        const isValidatorsLink = title === 'Validators';
-        const appPath =
-          isValidatorsLink && activeVault
-            ? `${path}${activeVault?.withdrawalCredentials}`
-            : path;
-
-        return (
-          <NavigationLink
-            key={path}
-            icon={icon}
-            title={title}
-            path={appPath}
-            pathname={pathname}
-            external={external}
-          />
-        );
-      })}
+      {routes.map(({ title, path, icon, pathname }) => (
+        <NavigationLink
+          key={path}
+          icon={icon}
+          title={title}
+          path={path}
+          pathname={pathname}
+        />
+      ))}
     </>
   );
 };
