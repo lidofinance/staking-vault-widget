@@ -8,6 +8,7 @@ type InlineLoaderProps = {
   height?: number;
   placeholder?: ReactNode;
   loader?: ReactNode;
+  showBy?: boolean;
 };
 
 export const InlineLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
@@ -17,6 +18,7 @@ export const InlineLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
   loader,
   width,
   height,
+  showBy,
 }) => {
   if (isLoading)
     return loader ? (
@@ -24,6 +26,8 @@ export const InlineLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
     ) : (
       <InlineLoaderStyled width={width} height={height} />
     );
+
+  if (showBy === false) return placeholder ?? null;
   if (children === undefined) return placeholder || null;
 
   return children;
