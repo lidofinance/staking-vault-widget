@@ -1,6 +1,6 @@
 import NextBundleAnalyzer from '@next/bundle-analyzer';
-import buildDynamics from './scripts/build-dynamics.mjs';
 
+import buildDynamics from './scripts/build-dynamics.mjs';
 import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs';
 import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
@@ -130,29 +130,58 @@ export default withBundleAnalyzer({
         source: '/(.*)',
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
+            key: 'x-dns-prefetch-control',
             value: 'on',
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
+            key: 'strict-transport-security',
+            value: 'max-age=2592000; includeSubDomains; preload',
           },
           {
-            key: 'Referrer-Policy',
+            key: 'referrer-policy',
             value: 'same-origin',
           },
           {
             key: 'x-content-type-options',
             value: 'nosniff',
           },
-          { key: 'x-xss-protection', value: '1' },
+          { key: 'x-xss-protection', value: '1; mode=block' },
           { key: 'x-download-options', value: 'noopen' },
+          { key: 'x-permitted-cross-domain-policies', value: 'none' },
+          { key: 'cross-origin-opener-policy', value: 'same-origin' },
+          {
+            key: 'Permissions-Policy',
+            value: [
+              'camera=()',
+              'microphone=()',
+              'geolocation=()',
+              'payment=()',
+              'accelerometer=()',
+              'gyroscope=()',
+              'magnetometer=()',
+              'display-capture=()',
+              'encrypted-media=()',
+              'serial=()',
+              'xr-spatial-tracking=()',
+              'browsing-topics=()',
+              // Allow for the page itself; hardware wallets (Ledger/Trezor) may need these
+              'usb=(self)',
+              'bluetooth=(self)',
+              'hid=(self)',
+              'autoplay=(self)',
+              'fullscreen=(self)',
+              'picture-in-picture=(self)',
+            ].join(', '),
+          },
         ],
       },
       {
         // required for gnosis save apps
         source: '/manifest.json',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
+        ],
       },
       ...CACHE_CONTROL_PAGES.map((page) => ({
         source: page,

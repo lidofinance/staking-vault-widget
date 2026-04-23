@@ -10,6 +10,7 @@ import type { ContentSecurityPolicyOption } from 'next-secure-headers/lib/rules'
 // otherwise you will get something like a cyclic error!
 import { config } from '../get-config';
 import { secretConfig } from '../get-secret-config';
+import { IPFS_BASE_SCRIPT_HASH } from 'features/ipfs';
 
 const trustedHosts = secretConfig.cspTrustedHosts
   ? secretConfig.cspTrustedHosts.split(',')
@@ -33,6 +34,7 @@ export const contentSecurityPolicy: ContentSecurityPolicyOption = {
       // if script changes, new hash must be checked against CSP error and updated
       "'sha256-wTvVT3oJ2rMAqNUILvSYccTn53N47S3NIZbPE0ql0No='",
       ...(config.developmentMode ? ["'unsafe-eval'"] : []), // for HMR
+      ...(config.ipfsMode ? [IPFS_BASE_SCRIPT_HASH] : []),
       ...trustedHosts,
     ],
 
