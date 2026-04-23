@@ -1,19 +1,9 @@
-import { config } from 'config';
 import type { Address } from 'viem';
 
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { appPaths } from 'consts/routing';
 
 import type { VaultRoutesConfig, NavigationRoutes } from './types';
-
-export const validators: Record<number, string> = {
-  [1]: 'https://beaconcha.in/validators/deposits?q=',
-  [560048]: 'https://hoodi.beaconcha.in/validators/deposits?q=',
-};
-
-export const getValidatorsLink = (): string => {
-  return validators[config.defaultChain];
-};
 
 export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
   '/': MATOMO_CLICK_EVENTS_TYPES.clickNaviMyVaults,
@@ -23,7 +13,8 @@ export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSupplyWithdraw,
   '/vaults/[vaultAddress]/steth/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviMintRepayStETH,
-  [getValidatorsLink()]: MATOMO_CLICK_EVENTS_TYPES.clickNaviValidators,
+  '/vaults/[vaultAddress]/validators':
+    MATOMO_CLICK_EVENTS_TYPES.clickNaviValidators,
   '/vaults/[vaultAddress]/disburse': MATOMO_CLICK_EVENTS_TYPES.clickNaviNOFee,
   '/vaults/[vaultAddress]/settings/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSettings,
@@ -59,10 +50,9 @@ export const vaultRoutes = (
     },
     {
       title: 'Validators',
-      path: getValidatorsLink(),
+      path: appPaths.vaults.vault(vaultAddress).validators,
       icon: 'validators',
       exact: true,
-      external: true,
       inMobileMenu: true,
     },
     {

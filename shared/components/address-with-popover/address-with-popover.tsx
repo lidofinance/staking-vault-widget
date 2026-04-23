@@ -30,7 +30,7 @@ export const AddressWithPopover: FC<AddressBadgeProps> = (props) => {
   const handleCopyLink = () => {
     if (!address) return;
     void navigator.clipboard.writeText(address);
-    ToastSuccess(`Address ${truncateAddress({ address })} have been copied`);
+    ToastSuccess(`Address ${truncateAddress({ address })} has been copied`);
   };
 
   const handleClosePopover = () => {
