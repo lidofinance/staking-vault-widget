@@ -148,7 +148,10 @@ export default withBundleAnalyzer({
           { key: 'x-xss-protection', value: '1; mode=block' },
           { key: 'x-download-options', value: 'noopen' },
           { key: 'x-permitted-cross-domain-policies', value: 'none' },
-          { key: 'cross-origin-opener-policy', value: 'same-origin' },
+          {
+            key: 'cross-origin-opener-policy',
+            value: 'same-origin-allow-popups',
+          },
           {
             key: 'Permissions-Policy',
             value: [
