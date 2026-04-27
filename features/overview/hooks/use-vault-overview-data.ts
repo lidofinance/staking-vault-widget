@@ -91,6 +91,7 @@ export type VaultInfo = VaultConnection &
     isVaultConnected: boolean;
     beaconChainDepositsPaused: boolean;
     isReportFresh: boolean;
+    isNodeOperatorVerified: boolean;
   };
 
 export type VaultOverviewData = ReturnType<typeof selectOverviewData>;
@@ -113,6 +114,8 @@ const getVaultData = async (
     isReportFresh,
     lazyOracle,
     blockNumber,
+    group,
+    isNodeOperatorVerified,
     ...rest
   } = vault;
 
@@ -127,7 +130,6 @@ const getVaultData = async (
     totalMintingCapacityShares,
     mintableShares,
     tier,
-    group,
     vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
@@ -148,7 +150,6 @@ const getVaultData = async (
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultTierInfo([vaultAddress]),
-      operatorGrid.prepare.group([vault.nodeOperator]),
       lazyOracle.prepare.vaultQuarantine([vaultAddress]),
     ] as const,
     blockNumber,
@@ -270,6 +271,7 @@ const getVaultData = async (
     redemptionStETH,
     beaconChainDepositsPaused,
     isReportFresh,
+    isNodeOperatorVerified,
     ...rest,
     ...restVaultRecord,
   };
@@ -322,6 +324,7 @@ const selectOverviewData = ({
     rebalanceStETH,
     beaconChainDepositsPaused,
     isReportFresh,
+    isNodeOperatorVerified,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -488,6 +491,7 @@ const selectOverviewData = ({
     outdatedReportData: vault7dApr?.outdated,
     dateOfLastReport: vault7dApr?.range.toTimestamp,
     isReportFresh,
+    isNodeOperatorVerified,
   };
 };
 

@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { type Address, zeroAddress } from 'viem';
+import { type Address, isAddressEqual, zeroAddress } from 'viem';
 
 import { useLidoSDK } from 'modules/web3';
 import {
@@ -107,6 +107,22 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultEntity.getDashboardContract(),
       ]);
 
+      const group = await operatorGrid.read.group([nodeOperator]);
+      const { operator, shareLimit, tierIds } = group;
+
+      // check if Node Operator has passed verification process
+      const isSameAddress =
+        isAddressEqual(operator, nodeOperator) && nodeOperator !== zeroAddress;
+      const isGroupLimitAvailable = shareLimit > 0n;
+      const tiersList = await Promise.all(
+        tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
+      );
+      const isTierLimitAvailable = tiersList.some(
+        (tier) => tier.shareLimit > 0n,
+      );
+      const isNodeOperatorVerified =
+        isSameAddress && isGroupLimitAvailable && isTierLimitAvailable;
+
       return {
         address: vaultAddress,
         vaultEntity,
@@ -118,6 +134,8 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         withdrawalCredentials,
         report,
         operatorGrid,
+        tiersList,
+        group,
         lazyOracle,
         hubReport: {
           root: latestHubReportRoot,
@@ -132,6 +150,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isPendingDisconnect,
         isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
+        isNodeOperatorVerified,
         predepositGuarantee,
         blockNumber,
         blockNumberString: blockNumber.toString(),

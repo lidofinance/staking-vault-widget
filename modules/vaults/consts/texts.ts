@@ -1,7 +1,8 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { WEI_PER_ETHER } from 'consts/tx';
+import { toStethValue } from 'utils';
+
 import type { TierConfirmationFnNames } from '../types';
-import { toStethValue } from '../../../utils';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -96,6 +97,15 @@ export const vaultTexts = {
     report: {
       loading: 'Applying oracle report' as const,
       completed: 'Applying oracle report is done' as const,
+    },
+    overview: {
+      vaultGeneral: {
+        nodeOperator: {
+          verifiedOperator: 'Identified operator',
+          unVerifiedOperator:
+            'Operator has not passed the identification process',
+        },
+      },
     },
     supply: {
       available: `Available to supply`,

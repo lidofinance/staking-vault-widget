@@ -11,6 +11,7 @@ export * from './calculate-health';
 export * from './ceil-div-bigint';
 export * from './calculate-tier-metrics';
 export * from './is-bigint';
+export * from './is-boolean';
 export * from './is-number';
 export * from './is-string';
 export * from './get-page-title';
