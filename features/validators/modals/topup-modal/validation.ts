@@ -6,7 +6,7 @@ import type { Resolver } from 'react-hook-form';
 import { maxAmountSchema, pubkeySchema } from 'utils/zod-validation';
 import { vaultTexts } from 'modules/vaults/consts';
 import { bigIntMin } from 'utils/bigint-math';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 
 import type {
   TopUpFormFieldValues,
@@ -14,10 +14,10 @@ import type {
   TopUpFormValidationContext,
 } from './types';
 
-const PREDEPOSIT_AMOUNT = WEI_PER_ETHER; // predeposit amount === 1 eth
-const ACTIVATION_DEPOSIT_AMOUNT = 31n * WEI_PER_ETHER; // amount of ether to be deposited after the predeposit to activate the validator
+const PREDEPOSIT_AMOUNT = ONE_ETHER; // predeposit amount === 1 eth
+const ACTIVATION_DEPOSIT_AMOUNT = 31n * ONE_ETHER; // amount of ether to be deposited after the predeposit to activate the validator
 const MAX_TOPUP_AMOUNT =
-  2048n * WEI_PER_ETHER - ACTIVATION_DEPOSIT_AMOUNT - PREDEPOSIT_AMOUNT;
+  2048n * ONE_ETHER - ACTIVATION_DEPOSIT_AMOUNT - PREDEPOSIT_AMOUNT;
 
 export const topUpFormSchema = ({
   availableBalance,
@@ -25,8 +25,8 @@ export const topUpFormSchema = ({
   const maxAmount = bigIntMin(availableBalance, MAX_TOPUP_AMOUNT);
   return z.object({
     amount: maxAmountSchema(maxAmount).min(
-      WEI_PER_ETHER,
-      vaultTexts.common.errors.amount.min(WEI_PER_ETHER),
+      ONE_ETHER,
+      vaultTexts.common.errors.amount.min(ONE_ETHER),
     ),
     index: z.number(),
     pubkey: pubkeySchema,

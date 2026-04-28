@@ -14,7 +14,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
-import { WEI_PER_GWEI } from 'consts/tx';
+import { ONE_GWEI } from 'consts/tx';
 
 import type { WithdrawalFormValidatedValues } from '../types';
 
@@ -46,7 +46,7 @@ export const useWithdrawalToVault = () => {
         '[useWithdrawalToVault] fee recipient address is undefined',
       );
 
-      const amountInGwei = amount / WEI_PER_GWEI;
+      const amountInGwei = amount / ONE_GWEI;
       const withdrawalAmount = amount > 0n ? amount : balance;
 
       const mainActionLoadingText = loadingText(index, withdrawalAmount);

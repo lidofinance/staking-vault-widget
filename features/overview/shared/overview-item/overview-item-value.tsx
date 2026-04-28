@@ -3,7 +3,7 @@ import { type FC, useMemo } from 'react';
 import { InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
 import { isBigint } from 'utils';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 
 import { ContentText } from './styles';
 
@@ -16,7 +16,7 @@ export interface ItemValueProps {
 }
 
 const countMaxDecimalDigits = (amount: bigint) => {
-  return amount / WEI_PER_ETHER > 1000 ? 1 : 4;
+  return amount / ONE_ETHER > 1000 ? 1 : 4;
 };
 
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
