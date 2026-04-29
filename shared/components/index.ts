@@ -32,4 +32,5 @@ export { InlineLoader, CircleLoader } from './value-with-loader';
 export { CopyAddress } from './copy-address';
 export { ReportState } from './report-state';
 export { TooltipHint } from './tooltip-hint';
+export { NoticeContainer } from './notice-container';
 export * from './banners';

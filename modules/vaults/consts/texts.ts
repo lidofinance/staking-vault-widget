@@ -113,6 +113,23 @@ export const vaultTexts = {
         isMint: 'Mint max available stETH',
         mintTo: 'Mint to address',
       },
+      banners: {
+        multipleOwners: {
+          title: 'Multiple Vault Owners',
+          description:
+            'The Vault Owner role (DEFAULT_ADMIN_ROLE) is assigned to one or more additional addresses.',
+          ownersListTitle: 'Other Vault Owner addresses:',
+          explanation: {
+            title: 'This means:',
+            list: [
+              '1. Another Vault Owner can fully control the tokens you supply.',
+              '2. Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
+            ],
+          },
+          confirm:
+            'I confirm that I understand the implications and risks and want to proceed.',
+        },
+      },
       submit: {
         supply: (token: ExternalToken, amount?: bigint | null) =>
           `Supply ${balance(amount)}${token}` as const,

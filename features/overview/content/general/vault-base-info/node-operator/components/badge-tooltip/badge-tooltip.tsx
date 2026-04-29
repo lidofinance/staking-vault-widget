@@ -1,9 +1,9 @@
 import type { FC } from 'react';
-import { Text, Link } from '@lidofinance/lido-ui';
+import { Link } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
 
-import { BadgeContainer } from './styles';
+import { BadgeContainer, TextStyled } from './styles';
 
 type BadgeTooltipProps = {
   description: string;
@@ -14,11 +14,11 @@ const docsLink = `${config.docsOrigin}/run-on-lido/stvaults/operational-and-mana
 export const BadgeTooltip: FC<BadgeTooltipProps> = ({ description }) => {
   return (
     <BadgeContainer>
-      <Text size="xxs">
+      <TextStyled size="xxs" color="default">
         {description}
         <br />
         <Link href={docsLink}>Learn more</Link>
-      </Text>
+      </TextStyled>
     </BadgeContainer>
   );
 };

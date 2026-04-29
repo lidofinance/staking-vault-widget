@@ -1,6 +1,6 @@
 import { Formula, OverviewModal } from 'features/overview/shared';
 import type { FormulaItem } from 'features/overview/types';
-import { useVaultOverview } from '../../../vault-overview';
+import { useVaultOverview } from 'features/overview/vault-overview';
 
 const formulasMap: Record<
   'infraFee' | 'liquidityFee' | 'annualReservationFee',
