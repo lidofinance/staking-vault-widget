@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useDappStatus } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
+import { antiScamConfirmDefaultValues } from 'shared/components/banners/anti-scam/validation';
 
 import { useRepay } from './use-repay';
 import { repayFormResolver } from './validation';
@@ -56,6 +57,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     defaultValues: {
       amount: null,
       token: 'stETH',
+      ...antiScamConfirmDefaultValues,
     },
     mode: 'onTouched',
     context: validationContext,

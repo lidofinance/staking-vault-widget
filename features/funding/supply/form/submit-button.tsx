@@ -17,10 +17,10 @@ export const SubmitButton = () => {
       'mintSteth',
     ]);
 
-  const { isSubmitting, disabled } = useFormState();
+  const { isSubmitting, disabled, isValid } = useFormState();
   const { maxMintableStethQuery } = useSupplyForm();
 
-  const isDisabled = isSubmitting || disabled;
+  const isDisabled = isSubmitting || disabled || !isValid;
 
   const submitText = mintSteth
     ? vaultTexts.actions.supply.submit.supplyMint(

@@ -6,6 +6,7 @@ import { useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { bigIntMin } from 'utils/bigint-math';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { useAntiScamBannerState } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
 
 import { useLiability } from './use-liability';
 import type { RepayFormValidationContext } from '../types';
@@ -15,6 +16,12 @@ export const useRepayFormData = () => {
   const liabilityQuery = useLiability();
   const stethBalanceQuery = useStethBalance();
   const wstethBalanceQuery = useWstethBalance();
+  const {
+    isReady: isAntiScamReady,
+    isNotOwnerWarningVisible,
+    isMultipleOwnersWarningVisible,
+    isUnguaranteedDepositsWarningVisible,
+  } = useAntiScamBannerState('repay');
 
   const isMaxRepayableLoading =
     stethBalanceQuery.isLoading ||
@@ -34,6 +41,7 @@ export const useRepayFormData = () => {
   const validationContextValue: RepayFormValidationContext | undefined =
     useMemo(() => {
       if (
+        !isAntiScamReady ||
         [maxRepayableStETH, maxRepayableWstETH].some(
           (data) => typeof data === 'undefined',
         )
@@ -44,8 +52,20 @@ export const useRepayFormData = () => {
       return {
         maxRepayableStETH: maxRepayableStETH!,
         maxRepayableWstETH: maxRepayableWstETH!,
+        antiScam: {
+          notOwner: isNotOwnerWarningVisible,
+          multipleOwners: isMultipleOwnersWarningVisible,
+          unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+        },
       };
-    }, [maxRepayableStETH, maxRepayableWstETH]);
+    }, [
+      maxRepayableStETH,
+      maxRepayableWstETH,
+      isAntiScamReady,
+      isNotOwnerWarningVisible,
+      isMultipleOwnersWarningVisible,
+      isUnguaranteedDepositsWarningVisible,
+    ]);
 
   const validationContext = useAwaiter(validationContextValue).awaiter;
 

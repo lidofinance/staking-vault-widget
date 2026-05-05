@@ -4,15 +4,19 @@ import { Suppliable } from './suppliable';
 import { SupplyFormInputs } from './supply-form-inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
-import { WarningBanners, ErrorBanners } from './content';
+
+import {
+  AntiScamErrorBanners,
+  AntiScamWarningBanners,
+} from 'shared/components';
 
 export const SupplyForm = () => {
   return (
     <SupplyFormProvider>
-      <ErrorBanners />
+      <AntiScamErrorBanners action="supply" />
       <Suppliable />
       <SupplyFormInputs />
-      <WarningBanners />
+      <AntiScamWarningBanners action="supply" />
       <SubmitButton />
       <TxInfo />
     </SupplyFormProvider>

@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
 import { isAddressEqual, zeroAddress } from 'viem';
 
@@ -15,11 +15,11 @@ export const useMitigateRisks = () => {
       ...queryKeys.base,
       'vault-mitigate-risks',
       activeVault?.address,
+      address,
     ] as const,
     enabled: !!activeVault && !!address,
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
-    placeholderData: keepPreviousData,
     queryFn: async () => {
       invariant(activeVault, '[useMitigateRisks] activeVault is not defined');
 
@@ -90,6 +90,7 @@ export const useMitigateRisks = () => {
     isUnguaranteedDepositsAllowed: data?.isUnguaranteedDepositsAllowed,
     isNodeOperatorVerified: data?.isNodeOperatorVerified,
     isMultipleOwners: data?.isMultipleOwners,
+    isMultipleTiers: data?.isMultipleTiers,
     isTierDefault: data?.isTierDefault,
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,

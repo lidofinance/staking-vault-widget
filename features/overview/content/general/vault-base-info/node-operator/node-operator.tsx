@@ -1,7 +1,7 @@
 import { Text } from '@lidofinance/lido-ui';
 import { zeroAddress } from 'viem';
 
-import { useVault, vaultTexts } from 'modules/vaults';
+import { useMitigateRisks, useVault, vaultTexts } from 'modules/vaults';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
 
@@ -12,11 +12,11 @@ const { general } = vaultTexts.metrics;
 
 export const NodeOperator = () => {
   const { values } = useVaultOverview();
+  const { isNodeOperatorVerified } = useMitigateRisks();
   const { activeVault } = useVault();
 
   const { feeRate } = values ?? {};
-  const { nodeOperator, isVaultDisconnected, isNodeOperatorVerified } =
-    activeVault ?? {};
+  const { nodeOperator, isVaultDisconnected } = activeVault ?? {};
   const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (

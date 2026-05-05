@@ -9,6 +9,7 @@ import {
   validateRecipientSchema,
   supplyTokenSchema,
 } from 'utils/zod-validation';
+import { antiScamConfirmSchema } from 'shared/components/banners/anti-scam/validation';
 
 import type {
   SupplyFormDataAwaitableValidationContext,
@@ -27,6 +28,7 @@ export const supplyFormSchema = ({
   ethBalance,
   wethBalance,
   validateRecipientArgs,
+  antiScam,
 }: SupplyFormSchemaOptions) => {
   const mintSchema = z.discriminatedUnion('mintSteth', [
     z.object({
@@ -42,11 +44,14 @@ export const supplyFormSchema = ({
   const maxAmount = isETH ? ethBalance : wethBalance;
 
   return z.intersection(
-    z.object({
-      amount: maxAmountSchema(maxAmount),
-      token: supplyTokenSchema,
-    }),
-    mintSchema,
+    z.intersection(
+      z.object({
+        amount: maxAmountSchema(maxAmount),
+        token: supplyTokenSchema,
+      }),
+      mintSchema,
+    ),
+    antiScamConfirmSchema(antiScam),
   );
 };
 

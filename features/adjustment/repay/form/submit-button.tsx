@@ -5,12 +5,12 @@ import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
 import type { RepayFormFieldValues } from './types';
 
 export const SubmitButton = () => {
-  const { isSubmitting, disabled } = useFormState();
+  const { isSubmitting, disabled, isValid } = useFormState();
   const [amount, token] = useFormContext<RepayFormFieldValues>().watch([
     'amount',
     'token',
   ]);
-  const isDisabled = isSubmitting || disabled;
+  const isDisabled = isSubmitting || disabled || !isValid;
 
   return (
     <PermissionedSubmitButton

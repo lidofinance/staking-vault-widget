@@ -13,6 +13,7 @@ import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormControllerStyled } from 'shared/components/form';
 import { useDisableForm } from 'shared/hook-form';
+import { antiScamConfirmDefaultValues } from 'shared/components/banners/anti-scam/validation';
 
 import { SupplyFormResolver } from './validation';
 import {
@@ -58,6 +59,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
       amount: null,
       mintSteth: false,
       mintAddress: '',
+      ...antiScamConfirmDefaultValues,
     },
     mode: 'onTouched',
     disabled: !isDappActive || disabled,

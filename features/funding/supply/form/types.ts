@@ -2,11 +2,16 @@ import type { z } from 'zod';
 import type { supplyFormSchema } from './supply-form-provider/validation';
 import type { useSupplyFormData } from './supply-form-provider/hooks';
 import type { ValidateRecipientArgs } from 'utils/zod-validation';
+import type {
+  AntiScamConfirmationFlags,
+  AntiScamConfirmFieldValues,
+} from 'shared/components/banners/anti-scam/types';
 
 export type SupplyFormDataValidationContext = {
   ethBalance: bigint;
   wethBalance: bigint;
   validateRecipientArgs: ValidateRecipientArgs;
+  antiScam: AntiScamConfirmationFlags;
 };
 
 export type SupplyFormDataAwaitableValidationContext =
@@ -16,7 +21,7 @@ export type SupplyFormValidatedValues = z.infer<
   ReturnType<typeof supplyFormSchema>
 >;
 
-export type SupplyFormFieldValues = {
+export type SupplyFormFieldValues = AntiScamConfirmFieldValues & {
   // booleans as is
   token: SupplyFormValidatedValues['token'];
   mintSteth: SupplyFormValidatedValues['mintSteth'];

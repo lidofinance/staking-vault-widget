@@ -73,7 +73,6 @@ export type VaultBaseInfo = {
   operatorGrid: OperatorGrid;
   lazyOracle: LazyOracle;
   predepositGuarantee: PredepositGuarantee;
-  tiersList: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'tier'>[];
   group: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'group'>;
   nodeOperator: Address;
   vaultOwner: Address;
@@ -87,7 +86,6 @@ export type VaultBaseInfo = {
   isPendingDisconnect: boolean;
   isPendingConnect: boolean;
   isReportAvailable: boolean;
-  isNodeOperatorVerified: boolean;
 } & VaultConnection;
 
 export type Tier = {
