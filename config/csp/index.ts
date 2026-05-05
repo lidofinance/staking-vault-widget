@@ -20,7 +20,7 @@ export const contentSecurityPolicy: ContentSecurityPolicyOption = {
   directives: {
     'default-src': ["'self'"],
     styleSrc: ["'self'", "'unsafe-inline'"],
-    fontSrc: ["'self'", 'data:'],
+    fontSrc: ["'self'", 'data:', 'https://fonts.reown.com'],
     imgSrc: [
       "'self'",
       'data:',
