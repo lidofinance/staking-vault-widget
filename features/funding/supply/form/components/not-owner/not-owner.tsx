@@ -7,7 +7,7 @@ import { isUndefined } from 'utils';
 
 import { ConfirmAndProceed } from '../confirm-and-proceed';
 
-const { title } = vaultTexts.actions.supply.banners.notOwner;
+const { title } = vaultTexts.actions.antiScam.banners.notOwner;
 
 export const NotOwner = () => {
   const { isDappActive } = useDappStatus();

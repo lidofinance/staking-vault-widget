@@ -6,7 +6,7 @@ import { vaultTexts } from 'modules/vaults';
 
 import { Container, InputBlock } from './styles';
 
-const { confirm } = vaultTexts.actions.supply.banners.multipleOwners;
+const { confirm } = vaultTexts.actions.antiScam.banners.multipleOwners;
 
 type ConfirmAndProceedProps = {
   fieldName: 'notOwner' | 'multipleOwners' | 'unguaranteedDeposits';

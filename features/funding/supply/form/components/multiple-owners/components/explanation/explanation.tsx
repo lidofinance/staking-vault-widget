@@ -5,7 +5,7 @@ import { vaultTexts } from 'modules/vaults';
 import { Description, List } from './styles';
 
 const { title, list } =
-  vaultTexts.actions.supply.banners.multipleOwners.explanation;
+  vaultTexts.actions.antiScam.banners.multipleOwners.explanation;
 
 export const Explanation = () => {
   return (

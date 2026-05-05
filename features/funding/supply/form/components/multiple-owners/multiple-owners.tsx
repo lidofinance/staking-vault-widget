@@ -9,7 +9,8 @@ import { ConfirmAndProceed } from '../confirm-and-proceed';
 
 import { OwnersList, Explanation } from './components';
 
-const { title, description } = vaultTexts.actions.supply.banners.multipleOwners;
+const { title, description } =
+  vaultTexts.actions.antiScam.banners.multipleOwners;
 
 export const MultipleOwners = () => {
   const { isDappActive } = useDappStatus();

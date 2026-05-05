@@ -4,7 +4,7 @@ import { NoticeContainer } from 'shared/components';
 
 import { UnidentifiedNodeOperator, DefaultTier } from './components';
 
-const { title } = vaultTexts.actions.supply.banners.multipleOwners;
+const { title } = vaultTexts.actions.antiScam.banners.multipleOwners;
 
 export const MultipleOwnersError = () => {
   const { isDappActive } = useDappStatus();

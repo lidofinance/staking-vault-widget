@@ -10,11 +10,6 @@ export const useMitigateRisks = () => {
   const { activeVault, queryKeys } = useVault();
   const { address } = useDappStatus();
 
-  // owners
-  // NO
-  // supplier
-  // verified NO
-  // tier level
   const { data, ...rest } = useQuery({
     queryKey: [
       ...queryKeys.base,
@@ -36,14 +31,21 @@ export const useMitigateRisks = () => {
         isAddressEqual(operator, nodeOperator) && nodeOperator !== zeroAddress;
       const isGroupLimitAvailable = shareLimit > 0n;
 
-      const [defaultAdminList, suppliers, pdgPolicy, tier, ...tiersList] =
-        await Promise.all([
-          dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
-          dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
-          dashboard.read.pdgPolicy(),
-          operatorGrid.read.vaultTierInfo([activeVault.address]),
-          ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
-        ]);
+      const [
+        defaultAdminList,
+        suppliers,
+        repayers,
+        pdgPolicy,
+        tier,
+        ...tiersList
+      ] = await Promise.all([
+        dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
+        dashboard.read.pdgPolicy(),
+        operatorGrid.read.vaultTierInfo([activeVault.address]),
+        ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
+      ]);
 
       const isTierLimitAvailable = tiersList.some(
         (tier) => tier.shareLimit > 0n,
@@ -58,7 +60,10 @@ export const useMitigateRisks = () => {
       const isTierDefault = tierId === 0n;
       const isMultipleTiers = tiersList.length > 0;
       const isVaultOwner = !!address && defaultAdminList.includes(address);
-      const isSupplier = !!address && suppliers.includes(address);
+      const isSupplier =
+        (!!address && suppliers.includes(address)) || isVaultOwner;
+      const isRepayer =
+        (!!address && repayers.includes(address)) || isVaultOwner;
       const isUnguaranteedDepositsAllowed = pdgPolicy === 2;
 
       // disable supply
@@ -72,6 +77,7 @@ export const useMitigateRisks = () => {
         isTierDefault,
         isVaultOwner,
         isSupplier,
+        isRepayer,
         defaultAdminList: [...defaultAdminList],
         nodeOperator,
         firstAdmin,
@@ -87,6 +93,7 @@ export const useMitigateRisks = () => {
     isTierDefault: data?.isTierDefault,
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,
+    isRepayer: data?.isRepayer,
     defaultAdminList: data?.defaultAdminList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,

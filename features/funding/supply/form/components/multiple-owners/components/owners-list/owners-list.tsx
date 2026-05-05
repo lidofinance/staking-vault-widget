@@ -11,7 +11,7 @@ type OwnersListProps = {
   ownersList: Address[];
 };
 
-const { ownersListTitle } = vaultTexts.actions.supply.banners.multipleOwners;
+const { ownersListTitle } = vaultTexts.actions.antiScam.banners.multipleOwners;
 
 export const OwnersList: FC<OwnersListProps> = ({ ownersList }) => {
   const { address } = useDappStatus();

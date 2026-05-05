@@ -6,7 +6,7 @@ import { isUndefined } from 'utils';
 import { DefaultTier } from './default-tier';
 import { UnidentifiedNodeOperator } from './unidentified-node-operator';
 
-const { title } = vaultTexts.actions.supply.banners.notOwner;
+const { title } = vaultTexts.actions.antiScam.banners.notOwner;
 
 export const NotOwnerError = () => {
   const { isDappActive } = useDappStatus();

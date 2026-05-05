@@ -113,26 +113,6 @@ export const vaultTexts = {
         isMint: 'Mint max available stETH',
         mintTo: 'Mint to address',
       },
-      banners: {
-        notOwner: {
-          title: 'This stVault is not owned by you',
-        },
-        multipleOwners: {
-          title: 'Multiple Vault Owners',
-          description:
-            'The Vault Owner role (DEFAULT_ADMIN_ROLE) is assigned to one or more additional addresses.',
-          ownersListTitle: 'Other Vault Owner addresses:',
-          explanation: {
-            title: 'This means:',
-            list: [
-              'Another Vault Owner can fully control the tokens you supply.',
-              'Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
-            ],
-          },
-          confirm:
-            'I confirm that I understand the implications and risks and want to proceed.',
-        },
-      },
       submit: {
         supply: (token: ExternalToken, amount?: bigint | null) =>
           `Supply ${balance(amount)}${token}` as const,
@@ -408,6 +388,28 @@ export const vaultTexts = {
             mainCompleteText: (index: number, amount: bigint) =>
               `The validator #${index} has been topped up with ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
           },
+        },
+      },
+    },
+    antiScam: {
+      banners: {
+        notOwner: {
+          title: 'This stVault is not owned by you',
+        },
+        multipleOwners: {
+          title: 'Multiple Vault Owners',
+          description:
+            'The Vault Owner role (DEFAULT_ADMIN_ROLE) is assigned to one or more additional addresses.',
+          ownersListTitle: 'Other Vault Owner addresses:',
+          explanation: {
+            title: 'This means:',
+            list: [
+              'Another Vault Owner can fully control the tokens you supply.',
+              'Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
+            ],
+          },
+          confirm:
+            'I confirm that I understand the implications and risks and want to proceed.',
         },
       },
     },
