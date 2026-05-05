@@ -64,7 +64,7 @@
     "reef-knot": "8.0.0-alpha.1",
     "styled-components": "^5.3.5",
     "tiny-invariant": "^1.1.0",
-    "viem": "2.45.3",
+    "viem": "2.48.3",
     "wagmi": "3.4.3",
     "zod": "^3.24.2"
   },

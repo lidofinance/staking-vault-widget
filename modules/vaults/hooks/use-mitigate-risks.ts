@@ -36,10 +36,11 @@ export const useMitigateRisks = () => {
         isAddressEqual(operator, nodeOperator) && nodeOperator !== zeroAddress;
       const isGroupLimitAvailable = shareLimit > 0n;
 
-      const [defaultAdminList, suppliers, tier, ...tiersList] =
+      const [defaultAdminList, suppliers, pdgPolicy, tier, ...tiersList] =
         await Promise.all([
           dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
           dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
+          dashboard.read.pdgPolicy(),
           operatorGrid.read.vaultTierInfo([activeVault.address]),
           ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
         ]);
@@ -49,32 +50,45 @@ export const useMitigateRisks = () => {
       );
 
       const [_, tierId] = tier;
+      const firstAdmin = defaultAdminList.at(0);
 
       const isNodeOperatorVerified =
         isSameAddress && isGroupLimitAvailable && isTierLimitAvailable;
       const isMultipleOwners = defaultAdminList.length > 1;
       const isTierDefault = tierId === 0n;
+      const isMultipleTiers = tiersList.length > 0;
       const isVaultOwner = !!address && defaultAdminList.includes(address);
       const isSupplier = !!address && suppliers.includes(address);
+      const isUnguaranteedDepositsAllowed = pdgPolicy === 2;
+
+      // disable supply
+      // disable repay
 
       return {
+        isUnguaranteedDepositsAllowed,
         isNodeOperatorVerified,
         isMultipleOwners,
+        isMultipleTiers,
         isTierDefault,
-        defaultAdminList,
         isVaultOwner,
         isSupplier,
+        defaultAdminList: [...defaultAdminList],
+        nodeOperator,
+        firstAdmin,
       };
     },
   });
 
   return {
     ...rest,
+    isUnguaranteedDepositsAllowed: data?.isUnguaranteedDepositsAllowed,
     isNodeOperatorVerified: data?.isNodeOperatorVerified,
     isMultipleOwners: data?.isMultipleOwners,
     isTierDefault: data?.isTierDefault,
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,
     defaultAdminList: data?.defaultAdminList,
+    nodeOperator: data?.nodeOperator,
+    firstAdmin: data?.firstAdmin,
   };
 };

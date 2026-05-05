@@ -14,5 +14,6 @@ export * from './is-bigint';
 export * from './is-boolean';
 export * from './is-number';
 export * from './is-string';
+export * from './is-undefined';
 export * from './get-page-title';
 export * from './get-test-id';

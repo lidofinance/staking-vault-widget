@@ -4,15 +4,15 @@ import { Suppliable } from './suppliable';
 import { SupplyFormInputs } from './supply-form-inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
-import { MultipleOwners, OwnedNotBySupplier } from './content';
+import { WarningBanners, ErrorBanners } from './content';
 
 export const SupplyForm = () => {
   return (
     <SupplyFormProvider>
+      <ErrorBanners />
       <Suppliable />
       <SupplyFormInputs />
-      <MultipleOwners />
-      <OwnedNotBySupplier />
+      <WarningBanners />
       <SubmitButton />
       <TxInfo />
     </SupplyFormProvider>

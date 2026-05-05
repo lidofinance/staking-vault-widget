@@ -114,6 +114,9 @@ export const vaultTexts = {
         mintTo: 'Mint to address',
       },
       banners: {
+        notOwner: {
+          title: 'This stVault is not owned by you',
+        },
         multipleOwners: {
           title: 'Multiple Vault Owners',
           description:
@@ -122,8 +125,8 @@ export const vaultTexts = {
           explanation: {
             title: 'This means:',
             list: [
-              '1. Another Vault Owner can fully control the tokens you supply.',
-              '2. Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
+              'Another Vault Owner can fully control the tokens you supply.',
+              'Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
             ],
           },
           confirm:
