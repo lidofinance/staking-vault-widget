@@ -11,7 +11,7 @@ import {
 import { useDappStatus } from 'modules/web3';
 import { useVault, vaultTexts } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 
 import { useValidators } from 'features/validators/contexts';
 import { ModalFormButton } from 'features/validators/shared';
@@ -69,7 +69,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       disabled ||
       !hasDepositorPermission ||
       !isValidatorInPDG ||
-      availableBalance < WEI_PER_ETHER ||
+      availableBalance < ONE_ETHER ||
       beaconChainDepositsPaused,
     resolver: topUpFormResolver,
     context: { availableBalance },

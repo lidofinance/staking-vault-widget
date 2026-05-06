@@ -1,5 +1,5 @@
 import { formatBalance } from 'utils/formats/format-balance';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 import { toStethValue } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
@@ -682,7 +682,7 @@ export const vaultTexts = {
               'Reserve is defined by the Minimal Reserve value of 1 ETH for the connection to Lido Core.';
             if (
               constraintBy === 'minimalReserve' &&
-              minimalReserve === WEI_PER_ETHER
+              minimalReserve === ONE_ETHER
             ) {
               return `${baseDescription} ${minimalReserveText}`;
             }

@@ -19,7 +19,7 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 import {
   formatPercent,
   toEthValue,
@@ -457,7 +457,7 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
-    isPausedByFees: feesToSettle > WEI_PER_ETHER,
+    isPausedByFees: feesToSettle > ONE_ETHER,
     netStakingRewards,
     carrySpreadApr,
     carrySpreadAprNumber,
