@@ -12,3 +12,7 @@ export const ConfirmInputBlock = styled.div`
   align-items: center;
   gap: 12px;
 `;
+
+export const Label = styled.span`
+  color: ${({ theme }) => theme.colors.text};
+`;

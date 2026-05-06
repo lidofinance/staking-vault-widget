@@ -22,6 +22,8 @@ export const useAntiScamBannerState = (
   } = useMitigateRisks();
 
   const hasActionPermission = action === 'supply' ? isSupplier : isRepayer;
+  const hasActionPermissionOrOwnership =
+    hasActionPermission || isVaultOwner === true;
 
   const isNotOwnerWarningVisible = Boolean(
     isDappActive &&
@@ -45,7 +47,7 @@ export const useAntiScamBannerState = (
     isDappActive &&
       isMultipleOwners === true &&
       isTierDefault === false &&
-      isVaultOwner === true &&
+      hasActionPermissionOrOwnership &&
       isNodeOperatorVerified === true &&
       defaultAdminList,
   );
@@ -53,21 +55,21 @@ export const useAntiScamBannerState = (
   const isMultipleOwnersErrorVisible = Boolean(
     isDappActive &&
       isMultipleOwners === true &&
-      isVaultOwner === true &&
+      hasActionPermissionOrOwnership &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
   const isUnguaranteedDepositsWarningVisible = Boolean(
     isDappActive &&
       isTierDefault === false &&
-      hasActionPermission &&
+      hasActionPermissionOrOwnership &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === true,
   );
 
   const isUnguaranteedDepositsErrorVisible = Boolean(
     isDappActive &&
-      hasActionPermission &&
+      hasActionPermissionOrOwnership &&
       isTierDefault === false &&
       nodeOperator &&
       isUnguaranteedDepositsAllowed === true &&
