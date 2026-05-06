@@ -11,6 +11,7 @@ export const AmountStatistic = () => {
       <ValidatorsStatistic
         title="Deposited on validators"
         amount={meta?.totalBalance}
+        data-testid="deposited-balance"
       />
       <LastUpdated timestamp={meta?.timestamp} isLoading={isLoading} />
     </Wrapper>

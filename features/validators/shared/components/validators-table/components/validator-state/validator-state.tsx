@@ -37,15 +37,17 @@ export const ValidatorState: FC<ValidatorStateProps> = ({
 
   return (
     <StateContainer>
-      <TextStyled size="xxs">{content}</TextStyled>
+      <TextStyled size="xxs" data-testid={!isTypeIndex ? 'pubkey' : undefined}>
+        {content}
+      </TextStyled>
       {!isTypeIndex && (
         <>
           <Tooltip title="Beaconcha.in">
-            <Text color="secondary">
+            <Text color="secondary" data-testid="beaconchain-btn">
               <SatelliteBeaconchaLink indexOrPubkey={indexOrPubkey} />
             </Text>
           </Tooltip>
-          <CopyButton onClick={handleCopy}>
+          <CopyButton onClick={handleCopy} data-testid="copy-btn">
             <Tooltip title={`Copy ${type}`}>
               <CopyIconStyled />
             </Tooltip>

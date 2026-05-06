@@ -34,5 +34,9 @@ export const ValidatorMenuAction: FC<ValidatorMenuActionProps> = ({
     return null;
   }
 
-  return <PopupMenuItem onClick={onCloseMenu}>{label}</PopupMenuItem>;
+  return (
+    <PopupMenuItem onClick={onCloseMenu} data-testid={`menu-action-${modal}`}>
+      {label}
+    </PopupMenuItem>
+  );
 };

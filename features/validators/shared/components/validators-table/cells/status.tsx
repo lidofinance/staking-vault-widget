@@ -11,5 +11,9 @@ type StatusCellProps = {
 };
 
 export const StatusCell: FC<StatusCellProps> = ({ status }) => {
-  return <TdStyled>{status ? <StatusChip status={status} /> : '-'}</TdStyled>;
+  return (
+    <TdStyled data-testid="status">
+      {status ? <StatusChip status={status} /> : '-'}
+    </TdStyled>
+  );
 };

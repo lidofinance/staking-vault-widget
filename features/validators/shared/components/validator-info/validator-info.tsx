@@ -35,7 +35,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
             Public key
           </Text>
           <PubKeyWrapper>
-            <Text size="xs" strong>
+            <Text size="xs" strong data-testid="validator-info-pubkey">
               <Address
                 as="span"
                 address={pubKey}
@@ -52,7 +52,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           <Text size="xxs" color="secondary">
             Index
           </Text>
-          <Text size="xs" strong>
+          <Text size="xs" strong data-testid="validator-info-index">
             {index}
           </Text>
         </ParamContainer>
@@ -63,7 +63,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           <Text size="xxs" color="secondary">
             Validator actual balance
           </Text>
-          <Text size="xxs" strong>
+          <Text size="xxs" strong data-testid="validator-info-balance">
             <FormatToken amount={balance} symbol="ETH" />
           </Text>
         </BalanceRow>

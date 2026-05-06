@@ -141,7 +141,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
     >
       <FormContainer>
         {!formState.disabled && (
-          <WarningInfo>
+          <WarningInfo data-testid="warning">
             {isPartial ? partialWarning : fullWarning(balance)}
           </WarningInfo>
         )}
@@ -150,6 +150,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
             <AvailableBalance
               title={availableToWithdraw}
               amount={availableToPartialWithdraw}
+              data-testid="available-balance"
             />
             <TokenAmountInputGroup
               amountFieldName="amount"
@@ -157,6 +158,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
               leftDecorator={<Eth />}
               maxAmount={availableToPartialWithdraw}
               fullwidth
+              data-testid="amount-input"
             />
             <VaultInJail isVaultInJail={isVaultInJail} />
           </>
@@ -165,12 +167,14 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
           <AvailableBalance
             title={estimatedFee}
             amount={validatorWithdrawalFee}
+            data-testid="estimated-fee"
           />
           <ConnectWalletButton>
             <ModalFormButton
               type="submit"
               disabled={formState.disabled}
               fullwidth
+              data-testid="submit"
             >
               {actionText}
             </ModalFormButton>

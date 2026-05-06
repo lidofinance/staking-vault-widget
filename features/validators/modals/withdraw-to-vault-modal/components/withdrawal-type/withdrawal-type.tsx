@@ -24,11 +24,19 @@ export const WithdrawalType: FC<WithdrawalTypeProps> = ({
   }, [onChange]);
 
   return (
-    <SwitcherStyled>
-      <SwitcherItemStyled active={!isFull} onClick={openPartialWithdrawal}>
+    <SwitcherStyled data-testid="switcher">
+      <SwitcherItemStyled
+        active={!isFull}
+        onClick={openPartialWithdrawal}
+        data-testid="type-partial"
+      >
         Partial withdrawal
       </SwitcherItemStyled>
-      <SwitcherItemStyled active={isFull} onClick={openFullWithdrawal}>
+      <SwitcherItemStyled
+        active={isFull}
+        onClick={openFullWithdrawal}
+        data-testid="type-full"
+      >
         Full withdrawal
       </SwitcherItemStyled>
     </SwitcherStyled>

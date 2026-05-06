@@ -104,6 +104,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           leftDecorator={<Eth />}
           maxAmount={availableBalance}
           fullwidth
+          data-testid="amount-input"
         />
         <NotInPdg isValidatorInPDG={isValidatorInPDG} />
         <DepositPaused beaconChainDepositsPaused={beaconChainDepositsPaused} />
@@ -113,6 +114,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
             type="submit"
             disabled={formObject.formState.disabled}
             fullwidth
+            data-testid="submit"
           >
             {formObject.formState.disabled ? actionDisabled : actionActive}
           </ModalFormButton>
