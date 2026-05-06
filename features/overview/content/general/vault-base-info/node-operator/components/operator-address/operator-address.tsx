@@ -24,10 +24,6 @@ export const OperatorAddress: FC<OperatorAddressProps> = ({
 }) => {
   const ref = useRef(null);
 
-  if (!isBoolean(isNodeOperatorVerified)) {
-    return null;
-  }
-
   return (
     <Container>
       <AddressPopover
@@ -47,7 +43,15 @@ export const OperatorAddress: FC<OperatorAddressProps> = ({
           />
         </NodeOperatorAddressWrapper>
       </AddressPopover>
-      {isNodeOperatorVerified ? <VerifiedOperator /> : <UnverifiedOperator />}
+      {isBoolean(isNodeOperatorVerified) && (
+        <>
+          {isNodeOperatorVerified ? (
+            <VerifiedOperator />
+          ) : (
+            <UnverifiedOperator />
+          )}
+        </>
+      )}
     </Container>
   );
 };
