@@ -13,3 +13,5 @@ export type {
   AntiScamConfirmFieldName,
   AntiScamConfirmFieldValues,
 } from './types';
+
+export { NO_IDENTIFICATION_LINK, PDG_LINK } from './const';
