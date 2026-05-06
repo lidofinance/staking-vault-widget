@@ -6,6 +6,7 @@ import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
 import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
+import { buildCspHeaders } from './config/csp/build-csp-header.js';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -129,6 +130,7 @@ export default withBundleAnalyzer({
         // Apply these headers to all routes in your application.
         source: '/(.*)',
         headers: [
+          ...buildCspHeaders({ isIPFSMode, isDevelopment: developmentMode }),
           {
             key: 'x-dns-prefetch-control',
             value: 'on',

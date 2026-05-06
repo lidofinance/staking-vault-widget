@@ -1,6 +1,3 @@
-import { FC } from 'react';
-import { AppProps } from 'next/app';
-import { withSecureHeaders } from 'next-secure-headers';
 import type { ContentSecurityPolicyOption } from 'next-secure-headers/lib/rules';
 
 // Don't use absolute import here!
@@ -78,18 +75,3 @@ export const contentSecurityPolicy: ContentSecurityPolicyOption = {
   },
   reportOnly: secretConfig.cspReportOnly,
 };
-
-// TODO: remove this HOC for better control over CSP headers when next/runtime-envs situation is fixed
-export const withCsp = (app: FC<AppProps>): FC =>
-  withSecureHeaders({
-    contentSecurityPolicy,
-    // applied manually in next.config.mjs for better control
-    frameGuard: false,
-    forceHTTPSRedirect: false,
-    noopen: false,
-    expectCT: false,
-    nosniff: false,
-    // there is no way to avoid setting it, so align with next.config.mjs value
-    xssProtection: 'block-rendering',
-    referrerPolicy: false,
-  })(app);
