@@ -1,4 +1,10 @@
-import { type MouseEvent, forwardRef, useRef, useState } from 'react';
+import {
+  type MouseEvent,
+  type ReactNode,
+  forwardRef,
+  useRef,
+  useState,
+} from 'react';
 import { zeroAddress } from 'viem';
 import {
   Identicon,
@@ -30,6 +36,7 @@ export type AddressBadgeProps = {
   weight?: TextWeight;
   hoverEffect?: boolean;
   dataTestId?: string;
+  rightDecorator?: ReactNode;
 } & React.ComponentPropsWithRef<typeof PillContainer>;
 
 export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
@@ -47,6 +54,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       hoverEffect = true,
       popoverPlacement = 'topLeft',
       dataTestId,
+      rightDecorator,
       ...props
     },
     forwardedRef,
@@ -106,6 +114,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           crossedText={crossed}
           data-testid={dataTestId ? `${dataTestId}-addressText` : undefined}
         />
+        {rightDecorator}
       </PillContainer>
     );
 

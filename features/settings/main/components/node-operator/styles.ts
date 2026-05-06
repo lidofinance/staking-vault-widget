@@ -8,3 +8,12 @@ export const Wrapper = styled(Block)`
   gap: ${({ theme }) => theme.spaceMap.sm}px;
   padding: 0;
 `;
+
+export const IconWrapper = styled.div`
+  width: fit-content;
+  height: 24px;
+
+  & > svg {
+    color: ${({ theme }) => theme.colors.warning};
+  }
+`;
