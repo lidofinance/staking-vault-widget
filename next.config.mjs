@@ -48,6 +48,7 @@ export default withBundleAnalyzer({
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,
   assetPrefix: isIPFSMode ? './' : undefined,
+  poweredByHeader: false,
 
   // IPFS version has hash-based routing,
   // so we provide only index.html in ipfs version
