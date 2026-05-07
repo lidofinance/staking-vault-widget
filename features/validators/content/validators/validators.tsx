@@ -11,7 +11,7 @@ export const Validators = () => {
   const { isLoading, validators, isParamsDefault, isError } = useValidators();
 
   return (
-    <Section>
+    <Section data-testid="validators-list">
       <CircleLoader
         isLoading={isLoading}
         showBy={!((validators?.length === 0 && isParamsDefault) || isError)}
