@@ -8,7 +8,7 @@ import type { ContentSecurityPolicyOption } from 'next-secure-headers/lib/rules'
 import { config } from '../get-config';
 import { secretConfig } from '../get-secret-config';
 import { IPFS_BASE_SCRIPT_HASH } from 'features/ipfs';
-import { buildCspDirectives } from './csp-directives.js';
+import { buildCspDirectives } from './directives.js';
 
 const trustedHosts = secretConfig.cspTrustedHosts
   ? secretConfig.cspTrustedHosts.split(',')

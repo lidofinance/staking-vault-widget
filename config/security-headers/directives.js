@@ -8,7 +8,7 @@ const WALLETCONNECT_HOSTS = [
 
 /**
  * Builds a ContentSecurityPolicyOption-compatible directives object.
- * Used by both next.config.mjs (via build-csp-header.js) and _document.tsx (via csp-headers.ts).
+ * Used by both next.config.mjs (via build-security-headers.js) and _document.tsx (via csp-headers.ts).
  *
  * @param {{
  *   trustedHosts?: string[],
@@ -69,3 +69,41 @@ export const buildCspDirectives = ({
   },
   reportOnly,
 });
+
+export const STATIC_SECURITY_HEADERS = [
+  { key: 'x-dns-prefetch-control', value: 'on' },
+  {
+    key: 'strict-transport-security',
+    value: 'max-age=2592000; includeSubDomains; preload',
+  },
+  { key: 'referrer-policy', value: 'same-origin' },
+  { key: 'x-content-type-options', value: 'nosniff' },
+  { key: 'x-xss-protection', value: '1; mode=block' },
+  { key: 'x-download-options', value: 'noopen' },
+  { key: 'x-permitted-cross-domain-policies', value: 'none' },
+  { key: 'cross-origin-opener-policy', value: 'same-origin-allow-popups' },
+  {
+    key: 'Permissions-Policy',
+    value: [
+      'camera=()',
+      'microphone=()',
+      'geolocation=()',
+      'payment=()',
+      'accelerometer=()',
+      'gyroscope=()',
+      'magnetometer=()',
+      'display-capture=()',
+      'encrypted-media=()',
+      'serial=()',
+      'xr-spatial-tracking=()',
+      'browsing-topics=()',
+      // Allow for the page itself; hardware wallets (Ledger/Trezor) may need these
+      'usb=(self)',
+      'bluetooth=(self)',
+      'hid=(self)',
+      'autoplay=(self)',
+      'fullscreen=(self)',
+      'picture-in-picture=(self)',
+    ].join(', '),
+  },
+];

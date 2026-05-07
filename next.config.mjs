@@ -6,7 +6,7 @@ import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
 import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
-import { buildCspHeaders } from './config/csp/build-csp-header.js';
+import { buildSecurityHeaders } from './config/security-headers/build-security-headers.js';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -130,56 +130,7 @@ export default withBundleAnalyzer({
       {
         // Apply these headers to all routes in your application.
         source: '/(.*)',
-        headers: [
-          ...buildCspHeaders({ isIPFSMode, isDevelopment: developmentMode }),
-          {
-            key: 'x-dns-prefetch-control',
-            value: 'on',
-          },
-          {
-            key: 'strict-transport-security',
-            value: 'max-age=2592000; includeSubDomains; preload',
-          },
-          {
-            key: 'referrer-policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'x-content-type-options',
-            value: 'nosniff',
-          },
-          { key: 'x-xss-protection', value: '1; mode=block' },
-          { key: 'x-download-options', value: 'noopen' },
-          { key: 'x-permitted-cross-domain-policies', value: 'none' },
-          {
-            key: 'cross-origin-opener-policy',
-            value: 'same-origin-allow-popups',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: [
-              'camera=()',
-              'microphone=()',
-              'geolocation=()',
-              'payment=()',
-              'accelerometer=()',
-              'gyroscope=()',
-              'magnetometer=()',
-              'display-capture=()',
-              'encrypted-media=()',
-              'serial=()',
-              'xr-spatial-tracking=()',
-              'browsing-topics=()',
-              // Allow for the page itself; hardware wallets (Ledger/Trezor) may need these
-              'usb=(self)',
-              'bluetooth=(self)',
-              'hid=(self)',
-              'autoplay=(self)',
-              'fullscreen=(self)',
-              'picture-in-picture=(self)',
-            ].join(', '),
-          },
-        ],
+        headers: buildSecurityHeaders({ isIPFSMode, isDevelopment: developmentMode }),
       },
       {
         // required for gnosis save apps

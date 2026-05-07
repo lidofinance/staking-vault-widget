@@ -45,6 +45,32 @@ test.describe('Page Headers', () => {
   });
 });
 
+test.describe('Static Security Headers', () => {
+  for (const route of SSG_ROUTES) {
+    test(`${route} — all static security headers are present`, async ({
+      request,
+    }) => {
+      const response = await request.get(route);
+      const headers = response.headers();
+
+      expect(headers['x-dns-prefetch-control']).toBe('on');
+      expect(headers['strict-transport-security']).toContain('max-age=');
+      expect(headers['strict-transport-security']).toContain(
+        'includeSubDomains',
+      );
+      expect(headers['referrer-policy']).toBe('same-origin');
+      expect(headers['x-content-type-options']).toBe('nosniff');
+      expect(headers['x-xss-protection']).toBe('1; mode=block');
+      expect(headers['x-download-options']).toBe('noopen');
+      expect(headers['x-permitted-cross-domain-policies']).toBe('none');
+      expect(headers['cross-origin-opener-policy']).toBe(
+        'same-origin-allow-popups',
+      );
+      expect(headers['permissions-policy']).toContain('camera=()');
+    });
+  }
+});
+
 test.describe('CSP Headers', () => {
   for (const route of SSG_ROUTES) {
     test.describe(route, () => {
