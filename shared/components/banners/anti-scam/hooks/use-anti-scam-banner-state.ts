@@ -47,7 +47,7 @@ export const useAntiScamBannerState = (
     isDappActive &&
       isMultipleOwners === true &&
       isTierDefault === false &&
-      hasActionPermissionOrOwnership &&
+      isVaultOwner === true &&
       isNodeOperatorVerified === true &&
       defaultAdminList,
   );
@@ -55,7 +55,7 @@ export const useAntiScamBannerState = (
   const isMultipleOwnersErrorVisible = Boolean(
     isDappActive &&
       isMultipleOwners === true &&
-      hasActionPermissionOrOwnership &&
+      isVaultOwner === true &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
