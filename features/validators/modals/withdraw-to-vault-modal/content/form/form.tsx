@@ -158,7 +158,6 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
               leftDecorator={<Eth />}
               maxAmount={availableToPartialWithdraw}
               fullwidth
-              data-testid="amount-input"
             />
             <VaultInJail isVaultInJail={isVaultInJail} />
           </>

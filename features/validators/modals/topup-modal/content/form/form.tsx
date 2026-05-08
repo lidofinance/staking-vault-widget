@@ -104,7 +104,6 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
           leftDecorator={<Eth />}
           maxAmount={availableBalance}
           fullwidth
-          data-testid="amount-input"
         />
         <NotInPdg isValidatorInPDG={isValidatorInPDG} />
         <DepositPaused beaconChainDepositsPaused={beaconChainDepositsPaused} />
