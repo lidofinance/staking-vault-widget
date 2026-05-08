@@ -2,13 +2,15 @@ import { Text, Link } from '@lidofinance/lido-ui';
 import { useWatch } from 'react-hook-form';
 
 import { useMitigateRisks } from 'modules/vaults';
-import { NO_IDENTIFICATION_LINK, PDG_LINK } from 'shared/components';
+import {
+  NO_IDENTIFICATION_LINK,
+  PDG_LINK,
+  BannerWithoutTitle,
+} from 'shared/components';
 
 import { useMainSettingsData } from 'features/settings/main/contexts';
 import { PDGPolicy } from 'features/settings/main/consts';
 import type { MainSettingsFormValidatedValues } from 'features/settings/main/types';
-
-import { BannerBase } from '../banner-base';
 
 export const IdentificationProcess = () => {
   const { nodeOperator, isNodeOperatorVerified, isLoading, isError } =
@@ -26,7 +28,7 @@ export const IdentificationProcess = () => {
   }
 
   return (
-    <BannerBase>
+    <BannerWithoutTitle>
       <Text size="xxs" color="warning">
         Operator <span style={{ fontWeight: 'bold' }}>{nodeOperator}</span> has
         not passed the{' '}
@@ -39,6 +41,6 @@ export const IdentificationProcess = () => {
         Owner, and that you understand and accept the risks associated with the
         selected Predeposit Guarantee Policy.
       </Text>
-    </BannerBase>
+    </BannerWithoutTitle>
   );
 };

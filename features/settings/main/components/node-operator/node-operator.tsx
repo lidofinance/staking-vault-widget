@@ -33,6 +33,7 @@ export const NodeOperator: FC = () => {
           rightDecorator={warningIcon}
           symbols={21}
           dataTestId="nodeOperator"
+          showWarning
           showPopover
         />
       </InlineLoader>

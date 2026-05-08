@@ -1,26 +1,30 @@
 import type { PropsWithChildren, RefObject } from 'react';
 import type { Address } from 'viem';
-
 import {
   Copy,
   ToastSuccess,
   External,
   Popover,
-  Tooltip,
+  Text,
+  Link,
 } from '@lidofinance/lido-ui';
 
+import { useMitigateRisks } from 'modules/vaults';
 import { truncateAddress } from 'utils';
+
 import { AddressBadge } from './address-badge';
 import { ButtonLink } from '../button-link';
 import { AddressLinkEtherscan } from '../address-link-etherscan';
+import { BannerWithoutTitle } from '../notice-container';
 
 import {
   ActionGroup,
   ActionWrapper,
   PopoverContent,
   PopoverWrapper,
+  StyledTooltip,
 } from './styles';
-import styled from 'styled-components';
+import { NO_IDENTIFICATION_LINK } from '../banners';
 
 type AddressPopoverProps = {
   address?: string;
@@ -29,39 +33,20 @@ type AddressPopoverProps = {
   onClose?: () => void;
   mode: 'default' | 'hover';
   placement?: React.ComponentProps<typeof Popover>['placement'];
+  showWarning?: boolean;
 };
-
-const StyledTooltip = styled(Tooltip)`
-  && {
-    background: var(--lido-color-foreground);
-    box-shadow: ${({ theme }) => theme.boxShadows.xs}
-      var(--lido-color-shadowLight);
-    padding: ${({ theme }) => theme.spaceMap.md}px;
-    max-width: unset !important;
-
-    opacity: 0;
-    pointer-events: none;
-    animation: fadeIn 0.1s ease-in forwards;
-    animation-delay: 0.6s;
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        pointer-events: all;
-      }
-    }
-  }
-`;
 
 export const AddressPopover = ({
   anchorRef,
   address,
   onClose,
   isOpen,
+  showWarning = false,
   children,
   mode = 'default',
   placement = 'topLeft',
 }: PropsWithChildren<AddressPopoverProps>) => {
+  const { isNodeOperatorVerified } = useMitigateRisks();
   const handleCopy = () => {
     if (!address) return;
     void navigator.clipboard.writeText(address).then(() => {
@@ -84,6 +69,14 @@ export const AddressPopover = ({
           {address && <AddressLinkEtherscan address={address as Address} />}
         </ActionWrapper>
       </ActionGroup>
+      {showWarning && isNodeOperatorVerified === false && (
+        <BannerWithoutTitle>
+          <Text size="xxs" color="warning">
+            Operator has not passed the identification process.
+          </Text>
+          <Link href={NO_IDENTIFICATION_LINK}>Learn more</Link>
+        </BannerWithoutTitle>
+      )}
     </PopoverContent>
   );
 

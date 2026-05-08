@@ -2,13 +2,11 @@ import { Text, Link } from '@lidofinance/lido-ui';
 import { useWatch } from 'react-hook-form';
 
 import { useMitigateRisks } from 'modules/vaults';
-import { PDG_LINK } from 'shared/components';
+import { PDG_LINK, BannerWithoutTitle } from 'shared/components';
 
 import { useMainSettingsData } from 'features/settings/main/contexts';
 import { PDGPolicy } from 'features/settings/main/consts';
 import type { MainSettingsFormValidatedValues } from 'features/settings/main/types';
-
-import { BannerBase } from '../banner-base';
 
 export const PdgTrust = () => {
   const { isNodeOperatorVerified, isLoading, isError } = useMitigateRisks();
@@ -25,7 +23,7 @@ export const PdgTrust = () => {
   }
 
   return (
-    <BannerBase>
+    <BannerWithoutTitle>
       <Text size="xxs" color="warning">
         By allowing this Node Operator to perform{' '}
         <Link href={PDG_LINK}>unguaranteed deposits</Link>, you confirm that
@@ -33,6 +31,6 @@ export const PdgTrust = () => {
         Owner, and that you understand and accept the risks associated with the
         selected Predeposit Guarantee Policy.
       </Text>
-    </BannerBase>
+    </BannerWithoutTitle>
   );
 };

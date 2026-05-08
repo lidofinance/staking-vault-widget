@@ -35,6 +35,7 @@ export type AddressBadgeProps = {
   color?: TextColors;
   weight?: TextWeight;
   hoverEffect?: boolean;
+  showWarning?: boolean;
   dataTestId?: string;
   rightDecorator?: ReactNode;
 } & React.ComponentPropsWithRef<typeof PillContainer>;
@@ -52,6 +53,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
       showPopover = false,
       showEnsName = false,
       hoverEffect = true,
+      showWarning = false,
       popoverPlacement = 'topLeft',
       dataTestId,
       rightDecorator,
@@ -129,6 +131,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           isOpen={isOpen}
           address={address}
           placement={popoverPlacement}
+          showWarning={showWarning}
           onClose={() => setIsOpen(false)}
         >
           {mainContent}

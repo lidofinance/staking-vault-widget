@@ -3,7 +3,7 @@ import { ReactComponent as WarningIcon } from 'assets/icons/warning-triangle.svg
 
 import { BannerContainer, IconWrapper } from './styles';
 
-export const BannerBase: FC<PropsWithChildren> = ({ children }) => {
+export const BannerWithoutTitle: FC<PropsWithChildren> = ({ children }) => {
   return (
     <BannerContainer>
       <IconWrapper>
