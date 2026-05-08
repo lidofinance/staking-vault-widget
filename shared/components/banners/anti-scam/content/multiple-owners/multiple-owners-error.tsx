@@ -21,9 +21,11 @@ export const MultipleOwnersError: FC<MultipleOwnersErrorProps> = ({
 
   return (
     <NoticeContainer title={title} type="error">
-      {state.isTierDefault && <DefaultTier variant="multipleOwners" />}
       {state.isNodeOperatorVerified === false && (
         <UnidentifiedNodeOperator variant="multipleOwners" />
+      )}
+      {state.isTierDefault && state.isNodeOperatorVerified && (
+        <DefaultTier variant="multipleOwners" />
       )}
     </NoticeContainer>
   );
