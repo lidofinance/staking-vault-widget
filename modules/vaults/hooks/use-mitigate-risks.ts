@@ -60,10 +60,8 @@ export const useMitigateRisks = () => {
       const isTierDefault = tierId === 0n;
       const isMultipleTiers = tiersList.length > 0;
       const isVaultOwner = !!address && defaultAdminList.includes(address);
-      const isSupplier =
-        (!!address && suppliers.includes(address)) || isVaultOwner;
-      const isRepayer =
-        (!!address && repayers.includes(address)) || isVaultOwner;
+      const isSupplier = !!address && suppliers.includes(address);
+      const isRepayer = !!address && repayers.includes(address);
       const isUnguaranteedDepositsAllowed = pdgPolicy === 2;
 
       // disable supply

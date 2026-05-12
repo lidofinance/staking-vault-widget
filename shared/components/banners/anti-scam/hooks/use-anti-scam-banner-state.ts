@@ -60,7 +60,6 @@ export const useAntiScamBannerState = (
 
   const isUnguaranteedDepositsWarningVisible = Boolean(
     isDappActive &&
-      isTierDefault === false &&
       hasActionPermissionOrOwnership &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === true,
@@ -69,7 +68,6 @@ export const useAntiScamBannerState = (
   const isUnguaranteedDepositsErrorVisible = Boolean(
     isDappActive &&
       hasActionPermissionOrOwnership &&
-      isTierDefault === false &&
       nodeOperator &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === false,
