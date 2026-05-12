@@ -38,7 +38,6 @@ export const useAntiScamBannerState = (
   const isNotOwnerErrorVisible = Boolean(
     isDappActive &&
       isVaultOwner === false &&
-      isMultipleOwners === false &&
       hasActionPermission &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );

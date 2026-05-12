@@ -19,9 +19,11 @@ export const NotOwnerError: FC<NotOwnerErrorProps> = ({ state }) => {
 
   return (
     <NoticeContainer title={notOwner.title} type="error">
-      {state.isTierDefault && <DefaultTier variant="notOwner" />}
-      {!state.isTierDefault && state.isNodeOperatorVerified === false && (
+      {state.isNodeOperatorVerified === false && (
         <UnidentifiedNodeOperator variant="notOwner" />
+      )}
+      {state.isTierDefault && state.isNodeOperatorVerified && (
+        <DefaultTier variant="notOwner" />
       )}
     </NoticeContainer>
   );
