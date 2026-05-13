@@ -8,12 +8,12 @@ import type { RepayFormFieldValues } from './types';
 const { submit, repayUnavailable } = vaultTexts.actions.repay;
 
 export const SubmitButton = () => {
-  const { isSubmitting, disabled, isValid } = useFormState();
+  const { isSubmitting, disabled } = useFormState();
   const [amount, token] = useFormContext<RepayFormFieldValues>().watch([
     'amount',
     'token',
   ]);
-  const isDisabled = isSubmitting || disabled || !isValid;
+  const isDisabled = isSubmitting || disabled;
   const {
     isNotOwnerErrorVisible,
     isMultipleOwnersErrorVisible,

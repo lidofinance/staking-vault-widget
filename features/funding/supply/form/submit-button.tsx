@@ -21,7 +21,7 @@ export const SubmitButton = () => {
       'mintSteth',
     ]);
 
-  const { isSubmitting, disabled, isValid } = useFormState();
+  const { isSubmitting, disabled } = useFormState();
   const { maxMintableStethQuery } = useSupplyForm();
   const {
     isNotOwnerErrorVisible,
@@ -29,7 +29,7 @@ export const SubmitButton = () => {
     isUnguaranteedDepositsErrorVisible,
   } = useAntiScamBannerState('supply');
 
-  const isDisabled = isSubmitting || disabled || !isValid;
+  const isDisabled = isSubmitting || disabled;
   const isBlockedByRestrictions =
     isNotOwnerErrorVisible ||
     isMultipleOwnersErrorVisible ||
