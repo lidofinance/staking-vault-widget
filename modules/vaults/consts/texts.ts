@@ -89,6 +89,7 @@ export const vaultTexts = {
     },
     repay: {
       available: `Available to repay`,
+      repayUnavailable: 'Repay unavailable',
       loading: (token: LidoToken) => `Repaying ${token}` as const,
       completed: (token: LidoToken) => `Repaid ${token} ` as const,
       submit: (token: LidoToken, amount?: bigint | null) =>
@@ -114,6 +115,7 @@ export const vaultTexts = {
         mintTo: 'Mint to address',
       },
       submit: {
+        supplyUnavailable: 'Supply unavailable',
         supply: (token: ExternalToken, amount?: bigint | null) =>
           `Supply ${balance(amount)}${token}` as const,
         supplyMint: (

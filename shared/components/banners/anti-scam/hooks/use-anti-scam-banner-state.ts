@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { useDappStatus } from 'modules/web3';
 import { useMitigateRisks } from 'modules/vaults';
 
@@ -21,56 +23,122 @@ export const useAntiScamBannerState = (
     isSuccess,
   } = useMitigateRisks();
 
-  const hasActionPermission = action === 'supply' ? isSupplier : isRepayer;
+  const hasActionPermission = useMemo(
+    () => (action === 'supply' ? isSupplier : isRepayer),
+    [action, isSupplier, isRepayer],
+  );
+
   const hasActionPermissionOrOwnership =
     hasActionPermission || isVaultOwner === true;
 
-  const isNotOwnerWarningVisible = Boolean(
-    isDappActive &&
-      isVaultOwner === false &&
-      isMultipleOwners === false &&
-      firstAdmin &&
-      hasActionPermission &&
-      isTierDefault === false &&
-      isNodeOperatorVerified === true,
+  const isNotOwnerWarningVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          isVaultOwner === false &&
+          isMultipleOwners === false &&
+          firstAdmin &&
+          hasActionPermission &&
+          isTierDefault === false &&
+          isNodeOperatorVerified === true,
+      ),
+    [
+      isDappActive,
+      isVaultOwner,
+      isMultipleOwners,
+      firstAdmin,
+      hasActionPermission,
+      isTierDefault,
+      isNodeOperatorVerified,
+    ],
   );
 
-  const isNotOwnerErrorVisible = Boolean(
-    isDappActive &&
-      isVaultOwner === false &&
-      hasActionPermission &&
-      (isTierDefault === true || isNodeOperatorVerified === false),
+  const isNotOwnerErrorVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          isVaultOwner === false &&
+          hasActionPermission &&
+          (isTierDefault === true || isNodeOperatorVerified === false),
+      ),
+    [
+      isDappActive,
+      isVaultOwner,
+      hasActionPermission,
+      isTierDefault,
+      isNodeOperatorVerified,
+    ],
   );
 
-  const isMultipleOwnersWarningVisible = Boolean(
-    isDappActive &&
-      isMultipleOwners === true &&
-      isTierDefault === false &&
-      isVaultOwner === true &&
-      isNodeOperatorVerified === true &&
-      defaultAdminList,
+  const isMultipleOwnersWarningVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          isMultipleOwners === true &&
+          isTierDefault === false &&
+          isVaultOwner === true &&
+          isNodeOperatorVerified === true,
+      ),
+    [
+      isDappActive,
+      isMultipleOwners,
+      isTierDefault,
+      isVaultOwner,
+      isNodeOperatorVerified,
+    ],
   );
 
-  const isMultipleOwnersErrorVisible = Boolean(
-    isDappActive &&
-      isMultipleOwners === true &&
-      isVaultOwner === true &&
-      (isTierDefault === true || isNodeOperatorVerified === false),
+  const isMultipleOwnersErrorVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          isMultipleOwners === true &&
+          isVaultOwner === true &&
+          (isTierDefault === true || isNodeOperatorVerified === false),
+      ),
+    [
+      isDappActive,
+      isMultipleOwners,
+      isVaultOwner,
+      isTierDefault,
+      isNodeOperatorVerified,
+    ],
   );
 
-  const isUnguaranteedDepositsWarningVisible = Boolean(
-    isDappActive &&
-      hasActionPermissionOrOwnership &&
-      isUnguaranteedDepositsAllowed === true &&
-      isNodeOperatorVerified === true,
+  const isUnguaranteedDepositsWarningVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          hasActionPermissionOrOwnership &&
+          isTierDefault === false &&
+          isUnguaranteedDepositsAllowed === true &&
+          isNodeOperatorVerified === true,
+      ),
+    [
+      isDappActive,
+      hasActionPermissionOrOwnership,
+      isTierDefault,
+      isUnguaranteedDepositsAllowed,
+      isNodeOperatorVerified,
+    ],
   );
 
-  const isUnguaranteedDepositsErrorVisible = Boolean(
-    isDappActive &&
-      hasActionPermissionOrOwnership &&
-      nodeOperator &&
-      isUnguaranteedDepositsAllowed === true &&
-      isNodeOperatorVerified === false,
+  const isUnguaranteedDepositsErrorVisible = useMemo(
+    () =>
+      Boolean(
+        isDappActive &&
+          hasActionPermissionOrOwnership &&
+          nodeOperator &&
+          isUnguaranteedDepositsAllowed === true &&
+          isNodeOperatorVerified === false,
+      ),
+    [
+      isDappActive,
+      hasActionPermissionOrOwnership,
+      nodeOperator,
+      isUnguaranteedDepositsAllowed,
+      isNodeOperatorVerified,
+    ],
   );
 
   return {

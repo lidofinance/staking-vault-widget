@@ -1,8 +1,11 @@
 import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
+import { useAntiScamBannerState } from 'shared/components';
 
 import type { RepayFormFieldValues } from './types';
+
+const { submit, repayUnavailable } = vaultTexts.actions.repay;
 
 export const SubmitButton = () => {
   const { isSubmitting, disabled, isValid } = useFormState();
@@ -11,14 +14,30 @@ export const SubmitButton = () => {
     'token',
   ]);
   const isDisabled = isSubmitting || disabled || !isValid;
+  const {
+    isNotOwnerErrorVisible,
+    isMultipleOwnersErrorVisible,
+    isUnguaranteedDepositsErrorVisible,
+  } = useAntiScamBannerState('repay');
+  const isBlockedByRestrictions =
+    isNotOwnerErrorVisible ||
+    isMultipleOwnersErrorVisible ||
+    isUnguaranteedDepositsErrorVisible;
+  const variant = isBlockedByRestrictions ? 'translucent' : 'filled';
+  const color = isBlockedByRestrictions ? 'secondary' : 'primary';
+  const submitText = isBlockedByRestrictions
+    ? repayUnavailable
+    : submit(token, amount);
 
   return (
     <PermissionedSubmitButton
       loading={isSubmitting}
       dashboardRole="repayer"
       disabled={isDisabled}
+      variant={variant}
+      color={color}
     >
-      {vaultTexts.actions.repay.submit(token, amount)}
+      {submitText}
     </PermissionedSubmitButton>
   );
 };
