@@ -19,6 +19,7 @@ const { notOwner } = vaultTexts.actions.antiScam.banners;
 export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
   const isMobile = useBreakpoint('sm');
   const addressSize = isMobile ? 10 : 22;
+  const token = state.action === 'repay' ? 'stETH' : 'ETH';
 
   if (!state.isNotOwnerWarningVisible || !state.firstAdmin) {
     return null;
@@ -27,12 +28,12 @@ export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
   return (
     <NoticeContainer title={notOwner.title} type="warning">
       <Text size="xxs">
-        The permission to {state.action} ETH in this stVault was delegated to
-        your address by the Vault Owner.
+        The permission to {state.action} {token} in this stVault was delegated
+        to your address by the Vault Owner.
       </Text>
       <Text size="xxs">
-        Any tokens you use for this action will be fully controlled by the Vault
-        Owner, and you will not be able to control or recover them.
+        Any tokens you supply will be fully controlled by the Vault Owner, and
+        you will not be able to control or recover them.
       </Text>
       <Text size="xxs">
         Vault Owner:{' '}
