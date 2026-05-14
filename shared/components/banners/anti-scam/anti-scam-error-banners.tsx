@@ -7,6 +7,7 @@ import {
   MultipleOwnersError,
   NotOwnerError,
   UnguaranteedDepositsError,
+  UnguaranteedDepositsWarningWithErrors,
 } from './content';
 
 type AntiScamBannersProps = {
@@ -21,6 +22,7 @@ export const AntiScamErrorBanners: FC<AntiScamBannersProps> = ({ action }) => {
       <NotOwnerError state={state} />
       <MultipleOwnersError state={state} />
       <UnguaranteedDepositsError state={state} />
+      <UnguaranteedDepositsWarningWithErrors state={state} />
     </>
   );
 };

@@ -12,6 +12,7 @@ type DefaultTierProps = {
 
 export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
   const link = useVaultSettingsLink('tier');
+  const token = action === 'repay' ? 'stETH' : 'ETH';
 
   if (variant === 'multipleOwners') {
     return (
@@ -30,11 +31,12 @@ export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
 
   return (
     <Text size="xxs">
-      This stVault is not owned by you, and the permission to {action} ETH was
-      delegated to your address by the Vault Owner. Additionally, this stVault
-      is currently in the Default Tier. This interface does not allow supplying
-      ETH, repaying stETH, or rebalancing in this case due to a higher risk of
-      fund loss. To enable these actions in the web interface, the stVault{' '}
+      This stVault is not owned by you, and the permission to {action} {token}{' '}
+      was delegated to your address by the Vault Owner. Additionally, this
+      stVault is currently in the Default Tier. This interface does not allow
+      supplying ETH, repaying stETH, or rebalancing in this case due to a higher
+      risk of fund loss. To enable these actions in the web interface, the
+      stVault{' '}
       <NextLink href={link}>
         must be moved to one of the Node Operator&apos;s tiers.
       </NextLink>
