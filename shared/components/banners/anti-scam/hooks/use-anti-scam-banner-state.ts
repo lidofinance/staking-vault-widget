@@ -106,14 +106,12 @@ export const useAntiScamBannerState = (
       Boolean(
         isDappActive &&
           hasActionPermissionOrOwnership &&
-          isTierDefault === false &&
           isUnguaranteedDepositsAllowed === true &&
           isNodeOperatorVerified === true,
       ),
     [
       isDappActive,
       hasActionPermissionOrOwnership,
-      isTierDefault,
       isUnguaranteedDepositsAllowed,
       isNodeOperatorVerified,
     ],
