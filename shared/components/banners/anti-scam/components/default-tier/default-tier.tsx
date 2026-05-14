@@ -21,10 +21,12 @@ export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
         other addresses, and the stVault is in the Default Tier. This UI does
         not allow supplying ETH, repaying stETH, or rebalancing in this case due
         to a higher risk of fund loss. To enable this action in the web
-        interface, this stVault must be{' '}
+        interface, this stVault{' '}
         <NextLink href={link}>
-          moved to one of the Node Operator&apos;s tiers.
-        </NextLink>
+          must be moved to one of the Node Operator&apos;s tiers,
+        </NextLink>{' '}
+        which serves as confirmation of the relationship between the Node
+        Operator and the Vault Owner.
       </Text>
     );
   }
