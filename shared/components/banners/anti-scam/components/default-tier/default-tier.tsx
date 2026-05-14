@@ -40,8 +40,9 @@ export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
       risk of fund loss. To enable these actions in the web interface, the
       stVault{' '}
       <NextLink href={link}>
-        must be moved to one of the Node Operator&apos;s tiers.
+        must be moved to one of the Node Operator&apos;s tiers
       </NextLink>
+      .
     </Text>
   );
 };

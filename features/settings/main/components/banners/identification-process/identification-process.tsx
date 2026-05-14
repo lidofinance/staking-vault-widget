@@ -23,15 +23,22 @@ export const IdentificationProcess = () => {
   const showBanner =
     data?.pdgPolicy !== PDGPolicy.ALLOW_DEPOSIT_AND_PROVE &&
     selectedPdgPolicy === PDGPolicy.ALLOW_DEPOSIT_AND_PROVE;
-  if (isNodeOperatorVerified || !showBanner || isLoading || isError) {
+  if (
+    isNodeOperatorVerified ||
+    !showBanner ||
+    isLoading ||
+    isError ||
+    !nodeOperator
+  ) {
     return null;
   }
 
   return (
     <BannerWithoutTitle>
       <Text size="xxs" color="warning">
-        Operator <span style={{ fontWeight: 'bold' }}>{nodeOperator}</span> has
-        not passed the{' '}
+        Operator{' '}
+        <span style={{ fontWeight: 'bold' }}>{nodeOperator.toLowerCase()}</span>{' '}
+        has not passed the{' '}
         <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>.
       </Text>
       <Text size="xxs" color="warning">
