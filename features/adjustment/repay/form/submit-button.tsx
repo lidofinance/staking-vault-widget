@@ -8,24 +8,19 @@ import type { RepayFormFieldValues } from './types';
 const { submit, repayUnavailable } = vaultTexts.actions.repay;
 
 export const SubmitButton = () => {
-  const { isSubmitting, disabled } = useFormState();
+  const { isSubmitting, disabled, isValid } = useFormState();
   const [amount, token] = useFormContext<RepayFormFieldValues>().watch([
     'amount',
     'token',
   ]);
-  const isDisabled = isSubmitting || disabled;
-  const {
-    isNotOwnerErrorVisible,
-    isMultipleOwnersErrorVisible,
-    isUnguaranteedDepositsErrorVisible,
-  } = useAntiScamBannerState('repay');
-  const isBlockedByRestrictions =
-    isNotOwnerErrorVisible ||
-    isMultipleOwnersErrorVisible ||
-    isUnguaranteedDepositsErrorVisible;
-  const variant = isBlockedByRestrictions ? 'translucent' : 'filled';
-  const color = isBlockedByRestrictions ? 'secondary' : 'primary';
-  const submitText = isBlockedByRestrictions
+  const { isErrorBannerVisible, isWarningBannerVisible } =
+    useAntiScamBannerState('repay');
+
+  const isDisabled =
+    isSubmitting || disabled || (isWarningBannerVisible && !isValid);
+  const variant = isErrorBannerVisible ? 'translucent' : 'filled';
+  const color = isErrorBannerVisible ? 'secondary' : 'primary';
+  const submitText = isErrorBannerVisible
     ? repayUnavailable
     : submit(token, amount);
 

@@ -30,6 +30,8 @@ export type AntiScamBannerState = {
   isUnguaranteedDepositsErrorVisible: boolean;
   isTierDefault?: boolean;
   isNodeOperatorVerified?: boolean;
+  isErrorBannerVisible: boolean;
+  isWarningBannerVisible: boolean;
   confirmationRequired: AntiScamConfirmationFlags;
   defaultAdminList?: Address[];
   firstAdmin?: Address;

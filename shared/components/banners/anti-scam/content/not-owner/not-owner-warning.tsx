@@ -27,7 +27,7 @@ export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
   return (
     <NoticeContainer title={notOwner.title} type="warning">
       <Text size="xxs">
-        The permission to perform this action in this stVault was delegated to
+        The permission to {state.action} ETH in this stVault was delegated to
         your address by the Vault Owner.
       </Text>
       <Text size="xxs">

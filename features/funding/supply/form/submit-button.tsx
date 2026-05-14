@@ -21,27 +21,22 @@ export const SubmitButton = () => {
       'mintSteth',
     ]);
 
-  const { isSubmitting, disabled } = useFormState();
+  const { isSubmitting, disabled, isValid } = useFormState();
   const { maxMintableStethQuery } = useSupplyForm();
-  const {
-    isNotOwnerErrorVisible,
-    isMultipleOwnersErrorVisible,
-    isUnguaranteedDepositsErrorVisible,
-  } = useAntiScamBannerState('supply');
+  const { isErrorBannerVisible, isWarningBannerVisible } =
+    useAntiScamBannerState('supply');
 
-  const isDisabled = isSubmitting || disabled;
-  const isBlockedByRestrictions =
-    isNotOwnerErrorVisible ||
-    isMultipleOwnersErrorVisible ||
-    isUnguaranteedDepositsErrorVisible;
-  const variant = isBlockedByRestrictions ? 'translucent' : 'filled';
-  const color = isBlockedByRestrictions ? 'secondary' : 'primary';
+  const isDisabled =
+    isSubmitting || disabled || (isWarningBannerVisible && !isValid);
+
+  const variant = isErrorBannerVisible ? 'translucent' : 'filled';
+  const color = isErrorBannerVisible ? 'secondary' : 'primary';
 
   const text = mintSteth
     ? supplyMint(token, amount, maxMintableStethQuery.data?.maxMintableStETH)
     : supply(token, amount);
 
-  const submitText = isBlockedByRestrictions ? supplyUnavailable : text;
+  const submitText = isErrorBannerVisible ? supplyUnavailable : text;
 
   return (
     <MultiplePermissionedSubmitButton
