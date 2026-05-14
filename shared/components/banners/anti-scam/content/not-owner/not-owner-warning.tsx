@@ -40,7 +40,7 @@ export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
         <Address
           as="span"
           style={{ fontWeight: 'bold' }}
-          address={state.firstAdmin}
+          address={state.firstAdmin.toLowerCase()}
           symbols={addressSize}
         />
       </Text>

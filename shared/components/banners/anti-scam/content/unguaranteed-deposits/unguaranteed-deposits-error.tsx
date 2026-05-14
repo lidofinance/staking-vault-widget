@@ -23,7 +23,7 @@ export const UnguaranteedDepositsError: FC<UnguaranteedDepositsErrorProps> = ({
   return (
     <NoticeContainer title="Unguaranteed deposits allowed" type="error">
       <Text size="xxs">
-        Operator {state.nodeOperator} has not passed the{' '}
+        Operator {state.nodeOperator.toLowerCase()} has not passed the{' '}
         <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>, and
         current <Link href={PDG_LINK}>Predeposit Guarantee Policy</Link> allows{' '}
         <NextLink href={mainSettingsLink}>unguaranteed deposits</NextLink>. Due
