@@ -97,6 +97,10 @@ export const vaultTexts = {
       loading: 'Applying oracle report' as const,
       completed: 'Applying oracle report is done' as const,
     },
+    settleLidoFees: {
+      loading: 'Settling Lido fees',
+      completed: 'Settling Lido fees is done',
+    },
     supply: {
       available: `Available to supply`,
       mint: {
@@ -530,7 +534,7 @@ export const vaultTexts = {
     },
     unsettledLidoFees: {
       title: 'Unsettled Lido fees',
-      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fee consists of the following components, calculated daily and automatically settled by Lido whenever a vault report is applied.',
+      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fees consist of the following components and are calculated daily.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     netApr: {

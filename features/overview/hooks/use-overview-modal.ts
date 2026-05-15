@@ -37,23 +37,23 @@ export const useOverviewModal = () => {
   }, [rawModal]);
 
   const openModal = useCallback(
-    (modal: OverviewModalItem) => {
+    async (modal: OverviewModalItem) => {
       if (!vaultAddress) return;
 
       trackEvent(...MATOMO_CLICK_EVENTS[modalEventMap[modal]]);
       const pathname = appPaths.vaults.vault(vaultAddress).overview;
-      void router.push({ pathname, query: { modal } }, undefined, {
+      await router.push({ pathname, query: { modal } }, undefined, {
         shallow: true,
       });
     },
     [router, vaultAddress],
   );
 
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback(async () => {
     if (!vaultAddress) return;
 
     const pathname = appPaths.vaults.vault(vaultAddress).overview;
-    void router.push({ pathname, query: {} }, undefined, { shallow: true });
+    await router.push({ pathname, query: {} }, undefined, { shallow: true });
   }, [router, vaultAddress]);
 
   return { currentModal, openModal, closeModal };
