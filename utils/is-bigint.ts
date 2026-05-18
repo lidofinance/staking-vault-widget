@@ -1,3 +1,3 @@
-export const isBigint = (value: unkown): value is bigint => {
+export const isBigint = (value: unknown): value is bigint => {
   return typeof value === 'bigint';
 };
