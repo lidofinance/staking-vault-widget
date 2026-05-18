@@ -16,7 +16,9 @@ export const SettleFee = () => {
   const { unsettledLidoFees } = values ?? {};
   const onSettleFee = useCallback(async () => {
     await closeModal();
-    await settleLidoFees();
+
+    // fix for opening modal after another modal which lead to blocking scrolling
+    setTimeout(settleLidoFees, 250);
   }, [closeModal, settleLidoFees]);
 
   if (!isBigint(unsettledLidoFees) || unsettledLidoFees === 0n) {
