@@ -1,7 +1,7 @@
 import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, PermissionedSubmitButton } from 'modules/vaults';
-import { useAntiScamBannerDefender } from 'shared/components';
+import { useVerificationBannerDefender } from 'shared/components';
 
 import type { RepayFormFieldValues } from './types';
 
@@ -14,7 +14,7 @@ export const SubmitButton = () => {
     'token',
   ]);
   const { isErrorBannerVisible, isWarningBannerVisible } =
-    useAntiScamBannerDefender('repay');
+    useVerificationBannerDefender('repay');
 
   const isDisabled =
     isSubmitting || disabled || (isWarningBannerVisible && !isValid);

@@ -1,2 +1,2 @@
 export * from './disconnected-vault';
-export * from './anti-scam';
+export * from './additional-verification';

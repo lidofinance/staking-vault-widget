@@ -12,9 +12,9 @@ import { useDappStatus } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 import {
-  antiScamConfirmDefaultValues,
-  useDisableFormByAntiScam,
-} from 'shared/components/banners/anti-scam';
+  verificationConfirmDefaultValues,
+  useDisableFormByVerification,
+} from 'shared/components';
 
 import { useRepay } from './use-repay';
 import { repayFormResolver } from './validation';
@@ -50,7 +50,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
   } = useRepayFormData();
   const { isDappActive } = useDappStatus();
   const disabled = useDisableForm();
-  const isDisabledByAntiScam = useDisableFormByAntiScam('repay');
+  const isDisabledByVerification = useDisableFormByVerification('repay');
   const { burn, retryEvent } = useRepay();
 
   const formObject = useForm<
@@ -61,12 +61,12 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     defaultValues: {
       amount: null,
       token: 'stETH',
-      ...antiScamConfirmDefaultValues,
+      ...verificationConfirmDefaultValues,
     },
     mode: 'onTouched',
     context: validationContext,
     resolver: repayFormResolver,
-    disabled: !isDappActive || disabled || isDisabledByAntiScam,
+    disabled: !isDappActive || disabled || isDisabledByVerification,
   });
 
   const token = formObject.watch('token');

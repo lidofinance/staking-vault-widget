@@ -1,7 +1,7 @@
 import { useFormContext, useFormState } from 'react-hook-form';
 
 import { vaultTexts, MultiplePermissionedSubmitButton } from 'modules/vaults';
-import { useAntiScamBannerDefender } from 'shared/components';
+import { useVerificationBannerDefender } from 'shared/components';
 
 import { useSupplyForm } from './supply-form-provider';
 
@@ -24,7 +24,7 @@ export const SubmitButton = () => {
   const { isSubmitting, disabled, isValid } = useFormState();
   const { maxMintableStethQuery } = useSupplyForm();
   const { isErrorBannerVisible, isWarningBannerVisible } =
-    useAntiScamBannerDefender('supply');
+    useVerificationBannerDefender('supply');
 
   const isDisabled =
     isSubmitting || disabled || (isWarningBannerVisible && !isValid);

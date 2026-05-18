@@ -6,17 +6,17 @@ import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
 
 import {
-  AntiScamErrorBanners,
-  AntiScamWarningBanners,
+  VerificationErrorBanners,
+  VerificationWarningBanners,
 } from 'shared/components';
 
 export const RepayForm = () => {
   return (
     <RepayFormProvider>
-      <AntiScamErrorBanners action="repay" />
+      <VerificationErrorBanners action="repay" />
       <Repayable />
       <RepayFormInputs />
-      <AntiScamWarningBanners action="repay" />
+      <VerificationWarningBanners action="repay" />
       <SubmitButton />
       <TxInfo />
     </RepayFormProvider>

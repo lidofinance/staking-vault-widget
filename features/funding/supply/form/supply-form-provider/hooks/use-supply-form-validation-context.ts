@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useEthereumBalance, useWethBalance } from 'modules/web3';
 import { useValidateRecipientArgs } from 'modules/vaults';
-import { useAntiScamBannerDefender } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
+import { useVerificationBannerDefender } from 'shared/components';
 
 import type { SupplyFormDataValidationContext } from 'features/funding/supply/form/types';
 
@@ -11,15 +11,15 @@ export const useSupplyFormValidationContext = () => {
   const ethBalanceQuery = useEthereumBalance();
   const wethBalanceQuery = useWethBalance();
   const {
-    isReady: isAntiScamReady,
+    isReady: isVerificationReady,
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
-  } = useAntiScamBannerDefender('supply');
+  } = useVerificationBannerDefender('supply');
 
   const validationContext = useMemo(() => {
     if (
-      !isAntiScamReady ||
+      !isVerificationReady ||
       [ethBalanceQuery.data, wethBalanceQuery.data, validateRecipientArgs].some(
         (value) => typeof value === 'undefined',
       )
@@ -31,7 +31,7 @@ export const useSupplyFormValidationContext = () => {
       ethBalance: ethBalanceQuery.data,
       wethBalance: wethBalanceQuery.data,
       validateRecipientArgs,
-      antiScam: {
+      additionalVerification: {
         notOwner: isNotOwnerWarningVisible,
         multipleOwners: isMultipleOwnersWarningVisible,
         unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
@@ -41,7 +41,7 @@ export const useSupplyFormValidationContext = () => {
     validateRecipientArgs,
     ethBalanceQuery.data,
     wethBalanceQuery.data,
-    isAntiScamReady,
+    isVerificationReady,
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,

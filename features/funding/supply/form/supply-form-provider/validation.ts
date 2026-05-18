@@ -9,7 +9,7 @@ import {
   validateRecipientSchema,
   supplyTokenSchema,
 } from 'utils/zod-validation';
-import { antiScamConfirmSchema } from 'shared/components/banners/anti-scam/validation';
+import { verificationConfirmSchema } from 'shared/components/banners/additional-verification/validation';
 
 import type {
   SupplyFormDataAwaitableValidationContext,
@@ -28,7 +28,7 @@ export const supplyFormSchema = ({
   ethBalance,
   wethBalance,
   validateRecipientArgs,
-  antiScam,
+  additionalVerification,
 }: SupplyFormSchemaOptions) => {
   const mintSchema = z.discriminatedUnion('mintSteth', [
     z.object({
@@ -51,7 +51,7 @@ export const supplyFormSchema = ({
       }),
       mintSchema,
     ),
-    antiScamConfirmSchema(antiScam),
+    verificationConfirmSchema(additionalVerification),
   );
 };
 

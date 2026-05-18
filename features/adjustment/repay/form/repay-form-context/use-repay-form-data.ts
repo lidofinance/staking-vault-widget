@@ -6,7 +6,7 @@ import { useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { bigIntMin } from 'utils/bigint-math';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
-import { useAntiScamBannerDefender } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
+import { useVerificationBannerDefender } from 'shared/components';
 
 import { useLiability } from './use-liability';
 import type { RepayFormValidationContext } from '../types';
@@ -17,11 +17,11 @@ export const useRepayFormData = () => {
   const stethBalanceQuery = useStethBalance();
   const wstethBalanceQuery = useWstethBalance();
   const {
-    isReady: isAntiScamReady,
+    isReady: isVerificationReady,
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
-  } = useAntiScamBannerDefender('repay');
+  } = useVerificationBannerDefender('repay');
 
   const isMaxRepayableLoading =
     stethBalanceQuery.isLoading ||
@@ -41,7 +41,7 @@ export const useRepayFormData = () => {
   const validationContextValue: RepayFormValidationContext | undefined =
     useMemo(() => {
       if (
-        !isAntiScamReady ||
+        !isVerificationReady ||
         [maxRepayableStETH, maxRepayableWstETH].some(
           (data) => typeof data === 'undefined',
         )
@@ -52,7 +52,7 @@ export const useRepayFormData = () => {
       return {
         maxRepayableStETH: maxRepayableStETH!,
         maxRepayableWstETH: maxRepayableWstETH!,
-        antiScam: {
+        additionalVerification: {
           notOwner: isNotOwnerWarningVisible,
           multipleOwners: isMultipleOwnersWarningVisible,
           unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
@@ -61,7 +61,7 @@ export const useRepayFormData = () => {
     }, [
       maxRepayableStETH,
       maxRepayableWstETH,
-      isAntiScamReady,
+      isVerificationReady,
       isNotOwnerWarningVisible,
       isMultipleOwnersWarningVisible,
       isUnguaranteedDepositsWarningVisible,

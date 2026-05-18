@@ -53,6 +53,12 @@ export const useVaultRiskStatus = () => {
       const [_, tierId] = tier;
       const firstAdmin = defaultAdminList.at(0);
 
+      /*
+       * Node operator (NO) verified if:
+       * NO has group
+       * NO's group has limit > 0
+       * NO's group has one tier with limit > 0
+       * */
       const isNodeOperatorVerified =
         isSameAddress && isGroupLimitAvailable && isTierLimitAvailable;
       const isMultipleOwners = defaultAdminList.length > 1;

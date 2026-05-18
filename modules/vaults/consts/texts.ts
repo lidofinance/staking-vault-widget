@@ -393,7 +393,7 @@ export const vaultTexts = {
         },
       },
     },
-    antiScam: {
+    additionalVerification: {
       banners: {
         notOwner: {
           title: 'This stVault is not owned by you',

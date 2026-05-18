@@ -5,7 +5,7 @@ import { Resolver } from 'react-hook-form';
 
 import { maxAmountSchema, mintTokenSchema } from 'utils/zod-validation';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { antiScamConfirmSchema } from 'shared/components/banners/anti-scam/validation';
+import { verificationConfirmSchema } from 'shared/components/banners/additional-verification/validation';
 
 import type {
   RepayFormFieldValues,
@@ -21,7 +21,7 @@ export const repayFormSchema = ({
   isSteth,
   maxRepayableStETH,
   maxRepayableWstETH,
-  antiScam,
+  additionalVerification,
 }: RepayFormSchemaOptions) =>
   z.intersection(
     z.object({
@@ -29,7 +29,7 @@ export const repayFormSchema = ({
 
       token: mintTokenSchema,
     }),
-    antiScamConfirmSchema(antiScam),
+    verificationConfirmSchema(additionalVerification),
   );
 
 export const repayFormResolver: Resolver<

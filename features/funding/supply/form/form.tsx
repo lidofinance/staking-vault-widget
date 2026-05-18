@@ -6,17 +6,17 @@ import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
 
 import {
-  AntiScamErrorBanners,
-  AntiScamWarningBanners,
+  VerificationErrorBanners,
+  VerificationWarningBanners,
 } from 'shared/components';
 
 export const SupplyForm = () => {
   return (
     <SupplyFormProvider>
-      <AntiScamErrorBanners action="supply" />
+      <VerificationErrorBanners action="supply" />
       <Suppliable />
       <SupplyFormInputs />
-      <AntiScamWarningBanners action="supply" />
+      <VerificationWarningBanners action="supply" />
       <SubmitButton />
       <TxInfo />
     </SupplyFormProvider>
