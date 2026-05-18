@@ -1,21 +1,12 @@
-import type { PropsWithChildren, RefObject } from 'react';
+import type { PropsWithChildren, RefObject, FC, ReactNode } from 'react';
 import type { Address } from 'viem';
-import {
-  Copy,
-  ToastSuccess,
-  External,
-  Popover,
-  Text,
-  Link,
-} from '@lidofinance/lido-ui';
+import { Copy, ToastSuccess, External, Popover } from '@lidofinance/lido-ui';
 
-import { useVaultRiskStatus } from 'modules/vaults';
 import { truncateAddress } from 'utils';
 
 import { AddressBadge } from './address-badge';
 import { ButtonLink } from '../button-link';
 import { AddressLinkEtherscan } from '../address-link-etherscan';
-import { BannerWithoutTitle } from '../notice-container';
 
 import {
   ActionGroup,
@@ -24,7 +15,6 @@ import {
   PopoverWrapper,
   StyledTooltip,
 } from './styles';
-import { NO_IDENTIFICATION_LINK } from '../banners';
 
 type AddressPopoverProps = {
   address?: string;
@@ -33,20 +23,19 @@ type AddressPopoverProps = {
   onClose?: () => void;
   mode: 'default' | 'hover';
   placement?: React.ComponentProps<typeof Popover>['placement'];
-  showWarning?: boolean;
+  contentChildren?: ReactNode;
 };
 
-export const AddressPopover = ({
+export const AddressPopover: FC<PropsWithChildren<AddressPopoverProps>> = ({
   anchorRef,
   address,
   onClose,
   isOpen,
-  showWarning = false,
   children,
+  contentChildren,
   mode = 'default',
   placement = 'topLeft',
-}: PropsWithChildren<AddressPopoverProps>) => {
-  const { isNodeOperatorVerified, isLoading } = useVaultRiskStatus();
+}) => {
   const handleCopy = () => {
     if (!address) return;
     void navigator.clipboard.writeText(address).then(() => {
@@ -69,14 +58,7 @@ export const AddressPopover = ({
           {address && <AddressLinkEtherscan address={address as Address} />}
         </ActionWrapper>
       </ActionGroup>
-      {showWarning && !isLoading && !isNodeOperatorVerified && (
-        <BannerWithoutTitle>
-          <Text size="xxs" color="warning">
-            Operator has not passed the identification process.
-          </Text>
-          <Link href={NO_IDENTIFICATION_LINK}>Learn more</Link>
-        </BannerWithoutTitle>
-      )}
+      {contentChildren}
     </PopoverContent>
   );
 

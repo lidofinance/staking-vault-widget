@@ -22,7 +22,7 @@ export const OperatorAddress: FC<OperatorAddressProps> = ({
   address,
   isNodeOperatorVerified,
 }) => {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   return (
     <Container>

@@ -57,21 +57,18 @@ export const useVaultRiskStatus = () => {
         isSameAddress && isGroupLimitAvailable && isTierLimitAvailable;
       const isMultipleOwners = defaultAdminList.length > 1;
       const isTierDefault = tierId === 0n;
-      const isMultipleTiers = tiersList.length > 0;
+      const hasTiers = tiersList.length > 0;
       const isVaultOwner = !!address && defaultAdminList.includes(address);
       const isSupplier = !!address && suppliers.includes(address);
       const isRepayer = !!address && repayers.includes(address);
       const isUnguaranteedDepositsAllowed =
         String(pdgPolicy) === PDG_POLICY.ALLOW_DEPOSIT_AND_PROVE;
 
-      // disable supply
-      // disable repay
-
       return {
         isUnguaranteedDepositsAllowed,
         isNodeOperatorVerified,
         isMultipleOwners,
-        isMultipleTiers,
+        hasTiers,
         isTierDefault,
         isVaultOwner,
         isSupplier,
@@ -88,7 +85,7 @@ export const useVaultRiskStatus = () => {
     isUnguaranteedDepositsAllowed: data?.isUnguaranteedDepositsAllowed,
     isNodeOperatorVerified: data?.isNodeOperatorVerified,
     isMultipleOwners: data?.isMultipleOwners,
-    isMultipleTiers: data?.isMultipleTiers,
+    hasTiers: data?.hasTiers,
     isTierDefault: data?.isTierDefault,
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,

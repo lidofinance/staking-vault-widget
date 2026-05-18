@@ -1,9 +1,15 @@
 import { type FC, useMemo } from 'react';
-import { useVaultRiskStatus, useVault, vaultTexts } from 'modules/vaults';
 import { useFormState } from 'react-hook-form';
-import { Text } from '@lidofinance/lido-ui';
+import { Text, Link } from '@lidofinance/lido-ui';
 
-import { AddressBadge, InlineLoader } from 'shared/components';
+import { useVaultRiskStatus, useVault, vaultTexts } from 'modules/vaults';
+import {
+  AddressBadge,
+  BannerWithoutTitle,
+  InlineLoader,
+  NO_IDENTIFICATION_LINK,
+} from 'shared/components';
+import { isBoolean } from 'utils';
 
 import { Skeleton } from 'features/settings/main/styles';
 
@@ -12,12 +18,37 @@ import { Wrapper } from './styles';
 
 const texts = vaultTexts.actions.settings.fields.nodeOperator;
 
+const NotVerifiedOperatorBanner = ({
+  isNodeOperatorVerified,
+  isLoading,
+}: {
+  isNodeOperatorVerified: boolean | undefined;
+  isLoading: boolean;
+}) => {
+  return (
+    <>
+      {!isLoading && !isNodeOperatorVerified && (
+        <BannerWithoutTitle>
+          <Text size="xxs" color="warning">
+            Operator has not passed the identification process.
+          </Text>
+          <Link href={NO_IDENTIFICATION_LINK}>Learn more</Link>
+        </BannerWithoutTitle>
+      )}
+    </>
+  );
+};
+
 export const NodeOperator: FC = () => {
   const { isLoading } = useFormState();
   const { activeVault } = useVault();
-  const { isNodeOperatorVerified } = useVaultRiskStatus();
+  const { isNodeOperatorVerified, isLoading: isDataLoading } =
+    useVaultRiskStatus();
   const warningIcon = useMemo(
-    () => (isNodeOperatorVerified === false ? <WarningIcon /> : null),
+    () =>
+      isBoolean(isNodeOperatorVerified) && !isNodeOperatorVerified ? (
+        <WarningIcon />
+      ) : null,
     [isNodeOperatorVerified],
   );
 
@@ -28,6 +59,12 @@ export const NodeOperator: FC = () => {
       </Text>
       <InlineLoader isLoading={isLoading} loader={<Skeleton />}>
         <AddressBadge
+          popoverContentChildren={
+            <NotVerifiedOperatorBanner
+              isNodeOperatorVerified={isNodeOperatorVerified}
+              isLoading={isDataLoading}
+            />
+          }
           weight={400}
           address={activeVault?.nodeOperator}
           rightDecorator={warningIcon}
