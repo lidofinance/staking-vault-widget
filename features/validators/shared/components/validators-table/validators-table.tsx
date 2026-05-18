@@ -14,7 +14,7 @@ const dataTestId = 'validators-table';
 
 export const ValidatorsTable: FC = () => {
   return (
-    <TableContainer>
+    <TableContainer data-testid="validators-table">
       <SearchContainer>
         <FilterPubkeyIndex dataTestId={dataTestId} />
         <FilterByStatus dataTestId={dataTestId} />

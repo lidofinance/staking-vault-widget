@@ -8,14 +8,16 @@ import { AvailableWrapper } from './styles';
 type AvailableBalanceProps = {
   title: string;
   amount: bigint;
+  'data-testid'?: string;
 };
 
 export const AvailableBalance: FC<AvailableBalanceProps> = ({
   title,
   amount,
+  'data-testid': dataTestId,
 }) => {
   return (
-    <AvailableWrapper>
+    <AvailableWrapper data-testid={dataTestId}>
       <Text size="xxs" color="secondary">
         {title}
       </Text>

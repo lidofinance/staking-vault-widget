@@ -11,7 +11,7 @@ type BalanceCellProps = {
 
 export const BalanceCell: FC<BalanceCellProps> = ({ amount }) => {
   return (
-    <TdStyled>
+    <TdStyled data-testid="balance">
       <Text size="xxs">
         <FormatToken amount={amount} maxDecimalDigits={2} />
       </Text>

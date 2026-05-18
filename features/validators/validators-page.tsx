@@ -5,7 +5,7 @@ import { PageWrapper } from './styles';
 
 export const ValidatorsPage = () => {
   return (
-    <PageWrapper>
+    <PageWrapper data-testid="validators-page">
       <ValidatorsTableProvider>
         <AccumulatedInfo />
         <Validators />

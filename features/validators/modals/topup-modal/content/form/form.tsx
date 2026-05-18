@@ -113,6 +113,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
             type="submit"
             disabled={formObject.formState.disabled}
             fullwidth
+            data-testid="submit"
           >
             {formObject.formState.disabled ? actionDisabled : actionActive}
           </ModalFormButton>
