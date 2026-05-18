@@ -9,7 +9,7 @@ import {
   Link,
 } from '@lidofinance/lido-ui';
 
-import { useMitigateRisks } from 'modules/vaults';
+import { useVaultRiskStatus } from 'modules/vaults';
 import { truncateAddress } from 'utils';
 
 import { AddressBadge } from './address-badge';
@@ -46,7 +46,7 @@ export const AddressPopover = ({
   mode = 'default',
   placement = 'topLeft',
 }: PropsWithChildren<AddressPopoverProps>) => {
-  const { isNodeOperatorVerified } = useMitigateRisks();
+  const { isNodeOperatorVerified, isLoading } = useVaultRiskStatus();
   const handleCopy = () => {
     if (!address) return;
     void navigator.clipboard.writeText(address).then(() => {
@@ -69,7 +69,7 @@ export const AddressPopover = ({
           {address && <AddressLinkEtherscan address={address as Address} />}
         </ActionWrapper>
       </ActionGroup>
-      {showWarning && isNodeOperatorVerified === false && (
+      {showWarning && !isLoading && !isNodeOperatorVerified && (
         <BannerWithoutTitle>
           <Text size="xxs" color="warning">
             Operator has not passed the identification process.

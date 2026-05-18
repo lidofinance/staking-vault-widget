@@ -9,4 +9,4 @@ export { useReadDashboard } from './use-read-dashboard';
 export * from './use-no-tiers';
 export * from './use-vault-tier-info';
 export * from './use-send-report';
-export * from './use-mitigate-risks';
+export * from './use-vault-risk-status';

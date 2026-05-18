@@ -12,6 +12,7 @@ import { VaultHubAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import type { RegisteredPublicClient } from '../web3';
 import type { Confirmation } from '../../utils/get-confirmations';
+import { PDG_POLICY } from './consts';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
@@ -190,3 +191,5 @@ export type NodeOperatorTiersInfo = {
   };
   tiers: Tier[];
 };
+
+export type PDGOptions = keyof typeof PDG_POLICY;

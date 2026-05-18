@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 
-import { useAntiScamBannerState } from './hooks';
+import { useAntiScamBannerDefender } from './hooks';
 
 import type { AntiScamAction } from './types';
 import {
@@ -15,7 +15,7 @@ type AntiScamBannersProps = {
 };
 
 export const AntiScamErrorBanners: FC<AntiScamBannersProps> = ({ action }) => {
-  const state = useAntiScamBannerState(action);
+  const state = useAntiScamBannerDefender(action);
 
   return (
     <>

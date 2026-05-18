@@ -15,7 +15,7 @@ import { FormControllerStyled } from 'shared/components/form';
 import { useDisableForm } from 'shared/hook-form';
 import {
   antiScamConfirmDefaultValues,
-  useAntiScamFormDisabled,
+  useDisableFormByAntiScam,
 } from 'shared/components/banners/anti-scam';
 
 import { SupplyFormResolver } from './validation';
@@ -51,7 +51,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   const { validationContext } = useSupplyFormValidationContext();
   const { supply, retryEvent } = useSupply();
   const disabled = useDisableForm();
-  const isAntiScamDisabled = useAntiScamFormDisabled('supply');
+  const isDisabledByAntiScam = useDisableFormByAntiScam('supply');
 
   const formObject = useForm<
     SupplyFormFieldValues,
@@ -66,7 +66,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
       ...antiScamConfirmDefaultValues,
     },
     mode: 'onTouched',
-    disabled: !isDappActive || disabled || isAntiScamDisabled,
+    disabled: !isDappActive || disabled || isDisabledByAntiScam,
     context: useAwaiter(validationContext).awaiter,
     resolver: SupplyFormResolver,
   });

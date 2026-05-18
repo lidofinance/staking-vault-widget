@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useEthereumBalance, useWethBalance } from 'modules/web3';
 import { useValidateRecipientArgs } from 'modules/vaults';
-import { useAntiScamBannerState } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
+import { useAntiScamBannerDefender } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
 
 import type { SupplyFormDataValidationContext } from 'features/funding/supply/form/types';
 
@@ -15,7 +15,7 @@ export const useSupplyFormValidationContext = () => {
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
-  } = useAntiScamBannerState('supply');
+  } = useAntiScamBannerDefender('supply');
 
   const validationContext = useMemo(() => {
     if (

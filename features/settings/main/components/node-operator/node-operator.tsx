@@ -1,5 +1,5 @@
 import { type FC, useMemo } from 'react';
-import { useMitigateRisks, useVault, vaultTexts } from 'modules/vaults';
+import { useVaultRiskStatus, useVault, vaultTexts } from 'modules/vaults';
 import { useFormState } from 'react-hook-form';
 import { Text } from '@lidofinance/lido-ui';
 
@@ -15,7 +15,7 @@ const texts = vaultTexts.actions.settings.fields.nodeOperator;
 export const NodeOperator: FC = () => {
   const { isLoading } = useFormState();
   const { activeVault } = useVault();
-  const { isNodeOperatorVerified } = useMitigateRisks();
+  const { isNodeOperatorVerified } = useVaultRiskStatus();
   const warningIcon = useMemo(
     () => (isNodeOperatorVerified === false ? <WarningIcon /> : null),
     [isNodeOperatorVerified],

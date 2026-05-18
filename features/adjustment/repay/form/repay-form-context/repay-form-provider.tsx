@@ -13,7 +13,7 @@ import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 import {
   antiScamConfirmDefaultValues,
-  useAntiScamFormDisabled,
+  useDisableFormByAntiScam,
 } from 'shared/components/banners/anti-scam';
 
 import { useRepay } from './use-repay';
@@ -50,7 +50,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
   } = useRepayFormData();
   const { isDappActive } = useDappStatus();
   const disabled = useDisableForm();
-  const isAntiScamDisabled = useAntiScamFormDisabled('repay');
+  const isDisabledByAntiScam = useDisableFormByAntiScam('repay');
   const { burn, retryEvent } = useRepay();
 
   const formObject = useForm<
@@ -66,7 +66,7 @@ export const RepayFormProvider = ({ children }: PropsWithChildren) => {
     mode: 'onTouched',
     context: validationContext,
     resolver: repayFormResolver,
-    disabled: !isDappActive || disabled || isAntiScamDisabled,
+    disabled: !isDappActive || disabled || isDisabledByAntiScam,
   });
 
   const token = formObject.watch('token');

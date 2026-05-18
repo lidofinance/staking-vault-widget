@@ -1,5 +1,3 @@
-export const isBoolean = (
-  value: number | string | bigint | null | undefined | boolean,
-): value is boolean => {
+export const isBoolean = (value: unkown): value is boolean => {
   return typeof value === 'boolean';
 };

@@ -223,9 +223,3 @@ const checkForDuplicateValues = (
     };
   }
 };
-
-export enum PDGPolicy {
-  STRICT = '0',
-  ALLOW_PROVE = '1',
-  ALLOW_DEPOSIT_AND_PROVE = '2',
-}

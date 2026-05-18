@@ -4,24 +4,23 @@ import { isAddressEqual, zeroAddress } from 'viem';
 
 import { useVault } from '../vault-context';
 import { useDappStatus } from '../../web3';
-import { VAULTS_OWNER_ROLES_MAP, VAULTS_ROOT_ROLES_MAP } from '../consts';
+import {
+  PDG_POLICY,
+  VAULTS_OWNER_ROLES_MAP,
+  VAULTS_ROOT_ROLES_MAP,
+} from '../consts';
 
-export const useMitigateRisks = () => {
+export const useVaultRiskStatus = () => {
   const { activeVault, queryKeys } = useVault();
   const { address } = useDappStatus();
 
   const { data, ...rest } = useQuery({
-    queryKey: [
-      ...queryKeys.base,
-      'vault-mitigate-risks',
-      activeVault?.address,
-      address,
-    ] as const,
-    enabled: !!activeVault,
+    queryKey: [...queryKeys.base, 'vault-risk-status', address] as const,
+    enabled: !!(activeVault && address),
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
     queryFn: async () => {
-      invariant(activeVault, '[useMitigateRisks] activeVault is not defined');
+      invariant(activeVault, '[useVaultRiskStatus] activeVault is not defined');
 
       const { dashboard, group, operatorGrid, nodeOperator } = activeVault;
       const { operator, shareLimit, tierIds } = group;
@@ -62,7 +61,8 @@ export const useMitigateRisks = () => {
       const isVaultOwner = !!address && defaultAdminList.includes(address);
       const isSupplier = !!address && suppliers.includes(address);
       const isRepayer = !!address && repayers.includes(address);
-      const isUnguaranteedDepositsAllowed = pdgPolicy === 2;
+      const isUnguaranteedDepositsAllowed =
+        String(pdgPolicy) === PDG_POLICY.ALLOW_DEPOSIT_AND_PROVE;
 
       // disable supply
       // disable repay

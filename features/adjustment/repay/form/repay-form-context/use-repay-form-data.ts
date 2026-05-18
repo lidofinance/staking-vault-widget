@@ -6,7 +6,7 @@ import { useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { bigIntMin } from 'utils/bigint-math';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
-import { useAntiScamBannerState } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
+import { useAntiScamBannerDefender } from 'shared/components/banners/anti-scam/hooks/use-anti-scam-banner-state';
 
 import { useLiability } from './use-liability';
 import type { RepayFormValidationContext } from '../types';
@@ -21,7 +21,7 @@ export const useRepayFormData = () => {
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
-  } = useAntiScamBannerState('repay');
+  } = useAntiScamBannerDefender('repay');
 
   const isMaxRepayableLoading =
     stethBalanceQuery.isLoading ||
