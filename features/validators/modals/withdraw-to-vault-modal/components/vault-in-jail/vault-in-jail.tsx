@@ -21,7 +21,7 @@ export const VaultInJail: FC<VaultInJailProps> = ({ isVaultInJail }) => {
   }
 
   return (
-    <WarningInfo>
+    <WarningInfo data-testid="vault-in-jail-warn">
       {vaultIsJail} <Link href={docsLink}>Learn more</Link>
     </WarningInfo>
   );

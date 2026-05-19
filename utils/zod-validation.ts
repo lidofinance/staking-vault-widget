@@ -1,9 +1,18 @@
 import { z } from 'zod';
-import { type Address, type Hex, isAddress, isAddressEqual, isHex } from 'viem';
+import {
+  type Address,
+  type Hex,
+  isAddress,
+  isAddressEqual,
+  isHex,
+  zeroAddress,
+} from 'viem';
 
 import { vaultTexts } from 'modules/vaults/consts';
 
-const validateAddress = (value: string | null) => !!(value && isAddress(value));
+// Prevent assigning roles to zero address
+const validateAddress = (value: string | null) =>
+  !!(value && isAddress(value) && !isAddressEqual(value, zeroAddress));
 const validatePubkey = (value: string | null) =>
   !!(value && isHex(value) && value.length === 98);
 

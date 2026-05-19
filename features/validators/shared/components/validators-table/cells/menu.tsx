@@ -36,6 +36,7 @@ export const MenuCell: FC<MenuCellProps> = ({ validator }) => {
           size="xs"
           variant="ghost"
           onClick={openPopup}
+          data-testid="row-menu-button"
         />
         <PopupMenu
           anchorRef={ref}

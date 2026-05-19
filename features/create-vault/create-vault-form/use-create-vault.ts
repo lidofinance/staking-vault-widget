@@ -2,7 +2,8 @@ import { useCallback, useMemo } from 'react';
 import invariant from 'tiny-invariant';
 import { useEstimateGas } from 'wagmi';
 import { useFormContext, useFormState } from 'react-hook-form';
-import { trackEvent } from '@lidofinance/analytics-matomo';
+
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 
 import {
   type TransactionEntry,
@@ -10,10 +11,7 @@ import {
   withSuccess,
   useDappStatus,
 } from 'modules/web3';
-import {
-  MATOMO_CLICK_EVENTS,
-  MATOMO_CLICK_EVENTS_TYPES,
-} from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { getContractAddress } from 'config';
 import { vaultTexts } from 'modules/vaults';
 
@@ -33,11 +31,7 @@ export const useCreateVault = () => {
           vaultFactoryAddress,
           '[useCreateVaultWihDashboard] vaultFactoryAddress is not defined',
         );
-        trackEvent(
-          ...MATOMO_CLICK_EVENTS[
-            MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault
-          ],
-        );
+        trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault);
 
         const { data, value } = schemaToTx(values);
 
@@ -58,11 +52,7 @@ export const useCreateVault = () => {
         );
 
         if (result.success) {
-          trackEvent(
-            ...MATOMO_CLICK_EVENTS[
-              MATOMO_CLICK_EVENTS_TYPES.finalisingCreatingVault
-            ],
-          );
+          trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.finalisingCreatingVault);
         }
 
         return result;

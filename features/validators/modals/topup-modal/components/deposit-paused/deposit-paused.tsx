@@ -17,5 +17,7 @@ export const DepositPaused: FC<DepositPausedProps> = ({
     return null;
   }
 
-  return <WarningInfo>{depositPaused}</WarningInfo>;
+  return (
+    <WarningInfo data-testid="deposit-paused-warn">{depositPaused}</WarningInfo>
+  );
 };

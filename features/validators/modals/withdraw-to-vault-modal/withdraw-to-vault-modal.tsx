@@ -51,6 +51,7 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
       onClose={handleCloseModal}
       windowSize="md"
       title={title}
+      data-testid="validators-withdrawal-modal"
     >
       <ContentContainer>
         <Text size="xs">{description}</Text>

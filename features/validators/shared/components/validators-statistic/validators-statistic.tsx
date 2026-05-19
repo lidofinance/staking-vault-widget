@@ -12,18 +12,20 @@ type ValidatorsStatisticProps = {
   title: string;
   hint?: string;
   amount: bigint | undefined;
+  'data-testid'?: string;
 };
 
 export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
   title,
   amount,
   hint,
+  'data-testid': dataTestId,
 }) => {
   const { usdAmount, isLoading } = useEthUsd(amount);
   const maxDecimalDigits = isBigint(amount) && amount > 0n ? 4 : 0;
 
   return (
-    <StatisticContainer>
+    <StatisticContainer data-testid={dataTestId}>
       <Title>
         <Text size="xxs" color="secondary">
           {title}
@@ -31,7 +33,7 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
         {!!hint && <TooltipHint hint={hint} />}
       </Title>
       <InlineLoader isLoading={!isBigint(amount)} height={28} width={56}>
-        <Text size="lg" strong>
+        <Text size="lg" strong data-testid="eth-balance">
           <FormatToken
             amount={amount}
             maxDecimalDigits={maxDecimalDigits}
@@ -44,7 +46,12 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
         height={20}
         width={80}
       >
-        <Text size="xxs" strong style={{ textTransform: 'uppercase' }}>
+        <Text
+          size="xxs"
+          strong
+          style={{ textTransform: 'uppercase' }}
+          data-testid="usd-balance"
+        >
           <FormatPrice amount={usdAmount} />
         </Text>
       </InlineLoader>
