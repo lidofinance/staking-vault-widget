@@ -1,14 +1,14 @@
-import type { FC } from 'react';
+import { type FC, useCallback, useMemo } from 'react';
+import { useConnect } from 'reef-knot/core-react';
 
 import { FormatToken } from 'shared/formatters';
 import { ONE_ETHER } from 'consts/tx';
-
 import { useSettleLidoFees } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
 
 import { ListItem, ListItemContent } from '../styles';
 import { ButtonLink } from './styles';
 import { TextStyled } from '../../../styles';
-import { useDappStatus } from 'modules/web3';
 
 type SettleFeesProps = {
   lidoFees: bigint | undefined;
@@ -17,8 +17,25 @@ type SettleFeesProps = {
 export const SettleFees: FC<SettleFeesProps> = ({ lidoFees }) => {
   const { settleLidoFees } = useSettleLidoFees();
   const { isDappActive } = useDappStatus();
+  const { connect } = useConnect();
 
-  if (!lidoFees || lidoFees < ONE_ETHER || !isDappActive) {
+  const handleConnect = useCallback(() => {
+    void connect();
+  }, [connect]);
+
+  const content = useMemo(
+    () =>
+      isDappActive ? (
+        <>
+          Settle <FormatToken amount={lidoFees} symbol="ETH" /> in Lido fees
+        </>
+      ) : (
+        'Connect wallet for settling Lido fees'
+      ),
+    [isDappActive, lidoFees],
+  );
+
+  if (!lidoFees || lidoFees < ONE_ETHER) {
     return null;
   }
 
@@ -26,8 +43,11 @@ export const SettleFees: FC<SettleFeesProps> = ({ lidoFees }) => {
     <ListItem>
       <ListItemContent>
         <TextStyled size="xxs">
-          <ButtonLink role="button" onClick={settleLidoFees}>
-            Settle <FormatToken amount={lidoFees} symbol="ETH" /> in Lido fees
+          <ButtonLink
+            role="button"
+            onClick={isDappActive ? settleLidoFees : handleConnect}
+          >
+            {content}
           </ButtonLink>
         </TextStyled>
       </ListItemContent>
