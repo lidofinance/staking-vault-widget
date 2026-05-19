@@ -1,11 +1,12 @@
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import type {
   ReefKnotConfig,
   ReefKnotWalletsModalConfig,
 } from '@reef-knot/types';
 import type { WalletIdsEthereum } from 'reef-knot/wallets';
 
-import { MATOMO_CLICK_EVENTS } from './matomo-click-events';
+import { trackMatomoEvent } from 'utils/track-matomo-event';
+
+import { MATOMO_CLICK_EVENTS_TYPES } from './matomo-click-events';
 
 type MetricProps = Pick<
   ReefKnotWalletsModalConfig<WalletIdsEthereum>,
@@ -48,13 +49,13 @@ export const walletMetricProps: MetricProps = {
   onConnectSuccess: ({ walletId }) => {
     const eventData = EVENTS_DATA_CONNECT_SUCCESS[walletId];
     if (eventData) {
-      trackEvent(...MATOMO_CLICK_EVENTS.walletConnected);
+      trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.walletConnected);
     }
   },
   onAutoConnect: () => {
-    trackEvent(...MATOMO_CLICK_EVENTS.walletAutoConnected);
+    trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.walletAutoConnected);
   },
   onReconnect: () => {
-    trackEvent(...MATOMO_CLICK_EVENTS.walletReConnected);
+    trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.walletReConnected);
   },
 };

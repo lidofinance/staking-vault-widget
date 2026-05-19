@@ -1,13 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
-import {
-  MATOMO_CLICK_EVENTS_TYPES,
-  MATOMO_CLICK_EVENTS,
-} from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { modals } from 'features/overview/consts';
 import type { OverviewModalItem } from 'features/overview/types';
@@ -40,7 +37,7 @@ export const useOverviewModal = () => {
     (modal: OverviewModalItem) => {
       if (!vaultAddress) return;
 
-      trackEvent(...MATOMO_CLICK_EVENTS[modalEventMap[modal]]);
+      trackMatomoEvent(modalEventMap[modal]);
       const pathname = appPaths.vaults.vault(vaultAddress).overview;
       void router.push({ pathname, query: { modal } }, undefined, {
         shallow: true,
