@@ -8,6 +8,7 @@ import { useSettleLidoFees } from 'modules/vaults';
 import { ListItem, ListItemContent } from '../styles';
 import { ButtonLink } from './styles';
 import { TextStyled } from '../../../styles';
+import { useDappStatus } from 'modules/web3';
 
 type SettleFeesProps = {
   lidoFees: bigint | undefined;
@@ -15,8 +16,9 @@ type SettleFeesProps = {
 
 export const SettleFees: FC<SettleFeesProps> = ({ lidoFees }) => {
   const { settleLidoFees } = useSettleLidoFees();
+  const { isDappActive } = useDappStatus();
 
-  if (!lidoFees || lidoFees < ONE_ETHER) {
+  if (!lidoFees || lidoFees < ONE_ETHER || !isDappActive) {
     return null;
   }
 
