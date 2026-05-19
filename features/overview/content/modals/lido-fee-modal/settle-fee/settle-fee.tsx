@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { isBigint } from 'utils';
 import { useSettleLidoFees } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
 import { useOverviewModal } from 'features/overview/hooks';
@@ -9,6 +10,7 @@ import { useOverviewModal } from 'features/overview/hooks';
 import { ButtonStyled } from './styles';
 
 export const SettleFee = () => {
+  const { isDappActive } = useDappStatus();
   const { values } = useVaultOverview();
   const { closeModal } = useOverviewModal();
   const { settleLidoFees } = useSettleLidoFees();
@@ -21,7 +23,11 @@ export const SettleFee = () => {
     setTimeout(settleLidoFees, 250);
   }, [closeModal, settleLidoFees]);
 
-  if (!isBigint(unsettledLidoFees) || unsettledLidoFees === 0n) {
+  if (
+    !isBigint(unsettledLidoFees) ||
+    unsettledLidoFees === 0n ||
+    !isDappActive
+  ) {
     return null;
   }
 
