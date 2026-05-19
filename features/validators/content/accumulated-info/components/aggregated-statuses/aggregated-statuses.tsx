@@ -31,7 +31,12 @@ export const AggregateStatuses = () => {
       <Divider />
       <StatusesContainer>
         {dataForRender.map(({ value, status }) => (
-          <StatusChip key={status} value={value} status={status} />
+          <StatusChip
+            key={status}
+            value={value}
+            status={status}
+            data-testid={`status-chip-${status}`}
+          />
         ))}
       </StatusesContainer>
     </>

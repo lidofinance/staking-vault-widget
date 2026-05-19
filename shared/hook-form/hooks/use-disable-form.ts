@@ -5,10 +5,10 @@ export const useDisableForm = () => {
   const { isPendingDisconnect, isPendingConnect, isVaultDisconnected } =
     activeVault ?? {};
 
-  return (
+  return Boolean(
     !activeVault ||
-    isPendingDisconnect ||
-    isPendingConnect ||
-    isVaultDisconnected
+      isPendingDisconnect ||
+      isPendingConnect ||
+      isVaultDisconnected,
   );
 };

@@ -30,7 +30,7 @@ export const LastUpdated: FC<LastUpdatedProps> = ({ timestamp, isLoading }) => {
   }, [activeVault]);
 
   return (
-    <LastUpdatedContainer>
+    <LastUpdatedContainer data-testid="last-updated">
       <InlineLoader isLoading={isLoading} width={188} height={18}>
         <Text size="xxs" color="secondary">
           Last updated: {isNumber(timestamp) && formatDate(new Date(timestamp))}

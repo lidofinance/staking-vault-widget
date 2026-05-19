@@ -12,7 +12,7 @@ type ValidatorIndexProps = {
 
 export const ValidatorIndex: FC<ValidatorIndexProps> = ({ index }) => {
   return (
-    <TdStyled>
+    <TdStyled data-testid="index">
       {isNumber(index) ? (
         <ValidatorState type="index" indexOrPubkey={`${index}`} />
       ) : (

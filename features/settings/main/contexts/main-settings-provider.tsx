@@ -1,12 +1,12 @@
 import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useDappStatus } from 'modules/web3';
 import { FormController, useDisableForm } from 'shared/hook-form';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useEditMainSettings } from '../hooks';
 import { useMainSettingsFormData } from './main-settings-data-provider';
@@ -48,7 +48,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
-      trackEvent(...MATOMO_CLICK_EVENTS.clickSettingsSubmitMainSettingsTab);
+      trackMatomoEvent(
+        MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitMainSettingsTab,
+      );
       const { result, isStateChanged } = await editMainSettings(data);
 
       const [_, __, vaultInfo] = await Promise.all([
