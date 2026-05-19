@@ -29,7 +29,9 @@ const getIconComponent = (state: TransactionModalState) => {
   }
 };
 
-const Content = styled.div`
+const Content = styled.div.attrs({
+  'data-testid': 'txStage',
+})`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.xl}px;
@@ -146,12 +148,15 @@ const showRetryButton = (state: TransactionModalState) => {
 
 export const TransactionModalContent = () => {
   const { dispatchModal, ...state } = useTransactionModal();
+
   return (
     <Modal
       center
       titleIcon={getIconComponent(state)}
-      title={getModalTitle(state)}
-      subtitle={getModalSubTitle(state)}
+      title={<span data-testid="title">{getModalTitle(state)}</span>}
+      subtitle={
+        <span data-testid="description">{getModalSubTitle(state)}</span>
+      }
       open={state.isOpen && state.stage !== 'none'}
       onClose={() => {
         dispatchModal({ type: 'close' });
@@ -159,7 +164,7 @@ export const TransactionModalContent = () => {
     >
       <Content>
         {getMainContent(state, dispatchModal)}
-        {showEtherscanLink(state)}
+        <div data-testid="footerHint">{showEtherscanLink(state)}</div>
         {showRetryButton(state)}
       </Content>
     </Modal>

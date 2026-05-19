@@ -11,7 +11,7 @@ export const AccumulatedInfo = () => {
   }
 
   return (
-    <Section>
+    <Section data-testid="validators-summary">
       <AmountStatistic />
       <AggregateStatuses />
     </Section>

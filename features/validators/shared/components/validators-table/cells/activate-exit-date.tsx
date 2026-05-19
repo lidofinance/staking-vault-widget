@@ -18,7 +18,7 @@ export const ActivateExitDate: FC<ActivateExitDateProps> = ({
   const isExitDateExist = typeof exitDate === 'object';
 
   return (
-    <TdStyled>
+    <TdStyled data-testid="activated-exited">
       <Text size="xxs">
         {isActivateDateExist ? formatDateToISO(activateDate) : '-'}{' '}
         {isExitDateExist && '/'}

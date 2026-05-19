@@ -39,6 +39,7 @@ export const TopupModal: FC<TopupModalProps> = ({
       onClose={onCloseModal}
       windowSize="md"
       title={title}
+      data-testid="validators-topup-modal"
     >
       <ContentContainer>
         <Text size="xs">{description}</Text>
@@ -46,11 +47,15 @@ export const TopupModal: FC<TopupModalProps> = ({
           <Text size="xxs" color="secondary">
             Available stVault Balance
           </Text>
-          <Text size="xxs" strong>
+          <Text size="xxs" strong data-testid="vault-balance">
             <FormatToken amount={availableBalance} symbol="ETH" />
           </Text>
         </ValidatorInfo>
-        <AvailableBalance title={availableToTopup} amount={availableBalance} />
+        <AvailableBalance
+          title={availableToTopup}
+          amount={availableBalance}
+          data-testid="available-balance"
+        />
         <TopupModalForm pubkey={pubKey} />
       </ContentContainer>
     </Modal>

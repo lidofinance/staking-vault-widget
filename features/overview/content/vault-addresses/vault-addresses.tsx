@@ -8,12 +8,22 @@ import { ContractAddress } from '../../shared';
 import { Container, Content, Title, VaultAddressesWrapper } from './styles';
 
 export const VaultAddresses = () => {
-  const { activeVault } = useVault();
-  const { dashboard, lazyOracle, hub, operatorGrid, isVaultDisconnected } =
-    activeVault ?? {};
+  const { activeVault, vaultAddress } = useVault();
+  const {
+    dashboard,
+    lazyOracle,
+    hub,
+    operatorGrid,
+    predepositGuarantee,
+    isVaultDisconnected,
+  } = activeVault ?? {};
 
   const contractInfoList = useMemo(() => {
     return [
+      {
+        title: 'StakingVault',
+        address: vaultAddress,
+      },
       {
         title: 'Dashboard',
         address: dashboard?.address,
@@ -21,6 +31,10 @@ export const VaultAddresses = () => {
       {
         title: 'VaultHub',
         address: hub?.address,
+      },
+      {
+        title: 'Predeposit Guarantee',
+        address: predepositGuarantee?.address,
       },
       {
         title: 'LazyOracle',
@@ -31,7 +45,14 @@ export const VaultAddresses = () => {
         address: operatorGrid?.address,
       },
     ];
-  }, [dashboard, lazyOracle, hub, operatorGrid]);
+  }, [
+    dashboard,
+    lazyOracle,
+    hub,
+    operatorGrid,
+    vaultAddress,
+    predepositGuarantee,
+  ]);
 
   if (isVaultDisconnected) {
     return null;

@@ -16,5 +16,9 @@ export const LowBalance: FC<LowBalanceProps> = ({ availableBalance }) => {
     return null;
   }
 
-  return <WarningInfo>{availableBalanceLow(availableBalance)}</WarningInfo>;
+  return (
+    <WarningInfo data-testid="low-balance-warn">
+      {availableBalanceLow(availableBalance)}
+    </WarningInfo>
+  );
 };

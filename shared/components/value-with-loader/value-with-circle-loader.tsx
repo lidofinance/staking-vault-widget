@@ -25,7 +25,11 @@ export const CircleLoader: FC<PropsWithChildren<InlineLoaderProps>> = ({
     return loader ? (
       loader
     ) : (
-      <CircleLoaderContainer width={width} height={height}>
+      <CircleLoaderContainer
+        data-testid="validators-list-loader"
+        width={width}
+        height={height}
+      >
         <Loader size={size} />
       </CircleLoaderContainer>
     );
