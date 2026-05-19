@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from 'react';
+import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { Hint } from 'shared/components';
@@ -60,12 +60,13 @@ export const OverviewItem: FC<PropsWithChildren<ItemProps>> = ({
   const { openModal } = useOverviewModal();
   const ModalComponent = getModalComponent(indicator);
 
+  const handleOpenModal = useCallback(async () => {
+    await openModal(indicator);
+  }, [openModal, indicator]);
+
   return (
     <>
-      <ItemWrapper
-        data-testid={`${indicator}`}
-        onClick={() => openModal(indicator)}
-      >
+      <ItemWrapper data-testid={`${indicator}`} onClick={handleOpenModal}>
         <DefaultContent titleView={titleView}>
           <Title>
             <Text data-testid="blockTitle" color="secondary" size="xxs">
