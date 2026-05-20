@@ -6,7 +6,7 @@ import { useVaultOverview } from 'features/overview/vault-overview';
 import {
   HowToResolve,
   RepayOrRebalance,
-  ApplyReport,
+  SettleFees,
   SupplyOrRepay,
   EnableDeposits,
 } from './components';
@@ -47,7 +47,7 @@ export const DepositsRestricted = () => {
           </TextStyled>
         )}
         <HowToResolve>
-          <ApplyReport lidoFees={feesToSettle} />
+          <SettleFees lidoFees={feesToSettle} />
           <SupplyOrRepay isNotHealth={isNotHealth} />
           <RepayOrRebalance amount={redemptionStETH} />
           <EnableDeposits isPausedByUser={beaconChainDepositsPauseIntent} />

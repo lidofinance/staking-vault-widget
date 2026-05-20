@@ -1,6 +1,8 @@
+import { useVaultOverview } from 'features/overview/vault-overview';
 import { Formula, OverviewModal } from 'features/overview/shared';
 import type { FormulaItem } from 'features/overview/types';
-import { useVaultOverview } from 'features/overview/vault-overview';
+
+import { SettleFee } from './settle-fee';
 
 const formulasMap: Record<
   'infraFee' | 'liquidityFee' | 'annualReservationFee',
@@ -128,7 +130,11 @@ export const LidoFeeModal = () => {
   const { values } = useVaultOverview();
 
   return (
-    <OverviewModal name="unsettledLidoFees" symbol="ETH">
+    <OverviewModal
+      name="unsettledLidoFees"
+      symbol="ETH"
+      amountRightDecorator={<SettleFee />}
+    >
       {!!values?.vaultData.infraFeeBP && (
         <Formula
           list={formulasMap.infraFee}
