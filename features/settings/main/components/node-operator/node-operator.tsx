@@ -17,6 +17,8 @@ import { WarningIcon } from './warning-icon';
 import { Wrapper } from './styles';
 
 const texts = vaultTexts.actions.settings.fields.nodeOperator;
+const { notPassedIdentification } =
+  vaultTexts.actions.additionalVerification.settings;
 
 const NotVerifiedOperatorBanner = ({
   isNodeOperatorVerified,
@@ -30,7 +32,7 @@ const NotVerifiedOperatorBanner = ({
       {!isLoading && !isNodeOperatorVerified && (
         <BannerWithoutTitle>
           <Text size="xxs" color="warning">
-            Operator has not passed the identification process.
+            {notPassedIdentification}
           </Text>
           <Link href={NO_IDENTIFICATION_LINK}>Learn more</Link>
         </BannerWithoutTitle>

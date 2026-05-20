@@ -418,6 +418,10 @@ export const vaultTexts = {
             'I confirm that I understand the implications and risks and want to proceed.',
         },
       },
+      settings: {
+        notPassedIdentification:
+          'Operator has not passed the identification process.',
+      },
     },
   },
   // configuration for vault metrics as seen in overview page
