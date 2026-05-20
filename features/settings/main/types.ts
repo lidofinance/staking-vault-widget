@@ -1,9 +1,9 @@
 import type { Address } from 'viem';
 import type { z } from 'zod';
 
-import type { VAULT_ROOT_ROLES } from 'modules/vaults';
+import { type VAULT_ROOT_ROLES } from 'modules/vaults';
 
-import { mainSettingsFormSchema, PDGPolicy } from './consts';
+import { mainSettingsFormSchema } from './consts';
 import { UseQueryResult } from '@tanstack/react-query';
 
 import type { Confirmation } from 'utils/get-confirmations';
@@ -82,4 +82,3 @@ export type MainSettingsOverview = {
 };
 
 export type ManagersKeys = 'nodeOperatorManagers' | 'defaultAdmins';
-export type PDGOptions = keyof typeof PDGPolicy;

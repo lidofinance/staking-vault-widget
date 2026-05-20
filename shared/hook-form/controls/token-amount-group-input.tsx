@@ -49,6 +49,7 @@ export const TokenAmountInputGroup = ({
           errorField={errorFieldName}
           fieldName={tokenFieldName}
           options={tokenOptions!}
+          disabled={disabled}
         />
       )}
       <TokenAmountInputHookForm

@@ -1,11 +1,18 @@
-import type { Address, Hex, ReadContractReturnType } from 'viem';
-import type { RegisteredPublicClient } from '../web3';
-import type { Confirmation } from '../../utils/get-confirmations';
+import type {
+  Address,
+  Hex,
+  ReadContractReturnType,
+  ContractFunctionReturnType,
+} from 'viem';
 import {
   LidoSDKVaultContracts,
   LidoSDKVaultEntity,
 } from '@lidofinance/lido-ethereum-sdk';
 import { VaultHubAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
+
+import type { RegisteredPublicClient } from '../web3';
+import type { Confirmation } from '../../utils/get-confirmations';
+import { PDG_POLICY } from './consts';
 
 export type VaultConnection = ReadContractReturnType<
   typeof VaultHubAbi,
@@ -37,25 +44,37 @@ export type HubReportData = {
   timestamp: bigint;
 };
 
+export type PredepositGuarantee = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractPredepositGuarantee']>
+>;
+export type OperatorGrid = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractOperatorGrid']>
+>;
+export type Dashboard = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractVaultDashboard']>
+>;
+export type Vault = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractVault']>
+>;
+export type LazyOracle = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractLazyOracle']>
+>;
+export type VaultHub = Awaited<
+  ReturnType<LidoSDKVaultContracts['getContractVaultHub']>
+>;
+
 export type VaultBaseInfo = {
   vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
   blockNumberString: string;
   address: Address;
-  vault: Awaited<ReturnType<LidoSDKVaultContracts['getContractVault']>>;
-  hub: Awaited<ReturnType<LidoSDKVaultContracts['getContractVaultHub']>>;
-  dashboard: Awaited<
-    ReturnType<LidoSDKVaultContracts['getContractVaultDashboard']>
-  >;
-  operatorGrid: Awaited<
-    ReturnType<LidoSDKVaultContracts['getContractOperatorGrid']>
-  >;
-  lazyOracle: Awaited<
-    ReturnType<LidoSDKVaultContracts['getContractLazyOracle']>
-  >;
-  predepositGuarantee: Awaited<
-    ReturnType<LidoSDKVaultContracts['getContractPredepositGuarantee']>
-  >;
+  vault: Vault;
+  hub: VaultHub;
+  dashboard: Dashboard;
+  operatorGrid: OperatorGrid;
+  lazyOracle: LazyOracle;
+  predepositGuarantee: PredepositGuarantee;
+  group: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'group'>;
   nodeOperator: Address;
   vaultOwner: Address;
   withdrawalCredentials: Hex;
@@ -172,3 +191,5 @@ export type NodeOperatorTiersInfo = {
   };
   tiers: Tier[];
 };
+
+export type PDGOptions = keyof typeof PDG_POLICY;

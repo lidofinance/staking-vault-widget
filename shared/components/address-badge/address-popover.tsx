@@ -1,15 +1,9 @@
-import type { PropsWithChildren, RefObject } from 'react';
+import type { PropsWithChildren, RefObject, FC, ReactNode } from 'react';
 import type { Address } from 'viem';
-
-import {
-  Copy,
-  ToastSuccess,
-  External,
-  Popover,
-  Tooltip,
-} from '@lidofinance/lido-ui';
+import { Copy, ToastSuccess, External, Popover } from '@lidofinance/lido-ui';
 
 import { truncateAddress } from 'utils';
+
 import { AddressBadge } from './address-badge';
 import { ButtonLink } from '../button-link';
 import { AddressLinkEtherscan } from '../address-link-etherscan';
@@ -19,8 +13,8 @@ import {
   ActionWrapper,
   PopoverContent,
   PopoverWrapper,
+  StyledTooltip,
 } from './styles';
-import styled from 'styled-components';
 
 type AddressPopoverProps = {
   address?: string;
@@ -29,39 +23,19 @@ type AddressPopoverProps = {
   onClose?: () => void;
   mode: 'default' | 'hover';
   placement?: React.ComponentProps<typeof Popover>['placement'];
+  contentChildren?: ReactNode;
 };
 
-const StyledTooltip = styled(Tooltip)`
-  && {
-    background: var(--lido-color-foreground);
-    box-shadow: ${({ theme }) => theme.boxShadows.xs}
-      var(--lido-color-shadowLight);
-    padding: ${({ theme }) => theme.spaceMap.md}px;
-    max-width: unset !important;
-
-    opacity: 0;
-    pointer-events: none;
-    animation: fadeIn 0.1s ease-in forwards;
-    animation-delay: 0.6s;
-
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        pointer-events: all;
-      }
-    }
-  }
-`;
-
-export const AddressPopover = ({
+export const AddressPopover: FC<PropsWithChildren<AddressPopoverProps>> = ({
   anchorRef,
   address,
   onClose,
   isOpen,
   children,
+  contentChildren,
   mode = 'default',
   placement = 'topLeft',
-}: PropsWithChildren<AddressPopoverProps>) => {
+}) => {
   const handleCopy = () => {
     if (!address) return;
     void navigator.clipboard.writeText(address).then(() => {
@@ -84,6 +58,7 @@ export const AddressPopover = ({
           {address && <AddressLinkEtherscan address={address as Address} />}
         </ActionWrapper>
       </ActionGroup>
+      {contentChildren}
     </PopoverContent>
   );
 

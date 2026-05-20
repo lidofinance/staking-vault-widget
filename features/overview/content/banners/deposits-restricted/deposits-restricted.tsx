@@ -1,7 +1,7 @@
 import { ONE_ETHER } from 'consts/tx';
 import { isBigint } from 'utils';
+import { NoticeContainer } from 'shared/components';
 
-import { NoticeContainer } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
 import {
   HowToResolve,

@@ -113,6 +113,7 @@ const getVaultData = async (
     isReportFresh,
     lazyOracle,
     blockNumber,
+    group,
     ...rest
   } = vault;
 
@@ -127,7 +128,6 @@ const getVaultData = async (
     totalMintingCapacityShares,
     mintableShares,
     tier,
-    group,
     vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
@@ -148,7 +148,6 @@ const getVaultData = async (
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultTierInfo([vaultAddress]),
-      operatorGrid.prepare.group([vault.nodeOperator]),
       lazyOracle.prepare.vaultQuarantine([vaultAddress]),
     ] as const,
     blockNumber,
