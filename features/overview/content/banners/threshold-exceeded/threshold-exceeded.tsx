@@ -1,7 +1,8 @@
 import { vaultTexts } from 'modules/vaults';
+import { NoticeContainer } from 'shared/components';
 
-import { NoticeContainer, RepayObligations } from 'features/overview/shared';
-import { useVaultOverview } from '../../../vault-overview';
+import { RepayObligations } from 'features/overview/shared';
+import { useVaultOverview } from 'features/overview/vault-overview';
 
 const {
   thresholdExceeded: { title, description },

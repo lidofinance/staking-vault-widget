@@ -141,7 +141,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     : tableHeaders.length;
 
   return (
-    <TableStyled>
+    <TableStyled data-testid="validators-table">
       <Thead>
         <TableRow>
           {tableHeaders.map(({ title, sortKey }, index) => {

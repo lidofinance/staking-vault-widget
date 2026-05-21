@@ -1,7 +1,7 @@
 import { formatCustomDate, isNumber } from 'utils';
 import { vaultTexts } from 'modules/vaults/consts';
+import { NoticeContainer } from 'shared/components';
 
-import { NoticeContainer } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextStyled } from '../styles';

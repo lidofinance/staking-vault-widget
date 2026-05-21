@@ -1,7 +1,8 @@
 import { formatBalance } from 'utils/formats/format-balance';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
+import { toStethValue } from 'utils';
+
 import type { TierConfirmationFnNames } from '../types';
-import { toStethValue } from '../../../utils';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -88,6 +89,7 @@ export const vaultTexts = {
     },
     repay: {
       available: `Available to repay`,
+      repayUnavailable: 'Repay unavailable',
       loading: (token: LidoToken) => `Repaying ${token}` as const,
       completed: (token: LidoToken) => `Repaid ${token} ` as const,
       submit: (token: LidoToken, amount?: bigint | null) =>
@@ -97,6 +99,19 @@ export const vaultTexts = {
       loading: 'Applying oracle report' as const,
       completed: 'Applying oracle report is done' as const,
     },
+    overview: {
+      vaultGeneral: {
+        nodeOperator: {
+          verifiedOperator: 'Identified operator',
+          unVerifiedOperator:
+            'Operator has not passed the identification process',
+        },
+      },
+    },
+    settleLidoFees: {
+      loading: 'Settling Lido fees',
+      completed: 'Settling Lido fees is done',
+    },
     supply: {
       available: `Available to supply`,
       mint: {
@@ -104,6 +119,7 @@ export const vaultTexts = {
         mintTo: 'Mint to address',
       },
       submit: {
+        supplyUnavailable: 'Supply unavailable',
         supply: (token: ExternalToken, amount?: bigint | null) =>
           `Supply ${balance(amount)}${token}` as const,
         supplyMint: (
@@ -381,6 +397,32 @@ export const vaultTexts = {
         },
       },
     },
+    additionalVerification: {
+      banners: {
+        notOwner: {
+          title: 'This stVault is not owned by you',
+        },
+        multipleOwners: {
+          title: 'Multiple Vault Owners',
+          description:
+            'The Vault Owner role (DEFAULT_ADMIN_ROLE) is assigned to one or more additional addresses.',
+          ownersListTitle: 'Other Vault Owner addresses:',
+          explanation: {
+            title: 'This means:',
+            list: [
+              'Another Vault Owner can fully control the tokens you supply.',
+              'Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
+            ],
+          },
+          confirm:
+            'I confirm that I understand the implications and risks and want to proceed.',
+        },
+      },
+      settings: {
+        notPassedIdentification:
+          'Operator has not passed the identification process.',
+      },
+    },
   },
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
@@ -530,7 +572,7 @@ export const vaultTexts = {
     },
     unsettledLidoFees: {
       title: 'Unsettled Lido fees',
-      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fee consists of the following components, calculated daily and automatically settled by Lido whenever a vault report is applied.',
+      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fees consist of the following components and are calculated daily.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     netApr: {
@@ -650,7 +692,7 @@ export const vaultTexts = {
               'Reserve is defined by the Minimal Reserve value of 1 ETH for the connection to Lido Core.';
             if (
               constraintBy === 'minimalReserve' &&
-              minimalReserve === WEI_PER_ETHER
+              minimalReserve === ONE_ETHER
             ) {
               return `${baseDescription} ${minimalReserveText}`;
             }

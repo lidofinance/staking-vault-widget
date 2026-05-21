@@ -19,7 +19,7 @@ import {
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 import {
   formatPercent,
   toEthValue,
@@ -113,6 +113,7 @@ const getVaultData = async (
     isReportFresh,
     lazyOracle,
     blockNumber,
+    group,
     ...rest
   } = vault;
 
@@ -127,7 +128,6 @@ const getVaultData = async (
     totalMintingCapacityShares,
     mintableShares,
     tier,
-    group,
     vaultQuarantineState,
   ] = await readWithReport({
     publicClient,
@@ -148,7 +148,6 @@ const getVaultData = async (
       dashboard.prepare.totalMintingCapacityShares(),
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultTierInfo([vaultAddress]),
-      operatorGrid.prepare.group([vault.nodeOperator]),
       lazyOracle.prepare.vaultQuarantine([vaultAddress]),
     ] as const,
     blockNumber,
@@ -458,7 +457,7 @@ const selectOverviewData = ({
     nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
     netStakingRewardsEth: toEthValue(netStakingRewards),
     bottomLineEth: toEthValue(bottomLine),
-    isPausedByFees: feesToSettle > WEI_PER_ETHER,
+    isPausedByFees: feesToSettle > ONE_ETHER,
     netStakingRewards,
     carrySpreadApr,
     carrySpreadAprNumber,

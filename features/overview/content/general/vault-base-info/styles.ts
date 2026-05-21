@@ -16,29 +16,6 @@ export const Wrapper = styled.article`
   }
 `;
 
-export const NodeOperatorContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spaceMap.xl}px;
-`;
-
-export const NodeOperatorParameter = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: end;
-  gap: ${({ theme }) => theme.spaceMap.xs}px;
-
-  @media ${devicesHeaderMedia.tablet} {
-    align-items: start;
-  }
-`;
-
-export const NodeOperatorAddressWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
-  cursor: pointer;
-`;
-
 export const VaultAddress = styled(Address)`
   font-size: ${({ theme }) => theme.fontSizesMap.xl}px;
   font-weight: 700;
@@ -74,13 +51,6 @@ export const VaultAddressAndTier = styled.div`
 export const VaultRR = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spaceMap.md}px;
-`;
-
-export const NodeOperatorAddress = styled(Address)`
-  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
-  font-weight: 700;
-  line-height: 20px;
-  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const VaultState = styled(Chip)`

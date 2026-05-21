@@ -1,9 +1,7 @@
 import { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
-
-import type { PDGOptions } from 'features/settings/main/types';
+import { vaultTexts, type PDGOptions } from 'modules/vaults';
 
 import { DescriptionWrapper } from './styles';
 

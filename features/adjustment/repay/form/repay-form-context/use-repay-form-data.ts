@@ -6,6 +6,7 @@ import { useStethBalance, useWstethBalance } from 'modules/web3';
 
 import { bigIntMin } from 'utils/bigint-math';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { useVerificationBannerDefender } from 'shared/components';
 
 import { useLiability } from './use-liability';
 import type { RepayFormValidationContext } from '../types';
@@ -15,6 +16,12 @@ export const useRepayFormData = () => {
   const liabilityQuery = useLiability();
   const stethBalanceQuery = useStethBalance();
   const wstethBalanceQuery = useWstethBalance();
+  const {
+    isReady: isVerificationReady,
+    isNotOwnerWarningVisible,
+    isMultipleOwnersWarningVisible,
+    isUnguaranteedDepositsWarningVisible,
+  } = useVerificationBannerDefender('repay');
 
   const isMaxRepayableLoading =
     stethBalanceQuery.isLoading ||
@@ -34,6 +41,7 @@ export const useRepayFormData = () => {
   const validationContextValue: RepayFormValidationContext | undefined =
     useMemo(() => {
       if (
+        !isVerificationReady ||
         [maxRepayableStETH, maxRepayableWstETH].some(
           (data) => typeof data === 'undefined',
         )
@@ -44,8 +52,20 @@ export const useRepayFormData = () => {
       return {
         maxRepayableStETH: maxRepayableStETH!,
         maxRepayableWstETH: maxRepayableWstETH!,
+        additionalVerification: {
+          notOwner: isNotOwnerWarningVisible,
+          multipleOwners: isMultipleOwnersWarningVisible,
+          unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+        },
       };
-    }, [maxRepayableStETH, maxRepayableWstETH]);
+    }, [
+      maxRepayableStETH,
+      maxRepayableWstETH,
+      isVerificationReady,
+      isNotOwnerWarningVisible,
+      isMultipleOwnersWarningVisible,
+      isUnguaranteedDepositsWarningVisible,
+    ]);
 
   const validationContext = useAwaiter(validationContextValue).awaiter;
 

@@ -12,7 +12,10 @@ import type { SupplyFormValidatedValues } from './types';
 
 export const SupplyFormInputs = () => {
   const { balanceQuery, isStethMintableQuery } = useSupplyForm();
-  const { watch } = useFormContext<SupplyFormValidatedValues>();
+  const {
+    watch,
+    formState: { disabled },
+  } = useFormContext<SupplyFormValidatedValues>();
   const mintSteth = watch('mintSteth');
 
   const isStethMintable = isStethMintableQuery.data === true;
@@ -25,6 +28,7 @@ export const SupplyFormInputs = () => {
         tokenFieldName="token"
         tokenOptions={VAULT_FUNDING_TOKENS}
         maxAmount={maxValue}
+        disabled={disabled}
       />
       <CheckboxHookForm
         fieldName="mintSteth"

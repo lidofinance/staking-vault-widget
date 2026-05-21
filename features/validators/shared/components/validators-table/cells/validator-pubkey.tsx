@@ -10,7 +10,7 @@ type ValidatorPubkeyProps = {
 
 export const ValidatorPubkey: FC<ValidatorPubkeyProps> = ({ pubkey }) => {
   return (
-    <TdStyled>
+    <TdStyled data-testid="pubkey-row">
       <ValidatorState type="pubkey" indexOrPubkey={pubkey} />
     </TdStyled>
   );

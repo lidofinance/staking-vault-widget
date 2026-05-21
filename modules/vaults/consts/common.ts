@@ -27,3 +27,9 @@ export const DEFAULT_TIER_ID = 0n;
 
 // validators
 export const VALIDATORS_PER_PAGE = 10;
+
+export enum PDG_POLICY {
+  STRICT = '0',
+  ALLOW_PROVE = '1',
+  ALLOW_DEPOSIT_AND_PROVE = '2',
+}

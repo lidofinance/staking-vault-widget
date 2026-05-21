@@ -13,7 +13,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
-import { WEI_PER_GWEI } from 'consts/tx';
+import { ONE_GWEI } from 'consts/tx';
 
 import type { TopUpFormValidatedValues } from '../types';
 
@@ -37,7 +37,7 @@ export const useSubmitTopup = () => {
 
         // @notice min amount === 1 ETH
         // amount is result of rounds eth down using gwei
-        const amountInGwei = (amount / WEI_PER_GWEI) * WEI_PER_GWEI;
+        const amountInGwei = (amount / ONE_GWEI) * ONE_GWEI;
 
         const mainActionLoadingText = loadingText(index, amountInGwei);
         const mainActionCompleteText = mainCompleteText(index, amountInGwei);

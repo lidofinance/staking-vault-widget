@@ -20,7 +20,7 @@ export const NotInPdg: FC<NotInPdgProps> = ({ isValidatorInPDG }) => {
   }
 
   return (
-    <WarningInfo>
+    <WarningInfo data-testid="not-in-pdg-warn">
       {validatorWithoutPDG} <Link href={pdgDocsLink}>Learn more</Link>
     </WarningInfo>
   );

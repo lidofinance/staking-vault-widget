@@ -96,7 +96,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultModule,
       );
 
-      // // TODO: reword to support multiple factories
+      // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
         throw new VaultOwnerNotDashboardError();
       }
@@ -106,6 +106,8 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultModule.contracts.getContractPredepositGuarantee(),
         vaultEntity.getDashboardContract(),
       ]);
+
+      const group = await operatorGrid.read.group([nodeOperator]);
 
       return {
         address: vaultAddress,
@@ -118,6 +120,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         withdrawalCredentials,
         report,
         operatorGrid,
+        group,
         lazyOracle,
         hubReport: {
           root: latestHubReportRoot,

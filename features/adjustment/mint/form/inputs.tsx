@@ -11,7 +11,10 @@ import { MintFormFieldValues } from './types';
 
 export const MintFormInputs = () => {
   const { mintableQuery } = useMintFormData();
-  const { watch } = useFormContext<MintFormFieldValues>();
+  const {
+    watch,
+    formState: { disabled },
+  } = useFormContext<MintFormFieldValues>();
   const token = watch('token');
 
   const maxValue =
@@ -26,11 +29,13 @@ export const MintFormInputs = () => {
         tokenFieldName="token"
         tokenOptions={VAULT_MINT_TOKENS}
         maxAmount={maxValue}
+        disabled={disabled}
       />
       <AddressInputHookForm
         label={vaultTexts.actions.mint.recipientLabel}
         fieldName="recipient"
         data-testid="mintAddress"
+        disabled={disabled}
       />
     </>
   );
