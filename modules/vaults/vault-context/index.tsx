@@ -1,14 +1,14 @@
 import invariant from 'tiny-invariant';
 import {
-  FC,
+  type FC,
+  type PropsWithChildren,
   createContext,
   useContext,
-  PropsWithChildren,
   useMemo,
   useEffect,
 } from 'react';
 import { useRouter } from 'next/router';
-import { Address, isAddress } from 'viem';
+import { type Address, isAddress, getAddress } from 'viem';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
@@ -39,8 +39,8 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const { publicClient } = useLidoSDK();
   const queryClient = useQueryClient();
   const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
-  const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
-    ? (vaultAddress.toLowerCase() as Address)
+  const sanitizedVaultAddress = isAddress(vaultAddress)
+    ? getAddress(vaultAddress)
     : undefined;
   const query = useBaseVaultData(sanitizedVaultAddress);
 
