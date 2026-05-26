@@ -3,12 +3,18 @@ import type {
   Hex,
   ReadContractReturnType,
   ContractFunctionReturnType,
+  GetContractReturnType,
+  WalletClient,
 } from 'viem';
+import type { EncodableContract } from '@lidofinance/lido-ethereum-sdk/common';
 import {
   LidoSDKVaultContracts,
   LidoSDKVaultEntity,
 } from '@lidofinance/lido-ethereum-sdk';
-import { VaultHubAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
+import {
+  DashboardAbi,
+  VaultHubAbi,
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import type { RegisteredPublicClient } from '../web3';
 import type { Confirmation } from '../../utils/get-confirmations';
@@ -50,8 +56,8 @@ export type PredepositGuarantee = Awaited<
 export type OperatorGrid = Awaited<
   ReturnType<LidoSDKVaultContracts['getContractOperatorGrid']>
 >;
-export type Dashboard = Awaited<
-  ReturnType<LidoSDKVaultContracts['getContractVaultDashboard']>
+export type Dashboard = EncodableContract<
+  GetContractReturnType<typeof DashboardAbi, WalletClient>
 >;
 export type Vault = Awaited<
   ReturnType<LidoSDKVaultContracts['getContractVault']>

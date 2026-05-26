@@ -4,6 +4,7 @@ import type {
   ContractFunctionName,
   ContractFunctionArgs,
   ContractFunctionReturnType,
+  ContractFunctionParameters,
 } from 'viem';
 
 import { dashboardAbi } from 'abi/dashboard-abi';
@@ -69,8 +70,11 @@ export const useReadDashboard = <
         '[useReadWithVaultReport] activeVault is not defined',
       );
 
-      // @ts-expect-error cannot match types
-      const contractData = activeVault.dashboard.prepare[functionName](args);
+      const prepare = activeVault.dashboard.prepare as Record<
+        TFunctionName,
+        (args: TArgs | undefined) => ContractFunctionParameters
+      >;
+      const contractData = prepare[functionName](args);
 
       return (
         await readWithReport({
@@ -80,7 +84,7 @@ export const useReadDashboard = <
           report: applyReport ? activeVault.report : null,
           isReportFresh: activeVault.isReportFresh,
         })
-      )[0];
+      )[0] as TResult;
     },
   });
 
