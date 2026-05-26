@@ -99,13 +99,7 @@ const ValidatorNotFound = ({ columnCount }: { columnCount: number }) => {
   );
 };
 
-type ValidatorsTableProps = {
-  dataTestId: string;
-};
-
-export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
-  dataTestId,
-}) => {
+export const ValidatorsTableContent: FC = () => {
   const {
     validators,
     isLoading,
@@ -141,7 +135,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
     : tableHeaders.length;
 
   return (
-    <TableStyled data-testid="validators-table">
+    <TableStyled>
       <Thead>
         <TableRow>
           {tableHeaders.map(({ title, sortKey }, index) => {
@@ -175,9 +169,7 @@ export const ValidatorsTableContent: FC<ValidatorsTableProps> = ({
             <TableRow
               data-address={pubkey}
               key={pubkey}
-              data-testid={
-                dataTestId ? `${dataTestId}-validator-${pubkey}` : null
-              }
+              data-testid={`validator-${pubkey}`}
             >
               <ValidatorTableRowContent
                 validator={validator}

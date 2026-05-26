@@ -10,21 +10,19 @@ import {
 } from './components';
 import { TableContainer, ScrollableContainer, SearchContainer } from './styles';
 
-const dataTestId = 'validators-table';
-
 export const ValidatorsTable: FC = () => {
   return (
-    <TableContainer data-testid="validators-table">
-      <SearchContainer>
-        <FilterPubkeyIndex dataTestId={dataTestId} />
-        <FilterByStatus dataTestId={dataTestId} />
+    <TableContainer data-testid="validators-list">
+      <SearchContainer data-testid="filter-header">
+        <FilterPubkeyIndex />
+        <FilterByStatus />
       </SearchContainer>
-      <ScrollableContainer>
+      <ScrollableContainer data-testid="validators-table">
         <ValidatorModalProvider>
-          <ValidatorsTableContent dataTestId={dataTestId} />
+          <ValidatorsTableContent />
         </ValidatorModalProvider>
       </ScrollableContainer>
-      <TablePagination dataTestId={dataTestId} />
+      <TablePagination />
     </TableContainer>
   );
 };
