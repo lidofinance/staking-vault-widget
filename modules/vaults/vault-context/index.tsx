@@ -59,7 +59,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       void router.replace(
         router.asPath.replace(vaultAddress, vaultAddressLowerCase),
         undefined,
-        { shallow: false },
+        { shallow: true },
       );
     }
   }, [router, vaultAddress]);
