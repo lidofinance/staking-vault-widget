@@ -27,15 +27,17 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
   children,
 }) => {
   return (
-    <InfoContainer>
+    <InfoContainer data-testid="validator-info">
       <BaseInfo>
-        <Identicon address={pubKey} diameter={40} />
+        <span data-testid="pubkey-icon">
+          <Identicon address={pubKey} diameter={40} />
+        </span>
         <ParamContainer>
           <Text size="xxs" color="secondary">
             Public key
           </Text>
           <PubKeyWrapper>
-            <Text size="xs" strong data-testid="validator-info-pubkey">
+            <Text size="xs" strong data-testid="pubkey">
               <Address
                 as="span"
                 address={pubKey}
@@ -43,7 +45,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
                 style={{ fontWeight: 700 }}
               />
             </Text>
-            <Text size="xs" color="secondary">
+            <Text size="xs" color="secondary" data-testid="beacon-link">
               <SatelliteBeaconchaLink indexOrPubkey={pubKey} />
             </Text>
           </PubKeyWrapper>
@@ -52,18 +54,22 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           <Text size="xxs" color="secondary">
             Index
           </Text>
-          <Text size="xs" strong data-testid="validator-info-index">
+          <Text size="xs" strong data-testid="index">
             {index}
           </Text>
         </ParamContainer>
       </BaseInfo>
       <Divider />
-      <BalanceInfo>
+      <BalanceInfo data-testid="balance-info">
         <BalanceRow>
-          <Text size="xxs" color="secondary">
+          <Text
+            data-testid="validator-balance-label"
+            size="xxs"
+            color="secondary"
+          >
             Validator actual balance
           </Text>
-          <Text size="xxs" strong data-testid="validator-info-balance">
+          <Text data-testid="validator-balance-value" size="xxs" strong>
             <FormatToken amount={balance} symbol="ETH" />
           </Text>
         </BalanceRow>

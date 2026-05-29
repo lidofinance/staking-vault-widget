@@ -50,11 +50,13 @@ export const WithdrawToVaultModal: FC<WithdrawToVaultModalProps> = ({
       open={VALIDATOR_MODALS.withdrawalToVault === currentModal}
       onClose={handleCloseModal}
       windowSize="md"
-      title={title}
+      title={<span data-testid="title">{title}</span>}
       data-testid="validators-withdrawal-modal"
     >
       <ContentContainer>
-        <Text size="xs">{description}</Text>
+        <Text size="xs" data-testid="description">
+          {description}
+        </Text>
         <ValidatorInfo pubKey={pubKey} index={index} balance={balance} />
         <WithdrawalType value={withdrawalType} onChange={setWithdrawalType} />
         <WithdrawToVaultModalForm

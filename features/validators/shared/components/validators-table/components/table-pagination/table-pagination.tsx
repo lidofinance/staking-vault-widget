@@ -20,7 +20,7 @@ export const TablePagination: FC = () => {
       pagesCount={totalPages}
       siblingCount={1}
       activePage={page}
-      data-testid={`pagination`}
+      data-testid="pagination"
     />
   );
 };

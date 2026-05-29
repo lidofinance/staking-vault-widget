@@ -18,10 +18,17 @@ export const AvailableBalance: FC<AvailableBalanceProps> = ({
 }) => {
   return (
     <AvailableWrapper data-testid={dataTestId}>
-      <Text size="xxs" color="secondary">
+      <Text
+        size="xxs"
+        data-testid={dataTestId ? `${dataTestId}-label` : undefined}
+        color="secondary"
+      >
         {title}
       </Text>
-      <Text size="xxs">
+      <Text
+        size="xxs"
+        data-testid={dataTestId ? `${dataTestId}-value` : undefined}
+      >
         <FormatToken amount={amount} symbol="ETH" />
       </Text>
     </AvailableWrapper>

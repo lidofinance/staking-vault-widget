@@ -12,12 +12,12 @@ import { TableContainer, ScrollableContainer, SearchContainer } from './styles';
 
 export const ValidatorsTable: FC = () => {
   return (
-    <TableContainer data-testid="validators-list">
-      <SearchContainer data-testid="filter-header">
+    <TableContainer>
+      <SearchContainer>
         <FilterPubkeyIndex />
         <FilterByStatus />
       </SearchContainer>
-      <ScrollableContainer data-testid="validators-table">
+      <ScrollableContainer>
         <ValidatorModalProvider>
           <ValidatorsTableContent />
         </ValidatorModalProvider>
