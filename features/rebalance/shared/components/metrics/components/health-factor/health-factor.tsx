@@ -7,17 +7,18 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { useHealthChart } from 'shared/hooks';
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { InlineLoader } from 'shared/components';
+import { vaultTexts } from 'modules/vaults';
+import { InlineLoader, OldToNew } from 'shared/components';
+
+import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
 
 export const HealthFactor = () => {
-  const { data, isPending } = useVaultOverviewData();
+  const { data, isPending, projected } = useRebalanceProjectedOverview();
   const { healthFactorNumber, healthFactor } = data ?? {};
   const { chartData } = useHealthChart(healthFactorNumber);
 
-  // TODO: add old to new if it has diffs
   return (
     <Container>
       <TextContainer>
@@ -25,9 +26,11 @@ export const HealthFactor = () => {
           {vaultTexts.actions.rebalance.metrics.healthFactor}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
-          <Text size="xxs" color="secondary" as="span">
-            {healthFactor}
-          </Text>
+          <OldToNew
+            old={healthFactor}
+            supposed={projected?.healthFactor}
+            isChanged={!!projected && projected?.healthFactor !== healthFactor}
+          />
         </InlineLoader>
       </TextContainer>
       <ChartProportion

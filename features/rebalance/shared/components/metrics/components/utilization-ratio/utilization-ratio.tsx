@@ -6,17 +6,18 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { useRemainingMintingCapacityChart } from 'shared/hooks';
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { InlineLoader } from 'shared/components';
+import { vaultTexts } from 'modules/vaults';
+import { InlineLoader, OldToNew } from 'shared/components';
+
+import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
 
 export const UtilizationRatio = () => {
-  const { data, isPending } = useVaultOverviewData();
+  const { data, isPending, projected } = useRebalanceProjectedOverview();
   const { utilizationRatio } = data ?? {};
   const chartData = useRemainingMintingCapacityChart();
 
-  // TODO: add old to new if it has diffs
   return (
     <Container>
       <TextContainer>
@@ -24,9 +25,13 @@ export const UtilizationRatio = () => {
           {vaultTexts.actions.rebalance.metrics.utilizationRatio}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
-          <Text size="xxs" color="secondary" as="span">
-            {utilizationRatio}
-          </Text>
+          <OldToNew
+            old={utilizationRatio}
+            supposed={projected?.utilizationRatio}
+            isChanged={
+              !!projected && projected?.utilizationRatio !== utilizationRatio
+            }
+          />
         </InlineLoader>
       </TextContainer>
       <ChartLine

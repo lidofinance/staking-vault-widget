@@ -26,9 +26,9 @@ import {
   toStethValue,
   getMintingConstraintType,
   formatBasisPoint,
+  calculateOverviewV2,
 } from 'utils';
 
-import { calculateOverviewV2 } from 'features/overview/consts';
 import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 
 type VaultDataArgs = {

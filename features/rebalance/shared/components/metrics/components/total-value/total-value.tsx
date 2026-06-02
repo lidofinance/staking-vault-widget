@@ -1,16 +1,17 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { InlineLoader } from 'shared/components';
+import { vaultTexts } from 'modules/vaults';
+import { InlineLoader, OldToNew } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
+
+import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
 
 import { Container, ValueContainer } from './styles';
 
 export const TotalValue = () => {
-  const { data, isPending } = useVaultOverviewData();
+  const { data, isPending, projected } = useRebalanceProjectedOverview();
   const { totalValue } = data ?? {};
 
-  // TODO: use old to new
   return (
     <Container>
       <Text size="xxs" as="span">
@@ -18,9 +19,13 @@ export const TotalValue = () => {
       </Text>
       <ValueContainer>
         <InlineLoader isLoading={isPending} width={80} height={18}>
-          <Text size="xxs" as="span" color="secondary">
-            <FormatToken amount={totalValue} symbol="ETH" />
-          </Text>
+          <OldToNew
+            old={<FormatToken amount={totalValue} symbol="ETH" />}
+            supposed={
+              <FormatToken amount={projected?.totalValue} symbol="ETH" />
+            }
+            isChanged={!!projected && projected?.totalValue !== totalValue}
+          />
         </InlineLoader>
       </ValueContainer>
     </Container>

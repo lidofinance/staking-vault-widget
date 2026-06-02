@@ -32,7 +32,7 @@ export const SupplyInput = () => {
         data-testid="supplyToRebalanceRow"
       />
       <TokenAmountInputGroup
-        amountFieldName="supplyAmount"
+        amountFieldName="supplyEth"
         tokenLabel="ETH"
         maxAmount={data}
         leftDecorator={<Eth />}
