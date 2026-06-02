@@ -1,6 +1,6 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { isNumber } from 'utils';
 import { UTILIZATION_RATIO_THRESHOLD } from 'consts/threshold';
 
@@ -20,11 +20,10 @@ export const CapacityExceeded = () => {
     return null;
   }
 
-  // TODO: move text to vault texts
   return (
     <InfoBanner>
       <Text size="xxs" color="warning" strong>
-        stETH minting capacity exceeded
+        {vaultTexts.actions.rebalance.healthState.capacityExceeded}
       </Text>
     </InfoBanner>
   );

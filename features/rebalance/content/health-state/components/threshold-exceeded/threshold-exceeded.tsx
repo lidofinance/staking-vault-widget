@@ -1,6 +1,6 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { isNumber } from 'utils';
 
 import { InfoBanner } from 'features/rebalance/shared';
@@ -14,11 +14,10 @@ export const ThresholdExceeded = () => {
     return null;
   }
 
-  // TODO: move text to vault texts
   return (
     <InfoBanner type="danger">
       <Text size="xxs" color="error" strong>
-        Forced Rebalance Threshold exceeded
+        {vaultTexts.actions.rebalance.healthState.thresholdExceeded}
       </Text>
     </InfoBanner>
   );

@@ -2,6 +2,7 @@ import { useWatch, useFormState } from 'react-hook-form';
 import { Eth } from '@lidofinance/lido-ui';
 
 import { useEthereumBalance } from 'modules/web3';
+import { vaultTexts } from 'modules/vaults';
 import { TokenAmountInputGroup } from 'shared/hook-form/controls';
 import { InfoRowAmount } from 'shared/components/form';
 
@@ -21,11 +22,10 @@ export const SupplyInput = () => {
     return null;
   }
 
-  // TODO: add text to vault texts
   return (
     <InputContainer>
       <InfoRowAmount
-        title="Available to supply"
+        title={vaultTexts.actions.rebalance.supply.available}
         amount={data}
         token="ETH"
         disabled={disabled}

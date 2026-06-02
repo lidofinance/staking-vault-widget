@@ -6,7 +6,7 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { useRemainingMintingCapacityChart } from 'shared/hooks';
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 
 import { Container, TextContainer } from './styles';
@@ -17,12 +17,11 @@ export const UtilizationRatio = () => {
   const chartData = useRemainingMintingCapacityChart();
 
   // TODO: add old to new if it has diffs
-  // TODO: add text to vault texts
   return (
     <Container>
       <TextContainer>
         <Text size="xxs" as="span">
-          Utilization ratio
+          {vaultTexts.actions.rebalance.metrics.utilizationRatio}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
           <Text size="xxs" color="secondary" as="span">

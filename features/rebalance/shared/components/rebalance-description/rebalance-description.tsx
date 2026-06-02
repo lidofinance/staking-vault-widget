@@ -9,7 +9,6 @@ export const RebalanceDescription = () => {
   const { isPending, data } = useVaultOverviewData();
   const { healthFactorNumber } = data ?? {};
 
-  // TODO: add text to vault texts
   return (
     <InlineLoader isLoading={isPending} height={88}>
       {isNumber(healthFactorNumber) && healthFactorNumber >= 100 ? (

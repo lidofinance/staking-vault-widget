@@ -399,6 +399,49 @@ export const vaultTexts = {
     },
     rebalance: {
       title: 'Rebalance',
+      description: {
+        rebalance: {
+          title: 'Rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
+          supplyLinkText: 'supply ETH',
+          repayLinkText: 'repay stETH',
+        },
+        forceRebalance: {
+          title: 'Forced rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liabiltiy.',
+          thresholdText:
+            "The stVault's Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism.",
+          restoreText:
+            'This means the stVault can be rebalanced at any time. You can still restore the collateralization balance by',
+          supplyLinkText: 'supplying ETH',
+          repayLinkText: 'repaying stETH',
+          noGuaranteeText:
+            'However, there is no guarantee that a permissionless rebalance will not occur before your transaction is executed.',
+        },
+      },
+      metrics: {
+        title: 'stVault metrics',
+        utilizationRatio: 'Utilization ratio',
+        liability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        totalValue: 'Total Value',
+      },
+      healthState: {
+        stethLiability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        utilizationRatio: 'Utilization ratio',
+        capacityExceeded: 'stETH minting capacity exceeded',
+        thresholdExceeded: 'Forced Rebalance Threshold exceeded',
+      },
+      supply: {
+        toggle: 'Supply ETH',
+        description:
+          'You can supply ETH into the stVault in the same transaction as rebalance, to reduce gas expenses.',
+        available: 'Available to supply',
+      },
+      input: {
+        available: 'Available to rebalance',
+      },
     },
     additionalVerification: {
       banners: {

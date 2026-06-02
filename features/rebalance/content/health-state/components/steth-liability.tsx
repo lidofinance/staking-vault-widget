@@ -2,7 +2,7 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { ONE_ETHER } from 'consts/tx';
 
 import { ListItem } from './styles';
@@ -13,11 +13,10 @@ export const StEthLiability = () => {
   const { vaultLiability = 0n } = data ?? {};
   const maxDecimalDigits = vaultLiability / ONE_ETHER > 100 ? 1 : 4;
 
-  // TODO: add text to vault texts
   return (
     <ListItem>
       <Text size="xxs" as="span">
-        stETH Liability
+        {vaultTexts.actions.rebalance.healthState.stethLiability}
       </Text>
       <InlineLoader isLoading={isPending} width={45} height={20}>
         <Text size="xxs" as="span" strong>

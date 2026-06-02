@@ -7,7 +7,7 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { useHealthChart } from 'shared/hooks';
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 
 import { Container, TextContainer } from './styles';
@@ -18,12 +18,11 @@ export const HealthFactor = () => {
   const { chartData } = useHealthChart(healthFactorNumber);
 
   // TODO: add old to new if it has diffs
-  // TODO: add text to vault texts
   return (
     <Container>
       <TextContainer>
         <Text size="xxs" as="span">
-          Health factor
+          {vaultTexts.actions.rebalance.metrics.healthFactor}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
           <Text size="xxs" color="secondary" as="span">

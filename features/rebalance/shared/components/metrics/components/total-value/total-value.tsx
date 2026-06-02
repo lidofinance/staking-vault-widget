@@ -1,6 +1,6 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
 
@@ -10,12 +10,11 @@ export const TotalValue = () => {
   const { data, isPending } = useVaultOverviewData();
   const { totalValue } = data ?? {};
 
-  // TODO: add text to vault texts
   // TODO: use old to new
   return (
     <Container>
       <Text size="xxs" as="span">
-        Total Value
+        {vaultTexts.actions.rebalance.metrics.totalValue}
       </Text>
       <ValueContainer>
         <InlineLoader isLoading={isPending} width={80} height={18}>

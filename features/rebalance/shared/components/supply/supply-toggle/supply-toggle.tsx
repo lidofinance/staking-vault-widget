@@ -1,11 +1,12 @@
+import { vaultTexts } from 'modules/vaults';
 import { InputToggle } from 'shared/hook-form/controls';
 
 export const SupplyToggle = () => {
   return (
     <InputToggle
       name="isSupplyEth"
-      textOn="Supply ETH"
-      textOff="Supply ETH"
+      textOn={vaultTexts.actions.rebalance.supply.toggle}
+      textOff={vaultTexts.actions.rebalance.supply.toggle}
       textPosition="right"
       textColor="default"
       size="xs"

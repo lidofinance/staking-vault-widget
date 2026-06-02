@@ -1,6 +1,6 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 
 import { ListItem, UtilizationRatioIndicator } from './styles';
@@ -11,7 +11,9 @@ export const UtilizationRatio = () => {
 
   return (
     <ListItem>
-      <Text size="xxs">Utilization ratio</Text>
+      <Text size="xxs">
+        {vaultTexts.actions.rebalance.healthState.utilizationRatio}
+      </Text>
       <InlineLoader isLoading={isPending} width={45} height={20}>
         <UtilizationRatioIndicator $ratio={utilizationRatioNumber}>
           {utilizationRatio}

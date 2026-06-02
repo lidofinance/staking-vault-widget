@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 import Link from 'next/link';
 
-import { useVault } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 
 import { Container } from './styles';
@@ -19,19 +19,17 @@ export const Rebalance = () => {
     ];
   }, [vaultAddress]);
 
-  // TODO: add text to vault texts
+  const { title, text, supplyLinkText, repayLinkText } =
+    vaultTexts.actions.rebalance.description.rebalance;
+
   return (
     <Container>
       <Text size="sm" strong>
-        Rebalance
+        {title}
       </Text>
       <Text size="xxs" color="secondary">
-        Rebalancing is sending ETH from the stVault balance to Lido Core,
-        receiving stETH with a ratio of 1:1, and repaying received stETH back to
-        stVault meaning reduce both Total Value and stETH Liability. To change
-        the collateralization balance, you can also{' '}
-        <Link href={supplyLink}>supply ETH</Link> or{' '}
-        <Link href={repayLink}>repay stETH</Link>.
+        {text} <Link href={supplyLink}>{supplyLinkText}</Link> or{' '}
+        <Link href={repayLink}>{repayLinkText}</Link>.
       </Text>
     </Container>
   );

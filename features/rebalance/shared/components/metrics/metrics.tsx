@@ -1,5 +1,7 @@
 import { Text } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
+
 import {
   UtilizationRatio,
   HealthFactor,
@@ -10,11 +12,10 @@ import {
 import { Container, MetricsContainer } from './styles';
 
 export const VaultMetrics = () => {
-  // TODO: add text to vault texts
   return (
     <Container>
       <Text size="xs" strong>
-        stVault metrics
+        {vaultTexts.actions.rebalance.metrics.title}
       </Text>
       <MetricsContainer>
         <UtilizationRatio />

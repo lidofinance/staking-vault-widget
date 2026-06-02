@@ -1,6 +1,7 @@
 import { useFormState } from 'react-hook-form';
 import { Eth } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
 import { InfoRowAmount } from 'shared/components/form';
 import { TokenAmountInputGroup } from 'shared/hook-form';
 
@@ -13,7 +14,7 @@ export const RebalanceInput = () => {
   return (
     <Container>
       <InfoRowAmount
-        title="Available to rebalance"
+        title={vaultTexts.actions.rebalance.input.available}
         amount={0n}
         token="ETH"
         disabled={disabled}
