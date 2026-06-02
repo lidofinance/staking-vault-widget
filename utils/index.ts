@@ -18,3 +18,4 @@ export * from './get-page-title';
 export * from './get-test-id';
 export * from './normalize-chart-bn';
 export * from './calculate-overview-v2';
+export * from './calculate-max-decimal-digits';

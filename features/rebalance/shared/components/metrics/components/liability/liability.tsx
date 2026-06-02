@@ -3,6 +3,7 @@ import { Text } from '@lidofinance/lido-ui';
 import { vaultTexts } from 'modules/vaults';
 import { InlineLoader, OldToNew } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
+import { calculateMaxDecimalDigits } from 'utils';
 
 import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
 
@@ -20,9 +21,25 @@ export const Liability = () => {
       <ValueContainer>
         <InlineLoader isLoading={isPending} width={80} height={18}>
           <OldToNew
-            old={<FormatToken amount={vaultLiability} symbol="stETH" />}
+            old={
+              <FormatToken
+                amount={vaultLiability}
+                maxDecimalDigits={calculateMaxDecimalDigits(
+                  vaultLiability,
+                  100n,
+                )}
+                symbol="stETH"
+              />
+            }
             supposed={
-              <FormatToken amount={projected?.vaultLiability} symbol="stETH" />
+              <FormatToken
+                amount={projected?.vaultLiability}
+                maxDecimalDigits={calculateMaxDecimalDigits(
+                  projected?.vaultLiability,
+                  100n,
+                )}
+                symbol="stETH"
+              />
             }
             isChanged={
               !!projected && projected?.vaultLiability !== vaultLiability
