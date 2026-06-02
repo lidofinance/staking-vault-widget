@@ -16,3 +16,4 @@ export * from './is-string';
 export * from './is-undefined';
 export * from './get-page-title';
 export * from './get-test-id';
+export * from './normalize-chart-bn';

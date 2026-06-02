@@ -1,8 +1,8 @@
 import { useId, type FC } from 'react';
-import { Text } from '@lidofinance/lido-ui';
+import { Text, TextProps } from '@lidofinance/lido-ui';
 import { useController } from 'react-hook-form';
 
-import { Container, InputWrapper, ToggleLoader } from './styles';
+import { Container, InputWrapper, ToggleLoader, ToggleSize } from './styles';
 
 export type InputToggleProps = {
   name: string;
@@ -11,6 +11,9 @@ export type InputToggleProps = {
   textOn?: string;
   textOff?: string;
   textPosition?: 'left' | 'right';
+  textColor?: TextProps['color'];
+  textStrong?: TextProps['strong'];
+  size?: ToggleSize;
   className?: string;
 };
 
@@ -19,8 +22,11 @@ export const InputToggle: FC<InputToggleProps> = ({
   disabled,
   showText = false,
   textPosition = 'left',
+  textColor = 'secondary',
+  textStrong = true,
   textOff,
   textOn,
+  size = 'md',
   className,
 }) => {
   const id = useId();
@@ -36,12 +42,12 @@ export const InputToggle: FC<InputToggleProps> = ({
   return (
     <Container className={className} $position={textPosition}>
       {showText && (
-        <Text size="xxs" color="secondary" strong>
+        <Text size="xxs" color={textColor} strong={textStrong}>
           {field.value ? textOn : textOff}
         </Text>
       )}
 
-      <InputWrapper $disabled={disabled} htmlFor={id}>
+      <InputWrapper $disabled={disabled} $size={size} htmlFor={id}>
         <input
           type="checkbox"
           id={id}

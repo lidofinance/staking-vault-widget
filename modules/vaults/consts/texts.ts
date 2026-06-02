@@ -397,6 +397,9 @@ export const vaultTexts = {
         },
       },
     },
+    rebalance: {
+      title: 'Rebalance',
+    },
     additionalVerification: {
       banners: {
         notOwner: {

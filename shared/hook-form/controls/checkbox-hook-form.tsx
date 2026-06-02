@@ -1,5 +1,9 @@
 import type { ComponentProps, ReactNode } from 'react';
-import { type RegisterOptions, useFormContext } from 'react-hook-form';
+import {
+  type RegisterOptions,
+  useFormContext,
+  useFormState,
+} from 'react-hook-form';
 
 import { CheckBoxStyled } from './styles';
 
@@ -19,9 +23,10 @@ export const CheckboxHookForm = ({
   'data-testid': dataTestId,
   ...registerOptions
 }: CheckBoxHookFormProps) => {
-  const { getFieldState } = useFormContext();
-  const hasError = Boolean(getFieldState(fieldName).error);
   const { register } = useFormContext();
+  const { disabled, errors } = useFormState({ name: fieldName });
+  const hasError = Boolean(errors);
+
   return (
     <CheckBoxStyled
       style={style}
@@ -29,6 +34,7 @@ export const CheckboxHookForm = ({
       error={hasError}
       data-testid={dataTestId}
       label={label}
+      disabled={disabled}
       {...register(fieldName, registerOptions)}
     />
   );

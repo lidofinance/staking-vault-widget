@@ -2,7 +2,6 @@ import { calculateHealth, ceilDivBigint } from 'utils';
 import { bigIntMax, bigIntMin } from 'utils/bigint-math';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
-export const UTILIZATION_RATIO_THRESHOLD = 100.01;
 export const HEALTH_EMERGENCY_GUIDE_LINK =
   'https://docs.lido.fi/run-on-lido/stvaults/operational-and-management-guides/health-emergency-guide';
 

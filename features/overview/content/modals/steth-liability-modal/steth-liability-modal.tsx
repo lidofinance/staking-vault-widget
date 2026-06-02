@@ -4,13 +4,12 @@ import {
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts, useVaultOverviewData } from 'modules/vaults';
 
 import {
   ModalSection,
   OverviewModal,
   useStEthChart,
-  useVaultOverviewData,
   SectionDivider,
 } from 'features/overview/inner';
 import { SlashingInfo } from 'features/overview/shared';
