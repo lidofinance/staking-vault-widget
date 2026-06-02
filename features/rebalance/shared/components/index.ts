@@ -8,3 +8,4 @@ export { RebalanceDescription } from './rebalance-description';
 export { RebalanceInput } from './rebalance-input';
 export { Supply } from './supply';
 export { InfoBanner } from './info-banner';
+export { FormWrapper, rebalanceFormSchema } from './form-wrapper';

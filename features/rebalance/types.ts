@@ -2,9 +2,14 @@ import type { z } from 'zod';
 
 import type { VaultOverviewData } from 'modules/vaults';
 
-import type { rebalanceFormSchema } from 'features/rebalance/content';
+import { rebalanceFormSchema } from 'features/rebalance/shared';
 
-export type RebalanceFormValidationContext = VaultOverviewData | undefined;
+export type RebalanceFormValidationContext =
+  | {
+      overviewData: VaultOverviewData;
+      ethBalance: bigint;
+    }
+  | undefined;
 
 export type RebalanceFormAwaitableValidationContext =
   Promise<RebalanceFormValidationContext>;

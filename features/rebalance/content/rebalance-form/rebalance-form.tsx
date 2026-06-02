@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 
-import { RebalanceFormWrapper } from './rebalance-form-wrapper';
 import {
+  FormWrapper,
   ActionSubmit,
   VaultMetrics,
   RebalanceDescription,
@@ -11,12 +11,12 @@ import {
 
 export const RebalanceForm: FC = () => {
   return (
-    <RebalanceFormWrapper>
+    <FormWrapper>
       <RebalanceDescription />
       <RebalanceInput />
       <Supply />
       <VaultMetrics />
       <ActionSubmit />
-    </RebalanceFormWrapper>
+    </FormWrapper>
   );
 };

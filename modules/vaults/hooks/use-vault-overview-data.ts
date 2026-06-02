@@ -83,6 +83,7 @@ export type VaultInfo = VaultConnection &
     feesToSettle: bigint;
     rebalanceShares: bigint;
     rebalanceStETH: bigint;
+    rebalanceETH: bigint;
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
     stagedBalanceWei: bigint;
@@ -226,6 +227,9 @@ const getVaultData = async (
     { amount: currentMaxLiabilityShares, roundUp: true },
   ]);
 
+  const rebalanceETH =
+    await lidoSDKShares.getPooledEthBySharesRoundUp(rebalanceShares);
+
   const lidoTVLSharesLimit =
     await lidoV3Contract.read.getMaxMintableExternalShares();
 
@@ -265,6 +269,7 @@ const getVaultData = async (
     feesToSettle,
     rebalanceShares,
     rebalanceStETH,
+    rebalanceETH,
     redemptionShares,
     redemptionStETH,
     beaconChainDepositsPaused,
@@ -319,6 +324,7 @@ const selectOverviewData = ({
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
+    rebalanceETH,
     beaconChainDepositsPaused,
     isReportFresh,
   } = vaultData;
@@ -480,6 +486,7 @@ const selectOverviewData = ({
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
+    rebalanceETH,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,

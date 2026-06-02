@@ -16,7 +16,11 @@ export const useRebalance = () => {
 
   return {
     rebalance: useCallback(
-      async ({ rebalanceAmount, supplyEth }: RebalanceFormValidatedValues) => {
+      async ({
+        rebalanceAmount,
+        supplyEth,
+        isSupplyEth,
+      }: RebalanceFormValidatedValues) => {
         invariant(activeVault, '[useRebalance] activeVault is undefined');
 
         const calls: TransactionEntry[] = [];
@@ -25,7 +29,7 @@ export const useRebalance = () => {
           ...activeVault.dashboard.encode.rebalanceVaultWithEther([
             rebalanceAmount,
           ]),
-          value: supplyEth,
+          value: isSupplyEth ? supplyEth : 0n,
           loadingActionText: vaultTexts.actions.rebalance.title,
         });
 

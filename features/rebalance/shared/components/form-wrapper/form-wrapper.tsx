@@ -1,7 +1,7 @@
 import { type FC, type ReactNode, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useDappStatus } from 'modules/web3';
+import { useDappStatus, useEthereumBalance } from 'modules/web3';
 import {
   useVaultPermission,
   useVaultConfirmingRoles,
@@ -12,24 +12,32 @@ import { FormController } from 'shared/hook-form/form-controller';
 import { useDisableForm } from 'shared/hook-form';
 
 import { useRebalance } from 'features/rebalance/hooks';
+
 import { RebalanceFormResolver } from './validation';
+
 import type {
   RebalanceFormAwaitableValidationContext,
   RebalanceFormFieldValues,
   RebalanceFormValidatedValues,
 } from 'features/rebalance/types';
+
 import { FormContent } from './styles';
 
-export const RebalanceFormWrapper: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const { rebalance, retryEvent } = useRebalance();
   const disabled = useDisableForm();
   const { hasAdmin } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('rebalancer');
   const { data: overviewData, refetch } = useVaultOverviewData();
-  const overviewDataPromise = useAwaiter(overviewData);
+  const { data: ethBalance } = useEthereumBalance();
+
+  const combinedContext =
+    overviewData !== undefined && ethBalance !== undefined
+      ? { overviewData, ethBalance }
+      : undefined;
+
+  const overviewDataPromise = useAwaiter(combinedContext);
 
   // TODO: add async data for defaultValues
   const formObject = useForm<

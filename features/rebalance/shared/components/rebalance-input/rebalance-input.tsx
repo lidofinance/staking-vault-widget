@@ -1,7 +1,7 @@
 import { useFormState } from 'react-hook-form';
 import { Eth } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { InfoRowAmount } from 'shared/components/form';
 import { TokenAmountInputGroup } from 'shared/hook-form';
 
@@ -9,13 +9,15 @@ import { Container } from './styles';
 
 export const RebalanceInput = () => {
   const { disabled } = useFormState();
+  const { data } = useVaultOverviewData();
+  const { rebalanceETH } = data ?? {};
 
   // TODO: update max button to use recomended
   return (
     <Container>
       <InfoRowAmount
         title={vaultTexts.actions.rebalance.input.available}
-        amount={0n}
+        amount={rebalanceETH}
         token="ETH"
         disabled={disabled}
         data-testid="availableToRebalanceRow"
@@ -23,7 +25,7 @@ export const RebalanceInput = () => {
       <TokenAmountInputGroup
         amountFieldName="rebalanceAmount"
         tokenLabel="ETH"
-        maxAmount={0n}
+        maxAmount={rebalanceETH}
         leftDecorator={<Eth />}
         disabled={disabled}
       />
