@@ -5,6 +5,7 @@ import type { Resolver } from 'react-hook-form';
 
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 import { vaultTexts } from 'modules/vaults';
+import { verificationConfirmSchema } from 'shared/components/banners/additional-verification';
 
 import type {
   RebalanceFormAwaitableValidationContext,
@@ -18,8 +19,13 @@ export const rebalanceFormSchema = (
 ) => {
   const rebalanceETH = context?.overviewData.rebalanceETH ?? 0n;
   const ethBalance = context?.ethBalance ?? 0n;
+  const additionalVerification = context?.additionalVerification ?? {
+    notOwner: false,
+    multipleOwners: false,
+    unguaranteedDeposits: false,
+  };
 
-  return z
+  const mainSchema = z
     .object({
       isSupplyEth: z.boolean(),
       supplyEth: z.bigint().nullable(),
@@ -73,6 +79,11 @@ export const rebalanceFormSchema = (
       rebalanceAmount: data.rebalanceAmount ?? 0n,
       supplyEth: data.isSupplyEth ? data.supplyEth ?? 0n : 0n,
     }));
+
+  return z.intersection(
+    mainSchema,
+    verificationConfirmSchema(additionalVerification),
+  );
 };
 
 export const RebalanceFormResolver: Resolver<

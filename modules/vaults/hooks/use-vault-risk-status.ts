@@ -34,6 +34,7 @@ export const useVaultRiskStatus = () => {
         defaultAdminList,
         suppliers,
         repayers,
+        rebalancer,
         pdgPolicy,
         tier,
         ...tiersList
@@ -41,6 +42,7 @@ export const useVaultRiskStatus = () => {
         dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.rebalancer]),
         dashboard.read.pdgPolicy(),
         operatorGrid.read.vaultTierInfo([activeVault.address]),
         ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
@@ -67,6 +69,7 @@ export const useVaultRiskStatus = () => {
       const isVaultOwner = !!address && defaultAdminList.includes(address);
       const isSupplier = !!address && suppliers.includes(address);
       const isRepayer = !!address && repayers.includes(address);
+      const isRebalancer = !!address && rebalancer.includes(address);
       const isUnguaranteedDepositsAllowed =
         String(pdgPolicy) === PDG_POLICY.ALLOW_DEPOSIT_AND_PROVE;
 
@@ -79,6 +82,7 @@ export const useVaultRiskStatus = () => {
         isVaultOwner,
         isSupplier,
         isRepayer,
+        isRebalancer,
         defaultAdminList: [...defaultAdminList],
         nodeOperator,
         firstAdmin,
@@ -96,6 +100,7 @@ export const useVaultRiskStatus = () => {
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,
     isRepayer: data?.isRepayer,
+    isRebalancer: data?.isRebalancer,
     defaultAdminList: data?.defaultAdminList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,

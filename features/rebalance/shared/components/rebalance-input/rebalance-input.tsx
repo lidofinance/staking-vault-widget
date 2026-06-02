@@ -12,7 +12,6 @@ export const RebalanceInput = () => {
   const { data } = useVaultOverviewData();
   const { rebalanceETH } = data ?? {};
 
-  // TODO: update max button to use recomended
   return (
     <Container>
       <InfoRowAmount

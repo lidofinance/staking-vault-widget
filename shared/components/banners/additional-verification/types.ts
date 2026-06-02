@@ -9,7 +9,7 @@ export const VERIFICATION_CONFIRM_FIELD_NAMES = {
 export type VerificationConfirmFieldName =
   (typeof VERIFICATION_CONFIRM_FIELD_NAMES)[keyof typeof VERIFICATION_CONFIRM_FIELD_NAMES];
 
-export type AdditionalVerificationAction = 'supply' | 'repay';
+export type AdditionalVerificationAction = 'supply' | 'repay' | 'rebalance';
 export type RiskVariant = 'notOwner' | 'multipleOwners';
 
 export type VerificationConfirmationFlags = Record<

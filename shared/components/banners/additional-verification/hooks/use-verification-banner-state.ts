@@ -14,8 +14,9 @@ export const useVerificationBannerDefender = (
     isVaultOwner,
     isMultipleOwners,
     firstAdmin,
-    isSupplier,
-    isRepayer,
+    isSupplier = false,
+    isRepayer = false,
+    isRebalancer = false,
     isTierDefault,
     isNodeOperatorVerified,
     defaultAdminList,
@@ -24,7 +25,13 @@ export const useVerificationBannerDefender = (
     isSuccess,
   } = useVaultRiskStatus();
 
-  const hasActionPermission = action === 'supply' ? isSupplier : isRepayer;
+  const permissionMap: Record<AdditionalVerificationAction, boolean> = {
+    repay: isRepayer,
+    supply: isSupplier,
+    rebalance: isRebalancer,
+  };
+
+  const hasActionPermission = permissionMap[action];
   const hasActionPermissionOrOwnership =
     hasActionPermission || isVaultOwner === true;
 

@@ -10,6 +10,11 @@ import {
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
 import { useDisableForm } from 'shared/hook-form';
+import {
+  verificationConfirmDefaultValues,
+  useDisableFormByVerification,
+  useVerificationBannerDefender,
+} from 'shared/components/banners/additional-verification';
 
 import { useRebalance } from 'features/rebalance/hooks';
 
@@ -27,19 +32,27 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
   const { rebalance, retryEvent } = useRebalance();
   const disabled = useDisableForm();
+  const isDisabledByVerification = useDisableFormByVerification('rebalance');
   const { hasAdmin } = useVaultConfirmingRoles();
   const { hasPermission } = useVaultPermission('rebalancer');
   const { data: overviewData, refetch } = useVaultOverviewData();
   const { data: ethBalance } = useEthereumBalance();
+  const { isReady: isVerificationReady, confirmationRequired } =
+    useVerificationBannerDefender('rebalance');
 
   const combinedContext =
-    overviewData !== undefined && ethBalance !== undefined
-      ? { overviewData, ethBalance }
+    overviewData !== undefined &&
+    ethBalance !== undefined &&
+    isVerificationReady
+      ? {
+          overviewData,
+          ethBalance,
+          additionalVerification: confirmationRequired,
+        }
       : undefined;
 
   const overviewDataPromise = useAwaiter(combinedContext);
 
-  // TODO: add async data for defaultValues
   const formObject = useForm<
     RebalanceFormFieldValues,
     RebalanceFormAwaitableValidationContext,
@@ -49,9 +62,14 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
       rebalanceAmount: null,
       isSupplyEth: false,
       supplyEth: null,
+      ...verificationConfirmDefaultValues,
     },
     mode: 'all',
-    disabled: !isDappActive || disabled || (!hasAdmin && !hasPermission),
+    disabled:
+      !isDappActive ||
+      disabled ||
+      isDisabledByVerification ||
+      (!hasAdmin && !hasPermission),
     context: overviewDataPromise.awaiter,
     resolver: RebalanceFormResolver,
   });
