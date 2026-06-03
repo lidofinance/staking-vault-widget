@@ -399,6 +399,18 @@ export const vaultTexts = {
     },
     rebalance: {
       title: 'Rebalance',
+      submit: {
+        rebalance: 'Rebalance',
+        supplyAndRebalance: 'Supply and Rebalance',
+        forceRebalance: 'Force rebalance',
+        unavailable: 'Rebalance unavailable',
+        tooltips: {
+          zeroLiability: 'stETH Liability is currently zero',
+          disconnected: 'stVault is disconnected',
+          pendingConnect: 'stVault is pending connection',
+          pendingDisconnect: 'stVault is pending disconnect',
+        },
+      },
       description: {
         rebalance: {
           title: 'Rebalance',

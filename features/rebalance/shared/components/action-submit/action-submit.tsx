@@ -1,28 +1,29 @@
-import { useFormContext, useFormState } from 'react-hook-form';
+import { MultiplePermissionedSubmitButton } from 'modules/vaults';
+import { TooltipHint } from 'shared/components';
 
-import { MultiplePermissionedSubmitButton, vaultTexts } from 'modules/vaults';
+import { useActionSubmitState } from './use-action-submit-state';
 
-import type { RebalanceFormFieldValues } from 'features/rebalance/types';
+import { ButtonContent } from './styles';
 
 const REBALANCE_ROLES = ['rebalancer'] as const;
 
 export const ActionSubmit = () => {
-  const { watch } = useFormContext<RebalanceFormFieldValues>();
-  const { isSubmitting, disabled } = useFormState();
-  const supplyEth = watch('supplyEth');
-
-  const text = supplyEth
-    ? `${vaultTexts.actions.rebalance.title} & Supply`
-    : vaultTexts.actions.rebalance.title;
+  const { text, tooltip, variant, color, isDisabled, isSubmitting } =
+    useActionSubmitState();
 
   return (
     <MultiplePermissionedSubmitButton
       dashboardRoles={REBALANCE_ROLES}
+      variant={variant}
+      color={color}
       type="submit"
       loading={isSubmitting}
-      disabled={isSubmitting || disabled}
+      disabled={isDisabled}
     >
-      {text}
+      <ButtonContent>
+        {text}
+        {tooltip && <TooltipHint hint={tooltip} />}
+      </ButtonContent>
     </MultiplePermissionedSubmitButton>
   );
 };

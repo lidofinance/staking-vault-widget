@@ -1,16 +1,32 @@
-import { useFormState } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { Eth } from '@lidofinance/lido-ui';
 
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { InfoRowAmount } from 'shared/components/form';
 import { TokenAmountInputGroup } from 'shared/hook-form';
+import { InfoRowAmount } from 'shared/components/form';
+
+import { useIsForceRebalance } from 'features/rebalance/hooks';
+import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import { Container } from './styles';
 
 export const RebalanceInput = () => {
-  const { disabled } = useFormState();
+  const {
+    setValue,
+    formState: { disabled },
+  } = useFormContext<RebalanceFormFieldValues>();
   const { data } = useVaultOverviewData();
   const { rebalanceETH } = data ?? {};
+  const isForceRebalance = useIsForceRebalance();
+
+  // In forced rebalance the whole available amount is rebalanced via the hub,
+  // so the field is pre-filled and locked from editing.
+  useEffect(() => {
+    if (isForceRebalance && rebalanceETH != null) {
+      setValue('rebalanceAmount', rebalanceETH, { shouldValidate: true });
+    }
+  }, [isForceRebalance, rebalanceETH, setValue]);
 
   return (
     <Container>
@@ -25,8 +41,9 @@ export const RebalanceInput = () => {
         amountFieldName="rebalanceAmount"
         tokenLabel="ETH"
         maxAmount={rebalanceETH}
+        showRightDecorator={!isForceRebalance}
         leftDecorator={<Eth />}
-        disabled={disabled}
+        disabled={disabled || isForceRebalance}
       />
     </Container>
   );

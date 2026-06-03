@@ -1,7 +1,10 @@
+import { useFormState } from 'react-hook-form';
+
 import { vaultTexts } from 'modules/vaults';
 import { InputToggle } from 'shared/hook-form/controls';
 
 export const SupplyToggle = () => {
+  const { disabled } = useFormState();
   return (
     <InputToggle
       name="isSupplyEth"
@@ -11,6 +14,7 @@ export const SupplyToggle = () => {
       textColor="default"
       size="xs"
       textStrong={false}
+      disabled={disabled}
       data-testid="supplyEthToggle"
       showText
     />
