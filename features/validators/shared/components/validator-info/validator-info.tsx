@@ -33,11 +33,11 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           <Identicon address={pubKey} diameter={40} />
         </span>
         <ParamContainer>
-          <Text size="xxs" color="secondary">
+          <Text size="xxs" color="secondary" data-testid="pubkey-label">
             Public key
           </Text>
           <PubKeyWrapper>
-            <Text size="xs" strong data-testid="pubkey">
+            <Text size="xs" strong data-testid="pubkey-value">
               <Address
                 as="span"
                 address={pubKey}
@@ -51,10 +51,10 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           </PubKeyWrapper>
         </ParamContainer>
         <ParamContainer>
-          <Text size="xxs" color="secondary">
+          <Text size="xxs" color="secondary" data-testid="index-label">
             Index
           </Text>
-          <Text size="xs" strong data-testid="index">
+          <Text size="xs" strong data-testid="index-value">
             {index}
           </Text>
         </ParamContainer>
