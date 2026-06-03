@@ -97,7 +97,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       retryEvent={retryEvent}
       afterSubmitResetOptions={false}
     >
-      <FormContainer>
+      <FormContainer data-testid="topup-form">
         <TokenAmountInputGroup
           amountFieldName="amount"
           label="ETH amount"

@@ -1,44 +1,48 @@
 import type { NextApiRequest } from 'next';
 import { API } from '@lidofinance/next-api-wrapper';
-import { Cache } from 'memory-cache';
+import { LRUCache } from 'lru-cache';
+
 import { responseTimeExternalMetricWrapper } from './fetch-api-wrapper';
 import { standardFetcher } from 'utils/standardFetcher';
 import { FetcherError } from 'utils/fetcherError';
+import { buildParams } from './cached-proxy-build-params';
+
+export { buildParams } from './cached-proxy-build-params';
+
+const DEFAULT_CACHE_MAX_ENTRIES = 200;
 
 type ProxyOptions = {
-  proxyUrl: string | ((req: NextApiRequest) => string);
+  proxyUrl: string | ((req: NextApiRequest) => string | Promise<string>);
   cacheTTL: number;
   timeout?: number;
   ignoreParams?: boolean;
+  /** Whitelist of query keys used in cache key + upstream URL. Unset = all. */
+  allowedQueryParams?: string[];
   transformData?: (data: any) => any;
   metricsHost?: string;
+  /** Hard cap on cache entries. Default 200. */
+  cacheMaxEntries?: number;
 };
 
 export const createCachedProxy = ({
   cacheTTL,
   proxyUrl,
   ignoreParams,
+  allowedQueryParams,
   timeout = 5000,
   transformData = (data) => data,
   metricsHost,
+  cacheMaxEntries = DEFAULT_CACHE_MAX_ENTRIES,
 }: ProxyOptions): API => {
-  const cache = new Cache<string, any>();
+  const cache = new LRUCache<string, any>({
+    max: cacheMaxEntries,
+    ttl: cacheTTL,
+  });
   return async (req, res) => {
-    const params =
-      ignoreParams || Object.keys(req.query).length === 0
-        ? null
-        : new URLSearchParams(
-            Object.entries(req.query).reduce(
-              (obj, [k, v]) => {
-                if (typeof v === 'string') obj[k] = v;
-                return obj;
-              },
-              {} as Record<string, string>,
-            ),
-          );
-    // Generate the actual proxy URL, passing req if the function accepts it
+    const params = buildParams(req.query, ignoreParams, allowedQueryParams);
+
     const proxyUrlString =
-      typeof proxyUrl === 'function' ? proxyUrl(req) : proxyUrl;
+      typeof proxyUrl === 'function' ? await proxyUrl(req) : proxyUrl;
 
     const cacheKey = `${proxyUrlString}-${params?.toString() ?? ''}`;
 
@@ -64,7 +68,7 @@ export const createCachedProxy = ({
 
       const transformedData = transformData(data) ?? data;
 
-      cache.put(cacheKey, transformedData, cacheTTL);
+      cache.set(cacheKey, transformedData);
       res.json(transformedData);
     } catch (e) {
       if (e instanceof FetcherError && e.status >= 400 && e.status < 500) {

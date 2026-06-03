@@ -5,11 +5,7 @@ import { isNumber } from 'utils';
 
 import { useValidators } from 'features/validators/contexts';
 
-type TablePaginationProps = {
-  dataTestId: string;
-};
-
-export const TablePagination: FC<TablePaginationProps> = ({ dataTestId }) => {
+export const TablePagination: FC = () => {
   const { totalPages, setPage, page } = useValidators();
   const showPagination =
     isNumber(totalPages) && totalPages > 1 && isNumber(page);
@@ -24,7 +20,7 @@ export const TablePagination: FC<TablePaginationProps> = ({ dataTestId }) => {
       pagesCount={totalPages}
       siblingCount={1}
       activePage={page}
-      data-testid={`${dataTestId}-pagination`}
+      data-testid="pagination"
     />
   );
 };
