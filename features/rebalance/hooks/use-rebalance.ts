@@ -6,7 +6,12 @@ import {
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
-import { useVault, vaultTexts, GoToVault } from 'modules/vaults';
+import {
+  useVault,
+  vaultTexts,
+  GoToVault,
+  useReportCalls,
+} from 'modules/vaults';
 
 import { useIsForceRebalance } from './use-is-force-rebalance';
 
@@ -17,6 +22,7 @@ const { title, submit } = vaultTexts.actions.rebalance;
 export const useRebalance = () => {
   const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
+  const prepareReportCalls = useReportCalls();
   const isForceRebalance = useIsForceRebalance();
 
   return {
@@ -29,7 +35,7 @@ export const useRebalance = () => {
         invariant(activeVault, '[useRebalance] activeVault is undefined');
 
         const { hub, dashboard, address } = activeVault;
-        const calls: TransactionEntry[] = [];
+        const calls: TransactionEntry[] = [...prepareReportCalls()];
 
         if (isForceRebalance) {
           calls.push({
@@ -55,7 +61,7 @@ export const useRebalance = () => {
 
         return success;
       },
-      [activeVault, sendTX, isForceRebalance],
+      [activeVault, sendTX, prepareReportCalls, isForceRebalance],
     ),
     ...rest,
   };

@@ -405,10 +405,14 @@ export const vaultTexts = {
         forceRebalance: 'Force rebalance',
         unavailable: 'Rebalance unavailable',
         tooltips: {
-          zeroLiability: 'stETH Liability is currently zero',
-          disconnected: 'stVault is disconnected',
-          pendingConnect: 'stVault is pending connection',
-          pendingDisconnect: 'stVault is pending disconnect',
+          zeroLiability:
+            'Rebalance is unavailable because stETH Liability is currently zero.',
+          disconnected:
+            'Rebalance is unavailable because stVault is disconnected from VaultHub.',
+          pendingConnect:
+            'Rebalance is unavailable because stVault is pending connection to VaultHub.',
+          pendingDisconnect:
+            'Rebalance is unavailable because stVault is pending disconnect from VaultHub.',
         },
       },
       description: {
