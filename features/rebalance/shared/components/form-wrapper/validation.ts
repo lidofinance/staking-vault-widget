@@ -7,6 +7,11 @@ import { awaitWithTimeout } from 'utils/await-with-timeout';
 import { vaultTexts } from 'modules/vaults';
 import { verificationConfirmSchema } from 'shared/components/banners/additional-verification';
 
+import {
+  getRebalanceMode,
+  getMaxRebalanceAmount,
+} from 'features/rebalance/shared/get-rebalance-mode';
+
 import type {
   RebalanceFormAwaitableValidationContext,
   RebalanceFormValidationContext,
@@ -17,13 +22,24 @@ import type {
 export const rebalanceFormSchema = (
   context: RebalanceFormValidationContext,
 ) => {
-  const rebalanceETH = context?.overviewData.rebalanceETH ?? 0n;
+  const overviewData = context?.overviewData;
+  const rebalanceETH = overviewData?.rebalanceETH ?? 0n;
+  const balance = overviewData?.balance ?? 0n;
+  const vaultLiability = overviewData?.vaultLiability ?? 0n;
   const ethBalance = context?.ethBalance ?? 0n;
   const additionalVerification = context?.additionalVerification ?? {
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
   };
+
+  // Either the forced rebalance shortfall has to be covered, or the vault has
+  // exceeded its minting capacity (totalMintingCapacity < vaultLiability) and
+  // the excess debt must be repaid. Otherwise there is nothing to rebalance.
+  const mode = getRebalanceMode({
+    healthFactorNumber: overviewData?.healthFactorNumber,
+    utilizationRatioNumber: overviewData?.utilizationRatioNumber,
+  });
 
   const mainSchema = z
     .object({
@@ -32,7 +48,7 @@ export const rebalanceFormSchema = (
       rebalanceAmount: z.bigint().nullable(),
     })
     .superRefine((data, ctx) => {
-      if (rebalanceETH <= 0n) {
+      if (mode === 'none') {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'No rebalance needed',
@@ -58,7 +74,13 @@ export const rebalanceFormSchema = (
       }
 
       const supplyEthValue = data.isSupplyEth ? data.supplyEth ?? 0n : 0n;
-      const maxRebalanceAmount = rebalanceETH + supplyEthValue;
+      const maxRebalanceAmount = getMaxRebalanceAmount({
+        mode,
+        rebalanceETH,
+        balance,
+        vaultLiability,
+        supplyEth: supplyEthValue,
+      });
 
       if (!data.rebalanceAmount || data.rebalanceAmount <= 0n) {
         ctx.addIssue({

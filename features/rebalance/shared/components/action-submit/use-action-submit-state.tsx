@@ -22,6 +22,7 @@ const { submit } = vaultTexts.actions.rebalance;
 type TooltipContext = {
   activeVault: ReturnType<typeof useVault>['activeVault'];
   overviewData: ReturnType<typeof useVaultOverviewData>['data'];
+  hasSupply: boolean;
 };
 
 const TOOLTIP_RULES: {
@@ -45,12 +46,16 @@ const TOOLTIP_RULES: {
     tooltip: <ZeroLiabilityTooltip />,
   },
   {
-    when: ({ overviewData }) => {
+    when: ({ overviewData, hasSupply }) => {
       if (!overviewData) return false;
 
       const { totalValue, vaultLiability, balance } = overviewData;
 
-      return totalValue > 0n && vaultLiability > 0n && balance === 0n;
+      // Supplying ETH provides the funds for the rebalance even when the whole
+      // balance is staked on validators, so the action stays available.
+      return (
+        totalValue > 0n && vaultLiability > 0n && balance === 0n && !hasSupply
+      );
     },
     tooltip: <AllEthStakedTooltip />,
   },
@@ -71,6 +76,8 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const { watch } = useFormContext<RebalanceFormFieldValues>();
   const { isSubmitting, disabled, isValid } = useFormState();
   const supplyEth = watch('supplyEth');
+  const isSupplyEth = watch('isSupplyEth');
+  const hasSupply = Boolean(isSupplyEth) && (supplyEth ?? 0n) > 0n;
 
   const { isErrorBannerVisible, isWarningBannerVisible } =
     useVerificationBannerDefender('rebalance');
@@ -80,7 +87,7 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const isForceRebalance = useIsForceRebalance();
 
   const tooltip = TOOLTIP_RULES.find(({ when }) =>
-    when({ activeVault, overviewData }),
+    when({ activeVault, overviewData, hasSupply }),
   )?.tooltip;
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);

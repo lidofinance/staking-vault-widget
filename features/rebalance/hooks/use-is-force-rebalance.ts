@@ -1,9 +1,3 @@
-import { useVaultOverviewData } from 'modules/vaults';
-import { isNumber } from 'utils';
+import { useRebalanceMode } from './use-rebalance-mode';
 
-export const useIsForceRebalance = () => {
-  const { data } = useVaultOverviewData();
-  const { healthFactorNumber } = data ?? {};
-
-  return isNumber(healthFactorNumber) && healthFactorNumber < 100;
-};
+export const useIsForceRebalance = () => useRebalanceMode() === 'force';
