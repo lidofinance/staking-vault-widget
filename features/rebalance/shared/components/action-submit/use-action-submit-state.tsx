@@ -1,11 +1,19 @@
 import { useFormContext, useFormState } from 'react-hook-form';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import type { Button } from '@lidofinance/lido-ui';
 
 import { useVault, useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { useVerificationBannerDefender } from 'shared/components';
 
 import { useIsForceRebalance } from 'features/rebalance/hooks';
+
+import {
+  AllEthStakedTooltip,
+  DisconnectedTooltip,
+  PendingConnectTooltip,
+  PendingDisconnectTooltip,
+  ZeroLiabilityTooltip,
+} from './components';
 
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
@@ -18,23 +26,33 @@ type TooltipContext = {
 
 const TOOLTIP_RULES: {
   when: (ctx: TooltipContext) => boolean;
-  tooltip: string;
+  tooltip: ReactNode;
 }[] = [
   {
     when: ({ activeVault }) => Boolean(activeVault?.isVaultDisconnected),
-    tooltip: submit.tooltips.disconnected,
+    tooltip: <DisconnectedTooltip />,
   },
   {
     when: ({ activeVault }) => Boolean(activeVault?.isPendingConnect),
-    tooltip: submit.tooltips.pendingConnect,
+    tooltip: <PendingConnectTooltip />,
   },
   {
     when: ({ activeVault }) => Boolean(activeVault?.isPendingDisconnect),
-    tooltip: submit.tooltips.pendingDisconnect,
+    tooltip: <PendingDisconnectTooltip />,
   },
   {
     when: ({ overviewData }) => overviewData?.vaultLiability === 0n,
-    tooltip: submit.tooltips.zeroLiability,
+    tooltip: <ZeroLiabilityTooltip />,
+  },
+  {
+    when: ({ overviewData }) => {
+      if (!overviewData) return false;
+
+      const { totalValue, vaultLiability, balance } = overviewData;
+
+      return totalValue > 0n && vaultLiability > 0n && balance === 0n;
+    },
+    tooltip: <AllEthStakedTooltip />,
   },
 ];
 
@@ -42,7 +60,7 @@ type ButtonProps = ComponentProps<typeof Button>;
 
 type ActionSubmitState = {
   text: string;
-  tooltip?: string;
+  tooltip?: ReactNode;
   variant: ButtonProps['variant'];
   color: ButtonProps['color'];
   isDisabled: boolean;

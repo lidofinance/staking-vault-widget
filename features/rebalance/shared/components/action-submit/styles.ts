@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const ButtonContent = styled.span`
   display: inline-flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spaceMap.xs}px;
-  // keep the tooltip trigger hoverable even when the button is disabled
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
   pointer-events: auto;
 `;

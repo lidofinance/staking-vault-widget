@@ -413,6 +413,8 @@ export const vaultTexts = {
             'Rebalance is unavailable because stVault is pending connection to VaultHub.',
           pendingDisconnect:
             'Rebalance is unavailable because stVault is pending disconnect from VaultHub.',
+          allEthStaked:
+            'Rebalance is unavailable because all ETH is staked on validators, and Not Staked stVaults Balance is currently zero. To enable rebalance,',
         },
       },
       description: {
@@ -420,6 +422,7 @@ export const vaultTexts = {
           title: 'Rebalance',
           text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
           supplyLinkText: 'supply ETH',
+          withdrawLinkText: 'withdraw ETH from validators',
           repayLinkText: 'repay stETH',
         },
         forceRebalance: {
