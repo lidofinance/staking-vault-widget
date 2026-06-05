@@ -10,7 +10,7 @@ import { verificationConfirmSchema } from 'shared/components/banners/additional-
 import {
   getRebalanceMode,
   getMaxRebalanceAmount,
-} from 'features/rebalance/shared/get-rebalance-mode';
+} from 'features/rebalance/shared';
 
 import type {
   RebalanceFormAwaitableValidationContext,
@@ -33,12 +33,13 @@ export const rebalanceFormSchema = (
     unguaranteedDeposits: false,
   };
 
-  // Either the forced rebalance shortfall has to be covered, or the vault has
-  // exceeded its minting capacity (totalMintingCapacity < vaultLiability) and
-  // the excess debt must be repaid. Otherwise there is nothing to rebalance.
+  // Rebalancing is available whenever there is an outstanding stETH Liability:
+  // either the forced rebalance shortfall has to be covered, or the user
+  // voluntarily repays (part of) the liability. Otherwise there is nothing to
+  // rebalance.
   const mode = getRebalanceMode({
+    vaultLiability,
     healthFactorNumber: overviewData?.healthFactorNumber,
-    utilizationRatioNumber: overviewData?.utilizationRatioNumber,
   });
 
   const mainSchema = z
@@ -114,7 +115,7 @@ export const RebalanceFormResolver: Resolver<
   RebalanceFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[RebalanceFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 4000);
+  const contextValue = await awaitWithTimeout(context, 10000);
   const schema = rebalanceFormSchema(contextValue);
   return zodResolver<
     RebalanceFormFieldValues,

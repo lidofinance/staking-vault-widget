@@ -415,6 +415,8 @@ export const vaultTexts = {
             'Rebalance is unavailable because stVault is pending disconnect from VaultHub.',
           allEthStaked:
             'Rebalance is unavailable because all ETH is staked on validators, and Not Staked stVaults Balance is currently zero. To enable rebalance,',
+          forceInsufficientFunds:
+            'Forced rebalance is unavailable because the Not Staked stVaults Balance is not enough to cover the shortfall.',
         },
       },
       description: {

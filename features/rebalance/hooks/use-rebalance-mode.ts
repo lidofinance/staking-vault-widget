@@ -1,12 +1,19 @@
+import { useMemo } from 'react';
+
 import { useVaultOverviewData } from 'modules/vaults';
 
-import { getRebalanceMode } from 'features/rebalance/shared/get-rebalance-mode';
+import { getRebalanceMode } from 'features/rebalance/shared';
 
 export const useRebalanceMode = () => {
   const { data } = useVaultOverviewData();
+  const { vaultLiability, healthFactorNumber } = data ?? {};
 
-  return getRebalanceMode({
-    healthFactorNumber: data?.healthFactorNumber,
-    utilizationRatioNumber: data?.utilizationRatioNumber,
-  });
+  return useMemo(
+    () =>
+      getRebalanceMode({
+        vaultLiability: vaultLiability ?? 0n,
+        healthFactorNumber,
+      }),
+    [vaultLiability, healthFactorNumber],
+  );
 };

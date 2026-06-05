@@ -10,6 +10,7 @@ import { useIsForceRebalance } from 'features/rebalance/hooks';
 import {
   AllEthStakedTooltip,
   DisconnectedTooltip,
+  ForceInsufficientFundsTooltip,
   PendingConnectTooltip,
   PendingDisconnectTooltip,
   ZeroLiabilityTooltip,
@@ -86,14 +87,29 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const { data: overviewData } = useVaultOverviewData();
   const isForceRebalance = useIsForceRebalance();
 
-  const tooltip = TOOLTIP_RULES.find(({ when }) =>
-    when({ activeVault, overviewData, hasSupply }),
-  )?.tooltip;
+  // The permissionless forced rebalance spends the Not Staked stVaults Balance,
+  // so it reverts (NoFundsForForceRebalance) when that balance cannot cover the
+  // shortfall. Block the submission in that case.
+  const isForceInsufficientFunds =
+    isForceRebalance &&
+    !!overviewData &&
+    overviewData.balance < overviewData.rebalanceETH;
+
+  const tooltip = isForceInsufficientFunds ? (
+    <ForceInsufficientFundsTooltip />
+  ) : (
+    TOOLTIP_RULES.find(({ when }) =>
+      when({ activeVault, overviewData, hasSupply }),
+    )?.tooltip
+  );
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
 
   const isDisabled =
-    isSubmitting || disabled || (isWarningBannerVisible && !isValid);
+    isSubmitting ||
+    disabled ||
+    isForceInsufficientFunds ||
+    (isWarningBannerVisible && !isValid);
 
   const variant = isUnavailable ? 'translucent' : 'filled';
   const color = isUnavailable ? 'secondary' : 'primary';
