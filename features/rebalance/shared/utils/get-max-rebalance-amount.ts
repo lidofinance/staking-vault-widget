@@ -20,8 +20,8 @@ export const getMaxRebalanceAmount = ({
   supplyEth,
 }: GetMaxRebalanceAmountArgs): bigint => {
   if (mode === 'force') {
-    // The shortfall reported by the hub is fixed; supplied ETH may extend it.
-    return rebalanceETH + supplyEth;
+    // The shortfall reported by the hub is fixed
+    return rebalanceETH;
   }
 
   if (mode === 'rebalance') {

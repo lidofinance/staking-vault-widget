@@ -3,7 +3,10 @@ import { useFormContext } from 'react-hook-form';
 
 import { useVaultPermission } from 'modules/vaults';
 
-import { useIsForceRebalance } from 'features/rebalance/hooks';
+import {
+  useIsForceRebalance,
+  useRebalanceAvailability,
+} from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import { Container } from './styles';
@@ -13,6 +16,7 @@ import { SupplyToggle } from './supply-toggle';
 
 export const Supply = () => {
   const isForceRebalance = useIsForceRebalance();
+  const { isDisabledByNoDebtCases } = useRebalanceAvailability();
   // Supplying ETH requires the FUND_ROLE (supplier) or DEFAULT_ADMIN.
   const { hasPermission: canSupply } = useVaultPermission('supplier');
   const { setValue } = useFormContext<RebalanceFormFieldValues>();
@@ -31,6 +35,11 @@ export const Supply = () => {
 
   // Hide the supply option entirely when the account cannot fund the vault.
   if (!canSupply) return null;
+
+  // Hide supply when the form is non-actionable for structural reasons: there
+  // is no outstanding liability to repay, or the balance is fully staked on
+  // validators and the wallet cannot fund a rebalance.
+  if (isDisabledByNoDebtCases) return null;
 
   return (
     <Container>

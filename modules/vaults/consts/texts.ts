@@ -462,6 +462,7 @@ export const vaultTexts = {
       },
       input: {
         available: 'Available to rebalance',
+        reduceToCapacity: 'TO 100%',
       },
     },
     additionalVerification: {

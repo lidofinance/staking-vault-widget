@@ -1,28 +1,24 @@
 import { type FC } from 'react';
 
 import {
-  VerificationErrorBanners,
-  VerificationWarningBanners,
-} from 'shared/components';
-
-import {
   FormWrapper,
   ActionSubmit,
   VaultMetrics,
   RebalanceDescription,
   Supply,
   RebalanceInput,
+  RebalanceVerificationBanners,
 } from 'features/rebalance/shared';
 
 export const RebalanceForm: FC = () => {
   return (
     <FormWrapper>
-      <VerificationErrorBanners action="rebalance" />
+      <RebalanceVerificationBanners variant="error" />
       <RebalanceDescription />
       <RebalanceInput />
       <Supply />
       <VaultMetrics />
-      <VerificationWarningBanners action="rebalance" />
+      <RebalanceVerificationBanners variant="warning" />
       <ActionSubmit />
     </FormWrapper>
   );

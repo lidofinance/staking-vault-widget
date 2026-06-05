@@ -13,7 +13,11 @@ import {
 } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
+import { ReduceToCapacityButton } from './reduce-to-capacity-button';
+
 import { Container } from './styles';
+
+const { available } = vaultTexts.actions.rebalance.input;
 
 export const RebalanceInput = () => {
   const {
@@ -36,7 +40,7 @@ export const RebalanceInput = () => {
   return (
     <Container>
       <InfoRowAmount
-        title={vaultTexts.actions.rebalance.input.available}
+        title={available}
         amount={balance}
         token="ETH"
         disabled={disabled}
@@ -48,6 +52,7 @@ export const RebalanceInput = () => {
         maxAmount={maxAmount}
         showRightDecorator={!isForceRebalance}
         leftDecorator={<Eth />}
+        rightDecorator={<ReduceToCapacityButton />}
         disabled={disabled || isForceRebalance}
       />
     </Container>

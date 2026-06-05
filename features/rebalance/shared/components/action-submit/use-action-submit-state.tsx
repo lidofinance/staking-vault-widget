@@ -80,8 +80,7 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const isSupplyEth = watch('isSupplyEth');
   const hasSupply = Boolean(isSupplyEth) && (supplyEth ?? 0n) > 0n;
 
-  const { isErrorBannerVisible, isWarningBannerVisible } =
-    useVerificationBannerDefender('rebalance');
+  const { isErrorBannerVisible } = useVerificationBannerDefender('rebalance');
 
   const { activeVault } = useVault();
   const { data: overviewData } = useVaultOverviewData();
@@ -109,7 +108,9 @@ export const useActionSubmitState = (): ActionSubmitState => {
     isSubmitting ||
     disabled ||
     isForceInsufficientFunds ||
-    (isWarningBannerVisible && !isValid);
+    // Keep submit inactive whenever the form is invalid (empty/over-max amount,
+    // unconfirmed verification, etc.).
+    !isValid;
 
   const variant = isUnavailable ? 'translucent' : 'filled';
   const color = isUnavailable ? 'secondary' : 'primary';

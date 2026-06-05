@@ -10,6 +10,9 @@ import { InputGroupStyled } from './styles';
 type TokenAmountInputGroupProps = {
   amountFieldName: string;
   showRightDecorator?: boolean;
+  rightDecorator?: ComponentProps<
+    typeof TokenAmountInputHookForm
+  >['rightDecorator'];
   maxAmount?: bigint;
   tokenLabel?: string;
   tokenFieldName?: string;
@@ -27,6 +30,7 @@ export const TokenAmountInputGroup = ({
   label,
   showRightDecorator,
   leftDecorator,
+  rightDecorator,
   disabled,
   ...props
 }: TokenAmountInputGroupProps) => {
@@ -56,6 +60,7 @@ export const TokenAmountInputGroup = ({
         token={amountLabel}
         label={label}
         leftDecorator={leftDecorator}
+        rightDecorator={rightDecorator}
         showRightDecorator={showRightDecorator}
         showErrorMessage={false}
         fieldName={amountFieldName}

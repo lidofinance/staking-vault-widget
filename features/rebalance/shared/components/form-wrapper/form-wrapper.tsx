@@ -2,11 +2,7 @@ import { type FC, type ReactNode, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus, useEthereumBalance } from 'modules/web3';
-import {
-  useVaultPermission,
-  useVaultConfirmingRoles,
-  useVaultOverviewData,
-} from 'modules/vaults';
+import { useVaultOverviewData } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
 import { useDisableForm } from 'shared/hook-form';
@@ -16,7 +12,10 @@ import {
   useVerificationBannerDefender,
 } from 'shared/components/banners/additional-verification';
 
-import { useRebalance } from 'features/rebalance/hooks';
+import {
+  useRebalance,
+  useRebalanceAvailability,
+} from 'features/rebalance/hooks';
 
 import { RebalanceFormResolver } from './validation';
 
@@ -33,8 +32,7 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { rebalance, retryEvent } = useRebalance();
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('rebalance');
-  const { hasAdmin } = useVaultConfirmingRoles();
-  const { hasPermission } = useVaultPermission('rebalancer');
+  const { isFormDisabled } = useRebalanceAvailability();
   const { data: overviewData, refetch } = useVaultOverviewData();
   const { data: ethBalance } = useEthereumBalance();
   const { isReady: isVerificationReady, confirmationRequired } =
@@ -66,10 +64,7 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     },
     mode: 'all',
     disabled:
-      !isDappActive ||
-      disabled ||
-      isDisabledByVerification ||
-      (!hasAdmin && !hasPermission),
+      !isDappActive || disabled || isDisabledByVerification || isFormDisabled,
     context: overviewDataPromise.awaiter,
     resolver: RebalanceFormResolver,
   });
