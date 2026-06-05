@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { InputDecoratorMaxButton } from 'shared/components/input-amount/input-decorator-max-button';
 import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { isNumber } from 'utils';
 import { UTILIZATION_RATIO_THRESHOLD } from 'consts/threshold';
 
 import {
   useIsForceRebalance,
+  useMaxRebalanceAmount,
   useReduceToCapacityAmount,
 } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
@@ -22,6 +24,7 @@ export const ReduceToCapacityButton = () => {
   const { utilizationRatioNumber } = data ?? {};
   const isForceRebalance = useIsForceRebalance();
   const reduceToCapacityAmount = useReduceToCapacityAmount();
+  const maxRebalanceAmount = useMaxRebalanceAmount();
 
   const isCapacityExceeded =
     !isForceRebalance &&
@@ -35,8 +38,16 @@ export const ReduceToCapacityButton = () => {
     });
   }, [setValue, reduceToCapacityAmount]);
 
+  const handleSetMax = useCallback(() => {
+    setValue('rebalanceAmount', maxRebalanceAmount, {
+      shouldValidate: true,
+    });
+  }, [setValue, maxRebalanceAmount]);
+
   if (!isCapacityExceeded) {
-    return null;
+    return (
+      <InputDecoratorMaxButton onClick={handleSetMax} disabled={disabled} />
+    );
   }
 
   return (

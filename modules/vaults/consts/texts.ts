@@ -525,6 +525,10 @@ export const vaultTexts = {
           title: 'Decrease Total Value and stETH Liability',
           children: 'Learn how to rebalance',
         },
+        rebalance: {
+          title: 'Decrease Total Value and stETH Liability',
+          children: 'Rebalance',
+        },
       },
     },
     thresholdExceeded: {

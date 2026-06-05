@@ -22,6 +22,7 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
   'data-testid': dataTestId,
 }) => {
   const { usdAmount, isLoading } = useEthUsd(amount);
+  const formatPriceAmount = amount === 0n ? 0 : usdAmount;
   const maxDecimalDigits = isBigint(amount) && amount > 0n ? 4 : 0;
 
   return (
@@ -52,7 +53,7 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
           style={{ textTransform: 'uppercase' }}
           data-testid="usd-balance"
         >
-          <FormatPrice amount={usdAmount} />
+          <FormatPrice amount={formatPriceAmount} />
         </Text>
       </InlineLoader>
     </StatisticContainer>

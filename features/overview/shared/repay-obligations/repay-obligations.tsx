@@ -6,7 +6,6 @@ import { vaultTexts } from 'modules/vaults';
 import { isBigint } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
-import { HEALTH_EMERGENCY_GUIDE_LINK } from 'features/overview/consts';
 
 import { SectionDivider } from '../styles';
 import { ActionContainer } from './styles';
@@ -17,7 +16,8 @@ const texts = vaultTexts.metrics.capacityExceeded;
 export const RepayObligations = () => {
   const router = useRouter();
   const { values } = useVaultOverview();
-  const { address, supplyETH, repayStETH } = values ?? {};
+  const { address, supplyETH, repayStETH, vaultLiability, rebalanceETH } =
+    values ?? {};
 
   const actions = useMemo(() => {
     if (!address) {
@@ -48,14 +48,16 @@ export const RepayObligations = () => {
       });
     }
 
-    items.push({
-      title: texts.actions.learnMore.title,
-      children: texts.actions.learnMore.children,
-      onClick: () => window.open(HEALTH_EMERGENCY_GUIDE_LINK, '_blank'),
-    });
+    if (isBigint(vaultLiability) || isBigint(rebalanceETH)) {
+      items.push({
+        title: texts.actions.rebalance.title,
+        children: texts.actions.rebalance.children,
+        onClick: () => router.push(appPaths.vaults.vault(address).rebalance),
+      });
+    }
 
     return items;
-  }, [supplyETH, repayStETH, router, address]);
+  }, [supplyETH, repayStETH, router, address, vaultLiability, rebalanceETH]);
 
   return (
     <ActionContainer>

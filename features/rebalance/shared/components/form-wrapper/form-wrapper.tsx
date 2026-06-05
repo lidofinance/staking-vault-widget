@@ -2,7 +2,7 @@ import { type FC, type ReactNode, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus, useEthereumBalance } from 'modules/web3';
-import { useVaultOverviewData } from 'modules/vaults';
+import { useVault, useVaultOverviewData } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController } from 'shared/hook-form/form-controller';
 import { useDisableForm } from 'shared/hook-form';
@@ -33,7 +33,8 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('rebalance');
   const { isFormDisabled } = useRebalanceAvailability();
-  const { data: overviewData, refetch } = useVaultOverviewData();
+  const { data: overviewData } = useVaultOverviewData();
+  const { refetch } = useVault();
   const { data: ethBalance } = useEthereumBalance();
   const { isReady: isVerificationReady, confirmationRequired } =
     useVerificationBannerDefender('rebalance');
@@ -56,11 +57,14 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     RebalanceFormAwaitableValidationContext,
     RebalanceFormValidatedValues
   >({
-    defaultValues: {
-      rebalanceAmount: null,
-      isSupplyEth: false,
-      supplyEth: null,
-      ...verificationConfirmDefaultValues,
+    defaultValues: async () => {
+      await overviewDataPromise.awaiter;
+      return {
+        rebalanceAmount: null,
+        isSupplyEth: false,
+        supplyEth: null,
+        ...verificationConfirmDefaultValues,
+      };
     },
     mode: 'all',
     disabled:
