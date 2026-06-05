@@ -139,7 +139,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       retryEvent={retryEvent}
       afterSubmitResetOptions={false}
     >
-      <FormContainer>
+      <FormContainer data-testid="withdrawal-form">
         {!formState.disabled && (
           <WarningInfo data-testid="warning">
             {isPartial ? partialWarning : fullWarning(balance)}
