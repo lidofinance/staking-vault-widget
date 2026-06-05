@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { Eth } from '@lidofinance/lido-ui';
+import { Eth, Tooltip } from '@lidofinance/lido-ui';
 
 import { TokenAmountInputGroup } from 'shared/hook-form';
 import { InfoRowAmount } from 'shared/components/form';
@@ -15,9 +15,9 @@ import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import { ReduceToCapacityButton } from './reduce-to-capacity-button';
 
-import { Container } from './styles';
+import { Container, TooltipAnchor } from './styles';
 
-const { available } = vaultTexts.actions.rebalance.input;
+const { available, forceRebalanceTooltip } = vaultTexts.actions.rebalance.input;
 
 export const RebalanceInput = () => {
   const {
@@ -37,6 +37,18 @@ export const RebalanceInput = () => {
     }
   }, [isForceRebalance, rebalanceETH, setValue]);
 
+  const input = (
+    <TokenAmountInputGroup
+      amountFieldName="rebalanceAmount"
+      tokenLabel="ETH"
+      maxAmount={maxAmount}
+      showRightDecorator={!isForceRebalance}
+      leftDecorator={<Eth />}
+      rightDecorator={<ReduceToCapacityButton />}
+      disabled={disabled || isForceRebalance}
+    />
+  );
+
   return (
     <Container>
       <InfoRowAmount
@@ -46,15 +58,13 @@ export const RebalanceInput = () => {
         disabled={disabled}
         data-testid="availableToRebalanceRow"
       />
-      <TokenAmountInputGroup
-        amountFieldName="rebalanceAmount"
-        tokenLabel="ETH"
-        maxAmount={maxAmount}
-        showRightDecorator={!isForceRebalance}
-        leftDecorator={<Eth />}
-        rightDecorator={<ReduceToCapacityButton />}
-        disabled={disabled || isForceRebalance}
-      />
+      {isForceRebalance ? (
+        <Tooltip title={forceRebalanceTooltip}>
+          <TooltipAnchor>{input}</TooltipAnchor>
+        </Tooltip>
+      ) : (
+        input
+      )}
     </Container>
   );
 };

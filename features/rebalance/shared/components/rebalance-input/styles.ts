@@ -6,3 +6,7 @@ export const Container = styled.div`
   gap: ${({ theme }) => theme.spaceMap.sm}px;
   width: 100%;
 `;
+
+export const TooltipAnchor = styled.div`
+  width: 100%;
+`;
