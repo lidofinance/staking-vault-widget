@@ -25,7 +25,7 @@ export const RebalanceInput = () => {
     formState: { disabled, isLoading: isFormReadyLoading },
   } = useFormContext<RebalanceFormFieldValues>();
   const { data, isPending } = useVaultOverviewData();
-  const { rebalanceETH, availableBalanceWei } = data ?? {};
+  const { forceRebalanceThresholdWei, availableBalanceWei } = data ?? {};
   const isForceRebalance = useIsForceRebalance();
   const maxAmount = useMaxRebalanceAmount();
 
@@ -36,16 +36,21 @@ export const RebalanceInput = () => {
       isForceRebalance &&
       !isPending &&
       !isFormReadyLoading &&
-      isBigint(rebalanceETH)
+      isBigint(forceRebalanceThresholdWei)
     ) {
-      // TODO: calc amount based on 100% utilization ratio
-      setValue('rebalanceAmount', rebalanceETH, {
-        shouldValidate: false,
+      setValue('rebalanceAmount', forceRebalanceThresholdWei, {
+        shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
     }
-  }, [isForceRebalance, rebalanceETH, isPending, isFormReadyLoading, setValue]);
+  }, [
+    isForceRebalance,
+    forceRebalanceThresholdWei,
+    isPending,
+    isFormReadyLoading,
+    setValue,
+  ]);
 
   const input = (
     <TokenAmountInputGroup

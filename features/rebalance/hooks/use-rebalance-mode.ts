@@ -6,14 +6,14 @@ import { getRebalanceMode } from 'features/rebalance/shared';
 
 export const useRebalanceMode = () => {
   const { data } = useVaultOverviewData();
-  const { vaultLiability, healthFactorNumber } = data ?? {};
+  const { vaultLiability, forceRebalanceThresholdWei } = data ?? {};
 
   return useMemo(
     () =>
       getRebalanceMode({
         vaultLiability: vaultLiability ?? 0n,
-        healthFactorNumber,
+        forceRebalanceThresholdWei,
       }),
-    [vaultLiability, healthFactorNumber],
+    [vaultLiability, forceRebalanceThresholdWei],
   );
 };

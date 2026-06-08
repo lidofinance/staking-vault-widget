@@ -16,8 +16,13 @@ const texts = vaultTexts.metrics.capacityExceeded;
 export const RepayObligations = () => {
   const router = useRouter();
   const { values } = useVaultOverview();
-  const { address, supplyETH, repayStETH, vaultLiability, rebalanceETH } =
-    values ?? {};
+  const {
+    address,
+    supplyETH,
+    repayStETH,
+    vaultLiability,
+    forceRebalanceThresholdWei,
+  } = values ?? {};
 
   const actions = useMemo(() => {
     if (!address) {
@@ -48,7 +53,7 @@ export const RepayObligations = () => {
       });
     }
 
-    if (isBigint(vaultLiability) || isBigint(rebalanceETH)) {
+    if (isBigint(vaultLiability) || isBigint(forceRebalanceThresholdWei)) {
       items.push({
         title: texts.actions.rebalance.title,
         children: texts.actions.rebalance.children,
@@ -57,7 +62,14 @@ export const RepayObligations = () => {
     }
 
     return items;
-  }, [supplyETH, repayStETH, router, address, vaultLiability, rebalanceETH]);
+  }, [
+    supplyETH,
+    repayStETH,
+    router,
+    address,
+    vaultLiability,
+    forceRebalanceThresholdWei,
+  ]);
 
   return (
     <ActionContainer>

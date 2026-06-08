@@ -1,20 +1,15 @@
 import { useMemo } from 'react';
 
-import {
-  useVaultConfirmingRoles,
-  useVaultOverviewData,
-  useVaultPermission,
-  useVaultRiskStatus,
-} from 'modules/vaults';
+import { useVaultOverviewData, useVaultRiskStatus } from 'modules/vaults';
 
 export type RebalanceAvailability = {
   // There is no outstanding stETH Liability, so there is nothing to rebalance.
   hasNoLiability: boolean;
-  // The vault has no idle (Not Staked) balance and the connected wallet cannot
+  // The vault has no idle (Not Staked) availableBalance and the connected wallet cannot
   // fund a rebalance on its own: it is neither the Vault Owner nor holds both
   // the supplier and repayer roles. A supplier-only wallet, for instance, could
   // top up the vault but would not be able to repay, so the action is pointless.
-  hasNoFundsToRebalance: boolean;
+  hasNoAnyFundsToRebalance: boolean;
   // The connected wallet lacks both the rebalancer role and admin (owner) rights.
   hasNoPermission: boolean;
   // Structural cases tied to the absence of outstanding liability / inability to
@@ -32,28 +27,26 @@ export type RebalanceAvailability = {
  */
 export const useRebalanceAvailability = (): RebalanceAvailability => {
   const { data } = useVaultOverviewData();
-  const { isVaultOwner, isSupplier, isRepayer } = useVaultRiskStatus();
-  const { hasAdmin } = useVaultConfirmingRoles();
-  // The rebalancer role permission already accounts for admin-over-role.
-  const { hasPermission: hasRebalancer } = useVaultPermission('rebalancer');
-
+  const { isVaultOwner, isSupplier, isRebalancer } = useVaultRiskStatus();
   const { availableBalanceWei, vaultLiability } = data ?? {};
 
   return useMemo(() => {
     const hasNoLiability = vaultLiability === 0n;
 
-    const canFundRebalance = Boolean(isVaultOwner || (isSupplier && isRepayer));
-    const hasNoFundsToRebalance =
+    const canFundRebalance = Boolean(
+      isVaultOwner || (isSupplier && isRebalancer),
+    );
+    const hasNoAnyFundsToRebalance =
       availableBalanceWei === 0n && !canFundRebalance;
 
-    const hasNoPermission = !hasAdmin && !hasRebalancer;
+    const hasNoPermission = !isVaultOwner && !isRebalancer;
 
-    const isDisabledByNoDebtCases = hasNoLiability || hasNoFundsToRebalance;
+    const isDisabledByNoDebtCases = hasNoLiability || hasNoAnyFundsToRebalance;
     const isFormDisabled = isDisabledByNoDebtCases || hasNoPermission;
 
     return {
       hasNoLiability,
-      hasNoFundsToRebalance,
+      hasNoAnyFundsToRebalance,
       hasNoPermission,
       isDisabledByNoDebtCases,
       isFormDisabled,
@@ -63,8 +56,6 @@ export const useRebalanceAvailability = (): RebalanceAvailability => {
     vaultLiability,
     isVaultOwner,
     isSupplier,
-    isRepayer,
-    hasAdmin,
-    hasRebalancer,
+    isRebalancer,
   ]);
 };

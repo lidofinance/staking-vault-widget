@@ -1,8 +1,8 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
 import type { Address } from 'viem';
 
-import { calculateHealth, formatToPercentWithDivider } from 'utils';
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';
 import {
   readWithReport,
@@ -22,14 +22,15 @@ import { Multicall3AbiUtils } from 'abi/multicall-abi';
 import { ONE_ETHER } from 'consts/tx';
 import {
   formatPercent,
+  calculateHealth,
+  formatToPercentWithDivider,
   toEthValue,
   toStethValue,
   getMintingConstraintType,
   formatBasisPoint,
   calculateOverviewV2,
 } from 'utils';
-
-import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
+import { bigIntMin } from 'utils/bigint-math';
 
 type VaultDataArgs = {
   vault: VaultBaseInfo;
@@ -353,6 +354,17 @@ const selectOverviewData = ({
     feeObligation,
   });
 
+  // Force rebalance threshold
+  // source https://github.com/lidofinance/core/blob/master/contracts/0.8.25/vaults/VaultHub.sol#L933
+  const balanceForObligations = bigIntMin(
+    availableBalanceWei,
+    vaultData.totalValue,
+  );
+  const forceRebalanceThresholdWei = bigIntMin(
+    stETHToBurn,
+    balanceForObligations,
+  );
+
   // Binding-constraint detection:
   // - totalMintingCapacityShares is the current effective capacity (RR-based and already
   //   reduced by any active caps).
@@ -493,6 +505,7 @@ const selectOverviewData = ({
     rebalanceStETH,
     rebalanceETH,
     availableBalanceWei,
+    forceRebalanceThresholdWei,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,

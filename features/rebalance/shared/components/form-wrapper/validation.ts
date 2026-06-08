@@ -38,7 +38,7 @@ export const rebalanceFormSchema = (
   // rebalance.
   const mode = getRebalanceMode({
     vaultLiability,
-    healthFactorNumber: overviewData?.healthFactorNumber,
+    forceRebalanceThresholdWei: overviewData?.forceRebalanceThresholdWei,
   });
 
   const mainSchema = z

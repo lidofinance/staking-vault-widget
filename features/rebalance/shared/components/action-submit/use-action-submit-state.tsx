@@ -1,11 +1,12 @@
-import { useFormContext, useFormState } from 'react-hook-form';
-import type { ComponentProps, ReactNode } from 'react';
-import type { Button } from '@lidofinance/lido-ui';
+import type { ReactNode } from 'react';
+import { useFormState, useWatch } from 'react-hook-form';
+import type { ButtonProps } from '@lidofinance/lido-ui';
 
 import { useVault, useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { useVerificationBannerDefender } from 'shared/components';
 
 import { useIsForceRebalance } from 'features/rebalance/hooks';
+import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import {
   AllEthStakedTooltip,
@@ -15,8 +16,6 @@ import {
   PendingDisconnectTooltip,
   ZeroLiabilityTooltip,
 } from './components';
-
-import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 const { submit } = vaultTexts.actions.rebalance;
 
@@ -65,8 +64,6 @@ const TOOLTIP_RULES: {
   },
 ];
 
-type ButtonProps = ComponentProps<typeof Button>;
-
 type ActionSubmitState = {
   text: string;
   tooltip?: ReactNode;
@@ -77,10 +74,13 @@ type ActionSubmitState = {
 };
 
 export const useActionSubmitState = (): ActionSubmitState => {
-  const { watch } = useFormContext<RebalanceFormFieldValues>();
   const { isSubmitting, disabled, isValid } = useFormState();
-  const supplyEth = watch('supplyEth');
-  const isSupplyEth = watch('isSupplyEth');
+  const [supplyEth, isSupplyEth] = useWatch<
+    RebalanceFormFieldValues,
+    ['supplyEth', 'isSupplyEth']
+  >({
+    name: ['supplyEth', 'isSupplyEth'],
+  });
   const hasSupply = Boolean(isSupplyEth) && (supplyEth ?? 0n) > 0n;
 
   const { isErrorBannerVisible } = useVerificationBannerDefender('rebalance');
@@ -90,12 +90,12 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const isForceRebalance = useIsForceRebalance();
 
   // The permissionless forced rebalance spends the Not Staked stVaults Balance,
-  // so it reverts (NoFundsForForceRebalance) when that availableBalanceWei cannot cover the
+  // so it reverts (NoFundsForForceRebalance) when that availableBalance cannot cover the
   // shortfall. Block the submission in that case.
   const isForceInsufficientFunds =
     isForceRebalance &&
     !!overviewData &&
-    overviewData.availableBalanceWei < overviewData.rebalanceETH;
+    overviewData.availableBalanceWei < overviewData.forceRebalanceThresholdWei;
 
   const tooltip = isForceInsufficientFunds ? (
     <ForceInsufficientFundsTooltip />
