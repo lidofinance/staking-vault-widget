@@ -37,13 +37,14 @@ export const useRebalanceAvailability = (): RebalanceAvailability => {
   // The rebalancer role permission already accounts for admin-over-role.
   const { hasPermission: hasRebalancer } = useVaultPermission('rebalancer');
 
-  const { balance, vaultLiability } = data ?? {};
+  const { availableBalanceWei, vaultLiability } = data ?? {};
 
   return useMemo(() => {
     const hasNoLiability = vaultLiability === 0n;
 
     const canFundRebalance = Boolean(isVaultOwner || (isSupplier && isRepayer));
-    const hasNoFundsToRebalance = balance === 0n && !canFundRebalance;
+    const hasNoFundsToRebalance =
+      availableBalanceWei === 0n && !canFundRebalance;
 
     const hasNoPermission = !hasAdmin && !hasRebalancer;
 
@@ -58,7 +59,7 @@ export const useRebalanceAvailability = (): RebalanceAvailability => {
       isFormDisabled,
     };
   }, [
-    balance,
+    availableBalanceWei,
     vaultLiability,
     isVaultOwner,
     isSupplier,

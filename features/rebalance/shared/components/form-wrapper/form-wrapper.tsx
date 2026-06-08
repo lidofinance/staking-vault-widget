@@ -66,7 +66,7 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
         ...verificationConfirmDefaultValues,
       };
     },
-    mode: 'all',
+    mode: 'onChange',
     disabled:
       !isDappActive || disabled || isDisabledByVerification || isFormDisabled,
     context: overviewDataPromise.awaiter,

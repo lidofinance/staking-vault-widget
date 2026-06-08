@@ -23,8 +23,7 @@ export const rebalanceFormSchema = (
   context: RebalanceFormValidationContext,
 ) => {
   const overviewData = context?.overviewData;
-  const rebalanceETH = overviewData?.rebalanceETH ?? 0n;
-  const balance = overviewData?.balance ?? 0n;
+  const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
   const vaultLiability = overviewData?.vaultLiability ?? 0n;
   const ethBalance = context?.ethBalance ?? 0n;
   const additionalVerification = context?.additionalVerification ?? {
@@ -77,8 +76,7 @@ export const rebalanceFormSchema = (
       const supplyEthValue = data.isSupplyEth ? data.supplyEth ?? 0n : 0n;
       const maxRebalanceAmount = getMaxRebalanceAmount({
         mode,
-        rebalanceETH,
-        balance,
+        availableBalance: availableBalanceWei,
         vaultLiability,
         supplyEth: supplyEthValue,
       });

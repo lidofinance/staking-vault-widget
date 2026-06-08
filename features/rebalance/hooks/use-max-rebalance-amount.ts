@@ -11,7 +11,7 @@ import { useRebalanceMode } from './use-rebalance-mode';
 export const useMaxRebalanceAmount = () => {
   const { data } = useVaultOverviewData();
   const mode = useRebalanceMode();
-  const { rebalanceETH, balance, vaultLiability } = data ?? {};
+  const { availableBalanceWei, vaultLiability } = data ?? {};
 
   const [supplyEth, isSupplyEth] = useWatch<
     RebalanceFormFieldValues,
@@ -19,17 +19,16 @@ export const useMaxRebalanceAmount = () => {
   >({ name: ['supplyEth', 'isSupplyEth'] });
 
   // The "Max" helper mirrors the validation cap: for a voluntary rebalance the
-  // repayment is bounded by the idle vault balance plus supplied ETH and by the
+  // repayment is bounded by the idle vault availableBalance plus supplied ETH and by the
   // outstanding liability.
   return useMemo(
     () =>
       getMaxRebalanceAmount({
         mode,
-        rebalanceETH: rebalanceETH ?? 0n,
-        balance: balance ?? 0n,
+        availableBalance: availableBalanceWei ?? 0n,
         vaultLiability: vaultLiability ?? 0n,
         supplyEth: isSupplyEth ? supplyEth ?? 0n : 0n,
       }),
-    [mode, rebalanceETH, balance, vaultLiability, isSupplyEth, supplyEth],
+    [mode, availableBalanceWei, vaultLiability, isSupplyEth, supplyEth],
   );
 };

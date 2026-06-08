@@ -3,8 +3,7 @@ import { RebalanceMode } from './get-rebalance-mode';
 
 type GetMaxRebalanceAmountArgs = {
   mode: RebalanceMode;
-  rebalanceETH: bigint;
-  balance: bigint;
+  availableBalance: bigint;
   vaultLiability: bigint;
   supplyEth: bigint;
 };
@@ -14,21 +13,15 @@ type GetMaxRebalanceAmountArgs = {
  */
 export const getMaxRebalanceAmount = ({
   mode,
-  rebalanceETH,
-  balance,
+  availableBalance,
   vaultLiability,
   supplyEth,
 }: GetMaxRebalanceAmountArgs): bigint => {
-  if (mode === 'force') {
-    // The shortfall reported by the hub is fixed
-    return rebalanceETH;
-  }
-
   if (mode === 'rebalance') {
-    // ETH for the repayment comes from the idle vault balance and/or ETH
+    // ETH for the repayment comes from the idle vault availableBalance and/or ETH
     // supplied from the connected wallet, but it can never exceed the
     // outstanding liability.
-    return bigIntMin(balance + supplyEth, vaultLiability);
+    return bigIntMin(availableBalance + supplyEth, vaultLiability);
   }
 
   return 0n;

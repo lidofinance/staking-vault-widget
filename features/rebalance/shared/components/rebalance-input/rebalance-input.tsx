@@ -22,20 +22,30 @@ const { available, forceRebalanceTooltip } = vaultTexts.actions.rebalance.input;
 export const RebalanceInput = () => {
   const {
     setValue,
-    formState: { disabled },
+    formState: { disabled, isLoading: isFormReadyLoading },
   } = useFormContext<RebalanceFormFieldValues>();
-  const { data } = useVaultOverviewData();
-  const { rebalanceETH, balance } = data ?? {};
+  const { data, isPending } = useVaultOverviewData();
+  const { rebalanceETH, availableBalanceWei } = data ?? {};
   const isForceRebalance = useIsForceRebalance();
   const maxAmount = useMaxRebalanceAmount();
 
   // In forced rebalance the whole available amount is rebalanced via the hub,
   // so the field is pre-filled and locked from editing.
   useEffect(() => {
-    if (isForceRebalance && isBigint(rebalanceETH)) {
-      setValue('rebalanceAmount', rebalanceETH, { shouldValidate: true });
+    if (
+      isForceRebalance &&
+      !isPending &&
+      !isFormReadyLoading &&
+      isBigint(rebalanceETH)
+    ) {
+      // TODO: calc amount based on 100% utilization ratio
+      setValue('rebalanceAmount', rebalanceETH, {
+        shouldValidate: false,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     }
-  }, [isForceRebalance, rebalanceETH, setValue]);
+  }, [isForceRebalance, rebalanceETH, isPending, isFormReadyLoading, setValue]);
 
   const input = (
     <TokenAmountInputGroup
@@ -53,13 +63,13 @@ export const RebalanceInput = () => {
     <Container>
       <InfoRowAmount
         title={available}
-        amount={balance}
+        amount={availableBalanceWei}
         token="ETH"
         disabled={disabled}
         data-testid="availableToRebalanceRow"
       />
       {isForceRebalance ? (
-        <Tooltip title={forceRebalanceTooltip}>
+        <Tooltip title={forceRebalanceTooltip} placement="bottomRight">
           <TooltipAnchor>{input}</TooltipAnchor>
         </Tooltip>
       ) : (

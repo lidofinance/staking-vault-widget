@@ -87,6 +87,7 @@ export type VaultInfo = VaultConnection &
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
     stagedBalanceWei: bigint;
+    availableBalanceWei: bigint;
     isPendingDisconnect: boolean;
     isVaultDisconnected: boolean;
     isVaultConnected: boolean;
@@ -163,6 +164,7 @@ const getVaultData = async (
     lockedEth,
     stagedBalanceWei,
     beaconChainDepositsPaused,
+    availableBalanceWei,
   ] = await readWithReport({
     publicClient,
     lazyOracle,
@@ -176,6 +178,7 @@ const getVaultData = async (
       dashboard.prepare.locked(),
       vaultContract.prepare.stagedBalance(),
       vaultContract.prepare.beaconChainDepositsPaused(),
+      vaultContract.prepare.availableBalance(),
     ] as const,
     blockNumber,
   });
@@ -248,6 +251,7 @@ const getVaultData = async (
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     balance,
+    availableBalanceWei,
     currentMaxLiabilityStETH,
     feeRate,
     shareLimit,
@@ -327,6 +331,7 @@ const selectOverviewData = ({
     rebalanceETH,
     beaconChainDepositsPaused,
     isReportFresh,
+    availableBalanceWei,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -487,6 +492,7 @@ const selectOverviewData = ({
     rebalanceShares,
     rebalanceStETH,
     rebalanceETH,
+    availableBalanceWei,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,

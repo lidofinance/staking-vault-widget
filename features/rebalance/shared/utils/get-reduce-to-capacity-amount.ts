@@ -13,7 +13,7 @@ type GetReduceToCapacityAmountArgs = {
  * When the minting capacity is exceeded the liability is larger than the
  * capacity, so the surplus `liability - capacity` is what needs to be rebalanced
  * away. The result is capped by the maximum amount that can actually be
- * rebalanced (idle balance + supplied ETH, bounded by the liability).
+ * rebalanced (idle availableBalance + supplied ETH, bounded by the liability).
  */
 export const getReduceToCapacityAmount = ({
   vaultLiability,

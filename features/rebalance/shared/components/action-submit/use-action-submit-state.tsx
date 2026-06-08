@@ -50,12 +50,15 @@ const TOOLTIP_RULES: {
     when: ({ overviewData, hasSupply }) => {
       if (!overviewData) return false;
 
-      const { totalValue, vaultLiability, balance } = overviewData;
+      const { totalValue, vaultLiability, availableBalanceWei } = overviewData;
 
       // Supplying ETH provides the funds for the rebalance even when the whole
-      // balance is staked on validators, so the action stays available.
+      // availableBalanceWei is staked on validators, so the action stays available.
       return (
-        totalValue > 0n && vaultLiability > 0n && balance === 0n && !hasSupply
+        totalValue > 0n &&
+        vaultLiability > 0n &&
+        availableBalanceWei === 0n &&
+        !hasSupply
       );
     },
     tooltip: <AllEthStakedTooltip />,
@@ -87,12 +90,12 @@ export const useActionSubmitState = (): ActionSubmitState => {
   const isForceRebalance = useIsForceRebalance();
 
   // The permissionless forced rebalance spends the Not Staked stVaults Balance,
-  // so it reverts (NoFundsForForceRebalance) when that balance cannot cover the
+  // so it reverts (NoFundsForForceRebalance) when that availableBalanceWei cannot cover the
   // shortfall. Block the submission in that case.
   const isForceInsufficientFunds =
     isForceRebalance &&
     !!overviewData &&
-    overviewData.balance < overviewData.rebalanceETH;
+    overviewData.availableBalanceWei < overviewData.rebalanceETH;
 
   const tooltip = isForceInsufficientFunds ? (
     <ForceInsufficientFundsTooltip />

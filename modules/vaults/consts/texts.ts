@@ -462,7 +462,7 @@ export const vaultTexts = {
       },
       input: {
         available: 'Available to rebalance',
-        reduceToCapacity: 'TO 100%',
+        reduceToCapacity: 'Use recommended',
         forceRebalanceTooltip:
           'In the current mode, the amount of ETH subject to rebalancing is calculated automatically and cannot be changed.',
       },
