@@ -355,7 +355,7 @@ const selectOverviewData = ({
   });
 
   // Force rebalance threshold
-  // source https://github.com/lidofinance/core/blob/master/contracts/0.8.25/vaults/VaultHub.sol#L933
+  // source https://github.com/lidofinance/core/blob/master/contracts/0.8.25/vaults/VaultHub.sol#L956
   const balanceForObligations = bigIntMin(
     availableBalanceWei,
     vaultData.totalValue,

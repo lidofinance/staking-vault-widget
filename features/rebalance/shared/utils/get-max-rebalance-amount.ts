@@ -24,5 +24,6 @@ export const getMaxRebalanceAmount = ({
     return bigIntMin(availableBalance + supplyEth, vaultLiability);
   }
 
+  // if mode 'none' or 'force', max button is hidden or unused
   return 0n;
 };
