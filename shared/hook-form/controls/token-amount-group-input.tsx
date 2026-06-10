@@ -18,6 +18,7 @@ type TokenAmountInputGroupProps = {
   tokenFieldName?: string;
   errorFieldName?: string;
   tokenOptions?: ComponentProps<typeof TokenSelectHookForm>['options'];
+  warning?: ComponentProps<typeof TokenAmountInputHookForm>['warning'];
 } & ComponentProps<typeof InputGroupStyled>;
 
 export const TokenAmountInputGroup = ({
@@ -32,6 +33,7 @@ export const TokenAmountInputGroup = ({
   leftDecorator,
   rightDecorator,
   disabled,
+  warning,
   ...props
 }: TokenAmountInputGroupProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
@@ -68,6 +70,7 @@ export const TokenAmountInputGroup = ({
         onFocus={onFocus}
         onBlur={onBlur}
         disabled={disabled}
+        warning={warning}
       />
     </InputGroupStyled>
   );

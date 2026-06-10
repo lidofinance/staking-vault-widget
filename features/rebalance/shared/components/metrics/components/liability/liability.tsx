@@ -11,7 +11,7 @@ import { Container, ValueContainer } from './styles';
 
 export const Liability = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
-  const { vaultLiability } = data ?? {};
+  const { vaultLiabilityStETH: vaultLiability } = data ?? {};
 
   return (
     <Container>

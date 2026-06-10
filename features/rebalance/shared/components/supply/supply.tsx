@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { useVaultPermission } from 'modules/vaults';
 
 import {
-  useIsForceRebalance,
+  useRebalanceState,
   useRebalanceAvailability,
 } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
@@ -15,7 +15,7 @@ import { SupplyInput } from './supply-input';
 import { SupplyToggle } from './supply-toggle';
 
 export const Supply = () => {
-  const isForceRebalance = useIsForceRebalance();
+  const { isForceRebalance } = useRebalanceState();
   const { isDisabledByNoDebtCases } = useRebalanceAvailability();
   // Supplying ETH requires the FUND_ROLE (supplier) or DEFAULT_ADMIN.
   const { hasPermission: canSupply } = useVaultPermission('supplier');

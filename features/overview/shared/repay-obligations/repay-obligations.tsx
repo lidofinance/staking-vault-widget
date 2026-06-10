@@ -20,8 +20,8 @@ export const RepayObligations = () => {
     address,
     supplyETH,
     repayStETH,
-    vaultLiability,
-    forceRebalanceThresholdWei,
+    vaultLiabilityStETH: vaultLiability,
+    valueToForceRebalance,
   } = values ?? {};
 
   const actions = useMemo(() => {
@@ -53,7 +53,7 @@ export const RepayObligations = () => {
       });
     }
 
-    if (isBigint(vaultLiability) || isBigint(forceRebalanceThresholdWei)) {
+    if (isBigint(vaultLiability) || isBigint(valueToForceRebalance)) {
       items.push({
         title: texts.actions.rebalance.title,
         children: texts.actions.rebalance.children,
@@ -68,7 +68,7 @@ export const RepayObligations = () => {
     router,
     address,
     vaultLiability,
-    forceRebalanceThresholdWei,
+    valueToForceRebalance,
   ]);
 
   return (

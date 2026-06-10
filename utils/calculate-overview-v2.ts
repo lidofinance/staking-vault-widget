@@ -1,7 +1,7 @@
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
 import { calculateHealth } from './calculate-health';
-import { bigIntMax, bigIntMin } from './bigint-math';
+import { bigIntClampZero, bigIntMax, bigIntMin } from './bigint-math';
 import { ceilDivBigint } from './ceil-div-bigint';
 
 export type OverviewArgs = {
@@ -61,10 +61,10 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
         ) - liabilitySharesInStethWei;
 
   // Prevent underflow
-  const valueMinusLiability =
-    totalValue > liabilitySharesInStethWei
-      ? totalValue - liabilitySharesInStethWei
-      : 0n;
+  const valueMinusLiability = bigIntClampZero(
+    totalValue - liabilitySharesInStethWei,
+  );
+
   const reserved = bigIntMin(valueMinusLiability, reservedByFormula);
 
   // Prevent division by 0
@@ -78,8 +78,7 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
         ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
 
   // Prevent underflow
-  const effectiveTotalValue =
-    totalValue > feeObligation ? totalValue - feeObligation : 0n;
+  const effectiveTotalValue = bigIntClampZero(totalValue - feeObligation);
 
   // repay-obligations
   const repay = bigIntMax(

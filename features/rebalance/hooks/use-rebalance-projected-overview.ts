@@ -26,11 +26,11 @@ export const useRebalanceProjectedOverview = () => {
     return { data, isPending, projected: null };
   }
 
-  const rawProjectedTotal = data.totalValue + effectiveSupply;
+  const rawProjectedTotal = data.totalValueETH + effectiveSupply;
   const projectedTotalValue =
     rawProjectedTotal >= amount ? rawProjectedTotal - amount : 0n;
   const projectedLiabilityStETH =
-    data.vaultLiability >= amount ? data.vaultLiability - amount : 0n;
+    data.vaultLiabilityStETH >= amount ? data.vaultLiabilityStETH - amount : 0n;
 
   const projectedOverview = calculateOverviewV2({
     totalValue: projectedTotalValue,
@@ -42,7 +42,7 @@ export const useRebalanceProjectedOverview = () => {
     balance: data.balance,
     locked: data.collateral,
     nodeOperatorDisbursableFee: data.undisbursedNodeOperatorFee,
-    totalMintingCapacityStethWei: data.totalMintingCapacity,
+    totalMintingCapacityStethWei: data.totalMintingCapacityStETH,
     unsettledLidoFees: data.unsettledLidoFees,
     feeObligation: data.feeObligation,
     currentMaxLiabilityStETH: data.vaultData.currentMaxLiabilityStETH,

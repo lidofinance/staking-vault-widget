@@ -11,7 +11,7 @@ export const useWithdrawChart = () => {
   return useMemo(() => {
     if (!values) return {};
 
-    const totalValue = values.totalValue;
+    const totalValue = values.totalValueETH;
     const withdrawableEther = values.vaultData.withdrawableEther;
 
     const totalValueAmount = formatBalance(totalValue).trimmed;

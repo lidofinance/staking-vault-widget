@@ -15,9 +15,9 @@ export const useRemainingMintingCapacityChart = () => {
 
     const {
       mintableStETH,
-      totalValue,
+      totalValueETH: totalValue,
       reserveRatioBP,
-      vaultLiability,
+      vaultLiabilityStETH: vaultLiability,
       forcedRebalanceThresholdBP,
     } = data;
 

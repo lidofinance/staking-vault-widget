@@ -1,29 +1,54 @@
-import { bigIntMin } from 'utils/bigint-math';
+import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import { bigIntClampZero, bigIntMin } from 'utils/bigint-math';
 
 type GetReduceToCapacityAmountArgs = {
-  vaultLiability: bigint;
-  totalMintingCapacity: bigint;
-  maxAmount: bigint;
+  currentVaultLiabilitySteth: bigint;
+  totalVaultValueEth: bigint;
+  toSupplyVaultValueEth?: bigint;
+  reserveRatioBP: bigint;
+  maximumRebalanceAmountEth: bigint;
+};
+
+type GetReduceToCapacityAmountResult = {
+  reduceToCapacityAmount: bigint;
+  hasExcessLiability: boolean;
 };
 
 /**
  * Amount of stETH Liability that has to be repaid to bring the Utilization ratio
  * (liability / minting capacity) back down to 100%.
  *
- * When the minting capacity is exceeded the liability is larger than the
- * capacity, so the surplus `liability - capacity` is what needs to be rebalanced
- * away. The result is capped by the maximum amount that can actually be
- * rebalanced (idle availableBalance + supplied ETH, bounded by the liability).
+ * We calculate how much stETH liability by RR vault can support with current value (+value to be supplied in rebalance tx)
+ * If there is excess liability, meaning vault has more liability then can be collateralize,
+ * the difference will be able to rebalance vault down to 100% utilization
+ * The value is capped by maximumRebalanceAmount which is based on actual vault ETH balance and total liability
  */
 export const getReduceToCapacityAmount = ({
-  vaultLiability,
-  totalMintingCapacity,
-  maxAmount,
-}: GetReduceToCapacityAmountArgs): bigint => {
-  const surplus =
-    vaultLiability > totalMintingCapacity
-      ? vaultLiability - totalMintingCapacity
-      : 0n;
+  currentVaultLiabilitySteth,
+  reserveRatioBP,
+  toSupplyVaultValueEth = 0n,
+  totalVaultValueEth,
+  maximumRebalanceAmountEth,
+}: GetReduceToCapacityAmountArgs): GetReduceToCapacityAmountResult => {
+  const targetVaultLiabilityStethNoSupply =
+    (totalVaultValueEth * reserveRatioBP) / VAULT_TOTAL_BASIS_POINTS_BN;
 
-  return bigIntMin(surplus, maxAmount);
+  const targetVaultLiabilitySteth =
+    ((totalVaultValueEth + toSupplyVaultValueEth) * reserveRatioBP) /
+    VAULT_TOTAL_BASIS_POINTS_BN;
+
+  const excessLiabilitySteth = bigIntClampZero(
+    currentVaultLiabilitySteth - targetVaultLiabilitySteth,
+  );
+
+  const hasExcessLiability =
+    currentVaultLiabilitySteth - targetVaultLiabilityStethNoSupply > 0n;
+
+  return {
+    reduceToCapacityAmount: bigIntMin(
+      excessLiabilitySteth,
+      maximumRebalanceAmountEth,
+    ),
+    hasExcessLiability,
+  };
 };

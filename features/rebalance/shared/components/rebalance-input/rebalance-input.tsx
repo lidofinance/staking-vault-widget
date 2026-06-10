@@ -1,66 +1,64 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults';
 import { Eth, Tooltip } from '@lidofinance/lido-ui';
 
 import { TokenAmountInputGroup } from 'shared/hook-form';
 import { InfoRowAmount } from 'shared/components/form';
 import { isBigint } from 'utils';
 
-import {
-  useIsForceRebalance,
-  useMaxRebalanceAmount,
-} from 'features/rebalance/hooks';
+import { useRebalanceState } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import { ReduceToCapacityButton } from './reduce-to-capacity-button';
 
 import { Container, TooltipAnchor } from './styles';
 
-const { available, forceRebalanceTooltip } = vaultTexts.actions.rebalance.input;
+const { available, forceRebalanceTooltip, rebalanceOversupplyWarning } =
+  vaultTexts.actions.rebalance.input;
 
 export const RebalanceInput = () => {
   const {
     setValue,
     formState: { disabled, isLoading: isFormReadyLoading },
   } = useFormContext<RebalanceFormFieldValues>();
-  const { data, isPending } = useVaultOverviewData();
-  const { forceRebalanceThresholdWei, availableBalanceWei } = data ?? {};
-  const isForceRebalance = useIsForceRebalance();
-  const maxAmount = useMaxRebalanceAmount();
+  const {
+    isForceRebalance,
+    valueToForceRebalance,
+    maxRebalanceAmount,
+    reduceToCapacityAmount,
+    rebalanceMode,
+  } = useRebalanceState();
 
   // In forced rebalance the whole available amount is rebalanced via the hub,
   // so the field is pre-filled and locked from editing.
   useEffect(() => {
     if (
       isForceRebalance &&
-      !isPending &&
       !isFormReadyLoading &&
-      isBigint(forceRebalanceThresholdWei)
+      isBigint(valueToForceRebalance)
     ) {
-      setValue('rebalanceAmount', forceRebalanceThresholdWei, {
+      setValue('rebalanceAmount', valueToForceRebalance, {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
     }
-  }, [
-    isForceRebalance,
-    forceRebalanceThresholdWei,
-    isPending,
-    isFormReadyLoading,
-    setValue,
-  ]);
+  }, [isForceRebalance, valueToForceRebalance, isFormReadyLoading, setValue]);
 
   const input = (
     <TokenAmountInputGroup
       amountFieldName="rebalanceAmount"
       tokenLabel="ETH"
-      maxAmount={maxAmount}
       showRightDecorator={!isForceRebalance}
       leftDecorator={<Eth />}
       rightDecorator={<ReduceToCapacityButton />}
       disabled={disabled || isForceRebalance}
+      warning={
+        rebalanceMode === 'healing' && reduceToCapacityAmount === 0n
+          ? rebalanceOversupplyWarning
+          : undefined
+      }
     />
   );
 
@@ -68,7 +66,7 @@ export const RebalanceInput = () => {
     <Container>
       <InfoRowAmount
         title={available}
-        amount={availableBalanceWei}
+        amount={maxRebalanceAmount}
         token="ETH"
         disabled={disabled}
         data-testid="availableToRebalanceRow"

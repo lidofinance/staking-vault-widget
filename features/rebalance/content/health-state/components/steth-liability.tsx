@@ -10,7 +10,7 @@ import { ListItem } from './styles';
 export const StEthLiability = () => {
   const { isPending, data } = useVaultOverviewData();
 
-  const { vaultLiability = 0n } = data ?? {};
+  const { vaultLiabilityStETH: vaultLiability = 0n } = data ?? {};
   const maxDecimalDigits = vaultLiability / ONE_ETHER > 100 ? 1 : 4;
 
   return (

@@ -25,7 +25,6 @@ import {
   calculateHealth,
   formatToPercentWithDivider,
   toEthValue,
-  toStethValue,
   getMintingConstraintType,
   formatBasisPoint,
   calculateOverviewV2,
@@ -56,7 +55,7 @@ export type VaultInfo = VaultConnection &
     address: Address;
     owner: Address;
     nodeOperator: Address;
-    totalValue: bigint;
+    totalValueETH: bigint;
     liabilityShares: bigint;
     liabilityStETH: bigint;
     currentLiabilityStETH: bigint;
@@ -80,11 +79,10 @@ export type VaultInfo = VaultConnection &
     vaultQuarantineState: VaultQuarantineState;
     currentMaxLiabilityStETH: bigint;
     obligationsShortfallValue: bigint;
-    stETHToBurn: bigint;
+    stETHToBurnForObligations: bigint;
     feesToSettle: bigint;
     rebalanceShares: bigint;
     rebalanceStETH: bigint;
-    rebalanceETH: bigint;
     lidoTVLSharesLimit: bigint;
     groupShareLimit: bigint;
     stagedBalanceWei: bigint;
@@ -124,7 +122,7 @@ const getVaultData = async (
 
   const [
     balance,
-    totalValue,
+    totalValueETH,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
     feeRate,
@@ -159,7 +157,7 @@ const getVaultData = async (
   // TODO: fix ts types deps and join in one call
   const [
     obligationsShortfallValue,
-    [sharesToBurn, feesToSettle],
+    [stethSharesToBurnForObligations, feesToSettle],
     rebalanceShares,
     vaultRecord,
     lockedEth,
@@ -210,29 +208,30 @@ const getVaultData = async (
   const [
     liabilityStETH,
     currentLiabilityStETH,
+    //
     mintableStETH,
     stETHLimit,
     totalMintingCapacityStETH,
     tierStETHLimit,
-    stETHToBurn,
+    //
+    stETHToBurnForObligations,
     rebalanceStETH,
     redemptionStETH,
     currentMaxLiabilityStETH,
   ] = await lidoSDKShares.convertBatchSharesToSteth([
     { amount: liabilityShares, roundUp: true },
     { amount: currentLiabilityShares, roundUp: true },
+    //
     mintableShares,
     shareLimit,
     totalMintingCapacityShares,
     tierShareLimit,
-    { amount: sharesToBurn, roundUp: true },
+    //
+    { amount: stethSharesToBurnForObligations, roundUp: true },
     { amount: rebalanceShares, roundUp: true },
     { amount: redemptionShares, roundUp: true },
     { amount: currentMaxLiabilityShares, roundUp: true },
   ]);
-
-  const rebalanceETH =
-    await lidoSDKShares.getPooledEthBySharesRoundUp(rebalanceShares);
 
   const lidoTVLSharesLimit =
     await lidoV3Contract.read.getMaxMintableExternalShares();
@@ -240,7 +239,7 @@ const getVaultData = async (
   return {
     address,
     nodeOperator,
-    totalValue,
+    totalValueETH,
     liabilityStETH,
     currentLiabilityStETH,
     mintableStETH,
@@ -270,11 +269,10 @@ const getVaultData = async (
     groupShareLimit,
     stagedBalanceWei,
     obligationsShortfallValue,
-    stETHToBurn,
+    stETHToBurnForObligations,
     feesToSettle,
     rebalanceShares,
     rebalanceStETH,
-    rebalanceETH,
     redemptionShares,
     redemptionStETH,
     beaconChainDepositsPaused,
@@ -299,6 +297,7 @@ const selectOverviewData = ({
     forcedRebalanceThresholdBP,
     nodeOperatorUnclaimedFee,
     withdrawableEther,
+    totalValueETH,
     balance,
     feeRate: nodeOperatorFee,
     nodeOperator,
@@ -323,13 +322,12 @@ const selectOverviewData = ({
     lidoTVLSharesLimit,
     stagedBalanceWei,
     obligationsShortfallValue,
-    stETHToBurn,
+    stETHToBurnForObligations,
     feesToSettle,
     redemptionShares,
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
-    rebalanceETH,
     beaconChainDepositsPaused,
     isReportFresh,
     availableBalanceWei,
@@ -339,7 +337,7 @@ const selectOverviewData = ({
   const feeObligation = unsettledLidoFees + nodeOperatorUnclaimedFee;
 
   const overview = calculateOverviewV2({
-    totalValue: vaultData.totalValue,
+    totalValue: totalValueETH,
     reserveRatioBP,
     liabilitySharesInStethWei: vaultData.liabilityStETH,
     currentLiabilityStETH: vaultData.currentLiabilityStETH,
@@ -354,16 +352,18 @@ const selectOverviewData = ({
     feeObligation,
   });
 
-  // Force rebalance threshold
+  // Force rebalance
   // source https://github.com/lidofinance/core/blob/master/contracts/0.8.25/vaults/VaultHub.sol#L956
-  const balanceForObligations = bigIntMin(
+  const valueToForceRebalance = bigIntMin(
+    // total value attributed to the vault by vault hub
+    totalValueETH,
+    // the unstaked value on vault balance
     availableBalanceWei,
-    vaultData.totalValue,
+    // if vault is unhealthy and can be force-rebalanced, dashboard.obligations() will include unhealthy part
+    stETHToBurnForObligations,
   );
-  const forceRebalanceThresholdWei = bigIntMin(
-    stETHToBurn,
-    balanceForObligations,
-  );
+
+  const isForceRebalance = valueToForceRebalance > 0n;
 
   // Binding-constraint detection:
   // - totalMintingCapacityShares is the current effective capacity (RR-based and already
@@ -382,11 +382,11 @@ const selectOverviewData = ({
     tierId,
     groupShareLimit,
     lidoTVLSharesLimit,
-    totalValue: vaultData.totalValue,
+    totalValue: totalValueETH,
   });
 
   const { healthRatio } = calculateHealth({
-    totalValue: vaultData.totalValue,
+    totalValue: totalValueETH,
     liabilitySharesInStethWei: vaultData.liabilityStETH,
     forceRebalanceThresholdBP: forcedRebalanceThresholdBP,
   });
@@ -404,17 +404,6 @@ const selectOverviewData = ({
   const carrySpreadAprNumber = vault7dApr?.carrySpreadApr.sma;
   const carrySpreadApr = formatToPercentWithDivider(carrySpreadAprNumber);
 
-  const tierLimitStETH = toStethValue(tierStETHLimit);
-  const remainingMintingCapacityStETH = toStethValue(mintableStETH);
-  const undisbursedNodeOperatorFeeEth = toEthValue(nodeOperatorUnclaimedFee);
-  const unsettledLidoFeesEth = toEthValue(unsettledLidoFees);
-
-  const feeObligationEth = toEthValue(feeObligation);
-  const totalValueETH = toEthValue(vaultData.totalValue);
-  const totalLocked = toEthValue(lockedEth + nodeOperatorUnclaimedFee);
-  const liabilityStETH = toStethValue(vaultData.liabilityStETH);
-  const withdrawableEth = toEthValue(withdrawableEther);
-  const balanceEth = toEthValue(balance);
   const reserveRatio = formatBasisPoint(reserveRatioBP);
   const rebalanceThreshold = formatBasisPoint(forcedRebalanceThresholdBP);
   const healthFactor = formatPercent.format(healthRatio / 100);
@@ -423,31 +412,24 @@ const selectOverviewData = ({
     overview.utilizationRatio / 100,
   );
 
-  const totalMintingCapacityStETH = toStethValue(
-    vaultData.totalMintingCapacityStETH,
-  );
   const feeRate = formatBasisPoint(Number(nodeOperatorFee));
   const pendingUnlock = overview.recentlyRepaid;
   const pendingUnlockEth = toEthValue(pendingUnlock > 0n ? pendingUnlock : 0n);
 
   return {
+    ...vaultData,
     address,
     nodeOperator,
-    totalValueETH,
     reserveRatio,
     utilizationRatio,
     utilizationRatioNumber: overview.utilizationRatio,
     rebalanceThreshold,
     healthFactor,
     healthFactorNumber,
-    totalLocked,
-    liabilityStETH,
-    totalMintingCapacityStETH,
-    withdrawableEth,
     withdrawableEther,
-    balanceEth,
+
     balance,
-    undisbursedNodeOperatorFeeEth,
+
     undisbursedNodeOperatorFee: nodeOperatorUnclaimedFee,
     feeRate,
     collateral: lockedEth,
@@ -455,13 +437,12 @@ const selectOverviewData = ({
     pendingUnlock,
     isVaultConnected,
     netApr,
-    unsettledLidoFeesEth,
+
     unsettledLidoFees,
-    remainingMintingCapacityStETH,
-    feeObligationEth,
+
     feeObligation,
     tierId: tierId.toString(),
-    tierLimitStETH,
+
     mintableStETH,
     forcedRebalanceThresholdBP,
     reserveRatioBP,
@@ -469,17 +450,15 @@ const selectOverviewData = ({
     nodeOperatorRewards,
     bottomLine,
     rebaseReward,
-    infraFee: formatBasisPoint(vaultData.infraFeeBP),
-    liquidityFee: formatBasisPoint(vaultData.liquidityFeeBP),
-    reservationFee: formatBasisPoint(vaultData.reservationFeeBP),
-    totalMintingCapacity: vaultData.totalMintingCapacityStETH,
-    totalValue: vaultData.totalValue,
-    vaultLiability: vaultData.liabilityStETH,
-    rebaseRewardEth: toStethValue(rebaseReward),
-    grossStakingRewardsEth: toEthValue(grossStakingRewards),
-    nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
-    netStakingRewardsEth: toEthValue(netStakingRewards),
-    bottomLineEth: toEthValue(bottomLine),
+    // infraFee: formatBasisPoint(vaultData.infraFeeBP),
+    // liquidityFee: formatBasisPoint(vaultData.liquidityFeeBP),
+    // reservationFee: formatBasisPoint(vaultData.reservationFeeBP),
+    vaultLiabilityStETH: vaultData.liabilityStETH,
+    // rebaseRewardEth: toStethValue(rebaseReward),
+    // grossStakingRewardsEth: toEthValue(grossStakingRewards),
+    // nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
+    // netStakingRewardsEth: toEthValue(netStakingRewards),
+    // bottomLineEth: toEthValue(bottomLine),
     isPausedByFees: feesToSettle > ONE_ETHER,
     netStakingRewards,
     carrySpreadApr,
@@ -497,15 +476,16 @@ const selectOverviewData = ({
     minimalReserve,
     stagedBalanceWei,
     obligationsShortfallValue,
-    stETHToBurn,
+    stETHToBurnForObligations,
     feesToSettle,
     redemptionShares,
     redemptionStETH,
     rebalanceShares,
     rebalanceStETH,
-    rebalanceETH,
     availableBalanceWei,
-    forceRebalanceThresholdWei,
+    //
+    isForceRebalance,
+    valueToForceRebalance,
     // minimalReserve is connection deposit (1 ETH), but it can increase if slashing happened in tier
     isSlashingHappened: minimalReserve > VAULTS_CONNECT_DEPOSIT,
     supplyETH: overview.supply,

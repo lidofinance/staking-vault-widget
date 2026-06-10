@@ -29,15 +29,18 @@ import { FormContent } from './styles';
 
 export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { rebalance, retryEvent } = useRebalance();
+  const { invalidateVaultState } = useVault();
+
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('rebalance');
   const { isFormDisabled } = useRebalanceAvailability();
+
   const { data: overviewData } = useVaultOverviewData();
-  const { invalidateVaultState } = useVault();
   const { data: ethBalance } = useEthereumBalance();
   const { isReady: isVerificationReady, confirmationRequired } =
     useVerificationBannerDefender('rebalance');
+
+  const { rebalance, retryEvent } = useRebalance();
 
   const combinedContext =
     overviewData !== undefined &&

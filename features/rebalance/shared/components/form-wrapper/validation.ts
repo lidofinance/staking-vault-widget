@@ -7,10 +7,7 @@ import { awaitWithTimeout } from 'utils/await-with-timeout';
 import { vaultTexts } from 'modules/vaults';
 import { verificationConfirmSchema } from 'shared/components/banners/additional-verification';
 
-import {
-  getRebalanceMode,
-  getMaxRebalanceAmount,
-} from 'features/rebalance/shared';
+import { getMaxRebalanceAmount } from 'features/rebalance/shared';
 
 import type {
   RebalanceFormAwaitableValidationContext,
@@ -24,22 +21,13 @@ export const rebalanceFormSchema = (
 ) => {
   const overviewData = context?.overviewData;
   const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
-  const vaultLiability = overviewData?.vaultLiability ?? 0n;
+  const vaultLiability = overviewData?.vaultLiabilityStETH ?? 0n;
   const ethBalance = context?.ethBalance ?? 0n;
   const additionalVerification = context?.additionalVerification ?? {
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
   };
-
-  // Rebalancing is available whenever there is an outstanding stETH Liability:
-  // either the forced rebalance shortfall has to be covered, or the user
-  // voluntarily repays (part of) the liability. Otherwise there is nothing to
-  // rebalance.
-  const mode = getRebalanceMode({
-    vaultLiability,
-    forceRebalanceThresholdWei: overviewData?.forceRebalanceThresholdWei,
-  });
 
   const mainSchema = z
     .object({
@@ -48,15 +36,6 @@ export const rebalanceFormSchema = (
       rebalanceAmount: z.bigint().nullable(),
     })
     .superRefine((data, ctx) => {
-      if (mode === 'none') {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'No rebalance needed',
-          path: ['rebalanceAmount'],
-        });
-        return;
-      }
-
       if (data.isSupplyEth) {
         if (!data.supplyEth || data.supplyEth <= 0n) {
           ctx.addIssue({
@@ -75,7 +54,6 @@ export const rebalanceFormSchema = (
 
       const supplyEthValue = data.isSupplyEth ? data.supplyEth ?? 0n : 0n;
       const maxRebalanceAmount = getMaxRebalanceAmount({
-        mode,
         availableBalance: availableBalanceWei,
         vaultLiability,
         supplyEth: supplyEthValue,

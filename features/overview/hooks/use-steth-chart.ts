@@ -13,10 +13,10 @@ export const useStEthChart = (): LineData[] => {
     if (!values) return [];
 
     const {
-      vaultLiability,
+      vaultLiabilityStETH: vaultLiability,
       forcedRebalanceThresholdBP,
-      totalValue,
-      totalMintingCapacity,
+      totalValueETH: totalValue,
+      totalMintingCapacityStETH: totalMintingCapacity,
       reserveRatioBP,
     } = values;
 

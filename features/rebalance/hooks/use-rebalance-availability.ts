@@ -28,7 +28,8 @@ export type RebalanceAvailability = {
 export const useRebalanceAvailability = (): RebalanceAvailability => {
   const { data } = useVaultOverviewData();
   const { isVaultOwner, isSupplier, isRebalancer } = useVaultRiskStatus();
-  const { availableBalanceWei, vaultLiability } = data ?? {};
+  const { availableBalanceWei, vaultLiabilityStETH: vaultLiability } =
+    data ?? {};
 
   return useMemo(() => {
     const hasNoLiability = vaultLiability === 0n;

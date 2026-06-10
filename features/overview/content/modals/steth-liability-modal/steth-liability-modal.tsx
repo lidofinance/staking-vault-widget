@@ -24,7 +24,7 @@ export const StethLiabilityModal = () => {
 
   const {
     utilizationRatio,
-    totalMintingCapacity,
+    totalMintingCapacityStETH: totalMintingCapacity,
     mintableStETH,
     reserveRatio,
     rebalanceThreshold,
@@ -35,7 +35,7 @@ export const StethLiabilityModal = () => {
   } = values || {};
 
   return (
-    <OverviewModal name="vaultLiability" symbol="stETH">
+    <OverviewModal name="vaultLiabilityStETH" symbol="stETH">
       <ChartLine
         loading={isLoading}
         border={ChartLineBorderType.rounded}

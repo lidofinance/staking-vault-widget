@@ -32,10 +32,10 @@ export type ItemProps = {
 } & Omit<SectionPayload, 'key'>;
 
 const modalsMap: Record<VaultOverviewModalKey, FC> = {
-  totalValue: TotalValueModal,
+  totalValueETH: TotalValueModal,
   healthFactorNumber: HealthFactorModal,
   netApr: NetAprModal,
-  vaultLiability: StethLiabilityModal,
+  vaultLiabilityStETH: StethLiabilityModal,
   balance: VaultBalanceModal,
   withdrawableEther: ImmediateWithdrawalModal,
   undisbursedNodeOperatorFee: NodeOperatorFeeModal,

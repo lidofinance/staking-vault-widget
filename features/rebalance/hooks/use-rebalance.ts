@@ -11,19 +11,18 @@ import {
   vaultTexts,
   GoToVault,
   useReportCalls,
+  useVaultOverviewData,
 } from 'modules/vaults';
 
-import { useIsForceRebalance } from './use-is-force-rebalance';
-
-import type { RebalanceFormValidatedValues } from 'features/rebalance/types';
+import type { RebalanceFormValidatedValues } from '../types';
 
 const { title, submit } = vaultTexts.actions.rebalance;
 
 export const useRebalance = () => {
   const { activeVault } = useVault();
+  const { data: vaultOverviewData } = useVaultOverviewData();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
-  const isForceRebalance = useIsForceRebalance();
 
   return {
     rebalance: useCallback(
@@ -33,6 +32,12 @@ export const useRebalance = () => {
         isSupplyEth,
       }: RebalanceFormValidatedValues) => {
         invariant(activeVault, '[useRebalance] activeVault is undefined');
+        invariant(
+          vaultOverviewData,
+          '[useRebalance] vaultOverviewData is undefined',
+        );
+
+        const { isForceRebalance } = vaultOverviewData;
 
         const { hub, dashboard, address } = activeVault;
         const calls: TransactionEntry[] = [...prepareReportCalls()];
@@ -61,7 +66,7 @@ export const useRebalance = () => {
 
         return success;
       },
-      [activeVault, sendTX, prepareReportCalls, isForceRebalance],
+      [activeVault, sendTX, prepareReportCalls, vaultOverviewData],
     ),
     ...rest,
   };

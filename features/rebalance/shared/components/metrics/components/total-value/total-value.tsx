@@ -11,7 +11,7 @@ import { Container, ValueContainer } from './styles';
 
 export const TotalValue = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
-  const { totalValue } = data ?? {};
+  const { totalValueETH: totalValue } = data ?? {};
 
   return (
     <Container>

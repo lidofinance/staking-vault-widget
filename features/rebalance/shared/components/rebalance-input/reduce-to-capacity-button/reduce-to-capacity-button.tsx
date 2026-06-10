@@ -1,64 +1,49 @@
 import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { InputDecoratorMaxButton } from 'shared/components/input-amount/input-decorator-max-button';
-import { useVaultOverviewData, vaultTexts } from 'modules/vaults';
-import { isNumber } from 'utils';
-import { UTILIZATION_RATIO_THRESHOLD } from 'consts/threshold';
+import { vaultTexts } from 'modules/vaults';
 
-import {
-  useIsForceRebalance,
-  useMaxRebalanceAmount,
-  useReduceToCapacityAmount,
-} from 'features/rebalance/hooks';
+import { useRebalanceState } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
-
-import { ReduceButton } from './styles';
 
 export const ReduceToCapacityButton = () => {
   const {
     setValue,
     formState: { disabled },
   } = useFormContext<RebalanceFormFieldValues>();
-  const { data } = useVaultOverviewData();
-  const { utilizationRatioNumber } = data ?? {};
-  const isForceRebalance = useIsForceRebalance();
-  const reduceToCapacityAmount = useReduceToCapacityAmount();
-  const maxRebalanceAmount = useMaxRebalanceAmount();
 
-  const isCapacityExceeded =
-    !isForceRebalance &&
-    isNumber(utilizationRatioNumber) &&
-    utilizationRatioNumber >= UTILIZATION_RATIO_THRESHOLD &&
-    reduceToCapacityAmount > 0n;
+  const { rebalanceAmount } = useWatch<RebalanceFormFieldValues>();
+  const { reduceToCapacityAmount, maxRebalanceAmount, rebalanceMode } =
+    useRebalanceState();
 
-  const handleReduceToCapacity = useCallback(() => {
-    setValue('rebalanceAmount', reduceToCapacityAmount, {
-      shouldValidate: true,
-    });
-  }, [setValue, reduceToCapacityAmount]);
+  const isCapacityExceeded = rebalanceMode === 'healing';
+
+  const maxButtonValue = isCapacityExceeded
+    ? reduceToCapacityAmount
+    : maxRebalanceAmount;
 
   const handleSetMax = useCallback(() => {
-    setValue('rebalanceAmount', maxRebalanceAmount, {
-      shouldValidate: true,
-    });
-  }, [setValue, maxRebalanceAmount]);
+    maxButtonValue &&
+      setValue('rebalanceAmount', maxButtonValue, {
+        shouldValidate: true,
+      });
+  }, [setValue, maxButtonValue]);
 
-  if (!isCapacityExceeded) {
-    return (
-      <InputDecoratorMaxButton onClick={handleSetMax} disabled={disabled} />
-    );
-  }
+  const isMaxButtonDisabled =
+    disabled || !maxButtonValue || rebalanceAmount === maxButtonValue;
+
+  const text = isCapacityExceeded
+    ? vaultTexts.actions.rebalance.input.reduceToCapacity
+    : 'MAX';
 
   return (
-    <ReduceButton
-      size="xxs"
-      variant="translucent"
-      disabled={disabled}
-      onClick={handleReduceToCapacity}
-      data-testid="reduceToCapacityBtn"
+    <InputDecoratorMaxButton
+      disabled={isMaxButtonDisabled}
+      onClick={handleSetMax}
+      data-testid={isCapacityExceeded ? 'reduceToCapacityBtn' : undefined}
     >
-      {vaultTexts.actions.rebalance.input.reduceToCapacity}
-    </ReduceButton>
+      {text}
+    </InputDecoratorMaxButton>
   );
 };

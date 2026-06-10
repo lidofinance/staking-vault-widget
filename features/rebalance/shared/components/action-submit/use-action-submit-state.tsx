@@ -5,13 +5,11 @@ import type { ButtonProps } from '@lidofinance/lido-ui';
 import { useVault, useVaultOverviewData, vaultTexts } from 'modules/vaults';
 import { useVerificationBannerDefender } from 'shared/components';
 
-import { useIsForceRebalance } from 'features/rebalance/hooks';
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import {
   AllEthStakedTooltip,
   DisconnectedTooltip,
-  ForceInsufficientFundsTooltip,
   PendingConnectTooltip,
   PendingDisconnectTooltip,
   ZeroLiabilityTooltip,
@@ -42,14 +40,18 @@ const TOOLTIP_RULES: {
     tooltip: <PendingDisconnectTooltip />,
   },
   {
-    when: ({ overviewData }) => overviewData?.vaultLiability === 0n,
+    when: ({ overviewData }) => overviewData?.vaultLiabilityStETH === 0n,
     tooltip: <ZeroLiabilityTooltip />,
   },
   {
     when: ({ overviewData, hasSupply }) => {
       if (!overviewData) return false;
 
-      const { totalValue, vaultLiability, availableBalanceWei } = overviewData;
+      const {
+        totalValueETH: totalValue,
+        vaultLiabilityStETH: vaultLiability,
+        availableBalanceWei,
+      } = overviewData;
 
       // Supplying ETH provides the funds for the rebalance even when the whole
       // availableBalanceWei is staked on validators, so the action stays available.
@@ -87,30 +89,18 @@ export const useActionSubmitState = (): ActionSubmitState => {
 
   const { activeVault } = useVault();
   const { data: overviewData } = useVaultOverviewData();
-  const isForceRebalance = useIsForceRebalance();
 
-  // The permissionless forced rebalance spends the Not Staked stVaults Balance,
-  // so it reverts (NoFundsForForceRebalance) when that availableBalance cannot cover the
-  // shortfall. Block the submission in that case.
-  const isForceInsufficientFunds =
-    isForceRebalance &&
-    !!overviewData &&
-    overviewData.availableBalanceWei < overviewData.forceRebalanceThresholdWei;
+  const isForceRebalance = overviewData?.isForceRebalance ?? false;
 
-  const tooltip = isForceInsufficientFunds ? (
-    <ForceInsufficientFundsTooltip />
-  ) : (
-    TOOLTIP_RULES.find(({ when }) =>
-      when({ activeVault, overviewData, hasSupply }),
-    )?.tooltip
-  );
+  const tooltip = TOOLTIP_RULES.find(({ when }) =>
+    when({ activeVault, overviewData, hasSupply }),
+  )?.tooltip;
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
 
   const isDisabled =
     isSubmitting ||
     disabled ||
-    isForceInsufficientFunds ||
     // Keep submit inactive whenever the form is invalid (empty/over-max amount,
     // unconfirmed verification, etc.).
     !isValid;
