@@ -15,7 +15,7 @@ export const useVaultRiskStatus = () => {
   const { address } = useDappStatus();
 
   const { data, ...rest } = useQuery({
-    queryKey: [...queryKeys.base, 'vault-risk-status', address] as const,
+    queryKey: [...queryKeys.config(), 'vault-risk-status', address] as const,
     enabled: !!(activeVault && address),
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min

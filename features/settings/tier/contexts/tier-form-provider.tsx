@@ -32,7 +32,7 @@ const prepareDefaultValues = async (
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { refetch } = useVault();
+  const { invalidateVaultConfig } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { data } = useVaultTierInfo();
   const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
@@ -55,10 +55,10 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
       trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitTierTab);
 
       const { result } = await editTierSettings(data);
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      await invalidateVaultConfig();
       return result.success;
     },
-    [editTierSettings, refetch],
+    [editTierSettings, invalidateVaultConfig],
   );
 
   return (

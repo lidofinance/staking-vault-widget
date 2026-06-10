@@ -12,7 +12,7 @@ import {
 const { settleLidoFees } = vaultTexts.actions;
 
 export const useSettleLidoFees = () => {
-  const { activeVault, refetch } = useVault();
+  const { activeVault, invalidateVaultState } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
   const prepareReportCalls = useReportCalls();
 
@@ -40,9 +40,9 @@ export const useSettleLidoFees = () => {
         }),
       );
 
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      await invalidateVaultState();
       return success;
-    }, [prepareReportCalls, sendTX, refetch, activeVault]),
+    }, [prepareReportCalls, sendTX, invalidateVaultState, activeVault]),
     ...rest,
   };
 };

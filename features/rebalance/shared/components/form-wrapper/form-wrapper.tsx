@@ -34,7 +34,7 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const isDisabledByVerification = useDisableFormByVerification('rebalance');
   const { isFormDisabled } = useRebalanceAvailability();
   const { data: overviewData } = useVaultOverviewData();
-  const { refetch } = useVault();
+  const { invalidateVaultState } = useVault();
   const { data: ethBalance } = useEthereumBalance();
   const { isReady: isVerificationReady, confirmationRequired } =
     useVerificationBannerDefender('rebalance');
@@ -76,10 +76,10 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const onSubmit = useCallback(
     async (values: RebalanceFormValidatedValues) => {
       const result = await rebalance(values);
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      await invalidateVaultState();
       return result;
     },
-    [refetch, rebalance],
+    [invalidateVaultState, rebalance],
   );
 
   return (
