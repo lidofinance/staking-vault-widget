@@ -8,7 +8,7 @@ import type { RegisteredPublicClient } from 'modules/web3';
 import { getEncodable } from '../utils/encodable';
 
 export const getStEthContract = (publicClient: RegisteredPublicClient) => {
-  const address = getContractAddress(publicClient.chain.id, 'steth');
+  const address = getContractAddress(publicClient.chain.id, 'lido');
 
   invariant(address, '[getStEthContract] lido is not defined');
 
