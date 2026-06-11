@@ -466,7 +466,7 @@ export const vaultTexts = {
         forceRebalanceTooltip:
           'In the current mode, the amount of ETH subject to rebalancing is calculated automatically and cannot be changed.',
         rebalanceOversupplyWarning:
-          'Supplied ETH will cover utilization recovery fully. Consider just supplying the ETH.',
+          'Supplying ETH will fully restore Utilization Ratio. Consider supplying ETH only.',
       },
     },
     additionalVerification: {

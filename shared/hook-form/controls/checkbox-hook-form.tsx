@@ -25,7 +25,7 @@ export const CheckboxHookForm = ({
 }: CheckBoxHookFormProps) => {
   const { register } = useFormContext();
   const { disabled, errors } = useFormState({ name: fieldName });
-  const hasError = Boolean(errors);
+  const hasError = Boolean(errors[fieldName]);
 
   return (
     <CheckBoxStyled
