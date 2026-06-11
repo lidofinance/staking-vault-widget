@@ -574,7 +574,7 @@ export const vaultTexts = {
       },
       action: 'Request to change',
     },
-    totalValue: {
+    totalValueETH: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -596,7 +596,7 @@ export const vaultTexts = {
         'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
-    vaultLiability: {
+    vaultLiabilityStETH: {
       title: 'stETH Liability',
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
