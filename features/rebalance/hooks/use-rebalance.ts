@@ -16,7 +16,7 @@ import {
 
 import type { RebalanceFormValidatedValues } from '../types';
 
-const { title, submit } = vaultTexts.actions.rebalance;
+const { submit } = vaultTexts.actions.rebalance;
 
 export const useRebalance = () => {
   const { activeVault } = useVault();
@@ -42,6 +42,11 @@ export const useRebalance = () => {
         const { hub, dashboard, address } = activeVault;
         const calls: TransactionEntry[] = [...prepareReportCalls()];
 
+        const modalTitle =
+          !isForceRebalance && isSupplyEth && supplyEth > 0n
+            ? submit.supplyAndRebalance
+            : submit.rebalance;
+
         if (isForceRebalance) {
           calls.push({
             ...hub.encode.forceRebalance([address]),
@@ -51,15 +56,15 @@ export const useRebalance = () => {
           calls.push({
             ...dashboard.encode.rebalanceVaultWithEther([rebalanceAmount]),
             value: isSupplyEth ? supplyEth : 0n,
-            loadingActionText: title,
+            loadingActionText: modalTitle,
           });
         }
 
         const { success } = await withSuccess(
           sendTX({
             transactions: calls,
-            mainActionLoadingText: title,
-            mainActionCompleteText: title,
+            mainActionLoadingText: modalTitle,
+            mainActionCompleteText: modalTitle,
             renderSuccessContent: GoToVault,
           }),
         );

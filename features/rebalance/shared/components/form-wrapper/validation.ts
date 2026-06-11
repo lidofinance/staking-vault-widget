@@ -22,6 +22,7 @@ export const rebalanceFormSchema = (
   const overviewData = context?.overviewData;
   const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
   const vaultLiability = overviewData?.vaultLiabilityStETH ?? 0n;
+  const isForceRebalance = overviewData?.isForceRebalance ?? false;
   const ethBalance = context?.ethBalance ?? 0n;
   const additionalVerification = context?.additionalVerification ?? {
     notOwner: false,
@@ -31,11 +32,13 @@ export const rebalanceFormSchema = (
 
   const mainSchema = z
     .object({
+      rebalanceAmount: z.bigint().nullable(),
       isSupplyEth: z.boolean(),
       supplyEth: z.bigint().nullable(),
-      rebalanceAmount: z.bigint().nullable(),
     })
     .superRefine((data, ctx) => {
+      if (isForceRebalance) return;
+
       if (data.isSupplyEth) {
         if (!data.supplyEth || data.supplyEth <= 0n) {
           ctx.addIssue({
@@ -81,7 +84,9 @@ export const rebalanceFormSchema = (
 
   return z.intersection(
     mainSchema,
-    verificationConfirmSchema(additionalVerification),
+    isForceRebalance
+      ? z.object({})
+      : verificationConfirmSchema(additionalVerification),
   );
 };
 

@@ -76,7 +76,7 @@ type ActionSubmitState = {
 };
 
 export const useActionSubmitState = (): ActionSubmitState => {
-  const { isSubmitting, disabled, isValid } = useFormState();
+  const { isSubmitting, disabled } = useFormState();
   const [supplyEth, isSupplyEth] = useWatch<
     RebalanceFormFieldValues,
     ['supplyEth', 'isSupplyEth']
@@ -98,12 +98,7 @@ export const useActionSubmitState = (): ActionSubmitState => {
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
 
-  const isDisabled =
-    isSubmitting ||
-    disabled ||
-    // Keep submit inactive whenever the form is invalid (empty/over-max amount,
-    // unconfirmed verification, etc.).
-    !isValid;
+  const isDisabled = isSubmitting || disabled;
 
   const variant = isUnavailable ? 'translucent' : 'filled';
   const color = isUnavailable ? 'secondary' : 'primary';
@@ -112,7 +107,7 @@ export const useActionSubmitState = (): ActionSubmitState => {
     ? submit.unavailable
     : isForceRebalance
       ? submit.forceRebalance
-      : supplyEth
+      : hasSupply
         ? submit.supplyAndRebalance
         : submit.rebalance;
 
