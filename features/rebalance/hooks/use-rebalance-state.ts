@@ -22,15 +22,14 @@ export const useRebalanceState = () => {
     if (!data)
       return {
         isForceRebalance: false,
-        rebalanceMode: 'voluntary' as const,
+        rebalanceMode: 'none' as const,
       };
 
     const {
       vaultLiabilityStETH,
       valueToForceRebalance,
       availableBalanceWei,
-      totalValueETH,
-      reserveRatioBP,
+      totalMintingCapacityStethByDeltaValue,
     } = data;
 
     const supplyEthValue = isSupplyEth ? supplyEth ?? 0n : 0n;
@@ -43,10 +42,9 @@ export const useRebalanceState = () => {
 
     const { reduceToCapacityAmount, hasExcessLiability } =
       getReduceToCapacityAmount({
+        totalMintingCapacityStethByDeltaValue,
         currentVaultLiabilitySteth: vaultLiabilityStETH,
-        totalVaultValueEth: totalValueETH,
         toSupplyVaultValueEth: supplyEthValue,
-        reserveRatioBP: BigInt(reserveRatioBP),
         maximumRebalanceAmountEth: maxRebalanceAmount,
       });
 

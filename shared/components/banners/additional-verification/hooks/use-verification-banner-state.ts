@@ -6,9 +6,14 @@ import type {
   VerificationBannerState,
 } from '../types';
 
+import { config } from 'config';
+
 export const useVerificationBannerDefender = (
   action: AdditionalVerificationAction,
 ): VerificationBannerState => {
+  // DEV only feature - will throw if on in production environment
+  const SECURITY_OVERRIDE_DEV_ENV = !config.dangerouslyDisableVaultSecurity;
+
   const { isDappActive } = useDappStatus();
   const {
     isVaultOwner,
@@ -36,7 +41,8 @@ export const useVerificationBannerDefender = (
     hasActionPermission || isVaultOwner === true;
 
   const isNotOwnerWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isVaultOwner === false &&
       hasActionPermission &&
       isTierDefault === false &&
@@ -44,14 +50,16 @@ export const useVerificationBannerDefender = (
   );
 
   const isNotOwnerErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isVaultOwner === false &&
       hasActionPermission &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
   const isMultipleOwnersWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isMultipleOwners === true &&
       isTierDefault === false &&
       isVaultOwner === true &&
@@ -59,21 +67,24 @@ export const useVerificationBannerDefender = (
   );
 
   const isMultipleOwnersErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isMultipleOwners === true &&
       isVaultOwner === true &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
   const isUnguaranteedDepositsWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       hasActionPermissionOrOwnership &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === true,
   );
 
   const isUnguaranteedDepositsErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       hasActionPermissionOrOwnership &&
       nodeOperator &&
       isUnguaranteedDepositsAllowed === true &&

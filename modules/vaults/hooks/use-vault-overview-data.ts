@@ -16,6 +16,7 @@ import {
   type VaultConnection,
   type VaultRecord,
   type Vault7DApr,
+  VAULT_TOTAL_BASIS_POINTS_BN,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -29,7 +30,7 @@ import {
   formatBasisPoint,
   calculateOverviewV2,
 } from 'utils';
-import { bigIntMin } from 'utils/bigint-math';
+import { bigIntClampZero, bigIntMax, bigIntMin } from 'utils/bigint-math';
 
 type VaultDataArgs = {
   vault: VaultBaseInfo;
@@ -76,6 +77,7 @@ export type VaultInfo = VaultConnection &
     tierId: bigint;
     tierShareLimit: bigint;
     tierStETHLimit: bigint;
+    operatorGridEffectiveStETHLimit: bigint;
     vaultQuarantineState: VaultQuarantineState;
     currentMaxLiabilityStETH: bigint;
     obligationsShortfallValue: bigint;
@@ -130,6 +132,7 @@ const getVaultData = async (
     mintableShares,
     tier,
     vaultQuarantineState,
+    operatorGridEffectiveShareLimit,
   ] = await readWithReport({
     publicClient,
     lazyOracle,
@@ -150,6 +153,7 @@ const getVaultData = async (
       dashboard.prepare.remainingMintingCapacityShares([0n]),
       operatorGrid.prepare.vaultTierInfo([vaultAddress]),
       lazyOracle.prepare.vaultQuarantine([vaultAddress]),
+      operatorGrid.prepare.effectiveShareLimit([vaultAddress]),
     ] as const,
     blockNumber,
   });
@@ -218,6 +222,8 @@ const getVaultData = async (
     rebalanceStETH,
     redemptionStETH,
     currentMaxLiabilityStETH,
+    //
+    operatorGridEffectiveStETHLimit,
   ] = await lidoSDKShares.convertBatchSharesToSteth([
     { amount: liabilityShares, roundUp: true },
     { amount: currentLiabilityShares, roundUp: true },
@@ -231,6 +237,8 @@ const getVaultData = async (
     { amount: rebalanceShares, roundUp: true },
     { amount: redemptionShares, roundUp: true },
     { amount: currentMaxLiabilityShares, roundUp: true },
+    //
+    { amount: operatorGridEffectiveShareLimit, roundUp: false },
   ]);
 
   const lidoTVLSharesLimit =
@@ -267,6 +275,7 @@ const getVaultData = async (
     tierStETHLimit,
     lidoTVLSharesLimit,
     groupShareLimit,
+    operatorGridEffectiveStETHLimit,
     stagedBalanceWei,
     obligationsShortfallValue,
     stETHToBurnForObligations,
@@ -331,6 +340,7 @@ const selectOverviewData = ({
     beaconChainDepositsPaused,
     isReportFresh,
     availableBalanceWei,
+    operatorGridEffectiveStETHLimit,
   } = vaultData;
 
   const unsettledLidoFees = cumulativeLidoFees - settledLidoFees;
@@ -416,6 +426,28 @@ const selectOverviewData = ({
   const pendingUnlock = overview.recentlyRepaid;
   const pendingUnlockEth = toEthValue(pendingUnlock > 0n ? pendingUnlock : 0n);
 
+  // Sources:
+  // VaultHub._totalMintingCapacityShares - https://github.com/lidofinance/core/blob/80ce4be7685f62fdda9058a0add2a7c3bfdfc31b/contracts/0.8.25/vaults/VaultHub.sol#L1513
+  // Dashboard.totalMintingCapacityShares -  https://github.com/lidofinance/core/blob/80ce4be7685f62fdda9058a0add2a7c3bfdfc31b/contracts/0.8.25/vaults/dashboard/Dashboard.sol#L207
+  const totalMintingCapacityStethByDeltaValue = (deltaValue: bigint) => {
+    const maxLockableValue = bigIntClampZero(
+      totalValueETH - nodeOperatorUnclaimedFee - unsettledLidoFees + deltaValue,
+    );
+
+    const reserveValue =
+      (maxLockableValue * BigInt(reserveRatioBP)) / VAULT_TOTAL_BASIS_POINTS_BN;
+
+    const capacitySteth = bigIntClampZero(
+      maxLockableValue - bigIntMax(reserveValue, minimalReserve),
+    );
+
+    return bigIntMin(
+      // capacity based on current total value and reserve ratio
+      capacitySteth,
+      operatorGridEffectiveStETHLimit,
+    );
+  };
+
   return {
     ...vaultData,
     address,
@@ -437,6 +469,7 @@ const selectOverviewData = ({
     pendingUnlock,
     isVaultConnected,
     netApr,
+    totalMintingCapacityStethByDeltaValue,
 
     unsettledLidoFees,
 
@@ -450,15 +483,7 @@ const selectOverviewData = ({
     nodeOperatorRewards,
     bottomLine,
     rebaseReward,
-    // infraFee: formatBasisPoint(vaultData.infraFeeBP),
-    // liquidityFee: formatBasisPoint(vaultData.liquidityFeeBP),
-    // reservationFee: formatBasisPoint(vaultData.reservationFeeBP),
     vaultLiabilityStETH: vaultData.liabilityStETH,
-    // rebaseRewardEth: toStethValue(rebaseReward),
-    // grossStakingRewardsEth: toEthValue(grossStakingRewards),
-    // nodeOperatorRewardsEth: toEthValue(nodeOperatorRewards),
-    // netStakingRewardsEth: toEthValue(netStakingRewards),
-    // bottomLineEth: toEthValue(bottomLine),
     isPausedByFees: feesToSettle > ONE_ETHER,
     netStakingRewards,
     carrySpreadApr,

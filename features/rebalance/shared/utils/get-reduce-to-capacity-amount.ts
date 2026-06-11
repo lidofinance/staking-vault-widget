@@ -1,11 +1,9 @@
-import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 import { bigIntClampZero, bigIntMin } from 'utils/bigint-math';
 
 type GetReduceToCapacityAmountArgs = {
+  totalMintingCapacityStethByDeltaValue: (deltaValue: bigint) => bigint;
   currentVaultLiabilitySteth: bigint;
-  totalVaultValueEth: bigint;
   toSupplyVaultValueEth?: bigint;
-  reserveRatioBP: bigint;
   maximumRebalanceAmountEth: bigint;
 };
 
@@ -24,31 +22,30 @@ type GetReduceToCapacityAmountResult = {
  * The value is capped by maximumRebalanceAmount which is based on actual vault ETH balance and total liability
  */
 export const getReduceToCapacityAmount = ({
+  totalMintingCapacityStethByDeltaValue,
   currentVaultLiabilitySteth,
-  reserveRatioBP,
   toSupplyVaultValueEth = 0n,
-  totalVaultValueEth,
   maximumRebalanceAmountEth,
 }: GetReduceToCapacityAmountArgs): GetReduceToCapacityAmountResult => {
-  const targetVaultLiabilityStethNoSupply =
-    (totalVaultValueEth * reserveRatioBP) / VAULT_TOTAL_BASIS_POINTS_BN;
-
-  const targetVaultLiabilitySteth =
-    ((totalVaultValueEth + toSupplyVaultValueEth) * reserveRatioBP) /
-    VAULT_TOTAL_BASIS_POINTS_BN;
-
-  const excessLiabilitySteth = bigIntClampZero(
-    currentVaultLiabilitySteth - targetVaultLiabilitySteth,
-  );
+  const currentTotalMintingCapacitySteth =
+    totalMintingCapacityStethByDeltaValue(0n);
+  const totalMintingCapacityStethWithSupply =
+    totalMintingCapacityStethByDeltaValue(toSupplyVaultValueEth);
 
   const hasExcessLiability =
-    currentVaultLiabilitySteth - targetVaultLiabilityStethNoSupply > 0n;
+    currentVaultLiabilitySteth > currentTotalMintingCapacitySteth;
+
+  const excessLiabilityStethWithSupply = bigIntClampZero(
+    currentVaultLiabilitySteth - totalMintingCapacityStethWithSupply,
+  );
+
+  const reduceToCapacityAmount = bigIntMin(
+    excessLiabilityStethWithSupply,
+    maximumRebalanceAmountEth,
+  );
 
   return {
-    reduceToCapacityAmount: bigIntMin(
-      excessLiabilitySteth,
-      maximumRebalanceAmountEth,
-    ),
+    reduceToCapacityAmount,
     hasExcessLiability,
   };
 };
