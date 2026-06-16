@@ -124,22 +124,35 @@ export const readWithReport = async <
       functionName: 'getBlockNumber',
     } as const;
 
-    try {
-      const allResults = await publicClient.multicall({
-        contracts: [reportCall, ...contracts, getBlockNumberCall] as any,
-        batchSize: 0, // this forces to use single call batch for all calls
-        allowFailure: false,
-        blockNumber,
-      });
+    const allResults = await publicClient.multicall({
+      contracts: [reportCall, ...contracts, getBlockNumberCall] as any,
+      batchSize: 0, // this forces to use single call batch for all calls
+      allowFailure: true,
+      blockNumber,
+    });
 
-      const [, ...results] = allResults.slice(0, -1);
-      return results as MulticallReturnType<TContracts, false>;
-    } catch (error) {
+    const reportResult = allResults[0];
+    const contractResults = allResults.slice(1, -1);
+    const blockNumberResult = allResults[allResults.length - 1];
+
+    if (reportResult?.error) {
       console.warn(
-        '[readWithReport] Report multicall failed, falling back to stale on-chain state.',
-        error instanceof Error ? error.message : 'Unknown error',
+        `[readWithReport] Report call in multicall failed at block ${blockNumberResult.result} with error`,
+        reportResult.error instanceof Error
+          ? reportResult.error.message
+          : 'Unknown error',
       );
     }
+
+    // emulate allowFailure: false,
+    const results = contractResults.map(({ error, result }) => {
+      if (error) {
+        throw error;
+      }
+      return result;
+    });
+
+    return results as MulticallReturnType<TContracts, false>;
   }
 
   return readWithoutReport({ publicClient, contracts });

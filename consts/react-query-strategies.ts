@@ -8,38 +8,38 @@ const TEN_MINUTES = 10 * 60 * 1000;
 
 const ONE_MINUTE = 60 * 1000;
 
-export const STRATEGY_IMMUTABLE = {
+export const STRATEGY_IMMUTABLE: QueryOptions = {
   gcTime: TWENTY_MINUTES,
   staleTime: Infinity,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   refetchOnMount: false,
   refetchInterval: false,
-} satisfies QueryOptions;
+};
 
-export const STRATEGY_CONSTANT = {
+export const STRATEGY_CONSTANT: QueryOptions = {
   gcTime: TWENTY_MINUTES,
   staleTime: Infinity,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   refetchOnMount: false,
   refetchInterval: TWENTY_MINUTES,
-} satisfies QueryOptions;
+};
 
-export const STRATEGY_LAZY = {
+export const STRATEGY_LAZY: QueryOptions = {
   gcTime: TWENTY_MINUTES,
   staleTime: ONE_MINUTE,
   refetchOnWindowFocus: false,
   refetchOnReconnect: true,
   refetchOnMount: true,
   refetchInterval: TEN_MINUTES,
-} satisfies QueryOptions;
+};
 
-export const STRATEGY_EAGER = {
+export const STRATEGY_EAGER: QueryOptions = {
   gcTime: TWENTY_MINUTES,
   staleTime: 0,
   refetchOnWindowFocus: true,
   refetchOnReconnect: true,
   refetchOnMount: true,
   refetchInterval: ONE_MINUTE, // 1 minute
-} satisfies QueryOptions;
+};
