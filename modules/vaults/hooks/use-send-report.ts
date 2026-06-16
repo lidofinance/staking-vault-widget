@@ -22,7 +22,7 @@ export const useSendReport = () => {
       const mainActionLoadingText = vaultTexts.actions.report.loading;
       const mainActionCompleteText = vaultTexts.actions.report.completed;
 
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
+      const transactions: TransactionEntry[] = await prepareReportCalls();
       const { success } = await withSuccess(
         sendTX({
           transactions,

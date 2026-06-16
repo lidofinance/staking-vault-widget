@@ -1,23 +1,18 @@
-import { DefaultOptions } from '@tanstack/react-query';
-
-type QueryOptions = DefaultOptions['queries'];
-
 const TWENTY_MINUTES = 20 * 60 * 1000;
 
 const TEN_MINUTES = 10 * 60 * 1000;
 
 const ONE_MINUTE = 60 * 1000;
 
-export const STRATEGY_IMMUTABLE: QueryOptions = {
+export const STRATEGY_IMMUTABLE = {
   gcTime: TWENTY_MINUTES,
   staleTime: Infinity,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   refetchOnMount: false,
-  refetchInterval: false,
 };
 
-export const STRATEGY_CONSTANT: QueryOptions = {
+export const STRATEGY_CONSTANT = {
   gcTime: TWENTY_MINUTES,
   staleTime: Infinity,
   refetchOnWindowFocus: false,
@@ -26,7 +21,7 @@ export const STRATEGY_CONSTANT: QueryOptions = {
   refetchInterval: TWENTY_MINUTES,
 };
 
-export const STRATEGY_LAZY: QueryOptions = {
+export const STRATEGY_LAZY = {
   gcTime: TWENTY_MINUTES,
   staleTime: ONE_MINUTE,
   refetchOnWindowFocus: false,
@@ -35,7 +30,7 @@ export const STRATEGY_LAZY: QueryOptions = {
   refetchInterval: TEN_MINUTES,
 };
 
-export const STRATEGY_EAGER: QueryOptions = {
+export const STRATEGY_EAGER = {
   gcTime: TWENTY_MINUTES,
   staleTime: 0,
   refetchOnWindowFocus: true,

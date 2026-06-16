@@ -24,7 +24,7 @@ export const useSettleLidoFees = () => {
       const mainActionCompleteText = settleLidoFees.completed;
       const { hub, address } = activeVault;
 
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
+      const transactions: TransactionEntry[] = await prepareReportCalls();
       transactions.push({
         ...hub.encode.settleLidoFees([address]),
         loadingActionText: mainActionLoadingText,

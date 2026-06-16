@@ -40,7 +40,7 @@ export const useRebalance = () => {
         const { isForceRebalance } = vaultOverviewData;
 
         const { hub, dashboard, address } = activeVault;
-        const calls: TransactionEntry[] = [...prepareReportCalls()];
+        const calls: TransactionEntry[] = [...(await prepareReportCalls())];
 
         const modalTitle =
           !isForceRebalance && isSupplyEth && supplyEth > 0n

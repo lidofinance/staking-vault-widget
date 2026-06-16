@@ -6,10 +6,14 @@ import { ReportMissingError, vaultTexts } from '../consts';
 
 export const useReportCalls = () => {
   const { activeVault } = useVault();
-  return useCallback(() => {
+  return useCallback(async () => {
     invariant(activeVault, 'activeVault is required');
 
-    const { report, isReportFresh, lazyOracle } = activeVault;
+    const { report, lazyOracle, hub, address } = activeVault;
+
+    // TODO: check report state against cached report, refetch report if nedeed,
+    // Live check before tx submission to ensure that report is not already submitted
+    const isReportFresh = await hub.read.isReportFresh([address]);
 
     if (!report) {
       if (!isReportFresh) {

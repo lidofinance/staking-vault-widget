@@ -49,7 +49,10 @@ export const useMint = () => {
 
         const { success } = await withSuccess(
           sendTX({
-            transactions: async () => [...prepareReportCalls(), mintCall],
+            transactions: async () => [
+              ...(await prepareReportCalls()),
+              mintCall,
+            ],
             forceAtomic: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
