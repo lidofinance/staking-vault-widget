@@ -8,16 +8,9 @@ import type {
 
 import { dashboardAbi } from 'abi/dashboard-abi';
 import { useLidoSDK } from 'modules/web3';
-import { isBigint } from 'utils';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
-
-const stringifyArgs = (args: unknown): string => {
-  return JSON.stringify(args ?? [], (_, value) =>
-    isBigint(value) ? value.toString() : value,
-  );
-};
 
 export const useReadDashboard = <
   TMutability extends 'pure' | 'view' | 'nonpayable' | 'payable',
@@ -58,12 +51,12 @@ export const useReadDashboard = <
     queryKey: [
       ...queryKeys.state,
       'read-with-report',
-      functionName,
-      { args: stringifyArgs(args) },
+      { args, functionName },
     ] as const,
     enabled: !!activeVault && enabled,
     select,
-    queryFn: async () => {
+    queryFn: async ({ queryKey }) => {
+      const { args, functionName } = queryKey[5];
       invariant(
         activeVault,
         '[useReadWithVaultReport] activeVault is not defined',

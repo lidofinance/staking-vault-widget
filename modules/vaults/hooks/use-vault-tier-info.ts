@@ -319,7 +319,7 @@ export const useVaultTierInfo = () => {
     queryKey: [
       ...queryKeys.state,
       'vault-tier-info',
-      activeVault?.blockNumberString,
+      { blockNumber: activeVault?.blockNumber },
     ],
     enabled: !!activeVault,
     queryFn: async () => {

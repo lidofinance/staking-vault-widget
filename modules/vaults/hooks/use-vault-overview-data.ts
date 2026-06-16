@@ -529,7 +529,7 @@ export const useVaultOverviewData = () => {
     queryKey: [
       ...queryKeys.state,
       'vault-overview-data',
-      activeVault?.blockNumber.toString(),
+      { blockNumber: activeVault?.blockNumber },
     ],
     enabled: !!activeVault,
     refetchOnMount: true,

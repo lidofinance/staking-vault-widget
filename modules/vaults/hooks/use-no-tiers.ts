@@ -88,7 +88,7 @@ export const useNodeOperatorTiersInfo = (): UseQueryResult<
     queryKey: [
       ...queryKeys.config('settings'),
       'node-operator-tier-info',
-      activeVault?.blockNumberString,
+      { blockNumber: activeVault?.blockNumber },
     ],
     enabled: !!activeVault,
     queryFn: async () => {
