@@ -10,6 +10,7 @@ type GetReduceToCapacityAmountArgs = {
 type GetReduceToCapacityAmountResult = {
   reduceToCapacityAmount: bigint;
   hasExcessLiability: boolean;
+  canReduceToCapacity: boolean;
 };
 
 /**
@@ -44,8 +45,12 @@ export const getReduceToCapacityAmount = ({
     maximumRebalanceAmountEth,
   );
 
+  const canReduceToCapacity =
+    excessLiabilityStethWithSupply == reduceToCapacityAmount;
+
   return {
     reduceToCapacityAmount,
     hasExcessLiability,
+    canReduceToCapacity,
   };
 };

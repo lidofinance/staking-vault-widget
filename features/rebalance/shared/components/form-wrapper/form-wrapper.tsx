@@ -32,11 +32,13 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { invalidateVaultState } = useVault();
 
   const disabled = useDisableForm();
-  const isDisabledByVerification = useDisableFormByVerification('rebalance');
-  const { isFormDisabled } = useRebalanceAvailability();
 
   const { data: overviewData, refetch: refetchOverviewData } =
     useVaultOverviewData();
+
+  const isDisabledByVerification = useDisableFormByVerification('rebalance');
+  const { isFormDisabled } = useRebalanceAvailability();
+
   const { data: ethBalance } = useEthereumBalance();
   const { isReady: isVerificationReady, confirmationRequired } =
     useVerificationBannerDefender('rebalance');
@@ -56,6 +58,8 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 
   const overviewDataPromise = useAwaiter(combinedContext);
 
+  const isForceRebalance = !!overviewData?.isForceRebalance;
+
   const formObject = useForm<
     RebalanceFormFieldValues,
     RebalanceFormAwaitableValidationContext,
@@ -72,7 +76,11 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     },
     mode: 'onChange',
     disabled:
-      !isDappActive || disabled || isDisabledByVerification || isFormDisabled,
+      !isDappActive ||
+      disabled ||
+      // FRT is permissionless is not affected by verification
+      (!isForceRebalance && isDisabledByVerification) ||
+      isFormDisabled,
     context: overviewDataPromise.awaiter,
     resolver: RebalanceFormResolver,
   });

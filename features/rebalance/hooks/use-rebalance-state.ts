@@ -40,7 +40,7 @@ export const useRebalanceState = () => {
       supplyEth: supplyEthValue,
     });
 
-    const { reduceToCapacityAmount, hasExcessLiability } =
+    const { reduceToCapacityAmount, hasExcessLiability, canReduceToCapacity } =
       getReduceToCapacityAmount({
         totalMintingCapacityStethByDeltaValue,
         currentVaultLiabilitySteth: vaultLiabilityStETH,
@@ -61,6 +61,7 @@ export const useRebalanceState = () => {
       maxRebalanceAmount,
       reduceToCapacityAmount,
       hasExcessLiability,
+      canReduceToCapacity,
     };
   }, [data, isSupplyEth, supplyEth]);
 };

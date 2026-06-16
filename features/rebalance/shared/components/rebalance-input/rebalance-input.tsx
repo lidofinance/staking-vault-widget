@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { vaultTexts } from 'modules/vaults';
-import { Eth, Tooltip } from '@lidofinance/lido-ui';
+import { Eth, Tooltip, Text } from '@lidofinance/lido-ui';
 
 import { TokenAmountInputGroup } from 'shared/hook-form';
 import { InfoRowAmount } from 'shared/components/form';
@@ -14,8 +14,12 @@ import { ReduceToCapacityButton } from './reduce-to-capacity-button';
 
 import { Container, TooltipAnchor } from './styles';
 
-const { available, forceRebalanceTooltip, rebalanceOversupplyWarning } =
-  vaultTexts.actions.rebalance.input;
+const {
+  available,
+  forceRebalanceTooltip,
+  rebalanceOversupplyWarning,
+  rebalanceRecommendedExplainer,
+} = vaultTexts.actions.rebalance.input;
 
 export const RebalanceInput = () => {
   const {
@@ -28,6 +32,7 @@ export const RebalanceInput = () => {
     maxRebalanceAmount,
     reduceToCapacityAmount,
     rebalanceMode,
+    canReduceToCapacity,
   } = useRebalanceState();
 
   // In forced rebalance the whole available amount is rebalanced via the hub,
@@ -77,6 +82,11 @@ export const RebalanceInput = () => {
         </Tooltip>
       ) : (
         input
+      )}
+      {rebalanceMode === 'healing' && (
+        <Text size="xxs" color="secondary">
+          {rebalanceRecommendedExplainer(canReduceToCapacity)}
+        </Text>
       )}
     </Container>
   );
