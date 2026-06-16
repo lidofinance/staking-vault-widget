@@ -21,8 +21,8 @@ export const RebalanceVerificationBanners: FC<
   }
 
   return variant === 'error' ? (
-    <VerificationErrorBanners action="rebalance" />
+    <VerificationErrorBanners action="supply" />
   ) : (
-    <VerificationWarningBanners action="rebalance" />
+    <VerificationWarningBanners action="supply" />
   );
 };

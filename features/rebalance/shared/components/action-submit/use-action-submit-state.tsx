@@ -85,7 +85,7 @@ export const useActionSubmitState = (): ActionSubmitState => {
   });
   const hasSupply = Boolean(isSupplyEth) && (supplyEth ?? 0n) > 0n;
 
-  const { isErrorBannerVisible } = useVerificationBannerDefender('rebalance');
+  const { isErrorBannerVisible } = useVerificationBannerDefender('supply');
 
   const { activeVault } = useVault();
   const { data: overviewData } = useVaultOverviewData();

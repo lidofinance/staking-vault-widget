@@ -1,19 +1,17 @@
-import { MultiplePermissionedSubmitButton } from 'modules/vaults';
+import { PermissionedSubmitButton } from 'modules/vaults';
 import { TooltipHint } from 'shared/components';
 
 import { useActionSubmitState } from './use-action-submit-state';
 
 import { ButtonContent } from './styles';
 
-const REBALANCE_ROLES = ['rebalancer'] as const;
-
 export const ActionSubmit = () => {
   const { text, tooltip, variant, color, isDisabled, isSubmitting } =
     useActionSubmitState();
 
   return (
-    <MultiplePermissionedSubmitButton
-      dashboardRoles={REBALANCE_ROLES}
+    <PermissionedSubmitButton
+      dashboardRole="rebalancer"
       variant={variant}
       color={color}
       type="submit"
@@ -24,6 +22,6 @@ export const ActionSubmit = () => {
         {text}
         {tooltip && <TooltipHint hint={tooltip} />}
       </ButtonContent>
-    </MultiplePermissionedSubmitButton>
+    </PermissionedSubmitButton>
   );
 };

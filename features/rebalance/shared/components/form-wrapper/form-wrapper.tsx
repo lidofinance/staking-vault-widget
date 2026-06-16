@@ -36,12 +36,12 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
   const { data: overviewData, refetch: refetchOverviewData } =
     useVaultOverviewData();
 
-  const isDisabledByVerification = useDisableFormByVerification('rebalance');
+  const isDisabledByVerification = useDisableFormByVerification('supply');
+  const { isReady: isVerificationReady, confirmationRequired } =
+    useVerificationBannerDefender('supply');
   const { isFormDisabled } = useRebalanceAvailability();
 
   const { data: ethBalance } = useEthereumBalance();
-  const { isReady: isVerificationReady, confirmationRequired } =
-    useVerificationBannerDefender('rebalance');
 
   const { rebalance, retryEvent } = useRebalance();
 

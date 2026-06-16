@@ -21,7 +21,6 @@ export const useVerificationBannerDefender = (
     firstAdmin,
     isSupplier = false,
     isRepayer = false,
-    isRebalancer = false,
     isTierDefault,
     isNodeOperatorVerified,
     defaultAdminList,
@@ -33,7 +32,6 @@ export const useVerificationBannerDefender = (
   const permissionMap: Record<AdditionalVerificationAction, boolean> = {
     repay: isRepayer,
     supply: isSupplier,
-    rebalance: isRebalancer,
   };
 
   const hasActionPermission = permissionMap[action];
@@ -70,6 +68,7 @@ export const useVerificationBannerDefender = (
     SECURITY_OVERRIDE_DEV_ENV &&
       isDappActive &&
       isMultipleOwners === true &&
+      hasActionPermission &&
       isVaultOwner === true &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
