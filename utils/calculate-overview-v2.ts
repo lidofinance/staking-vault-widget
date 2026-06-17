@@ -63,7 +63,6 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
           oneMinusRR,
         ) - liabilitySharesInStethWei;
 
-  // Prevent underflow
   const valueMinusLiability = bigIntClampZero(
     totalValue - liabilitySharesInStethWei,
   );
@@ -79,7 +78,6 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
             totalMintingCapacityStethWei,
         ) / VAULT_TOTAL_BASIS_POINTS;
 
-  // Prevent underflow
   const effectiveTotalValue = bigIntClampZero(totalValue - feeObligation);
 
   // repay-obligations
