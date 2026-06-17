@@ -73,6 +73,7 @@ type ActionSubmitState = {
   color: ButtonProps['color'];
   isDisabled: boolean;
   isSubmitting: boolean;
+  isForceRebalance: boolean;
 };
 
 export const useActionSubmitState = (): ActionSubmitState => {
@@ -111,5 +112,13 @@ export const useActionSubmitState = (): ActionSubmitState => {
         ? submit.supplyAndRebalance
         : submit.rebalance;
 
-  return { text, tooltip, variant, color, isDisabled, isSubmitting };
+  return {
+    text,
+    tooltip,
+    variant,
+    color,
+    isDisabled,
+    isSubmitting,
+    isForceRebalance,
+  };
 };

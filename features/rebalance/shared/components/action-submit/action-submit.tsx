@@ -6,12 +6,20 @@ import { useActionSubmitState } from './use-action-submit-state';
 import { ButtonContent } from './styles';
 
 export const ActionSubmit = () => {
-  const { text, tooltip, variant, color, isDisabled, isSubmitting } =
-    useActionSubmitState();
+  const {
+    text,
+    tooltip,
+    variant,
+    color,
+    isDisabled,
+    isSubmitting,
+    isForceRebalance,
+  } = useActionSubmitState();
 
   return (
     <PermissionedSubmitButton
       dashboardRole="rebalancer"
+      isPermissionless={isForceRebalance}
       variant={variant}
       color={color}
       type="submit"
