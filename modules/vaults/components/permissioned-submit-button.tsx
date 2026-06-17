@@ -26,10 +26,14 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   const shouldDisable =
     disabled ||
     !isAccountActive ||
-    (isPermissionless ? false : isLoading || !data?.hasPermissions);
+    (!isPermissionless && (isLoading || !data?.hasPermissions));
 
   const shouldShowPermissionError = Boolean(
-    !isLoading && data && !data.hasPermissions && isAccountActive,
+    !isPermissionless &&
+      !isLoading &&
+      data &&
+      !data.hasPermissions &&
+      isAccountActive,
   );
 
   const missingRoles =

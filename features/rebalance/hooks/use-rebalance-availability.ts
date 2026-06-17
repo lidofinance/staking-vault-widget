@@ -28,8 +28,11 @@ export type RebalanceAvailability = {
 export const useRebalanceAvailability = (): RebalanceAvailability => {
   const { data } = useVaultOverviewData();
   const { isVaultOwner, isSupplier, isRebalancer } = useVaultRiskStatus();
-  const { availableBalanceWei, vaultLiabilityStETH: vaultLiability } =
-    data ?? {};
+  const {
+    availableBalanceWei,
+    vaultLiabilityStETH: vaultLiability,
+    isForceRebalance = false,
+  } = data ?? {};
 
   return useMemo(() => {
     const hasNoLiability = vaultLiability === 0n;
@@ -40,7 +43,7 @@ export const useRebalanceAvailability = (): RebalanceAvailability => {
     const hasNoAnyFundsToRebalance =
       availableBalanceWei === 0n && !canFundRebalance;
 
-    const hasNoPermission = !isVaultOwner && !isRebalancer;
+    const hasNoPermission = !isForceRebalance && !isVaultOwner && !isRebalancer;
 
     const isDisabledByNoDebtCases = hasNoLiability || hasNoAnyFundsToRebalance;
     const isFormDisabled = isDisabledByNoDebtCases || hasNoPermission;
@@ -58,5 +61,6 @@ export const useRebalanceAvailability = (): RebalanceAvailability => {
     isVaultOwner,
     isSupplier,
     isRebalancer,
+    isForceRebalance,
   ]);
 };
