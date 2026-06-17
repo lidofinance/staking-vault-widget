@@ -16,7 +16,7 @@ import {
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
-import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk';
+import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   const { publicClient, vaultModule } = useLidoSDK();
@@ -137,7 +137,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
-        blockNumberString: blockNumber.toString(),
         ...connection,
       };
     },

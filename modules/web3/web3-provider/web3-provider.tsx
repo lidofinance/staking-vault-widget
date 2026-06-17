@@ -21,7 +21,7 @@ import { WalletIdsEthereum, WalletsListEthereum } from 'reef-knot/wallets';
 import { useThemeToggle } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import { useUserConfig } from 'config/user-config';
 import { useGetRpcUrlByChainId } from 'config/rpc';
 import { walletMetricProps } from 'consts/matomo-wallets-events';

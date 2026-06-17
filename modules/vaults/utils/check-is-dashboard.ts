@@ -1,6 +1,6 @@
 import type { Address } from 'viem';
 import type { RegisteredPublicClient } from 'modules/web3';
-import type { LidoSDKVaultModule } from '@lidofinance/lido-ethereum-sdk';
+import type { LidoSDKVaultModule } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 const PROXY_CODE_PAD_LEFT = '0x363d3d373d3d3d363d73';
 const PROXY_CODE_PAD_RIGHT = '5af43d82803e903d91602b57fd5bf';

@@ -7,10 +7,10 @@ import { optNumber } from 'utils/opt-number';
 import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient } from 'modules/web3';
-import {
+import type {
   LidoSDKVaultEntity,
   LidoSDKVaultModule,
-} from '@lidofinance/lido-ethereum-sdk';
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { getStEthContract } from '../contracts';
 import { vaultApiRoutes } from '../consts';

@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
 import type { Address } from 'viem';
 
 import { type RegisteredPublicClient, useLidoSDK } from 'modules/web3';

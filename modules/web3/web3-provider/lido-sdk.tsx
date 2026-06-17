@@ -17,10 +17,8 @@ import {
 import { LidoSDKWrap } from '@lidofinance/lido-ethereum-sdk/wrap';
 import { LidoSDKWithdraw } from '@lidofinance/lido-ethereum-sdk/withdraw';
 import { LidoSDKStatistics } from '@lidofinance/lido-ethereum-sdk/statistics';
-import {
-  LidoSDKShares,
-  LidoSDKVaultModule,
-} from '@lidofinance/lido-ethereum-sdk';
+import { LidoSDKShares } from '@lidofinance/lido-ethereum-sdk/shares';
+import { LidoSDKVaultModule } from '@lidofinance/lido-ethereum-sdk/stvault';
 // EXTRA MODULE
 import { LidoSDKwETH } from 'modules/vaults/contracts/weth';
 

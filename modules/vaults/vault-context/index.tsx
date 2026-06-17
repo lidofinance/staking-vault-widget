@@ -38,7 +38,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { publicClient } = useLidoSDK();
   const queryClient = useQueryClient();
-  const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
+  const { vaultAddress = '' } = router.query as { vaultAddress?: string };
   const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
     ? (vaultAddress.toLowerCase() as Address)
     : undefined;
