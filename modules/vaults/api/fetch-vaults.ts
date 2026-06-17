@@ -7,7 +7,7 @@ import { optNumber } from 'utils/opt-number';
 import { getApiURL } from 'config';
 
 import type { RegisteredPublicClient } from 'modules/web3';
-import type {
+import {
   LidoSDKVaultEntity,
   LidoSDKVaultModule,
 } from '@lidofinance/lido-ethereum-sdk/stvault';
