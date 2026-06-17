@@ -1,10 +1,14 @@
-import { bigIntClampZero, bigIntMin } from 'utils/bigint-math';
+import { type TotalMintingCapacityByDeltaValueFn } from 'modules/vaults';
+import { bigIntMin } from 'utils/bigint-math';
+import { solveRebalanceToCapacity } from './solve-rebalance-to-capacity';
 
 type GetReduceToCapacityAmountArgs = {
-  totalMintingCapacityStethByDeltaValue: (deltaValue: bigint) => bigint;
+  totalMintingCapacityStethByDeltaValue: TotalMintingCapacityByDeltaValueFn;
   currentVaultLiabilitySteth: bigint;
   toSupplyVaultValueEth?: bigint;
   maximumRebalanceAmountEth: bigint;
+  reserveRatioBP: bigint;
+  minimalReserveEth: bigint;
 };
 
 type GetReduceToCapacityAmountResult = {
@@ -27,18 +31,24 @@ export const getReduceToCapacityAmount = ({
   currentVaultLiabilitySteth,
   toSupplyVaultValueEth = 0n,
   maximumRebalanceAmountEth,
+  reserveRatioBP,
+  minimalReserveEth,
 }: GetReduceToCapacityAmountArgs): GetReduceToCapacityAmountResult => {
-  const currentTotalMintingCapacitySteth =
+  const { totalMintingCapacitySteth: currentTotalMintingCapacitySteth } =
     totalMintingCapacityStethByDeltaValue(0n);
-  const totalMintingCapacityStethWithSupply =
-    totalMintingCapacityStethByDeltaValue(toSupplyVaultValueEth);
+  const { totalLockableValueEth } = totalMintingCapacityStethByDeltaValue(
+    toSupplyVaultValueEth,
+  );
 
   const hasExcessLiability =
     currentVaultLiabilitySteth > currentTotalMintingCapacitySteth;
 
-  const excessLiabilityStethWithSupply = bigIntClampZero(
-    currentVaultLiabilitySteth - totalMintingCapacityStethWithSupply,
-  );
+  const excessLiabilityStethWithSupply = solveRebalanceToCapacity({
+    currentLiabilitySteth: currentVaultLiabilitySteth,
+    lockableValueEth: totalLockableValueEth,
+    reserveRatioBP,
+    minimalReserve: minimalReserveEth,
+  });
 
   const reduceToCapacityAmount = bigIntMin(
     excessLiabilityStethWithSupply,

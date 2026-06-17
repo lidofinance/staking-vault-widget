@@ -51,6 +51,11 @@ export type VaultQuarantineState = {
   totalValueRemainder: bigint;
 };
 
+export type TotalMintingCapacityByDeltaValueFn = (deltaValue: bigint) => {
+  totalMintingCapacitySteth: bigint;
+  totalLockableValueEth: bigint;
+};
+
 export type VaultInfo = VaultConnection &
   VaultRecordWithoutDelta & {
     address: Address;
@@ -429,24 +434,33 @@ const selectOverviewData = ({
   // Sources:
   // VaultHub._totalMintingCapacityShares - https://github.com/lidofinance/core/blob/80ce4be7685f62fdda9058a0add2a7c3bfdfc31b/contracts/0.8.25/vaults/VaultHub.sol#L1513
   // Dashboard.totalMintingCapacityShares -  https://github.com/lidofinance/core/blob/80ce4be7685f62fdda9058a0add2a7c3bfdfc31b/contracts/0.8.25/vaults/dashboard/Dashboard.sol#L207
-  const totalMintingCapacityStethByDeltaValue = (deltaValue: bigint) => {
-    const maxLockableValue = bigIntClampZero(
-      totalValueETH - nodeOperatorUnclaimedFee - unsettledLidoFees + deltaValue,
-    );
+  const totalMintingCapacityStethByDeltaValue: TotalMintingCapacityByDeltaValueFn =
+    (deltaValue: bigint) => {
+      const maxLockableValue = bigIntClampZero(
+        totalValueETH -
+          nodeOperatorUnclaimedFee -
+          unsettledLidoFees +
+          deltaValue,
+      );
 
-    const reserveValue =
-      (maxLockableValue * BigInt(reserveRatioBP)) / VAULT_TOTAL_BASIS_POINTS_BN;
+      const reserveValue =
+        (maxLockableValue * BigInt(reserveRatioBP)) /
+        VAULT_TOTAL_BASIS_POINTS_BN;
 
-    const capacitySteth = bigIntClampZero(
-      maxLockableValue - bigIntMax(reserveValue, minimalReserve),
-    );
+      const capacitySteth = bigIntClampZero(
+        maxLockableValue - bigIntMax(reserveValue, minimalReserve),
+      );
 
-    return bigIntMin(
-      // capacity based on current total value and reserve ratio
-      capacitySteth,
-      operatorGridEffectiveStETHLimit,
-    );
-  };
+      const totalMintingCapacitySteth = bigIntMin(
+        // capacity based on current total value and reserve ratio
+        capacitySteth,
+        operatorGridEffectiveStETHLimit,
+      );
+      return {
+        totalLockableValueEth: maxLockableValue,
+        totalMintingCapacitySteth,
+      };
+    };
 
   return {
     ...vaultData,

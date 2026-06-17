@@ -46,6 +46,8 @@ export const useRebalanceState = () => {
         currentVaultLiabilitySteth: vaultLiabilityStETH,
         toSupplyVaultValueEth: supplyEthValue,
         maximumRebalanceAmountEth: maxRebalanceAmount,
+        reserveRatioBP: BigInt(data.reserveRatioBP),
+        minimalReserveEth: data.minimalReserve,
       });
 
     const rebalanceMode = getRebalanceMode({
