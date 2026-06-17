@@ -1,4 +1,6 @@
 import {
+  ContractFunctionExecutionError,
+  ContractFunctionRevertedError,
   type Address,
   type ContractFunctionParameters,
   type MulticallReturnType,
@@ -6,8 +8,10 @@ import {
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
 import { type RegisteredPublicClient } from 'modules/web3';
+import { QUERY_CLIENT_UNSAFE_REF } from 'providers';
 
 import type { VaultBaseInfo, VaultReportType } from '../types';
+import { vaultQueryKeys } from '../consts';
 
 type LazyOracleContract = VaultBaseInfo['lazyOracle'];
 
@@ -136,12 +140,26 @@ export const readWithReport = async <
     const blockNumberResult = allResults[allResults.length - 1];
 
     if (reportResult?.error) {
-      console.warn(
-        `[readWithReport] Report call in multicall failed at block ${blockNumberResult.result} with error`,
-        reportResult.error instanceof Error
-          ? reportResult.error.message
-          : 'Unknown error',
-      );
+      // in case if report is already fresh or new is avaliable invalidate state query
+      if (
+        reportResult.error instanceof ContractFunctionExecutionError &&
+        reportResult.error.cause instanceof ContractFunctionRevertedError &&
+        (reportResult.error.cause.data?.errorName ===
+          'VaultReportIsFreshEnough' ||
+          reportResult.error.cause.data?.errorName === 'InvalidProof')
+      ) {
+        void QUERY_CLIENT_UNSAFE_REF?.invalidateQueries({
+          queryKey: vaultQueryKeys(report.vault, publicClient.chain.id)
+            .stateBase,
+        });
+      } else {
+        console.warn(
+          `[readWithReport] Report call in multicall failed at block ${blockNumberResult.result} with error`,
+          reportResult.error instanceof Error
+            ? reportResult.error.message
+            : 'Unknown error',
+        );
+      }
     }
 
     // emulate allowFailure: false,

@@ -85,20 +85,21 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
           )
         : null;
 
-      const reportGas = report
-        ? await lazyOracle.estimateGas.updateVaultData(
-            [
-              report.vault,
-              report.totalValueWei,
-              report.fee,
-              report.liabilityShares,
-              report.maxLiabilityShares,
-              report.slashingReserve,
-              report.proof,
-            ],
-            {},
-          )
-        : null;
+      const reportGas =
+        report && isReportAvailable
+          ? await lazyOracle.estimateGas.updateVaultData(
+              [
+                report.vault,
+                report.totalValueWei,
+                report.fee,
+                report.liabilityShares,
+                report.maxLiabilityShares,
+                report.slashingReserve,
+                report.proof,
+              ],
+              {},
+            )
+          : null;
 
       // we might not have a report even when fresh is not true
       const isReportMissing = !report && !isReportFresh;

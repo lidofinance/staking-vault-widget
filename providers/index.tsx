@@ -57,6 +57,9 @@ const initQueryClient = () =>
     },
   });
 
+// Exposes queryClient instance for access outside of react tree
+export let QUERY_CLIENT_UNSAFE_REF: QueryClient | undefined = undefined;
+
 export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
   children,
   prefetchedManifest,
@@ -64,6 +67,8 @@ export const Providers: FC<PropsWithChildren<ProvidersProps>> = ({
 }) => {
   // SSR Safe + useState value cannot be discarded/recomputed by React like useMemo
   const [queryClient] = useState(() => initQueryClient());
+
+  QUERY_CLIENT_UNSAFE_REF = queryClient;
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider prefetchedManifest={prefetchedManifest}>
