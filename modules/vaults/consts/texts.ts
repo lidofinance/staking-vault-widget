@@ -466,7 +466,8 @@ export const vaultTexts = {
         forceRebalanceTooltip:
           'In the current mode, the amount of ETH subject to rebalancing is calculated automatically and cannot be changed.',
         rebalanceOversupplyWarning:
-          'Supplying ETH will fully restore Utilization Ratio. Consider supplying ETH only.',
+          'Supplying ETH will fully restore Utilization Ratio.',
+        rebalanceOversupplyWarningLink: 'Consider supplying ETH only.',
         rebalanceRecommendedExplainer: (canReduceToCapacity: boolean) =>
           `“Use Recommended” restores the Utilization Ratio ${canReduceToCapacity ? 'to 100%' : 'as close to 100% as possible'}, based on the ETH available in the stVault Balance`,
       },

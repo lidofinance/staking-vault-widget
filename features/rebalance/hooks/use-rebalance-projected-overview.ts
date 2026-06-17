@@ -4,6 +4,8 @@ import { useVaultOverviewData } from 'modules/vaults';
 import { formatPercent, calculateOverviewV2 } from 'utils';
 
 import type { RebalanceFormFieldValues } from 'features/rebalance/types';
+import { bigIntClampZero } from 'utils/bigint-math';
+import { useMemo } from 'react';
 
 export const useRebalanceProjectedOverview = () => {
   const { data, isPending } = useVaultOverviewData();
@@ -15,54 +17,60 @@ export const useRebalanceProjectedOverview = () => {
     name: ['rebalanceAmount', 'supplyEth', 'isSupplyEth'],
   });
 
-  if (!data) {
-    return { data: undefined, isPending, projected: null };
-  }
+  return useMemo(() => {
+    if (!data) {
+      return { data: undefined, isPending, projected: null };
+    }
 
-  const amount = rebalanceAmount ?? 0n;
-  const effectiveSupply = isSupplyEth ? supplyEth ?? 0n : 0n;
+    const amount = rebalanceAmount ?? 0n;
+    const effectiveSupply = isSupplyEth ? supplyEth ?? 0n : 0n;
 
-  if (amount === 0n && effectiveSupply === 0n) {
-    return { data, isPending, projected: null };
-  }
+    if (amount === 0n && effectiveSupply === 0n) {
+      return { data, isPending, projected: null };
+    }
 
-  const rawProjectedTotal = data.totalValueETH + effectiveSupply;
-  const projectedTotalValue =
-    rawProjectedTotal >= amount ? rawProjectedTotal - amount : 0n;
-  const projectedLiabilityStETH =
-    data.vaultLiabilityStETH >= amount ? data.vaultLiabilityStETH - amount : 0n;
+    const projectedTotalValue = bigIntClampZero(
+      data.totalValueETH + effectiveSupply - amount,
+    );
+    const projectedLiabilityStETH = bigIntClampZero(
+      data.vaultLiabilityStETH - amount,
+    );
 
-  const projectedOverview = calculateOverviewV2({
-    totalValue: projectedTotalValue,
-    reserveRatioBP: data.reserveRatioBP,
-    liabilitySharesInStethWei: projectedLiabilityStETH,
-    currentLiabilityStETH: data.vaultData.currentLiabilityStETH,
-    forceRebalanceThresholdBP: data.forcedRebalanceThresholdBP,
-    withdrawableEther: data.withdrawableEther,
-    balance: data.balance,
-    locked: data.collateral,
-    nodeOperatorDisbursableFee: data.undisbursedNodeOperatorFee,
-    totalMintingCapacityStethWei: data.totalMintingCapacityStETH,
-    unsettledLidoFees: data.unsettledLidoFees,
-    feeObligation: data.feeObligation,
-    currentMaxLiabilityStETH: data.vaultData.currentMaxLiabilityStETH,
-  });
+    const { totalMintingCapacitySteth: projectTotalMintingCapacityStETH } =
+      data.totalMintingCapacityStethByDeltaValue(effectiveSupply - amount);
 
-  return {
-    data,
-    isPending,
-    projected: {
+    const projectedOverview = calculateOverviewV2({
       totalValue: projectedTotalValue,
-      vaultLiability: projectedLiabilityStETH,
-      healthFactor: formatPercent.format(projectedOverview.healthRatio / 100),
-      healthFactorNumber:
-        projectedOverview.healthRatio > 100000
-          ? Infinity
-          : projectedOverview.healthRatio,
-      utilizationRatio: formatPercent.format(
-        projectedOverview.utilizationRatio / 100,
-      ),
-      utilizationRatioNumber: projectedOverview.utilizationRatio,
-    },
-  };
+      reserveRatioBP: data.reserveRatioBP,
+      liabilitySharesInStethWei: projectedLiabilityStETH,
+      currentLiabilityStETH: data.vaultData.currentLiabilityStETH,
+      forceRebalanceThresholdBP: data.forcedRebalanceThresholdBP,
+      withdrawableEther: data.withdrawableEther,
+      balance: data.balance,
+      locked: data.collateral,
+      nodeOperatorDisbursableFee: data.undisbursedNodeOperatorFee,
+      totalMintingCapacityStethWei: projectTotalMintingCapacityStETH,
+      unsettledLidoFees: data.unsettledLidoFees,
+      feeObligation: data.feeObligation,
+      currentMaxLiabilityStETH: data.vaultData.currentMaxLiabilityStETH,
+    });
+
+    return {
+      data,
+      isPending,
+      projected: {
+        totalValue: projectedTotalValue,
+        vaultLiability: projectedLiabilityStETH,
+        healthFactor: formatPercent.format(projectedOverview.healthRatio / 100),
+        healthFactorNumber:
+          projectedOverview.healthRatio > 100000
+            ? Infinity
+            : projectedOverview.healthRatio,
+        utilizationRatio: formatPercent.format(
+          projectedOverview.utilizationRatio / 100,
+        ),
+        utilizationRatioNumber: projectedOverview.utilizationRatio,
+      },
+    };
+  }, [data, isPending, isSupplyEth, rebalanceAmount, supplyEth]);
 };

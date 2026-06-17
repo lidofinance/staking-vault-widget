@@ -1,4 +1,7 @@
-import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
+import {
+  VAULT_TOTAL_BASIS_POINTS_BN,
+  VAULT_TOTAL_BASIS_POINTS,
+} from 'modules/vaults';
 
 import { calculateHealth } from './calculate-health';
 import { bigIntClampZero, bigIntMax, bigIntMin } from './bigint-math';
@@ -72,25 +75,21 @@ export const calculateOverviewV2 = (args: OverviewArgs) => {
     totalMintingCapacityStethWei === 0n
       ? 0
       : Number(
-          ((liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN) /
-            totalMintingCapacityStethWei) *
-            100n,
-        ) / Number(VAULT_TOTAL_BASIS_POINTS_BN);
+          (liabilitySharesInStethWei * VAULT_TOTAL_BASIS_POINTS_BN * 100n) /
+            totalMintingCapacityStethWei,
+        ) / VAULT_TOTAL_BASIS_POINTS;
 
   // Prevent underflow
   const effectiveTotalValue = bigIntClampZero(totalValue - feeObligation);
 
   // repay-obligations
-  const repay = bigIntMax(
-    0n,
+  const repay = bigIntClampZero(
     liabilitySharesInStethWei -
       (effectiveTotalValue * oneMinusRR) / VAULT_TOTAL_BASIS_POINTS_BN,
   );
 
   const supply =
-    oneMinusRR === 0n
-      ? 0n
-      : bigIntMax(0n, (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR);
+    oneMinusRR === 0n ? 0n : (repay * VAULT_TOTAL_BASIS_POINTS_BN) / oneMinusRR;
 
   return {
     healthRatio,

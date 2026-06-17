@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -9,4 +10,13 @@ export const Container = styled.div`
 
 export const TooltipAnchor = styled.div`
   width: 100%;
+`;
+
+export const InlineLink = styled(Link)`
+  color: inherit;
+  text-decoration: underline;
+
+  &:visited {
+    color: inherit;
+  }
 `;

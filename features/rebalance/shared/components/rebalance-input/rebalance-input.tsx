@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts, useVault } from 'modules/vaults';
 import { Eth, Tooltip, Text } from '@lidofinance/lido-ui';
 
 import { TokenAmountInputGroup } from 'shared/hook-form';
@@ -12,16 +12,20 @@ import type { RebalanceFormFieldValues } from 'features/rebalance/types';
 
 import { ReduceToCapacityButton } from './reduce-to-capacity-button';
 
-import { Container, TooltipAnchor } from './styles';
+import { Container, TooltipAnchor, InlineLink } from './styles';
+import { appPaths } from 'consts/routing';
+import { Address } from 'viem';
 
 const {
   available,
   forceRebalanceTooltip,
   rebalanceOversupplyWarning,
+  rebalanceOversupplyWarningLink,
   rebalanceRecommendedExplainer,
 } = vaultTexts.actions.rebalance.input;
 
 export const RebalanceInput = () => {
+  const { vaultAddress } = useVault();
   const {
     setValue,
     formState: { disabled, isLoading: isFormReadyLoading },
@@ -60,9 +64,18 @@ export const RebalanceInput = () => {
       rightDecorator={<ReduceToCapacityButton />}
       disabled={disabled || isForceRebalance}
       warning={
-        rebalanceMode === 'healing' && reduceToCapacityAmount === 0n
-          ? rebalanceOversupplyWarning
-          : undefined
+        rebalanceMode === 'healing' && reduceToCapacityAmount === 0n ? (
+          <>
+            {rebalanceOversupplyWarning}{' '}
+            <InlineLink
+              href={appPaths.vaults
+                .vault(vaultAddress as Address)
+                .eth('supply')}
+            >
+              {rebalanceOversupplyWarningLink}
+            </InlineLink>
+          </>
+        ) : undefined
       }
     />
   );
