@@ -5,7 +5,10 @@ import {
   VerificationWarningBanners,
 } from 'shared/components';
 
-import { useRebalanceAvailability } from 'features/rebalance/hooks';
+import {
+  useRebalanceAvailability,
+  useRebalanceState,
+} from 'features/rebalance/hooks';
 
 type RebalanceVerificationBannersProps = {
   variant: 'error' | 'warning';
@@ -14,9 +17,10 @@ type RebalanceVerificationBannersProps = {
 export const RebalanceVerificationBanners: FC<
   RebalanceVerificationBannersProps
 > = ({ variant }) => {
+  const { isForceRebalance } = useRebalanceState();
   const { isDisabledByNoDebtCases } = useRebalanceAvailability();
 
-  if (isDisabledByNoDebtCases) {
+  if (isDisabledByNoDebtCases || isForceRebalance) {
     return null;
   }
 
