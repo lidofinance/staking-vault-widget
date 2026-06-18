@@ -40,29 +40,33 @@ export const useRebalance = () => {
         const { isForceRebalance } = vaultOverviewData;
 
         const { hub, dashboard, address } = activeVault;
-        const calls: TransactionEntry[] = [...(await prepareReportCalls())];
 
         const modalTitle =
           !isForceRebalance && isSupplyEth && supplyEth > 0n
             ? submit.supplyAndRebalance
             : submit.rebalance;
 
-        if (isForceRebalance) {
-          calls.push({
-            ...hub.encode.forceRebalance([address]),
-            loadingActionText: submit.forceRebalance,
-          });
-        } else {
-          calls.push({
-            ...dashboard.encode.rebalanceVaultWithEther([rebalanceAmount]),
-            value: isSupplyEth ? supplyEth : 0n,
-            loadingActionText: modalTitle,
-          });
-        }
-
         const { success } = await withSuccess(
           sendTX({
-            transactions: calls,
+            transactions: async () => {
+              const calls: TransactionEntry[] = await prepareReportCalls();
+
+              if (isForceRebalance) {
+                calls.push({
+                  ...hub.encode.forceRebalance([address]),
+                  loadingActionText: submit.forceRebalance,
+                });
+              } else {
+                calls.push({
+                  ...dashboard.encode.rebalanceVaultWithEther([
+                    rebalanceAmount,
+                  ]),
+                  value: isSupplyEth ? supplyEth : 0n,
+                  loadingActionText: modalTitle,
+                });
+              }
+              return calls;
+            },
             mainActionLoadingText: modalTitle,
             mainActionCompleteText: modalTitle,
             renderSuccessContent: GoToVault,
