@@ -15,6 +15,7 @@ type GetReduceToCapacityAmountResult = {
   reduceToCapacityAmount: bigint;
   hasExcessLiability: boolean;
   canReduceToCapacity: boolean;
+  canRecommend: boolean;
 };
 
 /**
@@ -55,6 +56,9 @@ export const getReduceToCapacityAmount = ({
     maximumRebalanceAmountEth,
   );
 
+  const canRecommend =
+    excessLiabilityStethWithSupply < currentVaultLiabilitySteth;
+
   const canReduceToCapacity =
     excessLiabilityStethWithSupply == reduceToCapacityAmount;
 
@@ -62,5 +66,6 @@ export const getReduceToCapacityAmount = ({
     reduceToCapacityAmount,
     hasExcessLiability,
     canReduceToCapacity,
+    canRecommend,
   };
 };

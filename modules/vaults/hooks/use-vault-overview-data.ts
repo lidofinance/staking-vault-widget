@@ -540,11 +540,7 @@ export const useVaultOverviewData = () => {
   const { activeVault, queryKeys } = useVault();
 
   const query = useQuery({
-    queryKey: [
-      ...queryKeys.state,
-      'vault-overview-data',
-      { blockNumber: activeVault?.blockNumber },
-    ],
+    queryKey: [...queryKeys.state, 'vault-overview-data'],
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,

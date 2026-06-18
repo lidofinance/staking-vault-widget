@@ -40,15 +40,19 @@ export const useRebalanceState = () => {
       supplyEth: supplyEthValue,
     });
 
-    const { reduceToCapacityAmount, hasExcessLiability, canReduceToCapacity } =
-      getReduceToCapacityAmount({
-        totalMintingCapacityStethByDeltaValue,
-        currentVaultLiabilitySteth: vaultLiabilityStETH,
-        toSupplyVaultValueEth: supplyEthValue,
-        maximumRebalanceAmountEth: maxRebalanceAmount,
-        reserveRatioBP: BigInt(data.reserveRatioBP),
-        minimalReserveEth: data.minimalReserve,
-      });
+    const {
+      reduceToCapacityAmount,
+      hasExcessLiability,
+      canReduceToCapacity,
+      canRecommend,
+    } = getReduceToCapacityAmount({
+      totalMintingCapacityStethByDeltaValue,
+      currentVaultLiabilitySteth: vaultLiabilityStETH,
+      toSupplyVaultValueEth: supplyEthValue,
+      maximumRebalanceAmountEth: maxRebalanceAmount,
+      reserveRatioBP: BigInt(data.reserveRatioBP),
+      minimalReserveEth: data.minimalReserve,
+    });
 
     const rebalanceMode = getRebalanceMode({
       vaultLiability: vaultLiabilityStETH,
@@ -64,6 +68,7 @@ export const useRebalanceState = () => {
       reduceToCapacityAmount,
       hasExcessLiability,
       canReduceToCapacity,
+      canRecommend,
     };
   }, [data, isSupplyEth, supplyEth]);
 };

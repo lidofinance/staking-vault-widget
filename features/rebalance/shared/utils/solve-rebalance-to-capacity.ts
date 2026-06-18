@@ -1,4 +1,4 @@
-import { bigIntMax, bigIntMin } from 'utils/bigint-math';
+import { bigIntClampZero } from 'utils/bigint-math';
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
 
 type SolveParams = {
@@ -19,25 +19,16 @@ export const solveRebalanceToCapacity = ({
   reserveRatioBP,
   minimalReserve,
 }: SolveParams): bigint => {
-  if (!(reserveRatioBP > 0n && reserveRatioBP < VAULT_TOTAL_BASIS_POINTS_BN))
-    throw new Error('reserveRatioBP range');
-  if (!(minimalReserve > 0n)) throw new Error('minimalReserve > 0');
-  if (!(lockableValueEth > 0n)) throw new Error('lockableValueEth > 0');
+  if (lockableValueEth - currentLiabilitySteth <= minimalReserve)
+    return currentLiabilitySteth;
+  // can be negative if the supply is too high and covers rebalance so we clamp to 0
+  if (lockableValueEth - currentLiabilitySteth)
+    return bigIntClampZero(
+      lockableValueEth -
+        ((lockableValueEth - currentLiabilitySteth) *
+          VAULT_TOTAL_BASIS_POINTS_BN) /
+          reserveRatioBP,
+    );
 
-  const upper = bigIntMin(currentLiabilitySteth, lockableValueEth);
-  const clamp = (x: bigint): bigint => bigIntMin(bigIntMax(x, 0n), upper);
-
-  const D = lockableValueEth - currentLiabilitySteth; // deficit
-
-  // Deficit non-positive, or below the fixed reserve floor -> fn floors to 0 -> x = l.
-  // Clamped: collapses to `upper`.
-  if (D <= 0n || D < minimalReserve) {
-    return clamp(currentLiabilitySteth); // == upper here, but explicit for clarity
-  }
-
-  // Percent arm binds: (v - x)*reserveRatioBP/TOTAL_BP = D
-  //   x = v - D*TOTAL_BP/reserveRatioBP
-  const x =
-    lockableValueEth - (D * VAULT_TOTAL_BASIS_POINTS_BN) / reserveRatioBP;
-  return clamp(x);
+  return 0n;
 };

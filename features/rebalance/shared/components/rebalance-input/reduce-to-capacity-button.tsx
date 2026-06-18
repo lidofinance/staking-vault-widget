@@ -14,8 +14,12 @@ export const ReduceToCapacityButton = () => {
   } = useFormContext<RebalanceFormFieldValues>();
 
   const { rebalanceAmount } = useWatch<RebalanceFormFieldValues>();
-  const { reduceToCapacityAmount, maxRebalanceAmount, rebalanceMode } =
-    useRebalanceState();
+  const {
+    reduceToCapacityAmount,
+    maxRebalanceAmount,
+    rebalanceMode,
+    canRecommend,
+  } = useRebalanceState();
 
   const isCapacityExceeded = rebalanceMode === 'healing';
 
@@ -31,7 +35,10 @@ export const ReduceToCapacityButton = () => {
   }, [setValue, maxButtonValue]);
 
   const isMaxButtonDisabled =
-    disabled || !maxButtonValue || rebalanceAmount === maxButtonValue;
+    disabled ||
+    !maxButtonValue ||
+    rebalanceAmount === maxButtonValue ||
+    (rebalanceMode === 'healing' && !canRecommend);
 
   const text = isCapacityExceeded
     ? vaultTexts.actions.rebalance.input.reduceToCapacity
