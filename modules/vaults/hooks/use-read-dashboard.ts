@@ -6,32 +6,29 @@ import type {
   ContractFunctionReturnType,
 } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import { useLidoSDK } from 'modules/web3';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
 
+import type { DashboardAbiType } from '@lidofinance/lido-ethereum-sdk/stvault';
+
 export const useReadDashboard = <
   TMutability extends 'pure' | 'view' | 'nonpayable' | 'payable',
   TFunctionName extends ContractFunctionName<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability
-  > = ContractFunctionName<typeof dashboardAbi, TMutability>,
+  > = ContractFunctionName<DashboardAbiType, TMutability>,
   TArgs extends ContractFunctionArgs<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability,
     TFunctionName
-  > = ContractFunctionArgs<typeof dashboardAbi, TMutability, TFunctionName>,
+  > = ContractFunctionArgs<DashboardAbiType, TMutability, TFunctionName>,
   TResult extends ContractFunctionReturnType<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability,
     TFunctionName
-  > = ContractFunctionReturnType<
-    typeof dashboardAbi,
-    TMutability,
-    TFunctionName
-  >,
+  > = ContractFunctionReturnType<DashboardAbiType, TMutability, TFunctionName>,
   TSelectData = TResult,
 >({
   functionName,

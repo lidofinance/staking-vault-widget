@@ -9,7 +9,6 @@ import {
   useVault,
   fetchVaultMetrics,
   fetch7dApr,
-  getLidoContract,
   VAULTS_CONNECT_DEPOSIT,
   type VaultApiMetrics,
   type VaultBaseInfo,
@@ -17,6 +16,7 @@ import {
   type VaultRecord,
   type Vault7DApr,
   VAULT_TOTAL_BASIS_POINTS_BN,
+  getStEthContract,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -212,7 +212,7 @@ const getVaultData = async (
   const [_, tierId, tierShareLimit] = tier;
   const { shareLimit: groupShareLimit } = group;
 
-  const lidoV3Contract = getLidoContract(publicClient);
+  const lidoV3Contract = getStEthContract(publicClient);
 
   const [
     liabilityStETH,

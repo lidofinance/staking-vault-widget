@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant';
 import { getContract } from 'viem';
 
-import { StETHPartialAbi } from 'abi/steth-partial-abi';
+import { LidoAbi } from '@lidofinance/lido-ethereum-sdk/core';
 import { getContractAddress } from 'config';
 import type { RegisteredPublicClient } from 'modules/web3';
 
@@ -15,7 +15,7 @@ export const getStEthContract = (publicClient: RegisteredPublicClient) => {
   return getEncodable(
     getContract({
       address,
-      abi: StETHPartialAbi,
+      abi: LidoAbi,
       client: publicClient,
     }),
   );

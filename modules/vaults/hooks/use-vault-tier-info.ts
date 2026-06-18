@@ -9,7 +9,6 @@ import {
   VAULT_TOTAL_BASIS_POINTS_BN,
   useVault,
   DEFAULT_TIER_ID,
-  getLidoContract,
   getStEthContract,
   type ExtendTierConfirmation,
   type TierConfirmationFnNames,
@@ -120,7 +119,6 @@ const getVaultTierInfo = async ({
     ...rest
   } = vault;
 
-  const lidoV3Contract = getLidoContract(publicClient);
   const stethContract = getStEthContract(publicClient);
 
   const [
@@ -192,7 +190,7 @@ const getVaultTierInfo = async ({
     stethContract.read.getPooledEthByShares([tierShareLimit]),
     stethContract.read.getPooledEthBySharesRoundUp([tierLiabilityShares]),
     stethContract.read.getPooledEthByShares([proposedVaultLimitShares]),
-    lidoV3Contract.read.getMaxMintableExternalShares(),
+    stethContract.read.getMaxMintableExternalShares(),
   ]);
 
   const extendLastProposal = lastProposal

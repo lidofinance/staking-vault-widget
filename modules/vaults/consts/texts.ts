@@ -900,6 +900,10 @@ export const vaultTexts = {
   },
   // common texts like errors, warnings, etc.
   common: {
+    warnings: {
+      balanceWarning:
+        'Using most of ETH balance may result in insufficient funds for gas fees',
+    },
     errors: {
       amount: {
         required: 'Amount is required',

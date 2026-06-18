@@ -5,7 +5,11 @@ import {
   CheckboxHookForm,
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
-import { VAULT_FUNDING_TOKENS, vaultTexts } from 'modules/vaults';
+import {
+  useEthBalanceWarning,
+  VAULT_FUNDING_TOKENS,
+  vaultTexts,
+} from 'modules/vaults';
 
 import { useSupplyForm } from './supply-form-provider/supply-form-provider';
 import type { SupplyFormValidatedValues } from './types';
@@ -17,6 +21,12 @@ export const SupplyFormInputs = () => {
     formState: { disabled },
   } = useFormContext<SupplyFormValidatedValues>();
   const mintSteth = watch('mintSteth');
+  const amount = watch('amount');
+  const token = watch('token');
+
+  const ethBalanceWarning = useEthBalanceWarning(
+    token === 'ETH' ? amount : undefined,
+  );
 
   const isStethMintable = isStethMintableQuery.data === true;
   const maxValue = balanceQuery.data;
@@ -29,6 +39,7 @@ export const SupplyFormInputs = () => {
         tokenOptions={VAULT_FUNDING_TOKENS}
         maxAmount={maxValue}
         disabled={disabled}
+        warning={ethBalanceWarning}
       />
       <CheckboxHookForm
         fieldName="mintSteth"

@@ -2,7 +2,7 @@ import { useWatch, useFormState } from 'react-hook-form';
 import { Eth } from '@lidofinance/lido-ui';
 
 import { useEthereumBalance } from 'modules/web3';
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts, useEthBalanceWarning } from 'modules/vaults';
 import { TokenAmountInputGroup } from 'shared/hook-form/controls';
 import { InfoRowAmount } from 'shared/components/form';
 
@@ -14,9 +14,15 @@ export const SupplyInput = () => {
   const { disabled } = useFormState();
   const { data } = useEthereumBalance();
 
-  const isSupplyEth = useWatch<RebalanceFormFieldValues>({
+  const isSupplyEth = useWatch<RebalanceFormFieldValues, 'isSupplyEth'>({
     name: 'isSupplyEth',
   });
+
+  const supplyEthAmount = useWatch<RebalanceFormFieldValues, 'supplyEth'>({
+    name: 'supplyEth',
+  });
+
+  const balanceWarning = useEthBalanceWarning(supplyEthAmount);
 
   if (!isSupplyEth) {
     return null;
@@ -37,6 +43,7 @@ export const SupplyInput = () => {
         maxAmount={data}
         leftDecorator={<Eth />}
         disabled={disabled}
+        warning={balanceWarning}
       />
     </InputContainer>
   );
