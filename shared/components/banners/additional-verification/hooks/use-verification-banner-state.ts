@@ -59,8 +59,8 @@ export const useVerificationBannerDefender = (
     SECURITY_OVERRIDE_DEV_ENV &&
       isDappActive &&
       isMultipleOwners === true &&
-      isTierDefault === false &&
       isVaultOwner === true &&
+      isTierDefault === false &&
       isNodeOperatorVerified === true,
   );
 
@@ -68,7 +68,7 @@ export const useVerificationBannerDefender = (
     SECURITY_OVERRIDE_DEV_ENV &&
       isDappActive &&
       isMultipleOwners === true &&
-      hasActionPermission &&
+      hasActionPermissionOrOwnership === true &&
       isVaultOwner === true &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );

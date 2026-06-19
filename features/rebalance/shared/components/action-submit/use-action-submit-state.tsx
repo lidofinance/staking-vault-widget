@@ -77,7 +77,7 @@ type ActionSubmitState = {
 };
 
 export const useActionSubmitState = (): ActionSubmitState => {
-  const { isSubmitting, disabled } = useFormState();
+  const { isSubmitting, isValid, disabled } = useFormState();
   const [supplyEth, isSupplyEth] = useWatch<
     RebalanceFormFieldValues,
     ['supplyEth', 'isSupplyEth']
@@ -99,7 +99,8 @@ export const useActionSubmitState = (): ActionSubmitState => {
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
 
-  const isDisabled = isSubmitting || disabled;
+  // isValid disables button when security confirmation not checked
+  const isDisabled = disabled || isSubmitting || !isValid;
 
   const variant = isUnavailable ? 'translucent' : 'filled';
   const color = isUnavailable ? 'secondary' : 'primary';

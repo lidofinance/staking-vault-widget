@@ -18,9 +18,10 @@ export const RebalanceVerificationBanners: FC<
   RebalanceVerificationBannersProps
 > = ({ variant }) => {
   const { isForceRebalance } = useRebalanceState();
-  const { isDisabledByNoDebtCases } = useRebalanceAvailability();
+  const { isDisabledByNoDebtCases, hasNoPermission } =
+    useRebalanceAvailability();
 
-  if (isDisabledByNoDebtCases || isForceRebalance) {
+  if (isDisabledByNoDebtCases || isForceRebalance || hasNoPermission) {
     return null;
   }
 
