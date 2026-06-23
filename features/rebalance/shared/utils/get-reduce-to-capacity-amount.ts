@@ -1,6 +1,7 @@
 import { type TotalMintingCapacityByDeltaValueFn } from 'modules/vaults';
 import { bigIntMin } from 'utils/bigint-math';
 import { solveRebalanceToCapacity } from './solve-rebalance-to-capacity';
+import { REBALANCE_RECOMMENDATION_THRESHOLD } from '../../consts';
 
 type GetReduceToCapacityAmountArgs = {
   totalMintingCapacityStethByDeltaValue: TotalMintingCapacityByDeltaValueFn;
@@ -44,6 +45,9 @@ export const getReduceToCapacityAmount = ({
   const hasExcessLiability =
     currentVaultLiabilitySteth > currentTotalMintingCapacitySteth;
 
+  const isAboveThreshold =
+    totalLockableValueEth > REBALANCE_RECOMMENDATION_THRESHOLD;
+
   const excessLiabilityStethWithSupply = solveRebalanceToCapacity({
     currentLiabilitySteth: currentVaultLiabilitySteth,
     lockableValueEth: totalLockableValueEth,
@@ -51,12 +55,12 @@ export const getReduceToCapacityAmount = ({
     minimalReserve: minimalReserveEth,
   });
 
-  const reduceToCapacityAmount = bigIntMin(
-    excessLiabilityStethWithSupply,
-    maximumRebalanceAmountEth,
-  );
+  const reduceToCapacityAmount = isAboveThreshold
+    ? bigIntMin(excessLiabilityStethWithSupply, maximumRebalanceAmountEth)
+    : 0n;
 
   const canRecommend =
+    isAboveThreshold &&
     excessLiabilityStethWithSupply < currentVaultLiabilitySteth;
 
   const canReduceToCapacity =

@@ -86,7 +86,8 @@ export const useActionSubmitState = (): ActionSubmitState => {
   });
   const hasSupply = Boolean(isSupplyEth) && (supplyEth ?? 0n) > 0n;
 
-  const { isErrorBannerVisible } = useVerificationBannerDefender('supply');
+  const { isErrorBannerVisible, isWarningBannerVisible } =
+    useVerificationBannerDefender('supply');
 
   const { activeVault } = useVault();
   const { data: overviewData } = useVaultOverviewData();
@@ -99,8 +100,8 @@ export const useActionSubmitState = (): ActionSubmitState => {
 
   const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
 
-  // isValid disables button when security confirmation not checked
-  const isDisabled = disabled || isSubmitting || !isValid;
+  const isDisabled =
+    isSubmitting || disabled || (isWarningBannerVisible && !isValid);
 
   const variant = isUnavailable ? 'translucent' : 'filled';
   const color = isUnavailable ? 'secondary' : 'primary';
