@@ -1,4 +1,4 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
   AddressInputHookForm,
@@ -17,12 +17,15 @@ import type { SupplyFormValidatedValues } from './types';
 export const SupplyFormInputs = () => {
   const { balanceQuery, isStethMintableQuery } = useSupplyForm();
   const {
-    watch,
     formState: { disabled },
   } = useFormContext<SupplyFormValidatedValues>();
-  const mintSteth = watch('mintSteth');
-  const amount = watch('amount');
-  const token = watch('token');
+
+  const [mintSteth, amount, token] = useWatch<
+    SupplyFormValidatedValues,
+    ['mintSteth', 'amount', 'token']
+  >({
+    name: ['mintSteth', 'amount', 'token'],
+  });
 
   const ethBalanceWarning = useEthBalanceWarning(
     token === 'ETH' ? amount : undefined,

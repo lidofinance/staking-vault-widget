@@ -14,15 +14,14 @@ export const SupplyInput = () => {
   const { disabled } = useFormState();
   const { data } = useEthereumBalance();
 
-  const isSupplyEth = useWatch<RebalanceFormFieldValues, 'isSupplyEth'>({
-    name: 'isSupplyEth',
+  const [isSupplyEth, supplyEth] = useWatch<
+    RebalanceFormFieldValues,
+    ['isSupplyEth', 'supplyEth']
+  >({
+    name: ['isSupplyEth', 'supplyEth'],
   });
 
-  const supplyEthAmount = useWatch<RebalanceFormFieldValues, 'supplyEth'>({
-    name: 'supplyEth',
-  });
-
-  const balanceWarning = useEthBalanceWarning(supplyEthAmount);
+  const balanceWarning = useEthBalanceWarning(supplyEth);
 
   if (!isSupplyEth) {
     return null;
