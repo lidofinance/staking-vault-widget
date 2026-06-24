@@ -16,6 +16,7 @@ export const appPaths = {
         settings: (mode: '[mode]' | 'main' | 'permissions' | 'tier') =>
           `/vaults/${vaultAddress}/settings/${mode}`,
         validators: `/vaults/${vaultAddress}/validators`,
+        rebalance: `/vaults/${vaultAddress}/rebalance`,
       }) as const,
   },
 } as const;

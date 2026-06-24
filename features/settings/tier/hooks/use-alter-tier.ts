@@ -148,7 +148,7 @@ export const useAlterTier = () => {
     queryKey: [
       ...queryKeys.state,
       'alter-tier-info',
-      activeVault?.blockNumberString,
+      { blockNumber: activeVault?.blockNumber },
     ],
     enabled: !!activeVault,
     queryFn: async () => {

@@ -5,3 +5,6 @@ export const VAULT_HEALTH_PERCENT_RED = 100;
 
 export const VAULT_UTILIZATION_RATIO_GREEN = 90;
 export const VAULT_UTILIZATION_RATIO_RED = 100;
+
+// The threshold above which the reduce UR UI is shown
+export const UTILIZATION_RATIO_THRESHOLD = 100.01;

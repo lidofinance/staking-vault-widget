@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import {
   wrapRequest as wrapNextRequest,
   cacheControl,

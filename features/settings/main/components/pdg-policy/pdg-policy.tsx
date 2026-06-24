@@ -12,7 +12,6 @@ const lip5Url =
 const learnMoreUrl =
   'https://docs.lido.fi/run-on-lido/stvaults/tech-documentation/pdg';
 
-// TODO: add "Learn more."  to text
 export const PdgPolicy: FC = () => {
   return (
     <PDGPolicyBlock>

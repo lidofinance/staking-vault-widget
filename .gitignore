@@ -45,6 +45,7 @@ yarn-error.log*
 .vscode
 .idea
 AGENTS.md
+.claude
 
 /public/runtime/
 

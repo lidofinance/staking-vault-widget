@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { getContract } from 'viem';
 import invariant from 'tiny-invariant';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import { useQuery } from '@tanstack/react-query';
 
 import { AggregatorAbi } from 'abi/aggregator-abi';

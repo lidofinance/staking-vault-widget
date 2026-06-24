@@ -79,12 +79,7 @@ export const useVaultValidatorsData = () => {
   } = useValidatorListParams();
 
   const query = useQuery({
-    queryKey: [
-      ...queryKeys.base,
-      'vault-validators',
-      activeVault?.address,
-      params,
-    ] as const,
+    queryKey: [...queryKeys.base, 'vault-validators', params] as const,
     enabled: isReady,
     refetchOnMount: true,
     staleTime: 300000, // 5 min,

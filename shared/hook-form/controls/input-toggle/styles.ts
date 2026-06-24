@@ -1,6 +1,18 @@
 import styled from 'styled-components';
 import { InlineLoader } from '@lidofinance/lido-ui';
 
+export type ToggleSize = 'xs' | 'md' | 'lg';
+
+const getToggleSize = (size: ToggleSize = 'md') => {
+  const height = { xs: 20, md: 24, lg: 28 }[size];
+  const thumb = height - 4;
+  const padding = 2;
+  const width = height * 2 - 8;
+  const translate = width - thumb - padding * 2;
+
+  return { height, width, thumb, padding, translate };
+};
+
 export const Container = styled.div<{ $position: 'left' | 'right' }>`
   display: flex;
   align-items: center;
@@ -15,12 +27,15 @@ export const ToggleLoader = styled(InlineLoader)`
   height: 24px;
 `;
 
-export const InputWrapper = styled.label<{ $disabled?: boolean }>`
+export const InputWrapper = styled.label<{
+  $disabled?: boolean;
+  $size?: ToggleSize;
+}>`
   position: relative;
   display: flex;
   align-items: center;
-  width: 40px;
-  height: 24px;
+  width: ${({ $size }) => getToggleSize($size).width}px;
+  height: ${({ $size }) => getToggleSize($size).height}px;
   border-radius: 99px;
   background-color: ${({ theme }) => theme.colors.accentBorder};
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
@@ -34,12 +49,12 @@ export const InputWrapper = styled.label<{ $disabled?: boolean }>`
 
   &::before {
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: ${({ $size }) => getToggleSize($size).padding}px;
+    left: ${({ $size }) => getToggleSize($size).padding}px;
     content: '';
     display: flex;
-    width: 20px;
-    height: 20px;
+    width: ${({ $size }) => getToggleSize($size).thumb}px;
+    height: ${({ $size }) => getToggleSize($size).thumb}px;
     border-radius: 50%;
     background-color: ${({ theme }) => theme.colors.foreground};
     transform: translateX(0);
@@ -54,7 +69,7 @@ export const InputWrapper = styled.label<{ $disabled?: boolean }>`
     background-color: ${({ theme }) => theme.colors.primary};
 
     &::before {
-      transform: translateX(16px);
+      transform: translateX(${({ $size }) => getToggleSize($size).translate}px);
     }
   }
 

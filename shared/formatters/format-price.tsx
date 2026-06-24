@@ -1,15 +1,15 @@
+import type { FC } from 'react';
 import { Tooltip } from '@lidofinance/lido-ui';
 import { DATA_UNAVAILABLE } from 'consts/text';
 
 import { config } from 'config';
-import { Component } from 'types';
 
-export type FormatPriceComponent = Component<
-  'span',
-  { amount: number | null | undefined; currency?: string }
->;
+export type FormatPriceProps = {
+  amount: number | null | undefined;
+  currency?: string;
+};
 
-export const FormatPrice: FormatPriceComponent = (props) => {
+export const FormatPrice: FC<FormatPriceProps> = (props) => {
   const { amount, currency = 'USD', ...rest } = props;
   const actual =
     amount == null

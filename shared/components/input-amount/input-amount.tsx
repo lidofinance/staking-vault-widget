@@ -24,6 +24,7 @@ type InputAmountProps = {
   maxValue?: bigint;
   isLocked?: boolean;
   showRightDecorator?: boolean;
+  disableMaxOnValueMatch?: boolean;
 } & Omit<ComponentProps<typeof Input>, 'onChange' | 'value'>;
 
 const parseEtherSafe = (value: string) => {
@@ -42,6 +43,7 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
       onMaxClick,
       rightDecorator,
       showRightDecorator = true,
+      disableMaxOnValueMatch = true,
       isLocked,
       maxValue,
       placeholder = '0',
@@ -160,6 +162,9 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
           }
         : undefined;
 
+    const isMaxButtonDisabled =
+      props.disabled || (disableMaxOnValueMatch && maxValue === value);
+
     return (
       <InputStyle
         {...props}
@@ -170,7 +175,7 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
             <>
               <InputDecoratorMaxButton
                 onClick={handleClickMax}
-                disabled={!handleClickMax || props.disabled}
+                disabled={isMaxButtonDisabled}
               />
               {isLocked ? <InputDecoratorLocked /> : undefined}
             </>

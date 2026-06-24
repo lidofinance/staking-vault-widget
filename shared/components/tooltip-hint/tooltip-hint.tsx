@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { Tooltip, TextColors } from '@lidofinance/lido-ui';
 
 import { QuestionIcon } from './styles';
 
 type TooltipHintProps = {
-  hint: string;
+  hint: ReactNode;
   color?: TextColors;
 };
 

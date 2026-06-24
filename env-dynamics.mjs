@@ -61,6 +61,11 @@ export const prefillUnsafeElRpcUrls = supportedChains.reduce((acc, chain) => {
 /** @type boolean */
 export const enableQaHelpers = toBoolean(process.env.ENABLE_QA_HELPERS);
 
+/** @type boolean */
+export const dangerouslyDisableVaultSecurity = toBoolean(
+  process.env.DANGEROUSLY_DISABLE_VAULT_SECURITY,
+);
+
 export const walletconnectProjectId = process.env.WALLETCONNECT_PROJECT_ID;
 
 /** @type string */

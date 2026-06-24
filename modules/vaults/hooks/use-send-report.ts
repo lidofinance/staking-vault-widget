@@ -14,7 +14,7 @@ import {
 
 export const useSendReport = () => {
   const { sendTX, ...rest } = useSendTransaction();
-  const { refetch } = useVault();
+  const { invalidateVaultState } = useVault();
   const prepareReportCalls = useReportCalls();
 
   return {
@@ -22,7 +22,7 @@ export const useSendReport = () => {
       const mainActionLoadingText = vaultTexts.actions.report.loading;
       const mainActionCompleteText = vaultTexts.actions.report.completed;
 
-      const transactions: TransactionEntry[] = [...prepareReportCalls()];
+      const transactions: TransactionEntry[] = await prepareReportCalls();
       const { success } = await withSuccess(
         sendTX({
           transactions,
@@ -33,9 +33,9 @@ export const useSendReport = () => {
         }),
       );
 
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      await invalidateVaultState();
       return success;
-    }, [prepareReportCalls, sendTX, refetch]),
+    }, [prepareReportCalls, sendTX, invalidateVaultState]),
     ...rest,
   };
 };

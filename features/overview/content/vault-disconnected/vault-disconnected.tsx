@@ -2,7 +2,7 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { useVault } from 'modules/vaults';
 
-import { useVaultOverviewData } from 'features/overview/hooks';
+import { useVaultOverviewData } from 'modules/vaults';
 
 import { Wrapper } from './styles';
 
