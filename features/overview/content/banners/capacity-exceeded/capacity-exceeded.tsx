@@ -1,10 +1,10 @@
 import { vaultTexts } from 'modules/vaults';
 import { isNumber } from 'utils';
 import { NoticeContainer } from 'shared/components';
+import { UTILIZATION_RATIO_THRESHOLD } from 'consts/threshold';
 
 import { RepayObligations } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
-import { UTILIZATION_RATIO_THRESHOLD } from 'features/overview/consts';
 
 const {
   capacityExceeded: { title, description, note },

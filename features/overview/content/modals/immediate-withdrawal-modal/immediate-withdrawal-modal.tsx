@@ -35,7 +35,7 @@ const dataTestIdPrefix = 'withdrawableEther-modal';
 export const ImmediateWithdrawalModal = () => {
   const { isLoadingVault, values } = useVaultOverview();
   const {
-    totalValue,
+    totalValueETH: totalValue,
     collateral,
     feeObligation,
     withdrawableEther,

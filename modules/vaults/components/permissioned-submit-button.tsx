@@ -11,21 +11,29 @@ import { SubmitButton } from './styles';
 
 type MultiplePermissionedSubmitProps = {
   dashboardRoles: readonly VAULTS_ALL_ROLES[];
+  isPermissionless?: boolean;
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<
   HTMLButtonElement,
   MultiplePermissionedSubmitProps
 >((props, ref) => {
-  const { children, dashboardRoles, disabled, ...rest } = props;
+  const { children, dashboardRoles, disabled, isPermissionless, ...rest } =
+    props;
   const { isAccountActive } = useDappStatus();
   const { data, isLoading } = useVaultPermissions(dashboardRoles);
 
   const shouldDisable =
-    disabled || !isAccountActive || isLoading || !data?.hasPermissions;
+    disabled ||
+    !isAccountActive ||
+    (!isPermissionless && (isLoading || !data?.hasPermissions));
 
   const shouldShowPermissionError = Boolean(
-    !isLoading && data && !data.hasPermissions && isAccountActive,
+    !isPermissionless &&
+      !isLoading &&
+      data &&
+      !data.hasPermissions &&
+      isAccountActive,
   );
 
   const missingRoles =
@@ -44,7 +52,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
 
 type PermissionedSubmitProps = {
   dashboardRole: VAULTS_ALL_ROLES;
-} & ComponentProps<typeof Button>;
+} & Omit<MultiplePermissionedSubmitProps, 'dashboardRoles'>;
 
 export const PermissionedSubmitButton = forwardRef<
   HTMLButtonElement,

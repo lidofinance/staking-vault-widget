@@ -40,10 +40,13 @@ export const FormatToken: FormatTokenComponent = ({
 
   if (isTrimmed) {
     const [integer, decimal] = trimmed.split('.');
+    // decimal can be undefined if the trimmed value is an integer, in that case we will show 0 as decimal part
     const index = decimal
-      .split('')
-      .slice(0, maxDecimalDigits + 1)
-      .findLastIndex((v) => v !== '0');
+      ? decimal
+          .split('')
+          .slice(0, maxDecimalDigits + 1)
+          .findLastIndex((v) => v !== '0')
+      : -1;
     valueToShow =
       `${integer}.` + (index === -1 ? '0' : decimal.slice(0, index + 1));
   }

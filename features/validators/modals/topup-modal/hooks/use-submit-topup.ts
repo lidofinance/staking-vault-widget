@@ -43,7 +43,7 @@ export const useSubmitTopup = () => {
         const mainActionCompleteText = mainCompleteText(index, amountInGwei);
 
         const prepareTransactions = async () => {
-          const calls: TransactionEntry[] = [...prepareReportCalls()];
+          const calls: TransactionEntry[] = [...(await prepareReportCalls())];
 
           calls.push({
             ...activeVault.predepositGuarantee.encode.topUpExistingValidators([

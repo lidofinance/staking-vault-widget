@@ -6,7 +6,7 @@ import { getStEthContract } from 'modules/vaults';
 import {
   LidoSDKVaultEntity,
   LidoSDKVaultModule,
-} from '@lidofinance/lido-ethereum-sdk';
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import type { RegisteredPublicClient } from 'modules/web3';
 

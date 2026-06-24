@@ -55,7 +55,7 @@ export const useSupply = () => {
         // minting stETH requires async data for report and minting balance
         if (mintSteth) {
           prepareTransactions = async () => {
-            calls.push(...prepareReportCalls());
+            calls.push(...(await prepareReportCalls()));
 
             const [maxMintableShares] = await readWithReport({
               contracts: [

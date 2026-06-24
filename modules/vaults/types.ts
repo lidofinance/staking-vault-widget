@@ -4,10 +4,10 @@ import type {
   ReadContractReturnType,
   ContractFunctionReturnType,
 } from 'viem';
-import {
+import type {
   LidoSDKVaultContracts,
   LidoSDKVaultEntity,
-} from '@lidofinance/lido-ethereum-sdk';
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 import { VaultHubAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import type { RegisteredPublicClient } from '../web3';
@@ -66,7 +66,6 @@ export type VaultHub = Awaited<
 export type VaultBaseInfo = {
   vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
-  blockNumberString: string;
   address: Address;
   vault: Vault;
   hub: VaultHub;

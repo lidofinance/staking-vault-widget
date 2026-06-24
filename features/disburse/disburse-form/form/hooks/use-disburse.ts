@@ -31,7 +31,10 @@ export const useDisburse = () => {
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: async () => [...prepareReportCalls(), claimCall],
+          transactions: async () => [
+            ...(await prepareReportCalls()),
+            claimCall,
+          ],
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,
           renderSuccessContent: GoToVault,

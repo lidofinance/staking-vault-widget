@@ -35,11 +35,7 @@ const { actionActive, actionDisabled } =
   vaultTexts.actions.validators.modals.topUp;
 
 export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
-  const {
-    invalidateVaultConfig,
-    invalidateVaultState,
-    refetch: refetchVault,
-  } = useVault();
+  const { invalidateVault } = useVault();
   const disabled = useDisableForm();
   const {
     hasDepositorPermission,
@@ -79,15 +75,11 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
   const onSubmit = useCallback(
     async (formData: TopUpFormValidatedValues) => {
       const success = await topUp(formData);
-      await Promise.all([
-        invalidateVaultConfig(),
-        invalidateVaultState(),
-        refetchVault(),
-      ]);
+      await invalidateVault();
 
       return success;
     },
-    [invalidateVaultConfig, invalidateVaultState, topUp, refetchVault],
+    [invalidateVault, topUp],
   );
 
   return (
@@ -97,7 +89,7 @@ export const TopupModalForm: FC<FormProps> = ({ pubkey }) => {
       retryEvent={retryEvent}
       afterSubmitResetOptions={false}
     >
-      <FormContainer>
+      <FormContainer data-testid="topup-form">
         <TokenAmountInputGroup
           amountFieldName="amount"
           label="ETH amount"

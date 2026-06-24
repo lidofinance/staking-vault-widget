@@ -13,7 +13,7 @@ import { NetStakingRewards } from './net-staking-rewards';
 
 const sectionPayloadList: SectionData[] = [
   {
-    indicator: 'totalValue',
+    indicator: 'totalValueETH',
   },
   {
     indicator: 'netApr',

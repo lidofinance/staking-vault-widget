@@ -2,10 +2,9 @@ import { useMemo } from 'react';
 import { LineData } from '@lidofinance/lido-ui';
 
 import { VAULT_TOTAL_BASIS_POINTS_BN } from 'modules/vaults';
-import { formatBalance } from 'utils';
+import { formatBalance, normalizeChartBN } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
-import { normalizeChartBN } from './utils';
 
 export const useStEthChart = (): LineData[] => {
   const { values } = useVaultOverview();
@@ -14,10 +13,10 @@ export const useStEthChart = (): LineData[] => {
     if (!values) return [];
 
     const {
-      vaultLiability,
+      vaultLiabilityStETH: vaultLiability,
       forcedRebalanceThresholdBP,
-      totalValue,
-      totalMintingCapacity,
+      totalValueETH: totalValue,
+      totalMintingCapacityStETH: totalMintingCapacity,
       reserveRatioBP,
     } = values;
 

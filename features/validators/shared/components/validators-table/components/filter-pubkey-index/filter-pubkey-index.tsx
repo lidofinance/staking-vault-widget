@@ -5,13 +5,7 @@ import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
 
 import { useFilterPubkeyIndex } from './use-filter-pubkey-index';
 
-type FilterPubkeyIndexProps = {
-  dataTestId: string;
-};
-
-export const FilterPubkeyIndex: FC<FilterPubkeyIndexProps> = ({
-  dataTestId,
-}) => {
+export const FilterPubkeyIndex: FC = () => {
   const { value, error, handleChange, handleClear } = useFilterPubkeyIndex();
 
   return (
@@ -31,7 +25,7 @@ export const FilterPubkeyIndex: FC<FilterPubkeyIndexProps> = ({
         ) : null
       }
       error={error}
-      data-testid={`${dataTestId}-filter-pubkey-index`}
+      data-testid="filter-pubkey-index"
       fullwidth
     />
   );

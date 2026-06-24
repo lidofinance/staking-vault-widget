@@ -25,7 +25,7 @@ export const ApproveRequest = () => {
     approveUpdateMintingLimit,
     approving,
   } = useConfirmTierVoting();
-  const { refetch: refetchVault } = useVault();
+  const { invalidateVaultConfig } = useVault();
   const { data: vaultTierInfo } = useVaultTierInfo();
   const { reset: resetForm } = useFormContext();
   const tierVoting = useTierVoting();
@@ -49,7 +49,7 @@ export const ApproveRequest = () => {
       await approveSyncTier();
     }
 
-    await refetchVault().then(() =>
+    await invalidateVaultConfig().then(() =>
       resetForm({
         selectedTierId: proposal.tierId.toString(),
         selectedTierLimit: proposedTier.shareLimitStETH,
@@ -63,7 +63,7 @@ export const ApproveRequest = () => {
     approveMovingTier,
     approveSyncTier,
     approveUpdateMintingLimit,
-    refetchVault,
+    invalidateVaultConfig,
     proposal,
     proposedTier,
     resetForm,

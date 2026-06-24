@@ -7,11 +7,7 @@ import { useValidators } from 'features/validators/contexts';
 
 import { OptionStyled, SelectStyled } from './styles';
 
-type FilterByStatusProps = {
-  dataTestId: string;
-};
-
-export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
+export const FilterByStatus: FC = () => {
   const { meta, setFilterByStatus, params } = useValidators();
 
   const statuses = useMemo(
@@ -34,7 +30,7 @@ export const FilterByStatus: FC<FilterByStatusProps> = ({ dataTestId }) => {
       placeholder="Status"
       $status={params.status}
       value={params.status ?? 'all'}
-      data-testid={`${dataTestId}-filter-status`}
+      data-testid="filter-status"
     >
       <Option value="all">all</Option>
       {statuses.map((status) => (

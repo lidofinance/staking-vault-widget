@@ -56,7 +56,7 @@ export const useSyncTier = () => {
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: async () => [...prepareReportCalls(), ...tx],
+          transactions: async () => [...(await prepareReportCalls()), ...tx],
           forceAtomic: true,
           mainActionLoadingText: loadingActionText,
           mainActionCompleteText,

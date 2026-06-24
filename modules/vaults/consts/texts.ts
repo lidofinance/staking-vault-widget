@@ -397,6 +397,81 @@ export const vaultTexts = {
         },
       },
     },
+    rebalance: {
+      title: 'Rebalance',
+      submit: {
+        rebalance: 'Rebalance',
+        supplyAndRebalance: 'Supply and Rebalance',
+        forceRebalance: 'Force rebalance',
+        unavailable: 'Rebalance unavailable',
+        tooltips: {
+          zeroLiability:
+            'Rebalance is unavailable because stETH Liability is currently zero.',
+          disconnected:
+            'Rebalance is unavailable because stVault is disconnected from VaultHub.',
+          pendingConnect:
+            'Rebalance is unavailable because stVault is pending connection to VaultHub.',
+          pendingDisconnect:
+            'Rebalance is unavailable because stVault is pending disconnect from VaultHub.',
+          allEthStaked:
+            'Rebalance is unavailable because all ETH is staked on validators, and Not Staked stVaults Balance is currently zero. To enable rebalance,',
+          forceInsufficientFunds:
+            'Forced rebalance is unavailable because the Not Staked stVaults Balance is not enough to cover the shortfall.',
+        },
+      },
+      description: {
+        rebalance: {
+          title: 'Rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
+          supplyLinkText: 'supply ETH',
+          withdrawLinkText: 'withdraw ETH from validators',
+          repayLinkText: 'repay stETH',
+        },
+        forceRebalance: {
+          title: 'Forced rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liabiltiy.',
+          thresholdText:
+            "The stVault's Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism.",
+          restoreText:
+            'This means the stVault can be rebalanced at any time. You can still restore the collateralization balance by',
+          supplyLinkText: 'supplying ETH',
+          repayLinkText: 'repaying stETH',
+          noGuaranteeText:
+            'However, there is no guarantee that a permissionless rebalance will not occur before your transaction is executed.',
+        },
+      },
+      metrics: {
+        title: 'stVault metrics',
+        utilizationRatio: 'Utilization ratio',
+        liability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        totalValue: 'Total Value',
+      },
+      healthState: {
+        stethLiability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        utilizationRatio: 'Utilization ratio',
+        capacityExceeded: 'stETH minting capacity exceeded',
+        thresholdExceeded: 'Forced Rebalance Threshold exceeded',
+      },
+      supply: {
+        toggle: 'Supply ETH',
+        description:
+          'You can supply ETH into the stVault in the same transaction as rebalance, to reduce gas expenses.',
+        available: 'Available to supply',
+      },
+      input: {
+        available: 'Available to rebalance',
+        reduceToCapacity: 'Use recommended',
+        forceRebalanceTooltip:
+          'In the current mode, the amount of ETH subject to rebalancing is calculated automatically and cannot be changed.',
+        rebalanceOversupplyWarning:
+          'Supplying ETH will fully restore Utilization Ratio.',
+        rebalanceOversupplyWarningLink: 'Consider supplying ETH only.',
+        rebalanceRecommendedExplainer: (canReduceToCapacity: boolean) =>
+          `“Use Recommended” restores the Utilization Ratio ${canReduceToCapacity ? 'to 100%' : 'as close to 100% as possible'}, based on the ETH available in the stVault Balance`,
+      },
+    },
     additionalVerification: {
       banners: {
         notOwner: {
@@ -457,6 +532,10 @@ export const vaultTexts = {
           title: 'Decrease Total Value and stETH Liability',
           children: 'Learn how to rebalance',
         },
+        rebalance: {
+          title: 'Decrease Total Value and stETH Liability',
+          children: 'Rebalance',
+        },
       },
     },
     thresholdExceeded: {
@@ -498,7 +577,7 @@ export const vaultTexts = {
       },
       action: 'Request to change',
     },
-    totalValue: {
+    totalValueETH: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -520,7 +599,7 @@ export const vaultTexts = {
         'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
-    vaultLiability: {
+    vaultLiabilityStETH: {
       title: 'stETH Liability',
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -821,6 +900,10 @@ export const vaultTexts = {
   },
   // common texts like errors, warnings, etc.
   common: {
+    warnings: {
+      balanceWarning:
+        'Using most of ETH balance may result in insufficient funds for gas fees',
+    },
     errors: {
       amount: {
         required: 'Amount is required',

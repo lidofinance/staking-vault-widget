@@ -8,7 +8,7 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts, useVaultOverviewData } from 'modules/vaults';
 
 import {
   OverviewContent,
@@ -18,7 +18,6 @@ import {
   RetryFetching,
   VaultAddresses,
 } from './content';
-import { useVaultOverviewData } from './hooks';
 
 import type {
   VaultOverviewContextType,
