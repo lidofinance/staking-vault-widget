@@ -57,6 +57,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       sanitizedVaultAddress,
       publicClient.chain.id,
       query.data?.hubReport.cid,
+      query.data?.blockNumber,
     );
 
     const options = { cancelRefetch: true, throwOnError: false };

@@ -26,6 +26,10 @@ import { TransactionModalState } from 'shared/components/transaction-modal/types
 import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
 import { useAddressValidation } from 'providers/address-validation-provider';
 import { useDappStatus } from 'modules/web3';
+import {
+  AA_TX_POLLING_TIMEOUT,
+  TX_BLOCK_CONFIRMATIONS,
+} from 'config/groups/web3';
 
 export type TransactionEntry = {
   to: Address;
@@ -167,7 +171,7 @@ export const useSendTransaction = () => {
           try {
             callStatus = await waitForCallsStatus(config, {
               id,
-              timeout: 2 * 60 * 1000, // two minutes for tx to complete
+              timeout: AA_TX_POLLING_TIMEOUT,
             });
           } catch (error) {
             throw new SendTxGetStatusError(error);
@@ -183,6 +187,17 @@ export const useSendTransaction = () => {
             callStatus,
             receipts: callStatus.receipts,
           } as TransactionResponse;
+
+          if (callStatus.receipts && callStatus.receipts.length > 0) {
+            const latestReceipt =
+              callStatus.receipts[callStatus.receipts.length - 1];
+
+            await publicClient.waitForTransactionReceipt({
+              hash: latestReceipt.transactionHash,
+              confirmations: TX_BLOCK_CONFIRMATIONS,
+              timeout: AA_TX_POLLING_TIMEOUT,
+            });
+          }
 
           dispatchModal({
             type: 'stage',
@@ -228,9 +243,10 @@ export const useSendTransaction = () => {
               awaitingDescriptionText: tx.awaitingDescriptionText,
             },
           });
+
           const txReceipt = await waitForTransactionReceipt(config, {
             hash: txHash,
-            confirmations: 1,
+            confirmations: TX_BLOCK_CONFIRMATIONS,
           });
 
           receipts.push(txReceipt);

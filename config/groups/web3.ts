@@ -7,6 +7,8 @@ export const PROVIDER_MAX_BATCH = 20;
 // AA transaction polling timeout(ms)
 export const AA_TX_POLLING_TIMEOUT = 180_000; // 3 minutes
 
+export const TX_BLOCK_CONFIRMATIONS = 2; // number of confirmations to wait for tx to be considered confirmed
+
 // account for gas estimation
 // will always have:
 // Balances:
