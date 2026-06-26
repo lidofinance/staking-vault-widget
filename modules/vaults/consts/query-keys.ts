@@ -8,12 +8,12 @@ export const vaultQueryKeys = (
   ipfsCID = '<none-cid>',
 ) => {
   // this key scopes all query about specific vault on chain
-  const base = ['vault', vaultAddress, chainId] as const;
+  const base = ['vault', { vaultAddress, chainId }] as const;
 
   // this key scopes all queries about vault state that changes with actions or reports
   // e.g. mint, burn, report, etc.
   const stateBase = [...base, 'state'] as const;
-  const state = [...stateBase, ipfsCID] as const;
+  const state = [...stateBase, { ipfsCID }] as const;
 
   // this key scopes all queries about vault configuration that is not dependant on state
   // but can be changed by other setters

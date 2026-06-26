@@ -2294,12 +2294,11 @@
   dependencies:
     typescript "^4.7"
 
-"@lidofinance/lido-ethereum-sdk@4.7.0":
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.7.0.tgz#1843cdcdea5d29c138b912a239a2087697f8a69f"
-  integrity sha512-mw4SyclQzYTxsGa43thBM/WiaWnP/0urfXOkasOJvWd18Oxc1Bd+WXo9YQfqk5T5k5qZqofbdJb4zsrCgP1ZjQ==
+"@lidofinance/lido-ethereum-sdk@4.8.0":
+  version "4.8.0"
+  resolved "https://registry.npmjs.org/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.8.0.tgz#190ff16c004b08d9618fb96c1507729140bde66c"
+  integrity sha512-KjU0opfkc4D92tUXB8H6bsnBuC5/JEEGydJ418CNf5/ib2H6YzTTzG+MQF3gFNYN1ho21Qa4tyEXY1ipWHfcag==
   dependencies:
-    "@ethersproject/bytes" "^5.7.0"
     "@openzeppelin/merkle-tree" "^1.0.8"
     blockstore-core "^5.0.4"
     graphql "^16.8.1"
@@ -3847,17 +3846,17 @@
   dependencies:
     tslib "^2.8.0"
 
-"@tanstack/query-core@5.81.5":
-  version "5.81.5"
-  resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.81.5.tgz"
-  integrity sha512-ZJOgCy/z2qpZXWaj/oxvodDx07XcQa9BF92c0oINjHkoqUPsmm3uG08HpTaviviZ/N9eP1f9CM7mKSEkIo7O1Q==
+"@tanstack/query-core@5.101.0":
+  version "5.101.0"
+  resolved "https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.101.0.tgz#45391ce143c270b7e7a55bd1a6696918f20782d1"
+  integrity sha512-cQetA74EB+seWySv1TTKr828TnP0u39m6LykwDXIo84SNortpDkp30TMEjkqtYCNP9c40uT/iwl6MLiufEt0Ow==
 
-"@tanstack/react-query@^5.81.5":
-  version "5.81.5"
-  resolved "https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.81.5.tgz"
-  integrity sha512-lOf2KqRRiYWpQT86eeeftAGnjuTR35myTP8MXyvHa81VlomoAWNEd8x5vkcAfQefu0qtYCvyqLropFZqgI2EQw==
+"@tanstack/react-query@5.101.0":
+  version "5.101.0"
+  resolved "https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.101.0.tgz#2dd56c5b96ec816d6b6ec9cee5c80ed298974733"
+  integrity sha512-rLlJXSpkqfizLWgkR5+eLeIk0MvTx/meEIR7LRjxic+qxiQP8zVjq7BqQkiCMNLQBlLfuOLqqr6KO5GtrDlmSg==
   dependencies:
-    "@tanstack/query-core" "5.81.5"
+    "@tanstack/query-core" "5.101.0"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
@@ -5409,9 +5408,9 @@ camelize@^1.0.0:
   integrity sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001759:
-  version "1.0.30001761"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001761.tgz"
-  integrity sha512-JF9ptu1vP2coz98+5051jZ4PwQgd2ni8A+gYSN7EA7dPKIMf0pDlSUxhdmVOaV3/fYK5uWBkgSXJaRLr4+3A6g==
+  version "1.0.30001797"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001797.tgz"
+  integrity sha512-l8xKG+gwAIExZGl9FrF7KUwuOmk6wbEPC9Xoy/RtnWv1XG0Q4LFlagaLpUv3Kiza3W/wm27zy0yWJEieYKAP6w==
 
 chalk@5.3.0:
   version "5.3.0"
@@ -5678,13 +5677,6 @@ cookie-es@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/cookie-es/-/cookie-es-1.2.2.tgz#18ceef9eb513cac1cb6c14bcbf8bdb2679b34821"
   integrity sha512-+W7VmiVINB+ywl1HGXJXmrqkOhpKrIiVZV6tQuV54ZyQC7MMuBt81Vc336GMLoHBq5hV/F9eXgt5Mnx0Rha5Fg==
-
-copy-to-clipboard@^3.3.1:
-  version "3.3.3"
-  resolved "https://registry.npmjs.org/copy-to-clipboard/-/copy-to-clipboard-3.3.3.tgz"
-  integrity sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==
-  dependencies:
-    toggle-selection "^1.0.6"
 
 core-js-compat@^3.31.0, core-js-compat@^3.34.0:
   version "3.35.1"
@@ -10915,11 +10907,6 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
-
-toggle-selection@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npmjs.org/toggle-selection/-/toggle-selection-1.0.6.tgz"
-  integrity sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==
 
 totalist@^3.0.0:
   version "3.0.1"

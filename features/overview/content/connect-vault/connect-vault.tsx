@@ -1,6 +1,6 @@
 import { useVault, vaultTexts } from 'modules/vaults';
 
-import { useVaultOverviewData } from 'features/overview/hooks';
+import { useVaultOverviewData } from 'modules/vaults';
 
 import { GeneralInfo, RequestTier, ApproveButton } from './components';
 import { Content, Title, Wrapper } from './styles';

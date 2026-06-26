@@ -1,16 +1,14 @@
 import { Text, Divider } from '@lidofinance/lido-ui';
 
 import { FormatToken } from 'shared/formatters';
+import { OldToNew } from 'shared/components';
 import type { ExtendTierConfirmation, Tier } from 'modules/vaults';
 
 import { ExpiresInItem } from './content/expires-in-item';
 import { RequestBy } from './content/request-by';
 import { VaultInfo } from './vault-info';
 
-import {
-  ExtendedMetrics,
-  OldToNew,
-} from 'features/settings/tier/shared/vault-metrics/extended-metrics';
+import { ExtendedMetrics } from 'features/settings/tier/shared/vault-metrics/extended-metrics';
 import { useTierData } from '../../contexts';
 
 import { ApproveRequest } from './approve-request';

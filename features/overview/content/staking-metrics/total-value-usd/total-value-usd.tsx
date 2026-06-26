@@ -8,7 +8,7 @@ import { TextBlack } from './styles';
 
 export const TotalValueUsd = () => {
   const { isLoadingVault, values } = useVaultOverview();
-  const { isLoading, usdAmount } = useEthUsd(values?.totalValue);
+  const { isLoading, usdAmount } = useEthUsd(values?.totalValueETH);
 
   return (
     <InlineLoader isLoading={isLoading || isLoadingVault}>

@@ -8,10 +8,8 @@ import type {
 } from 'viem';
 import type { EncodableContract } from '@lidofinance/lido-ethereum-sdk/common';
 import {
-  LidoSDKVaultContracts,
-  LidoSDKVaultEntity,
-} from '@lidofinance/lido-ethereum-sdk';
-import {
+  type LidoSDKVaultContracts,
+  type LidoSDKVaultEntity,
   DashboardAbi,
   VaultHubAbi,
 } from '@lidofinance/lido-ethereum-sdk/stvault';
@@ -72,7 +70,6 @@ export type VaultHub = Awaited<
 export type VaultBaseInfo = {
   vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
-  blockNumberString: string;
   address: Address;
   vault: Vault;
   hub: VaultHub;

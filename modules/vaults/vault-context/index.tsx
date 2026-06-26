@@ -39,7 +39,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
   const { publicClient } = useLidoSDK();
   const queryClient = useQueryClient();
-  const { vaultAddress = '' } = router.query as { vaultAddress?: Address };
+  const { vaultAddress = '' } = router.query as { vaultAddress?: string };
   const sanitizedVaultAddress = isAddress(vaultAddress)
     ? getAddress(vaultAddress, config.defaultChain)
     : undefined;
@@ -80,18 +80,18 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       error:
         (vaultAddress && !sanitizedVaultAddress && new VaultAddressError()) ||
         query.error,
-      // refetchQueries refetches all active queries with matching key
-      // vs invalidateQueries will trigger eventual refetch but still show data,
-      // resulting in old data being shown for a while or passed to sub-queries
       invalidateVaultState: () =>
-        queryClient.refetchQueries({ queryKey: queryKeys.stateBase }, options),
+        queryClient.invalidateQueries(
+          { queryKey: queryKeys.stateBase },
+          options,
+        ),
       invalidateVaultConfig: (scope?: VaultConfigScopes) =>
-        queryClient.refetchQueries(
+        queryClient.invalidateQueries(
           { queryKey: queryKeys.config(scope) },
           options,
         ),
       invalidateVault: () =>
-        queryClient.refetchQueries({ queryKey: queryKeys.base }, options),
+        queryClient.invalidateQueries({ queryKey: queryKeys.base }, options),
     };
   }, [
     sanitizedVaultAddress,

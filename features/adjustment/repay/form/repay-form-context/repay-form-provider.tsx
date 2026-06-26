@@ -34,7 +34,7 @@ export const useRepayForm = () => {
   const value = useContext(RepayFormContext);
   invariant(
     value,
-    'useRepayFormData was used outside the RepayFormContext provider',
+    '[useRepayFormData] was used outside the RepayFormContext provider',
   );
 
   return value;
