@@ -6,6 +6,7 @@ import {
   PropsWithChildren,
   useMemo,
   useEffect,
+  useState,
 } from 'react';
 import { useRouter } from 'next/router';
 import { Address, isAddress } from 'viem';
@@ -25,6 +26,7 @@ type VaultContextType = {
   vaultAddress?: Address;
   activeVault?: VaultBaseInfo;
   queryKeys: ReturnType<typeof vaultQueryKeys>;
+  setLatestTxBlock: (blockNumber: bigint) => void;
   invalidateVaultState: () => Promise<void>;
   invalidateVaultConfig: (scope?: VaultConfigScopes) => Promise<void>;
   invalidateVault: () => Promise<void>;
@@ -35,6 +37,10 @@ const VaultContext = createContext<VaultContextType | null>(null);
 VaultContext.displayName = 'VaultContext';
 
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
+  const [latestTxBlock, setLatestTxBlock] = useState<bigint | undefined>(
+    undefined,
+  );
+
   const router = useRouter();
   const { publicClient } = useLidoSDK();
   const queryClient = useQueryClient();
@@ -42,7 +48,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
     ? (vaultAddress.toLowerCase() as Address)
     : undefined;
-  const query = useBaseVaultData(sanitizedVaultAddress);
+  const query = useBaseVaultData(sanitizedVaultAddress, latestTxBlock);
 
   useEffect(() => {
     if (query.error)
@@ -66,6 +72,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       vaultAddress: sanitizedVaultAddress,
       activeVault: query.data,
       queryKeys,
+      setLatestTxBlock,
       error:
         (vaultAddress && !sanitizedVaultAddress && new VaultAddressError()) ||
         query.error,

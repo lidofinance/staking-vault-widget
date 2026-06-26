@@ -1,35 +1,31 @@
-import type {
-  Address,
-  Hex,
-  TransactionReceipt,
-  WaitForCallsStatusReturnType,
+import {
+  hexToBigInt,
+  type Address,
+  type Hex,
+  type TransactionReceipt,
+  type WaitForCallsStatusReturnType,
+  type WalletCallReceipt,
 } from 'viem';
 
 import { useMutation } from '@tanstack/react-query';
-import { useConfig, usePublicClient } from 'wagmi';
 import { useAA } from './use-aa';
-
-// @wagmi/core provides async wagmi actions
-// avoid putting it in main dependencies as it will eventually conflict with wagmi package
-// eslint-disable-next-line import/no-extraneous-dependencies
-import {
-  waitForCallsStatus,
-  sendCalls,
-  sendTransaction,
-  waitForTransactionReceipt,
-} from '@wagmi/core';
 
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
-import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
+import {
+  DisplayableError,
+  SendTxGetStatusError,
+  useVault,
+} from 'modules/vaults';
 import { useAddressValidation } from 'providers/address-validation-provider';
-import { useDappStatus } from 'modules/web3';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
 import {
   AA_TX_POLLING_TIMEOUT,
   TX_BLOCK_CONFIRMATIONS,
 } from 'config/groups/web3';
+import { useCallback } from 'react';
 
 export type TransactionEntry = {
   to: Address;
@@ -53,34 +49,48 @@ export type SendTransactionArguments = {
 // TODO: wrapper around error with readable message
 type TransactionError = Error;
 
-export type TransactionResponse =
+export type TransactionResponse = {
+  lastTxBlock: bigint;
+  receipts: TransactionReceipt[];
+} & (
   | {
       isAA: true;
       callStatus: WaitForCallsStatusReturnType;
-      receipts: TransactionReceipt[];
     }
   | {
       isAA: false;
       callStatus?: undefined;
-      receipts: TransactionReceipt[];
-    };
+    }
+);
+
+const receiptsToLastBlock = (
+  receipts: (
+    | TransactionReceipt
+    | WalletCallReceipt<bigint, 'success' | 'reverted'>
+  )[],
+): bigint => {
+  const lastTxBlock = receipts
+    .map((receipt) =>
+      typeof receipt.blockNumber === 'bigint'
+        ? receipt.blockNumber
+        : hexToBigInt(receipt.blockNumber),
+    )
+    .sort((a, b) => (a < b ? 1 : -1))
+    .at(-1);
+  return lastTxBlock ?? 0n;
+};
 
 export const useSendTransaction = () => {
-  const publicClient = usePublicClient();
-  const config = useConfig();
+  const { setLatestTxBlock } = useVault();
+  const { publicClient, walletClient } = useLidoSDK();
   const { address } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();
   const { validateAddress } = useAddressValidation();
   const { isAA } = useAA();
 
-  const mutation = useMutation<
-    TransactionResponse,
-    TransactionError,
-    SendTransactionArguments
-  >({
-    mutationKey: ['sendTransaction', isAA, retryFire],
-    mutationFn: async ({
+  const mutationFn = useCallback(
+    async ({
       transactions,
       mainActionCompleteText,
       mainActionLoadingText,
@@ -89,18 +99,19 @@ export const useSendTransaction = () => {
       forceLegacy,
       allowRetry = true,
       renderSuccessContent,
-    }) => {
+    }: SendTransactionArguments): Promise<TransactionResponse> => {
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !forceLegacy && isAA;
 
       try {
-        const result = await validateAddress(address);
+        const validationResult = await validateAddress(address);
         // if address is not valid, don't send the transaction
-        if (!result) {
-          return {
-            isAA,
-            receipts: [],
-          } as TransactionResponse;
+        if (!validationResult) {
+          throw new Error('Validation failed');
+        }
+
+        if (!publicClient || !walletClient) {
+          throw new Error('Public or wallet client is not initialized');
         }
 
         dispatchModal({
@@ -152,9 +163,10 @@ export const useSendTransaction = () => {
             },
           });
 
-          const { id } = await sendCalls(config, {
+          const { id } = await walletClient.sendCalls({
             calls,
             forceAtomic,
+            experimental_fallback: true,
           });
 
           dispatchModal({
@@ -169,7 +181,7 @@ export const useSendTransaction = () => {
           // tx status is ambiguous in this case
           let callStatus: WaitForCallsStatusReturnType;
           try {
-            callStatus = await waitForCallsStatus(config, {
+            callStatus = await walletClient.waitForCallsStatus({
               id,
               timeout: AA_TX_POLLING_TIMEOUT,
             });
@@ -182,22 +194,27 @@ export const useSendTransaction = () => {
             throw new Error('Batch failed');
           }
 
-          const transactionResult = {
-            isAA,
-            callStatus,
-            receipts: callStatus.receipts,
-          } as TransactionResponse;
+          let receipts: TransactionReceipt[] = [];
 
           if (callStatus.receipts && callStatus.receipts.length > 0) {
             const latestReceipt =
               callStatus.receipts[callStatus.receipts.length - 1];
 
-            await publicClient.waitForTransactionReceipt({
+            const receipt = await publicClient.waitForTransactionReceipt({
               hash: latestReceipt.transactionHash,
               confirmations: TX_BLOCK_CONFIRMATIONS,
               timeout: AA_TX_POLLING_TIMEOUT,
             });
+
+            receipts = [receipt];
           }
+
+          const transactionResult = {
+            isAA,
+            callStatus,
+            receipts,
+            lastTxBlock: receiptsToLastBlock(receipts),
+          };
 
           dispatchModal({
             type: 'stage',
@@ -206,6 +223,8 @@ export const useSendTransaction = () => {
               transactionResult,
             },
           });
+
+          setLatestTxBlock(transactionResult.lastTxBlock);
 
           return transactionResult;
         }
@@ -228,7 +247,7 @@ export const useSendTransaction = () => {
             account: address,
           });
 
-          const txHash = await sendTransaction(config, {
+          const txHash = await walletClient.sendTransaction({
             to: tx.to,
             data: tx.data,
             value: tx.value,
@@ -244,7 +263,7 @@ export const useSendTransaction = () => {
             },
           });
 
-          const txReceipt = await waitForTransactionReceipt(config, {
+          const txReceipt = await publicClient.waitForTransactionReceipt({
             hash: txHash,
             confirmations: TX_BLOCK_CONFIRMATIONS,
           });
@@ -256,7 +275,11 @@ export const useSendTransaction = () => {
           }
         }
 
-        const transactionResult = { isAA: useSendCalls, receipts };
+        const transactionResult = {
+          isAA: useSendCalls,
+          receipts,
+          lastTxBlock: receiptsToLastBlock(receipts),
+        };
 
         dispatchModal({
           type: 'stage',
@@ -265,6 +288,8 @@ export const useSendTransaction = () => {
             transactionResult,
           },
         });
+
+        setLatestTxBlock(transactionResult.lastTxBlock);
 
         return transactionResult;
       } catch (error) {
@@ -283,6 +308,25 @@ export const useSendTransaction = () => {
         throw error;
       }
     },
+    [
+      address,
+      dispatchModal,
+      isAA,
+      publicClient,
+      retryFire,
+      setLatestTxBlock,
+      validateAddress,
+      walletClient,
+    ],
+  );
+
+  const mutation = useMutation<
+    TransactionResponse,
+    TransactionError,
+    SendTransactionArguments
+  >({
+    mutationKey: ['sendTransaction', isAA, retryFire],
+    mutationFn,
   });
 
   return {
