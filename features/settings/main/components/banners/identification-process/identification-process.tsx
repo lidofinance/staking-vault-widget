@@ -33,19 +33,30 @@ export const IdentificationProcess = () => {
   }
 
   return (
-    <BannerWithoutTitle>
+    <BannerWithoutTitle dataTestId="settings-identificationProcess-banner">
       <Text size="xxs" color="warning">
         Operator{' '}
         <span style={{ fontWeight: 'bold' }}>{nodeOperator.toLowerCase()}</span>{' '}
         has not passed the{' '}
-        <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>.
+        <Link
+          href={NO_IDENTIFICATION_LINK}
+          data-testid="settings-identificationProcess-link"
+        >
+          identification process
+        </Link>
+        .
       </Text>
       <Text size="xxs" color="warning">
         By allowing this Node Operator to perform{' '}
-        <Link href={PDG_LINK}>unguaranteed deposits</Link>, you confirm that
-        there is mutual off-chain trust between the Node Operator and the Vault
-        Owner, and that you understand and accept the risks associated with the
-        selected Predeposit Guarantee Policy.
+        <Link
+          href={PDG_LINK}
+          data-testid="additionalVerification-unguaranteedDeposits-link"
+        >
+          unguaranteed deposits
+        </Link>
+        , you confirm that there is mutual off-chain trust between the Node
+        Operator and the Vault Owner, and that you understand and accept the
+        risks associated with the selected Predeposit Guarantee Policy.
       </Text>
     </BannerWithoutTitle>
   );

@@ -22,7 +22,10 @@ export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
         not allow supplying ETH, repaying stETH, or rebalancing in this case due
         to a higher risk of fund loss. To enable this action in the web
         interface, this stVault{' '}
-        <NextLink href={link}>
+        <NextLink
+          href={link}
+          data-testid="additionalVerification-tierSettings-link"
+        >
           must be moved to one of the Node Operator&apos;s tiers
         </NextLink>
         , which serves as confirmation of the relationship between the Node
@@ -39,7 +42,10 @@ export const DefaultTier: FC<DefaultTierProps> = ({ variant, action }) => {
       supplying ETH, repaying stETH, or rebalancing in this case due to a higher
       risk of fund loss. To enable these actions in the web interface, the
       stVault{' '}
-      <NextLink href={link}>
+      <NextLink
+        href={link}
+        data-testid="additionalVerification-tierSettings-link"
+      >
         must be moved to one of the Node Operator&apos;s tiers
       </NextLink>
       .

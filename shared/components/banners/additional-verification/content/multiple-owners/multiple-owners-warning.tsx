@@ -28,7 +28,11 @@ export const MultipleOwnersWarning: FC<MultipleOwnersWarningProps> = ({
   }
 
   return (
-    <NoticeContainer title={title} type="warning">
+    <NoticeContainer
+      title={title}
+      type="warning"
+      dataTestId="additionalVerification-multipleOwners-warning-banner"
+    >
       <Text size="xxs">{description}</Text>
       <Explanation />
       <OwnersList ownersList={state.defaultAdminList} />

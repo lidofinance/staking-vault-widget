@@ -22,13 +22,18 @@ export const PdgTrust = () => {
   }
 
   return (
-    <BannerWithoutTitle>
+    <BannerWithoutTitle dataTestId="settings-pdgTrust-banner">
       <Text size="xxs" color="warning">
         By allowing this Node Operator to perform{' '}
-        <Link href={PDG_LINK}>unguaranteed deposits</Link>, you confirm that
-        there is mutual off-chain trust between the Node Operator and the Vault
-        Owner, and that you understand and accept the risks associated with the
-        selected Predeposit Guarantee Policy.
+        <Link
+          href={PDG_LINK}
+          data-testid="additionalVerification-unguaranteedDeposits-link"
+        >
+          unguaranteed deposits
+        </Link>
+        , you confirm that there is mutual off-chain trust between the Node
+        Operator and the Vault Owner, and that you understand and accept the
+        risks associated with the selected Predeposit Guarantee Policy.
       </Text>
     </BannerWithoutTitle>
   );
