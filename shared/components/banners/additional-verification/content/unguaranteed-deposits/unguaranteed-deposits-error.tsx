@@ -30,14 +30,8 @@ export const UnguaranteedDepositsError: FC<UnguaranteedDepositsErrorProps> = ({
         Operator {state.nodeOperator.toLowerCase()} has not passed the{' '}
         <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>, and
         current <Link href={PDG_LINK}>Predeposit Guarantee Policy</Link> allows{' '}
-        <NextLink
-          href={mainSettingsLink}
-          data-testid="additionalVerification-unguaranteedDeposits-link"
-        >
-          unguaranteed deposits
-        </NextLink>
-        . Due to a higher risk of losing funds, this action is not allowed in
-        this UI.
+        <NextLink href={mainSettingsLink}>unguaranteed deposits</NextLink>. Due
+        to a higher risk of losing funds, this action is not allowed in this UI.
       </Text>
     </NoticeContainer>
   );
