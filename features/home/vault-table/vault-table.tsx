@@ -54,7 +54,7 @@ const tableHeaders = [
   },
   {
     title: 'Total value, ETH',
-    sortKey: 'totalValueETH',
+    sortKey: 'totalValue',
     hint: 'The total amount of ETH deposited on validators and on the vault balance.',
   },
   {
