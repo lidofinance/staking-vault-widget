@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   hexToBigInt,
   type Address,
@@ -6,26 +7,22 @@ import {
   type WaitForCallsStatusReturnType,
   type WalletCallReceipt,
 } from 'viem';
-
-import { useMutation } from '@tanstack/react-query';
-import { useAA } from './use-aa';
-
-import { useTransactionModal } from 'shared/components/transaction-modal';
-import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
 import invariant from 'tiny-invariant';
-import { TransactionModalState } from 'shared/components/transaction-modal/types';
-import {
-  DisplayableError,
-  SendTxGetStatusError,
-  useVault,
-} from 'modules/vaults';
-import { useAddressValidation } from 'providers/address-validation-provider';
+import { useMutation } from '@tanstack/react-query';
+
+import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import {
   AA_TX_POLLING_TIMEOUT,
   TX_BLOCK_CONFIRMATIONS,
 } from 'config/groups/web3';
-import { useCallback } from 'react';
+
+import { useTransactionModal } from 'shared/components/transaction-modal';
+import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-form-controller-retry-delegate';
+import { TransactionModalState } from 'shared/components/transaction-modal/types';
+import { useAddressValidation } from 'providers/address-validation-provider';
+
+import { useAA } from './use-aa';
 
 export type TransactionEntry = {
   to: Address;
@@ -81,8 +78,7 @@ const receiptsToLastBlock = (
 };
 
 export const useSendTransaction = () => {
-  const { setLatestTxBlock } = useVault();
-  const { publicClient, walletClient } = useLidoSDK();
+  const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
   const { address } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();

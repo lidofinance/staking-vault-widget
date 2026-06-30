@@ -1,13 +1,17 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
+import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { useLidoSDK } from 'modules/web3';
+
 import {
   fetchReport,
   checkIsDashboard,
   VaultOwnerNotDashboardError,
 } from 'modules/vaults';
+import { PROVIDER_POLLING_INTERVAL } from 'config/groups/web3';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import {
   DisplayableError,
@@ -16,9 +20,6 @@ import {
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
-import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
-import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { PROVIDER_POLLING_INTERVAL } from 'config/groups/web3';
 
 const waitForRpcBlock = async (
   publicClient: any,

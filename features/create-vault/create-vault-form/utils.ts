@@ -1,4 +1,4 @@
-import { encodeFunctionData, Log, parseEventLogs } from 'viem';
+import { encodeFunctionData, parseEventLogs } from 'viem';
 
 import { VaultFactoryAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 import {
@@ -51,7 +51,7 @@ export const parseVaultTx = ({ receipts }: TransactionResponse) => {
 
   const logs = parseEventLogs({
     abi: VaultFactoryAbi,
-    logs: receipt.logs as Log[],
+    logs: receipt.logs,
     strict: true,
     eventName: 'VaultCreated',
   });
