@@ -106,9 +106,10 @@ export const useSendTransaction = () => {
           throw new Error('Validation failed');
         }
 
-        if (!publicClient || !walletClient) {
-          throw new Error('Public or wallet client is not initialized');
-        }
+        invariant(
+          publicClient && walletClient,
+          '[useSendTransaction] Public or wallet clients are not initialized',
+        );
 
         dispatchModal({
           type: 'init',
