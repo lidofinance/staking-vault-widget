@@ -1,12 +1,12 @@
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
 import { isBigint } from 'utils';
+import { NoticeContainer } from 'shared/components';
 
-import { NoticeContainer } from 'features/overview/shared';
 import { useVaultOverview } from 'features/overview/vault-overview';
 import {
   HowToResolve,
   RepayOrRebalance,
-  ApplyReport,
+  SettleFees,
   SupplyOrRepay,
   EnableDeposits,
 } from './components';
@@ -24,7 +24,7 @@ export const DepositsRestricted = () => {
 
   if (
     !healthFactorNumber ||
-    ((!isBigint(feesToSettle) || feesToSettle < WEI_PER_ETHER) &&
+    ((!isBigint(feesToSettle) || feesToSettle < ONE_ETHER) &&
       (!isBigint(redemptionStETH) || redemptionStETH === 0n)) ||
     !beaconChainDepositsPaused
   ) {
@@ -47,7 +47,7 @@ export const DepositsRestricted = () => {
           </TextStyled>
         )}
         <HowToResolve>
-          <ApplyReport lidoFees={feesToSettle} />
+          <SettleFees lidoFees={feesToSettle} />
           <SupplyOrRepay isNotHealth={isNotHealth} />
           <RepayOrRebalance amount={redemptionStETH} />
           <EnableDeposits isPausedByUser={beaconChainDepositsPauseIntent} />

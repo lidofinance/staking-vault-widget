@@ -13,6 +13,10 @@ import { useDappStatus } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormControllerStyled } from 'shared/components/form';
 import { useDisableForm } from 'shared/hook-form';
+import {
+  verificationConfirmDefaultValues,
+  useDisableFormByVerification,
+} from 'shared/components/banners/additional-verification';
 
 import { SupplyFormResolver } from './validation';
 import {
@@ -47,6 +51,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   const { validationContext } = useSupplyFormValidationContext();
   const { supply, retryEvent } = useSupply();
   const disabled = useDisableForm();
+  const isDisabledByVerification = useDisableFormByVerification('supply');
 
   const formObject = useForm<
     SupplyFormFieldValues,
@@ -58,9 +63,10 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
       amount: null,
       mintSteth: false,
       mintAddress: '',
+      ...verificationConfirmDefaultValues,
     },
     mode: 'onTouched',
-    disabled: !isDappActive || disabled,
+    disabled: !isDappActive || disabled || isDisabledByVerification,
     context: useAwaiter(validationContext).awaiter,
     resolver: SupplyFormResolver,
   });

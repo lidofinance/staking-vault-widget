@@ -23,7 +23,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
     queryKey: [
       ...queryKeys.state,
       'max-mintable-steth-with-supply',
-      { supply: amount?.toString() },
+      { supply: amount },
     ],
     enabled: enabled,
     queryFn: async () => {

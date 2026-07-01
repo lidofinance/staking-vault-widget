@@ -1,7 +1,8 @@
 import { formatBalance } from 'utils/formats/format-balance';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { ONE_ETHER } from 'consts/tx';
+import { toStethValue } from 'utils';
+
 import type { TierConfirmationFnNames } from '../types';
-import { toStethValue } from '../../../utils';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -88,6 +89,7 @@ export const vaultTexts = {
     },
     repay: {
       available: `Available to repay`,
+      repayUnavailable: 'Repay unavailable',
       loading: (token: LidoToken) => `Repaying ${token}` as const,
       completed: (token: LidoToken) => `Repaid ${token} ` as const,
       submit: (token: LidoToken, amount?: bigint | null) =>
@@ -97,6 +99,19 @@ export const vaultTexts = {
       loading: 'Applying oracle report' as const,
       completed: 'Applying oracle report is done' as const,
     },
+    overview: {
+      vaultGeneral: {
+        nodeOperator: {
+          verifiedOperator: 'Identified operator',
+          unVerifiedOperator:
+            'Operator has not passed the identification process',
+        },
+      },
+    },
+    settleLidoFees: {
+      loading: 'Settling Lido fees',
+      completed: 'Settling Lido fees is done',
+    },
     supply: {
       available: `Available to supply`,
       mint: {
@@ -104,6 +119,7 @@ export const vaultTexts = {
         mintTo: 'Mint to address',
       },
       submit: {
+        supplyUnavailable: 'Supply unavailable',
         supply: (token: ExternalToken, amount?: bigint | null) =>
           `Supply ${balance(amount)}${token}` as const,
         supplyMint: (
@@ -313,6 +329,175 @@ export const vaultTexts = {
       },
       clearChanges: 'Clear changes',
     },
+    validators: {
+      title: 'stVaults Validators overview',
+      table: {
+        header: {
+          index: 'Index',
+          pubKey: 'Public key',
+          status: 'Status',
+          actualBalance: 'Actual balance',
+          activatedExited: 'Activated / exited',
+          menu: '',
+        },
+        noValidatorsFound: 'No validators found',
+        placeholder: {
+          title: 'No validators found',
+          description:
+            'Once validators are running, they will be displayed here',
+          errorDescription:
+            'Failed to load validator data. Please try again later',
+        },
+        menu: {
+          topUpValidator: 'Top up validator',
+          withdrawToStVault: 'Withdraw to stVault',
+        },
+      },
+      modals: {
+        withdrawal: {
+          title: 'Withdraw ETH from validator to stVault',
+          description:
+            'You can withdraw a portion of ETH (while leaving a minimum of 32 ETH on the validator balance) or the full amount from the validator. The exact time when the withdrawn ETH appears in the stVault Not-Staked Balance depends on the current Ethereum exit queue.',
+          availableToWithdraw: 'Available to withdraw',
+          estimatedFee: 'Estimated withdrawal fee',
+          actionFull: 'Force exit validator',
+          actionPartial: 'Withdraw to stVault',
+          actionDisabled: 'Withdraw unavailable',
+          vaultIsJail:
+            'Operation is restricted. Vault is jailed. Partial Withdrawal temporary unavailable.',
+          partialWarning:
+            "Withdrawals are subject for the withdrawal queue, which is not yet supported by this UI. So you'll see the result of your request only when it's done.",
+          fullWarning: (amount: bigint) =>
+            `You are about to force-exit this validator. The entire validator's actual balance (currently ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH) will be withdrawn.`,
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are withdrawing ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH from the validator #${index}`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH has been withdrawn from the validator #${index}`,
+          },
+        },
+        topUp: {
+          title: 'Top up validator',
+          description:
+            'You can top-up this validator by ETH available on the stVault Balance.',
+          availableToTopup: 'Available to top up',
+          estimatedFee: 'Estimated withdrawal fee',
+          actionActive: 'Top up validator',
+          actionDisabled: 'Top up unavailable',
+          validatorWithoutPDG: `Top-ups are unavailable for this validator because it has not been proven for Predeposit Guarantee. To enable top-ups in this interface, please prove the validator.`,
+          depositPaused: `Top-ups are unavailable due to temporary restrictions on deposits from the stVault Balance to validators.`,
+          availableBalanceLow: (amount: bigint) =>
+            `Top-ups are unavailable due to low available balance ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
+          txModal: {
+            loadingText: (index: number, amount: bigint) =>
+              `You are topping up the validator #${index} with ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
+            mainCompleteText: (index: number, amount: bigint) =>
+              `The validator #${index} has been topped up with ${formatBalance(amount, { adaptiveDecimals: true }).trimmed} ETH`,
+          },
+        },
+      },
+    },
+    rebalance: {
+      title: 'Rebalance',
+      submit: {
+        rebalance: 'Rebalance',
+        supplyAndRebalance: 'Supply and Rebalance',
+        forceRebalance: 'Force rebalance',
+        unavailable: 'Rebalance unavailable',
+        tooltips: {
+          zeroLiability:
+            'Rebalance is unavailable because stETH Liability is currently zero.',
+          disconnected:
+            'Rebalance is unavailable because stVault is disconnected from VaultHub.',
+          pendingConnect:
+            'Rebalance is unavailable because stVault is pending connection to VaultHub.',
+          pendingDisconnect:
+            'Rebalance is unavailable because stVault is pending disconnect from VaultHub.',
+          allEthStaked:
+            'Rebalance is unavailable because all ETH is staked on validators, and Not Staked stVaults Balance is currently zero. To enable rebalance,',
+          forceInsufficientFunds:
+            'Forced rebalance is unavailable because the Not Staked stVaults Balance is not enough to cover the shortfall.',
+        },
+      },
+      description: {
+        rebalance: {
+          title: 'Rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
+          supplyLinkText: 'supply ETH',
+          withdrawLinkText: 'withdraw ETH from validators',
+          repayLinkText: 'repay stETH',
+        },
+        forceRebalance: {
+          title: 'Forced rebalance',
+          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liabiltiy.',
+          thresholdText:
+            "The stVault's Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism.",
+          restoreText:
+            'This means the stVault can be rebalanced at any time. You can still restore the collateralization balance by',
+          supplyLinkText: 'supplying ETH',
+          repayLinkText: 'repaying stETH',
+          noGuaranteeText:
+            'However, there is no guarantee that a permissionless rebalance will not occur before your transaction is executed.',
+        },
+      },
+      metrics: {
+        title: 'stVault metrics',
+        utilizationRatio: 'Utilization ratio',
+        liability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        totalValue: 'Total Value',
+      },
+      healthState: {
+        stethLiability: 'stETH Liability',
+        healthFactor: 'Health factor',
+        utilizationRatio: 'Utilization ratio',
+        capacityExceeded: 'stETH minting capacity exceeded',
+        thresholdExceeded: 'Forced Rebalance Threshold exceeded',
+      },
+      supply: {
+        toggle: 'Supply ETH',
+        description:
+          'You can supply ETH into the stVault in the same transaction as rebalance, to reduce gas expenses.',
+        available: 'Available to supply',
+      },
+      input: {
+        available: 'Available to rebalance',
+        reduceToCapacity: 'Use recommended',
+        forceRebalanceTooltip:
+          'In the current mode, the amount of ETH subject to rebalancing is calculated automatically and cannot be changed.',
+        rebalanceOversupplyWarning:
+          'Supplying ETH will fully restore Utilization Ratio.',
+        rebalanceOversupplyWarningLink: 'Consider supplying ETH only.',
+        rebalanceRecommendedExplainer: (canReduceToCapacity: boolean) =>
+          `“Use Recommended” restores the Utilization Ratio ${canReduceToCapacity ? 'to 100%' : 'as close to 100% as possible'}, based on the ETH available in the stVault Balance`,
+      },
+    },
+    additionalVerification: {
+      banners: {
+        notOwner: {
+          title: 'This stVault is not owned by you',
+        },
+        multipleOwners: {
+          title: 'Multiple Vault Owners',
+          description:
+            'The Vault Owner role (DEFAULT_ADMIN_ROLE) is assigned to one or more additional addresses.',
+          ownersListTitle: 'Other Vault Owner addresses:',
+          explanation: {
+            title: 'This means:',
+            list: [
+              'Another Vault Owner can fully control the tokens you supply.',
+              'Another Vault Owner can revoke this role from your address at any time. If this happens, you will lose control over your supplied tokens.',
+            ],
+          },
+          confirm:
+            'I confirm that I understand the implications and risks and want to proceed.',
+        },
+      },
+      settings: {
+        notPassedIdentification:
+          'Operator has not passed the identification process.',
+      },
+    },
   },
   // configuration for vault metrics as seen in overview page
   // but can be used in other places as well where vault status is displayed
@@ -346,6 +531,10 @@ export const vaultTexts = {
         learnMore: {
           title: 'Decrease Total Value and stETH Liability',
           children: 'Learn how to rebalance',
+        },
+        rebalance: {
+          title: 'Decrease Total Value and stETH Liability',
+          children: 'Rebalance',
         },
       },
     },
@@ -388,7 +577,7 @@ export const vaultTexts = {
       },
       action: 'Request to change',
     },
-    totalValue: {
+    totalValueETH: {
       title: 'Total value',
       hint: 'The total amount of ETH deposited on validators and on the vault balance.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -410,7 +599,7 @@ export const vaultTexts = {
         'The Health Factor demonstrates the economic state of the stVault. It shows how the stETH Liability is backed by the Total Value.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
-    vaultLiability: {
+    vaultLiabilityStETH: {
       title: 'stETH Liability',
       hint: 'The amount of stETH that the vault owner minted in the vault backed by the ETH collateral. Increases daily due to daily stETH rebase.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
@@ -462,7 +651,7 @@ export const vaultTexts = {
     },
     unsettledLidoFees: {
       title: 'Unsettled Lido fees',
-      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fee consists of the following components, calculated daily and automatically settled by Lido whenever a vault report is applied.',
+      hint: 'The amount of accumulated but not yet settled Lido fees. This amount of ETH increases the amount of total locked ETH.\n\nLido fees consist of the following components and are calculated daily.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     netApr: {
@@ -582,7 +771,7 @@ export const vaultTexts = {
               'Reserve is defined by the Minimal Reserve value of 1 ETH for the connection to Lido Core.';
             if (
               constraintBy === 'minimalReserve' &&
-              minimalReserve === WEI_PER_ETHER
+              minimalReserve === ONE_ETHER
             ) {
               return `${baseDescription} ${minimalReserveText}`;
             }
@@ -711,6 +900,10 @@ export const vaultTexts = {
   },
   // common texts like errors, warnings, etc.
   common: {
+    warnings: {
+      balanceWarning:
+        'Using most of ETH balance may result in insufficient funds for gas fees',
+    },
     errors: {
       amount: {
         required: 'Amount is required',
@@ -726,6 +919,10 @@ export const vaultTexts = {
         invalid: 'Invalid ethereum address',
         vault: 'Recipient cannot be stVault',
         dashboard: 'Recipient cannot be stVault Dashboard',
+      },
+      pubkey: {
+        required: 'Validator public key is required',
+        invalid: 'Invalid validator public key',
       },
 
       tx: {

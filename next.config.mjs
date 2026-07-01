@@ -1,11 +1,12 @@
 import NextBundleAnalyzer from '@next/bundle-analyzer';
-import buildDynamics from './scripts/build-dynamics.mjs';
 
+import buildDynamics from './scripts/build-dynamics.mjs';
 import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs';
 import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
 import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
+import { buildSecurityHeaders } from './config/security-headers/build-security-headers.js';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -47,6 +48,7 @@ export default withBundleAnalyzer({
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,
   assetPrefix: isIPFSMode ? './' : undefined,
+  poweredByHeader: false,
 
   // IPFS version has hash-based routing,
   // so we provide only index.html in ipfs version
@@ -128,31 +130,15 @@ export default withBundleAnalyzer({
       {
         // Apply these headers to all routes in your application.
         source: '/(.*)',
-        headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'x-content-type-options',
-            value: 'nosniff',
-          },
-          { key: 'x-xss-protection', value: '1' },
-          { key: 'x-download-options', value: 'noopen' },
-        ],
+        headers: buildSecurityHeaders({ isIPFSMode, isDevelopment: developmentMode }),
       },
       {
         // required for gnosis save apps
         source: '/manifest.json',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
+        ],
       },
       ...CACHE_CONTROL_PAGES.map((page) => ({
         source: page,

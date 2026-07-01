@@ -1,6 +1,8 @@
+import { useVaultOverview } from 'features/overview/vault-overview';
 import { Formula, OverviewModal } from 'features/overview/shared';
 import type { FormulaItem } from 'features/overview/types';
-import { useVaultOverview } from '../../../vault-overview';
+
+import { SettleFee } from './settle-fee';
 
 const formulasMap: Record<
   'infraFee' | 'liquidityFee' | 'annualReservationFee',
@@ -21,7 +23,7 @@ const formulasMap: Record<
       label: '0.5%',
       type: 'variable',
       hasHighlight: false,
-      vaultIndicator: 'infraFee',
+      vaultIndicator: 'infraFeeBP',
     },
     {
       label: '×',
@@ -59,7 +61,7 @@ const formulasMap: Record<
       label: '6%',
       type: 'variable',
       hasHighlight: false,
-      vaultIndicator: 'liquidityFee',
+      vaultIndicator: 'liquidityFeeBP',
     },
     {
       label: '×',
@@ -97,7 +99,7 @@ const formulasMap: Record<
       label: '8%',
       type: 'variable',
       hasHighlight: false,
-      vaultIndicator: 'reservationFee',
+      vaultIndicator: 'reservationFeeBP',
     },
     {
       label: '×',
@@ -128,7 +130,11 @@ export const LidoFeeModal = () => {
   const { values } = useVaultOverview();
 
   return (
-    <OverviewModal name="unsettledLidoFees" symbol="ETH">
+    <OverviewModal
+      name="unsettledLidoFees"
+      symbol="ETH"
+      amountRightDecorator={<SettleFee />}
+    >
       {!!values?.vaultData.infraFeeBP && (
         <Formula
           list={formulasMap.infraFee}

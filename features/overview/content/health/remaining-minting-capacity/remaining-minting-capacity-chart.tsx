@@ -4,7 +4,8 @@ import {
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
-import { useRemainingMintingCapacityChart } from 'features/overview/inner';
+import { useRemainingMintingCapacityChart } from 'shared/hooks';
+
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 export const RemainingMintingCapacityChart = () => {

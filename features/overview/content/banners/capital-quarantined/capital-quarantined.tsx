@@ -1,6 +1,7 @@
 import { isBigint } from 'utils';
 
-import { NoticeContainer } from 'features/overview/shared';
+import { NoticeContainer } from 'shared/components';
+
 import { useVaultOverview } from 'features/overview/vault-overview';
 import { QuarantineDescription } from './quarantine-description';
 

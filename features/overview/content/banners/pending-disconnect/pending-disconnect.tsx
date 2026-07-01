@@ -1,6 +1,6 @@
 import { useVault, useSendReport, vaultTexts } from 'modules/vaults';
+import { NoticeContainer } from 'shared/components';
 
-import { NoticeContainer } from 'features/overview/shared';
 import {} from 'features/overview/hooks';
 import { ApplyButton } from './styles';
 

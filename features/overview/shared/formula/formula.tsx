@@ -1,9 +1,9 @@
-import { FC, useId } from 'react';
+import { type FC, useId } from 'react';
 
 import { Text } from '@lidofinance/lido-ui';
 
+import { useVaultOverview } from 'features/overview/vault-overview';
 import type { FormulaItem } from 'features/overview/inner';
-import { useVaultOverview } from '../../vault-overview';
 
 import { FormulaWrapper, Variable } from './styles';
 

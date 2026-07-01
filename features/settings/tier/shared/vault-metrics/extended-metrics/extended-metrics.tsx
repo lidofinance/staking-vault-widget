@@ -3,12 +3,12 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { calculateTierMetrics } from 'utils';
 import { FormatToken } from 'shared/formatters';
+import { OldToNew } from 'shared/components';
 import type { Tier } from 'modules/vaults';
 
 import { useTierData } from 'features/settings/tier/contexts';
 
 import { MintingCapacityTooltip } from './minting-capacity-tooltip';
-import { OldToNew } from './old-to-new';
 
 import { List, ListItem, ContentContainer } from './styles';
 

@@ -1,10 +1,16 @@
 export type NavigationRoutes = {
   title: string;
   path: string;
-  icon: 'gear' | 'withdraw' | 'validators' | 'mint' | 'mosaic' | 'stake';
+  icon:
+    | 'gear'
+    | 'withdraw'
+    | 'validators'
+    | 'mint'
+    | 'mosaic'
+    | 'stake'
+    | 'rebalance';
   exact: boolean;
   inMobileMenu?: boolean;
-  external?: boolean;
 };
 
 export type VaultRoutesConfig = {

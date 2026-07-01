@@ -36,7 +36,7 @@ export const useRepay = () => {
           vaultTexts.actions.repay.completed(token);
 
         const prepareTransactions = async () => {
-          const calls: TransactionEntry[] = [...prepareReportCalls()];
+          const calls: TransactionEntry[] = await prepareReportCalls();
 
           const isSteth = token === 'stETH';
           const tokenContract = isSteth ? stETH : wstETH;

@@ -1,7 +1,7 @@
 import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { FormController, useDisableForm } from 'shared/hook-form';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { useDappStatus } from 'modules/web3';
@@ -12,7 +12,7 @@ import {
   useVaultTierInfo,
   type VaultTierData,
 } from 'modules/vaults';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useEditTierSettings } from 'features/settings/tier/hooks';
 import { tierSettingsFormResolver } from 'features/settings/tier/const';
@@ -32,7 +32,7 @@ const prepareDefaultValues = async (
 
 export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
   const { isDappActive } = useDappStatus();
-  const { refetch } = useVault();
+  const { invalidateVaultConfig } = useVault();
   const { editTierSettings, retryEvent } = useEditTierSettings();
   const { data } = useVaultTierInfo();
   const { isNodeOperator, hasAdmin } = useVaultConfirmingRoles();
@@ -52,13 +52,13 @@ export const TierFormProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const onSubmit = useCallback(
     async (data: TierSettingsFormValues): Promise<boolean> => {
-      trackEvent(...MATOMO_CLICK_EVENTS.clickSettingsSubmitTierTab);
+      trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitTierTab);
 
       const { result } = await editTierSettings(data);
-      await refetch({ cancelRefetch: true, throwOnError: false });
+      await invalidateVaultConfig();
       return result.success;
     },
-    [editTierSettings, refetch],
+    [editTierSettings, invalidateVaultConfig],
   );
 
   return (

@@ -68,7 +68,7 @@ yarn build:ipfs
 
 - create a new file in `pages/api/` folder
 - use `wrapRequest` function from `@lidofinance/next-api-wrapper` package.
-- use default wrappers from `utilsApi/nextApiWrappers.ts` if needed (e.g. `defaultErrorHandler` for handle errors)
+- use default wrappers from `utilsApi/next-api-wrappers.ts` if needed (e.g. `defaultErrorHandler` for handle errors)
 
 **Example:**
 
@@ -87,5 +87,3 @@ To create a new release:
 1. When you need to release, go to Repo → Releases.
 1. Publish the desired release draft manually by clicking the edit button - this release is now the `Latest Published`.
 1. After publication, the action to create a release bump will be triggered automatically.
-
-Learn more about [App Release Flow](https://www.notion.so/App-Release-Flow-f8a3484deecb40cb9d8da4d82c1afe96).

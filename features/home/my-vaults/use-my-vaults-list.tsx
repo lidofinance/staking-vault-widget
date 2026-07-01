@@ -1,13 +1,10 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { vaultListQueryKeys, fetchVaults } from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
-import {
-  MATOMO_CLICK_EVENTS,
-  MATOMO_CLICK_EVENTS_TYPES,
-} from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useVaultListParams } from '../use-vault-list-params';
 
@@ -18,11 +15,7 @@ export const useMyVaultsList = () => {
 
   const setPageWithEvent = useCallback(
     (newPage: number) => {
-      trackEvent(
-        ...MATOMO_CLICK_EVENTS[
-          MATOMO_CLICK_EVENTS_TYPES.clickPaginationButtonMyVaults
-        ],
-      );
+      trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickPaginationButtonMyVaults);
       setPage(newPage);
     },
     [setPage],

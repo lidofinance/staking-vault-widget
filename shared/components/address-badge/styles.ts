@@ -9,6 +9,7 @@ import {
   TextProps,
   TextWeight,
   Theme,
+  Tooltip,
 } from '@lidofinance/lido-ui';
 import { getColorTransparency } from 'styles';
 
@@ -212,4 +213,26 @@ export const AddressAvatarImage = styled.img`
 
 export const AddressAvatarLoader = styled(Loader).attrs({ size: 'small' })`
   ${commonAvatarStyles}
+`;
+
+export const StyledTooltip = styled(Tooltip)`
+  && {
+    background: var(--lido-color-foreground);
+    box-shadow: ${({ theme }) => theme.boxShadows.xs}
+      var(--lido-color-shadowLight);
+    padding: ${({ theme }) => theme.spaceMap.md}px;
+    max-width: unset !important;
+
+    opacity: 0;
+    pointer-events: none;
+    animation: fadeIn 0.1s ease-in forwards;
+    animation-delay: 0.6s;
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
 `;

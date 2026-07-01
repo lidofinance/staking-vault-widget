@@ -6,16 +6,14 @@ import {
   ChartProportionBorderSize,
 } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
 import { Hint, InlineLoader } from 'shared/components';
+import { useHealthChart } from 'shared/hooks';
 
-import { useHealthChart } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextWrapper } from '../../styles';
 import { ContentWrapper, ChartContainer, CarrySpreadPercent } from './styles';
 
-vaultTexts;
 export const CarrySpread = () => {
   const { isLoadingVault, values } = useVaultOverview();
   const { chartData } = useHealthChart(values?.healthFactorNumber);

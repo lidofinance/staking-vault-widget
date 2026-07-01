@@ -1,19 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
-import {
-  MATOMO_CLICK_EVENTS_TYPES,
-  MATOMO_CLICK_EVENTS,
-} from 'consts/matomo-click-events';
+import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { modals } from 'features/overview/consts';
 import type { OverviewModalItem } from 'features/overview/types';
 
 const modalEventMap = {
-  totalValue: MATOMO_CLICK_EVENTS_TYPES.clickOverviewTotalValuePopup,
+  totalValueETH: MATOMO_CLICK_EVENTS_TYPES.clickOverviewTotalValuePopup,
   healthFactorNumber: MATOMO_CLICK_EVENTS_TYPES.clickOverviewHealthFactorPopup,
   netApr: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNetStakingAPRPopup,
   balance: MATOMO_CLICK_EVENTS_TYPES.clickOverviewUnstakedBalancePopup,
@@ -21,7 +18,8 @@ const modalEventMap = {
     MATOMO_CLICK_EVENTS_TYPES.clickOverviewWithdrawableETHPopup,
   undisbursedNodeOperatorFee: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNOFeePopup,
   unsettledLidoFees: MATOMO_CLICK_EVENTS_TYPES.clickOverviewLidoFeesPopup,
-  vaultLiability: MATOMO_CLICK_EVENTS_TYPES.clickOverviewStETHLiabilityPopup,
+  vaultLiabilityStETH:
+    MATOMO_CLICK_EVENTS_TYPES.clickOverviewStETHLiabilityPopup,
 } as const;
 
 export const useOverviewModal = () => {
@@ -37,23 +35,23 @@ export const useOverviewModal = () => {
   }, [rawModal]);
 
   const openModal = useCallback(
-    (modal: OverviewModalItem) => {
+    async (modal: OverviewModalItem) => {
       if (!vaultAddress) return;
 
-      trackEvent(...MATOMO_CLICK_EVENTS[modalEventMap[modal]]);
+      trackMatomoEvent(modalEventMap[modal]);
       const pathname = appPaths.vaults.vault(vaultAddress).overview;
-      void router.push({ pathname, query: { modal } }, undefined, {
+      await router.push({ pathname, query: { modal } }, undefined, {
         shallow: true,
       });
     },
     [router, vaultAddress],
   );
 
-  const closeModal = useCallback(() => {
+  const closeModal = useCallback(async () => {
     if (!vaultAddress) return;
 
     const pathname = appPaths.vaults.vault(vaultAddress).overview;
-    void router.push({ pathname, query: {} }, undefined, { shallow: true });
+    await router.push({ pathname, query: {} }, undefined, { shallow: true });
   }, [router, vaultAddress]);
 
   return { currentModal, openModal, closeModal };

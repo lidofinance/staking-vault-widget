@@ -1,13 +1,13 @@
 import { type FC, type ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { trackEvent } from '@lidofinance/analytics-matomo';
 import { Stake, Withdraw, Validators } from '@lidofinance/lido-ui';
 
+import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { ReactComponent as MintRepay } from 'assets/icons/mint.svg';
-import { MATOMO_CLICK_EVENTS } from 'consts/matomo-click-events';
+import { ReactComponent as RebalanceIcon } from 'assets/icons/rebalance.svg';
 
 import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
@@ -19,7 +19,6 @@ export type NavigationLinkProps = {
   title: string;
   path: string;
   pathname?: string;
-  external?: boolean;
 };
 
 const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
@@ -29,13 +28,13 @@ const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
   validators: <Validators />,
   mosaic: <MosaicIcon />,
   gear: <GearIcon />,
+  rebalance: <RebalanceIcon />,
 };
 
 export const NavigationLink: FC<NavigationLinkProps> = ({
   title,
   icon,
   path,
-  external,
   pathname: pathnameInfo,
 }) => {
   const { pathname } = useRouter();
@@ -44,12 +43,12 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
   const isActivePath = routeInfo === pathname;
 
   const trackClickEvent = useCallback(() => {
-    trackEvent(...MATOMO_CLICK_EVENTS[routsClickEventsMap[routeInfo]]);
+    trackMatomoEvent(routsClickEventsMap[routeInfo]);
   }, [routeInfo]);
 
   return (
     <ListItem onClick={trackClickEvent} key={path}>
-      <Link href={path} target={external ? '_blank' : undefined}>
+      <Link href={path}>
         <NavLink active={isActivePath}>
           {pathIcon}
           <span>{title}</span>

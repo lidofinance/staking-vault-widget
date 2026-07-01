@@ -16,7 +16,7 @@ import {
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
-import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk';
+import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   const { publicClient, vaultModule } = useLidoSDK();
@@ -24,7 +24,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data'] as const,
     enabled: !!vaultAddress,
-    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS * 30, // 30 mins
+    refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS, // 30 mins
     retry(failureCount, error) {
       // retry only if the error is not our custom error
       return failureCount < 3 && !(error instanceof DisplayableError);
@@ -96,7 +96,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultModule,
       );
 
-      // // TODO: reword to support multiple factories
+      // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
         throw new VaultOwnerNotDashboardError();
       }
@@ -106,6 +106,8 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultModule.contracts.getContractPredepositGuarantee(),
         vaultEntity.getDashboardContract(),
       ]);
+
+      const group = await operatorGrid.read.group([nodeOperator]);
 
       return {
         address: vaultAddress,
@@ -118,6 +120,7 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         withdrawalCredentials,
         report,
         operatorGrid,
+        group,
         lazyOracle,
         hubReport: {
           root: latestHubReportRoot,
@@ -134,7 +137,6 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportAvailable,
         predepositGuarantee,
         blockNumber,
-        blockNumberString: blockNumber.toString(),
         ...connection,
       };
     },

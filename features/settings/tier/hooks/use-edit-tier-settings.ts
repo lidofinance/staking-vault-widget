@@ -39,7 +39,9 @@ export const useEditTierSettings = () => {
           '[useEditTierSettings] activeVault is undefined',
         );
 
-        const transactions: TransactionEntry[] = [...prepareReportCalls()];
+        const transactions: TransactionEntry[] = [
+          ...(await prepareReportCalls()),
+        ];
         const { selectedTierId, vaultMintingLimit } = formValues;
 
         const selectedTier = nodeOperatorTiers?.tiers?.find(

@@ -11,7 +11,7 @@ import { ServerStyleSheet } from 'styled-components';
 import { Fonts, LidoUIHead } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
-import { contentSecurityPolicy } from 'config/csp';
+import { contentSecurityPolicy } from 'config/security-headers';
 import { InsertIpfsBaseScript } from 'features/ipfs/ipfs-base-script';
 
 const secureHeaders = createHeadersObject({ contentSecurityPolicy });

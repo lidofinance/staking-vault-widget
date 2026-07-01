@@ -5,9 +5,7 @@ import {
   PropsWithChildren,
   useEffect,
   useMemo,
-  useState,
 } from 'react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
 import { http, publicActions } from 'viem';
 import { WagmiProvider, createConfig, useConnections, fallback } from 'wagmi';
@@ -23,7 +21,7 @@ import { WalletIdsEthereum, WalletsListEthereum } from 'reef-knot/wallets';
 import { useThemeToggle } from '@lidofinance/lido-ui';
 
 import { config } from 'config';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import { useUserConfig } from 'config/user-config';
 import { useGetRpcUrlByChainId } from 'config/rpc';
 import { walletMetricProps } from 'consts/matomo-wallets-events';
@@ -37,7 +35,6 @@ import type {
   MainnetPublicClient,
   RegisteredConfig,
 } from '../types';
-import { STRATEGY_LAZY } from 'consts/react-query-strategies';
 
 const WALLETS_PINNED: WalletIdsEthereum[] = ['browserExtension'];
 
@@ -49,6 +46,7 @@ const WALLETS_SHOWN: WalletIdsEthereum[] = [
   'ledgerLive',
   'walletConnect',
   'bitget',
+  'anchorageDigital',
   'imToken',
   'ambire',
   'safe',
@@ -88,18 +86,6 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
     isWalletConnectionAllowed,
   } = useUserConfig();
   const { themeName } = useThemeToggle();
-
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            ...STRATEGY_LAZY,
-            retry: 3,
-          },
-        },
-      }),
-  );
 
   const { supportedChains, defaultChain } = useMemo(() => {
     // must preserve order of supportedChainIds
@@ -212,22 +198,20 @@ export const Web3Provider: FC<PropsWithChildren> = ({ children }) => {
   }, [activeConnection, onActiveConnection]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Web3ProviderContext.Provider value={web3ProviderContextValue}>
-        {/* default wagmi autoConnect, MUST be false in our case, because we use custom autoConnect from Reef Knot */}
-        <WagmiProvider
-          config={wagmiConfig as RegisteredConfig}
-          reconnectOnMount={false}
-        >
-          <ReefKnotProvider config={reefKnotConfig}>
-            <ReefKnotWalletsModal
-              config={walletsModalConfig}
-              darkThemeEnabled={themeName === 'dark'}
-            />
-            <SupportL1Chains>{children}</SupportL1Chains>
-          </ReefKnotProvider>
-        </WagmiProvider>
-      </Web3ProviderContext.Provider>
-    </QueryClientProvider>
+    <Web3ProviderContext.Provider value={web3ProviderContextValue}>
+      {/* default wagmi autoConnect, MUST be false in our case, because we use custom autoConnect from Reef Knot */}
+      <WagmiProvider
+        config={wagmiConfig as RegisteredConfig}
+        reconnectOnMount={false}
+      >
+        <ReefKnotProvider config={reefKnotConfig}>
+          <ReefKnotWalletsModal
+            config={walletsModalConfig}
+            darkThemeEnabled={themeName === 'dark'}
+          />
+          <SupportL1Chains>{children}</SupportL1Chains>
+        </ReefKnotProvider>
+      </WagmiProvider>
+    </Web3ProviderContext.Provider>
   );
 };

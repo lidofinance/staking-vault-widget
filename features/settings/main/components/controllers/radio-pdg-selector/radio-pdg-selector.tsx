@@ -2,16 +2,18 @@ import { FC, ReactNode, useMemo } from 'react';
 import { useFormContext, useFormState } from 'react-hook-form';
 
 import { RadioInput, RadioInputProps } from 'shared/components';
-import { useVaultConfirmingRoles } from 'modules/vaults';
+import {
+  useVaultConfirmingRoles,
+  PDG_POLICY,
+  type PDGOptions,
+} from 'modules/vaults';
 
 import { Skeleton } from 'features/settings/main/styles';
 import { useVaultSettingsData } from 'features/settings/main/hooks';
+import type { VaultMainSettingsData } from 'features/settings/main/types';
+
 import { PolicyDescription } from './policy-description';
-import { PDGPolicy } from 'features/settings/main/consts';
-import type {
-  PDGOptions,
-  VaultMainSettingsData,
-} from 'features/settings/main/types';
+
 import { RadioSelectorContainer } from './styles';
 
 type VotingSelectorProps = {
@@ -26,7 +28,7 @@ const radioContentMap: Record<PDGOptions, ReactNode> = {
   ),
 };
 
-const pdgOptionsList = Object.entries(PDGPolicy) as [PDGOptions, string][];
+const pdgOptionsList = Object.entries(PDG_POLICY) as [PDGOptions, string][];
 
 export const RadioPdgSelector: FC<VotingSelectorProps> = ({ vaultKey }) => {
   const { isLoading, disabled } = useFormState();

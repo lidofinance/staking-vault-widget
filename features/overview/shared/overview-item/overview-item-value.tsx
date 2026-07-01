@@ -2,8 +2,7 @@ import { type FC, useMemo } from 'react';
 
 import { InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
-import { isBigint } from 'utils';
-import { WEI_PER_ETHER } from 'consts/tx';
+import { isBigint, calculateMaxDecimalDigits } from 'utils';
 
 import { ContentText } from './styles';
 
@@ -15,10 +14,6 @@ export interface ItemValueProps {
   textSize?: 'lg' | 'xl';
 }
 
-const countMaxDecimalDigits = (amount: bigint) => {
-  return amount / WEI_PER_ETHER > 1000 ? 1 : 4;
-};
-
 export const OverviewItemValue: FC<ItemValueProps> = (props) => {
   const { content, isLoading, color, textSize = 'xl', symbol = '' } = props;
   const contentView = useMemo(
@@ -26,7 +21,7 @@ export const OverviewItemValue: FC<ItemValueProps> = (props) => {
       isBigint(content) ? (
         <FormatToken
           amount={content}
-          maxDecimalDigits={countMaxDecimalDigits(content)}
+          maxDecimalDigits={calculateMaxDecimalDigits(content)}
           showAmountTip={false}
           symbol={symbol}
         />

@@ -8,7 +8,7 @@
 yalc.lock
 tsconfig.tsbuildinfo
 
-# playwright 
+# playwright
 /test-results/
 /playwright-report/
 /playwright/.cache/
@@ -44,7 +44,12 @@ yarn-error.log*
 #ide
 .vscode
 .idea
+AGENTS.md
+.claude
 
 /public/runtime/
 
 validation.json
+
+AGENTS.md
+CLAUDE.md
