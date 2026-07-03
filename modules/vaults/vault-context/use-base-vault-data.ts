@@ -10,7 +10,7 @@ import {
   checkIsDashboard,
   VaultOwnerNotDashboardError,
 } from 'modules/vaults';
-import { PROVIDER_POLLING_INTERVAL } from 'config/groups/web3';
+import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import {
@@ -34,9 +34,7 @@ const waitForRpcBlock = async (
     if (latestRpcBlock >= targetBlock) {
       return latestRpcBlock;
     }
-    await new Promise((resolve) =>
-      setTimeout(resolve, PROVIDER_POLLING_INTERVAL),
-    );
+    await new Promise((resolve) => setTimeout(resolve, BLOCK_POLLING_INTERVAL));
   }
 };
 
