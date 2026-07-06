@@ -29,6 +29,7 @@ export const useRebalanceState = () => {
       vaultLiabilityStETH,
       valueToForceRebalance,
       availableBalanceWei,
+      utilizationRatioNumber,
       totalMintingCapacityStethByDeltaValue,
     } = data;
 
@@ -57,12 +58,13 @@ export const useRebalanceState = () => {
     const rebalanceMode = getRebalanceMode({
       vaultLiability: vaultLiabilityStETH,
       valueToForceRebalance,
-      hasExcessLiability,
+      utilizationRatioNumber,
     });
 
     return {
       rebalanceMode,
       isForceRebalance: rebalanceMode === 'force',
+      isHealing: rebalanceMode === 'healing',
       valueToForceRebalance,
       maxRebalanceAmount,
       reduceToCapacityAmount,

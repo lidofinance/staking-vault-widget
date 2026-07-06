@@ -17,13 +17,11 @@ export const ReduceToCapacityButton = () => {
   const {
     reduceToCapacityAmount,
     maxRebalanceAmount,
-    rebalanceMode,
+    isHealing,
     canRecommend,
   } = useRebalanceState();
 
-  const isCapacityExceeded = rebalanceMode === 'healing';
-
-  const maxButtonValue = isCapacityExceeded
+  const maxButtonValue = isHealing
     ? reduceToCapacityAmount
     : maxRebalanceAmount;
 
@@ -38,9 +36,9 @@ export const ReduceToCapacityButton = () => {
     disabled ||
     !maxButtonValue ||
     rebalanceAmount === maxButtonValue ||
-    (rebalanceMode === 'healing' && !canRecommend);
+    (isHealing && !canRecommend);
 
-  const text = isCapacityExceeded
+  const text = isHealing
     ? vaultTexts.actions.rebalance.input.reduceToCapacity
     : 'MAX';
 
@@ -48,7 +46,7 @@ export const ReduceToCapacityButton = () => {
     <InputDecoratorMaxButton
       disabled={isMaxButtonDisabled}
       onClick={handleSetMax}
-      data-testid={isCapacityExceeded ? 'reduceToCapacityBtn' : undefined}
+      data-testid={isHealing ? 'reduceToCapacityBtn' : undefined}
     >
       {text}
     </InputDecoratorMaxButton>
