@@ -26,13 +26,21 @@ const getProxyCodeWithCache = async (
   return proxyCode;
 };
 
-export const checkIsDashboard = async (
-  publicClient: RegisteredPublicClient,
-  dashboardAddress: Address,
-  vaultModule: LidoSDKVaultModule,
-): Promise<boolean> => {
+type CheckIsDashboardArgs = {
+  publicClient: RegisteredPublicClient;
+  dashboardAddress: Address;
+  vaultModule: LidoSDKVaultModule;
+  blockNumber: bigint;
+};
+
+export const checkIsDashboard = async ({
+  publicClient,
+  dashboardAddress,
+  vaultModule,
+  blockNumber,
+}: CheckIsDashboardArgs): Promise<boolean> => {
   const [contractCode, canonicalCode] = await Promise.all([
-    publicClient.getCode({ address: dashboardAddress }),
+    publicClient.getCode({ address: dashboardAddress, blockNumber }),
     getProxyCodeWithCache(publicClient, vaultModule),
   ]);
 
