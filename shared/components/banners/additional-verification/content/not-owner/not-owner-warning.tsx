@@ -26,7 +26,11 @@ export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
   }
 
   return (
-    <NoticeContainer title={notOwner.title} type="warning">
+    <NoticeContainer
+      title={notOwner.title}
+      type="warning"
+      dataTestId="additionalVerification-notOwner-warning-banner"
+    >
       <Text size="xxs">
         The permission to {state.action} {token} in this stVault was delegated
         to your address by the Vault Owner.

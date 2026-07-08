@@ -29,7 +29,10 @@ export const OwnersList: FC<OwnersListProps> = ({ ownersList }) => {
       <Text size="xxs">{ownersListTitle}</Text>
       <AddressesList>
         {listWithoutConnectedAddress.map((address) => (
-          <ListItem key={address}>
+          <ListItem
+            key={address}
+            data-testid="additionalVerification-multipleOwners-ownerAddress"
+          >
             <Address
               style={{ fontWeight: 'bold' }}
               symbols={symbols}

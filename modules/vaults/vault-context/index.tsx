@@ -36,13 +36,13 @@ VaultContext.displayName = 'VaultContext';
 
 export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
-  const { publicClient } = useLidoSDK();
+  const { publicClient, latestTxBlock } = useLidoSDK();
   const queryClient = useQueryClient();
   const { vaultAddress = '' } = router.query as { vaultAddress?: string };
   const sanitizedVaultAddress = isAddress(vaultAddress.toLowerCase())
     ? (vaultAddress.toLowerCase() as Address)
     : undefined;
-  const query = useBaseVaultData(sanitizedVaultAddress);
+  const query = useBaseVaultData(sanitizedVaultAddress, latestTxBlock);
 
   useEffect(() => {
     if (query.error)
@@ -57,6 +57,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
       sanitizedVaultAddress,
       publicClient.chain.id,
       query.data?.hubReport.cid,
+      query.data?.blockNumber,
     );
 
     const options = { cancelRefetch: true, throwOnError: false };
