@@ -37,6 +37,7 @@ export const RebalanceInput = () => {
     reduceToCapacityAmount,
     rebalanceMode,
     canReduceToCapacity,
+    isSupplyEth,
   } = useRebalanceState();
 
   // In forced rebalance the whole available amount is rebalanced via the hub,
@@ -64,7 +65,9 @@ export const RebalanceInput = () => {
       rightDecorator={<ReduceToCapacityButton />}
       disabled={disabled || isForceRebalance}
       warning={
-        rebalanceMode === 'healing' && reduceToCapacityAmount === 0n ? (
+        rebalanceMode === 'healing' &&
+        isSupplyEth &&
+        reduceToCapacityAmount === 0n ? (
           <>
             {rebalanceOversupplyWarning}{' '}
             <InlineLink
