@@ -1,6 +1,8 @@
 import { useVaultOverviewData } from 'modules/vaults';
 import { useMemo } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useWatch, useFormState } from 'react-hook-form';
+
+import { useVaultOverviewData } from 'modules/vaults';
 
 import type { RebalanceFormFieldValues } from '../types';
 
@@ -15,6 +17,8 @@ export const useRebalanceState = () => {
     RebalanceFormFieldValues,
     ['supplyEth', 'isSupplyEth']
   >({ name: ['supplyEth', 'isSupplyEth'] });
+  const { errors } = useFormState();
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const { data } = useVaultOverviewData();
 
@@ -71,7 +75,8 @@ export const useRebalanceState = () => {
       hasExcessLiability,
       canReduceToCapacity,
       canRecommend,
+      hasFormErrors,
       isSupplyEth,
     };
-  }, [data, isSupplyEth, supplyEth]);
+  }, [data, isSupplyEth, supplyEth, hasFormErrors]);
 };

@@ -10,14 +10,20 @@ import { useHealthChart } from 'shared/hooks';
 import { vaultTexts } from 'modules/vaults';
 import { InlineLoader, OldToNew } from 'shared/components';
 
-import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
+import {
+  useRebalanceProjectedOverview,
+  useRebalanceState,
+} from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
 
 export const HealthFactor = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
+  const { hasFormErrors } = useRebalanceState();
   const { healthFactorNumber, healthFactor } = data ?? {};
-  const { chartData } = useHealthChart(healthFactorNumber);
+  const { chartData } = useHealthChart(
+    (!hasFormErrors && projected?.healthFactorNumber) || healthFactorNumber,
+  );
 
   return (
     <Container>
@@ -29,7 +35,11 @@ export const HealthFactor = () => {
           <OldToNew
             old={healthFactor}
             supposed={projected?.healthFactor}
-            isChanged={!!projected && projected?.healthFactor !== healthFactor}
+            isChanged={
+              !!projected &&
+              !hasFormErrors &&
+              projected?.healthFactor !== healthFactor
+            }
           />
         </InlineLoader>
       </TextContainer>
