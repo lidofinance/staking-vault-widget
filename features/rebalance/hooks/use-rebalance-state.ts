@@ -71,6 +71,7 @@ export const useRebalanceState = () => {
       hasExcessLiability,
       canReduceToCapacity,
       canRecommend,
+      isSupplyEth,
     };
   }, [data, isSupplyEth, supplyEth]);
 };
