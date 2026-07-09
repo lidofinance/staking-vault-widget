@@ -61,6 +61,9 @@ export const useRebalanceProjectedOverview = () => {
       projected: {
         totalValue: projectedTotalValue,
         vaultLiability: projectedLiabilityStETH,
+        mintableStETH: bigIntClampZero(
+          projectTotalMintingCapacityStETH - projectedLiabilityStETH,
+        ),
         healthFactor: formatPercent.format(projectedOverview.healthRatio / 100),
         healthFactorNumber:
           projectedOverview.healthRatio > 100000

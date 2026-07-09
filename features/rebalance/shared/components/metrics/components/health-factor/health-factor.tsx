@@ -13,11 +13,16 @@ import { InlineLoader, OldToNew } from 'shared/components';
 import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
+import { useFormState } from 'react-hook-form';
 
 export const HealthFactor = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
+  const { errors } = useFormState();
   const { healthFactorNumber, healthFactor } = data ?? {};
-  const { chartData } = useHealthChart(healthFactorNumber);
+  const hasErrors = Object.keys(errors).length > 0;
+  const { chartData } = useHealthChart(
+    (!hasErrors && projected?.healthFactorNumber) || healthFactorNumber,
+  );
 
   return (
     <Container>

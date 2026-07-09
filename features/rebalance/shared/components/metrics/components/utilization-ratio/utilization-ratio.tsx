@@ -5,18 +5,20 @@ import {
   Text,
 } from '@lidofinance/lido-ui';
 
-import { useRemainingMintingCapacityChart } from 'shared/hooks';
 import { vaultTexts } from 'modules/vaults';
 import { InlineLoader, OldToNew } from 'shared/components';
 
-import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
+import {
+  useRebalanceMintingCapacityChart,
+  useRebalanceProjectedOverview,
+} from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
 
 export const UtilizationRatio = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
   const { utilizationRatio } = data ?? {};
-  const chartData = useRemainingMintingCapacityChart();
+  const chartData = useRebalanceMintingCapacityChart();
 
   return (
     <Container>
