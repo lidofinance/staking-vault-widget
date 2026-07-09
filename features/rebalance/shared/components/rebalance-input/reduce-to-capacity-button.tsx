@@ -33,14 +33,12 @@ export const ReduceToCapacityButton = () => {
   }, [setValue, maxButtonValue]);
 
   const isMaxButtonDisabled =
-    disabled ||
-    !maxButtonValue ||
-    rebalanceAmount === maxButtonValue ||
-    (isHealing && !canRecommend);
+    disabled || !maxButtonValue || rebalanceAmount === maxButtonValue;
 
-  const text = isHealing
-    ? vaultTexts.actions.rebalance.input.reduceToCapacity
-    : 'MAX';
+  const text =
+    isHealing && canRecommend
+      ? vaultTexts.actions.rebalance.input.reduceToCapacity
+      : 'MAX';
 
   return (
     <InputDecoratorMaxButton
