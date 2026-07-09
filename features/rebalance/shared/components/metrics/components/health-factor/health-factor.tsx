@@ -10,18 +10,19 @@ import { useHealthChart } from 'shared/hooks';
 import { vaultTexts } from 'modules/vaults';
 import { InlineLoader, OldToNew } from 'shared/components';
 
-import { useRebalanceProjectedOverview } from 'features/rebalance/hooks';
+import {
+  useRebalanceProjectedOverview,
+  useRebalanceState,
+} from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
-import { useFormState } from 'react-hook-form';
 
 export const HealthFactor = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
-  const { errors } = useFormState();
+  const { hasFormErrors } = useRebalanceState();
   const { healthFactorNumber, healthFactor } = data ?? {};
-  const hasErrors = Object.keys(errors).length > 0;
   const { chartData } = useHealthChart(
-    (!hasErrors && projected?.healthFactorNumber) || healthFactorNumber,
+    (!hasFormErrors && projected?.healthFactorNumber) || healthFactorNumber,
   );
 
   return (
@@ -34,7 +35,11 @@ export const HealthFactor = () => {
           <OldToNew
             old={healthFactor}
             supposed={projected?.healthFactor}
-            isChanged={!!projected && projected?.healthFactor !== healthFactor}
+            isChanged={
+              !!projected &&
+              !hasFormErrors &&
+              projected?.healthFactor !== healthFactor
+            }
           />
         </InlineLoader>
       </TextContainer>

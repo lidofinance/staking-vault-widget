@@ -11,12 +11,15 @@ import { InlineLoader, OldToNew } from 'shared/components';
 import {
   useRebalanceMintingCapacityChart,
   useRebalanceProjectedOverview,
+  useRebalanceState,
 } from 'features/rebalance/hooks';
 
 import { Container, TextContainer } from './styles';
 
 export const UtilizationRatio = () => {
   const { data, isPending, projected } = useRebalanceProjectedOverview();
+  const { hasFormErrors } = useRebalanceState();
+
   const { utilizationRatio } = data ?? {};
   const chartData = useRebalanceMintingCapacityChart();
 
@@ -31,7 +34,9 @@ export const UtilizationRatio = () => {
             old={utilizationRatio}
             supposed={projected?.utilizationRatio}
             isChanged={
-              !!projected && projected?.utilizationRatio !== utilizationRatio
+              !!projected &&
+              !hasFormErrors &&
+              projected?.utilizationRatio !== utilizationRatio
             }
           />
         </InlineLoader>

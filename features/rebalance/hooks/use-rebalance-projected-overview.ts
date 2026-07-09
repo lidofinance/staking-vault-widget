@@ -55,6 +55,11 @@ export const useRebalanceProjectedOverview = () => {
       currentMaxLiabilityStETH: data.vaultData.currentMaxLiabilityStETH,
     });
 
+    const projectedHealthRatio =
+      projectedOverview.healthRatio > 100000
+        ? Infinity
+        : projectedOverview.healthRatio;
+
     return {
       data,
       isPending,
@@ -64,11 +69,8 @@ export const useRebalanceProjectedOverview = () => {
         mintableStETH: bigIntClampZero(
           projectTotalMintingCapacityStETH - projectedLiabilityStETH,
         ),
-        healthFactor: formatPercent.format(projectedOverview.healthRatio / 100),
-        healthFactorNumber:
-          projectedOverview.healthRatio > 100000
-            ? Infinity
-            : projectedOverview.healthRatio,
+        healthFactor: formatPercent.format(projectedHealthRatio / 100),
+        healthFactorNumber: projectedHealthRatio,
         utilizationRatio: formatPercent.format(
           projectedOverview.utilizationRatio / 100,
         ),
