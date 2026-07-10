@@ -1,4 +1,3 @@
-import { useVaultOverviewData } from 'modules/vaults';
 import { useMemo } from 'react';
 import { useWatch, useFormState } from 'react-hook-form';
 
