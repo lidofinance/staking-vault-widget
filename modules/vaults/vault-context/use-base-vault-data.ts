@@ -1,13 +1,17 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import { type Address, zeroAddress } from 'viem';
+import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { useLidoSDK } from 'modules/web3';
+
 import {
   fetchReport,
   checkIsDashboard,
   VaultOwnerNotDashboardError,
 } from 'modules/vaults';
+import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
 
 import {
   DisplayableError,
@@ -16,13 +20,32 @@ import {
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
-import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
-export const useBaseVaultData = (vaultAddress: Address | undefined) => {
+const waitForRpcBlock = async (
+  publicClient: any,
+  targetBlock: bigint,
+): Promise<bigint> => {
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const latestRpcBlock = await publicClient.getBlockNumber({
+      cacheTime: 0,
+    });
+
+    if (latestRpcBlock >= targetBlock) {
+      return latestRpcBlock;
+    }
+    await new Promise((resolve) => setTimeout(resolve, BLOCK_POLLING_INTERVAL));
+  }
+};
+
+export const useBaseVaultData = (
+  vaultAddress: Address | undefined,
+  latestTxBlock: bigint | undefined,
+) => {
   const { publicClient, vaultModule } = useLidoSDK();
   const base = vaultQueryKeys(vaultAddress).stateBase;
   return useQuery<VaultBaseInfo>({
-    queryKey: [...base, 'base-vault-data'] as const,
+    queryKey: [...base, 'base-vault-data', { latestTxBlock }] as const,
     enabled: !!vaultAddress,
     refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS, // 30 mins
     retry(failureCount, error) {
@@ -37,6 +60,13 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultAddress,
         skipDashboardCheck: true,
       });
+
+      const blockNumber = await awaitWithTimeout(
+        waitForRpcBlock(publicClient, latestTxBlock ?? 0n),
+        VAULT_REPORT_REFETCH_INTERVAL_MS,
+      );
+
+      const DEFAULT_CALL_OPTIONS = { blockNumber };
 
       const [hub, lazyOracle, vault] = await Promise.all([
         vaultModule.contracts.getContractVaultHub(),
@@ -54,18 +84,16 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         isReportFresh,
         latestVaultReport,
         latestHubReport,
-        blockNumber,
       ] = await Promise.all([
-        vault.read.owner(),
-        vault.read.nodeOperator(),
-        vault.read.withdrawalCredentials(),
-        hub.read.vaultConnection([vaultAddress]),
-        hub.read.isVaultConnected([vault.address]),
-        hub.read.isPendingDisconnect([vault.address]),
-        hub.read.isReportFresh([vaultAddress]),
-        hub.read.latestReport([vaultAddress]),
-        lazyOracle.read.latestReportData(),
-        publicClient.getBlockNumber(),
+        vault.read.owner(DEFAULT_CALL_OPTIONS),
+        vault.read.nodeOperator(DEFAULT_CALL_OPTIONS),
+        vault.read.withdrawalCredentials(DEFAULT_CALL_OPTIONS),
+        hub.read.vaultConnection([vaultAddress], DEFAULT_CALL_OPTIONS),
+        hub.read.isVaultConnected([vault.address], DEFAULT_CALL_OPTIONS),
+        hub.read.isPendingDisconnect([vault.address], DEFAULT_CALL_OPTIONS),
+        hub.read.isReportFresh([vaultAddress], DEFAULT_CALL_OPTIONS),
+        hub.read.latestReport([vaultAddress], DEFAULT_CALL_OPTIONS),
+        lazyOracle.read.latestReportData(DEFAULT_CALL_OPTIONS),
       ]);
 
       const [
@@ -90,11 +118,12 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
 
       const supposedDashboardAddress =
         connection.owner !== zeroAddress ? connection.owner : vaultOwner;
-      const isDashboard = await checkIsDashboard(
+      const isDashboard = await checkIsDashboard({
         publicClient,
-        supposedDashboardAddress,
         vaultModule,
-      );
+        blockNumber,
+        dashboardAddress: supposedDashboardAddress,
+      });
 
       // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
@@ -107,7 +136,10 @@ export const useBaseVaultData = (vaultAddress: Address | undefined) => {
         vaultEntity.getDashboardContract(),
       ]);
 
-      const group = await operatorGrid.read.group([nodeOperator]);
+      const group = await operatorGrid.read.group(
+        [nodeOperator],
+        DEFAULT_CALL_OPTIONS,
+      );
 
       return {
         address: vaultAddress,

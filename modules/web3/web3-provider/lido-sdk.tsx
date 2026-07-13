@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import invariant from 'tiny-invariant';
 import {
   useAccount,
@@ -43,6 +43,8 @@ type LidoSDKContextValue = {
   publicClient: RegisteredPublicClient;
   walletClient?: RegisteredWalletClient;
   subscribeToTokenUpdates: ReturnType<typeof useTokenTransferSubscription>;
+  setLatestTxBlock: (blockNumber: bigint) => void;
+  latestTxBlock: bigint | undefined;
 };
 
 const LidoSDKContext = createContext<LidoSDKContextValue | null>(null);
@@ -55,6 +57,9 @@ export const useLidoSDK = () => {
 };
 
 export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
+  const [latestTxBlock, setLatestTxBlock] = useState<bigint | undefined>(
+    undefined,
+  );
   const subscribe = useTokenTransferSubscription();
 
   // will only have
@@ -81,7 +86,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
 
-  const contextValue = useMemo(() => {
+  const sdkContextValue = useMemo(() => {
     const customLidoLocatorAddress = getContractAddress(chainId, 'lidoLocator');
     invariant(
       customLidoLocatorAddress,
@@ -90,9 +95,9 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
     const core = new LidoSDKCore({
       chainId,
       logMode: 'none',
-      // @ts-expect-error mistype between sdk and wagmi
-      rpcProvider: publicClient,
-      web3Provider: walletClient,
+      // @ts-expect-error TODO: fix types and register publicClient/walletClient with SDK via ClientRegister
+      publicClient,
+      walletClient,
       customLidoLocatorAddress,
     });
 
@@ -120,9 +125,17 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       publicClient,
       walletClient,
       vaultModule,
+    };
+  }, [chainId, publicClient, walletClient]);
+
+  const contextValue = useMemo(() => {
+    return {
+      ...sdkContextValue,
+      latestTxBlock,
+      setLatestTxBlock,
       subscribeToTokenUpdates: subscribe,
     };
-  }, [chainId, publicClient, subscribe, walletClient]);
+  }, [sdkContextValue, latestTxBlock, subscribe]);
   return (
     <LidoSDKContext.Provider value={contextValue}>
       {children}

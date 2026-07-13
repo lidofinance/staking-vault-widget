@@ -422,14 +422,14 @@ export const vaultTexts = {
       description: {
         rebalance: {
           title: 'Rebalance',
-          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
+          text: 'Rebalancing sends ETH from the stVault balance to Lido Core, receives stETH at a 1:1 ratio, and repays the received stETH to the stVault. This reduces both Total Value and stETH Liability. To adjust the collateralization balance, you can also',
           supplyLinkText: 'supply ETH',
           withdrawLinkText: 'withdraw ETH from validators',
           repayLinkText: 'repay stETH',
         },
         forceRebalance: {
           title: 'Forced rebalance',
-          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liabiltiy.',
+          text: 'Rebalancing sends ETH from the stVault balance to Lido Core, receives stETH at a 1:1 ratio, and repays the received stETH to the stVault. This reduces both Total Value and stETH Liability.',
           thresholdText:
             "The stVault's Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism.",
           restoreText:
