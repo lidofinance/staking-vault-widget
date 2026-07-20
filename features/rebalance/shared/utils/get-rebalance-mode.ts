@@ -1,11 +1,12 @@
 import { isBigint } from 'utils';
+import { UTILIZATION_RATIO_THRESHOLD } from 'consts/threshold';
 
 export type RebalanceMode = 'none' | 'rebalance' | 'healing' | 'force';
 
 type GetRebalanceModeArgs = {
   vaultLiability: bigint;
-  hasExcessLiability: boolean;
   valueToForceRebalance: bigint;
+  utilizationRatioNumber: number;
 };
 
 /**
@@ -23,14 +24,14 @@ type GetRebalanceModeArgs = {
 export const getRebalanceMode = ({
   vaultLiability,
   valueToForceRebalance,
-  hasExcessLiability,
+  utilizationRatioNumber,
 }: GetRebalanceModeArgs): RebalanceMode => {
   switch (true) {
     case vaultLiability === 0n:
       return 'none';
     case isBigint(valueToForceRebalance) && valueToForceRebalance > 0n:
       return 'force';
-    case hasExcessLiability:
+    case UTILIZATION_RATIO_THRESHOLD < utilizationRatioNumber:
       return 'healing';
     default:
       return 'rebalance';

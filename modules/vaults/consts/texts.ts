@@ -818,83 +818,104 @@ export const vaultTexts = {
   roles: {
     defaultAdmin: {
       title: 'Vault Manager',
+      buttonText: 'Vault Manager',
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters.\nVault Manager role can be considered as Vault Owner for the User.\nMultiple addresses supported.',
     },
     nodeOperatorManager: {
       title: 'Node Operator Manager',
+      buttonText: 'Node Operator Manager',
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters from the Node Operator perspective.\nMultiple addresses supported',
     },
     supplier: {
       title: 'Supply (fund) ETH to the stVault',
+      buttonText: 'Supply (fund) ETH to the stVault',
       hint: 'Allows Supplying ETH',
     },
     withdrawer: {
       title: 'Withdraw ETH from the stVault Balance',
+      buttonText: 'Withdraw ETH from the stVault Balance',
       hint: 'Allows Withdrawing unlocked ETH from stVault',
     },
     depositsPauser: {
       title: 'Pause Deposits to Validators',
+      buttonText: 'Pause Deposits to Validators',
       hint: 'Allows requesting the Node Operator to pause deposits to Validators to keep available ETH on the Vault balance.',
     },
     depositsResumer: {
       title: 'Resume Deposits to Validators',
+      buttonText: 'Resume Deposits to Validators',
       hint: 'Allows informing the Node Operator that deposits to Validators can be resumed.',
     },
     validatorWithdrawalTrigger: {
       title: 'Force Withdrawals of ETH from Validator',
+      buttonText: 'Force Withdrawals of ETH from Validator',
       hint: 'Allows forced withdrawing ETH from validator and returning it to Vault balance.',
     },
     validatorExitRequester: {
       title: 'Request Node Operator to Exit Validator',
+      buttonText: 'Request Node Operator to Exit Validator',
       hint: 'Allows creating a request for Node Operator to exit a validator and return all ETH from this validator to the Vault balance.',
     },
     rebalancer: {
       title: 'Re-balance unhealthy Vault',
+      buttonText: 'Rebalance Vault',
       // TODO: link support
       hint: 'Allows rebalancing stVault if Health rate < 100%',
     },
     minter: {
       title: 'Mint stETH',
+      buttonText: 'Mint stETH',
       hint: 'Allows Minting stETH (considering ReserveRatio)',
     },
     repayer: {
       title: 'Repay (burn) previously minted stETH to decrease stETH Liability',
+      buttonText:
+        'Repay (burn) previously minted stETH to decrease stETH Liability',
       hint: 'Allows Repaying stETH',
     },
     volunataryDisconnecter: {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
+      buttonText: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
     },
     vaultConfiguration: {
       title: 'Request to change the stVault tier',
+      buttonText: 'Request to change the stVault tier',
       hint: 'Allows requesting Node Operator to change the stVaults tier',
     },
     assetCollector: {
       title: 'Assets Collector',
+      buttonText: 'Assets Collector',
       hint: 'ERC20 Assets Collector', // TODO: add description
     },
     nodeOperatorFeeClaimer: {
       title: 'Claim Node Operator’s Accumulated Fees',
+      buttonText: 'Claim Node Operator’s Accumulated Fees',
       hint: 'Allows claiming accumulated Node Operator’s fee.\nClaimer provides an address to receive fees.',
     },
     feeExemptRole: {
       title: `Node operator's sub-role for fee exemptions`,
+      buttonText: `Node operator's sub-role for fee exemptions`,
       hint: `Any ETH appearing on validators outside of stVaults mechanisms (e.g. side deposits or consolidations) is treated as rewards, and the Node Operator Fee applies. To classify ETH as a deposit instead, the Node Operator can adjust the validator balance accordingly.`,
     },
     unguaranteedDepositRole: {
       title: `Node operator's sub-role for unguaranteed deposit`,
+      buttonText: `Node operator's sub-role for unguaranteed deposit`,
       hint: `If PDG Policy is set to ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will perform unguaranteed deposits to validators.`,
     },
     proveUnknownValidatorsRole: {
       title: `Node operator's sub-role for proving unknown validators`,
+      buttonText: `Node operator's sub-role for proving unknown validators`,
       hint: `If PDG Policy is set to ALLOW_PROVE or ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will prove unknown validators to PDG.`,
     },
     guarantor: {
       title: 'Guarantor',
+      buttonText: 'Guarantor',
       hint: 'Manages the Node Operator’s guarantor bond: top up, withdraw, and claim refunds.',
     },
     depositor: {
       title: 'Depositor',
+      buttonText: 'Depositor',
       hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },

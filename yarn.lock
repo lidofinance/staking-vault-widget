@@ -2467,13 +2467,27 @@
     ipfs-unixfs-importer "^15.4.0"
     multiformats "^13.4.0"
 
-"@lidofinance/lido-ui@^3.18.0", "@lidofinance/lido-ui@^3.42.0":
+"@lidofinance/lido-ui@^3.18.0":
   version "3.42.0"
   resolved "https://registry.yarnpkg.com/@lidofinance/lido-ui/-/lido-ui-3.42.0.tgz#8ac832a43ab32104a95481df7796e8db8333606d"
   integrity sha512-oAYnrcU2iFKnYKof8+ajqXUBBtfvc9f6MxiJVNY0jvHBnMPceDpolj08a24QFfcxqarO0zTeTmZvhhFyCmvpHA==
   dependencies:
     "@styled-system/should-forward-prop" "5.1.5"
     react-collapsed "3.0.2"
+    react-jazzicon "^1.0.4"
+    react-toastify "7.0.4"
+    react-transition-group "4"
+    styled-system "5.1.5"
+    ua-parser-js "^1.0.35"
+    use-callback-ref "1.2.5"
+
+"@lidofinance/lido-ui@^3.42.2":
+  version "3.42.2"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ui/-/lido-ui-3.42.2.tgz#5d5607e28445284004f6f378735cf5973cdc20d9"
+  integrity sha512-YRP3Dj0ZS8NUdy4jg78+WpwwagQRkNE+EuC/8TQGxXj5cCFqZBzslnASIvfoSEh94x0tDaiga0AEiDKldUrHGg==
+  dependencies:
+    "@styled-system/should-forward-prop" "5.1.5"
+    react-collapsed "4.2.0"
     react-jazzicon "^1.0.4"
     react-toastify "7.0.4"
     react-transition-group "4"
@@ -9987,6 +10001,13 @@ react-collapsed@3.0.2:
   integrity sha512-TecE2O/3b3Szcej2BkWlLIwvLBZBKGzCfcGVDnqrgVsq8SZe9q2uUc9c54qX3ctJ7wbj9yXJd2QgSZwWfRoAvQ==
   dependencies:
     raf "^3.4.1"
+    tiny-warning "^1.0.3"
+
+react-collapsed@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/react-collapsed/-/react-collapsed-4.2.0.tgz#330613bd604e1d8b66832d931efb2b226925cbc0"
+  integrity sha512-8rQuV3wGTjBI4M1WzD5DpqCBRliHNDKEEFeC6tAQEVrRDic46xBOtySgMGjVVacIobEaMf7AiYlI5APCZIZtkg==
+  dependencies:
     tiny-warning "^1.0.3"
 
 react-dom@^18.2.0:

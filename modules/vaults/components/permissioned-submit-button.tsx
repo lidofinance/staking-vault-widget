@@ -37,7 +37,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   );
 
   const missingRoles =
-    data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
+    data?.missingRoles.map((role) => vaultTexts.roles[role].buttonText) ?? [];
 
   return (
     <ConnectWalletButton>
