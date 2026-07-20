@@ -30,11 +30,11 @@ export const ForceRebalance = () => {
   } = vaultTexts.actions.rebalance.description.forceRebalance;
 
   return (
-    <Container>
-      <Text size="sm" strong>
+    <Container data-testid="description">
+      <Text size="sm" strong data-testid="title">
         {title}
       </Text>
-      <Text size="xxs" color="secondary">
+      <Text size="xxs" color="secondary" data-testid="text">
         {text}
         <br />
         {thresholdText}
