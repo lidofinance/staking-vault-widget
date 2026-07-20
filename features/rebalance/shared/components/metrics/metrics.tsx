@@ -13,7 +13,7 @@ import { Container, MetricsContainer } from './styles';
 
 export const VaultMetrics = () => {
   return (
-    <Container>
+    <Container data-testid="stvault-metrics">
       <Text size="xs" strong>
         {vaultTexts.actions.rebalance.metrics.title}
       </Text>

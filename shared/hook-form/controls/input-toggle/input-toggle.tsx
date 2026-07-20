@@ -15,6 +15,7 @@ export type InputToggleProps = {
   textStrong?: TextProps['strong'];
   size?: ToggleSize;
   className?: string;
+  'data-testid'?: string;
 };
 
 export const InputToggle: FC<InputToggleProps> = ({
@@ -28,6 +29,7 @@ export const InputToggle: FC<InputToggleProps> = ({
   textOn,
   size = 'md',
   className,
+  'data-testid': dataTestId,
 }) => {
   const id = useId();
   const {
@@ -40,7 +42,11 @@ export const InputToggle: FC<InputToggleProps> = ({
   }
 
   return (
-    <Container className={className} $position={textPosition}>
+    <Container
+      className={className}
+      $position={textPosition}
+      data-testid={dataTestId}
+    >
       {showText && (
         <Text size="xxs" color={textColor} strong={textStrong}>
           {field.value ? textOn : textOff}

@@ -11,6 +11,7 @@ import { ReactComponent as ErrorIcon } from 'assets/icons/error-triangle.svg';
 
 type InfoBannerProps = {
   type?: 'warning' | 'danger';
+  'data-testid'?: string;
 };
 
 const iconsMap: Record<'warning' | 'danger', ReactNode> = {
@@ -20,12 +21,13 @@ const iconsMap: Record<'warning' | 'danger', ReactNode> = {
 
 export const InfoBanner: FC<PropsWithChildren<InfoBannerProps>> = ({
   type = 'warning',
+  'data-testid': dataTestId,
   children,
 }) => {
   const icon = useMemo(() => iconsMap[type], [type]);
 
   return (
-    <Container $type={type}>
+    <Container $type={type} data-testid={dataTestId}>
       <IconWrapper>{icon}</IconWrapper>
       {children}
     </Container>

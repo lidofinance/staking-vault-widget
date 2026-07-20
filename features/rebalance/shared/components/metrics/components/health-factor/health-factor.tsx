@@ -26,9 +26,9 @@ export const HealthFactor = () => {
   );
 
   return (
-    <Container>
+    <Container data-testid="health-factor">
       <TextContainer>
-        <Text size="xxs" as="span">
+        <Text size="xxs" as="span" data-testid="label">
           {vaultTexts.actions.rebalance.metrics.healthFactor}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
@@ -40,6 +40,7 @@ export const HealthFactor = () => {
               !hasFormErrors &&
               projected?.healthFactor !== healthFactor
             }
+            dataTestId="value"
           />
         </InlineLoader>
       </TextContainer>

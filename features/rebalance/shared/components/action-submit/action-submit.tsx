@@ -25,6 +25,7 @@ export const ActionSubmit = () => {
       type="submit"
       loading={isSubmitting}
       disabled={isDisabled}
+      data-testid="submit"
     >
       <ButtonContent>
         {text}
