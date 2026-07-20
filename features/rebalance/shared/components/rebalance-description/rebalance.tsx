@@ -23,11 +23,11 @@ export const Rebalance = () => {
     vaultTexts.actions.rebalance.description.rebalance;
 
   return (
-    <Container>
-      <Text size="sm" strong>
+    <Container data-testid="description">
+      <Text size="sm" strong data-testid="title">
         {title}
       </Text>
-      <Text size="xxs" color="secondary">
+      <Text size="xxs" color="secondary" data-testid="text">
         {text} <Link href={supplyLink}>{supplyLinkText}</Link> or{' '}
         <Link href={repayLink}>{repayLinkText}</Link>.
       </Text>

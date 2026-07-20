@@ -14,12 +14,12 @@ export const StEthLiability = () => {
   const maxDecimalDigits = vaultLiability / ONE_ETHER > 100 ? 1 : 4;
 
   return (
-    <ListItem>
-      <Text size="xxs" as="span">
+    <ListItem data-testid="steth-liability">
+      <Text size="xxs" as="span" data-testid="label">
         {vaultTexts.actions.rebalance.healthState.stethLiability}
       </Text>
       <InlineLoader isLoading={isPending} width={45} height={20}>
-        <Text size="xxs" as="span" strong>
+        <Text size="xxs" as="span" strong data-testid="value">
           <FormatToken
             amount={vaultLiability}
             maxDecimalDigits={maxDecimalDigits}

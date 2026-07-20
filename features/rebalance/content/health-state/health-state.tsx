@@ -14,7 +14,7 @@ export const HealthState = () => {
     <Container>
       <CapacityExceeded />
       <ThresholdExceeded />
-      <List>
+      <List data-testid="header-metrics">
         <UtilizationRatio />
         <StEthLiability />
         <HeathFactor />

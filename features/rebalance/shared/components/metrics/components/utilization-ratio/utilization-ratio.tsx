@@ -24,9 +24,9 @@ export const UtilizationRatio = () => {
   const chartData = useRebalanceMintingCapacityChart();
 
   return (
-    <Container>
+    <Container data-testid="utilization-ratio">
       <TextContainer>
-        <Text size="xxs" as="span">
+        <Text size="xxs" as="span" data-testid="label">
           {vaultTexts.actions.rebalance.metrics.utilizationRatio}
         </Text>
         <InlineLoader isLoading={isPending} width={50} height={18}>
@@ -38,6 +38,7 @@ export const UtilizationRatio = () => {
               !hasFormErrors &&
               projected?.utilizationRatio !== utilizationRatio
             }
+            dataTestId="value"
           />
         </InlineLoader>
       </TextContainer>

@@ -44,7 +44,7 @@ export const ReduceToCapacityButton = () => {
     <InputDecoratorMaxButton
       disabled={isMaxButtonDisabled}
       onClick={handleSetMax}
-      data-testid={isHealing ? 'reduceToCapacityBtn' : undefined}
+      data-testid={isHealing ? 'reduceToCapacityBtn' : 'maxBtn'}
     >
       {text}
     </InputDecoratorMaxButton>

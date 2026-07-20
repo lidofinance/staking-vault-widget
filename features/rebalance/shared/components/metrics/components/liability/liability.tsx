@@ -14,8 +14,8 @@ export const Liability = () => {
   const { vaultLiabilityStETH: vaultLiability } = data ?? {};
 
   return (
-    <Container>
-      <Text size="xxs" as="span">
+    <Container data-testid="liability">
+      <Text size="xxs" as="span" data-testid="label">
         {vaultTexts.actions.rebalance.metrics.liability}
       </Text>
       <ValueContainer>
@@ -44,6 +44,7 @@ export const Liability = () => {
             isChanged={
               !!projected && projected?.vaultLiability !== vaultLiability
             }
+            dataTestId="value"
           />
         </InlineLoader>
       </ValueContainer>

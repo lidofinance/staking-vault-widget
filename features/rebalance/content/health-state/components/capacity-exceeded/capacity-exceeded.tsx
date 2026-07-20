@@ -21,7 +21,7 @@ export const CapacityExceeded = () => {
   }
 
   return (
-    <InfoBanner>
+    <InfoBanner data-testid="capacity-exceeded-banner">
       <Text size="xxs" color="warning" strong>
         {vaultTexts.actions.rebalance.healthState.capacityExceeded}
       </Text>

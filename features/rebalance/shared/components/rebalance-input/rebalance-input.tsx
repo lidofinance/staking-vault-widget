@@ -83,7 +83,7 @@ export const RebalanceInput = () => {
   );
 
   return (
-    <Container>
+    <Container data-testid="rebalance-input">
       <InfoRowAmount
         title={available}
         amount={maxRebalanceAmount}

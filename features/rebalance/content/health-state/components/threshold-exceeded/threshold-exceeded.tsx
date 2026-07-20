@@ -15,7 +15,7 @@ export const ThresholdExceeded = () => {
   }
 
   return (
-    <InfoBanner type="danger">
+    <InfoBanner type="danger" data-testid="frt-banner">
       <Text size="xxs" color="error" strong>
         {vaultTexts.actions.rebalance.healthState.thresholdExceeded}
       </Text>

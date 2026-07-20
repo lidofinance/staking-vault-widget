@@ -163,7 +163,9 @@ export const InputAmount = forwardRef<HTMLInputElement, InputAmountProps>(
         : undefined;
 
     const isMaxButtonDisabled =
-      props.disabled || (disableMaxOnValueMatch && maxValue === value);
+      props.disabled ||
+      !handleClickMax ||
+      (disableMaxOnValueMatch && maxValue === value);
 
     return (
       <InputStyle
