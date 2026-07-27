@@ -1,6 +1,6 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { ONE_ETHER } from 'consts/tx';
-import { toStethValue } from 'utils';
+import { toStethValue, truncateAddress } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
 
@@ -24,6 +24,36 @@ export const vaultTexts = {
     connectVault: {
       connect: 'Awaiting for Vault connection',
       completed: 'Vault connected',
+    },
+    disconnectVault: {
+      voluntaryDisconnect: {
+        loading: 'Disconnecting vault from Vault Hub',
+        completed: 'Vault disconnected from Vault Hub',
+      },
+      applyReport: {
+        loading: 'Applying report',
+        completed: 'Report has been applied',
+      },
+      abandonDashboard: {
+        loading: 'Abandoning dashboard from vault',
+        completeActionText: (address: string) =>
+          `Ownership suggestion passed to ${truncateAddress({ address })}`,
+      },
+      acceptOwnership: {
+        loading: (address: string) =>
+          `Accepting ownership for ${truncateAddress({ address })}`,
+        completeActionText: (address: string) =>
+          `Vault ownership passed to ${truncateAddress({ address })}`,
+      },
+      withdraw: {
+        loading: 'Withdrawing available stVault balance',
+        completed: 'Available stVault balance withdrawn',
+        submit: (amount?: bigint | null) =>
+          `Withdraw ${balance(amount)}ETH` as const,
+        recipientLabel: 'Withdraw to address',
+        useOwnerAddress: `Use Vault Owner's address`,
+        useAnotherAddress: 'Use another address',
+      },
     },
     createVault: {
       loading: 'Creating vault',
@@ -226,6 +256,9 @@ export const vaultTexts = {
         },
       },
     },
+    disconnect: {
+      settingsTitle: 'stVault Disconnection from VaultHub',
+    },
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -328,6 +361,12 @@ export const vaultTexts = {
         },
       },
       clearChanges: 'Clear changes',
+      disconnect: {
+        subTitle: 'Disconnect stVault from VaultHub',
+        subDescription:
+          '1 ETH connection deposit can be withdrawn after disconnection the stVault from the VaultHub protocol.',
+        subNavigation: 'Learn more and disconnect',
+      },
     },
     validators: {
       title: 'stVaults Validators overview',

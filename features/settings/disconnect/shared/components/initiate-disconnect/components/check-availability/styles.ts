@@ -1,0 +1,16 @@
+import styled from 'styled-components';
+
+export const AvailabilityContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.lg}px;
+  padding: ${({ theme }) => theme.spaceMap.md}px;
+  border-radius: ${({ theme }) => theme.borderRadiusesMap.lg}px;
+  background-color: ${({ theme }) => theme.colors.background};
+`;
+
+export const PreparationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;

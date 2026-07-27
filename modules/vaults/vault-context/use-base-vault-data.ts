@@ -68,9 +68,10 @@ export const useBaseVaultData = (
 
       const DEFAULT_CALL_OPTIONS = { blockNumber };
 
-      const [hub, lazyOracle, vault] = await Promise.all([
+      const [hub, lazyOracle, vaultFactory, vault] = await Promise.all([
         vaultModule.contracts.getContractVaultHub(),
         vaultModule.contracts.getContractLazyOracle(),
+        vaultModule.contracts.getContractVaultFactory(),
         vaultEntity.getVaultContract(),
       ]);
 
@@ -78,22 +79,26 @@ export const useBaseVaultData = (
         vaultOwner,
         nodeOperator,
         withdrawalCredentials,
+        pendingOwner,
         connection,
         isVaultConnected,
         isPendingDisconnect,
         isReportFresh,
         latestVaultReport,
         latestHubReport,
+        isDeployedVault,
       ] = await Promise.all([
         vault.read.owner(DEFAULT_CALL_OPTIONS),
         vault.read.nodeOperator(DEFAULT_CALL_OPTIONS),
         vault.read.withdrawalCredentials(DEFAULT_CALL_OPTIONS),
+        vault.read.pendingOwner(DEFAULT_CALL_OPTIONS),
         hub.read.vaultConnection([vaultAddress], DEFAULT_CALL_OPTIONS),
         hub.read.isVaultConnected([vault.address], DEFAULT_CALL_OPTIONS),
         hub.read.isPendingDisconnect([vault.address], DEFAULT_CALL_OPTIONS),
         hub.read.isReportFresh([vaultAddress], DEFAULT_CALL_OPTIONS),
         hub.read.latestReport([vaultAddress], DEFAULT_CALL_OPTIONS),
         lazyOracle.read.latestReportData(DEFAULT_CALL_OPTIONS),
+        vaultFactory.read.deployedVaults([vault.address], DEFAULT_CALL_OPTIONS),
       ]);
 
       const [
@@ -126,7 +131,8 @@ export const useBaseVaultData = (
       });
 
       // TODO: reword to support multiple factories
-      if (!isDashboard && isVaultConnected) {
+      // if (!isDashboard && isVaultConnected) {}
+      if (!isDeployedVault) {
         throw new VaultOwnerNotDashboardError();
       }
 
@@ -149,6 +155,7 @@ export const useBaseVaultData = (
         dashboard,
         hub,
         nodeOperator,
+        pendingOwner,
         withdrawalCredentials,
         report,
         operatorGrid,
@@ -162,11 +169,14 @@ export const useBaseVaultData = (
         },
         isReportFresh,
         isReportMissing,
-        isVaultDisconnected: !isDashboard,
+        // isVaultDisconnected: !isDashboard,
+        isVaultDisconnected: false,
         isVaultConnected,
         isPendingDisconnect,
         isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
+        isDeployedVault,
+        hasPendingOwner: pendingOwner !== zeroAddress,
         predepositGuarantee,
         blockNumber,
         ...connection,

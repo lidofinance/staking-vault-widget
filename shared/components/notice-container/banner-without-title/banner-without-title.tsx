@@ -1,15 +1,24 @@
-import type { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren, ReactNode } from 'react';
 import { ReactComponent as WarningIcon } from 'assets/icons/warning-triangle.svg';
 
 import { BannerContainer, IconWrapper } from './styles';
 
-export const BannerWithoutTitle: FC<
-  PropsWithChildren<{ dataTestId?: string }>
-> = ({ children, dataTestId }) => {
+export type BannerWithoutTitle = {
+  leftDecorator?: ReactNode;
+  padding?: string;
+  dataTestId?: string;
+};
+
+export const BannerWithoutTitle: FC<PropsWithChildren<BannerWithoutTitle>> = ({
+  children,
+  leftDecorator,
+  padding,
+  dataTestId,
+}) => {
   return (
-    <BannerContainer data-testid={dataTestId}>
+    <BannerContainer $padding={padding} data-testid={dataTestId}>
       <IconWrapper>
-        <WarningIcon />
+        {leftDecorator ? leftDecorator : <WarningIcon />}
       </IconWrapper>
       <div>{children}</div>
     </BannerContainer>

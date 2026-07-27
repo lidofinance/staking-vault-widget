@@ -7,6 +7,7 @@ import {
   Pdg,
   VotingList,
   MainSettingsAction,
+  DisconnectVault,
 } from 'features/settings/main/content';
 import {
   SectionContainer,
@@ -20,20 +21,27 @@ import {
 const texts = vaultTexts.actions.settings;
 export const EditMainSettings = () => {
   return (
-    <MainSettingsDataProvider>
-      <MainSettingsProvider>
-        <ContentWrapper>
-          <SectionContainer>
-            <Text size="lg" strong data-testid="mainSettingsTitle">
-              {texts.title}
-            </Text>
-            <Pdg />
-            <Addresses />
-            <VotingList />
-            <MainSettingsAction />
-          </SectionContainer>
-        </ContentWrapper>
-      </MainSettingsProvider>
-    </MainSettingsDataProvider>
+    <>
+      <MainSettingsDataProvider>
+        <MainSettingsProvider>
+          <ContentWrapper>
+            <SectionContainer>
+              <Text size="lg" strong data-testid="mainSettingsTitle">
+                {texts.title}
+              </Text>
+              <Pdg />
+              <Addresses />
+              <VotingList />
+              <MainSettingsAction />
+            </SectionContainer>
+          </ContentWrapper>
+        </MainSettingsProvider>
+      </MainSettingsDataProvider>
+      <ContentWrapper>
+        <SectionContainer>
+          <DisconnectVault />
+        </SectionContainer>
+      </ContentWrapper>
+    </>
   );
 };

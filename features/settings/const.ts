@@ -2,6 +2,7 @@ export enum SETTINGS_PATHS {
   main = 'main',
   permissions = 'permissions',
   tier = 'tier',
+  disconnect = 'disconnect',
 }
 
 export type SettingsPaths =

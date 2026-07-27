@@ -76,6 +76,7 @@ export type VaultBaseInfo = {
   group: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'group'>;
   nodeOperator: Address;
   vaultOwner: Address;
+  pendingOwner: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
@@ -86,6 +87,8 @@ export type VaultBaseInfo = {
   isPendingDisconnect: boolean;
   isPendingConnect: boolean;
   isReportAvailable: boolean;
+  isDeployedVault: boolean;
+  hasPendingOwner: boolean;
 } & VaultConnection;
 
 export type Tier = {
