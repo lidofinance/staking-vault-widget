@@ -7,8 +7,9 @@ import { Title, Wrapper } from './styles';
 
 export const DisconnectedVault = () => {
   const { activeVault } = useVault();
+  const { isPendingDisconnect, isVaultConnected } = activeVault ?? {};
 
-  if (!activeVault || !activeVault.isVaultDisconnected) {
+  if (!activeVault || (isVaultConnected && !isPendingDisconnect)) {
     return null;
   }
 

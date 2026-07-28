@@ -1,6 +1,6 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 
 import {
   Addresses,
@@ -20,6 +20,14 @@ import {
 
 const texts = vaultTexts.actions.settings;
 export const EditMainSettings = () => {
+  const { activeVault } = useVault();
+  const { isVaultDisconnected = false, isPendingDisconnect = false } =
+    activeVault ?? {};
+
+  if (isVaultDisconnected || isPendingDisconnect) {
+    return null;
+  }
+
   return (
     <>
       <MainSettingsDataProvider>

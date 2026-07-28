@@ -4,7 +4,6 @@ import Head from 'next/head';
 import type { Address } from 'viem';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { ToggleSwitch } from 'shared/components/toggle';
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { getPageTitle } from 'utils';
@@ -17,7 +16,8 @@ import { DisconnectVault } from './disconnect';
 
 import { PageWrapper } from './styles';
 
-import { SETTINGS_PATHS, SettingsPaths, settingsToggleList } from './const';
+import { SETTINGS_PATHS, SettingsPaths } from './const';
+import { SettingsNavigation } from './shared/components';
 
 type AdjustmentTabPageParams = {
   mode: SETTINGS_PATHS;
@@ -88,11 +88,7 @@ export const Settings = () => {
               <title>{getPageTitle(titleMap[mode])}</title>
             </Head>
             <DisconnectedVault />
-            <ToggleSwitch
-              options={settingsToggleList}
-              defaultValue={mode}
-              onToggle={({ value }) => changeTab(value as SettingsPaths)}
-            />
+            <SettingsNavigation mode={mode} changeTab={changeTab} />
           </>
         )}
         <CurrentSettings />
