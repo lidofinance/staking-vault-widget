@@ -845,6 +845,18 @@ export const vaultTexts = {
       },
     },
     banners: {
+      disconnectedVault: {
+        disconnected: {
+          title: 'Vault is disconnected from VaultHub.',
+          description:
+            'This vault is disconnected from VaultHub, and some operations are not supported in this UI, including supplying ETH and minting or repaying stETH.',
+        },
+        pendingDisconnect: {
+          title: 'Pending disconnection from VaultHub',
+          description:
+            'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
+        },
+      },
       outdatedMetrics: {
         title: (date: string) =>
           `Validator Balance Spike Detected — Metrics as of ${date}`,

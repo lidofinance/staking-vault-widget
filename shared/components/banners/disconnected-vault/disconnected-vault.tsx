@@ -2,8 +2,11 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as WarningTriangle } from 'assets/icons/warning-triangle.svg';
 import { useVault } from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults/consts/texts';
 
 import { Title, Wrapper } from './styles';
+
+const texts = vaultTexts.metrics.banners.disconnectedVault;
 
 export const DisconnectedVault = () => {
   const { activeVault } = useVault();
@@ -13,20 +16,20 @@ export const DisconnectedVault = () => {
     return null;
   }
 
+  const { title, description } = isPendingDisconnect
+    ? texts.pendingDisconnect
+    : texts.disconnected;
+
   return (
     <Wrapper>
       <Title>
         <WarningTriangle />
         <Text size="xs" as="h3" strong>
-          Vault is disconnected from VaultHub.
+          {title}
         </Text>
       </Title>
 
-      <Text size="xxs">
-        This vault is disconnected from VaultHub, and some operations are not
-        supported in this UI, including supplying ETH and minting or repaying
-        stETH.
-      </Text>
+      <Text size="xxs">{description}</Text>
     </Wrapper>
   );
 };
