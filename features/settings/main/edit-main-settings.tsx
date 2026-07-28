@@ -23,28 +23,27 @@ export const EditMainSettings = () => {
   const { activeVault } = useVault();
   const { isVaultDisconnected = false, isPendingDisconnect = false } =
     activeVault ?? {};
-
-  if (isVaultDisconnected || isPendingDisconnect) {
-    return null;
-  }
+  const showMainSettings = !(isVaultDisconnected || isPendingDisconnect);
 
   return (
     <>
-      <MainSettingsDataProvider>
-        <MainSettingsProvider>
-          <ContentWrapper>
-            <SectionContainer>
-              <Text size="lg" strong data-testid="mainSettingsTitle">
-                {texts.title}
-              </Text>
-              <Pdg />
-              <Addresses />
-              <VotingList />
-              <MainSettingsAction />
-            </SectionContainer>
-          </ContentWrapper>
-        </MainSettingsProvider>
-      </MainSettingsDataProvider>
+      {showMainSettings && (
+        <MainSettingsDataProvider>
+          <MainSettingsProvider>
+            <ContentWrapper>
+              <SectionContainer>
+                <Text size="lg" strong data-testid="mainSettingsTitle">
+                  {texts.title}
+                </Text>
+                <Pdg />
+                <Addresses />
+                <VotingList />
+                <MainSettingsAction />
+              </SectionContainer>
+            </ContentWrapper>
+          </MainSettingsProvider>
+        </MainSettingsDataProvider>
+      )}
       <ContentWrapper>
         <SectionContainer>
           <DisconnectVault />

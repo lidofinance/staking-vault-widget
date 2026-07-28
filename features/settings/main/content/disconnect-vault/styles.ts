@@ -15,5 +15,6 @@ export const TextContainer = styled.div`
 export const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
