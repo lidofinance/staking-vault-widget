@@ -9,6 +9,7 @@ import {
   fetchReport,
   checkIsDashboard,
   VaultOwnerNotDashboardError,
+  VaultNotCreatedByFactoryError,
 } from 'modules/vaults';
 import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
@@ -130,9 +131,12 @@ export const useBaseVaultData = (
         dashboardAddress: supposedDashboardAddress,
       });
 
-      // TODO: reword to support multiple factories
-      // if (!isDashboard && isVaultConnected) {}
       if (!isDeployedVault) {
+        throw new VaultNotCreatedByFactoryError();
+      }
+
+      // TODO: reword to support multiple factories
+      if (!isDashboard && isVaultConnected) {
         throw new VaultOwnerNotDashboardError();
       }
 
@@ -169,7 +173,7 @@ export const useBaseVaultData = (
         },
         isReportFresh,
         isReportMissing,
-        isVaultDisconnected: !isVaultConnected, // TODO: investigate isPendingConnect
+        isVaultDisconnected: !isVaultConnected, // TODO: add API check to avoid isPendingConnect state
         isVaultFullDisconnected: !isDashboard && !isVaultConnected,
         isVaultConnected,
         isPendingDisconnect,

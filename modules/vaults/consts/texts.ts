@@ -368,7 +368,7 @@ export const vaultTexts = {
         navigation: {
           connected: 'Learn more and disconnect',
           disconnectInitiated: 'Continue disconnection',
-          disconnected: 'View',
+          view: 'View',
         },
       },
     },
@@ -1003,6 +1003,7 @@ export const vaultTexts = {
         loadingVault: 'Error loading stVault',
         vaultAddress: 'Invalid stVault address',
         notDashboard: 'stVault is not owned by Dashboard contract',
+        notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
       },
