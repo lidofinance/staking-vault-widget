@@ -2,17 +2,17 @@ import { Text, Link } from '@lidofinance/lido-ui';
 
 import { Step } from 'shared/components';
 
+import { DISCONNECT_STEP } from 'features/settings/shared/const';
+import { useDisconnectStep } from 'features/settings/shared/hooks';
+
 import { RecoverFeesContainer } from './styles';
 
 export const RecoverFees = () => {
+  const stepProps = useDisconnectStep(DISCONNECT_STEP.RECOVER_FEES);
+
   // TODO: add link for docs
   return (
-    <Step
-      number={6}
-      title="Recover undisbursed Node Operator fees"
-      isAllowExpand={false}
-      defaultExpanded={false}
-    >
+    <Step {...stepProps} title="Recover undisbursed Node Operator fees">
       <RecoverFeesContainer>
         <Text size="xs">
           Undisbursed Node Operator fees are stored in the abandoned Dashboard

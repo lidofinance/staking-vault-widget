@@ -1,5 +1,8 @@
 import { Step } from 'shared/components';
 
+import { DISCONNECT_STEP } from 'features/settings/shared/const';
+import { useDisconnectStep } from 'features/settings/shared/hooks';
+
 import {
   TransferAddress,
   TransferDescription,
@@ -10,9 +13,11 @@ import {
 import { AbandonContainer } from './styles';
 
 export const AbandonDashboard = () => {
+  const stepProps = useDisconnectStep(DISCONNECT_STEP.ABANDON_DASHBOARD);
+
   return (
     <Step
-      number={3}
+      {...stepProps}
       title="Abandon Dashboard contract and transfer the stVault ownership"
     >
       <AbandonContainer>

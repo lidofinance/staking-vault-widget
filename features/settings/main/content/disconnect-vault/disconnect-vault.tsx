@@ -6,6 +6,9 @@ import { StatusBadge, InlineLoader } from 'shared/components';
 import { useVault, vaultTexts } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 
+import { DISCONNECT_STATUS } from 'features/settings/shared/const';
+import { useDisconnectStatus } from 'features/settings/shared/hooks';
+
 import { Container, TextContainer, TitleWrapper } from './styles';
 
 const { subTitle, subDescription, navigation } =
@@ -13,21 +16,19 @@ const { subTitle, subDescription, navigation } =
 
 export const DisconnectVault = () => {
   const router = useRouter();
-  const { isLoading, isPending, vaultAddress, activeVault } = useVault();
-  const { isPendingDisconnect, isVaultDisconnected, isVaultConnected } =
-    activeVault ?? {};
-  const showLoader = isLoading || isPending;
-  const isDisconnectInitiated = isPendingDisconnect || isVaultDisconnected;
-  // TODO: get complete disconnect status
-  const isDisconnectCompleted = isVaultDisconnected;
+  const { vaultAddress } = useVault();
+  const { status, isLoading } = useDisconnectStatus();
+
+  const isDisconnectInitiated =
+    !!status && status !== DISCONNECT_STATUS.NOT_INITIATED;
+  const isDisconnectCompleted = status === DISCONNECT_STATUS.COMPLETED;
   const btnVariant =
     isDisconnectInitiated && !isDisconnectCompleted ? 'filled' : 'outlined';
-  const btnText =
-    isVaultConnected && !isPendingDisconnect
-      ? navigation.connected
-      : isDisconnectCompleted
-        ? navigation.disconnected
-        : navigation.disconnectInitiated;
+  const btnText = !isDisconnectInitiated
+    ? navigation.connected
+    : isDisconnectCompleted
+      ? navigation.disconnected
+      : navigation.disconnectInitiated;
 
   const navigateToDisconnectPage = useCallback(() => {
     if (!vaultAddress) {
@@ -46,9 +47,9 @@ export const DisconnectVault = () => {
           <Text size="sm" strong>
             {subTitle}
           </Text>
-          <InlineLoader isLoading={showLoader} height={24} width={100}>
+          <InlineLoader isLoading={isLoading} height={24} width={100}>
             {isDisconnectInitiated && (
-              <StatusBadge status="ongoing" size="small" />
+              <StatusBadge status={status} size="small" />
             )}
           </InlineLoader>
         </TitleWrapper>
