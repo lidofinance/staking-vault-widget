@@ -7,7 +7,12 @@ import { RecoverFeesContainer } from './styles';
 export const RecoverFees = () => {
   // TODO: add link for docs
   return (
-    <Step number={6} title="Recover undisbursed Node Operator fees">
+    <Step
+      number={6}
+      title="Recover undisbursed Node Operator fees"
+      isAllowExpand={false}
+      defaultExpanded={false}
+    >
       <RecoverFeesContainer>
         <Text size="xs">
           Undisbursed Node Operator fees are stored in the abandoned Dashboard

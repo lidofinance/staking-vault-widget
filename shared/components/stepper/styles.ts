@@ -12,7 +12,7 @@ export const StepContainer = styled.div`
   padding: 0 0 12px 32px;
 `;
 
-export const StepMarker = styled.div`
+export const StepMarker = styled.div<{ $isSuccess: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -22,12 +22,14 @@ export const StepMarker = styled.div`
   box-sizing: border-box;
   width: 24px;
   height: 24px;
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 1px solid
+    ${({ theme, $isSuccess }) =>
+      $isSuccess ? theme.colors.success : theme.colors.border};
   border-radius: 50%;
 `;
 
 export const StepNumber = styled(Text)`
-  line-height: 1;
+  line-height: 20px;
 `;
 
 export const StepConnector = styled.span<{ $isSuccess: boolean }>`
@@ -50,11 +52,16 @@ export const StepHeader = styled.div<{ $isClickable: boolean }>`
 
 // a plain span instead of lido-ui Text, so a ReactNode title does not end up
 // nested inside a paragraph
-export const StepTitle = styled.span`
+export const StepTitle = styled.span<{ $isAllowExpand: boolean }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
-  font-weight: 700;
+  font-weight: ${({ $isAllowExpand }) => ($isAllowExpand ? '700' : '400')};
   line-height: 24px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({
+    theme: {
+      colors: { text, textSecondary },
+    },
+    $isAllowExpand,
+  }) => ($isAllowExpand ? text : textSecondary)};
 `;
 
 export const StepContent = styled.div<{ $showContent: boolean }>`

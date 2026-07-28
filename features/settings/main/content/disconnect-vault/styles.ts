@@ -11,3 +11,9 @@ export const TextContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spaceMap.sm}px;
 `;
+
+export const TitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;

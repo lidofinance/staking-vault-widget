@@ -36,3 +36,4 @@ export {
   type StepperProps,
   type StepperStepProps,
 } from './stepper';
+export { StatusBadge } from './status-badge';

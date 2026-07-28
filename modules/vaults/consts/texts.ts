@@ -365,7 +365,11 @@ export const vaultTexts = {
         subTitle: 'Disconnect stVault from VaultHub',
         subDescription:
           '1 ETH connection deposit can be withdrawn after disconnection the stVault from the VaultHub protocol.',
-        subNavigation: 'Learn more and disconnect',
+        navigation: {
+          connected: 'Learn more and disconnect',
+          disconnectInitiated: 'Continue disconnection',
+          disconnected: 'View',
+        },
       },
     },
     validators: {

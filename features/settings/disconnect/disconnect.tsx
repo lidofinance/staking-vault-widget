@@ -1,16 +1,13 @@
-import { vaultTexts } from 'modules/vaults';
-
 import { ContentWrapper } from 'features/settings/shared/components';
 
 import {
   DisconnectDescription,
   DisconnectSteps,
   BackToSettings,
+  DisconnectTitle,
 } from './content';
 
-import { DisconnectPage, Title, Content } from './styles';
-
-const { settingsTitle } = vaultTexts.actions.disconnect;
+import { DisconnectPage, Content } from './styles';
 
 export const DisconnectVault = () => {
   return (
@@ -18,9 +15,7 @@ export const DisconnectVault = () => {
       <BackToSettings />
       <ContentWrapper>
         <Content>
-          <Title data-testid="title" as="h2">
-            {settingsTitle}
-          </Title>
+          <DisconnectTitle />
           <DisconnectDescription />
           <DisconnectSteps />
         </Content>
