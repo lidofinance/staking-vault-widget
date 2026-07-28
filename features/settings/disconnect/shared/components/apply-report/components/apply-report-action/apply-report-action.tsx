@@ -13,7 +13,6 @@ export const ApplyReportAction = () => {
     isReportFresh = false,
     isVaultDisconnected = false,
     isPendingDisconnect = false,
-    isVaultConnected = false,
   } = activeVault ?? {};
 
   const isDisabled =
@@ -21,8 +20,7 @@ export const ApplyReportAction = () => {
     isReportFresh ||
     isVaultDisconnected ||
     !isPendingDisconnect ||
-    !hasAdmin ||
-    isVaultConnected;
+    !hasAdmin;
 
   const text = isReportFresh
     ? 'Wait for next Oracle report'
@@ -30,7 +28,12 @@ export const ApplyReportAction = () => {
 
   return (
     <InlineLoader isLoading={isLoading} height={32} width={200}>
-      <ButtonStyled size="xs" onClick={applyReport} disabled={isDisabled}>
+      <ButtonStyled
+        dashboardRole="defaultAdmin"
+        size="xs"
+        onClick={applyReport}
+        disabled={isDisabled}
+      >
         {text}
       </ButtonStyled>
     </InlineLoader>

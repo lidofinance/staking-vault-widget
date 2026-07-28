@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Button } from '@lidofinance/lido-ui';
+import { PermissionedSubmitButton } from 'modules/vaults';
 
-export const ButtonStyled = styled(Button)`
+export const ButtonStyled = styled(PermissionedSubmitButton)`
   width: fit-content;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;

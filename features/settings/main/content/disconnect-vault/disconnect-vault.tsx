@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Text, Button } from '@lidofinance/lido-ui';
 import { useRouter } from 'next/router';
+import { isAddressEqual } from 'viem';
 
 import { StatusBadge, InlineLoader } from 'shared/components';
 import { useVault, useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
@@ -31,8 +32,8 @@ const getNavigationText = ({
 
 export const DisconnectVault = () => {
   const router = useRouter();
-  const { vaultAddress } = useVault();
-  const { isDappActive } = useDappStatus();
+  const { vaultAddress, activeVault } = useVault();
+  const { isDappActive, address } = useDappStatus();
   const { hasAdmin } = useVaultConfirmingRoles();
   const { status, isLoading } = useDisconnectStatus();
 
@@ -40,7 +41,14 @@ export const DisconnectVault = () => {
     !!status && status !== DISCONNECT_STATUS.NOT_INITIATED;
   const isDisconnectCompleted = status === DISCONNECT_STATUS.COMPLETED;
   // there is nothing to act on without a connected wallet owning the vault
-  const isViewOnly = !isDappActive || !hasAdmin;
+  const isViewOnly =
+    !isDappActive ||
+    !hasAdmin ||
+    !(
+      activeVault &&
+      address &&
+      isAddressEqual(address, activeVault.vaultOwner)
+    );
 
   const btnVariant =
     !isViewOnly && isDisconnectInitiated && !isDisconnectCompleted
