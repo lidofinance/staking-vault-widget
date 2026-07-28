@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Text, Button } from '@lidofinance/lido-ui';
+import { Text, Button, Loader } from '@lidofinance/lido-ui';
 import { useRouter } from 'next/router';
 import { isAddressEqual } from 'viem';
 
@@ -32,7 +32,7 @@ const getNavigationText = ({
 
 export const DisconnectVault = () => {
   const router = useRouter();
-  const { vaultAddress, activeVault } = useVault();
+  const { vaultAddress, activeVault, isPending } = useVault();
   const { isDappActive, address } = useDappStatus();
   const { hasAdmin } = useVaultConfirmingRoles();
   const { status, isLoading } = useDisconnectStatus();
@@ -40,15 +40,14 @@ export const DisconnectVault = () => {
   const isDisconnectInitiated =
     !!status && status !== DISCONNECT_STATUS.NOT_INITIATED;
   const isDisconnectCompleted = status === DISCONNECT_STATUS.COMPLETED;
-  // there is nothing to act on without a connected wallet owning the vault
   const isViewOnly =
     !isDappActive ||
-    !hasAdmin ||
-    !(
-      activeVault &&
-      address &&
-      isAddressEqual(address, activeVault.vaultOwner)
-    );
+    (!hasAdmin &&
+      !(
+        activeVault &&
+        address &&
+        isAddressEqual(address, activeVault.vaultOwner)
+      ));
 
   const btnVariant =
     !isViewOnly && isDisconnectInitiated && !isDisconnectCompleted
@@ -60,6 +59,8 @@ export const DisconnectVault = () => {
     isDisconnectInitiated,
     isDisconnectCompleted,
   });
+
+  const showLoader = isLoading || isPending;
 
   const navigateToDisconnectPage = useCallback(() => {
     if (!vaultAddress) {
@@ -93,10 +94,11 @@ export const DisconnectVault = () => {
       <Button
         onClick={navigateToDisconnectPage}
         variant={btnVariant}
+        style={{ display: 'flex', justifyContent: 'center' }}
         size="sm"
         fullwidth
       >
-        {btnText}
+        {showLoader ? <Loader size="small" /> : btnText}
       </Button>
     </Container>
   );

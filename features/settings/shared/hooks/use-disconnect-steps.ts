@@ -118,15 +118,11 @@ export const useDisconnectSteps = () => {
 
       const dashboardAddress = dashboard.address;
 
-      // the hub connection is wiped once the disconnect report is applied, from
-      // that point on the ownership state is what moves the flow forward
-      const isDisconnectedFromHub = !isVaultConnected;
-
       // `dashboard` is resolved from the vault owner as soon as the hub
-      // connection is gone, so `isVaultDisconnected` (owner has no Dashboard
-      // code) is what really tells us whether the Dashboard is still the owner
+      // connection is gone, so `isVaultDisconnected` (owner has Dashboard code)
+      // is what really tells us whether the Dashboard is still the owner
       const isOwnedByDashboard =
-        !isVaultDisconnected && isAddressEqual(vaultOwner, dashboardAddress);
+        isVaultDisconnected && isAddressEqual(vaultOwner, dashboardAddress);
 
       const stepChecks: Record<DisconnectStep, boolean> = {
         // the vault is still connected: request the voluntary disconnect
@@ -136,18 +132,17 @@ export const useDisconnectSteps = () => {
         [DISCONNECT_STEP.APPLY_REPORT]: isPendingDisconnect,
         // disconnected, the Dashboard still owns the vault: abandon it
         [DISCONNECT_STEP.ABANDON_DASHBOARD]:
-          isDisconnectedFromHub && !hasPendingOwner && isOwnedByDashboard,
+          isVaultDisconnected && !hasPendingOwner && isOwnedByDashboard,
         // ownership transfer is initiated: the new owner has to accept it
         [DISCONNECT_STEP.ACCEPT_OWNERSHIP]:
-          isDisconnectedFromHub &&
+          isVaultDisconnected &&
           hasPendingOwner &&
           isOwnedByDashboard &&
           !isAddressEqual(pendingOwner, dashboardAddress),
         // ownership is accepted, the vault is owned directly: withdraw the ETH.
         // the step stays reachable with an empty balance as well, an empty
         // balance is what marks the whole flow as completed
-        [DISCONNECT_STEP.WITHDRAW]:
-          isDisconnectedFromHub && isVaultDisconnected && !isOwnedByDashboard,
+        [DISCONNECT_STEP.WITHDRAW]: isVaultDisconnected && !isOwnedByDashboard,
         // informational step, it follows the withdraw step
         [DISCONNECT_STEP.RECOVER_FEES]: false,
       };
