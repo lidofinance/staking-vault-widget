@@ -1,6 +1,5 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { ArrowLeft, Text } from '@lidofinance/lido-ui';
-import { useRouter } from 'next/router';
 
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
@@ -15,21 +14,19 @@ const trackAllVaultsPageEvent = () => {
 
 export const BackToSettings = () => {
   const { vaultAddress } = useVault();
-  const router = useRouter();
 
-  const handleBackToSettings = useCallback(() => {
+  const linkToMainSettings = useMemo(() => {
     if (!vaultAddress) {
-      return;
+      return '#';
     }
 
-    trackAllVaultsPageEvent();
-    void router.push(appPaths.vaults.vault(vaultAddress).settings('main'));
-  }, [router, vaultAddress]);
+    return appPaths.vaults.vault(vaultAddress).settings('main');
+  }, [vaultAddress]);
 
   return (
-    <Container onClick={handleBackToSettings}>
+    <Container onClick={trackAllVaultsPageEvent} href={linkToMainSettings}>
       <ArrowLeft />
-      <Text size="xs" color="secondary">
+      <Text size="xs" color="secondary" as="span">
         Back to settings
       </Text>
     </Container>

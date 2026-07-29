@@ -95,6 +95,8 @@ export const useDisconnectSteps = () => {
   return useQuery<DisconnectStepsState>({
     queryKey: [...queryKeys.state, 'disconnect-steps'] as const,
     enabled: !!activeVault,
+    refetchOnMount: true,
+    staleTime: 300000,
     queryFn: async () => {
       invariant(activeVault, '[useDisconnectSteps] activeVault is not defined');
 
