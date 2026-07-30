@@ -1,7 +1,11 @@
 import type { Address } from 'viem';
 
 import { getApiURL } from 'config';
+import { standardFetcher } from 'utils/standardFetcher';
+
 import { vaultApiRoutes } from '../consts';
+
+import type { VaultEntry } from './fetch-vaults';
 
 export type VaultApiInfo = {
   address: Address;
@@ -24,21 +28,17 @@ export const fetchVaultInfo = async ({
     throw new Error('[fetchVaultInfo] API URL not found');
   }
 
-  const res = await fetch(vaultApiRoutes.vault(apiURL, vaultAddress));
-
-  if (!res.ok) {
-    throw new Error(`Error fetching vault info: ${res.statusText}`);
-  }
-
-  const data = await res.json();
+  const data = await standardFetcher<VaultEntry>(
+    vaultApiRoutes.vault(apiURL, vaultAddress),
+  );
 
   return {
-    address: data.address as Address,
-    totalValue: BigInt(data.totalValue),
+    address: data.address,
+    totalValue: BigInt(data.totalValue ?? 0),
     lastReportTotalValueWei: data.lastReport?.totalValueWei
       ? BigInt(data.lastReport.totalValueWei)
       : null,
     isReportFresh: Boolean(data.isReportFresh),
-    updatedAt: new Date(data.updatedAt),
+    updatedAt: new Date(data.updatedAt ?? Date.now()),
   };
 };

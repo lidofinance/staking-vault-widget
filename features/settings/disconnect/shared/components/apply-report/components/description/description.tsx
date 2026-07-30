@@ -13,6 +13,14 @@ const getChainPeriod = (chainId: number) => {
 };
 
 const getTime = (timestamp: bigint) => {
+  const now = Date.now();
+  const targetMs = Number(timestamp) * 1000;
+
+  // safe border
+  if (now >= targetMs) {
+    return 'soon';
+  }
+
   // contract timestamp in seconds
   const date = new Date(Number(timestamp) * 1000);
 

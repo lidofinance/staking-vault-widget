@@ -21,7 +21,7 @@ export const VaultNotVerified = () => {
     <Modal title={<ModalTitle />} windowSize="md" open>
       <ModalContent>
         <Text size="xs">
-          We detected that StakingVault contract has not been created by Vault
+          Detected that StakingVault contract has not been created by Vault
           Factory
         </Text>
         <Text size="xxs">

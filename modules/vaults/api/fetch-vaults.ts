@@ -41,7 +41,7 @@ export type FetchVaultsContext = {
   vaultModule: LidoSDKVaultModule;
 };
 
-type VaultEntryRaw = {
+export type VaultEntryRaw = {
   address: Address;
 } & Partial<{
   ens: string | null;
