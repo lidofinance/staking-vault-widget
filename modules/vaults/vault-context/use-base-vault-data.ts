@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { type Address, zeroAddress } from 'viem';
+import { type Address, zeroAddress, isAddressEqual } from 'viem';
 import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { useLidoSDK } from 'modules/web3';
@@ -146,6 +146,29 @@ export const useBaseVaultData = (
         vaultEntity.getDashboardContract(),
       ]);
 
+      const hasPendingOwner = pendingOwner !== zeroAddress;
+
+      // dashboard address is missed when call apply report after voluntary disconnection
+      // but we can it get using pending owner when
+      // VaultHub transfers vaults's ownership to dashboard
+      if (
+        !isVaultConnected &&
+        !isDashboard &&
+        isAddressEqual(vaultOwner, hub.address) &&
+        hasPendingOwner
+      ) {
+        const isPendingOwnerDashboard = await checkIsDashboard({
+          publicClient,
+          vaultModule,
+          blockNumber,
+          dashboardAddress: pendingOwner,
+        });
+
+        if (isPendingOwnerDashboard) {
+          dashboard.address = pendingOwner;
+        }
+      }
+
       const group = await operatorGrid.read.group(
         [nodeOperator],
         DEFAULT_CALL_OPTIONS,
@@ -180,7 +203,7 @@ export const useBaseVaultData = (
         isPendingConnect: !isVaultConnected && isDashboard,
         isReportAvailable,
         isDeployedVault,
-        hasPendingOwner: pendingOwner !== zeroAddress,
+        hasPendingOwner,
         predepositGuarantee,
         blockNumber,
         ...connection,

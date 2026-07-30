@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import invariant from 'tiny-invariant';
-import { isAddressEqual } from 'viem';
+import { isAddressEqual, zeroAddress } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 
 import { useVault } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
 
 import {
   DISCONNECT_STATUS,
@@ -91,9 +92,10 @@ const buildStepsState = (
  */
 export const useDisconnectSteps = () => {
   const { activeVault, queryKeys } = useVault();
+  const { address } = useDappStatus();
 
   return useQuery<DisconnectStepsState>({
-    queryKey: [...queryKeys.state, 'disconnect-steps'] as const,
+    queryKey: [...queryKeys.state, 'disconnect-steps', address] as const,
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 300000,
@@ -110,6 +112,7 @@ export const useDisconnectSteps = () => {
         isVaultDisconnected,
         dashboard,
         blockNumber,
+        hub,
       } = activeVault;
 
       // the vault contract stays readable after the disconnection, unlike the
@@ -119,12 +122,18 @@ export const useDisconnectSteps = () => {
       });
 
       const dashboardAddress = dashboard.address;
+      const hubAddress = hub.address;
+      const connectedAddress = address ?? zeroAddress;
 
       // `dashboard` is resolved from the vault owner as soon as the hub
       // connection is gone, so `isVaultDisconnected` (owner has Dashboard code)
       // is what really tells us whether the Dashboard is still the owner
       const isOwnedByDashboard =
         isVaultDisconnected && isAddressEqual(vaultOwner, dashboardAddress);
+      const isOwnedByHub =
+        isVaultDisconnected && isAddressEqual(vaultOwner, hubAddress);
+      const isOwnedByConnectedAddress =
+        isVaultDisconnected && isAddressEqual(vaultOwner, connectedAddress);
 
       const stepChecks: Record<DisconnectStep, boolean> = {
         // the vault is still connected: request the voluntary disconnect
@@ -134,7 +143,10 @@ export const useDisconnectSteps = () => {
         [DISCONNECT_STEP.APPLY_REPORT]: isPendingDisconnect,
         // disconnected, the Dashboard still owns the vault: abandon it
         [DISCONNECT_STEP.ABANDON_DASHBOARD]:
-          isVaultDisconnected && !hasPendingOwner && isOwnedByDashboard,
+          isVaultDisconnected &&
+          hasPendingOwner &&
+          !isOwnedByDashboard &&
+          isOwnedByHub,
         // ownership transfer is initiated: the new owner has to accept it
         [DISCONNECT_STEP.ACCEPT_OWNERSHIP]:
           isVaultDisconnected &&
@@ -144,7 +156,8 @@ export const useDisconnectSteps = () => {
         // ownership is accepted, the vault is owned directly: withdraw the ETH.
         // the step stays reachable with an empty balance as well, an empty
         // balance is what marks the whole flow as completed
-        [DISCONNECT_STEP.WITHDRAW]: isVaultDisconnected && !isOwnedByDashboard,
+        [DISCONNECT_STEP.WITHDRAW]:
+          isVaultDisconnected && isOwnedByConnectedAddress,
         // informational step, it follows the withdraw step
         [DISCONNECT_STEP.RECOVER_FEES]: false,
       };

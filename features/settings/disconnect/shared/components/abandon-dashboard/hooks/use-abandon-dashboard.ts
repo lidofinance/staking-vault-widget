@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
 
-import { useReportCalls, useVault, vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
 import {
   type TransactionEntry,
   useDappStatus,
@@ -13,7 +13,6 @@ const { loading, completeActionText } =
   vaultTexts.actions.disconnectVault.abandonDashboard;
 
 export const useAbandonDashboard = () => {
-  const prepareReportCalls = useReportCalls();
   const { address } = useDappStatus();
   const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
@@ -24,12 +23,12 @@ export const useAbandonDashboard = () => {
       invariant(address, '[useAbandonDashboard] address is undefined');
 
       const prepareTransactions = async () => {
-        const calls: TransactionEntry[] = await prepareReportCalls();
-
-        calls.push({
-          ...activeVault.dashboard.encode.abandonDashboard([address]),
-          loadingActionText: loading,
-        });
+        const calls: TransactionEntry[] = [
+          {
+            ...activeVault.dashboard.encode.abandonDashboard([address]),
+            loadingActionText: loading,
+          },
+        ];
 
         return calls;
       };
@@ -43,7 +42,7 @@ export const useAbandonDashboard = () => {
       );
 
       return success;
-    }, [activeVault, prepareReportCalls, sendTX, address]),
+    }, [activeVault, sendTX, address]),
     ...rest,
   };
 };
