@@ -546,12 +546,12 @@ export const vaultTexts = {
   // but can be used in other places as well where vault status is displayed
   metrics: {
     pendingDisconnect: {
-      title: 'Pending disconnect from Lido Core',
+      title: 'Pending disconnection from VaultHub',
       description: {
         reportIsAvailable:
-          'Lido Core disconnection has been initiated. To complete the process, apply the latest Oracle report. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
         reportIsNotAvailable:
-          'Lido Core disconnection has been initiated. Oracle report submission is currently unavailable. Please wait for the next reporting window. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
       },
       actions: {
         applyReport: 'Apply the latest Oracle report',
