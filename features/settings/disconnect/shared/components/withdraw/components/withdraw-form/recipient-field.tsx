@@ -8,7 +8,7 @@ import { AddressBadge } from 'shared/components';
 import { AddressInputHookForm } from 'shared/hook-form/controls';
 
 import { IdenticonDecorator } from './identicon-decorator';
-import { AddressToggle, Wrapper } from './styles';
+import { AddressToggle, RecipientContainer, Wrapper } from './styles';
 import type { DisconnectWithdrawFormFieldValues } from './types';
 
 const texts = vaultTexts.actions.disconnectVault.withdraw;
@@ -26,11 +26,9 @@ export const RecipientField = ({ vaultOwner }: RecipientFieldProps) => {
     'useOwnerAddress'
   >({ name: 'useOwnerAddress' });
 
-  // switching back to the owner restores its address, switching away clears the
-  // field so the user starts from an empty input
   const handleToggle = useCallback(
     ({ target }: React.ChangeEvent<HTMLInputElement>) => {
-      setValue('recipient', target.checked ? vaultOwner : '', {
+      setValue('recipient', vaultOwner, {
         shouldValidate: target.checked,
       });
     },
@@ -39,9 +37,19 @@ export const RecipientField = ({ vaultOwner }: RecipientFieldProps) => {
 
   return (
     <Wrapper>
-      <Text size="xs" strong>
-        {texts.recipientLabel}
-      </Text>
+      <RecipientContainer>
+        <Text size="xs" strong>
+          {texts.recipientLabel}
+        </Text>
+        <AddressToggle
+          fieldName="useOwnerAddress"
+          onChange={handleToggle}
+          label={
+            useOwnerAddress ? texts.useAnotherAddress : texts.useOwnerAddress
+          }
+          data-testid="disconnectWithdrawAddressToggle"
+        />
+      </RecipientContainer>
       {useOwnerAddress ? (
         <AddressBadge
           address={vaultOwner}
@@ -57,14 +65,6 @@ export const RecipientField = ({ vaultOwner }: RecipientFieldProps) => {
           data-testid="disconnectWithdrawRecipientInput"
         />
       )}
-      <AddressToggle
-        fieldName="useOwnerAddress"
-        onChange={handleToggle}
-        label={
-          useOwnerAddress ? texts.useAnotherAddress : texts.useOwnerAddress
-        }
-        data-testid="disconnectWithdrawAddressToggle"
-      />
     </Wrapper>
   );
 };

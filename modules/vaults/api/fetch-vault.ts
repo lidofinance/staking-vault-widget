@@ -13,7 +13,7 @@ export type VaultApiInfo = {
   // last oracle report values, kept off-chain so they survive disconnection
   lastReportTotalValueWei: bigint | null;
   isReportFresh: boolean;
-  updatedAt: Date;
+  updatedAt: Date | undefined;
 };
 
 type FetchVaultInfoParams = {
@@ -39,6 +39,6 @@ export const fetchVaultInfo = async ({
       ? BigInt(data.lastReport.totalValueWei)
       : null,
     isReportFresh: Boolean(data.isReportFresh),
-    updatedAt: new Date(data.updatedAt ?? Date.now()),
+    updatedAt: data.updatedAt && new Date(data.updatedAt),
   };
 };

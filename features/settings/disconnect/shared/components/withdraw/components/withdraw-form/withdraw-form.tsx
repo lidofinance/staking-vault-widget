@@ -68,6 +68,7 @@ const WithdrawFormContent = ({
       <RecipientField vaultOwner={vaultOwner} />
       <SubmitButtonHookForm
         disabled={isAvailableBalanceLoading || availableBalance === 0n}
+        style={{ width: 'fo' }}
         data-testid="disconnectWithdrawSubmit"
       >
         {texts.submit(availableBalance)}
@@ -78,10 +79,9 @@ const WithdrawFormContent = ({
 
 export const WithdrawForm = () => {
   const { activeVault } = useVault();
+  const { availableBalance } = useWithdrawData();
 
-  // the owner address is the form default, so mount only once it is known and
-  // remount if the ownership changes
-  if (!activeVault) return null;
+  if (!activeVault || availableBalance === 0n) return null;
 
   return (
     <WithdrawFormContent
