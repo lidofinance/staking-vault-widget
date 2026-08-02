@@ -11,7 +11,7 @@ import { appPaths } from 'consts/routing';
 import { DISCONNECT_STATUS } from 'features/settings/shared/const';
 import { useDisconnectStatus } from 'features/settings/shared/hooks';
 
-import { Container, TextContainer, TitleWrapper } from './styles';
+import { BadgeWrapper, Container, TextContainer, TitleWrapper } from './styles';
 
 const { subTitle, subDescription, navigation } =
   vaultTexts.actions.settings.disconnect;
@@ -79,11 +79,13 @@ export const DisconnectVault = () => {
           <Text size="sm" strong>
             {subTitle}
           </Text>
-          <InlineLoader isLoading={isLoading} height={24} width={100}>
-            {isDisconnectInitiated && (
-              <StatusBadge status={status} size="small" />
-            )}
-          </InlineLoader>
+          <BadgeWrapper>
+            <InlineLoader isLoading={isLoading} height={24} width={100}>
+              {isDisconnectInitiated && (
+                <StatusBadge status={status} size="small" />
+              )}
+            </InlineLoader>
+          </BadgeWrapper>
         </TitleWrapper>
         {!isDisconnectCompleted && (
           <Text size="xxs" color="secondary">

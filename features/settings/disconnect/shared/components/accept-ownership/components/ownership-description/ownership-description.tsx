@@ -7,7 +7,7 @@ import { OwnershipAddressContainer } from './styles';
 
 export const OwnershipDescription = () => {
   const { isLoading, isPending, activeVault } = useVault();
-  const isMobile = useBreakpoint('sm');
+  const isMobile = useBreakpoint('md');
   const { pendingOwner, hasPendingOwner } = activeVault ?? {};
   const symbols = isMobile ? 5 : 21;
 

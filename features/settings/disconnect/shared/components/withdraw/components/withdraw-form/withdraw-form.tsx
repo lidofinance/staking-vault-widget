@@ -68,7 +68,8 @@ const WithdrawFormContent = ({
       <RecipientField vaultOwner={vaultOwner} />
       <SubmitButtonHookForm
         disabled={isAvailableBalanceLoading || availableBalance === 0n}
-        style={{ width: 'fo' }}
+        size="sm"
+        style={{ width: 'fit-content' }}
         data-testid="disconnectWithdrawSubmit"
       >
         {texts.submit(availableBalance)}

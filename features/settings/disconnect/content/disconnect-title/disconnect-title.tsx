@@ -4,7 +4,7 @@ import { InlineLoader, StatusBadge } from 'shared/components';
 import { DISCONNECT_STATUS } from 'features/settings/shared/const';
 import { useDisconnectStatus } from 'features/settings/shared/hooks';
 
-import { TitleContainer, TitleHeading } from './styles';
+import { BadgeWrapper, TitleContainer, TitleHeading } from './styles';
 
 const { settingsTitle } = vaultTexts.actions.disconnect;
 
@@ -18,9 +18,11 @@ export const DisconnectTitle = () => {
   return (
     <TitleContainer>
       <TitleHeading>{settingsTitle}</TitleHeading>
-      <InlineLoader isLoading={isLoading} height={32} width={124}>
-        {isDisconnectInitiated && <StatusBadge status={badgeStatus} />}
-      </InlineLoader>
+      <BadgeWrapper>
+        <InlineLoader isLoading={isLoading} height={32} width={124}>
+          {isDisconnectInitiated && <StatusBadge status={badgeStatus} />}
+        </InlineLoader>
+      </BadgeWrapper>
     </TitleContainer>
   );
 };
