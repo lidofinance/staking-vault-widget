@@ -69,10 +69,7 @@ export const checkIsVaultKnownByApi = async ({
       VAULT_NOT_FOUND_STATUSES.includes(error.status);
 
     if (!isNotFound) {
-      console.warn(
-        `[checkIsVaultKnownByApi] failed to fetch ${vaultAddress}`,
-        error,
-      );
+      console.warn('[checkIsVaultKnownByApi] failed to fetch', error);
     }
 
     return false;
