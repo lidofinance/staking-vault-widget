@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { zeroAddress } from 'viem';
 import { useVault } from 'modules/vaults';
 
-import { Switch, DisconnectedVault } from 'shared/components';
+import { Switch, VaultConnectionBanner } from 'shared/components';
 import { appPaths } from 'consts/routing';
 
 import { Supply } from './supply';
@@ -31,7 +31,7 @@ export const FundingTabs: FC<FundingTabsProps> = ({ mode }) => {
 
   return (
     <PageWrapper>
-      <DisconnectedVault />
+      <VaultConnectionBanner />
       <Switch checked={!isFundTab} routes={fundingRoutes} />
 
       {isFundTab ? <Supply /> : <Withdraw />}

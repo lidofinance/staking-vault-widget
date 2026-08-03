@@ -8,6 +8,7 @@ import { useLidoSDK } from 'modules/web3';
 import {
   fetchReport,
   checkIsDashboard,
+  checkIsVaultKnownByApi,
   VaultOwnerNotDashboardError,
   VaultNotCreatedByFactoryError,
 } from 'modules/vaults';
@@ -174,6 +175,19 @@ export const useBaseVaultData = (
         DEFAULT_CALL_OPTIONS,
       );
 
+      // The contracts have no pending-connect state: a vault that was never
+      // connected and a vault disconnected by its owner both read as
+      // `!isVaultConnected` with a Dashboard owner. The API knows only vaults
+      // that have been connected to the VaultHub at least once, so a missing
+      // API record is what marks the vault as pending connect. The request is
+      // made only for candidates, connected vaults never pay for it.
+      const isPendingConnectCandidate =
+        !isVaultConnected && isDashboard && isDeployedVault;
+
+      const isPendingConnect =
+        isPendingConnectCandidate &&
+        !(await checkIsVaultKnownByApi({ vaultAddress }));
+
       return {
         address: vaultAddress,
         vaultEntity,
@@ -196,11 +210,11 @@ export const useBaseVaultData = (
         },
         isReportFresh,
         isReportMissing,
-        isVaultDisconnected: !isVaultConnected, // TODO: add API check to avoid isPendingConnect state
+        isVaultDisconnected: !isVaultConnected && !isPendingConnect,
         isVaultFullDisconnected: !isDashboard && !isVaultConnected,
         isVaultConnected,
         isPendingDisconnect,
-        isPendingConnect: !isVaultConnected && isDashboard,
+        isPendingConnect,
         isReportAvailable,
         isDeployedVault,
         hasPendingOwner,

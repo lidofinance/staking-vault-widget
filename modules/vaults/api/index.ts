@@ -8,7 +8,7 @@ export type {
 
 export { fetchReport } from './fetch-report';
 
-export { fetchVaultInfo } from './fetch-vault';
+export { fetchVaultInfo, checkIsVaultKnownByApi } from './fetch-vault';
 export type { VaultApiInfo } from './fetch-vault';
 
 export { fetchVaultMetrics } from './fetch-metrics';

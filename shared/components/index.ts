@@ -37,3 +37,4 @@ export {
   type StepperStepProps,
 } from './stepper';
 export { StatusBadge } from './status-badge';
+export { PendingConnectGuard } from './pending-connect-guard';

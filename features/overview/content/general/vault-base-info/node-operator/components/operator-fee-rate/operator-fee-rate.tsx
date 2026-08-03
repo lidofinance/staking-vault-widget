@@ -12,13 +12,16 @@ const { general } = vaultTexts.metrics;
 type OperatorFeeRateProps = {
   feeRate: string | undefined;
   isVaultDisconnected: boolean | undefined;
+  isPendingConnect: boolean | undefined;
 };
 
 export const OperatorFeeRate: FC<OperatorFeeRateProps> = ({
   feeRate,
   isVaultDisconnected,
+  isPendingConnect,
 }) => {
-  if (isVaultDisconnected) {
+  // there is no fee rate to show until the vault gets connected to the VaultHub
+  if (isVaultDisconnected || isPendingConnect) {
     return null;
   }
 

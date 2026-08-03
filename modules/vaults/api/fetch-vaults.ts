@@ -105,6 +105,7 @@ export type VaultEntry = {
   blockNumber: number;
   isReportFresh: boolean;
   isQuarantineActive: boolean;
+  isDisconnected: boolean;
   quarantinePendingTotalValueIncrease: bigint;
   quarantineStartTimestamp: number;
   quarantineEndTimestamp: number;

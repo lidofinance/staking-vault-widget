@@ -845,7 +845,13 @@ export const vaultTexts = {
       },
     },
     banners: {
-      disconnectedVault: {
+      vaultConnection: {
+        pendingConnect: {
+          title: 'stVault is waiting connection to VaultHub',
+          description:
+            'This stVault is requested to connect to Lido VaultHub to enable stETH minting and accounting, with pre-selected stETH minting terms and Lido fees.',
+          actionText: 'Connect stVault to Lido VaultHub',
+        },
         disconnected: {
           title: 'Vault is disconnected from VaultHub.',
           description:

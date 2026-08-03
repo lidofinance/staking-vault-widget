@@ -1,6 +1,7 @@
 import { Text } from '@lidofinance/lido-ui';
 
 import { useVault, vaultTexts } from 'modules/vaults';
+import { PendingConnectGuard } from 'shared/components';
 
 import {
   Addresses,
@@ -44,11 +45,13 @@ export const EditMainSettings = () => {
           </MainSettingsProvider>
         </MainSettingsDataProvider>
       )}
-      <ContentWrapper>
-        <SectionContainer>
-          <DisconnectVault />
-        </SectionContainer>
-      </ContentWrapper>
+      <PendingConnectGuard>
+        <ContentWrapper>
+          <SectionContainer>
+            <DisconnectVault />
+          </SectionContainer>
+        </ContentWrapper>
+      </PendingConnectGuard>
     </>
   );
 };

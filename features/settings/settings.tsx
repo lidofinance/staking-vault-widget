@@ -7,7 +7,7 @@ import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { getPageTitle } from 'utils';
-import { DisconnectedVault, Layout } from 'shared/components';
+import { Layout, VaultConnectionBanner } from 'shared/components';
 
 import { EditMainSettings } from './main';
 import { PermissionsSettings } from './permissions';
@@ -87,7 +87,7 @@ export const Settings = () => {
             <Head>
               <title>{getPageTitle(titleMap[mode])}</title>
             </Head>
-            <DisconnectedVault />
+            <VaultConnectionBanner />
             <SettingsNavigation mode={mode} changeTab={changeTab} />
           </>
         )}
