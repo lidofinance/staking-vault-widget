@@ -4,7 +4,12 @@ import { useRouter } from 'next/router';
 import { isAddressEqual } from 'viem';
 
 import { StatusBadge, InlineLoader } from 'shared/components';
-import { useVault, useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
+import {
+  useVault,
+  useVaultConfirmingRoles,
+  useVaultPermission,
+  vaultTexts,
+} from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
 import { appPaths } from 'consts/routing';
 
@@ -35,6 +40,7 @@ export const DisconnectVault = () => {
   const { vaultAddress, activeVault, isPending } = useVault();
   const { isDappActive, address } = useDappStatus();
   const { hasAdmin } = useVaultConfirmingRoles();
+  const { hasPermission } = useVaultPermission('volunataryDisconnecter');
   const { status, isLoading } = useDisconnectStatus();
 
   const isDisconnectInitiated =
@@ -42,7 +48,7 @@ export const DisconnectVault = () => {
   const isDisconnectCompleted = status === DISCONNECT_STATUS.COMPLETED;
   const isViewOnly =
     !isDappActive ||
-    (!hasAdmin &&
+    (!(hasAdmin || hasPermission) &&
       !(
         activeVault &&
         address &&

@@ -1,4 +1,5 @@
 import { PermissionedSubmitButton } from 'modules/vaults';
+import { useDappStatus } from 'modules/web3';
 
 import { useCheckAvailability, useVoluntaryDisconnect } from '../../hooks';
 
@@ -6,6 +7,7 @@ export const DisconnectAction = () => {
   const { isError, isLoading, isNeedSupplyForFees, hasMintedStETH } =
     useCheckAvailability();
   const { disconnect } = useVoluntaryDisconnect();
+  const { isDappActive } = useDappStatus();
   const canProceed = !isNeedSupplyForFees && !hasMintedStETH;
 
   if (isError) {
@@ -18,7 +20,7 @@ export const DisconnectAction = () => {
       loading={isLoading}
       dashboardRole="volunataryDisconnecter"
       disabled={!canProceed}
-      variant="outlined"
+      variant={isDappActive ? 'outlined' : 'filled'}
       color="error"
       size="sm"
       fullwidth

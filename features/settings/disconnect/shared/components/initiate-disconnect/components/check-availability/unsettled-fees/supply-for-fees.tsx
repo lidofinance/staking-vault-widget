@@ -6,7 +6,7 @@ import { FormatToken } from 'shared/formatters';
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 
-import { Container } from './styles';
+import { AvailabilityItem } from '../styles';
 
 type SupplyForFeesProps = {
   diff: bigint;
@@ -23,7 +23,7 @@ export const SupplyForFees: FC<SupplyForFeesProps> = ({ diff }) => {
   }, [vaultAddress, router]);
 
   return (
-    <Container>
+    <AvailabilityItem>
       <div>
         <Text size="xxs" strong>
           Supply ETH for unsettled fees
@@ -35,6 +35,6 @@ export const SupplyForFees: FC<SupplyForFeesProps> = ({ diff }) => {
       <Button variant="outlined" size="xs" onClick={handleNavigate}>
         Supply ETH
       </Button>
-    </Container>
+    </AvailabilityItem>
   );
 };

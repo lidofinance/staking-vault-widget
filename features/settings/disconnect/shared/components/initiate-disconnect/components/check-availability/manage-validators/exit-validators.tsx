@@ -7,7 +7,7 @@ import { appPaths } from 'consts/routing';
 import { formatCustomDate } from 'utils/formats';
 import { config } from 'config';
 
-import { Container } from './styles';
+import { AvailabilityItem } from '../styles';
 
 type ExitValidatorsProps = {
   timestamp: number;
@@ -27,7 +27,7 @@ export const ExitValidators: FC<ExitValidatorsProps> = ({ timestamp }) => {
   }, [vaultAddress, router]);
 
   return (
-    <Container>
+    <AvailabilityItem>
       <div>
         <Text size="xxs" strong>
           Exit validators
@@ -41,6 +41,6 @@ export const ExitValidators: FC<ExitValidatorsProps> = ({ timestamp }) => {
       <Button variant="outlined" size="xs" onClick={handleNavigate}>
         Manage validators
       </Button>
-    </Container>
+    </AvailabilityItem>
   );
 };

@@ -181,8 +181,7 @@ export const useBaseVaultData = (
       // that have been connected to the VaultHub at least once, so a missing
       // API record is what marks the vault as pending connect. The request is
       // made only for candidates, connected vaults never pay for it.
-      const isPendingConnectCandidate =
-        !isVaultConnected && isDashboard && isDeployedVault;
+      const isPendingConnectCandidate = !isVaultConnected && isDashboard;
 
       const isPendingConnect =
         isPendingConnectCandidate &&

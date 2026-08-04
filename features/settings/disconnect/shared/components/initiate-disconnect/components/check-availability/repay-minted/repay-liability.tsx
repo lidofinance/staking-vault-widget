@@ -6,7 +6,7 @@ import { FormatToken } from 'shared/formatters';
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
 
-import { RepayContainer } from './styles';
+import { AvailabilityItem } from '../styles';
 
 type RepayLiabilityProps = {
   liability: bigint;
@@ -23,7 +23,7 @@ export const RepayLiability: FC<RepayLiabilityProps> = ({ liability }) => {
   }, [vaultAddress, router]);
 
   return (
-    <RepayContainer>
+    <AvailabilityItem>
       <div>
         <Text size="xxs" strong>
           Repay all minted stETH
@@ -35,6 +35,6 @@ export const RepayLiability: FC<RepayLiabilityProps> = ({ liability }) => {
       <Button variant="outlined" size="xs" onClick={handleNavigate}>
         Repay stETH
       </Button>
-    </RepayContainer>
+    </AvailabilityItem>
   );
 };
