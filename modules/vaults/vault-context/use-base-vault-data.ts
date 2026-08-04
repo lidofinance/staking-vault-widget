@@ -8,7 +8,8 @@ import { useLidoSDK } from 'modules/web3';
 import {
   fetchReport,
   checkIsDashboard,
-  checkIsVaultKnownByApi,
+  // TODO: return after API fix
+  // checkIsVaultKnownByApi,
   VaultOwnerNotDashboardError,
   VaultNotCreatedByFactoryError,
 } from 'modules/vaults';
@@ -183,9 +184,10 @@ export const useBaseVaultData = (
       // made only for candidates, connected vaults never pay for it.
       const isPendingConnectCandidate = !isVaultConnected && isDashboard;
 
-      const isPendingConnect =
-        isPendingConnectCandidate &&
-        !(await checkIsVaultKnownByApi({ vaultAddress }));
+      const isPendingConnect = isPendingConnectCandidate;
+      // TODO: return after API fix
+      // isPendingConnectCandidate &&
+      // !(await checkIsVaultKnownByApi({ vaultAddress }));
 
       return {
         address: vaultAddress,
