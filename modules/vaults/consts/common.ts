@@ -11,6 +11,12 @@ export const LAZY_ORACLE_ROOT_HASH_SLOT =
 
 export const VAULT_REPORT_REFETCH_INTERVAL_MS = 60_000 * 30; // 30 minutes
 
+// `NodeOperatorFee.MAX_SANE_SETTLED_GROWTH` = `type(int104).max`. The Dashboard
+// raises `settledGrowth` to this value to stop the node operator fee accrual,
+// which happens on `voluntaryDisconnect()` and `transferVaultOwnership()`.
+// The contract constant is `internal`, so there is no getter to read it from.
+export const MAX_SANE_SETTLED_GROWTH = 10141204801825835211973625643007n;
+
 // TOOD: remove in favor on bigint only calc
 export const VAULT_TOTAL_BASIS_POINTS = 10_000;
 export const VAULT_TOTAL_BASIS_POINTS_BN = 10_000n;

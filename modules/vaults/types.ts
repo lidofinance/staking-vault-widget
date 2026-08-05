@@ -82,13 +82,10 @@ export type VaultBaseInfo = {
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
-  // disconnected by user, mutually exclusive with `isPendingConnect`
   isVaultDisconnected: boolean;
-  // disconnected and the Dashboard is no longer the owner
   isVaultFullDisconnected: boolean;
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;
-  // created by the factory but never connected to the VaultHub
   isPendingConnect: boolean;
   isReportAvailable: boolean;
   isDeployedVault: boolean;

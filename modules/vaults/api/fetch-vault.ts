@@ -2,7 +2,6 @@ import type { Address } from 'viem';
 
 import { getApiURL } from 'config';
 import { standardFetcher } from 'utils/standardFetcher';
-import { FetcherError } from 'utils/fetcherError';
 
 import { vaultApiRoutes } from '../consts';
 
@@ -44,34 +43,4 @@ export const fetchVaultInfo = async ({
     isDisconnected: Boolean(data.isDisconnected),
     updatedAt: data.updatedAt && new Date(data.updatedAt),
   };
-};
-
-const VAULT_NOT_FOUND_STATUSES = [400, 404];
-
-/**
- * The API only stores vaults that have been connected to the VaultHub at least
- * once, so a "vault not found" response is what distinguishes a never-connected
- * vault from a voluntarily disconnected one.
- *
- * When the API itself is unreachable or not configured there is nothing to go
- * on, so the vault is reported as unknown and the caller falls back to its
- * on-chain heuristic.
- */
-export const checkIsVaultKnownByApi = async ({
-  vaultAddress,
-}: FetchVaultInfoParams): Promise<boolean> => {
-  try {
-    await fetchVaultInfo({ vaultAddress });
-    return true;
-  } catch (error) {
-    const isNotFound =
-      error instanceof FetcherError &&
-      VAULT_NOT_FOUND_STATUSES.includes(error.status);
-
-    if (!isNotFound) {
-      console.warn('[checkIsVaultKnownByApi] failed to fetch', error);
-    }
-
-    return false;
-  }
 };

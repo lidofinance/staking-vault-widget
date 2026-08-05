@@ -8,8 +8,6 @@ import { useLidoSDK } from 'modules/web3';
 import {
   fetchReport,
   checkIsDashboard,
-  // TODO: return after API fix
-  // checkIsVaultKnownByApi,
   VaultOwnerNotDashboardError,
   VaultNotCreatedByFactoryError,
 } from 'modules/vaults';
@@ -19,6 +17,7 @@ import { awaitWithTimeout } from 'utils/await-with-timeout';
 import {
   DisplayableError,
   vaultQueryKeys,
+  MAX_SANE_SETTLED_GROWTH,
   VAULT_REPORT_REFETCH_INTERVAL_MS,
 } from '../consts';
 
@@ -151,8 +150,7 @@ export const useBaseVaultData = (
       const hasPendingOwner = pendingOwner !== zeroAddress;
 
       // dashboard address is missed when call apply report after voluntary disconnection
-      // but we can it get using pending owner when
-      // VaultHub transfers vaults's ownership to dashboard
+      // but we can it get using pending owner when VaultHub transfers vaults's ownership to dashboard
       if (
         !isVaultConnected &&
         !isDashboard &&
@@ -178,16 +176,22 @@ export const useBaseVaultData = (
 
       // The contracts have no pending-connect state: a vault that was never
       // connected and a vault disconnected by its owner both read as
-      // `!isVaultConnected` with a Dashboard owner. The API knows only vaults
-      // that have been connected to the VaultHub at least once, so a missing
-      // API record is what marks the vault as pending connect. The request is
-      // made only for candidates, connected vaults never pay for it.
-      const isPendingConnectCandidate = !isVaultConnected && isDashboard;
+      // `!isVaultConnected` with a Dashboard owner. Two on-chain markers prove
+      // the vault has been connected to the VaultHub at least once:
+      //   - a pending owner: completing a disconnect hands the StakingVault
+      //     ownership back with a 2-step transfer, while a vault created by
+      //     `createVaultWithDashboardWithoutConnectingToVaultHub` has no pending
+      //     owner and cannot get one without connecting first;
+      //   - `settledGrowth` raised to `MAX_SANE_SETTLED_GROWTH`: the Dashboard
+      //     stops the node operator fee accrual on `voluntaryDisconnect()`.
+      const isPendingConnectCandidate =
+        !isVaultConnected && isDashboard && !hasPendingOwner;
 
-      const isPendingConnect = isPendingConnectCandidate;
-      // TODO: return after API fix
-      // isPendingConnectCandidate &&
-      // !(await checkIsVaultKnownByApi({ vaultAddress }));
+      // the read is made only for candidates, connected vaults never pay for it
+      const isPendingConnect =
+        isPendingConnectCandidate &&
+        (await dashboard.read.settledGrowth(DEFAULT_CALL_OPTIONS)) <
+          MAX_SANE_SETTLED_GROWTH;
 
       return {
         address: vaultAddress,
