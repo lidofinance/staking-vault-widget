@@ -380,7 +380,10 @@ export const vaultTexts = {
           pubKey: 'Public key',
           status: 'Status',
           actualBalance: 'Actual balance',
-          activatedExited: 'Activated / exited',
+          activatedExited: (timeZoneLabel: string) =>
+            timeZoneLabel
+              ? `Activated / exited (${timeZoneLabel})`
+              : 'Activated / exited',
           menu: '',
         },
         noValidatorsFound: 'No validators found',
