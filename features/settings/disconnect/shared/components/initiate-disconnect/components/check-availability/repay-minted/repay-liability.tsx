@@ -25,14 +25,19 @@ export const RepayLiability: FC<RepayLiabilityProps> = ({ liability }) => {
   return (
     <AvailabilityItem>
       <div>
-        <Text size="xxs" strong>
+        <Text size="xxs" strong data-testid="title">
           Repay all minted stETH
         </Text>
-        <Text size="xxs">
+        <Text size="xxs" data-testid="value">
           stVault Liability = <FormatToken amount={liability} symbol="stETH" />
         </Text>
       </div>
-      <Button variant="outlined" size="xs" onClick={handleNavigate}>
+      <Button
+        variant="outlined"
+        size="xs"
+        onClick={handleNavigate}
+        data-testid="action-btn"
+      >
         Repay stETH
       </Button>
     </AvailabilityItem>

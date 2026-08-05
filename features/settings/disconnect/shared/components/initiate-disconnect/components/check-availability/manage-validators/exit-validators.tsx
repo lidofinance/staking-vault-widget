@@ -29,16 +29,23 @@ export const ExitValidators: FC<ExitValidatorsProps> = ({ timestamp }) => {
   return (
     <AvailabilityItem>
       <div>
-        <Text size="xxs" strong>
+        <Text size="xxs" strong data-testid="title">
           Exit validators
         </Text>
-        <Text size="xxs" as="span">
+        <Text size="xxs" as="span" data-testid="value">
           Active validators or pending deposits detected
           <p>Last update: {formatCustomDate(timestamp)}</p>
         </Text>
-        <Link href={docLink}>learn more</Link>
+        <Link href={docLink} data-testid="docs-link">
+          learn more
+        </Link>
       </div>
-      <Button variant="outlined" size="xs" onClick={handleNavigate}>
+      <Button
+        variant="outlined"
+        size="xs"
+        onClick={handleNavigate}
+        data-testid="action-btn"
+      >
         Manage validators
       </Button>
     </AvailabilityItem>

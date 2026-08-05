@@ -22,7 +22,11 @@ export const WarningBanner = () => {
   }
 
   return (
-    <BannerWithoutTitle leftDecorator={<WarningRing />} padding="16px">
+    <BannerWithoutTitle
+      leftDecorator={<WarningRing />}
+      padding="16px"
+      dataTestId="warning-banner"
+    >
       <Text size="xxs">
         This process is one-way. Once the disconnection is initiated, it must be
         completed. The 1 ETH deposit is unlocked only after the process is fully

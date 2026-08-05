@@ -19,8 +19,9 @@ export const AbandonDashboard = () => {
     <Step
       {...stepProps}
       title="Abandon Dashboard contract and transfer the stVault ownership"
+      dataTestId="disconnect-step-3"
     >
-      <AbandonContainer>
+      <AbandonContainer data-testid="abandon-dashboard">
         <TransferDescription />
         <TransferAddress />
         <WarningBanner />

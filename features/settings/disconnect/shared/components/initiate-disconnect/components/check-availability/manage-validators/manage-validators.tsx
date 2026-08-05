@@ -31,7 +31,7 @@ export const ManageValidators = () => {
   }, [isLoading, isError, hasValidatorsBalance]);
 
   return (
-    <PreparationItem status={status}>
+    <PreparationItem status={status} dataTestId="requirement-validators">
       {canShowContent && hasValidatorsBalance && (
         <ExitValidators timestamp={timestamp} />
       )}

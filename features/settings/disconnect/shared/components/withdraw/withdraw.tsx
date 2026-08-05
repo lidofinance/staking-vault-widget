@@ -11,7 +11,7 @@ export const Withdraw = () => {
   const stepProps = useDisconnectStep(DISCONNECT_STEP.WITHDRAW);
 
   return (
-    <Step {...stepProps} title="Withdraw ETH">
+    <Step {...stepProps} title="Withdraw ETH" dataTestId="disconnect-step-5">
       <WithdrawContainer>
         <DescriptionAndMetrics />
         <WithdrawForm />

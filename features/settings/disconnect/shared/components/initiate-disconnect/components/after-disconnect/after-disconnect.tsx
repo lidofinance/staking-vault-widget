@@ -31,7 +31,7 @@ export const AfterDisconnect = () => {
   }
 
   return (
-    <AfterDisconnectContainer>
+    <AfterDisconnectContainer data-testid="after-disconnect">
       <Text size="xxs" strong>
         After disconnect
       </Text>

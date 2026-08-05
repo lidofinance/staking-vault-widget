@@ -24,6 +24,7 @@ export const DisconnectAction = () => {
       color="error"
       size="sm"
       fullwidth
+      data-testid="submit"
     >
       {canProceed
         ? 'Initiate disconnection'

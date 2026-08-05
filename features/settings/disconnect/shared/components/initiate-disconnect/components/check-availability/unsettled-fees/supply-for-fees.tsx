@@ -25,14 +25,19 @@ export const SupplyForFees: FC<SupplyForFeesProps> = ({ diff }) => {
   return (
     <AvailabilityItem>
       <div>
-        <Text size="xxs" strong>
+        <Text size="xxs" strong data-testid="title">
           Supply ETH for unsettled fees
         </Text>
-        <Text size="xxs">
+        <Text size="xxs" data-testid="value">
           Shortage = <FormatToken amount={diff} symbol="ETH" />
         </Text>
       </div>
-      <Button variant="outlined" size="xs" onClick={handleNavigate}>
+      <Button
+        variant="outlined"
+        size="xs"
+        onClick={handleNavigate}
+        data-testid="action-btn"
+      >
         Supply ETH
       </Button>
     </AvailabilityItem>

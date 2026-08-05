@@ -16,6 +16,7 @@ type PreparationStatus = 'warning' | 'success' | 'error' | 'loading';
 
 export type PreparationItemProps = {
   status: PreparationStatus;
+  dataTestId?: string;
 };
 
 const iconList: Record<PreparationStatus, ReactNode> = {
@@ -27,14 +28,17 @@ const iconList: Record<PreparationStatus, ReactNode> = {
 
 export const PreparationItem: FC<PropsWithChildren<PreparationItemProps>> = ({
   status,
+  dataTestId,
   children,
 }) => {
   const icon = useMemo(() => iconList[status], [status]);
   const isLoading = status === 'loading';
 
   return (
-    <Container>
-      <IconWrapper>{icon}</IconWrapper>
+    <Container data-testid={dataTestId}>
+      <IconWrapper data-testid="status-icon" data-status={status}>
+        {icon}
+      </IconWrapper>
       <Content>
         <InlineLoader isLoading={isLoading} height={20}>
           {children}

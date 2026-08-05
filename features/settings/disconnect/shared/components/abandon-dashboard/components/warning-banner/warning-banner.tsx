@@ -15,7 +15,11 @@ export const WarningBanner = () => {
   }
 
   return (
-    <BannerWithoutTitle leftDecorator={<WarningRing />} padding="16px">
+    <BannerWithoutTitle
+      leftDecorator={<WarningRing />}
+      padding="16px"
+      dataTestId="warning-banner"
+    >
       <Text size="xxs">
         Carefully review the transaction displayed in your wallet before
         signing. Verify that it matches the intended ownership transfer. Once

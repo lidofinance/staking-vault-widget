@@ -66,7 +66,9 @@ export const Description = () => {
 
   return (
     <DescriptionLoader isLoading={isLoading}>
-      <Text size="xs">{getText(isReportFresh, timestamp, chainId)}</Text>
+      <Text size="xs" data-testid="description">
+        {getText(isReportFresh, timestamp, chainId)}
+      </Text>
     </DescriptionLoader>
   );
 };

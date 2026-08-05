@@ -23,7 +23,7 @@ export const UnsettledFees = () => {
   }, [isLoading, isError, isNeedSupplyForFees]);
 
   return (
-    <PreparationItem status={status}>
+    <PreparationItem status={status} dataTestId="requirement-fees">
       {canShowContent && !isNeedSupplyForFees && <BalanceCoverFees />}
       {canShowContent && isNeedSupplyForFees && (
         <SupplyForFees diff={supplyBalanceForFees} />

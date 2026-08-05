@@ -33,6 +33,7 @@ export const ApplyReportAction = () => {
         size="xs"
         onClick={applyReport}
         disabled={isDisabled}
+        data-testid="action-btn"
       >
         {text}
       </ButtonStyled>

@@ -79,13 +79,13 @@ export const DisconnectVault = () => {
   }, [router, vaultAddress]);
 
   return (
-    <Container>
+    <Container data-testid="disconnect-entry">
       <TextContainer>
         <TitleWrapper>
-          <Text size="sm" strong>
+          <Text size="sm" strong data-testid="title">
             {subTitle}
           </Text>
-          <BadgeWrapper>
+          <BadgeWrapper data-testid="status-badge">
             <InlineLoader isLoading={isLoading} height={24} width={100}>
               {isDisconnectInitiated && (
                 <StatusBadge status={status} size="small" />
@@ -94,7 +94,7 @@ export const DisconnectVault = () => {
           </BadgeWrapper>
         </TitleWrapper>
         {!isDisconnectCompleted && (
-          <Text size="xxs" color="secondary">
+          <Text size="xxs" color="secondary" data-testid="description">
             {subDescription}
           </Text>
         )}
@@ -105,6 +105,7 @@ export const DisconnectVault = () => {
         style={{ display: 'flex', justifyContent: 'center' }}
         size="sm"
         fullwidth
+        data-testid="nav-button"
       >
         {showLoader ? <Loader size="small" /> : btnText}
       </Button>

@@ -16,9 +16,9 @@ export const DisconnectTitle = () => {
     status === DISCONNECT_STATUS.COMPLETED ? 'completed' : 'ongoing';
 
   return (
-    <TitleContainer>
-      <TitleHeading>{settingsTitle}</TitleHeading>
-      <BadgeWrapper>
+    <TitleContainer data-testid="disconnect-header">
+      <TitleHeading data-testid="title">{settingsTitle}</TitleHeading>
+      <BadgeWrapper data-testid="status-badge">
         <InlineLoader isLoading={isLoading} height={32} width={124}>
           {isDisconnectInitiated && <StatusBadge status={badgeStatus} />}
         </InlineLoader>

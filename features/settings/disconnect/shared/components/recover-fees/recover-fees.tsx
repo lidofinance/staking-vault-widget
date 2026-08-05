@@ -12,7 +12,11 @@ export const RecoverFees = () => {
 
   // TODO: add link for docs
   return (
-    <Step {...stepProps} title="Recover undisbursed Node Operator fees">
+    <Step
+      {...stepProps}
+      title="Recover undisbursed Node Operator fees"
+      dataTestId="disconnect-step-6"
+    >
       <RecoverFeesContainer>
         <Text size="xs">
           Undisbursed Node Operator fees are stored in the abandoned Dashboard
