@@ -13,9 +13,13 @@ import type {
 export const disconnectWithdrawFormSchema = (vaultAddress: Address) =>
   z.object({
     useOwnerAddress: z.boolean(),
-    recipient: addressSchema.refine(
-      (value) => !isAddressEqual(value, vaultAddress),
-      { message: vaultTexts.common.errors.address.vault },
+    recipient: addressSchema.pipe(
+      z
+        .string()
+        .transform((value) => value as Address)
+        .refine((val) => !isAddressEqual(val, vaultAddress), {
+          message: vaultTexts.common.errors.address.vault,
+        }),
     ),
   });
 
