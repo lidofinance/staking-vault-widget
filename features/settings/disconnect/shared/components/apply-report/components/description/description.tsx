@@ -1,9 +1,10 @@
 import { Text } from '@lidofinance/lido-ui';
+import { usePublicClient } from 'wagmi';
 
 import { useVault } from 'modules/vaults';
+import { formatCustomDate } from 'utils';
 
 import { DescriptionLoader } from '../description-loader';
-import { usePublicClient } from 'wagmi';
 
 const getChainPeriod = (chainId: number) => {
   if (chainId === 1) {
@@ -12,37 +13,7 @@ const getChainPeriod = (chainId: number) => {
   return 86400n; // 24h in seconds
 };
 
-const getTime = (timestamp: bigint) => {
-  const now = Date.now();
-  const targetMs = Number(timestamp) * 1000;
-
-  // safe border
-  if (now >= targetMs) {
-    return 'soon';
-  }
-
-  // contract timestamp in seconds
-  const date = new Date(Number(timestamp) * 1000);
-
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'UTC',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
-
-  const parts = formatter.formatToParts(date);
-  const values: Record<string, string> = {};
-  for (const { type, value } of parts) {
-    values[type] = value;
-  }
-
-  return `${values.day}.${values.month}.${values.year} at ${values.hour}:${values.minute}:${values.second} UTC`;
-};
+const getTime = (timestamp: bigint) => formatCustomDate(Number(timestamp));
 
 const getText = (
   isReportFresh: boolean,

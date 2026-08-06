@@ -19,9 +19,9 @@ export const DescriptionAndMetrics = () => {
     <Container>
       <InlineLoader isLoading={isAvailableBalanceLoading} height={24}>
         <Text size="xs">
-          Disconnection and ownership transfer have been completed.
-          {availableBalance > 0n &&
-            'You can now withdraw the available stVault Balance, including the connection deposit.'}
+          {availableBalance > 0n
+            ? 'Disconnection and ownership transfer have been completed. You can now withdraw the available stVault Balance, including the connection deposit.'
+            : 'Disconnection and ownership transferring has been completed.'}
         </Text>
       </InlineLoader>
       <LastMetrics>

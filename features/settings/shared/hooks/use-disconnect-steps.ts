@@ -19,8 +19,6 @@ import type {
   DisconnectStepsState,
 } from '../types';
 
-// the furthest reached step wins, so a stale check on an earlier step can never
-// drag the flow backwards
 const getActiveStep = (
   checks: Record<DisconnectStep, boolean>,
 ): DisconnectStep | null => {
@@ -35,18 +33,19 @@ const getActiveStep = (
 const getStepState = (
   step: DisconnectStep,
   activeStep: DisconnectStep | null,
+  status: DisconnectStatus,
 ): DisconnectStepState => {
   const isCurrent =
     step === activeStep ||
-    // the last step only explains how the fees are recovered later on, it is
-    // unlocked together with the withdraw step
     (step === DISCONNECT_STEP.RECOVER_FEES &&
       activeStep === DISCONNECT_STEP.WITHDRAW);
   const isPassed = activeStep !== null && step < activeStep;
+  const isWithdrawDone =
+    step === DISCONNECT_STEP.WITHDRAW && status === DISCONNECT_STATUS.COMPLETED;
 
   return {
     number: step,
-    status: isPassed ? 'success' : 'pending',
+    status: isPassed || isWithdrawDone ? 'success' : 'pending',
     isAllowExpand: isCurrent,
     defaultExpanded: isCurrent,
   };
@@ -59,7 +58,6 @@ const getStatus = (
   if (activeStep === null || activeStep === DISCONNECT_STEP.INITIATE_DISCONNECT)
     return DISCONNECT_STATUS.NOT_INITIATED;
 
-  // the flow is over once there is nothing left to withdraw from the vault
   if (activeStep === DISCONNECT_STEP.WITHDRAW && availableBalance === 0n)
     return DISCONNECT_STATUS.COMPLETED;
 
@@ -69,18 +67,22 @@ const getStatus = (
 const buildStepsState = (
   activeStep: DisconnectStep | null,
   availableBalance: bigint,
-): DisconnectStepsState => ({
-  activeStep,
-  availableBalance,
-  status: getStatus(activeStep, availableBalance),
-  steps: DISCONNECT_STEPS_ORDER.reduce(
-    (steps, step) => {
-      steps[step] = getStepState(step, activeStep);
-      return steps;
-    },
-    {} as Record<DisconnectStep, DisconnectStepState>,
-  ),
-});
+): DisconnectStepsState => {
+  const status = getStatus(activeStep, availableBalance);
+
+  return {
+    activeStep,
+    availableBalance,
+    status,
+    steps: DISCONNECT_STEPS_ORDER.reduce(
+      (steps, step) => {
+        steps[step] = getStepState(step, activeStep, status);
+        return steps;
+      },
+      {} as Record<DisconnectStep, DisconnectStepState>,
+    ),
+  };
+};
 
 /**
  * Single source of truth for the disconnect flow: resolves the step the user has
@@ -98,7 +100,7 @@ export const useDisconnectSteps = () => {
     queryKey: [...queryKeys.state, 'disconnect-steps', address] as const,
     enabled: !!activeVault,
     refetchOnMount: true,
-    staleTime: 300000,
+    staleTime: 60000,
     queryFn: async () => {
       invariant(activeVault, '[useDisconnectSteps] activeVault is not defined');
 

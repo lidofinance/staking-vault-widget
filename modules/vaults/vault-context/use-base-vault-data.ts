@@ -52,7 +52,13 @@ export const useBaseVaultData = (
     refetchInterval: VAULT_REPORT_REFETCH_INTERVAL_MS, // 30 mins
     retry(failureCount, error) {
       // retry only if the error is not our custom error
-      return failureCount < 3 && !(error instanceof DisplayableError);
+      return (
+        failureCount < 3 &&
+        !(
+          error instanceof DisplayableError ||
+          error instanceof VaultNotCreatedByFactoryError
+        )
+      );
     },
     queryFn: async () => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Text, Theme } from '@lidofinance/lido-ui';
+import { Theme } from '@lidofinance/lido-ui';
 
 import { getColorTransparency } from 'styles';
 
@@ -15,7 +15,7 @@ const getBackgroundColor = ({
 }) => {
   const colorsByStatus: Record<Status, string> = {
     ongoing: theme.colors.warning,
-    completed: theme.colors.textDark,
+    completed: theme.colors.text,
   };
 
   return getColorTransparency(colorsByStatus[$status], '10%');
@@ -39,10 +39,13 @@ export const BadgeContainer = styled.div<{ $status: Status; $size: Size }>`
   background-color: ${getBackgroundColor};
 `;
 
-export const CompetedText = styled(Text)`
-  color: ${({ theme }) => theme.colors.textDark};
+export const CompleteWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.xs}px;
+  color: ${({ theme }) => theme.colors.text};
 
   svg {
-    fill: ${({ theme }) => theme.colors.textDark};
+    fill: currentColor;
   }
 `;

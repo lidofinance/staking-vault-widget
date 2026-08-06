@@ -1,4 +1,4 @@
-import { type FC, type MouseEvent, useCallback } from 'react';
+import { type FC, type MouseEvent, useCallback, useMemo } from 'react';
 import { Text, Thead } from '@lidofinance/lido-ui';
 
 import { ReactComponent as TopBottomArrows } from 'assets/icons/top-bottom-arrows.svg';
@@ -8,6 +8,7 @@ import {
   ValidatorsOrderByEnum,
   vaultTexts,
 } from 'modules/vaults';
+import { getLocalTimeZoneLabel } from 'utils';
 
 import { useValidators } from 'features/validators/contexts';
 
@@ -36,7 +37,7 @@ type TableHeader = {
 
 const { noValidatorsFound, header } = vaultTexts.actions.validators.table;
 
-const tableHeaders: TableHeader[] = [
+const getTableHeaders = (timeZoneLabel: string): TableHeader[] => [
   {
     title: header.index,
     sortKey: ValidatorsOrderByEnum.INDEX,
@@ -53,7 +54,7 @@ const tableHeaders: TableHeader[] = [
     sortKey: ValidatorsOrderByEnum.BALANCE,
   },
   {
-    title: header.activatedExited,
+    title: header.activatedExited(timeZoneLabel),
     sortKey: ValidatorsOrderByEnum.ACTIVATED_AT,
   },
   {
@@ -111,6 +112,11 @@ export const ValidatorsTableContent: FC = () => {
   } = useValidators();
   const isEmpty = (validators?.length ?? 0) === 0;
 
+  const tableHeaders = useMemo(
+    () => getTableHeaders(getLocalTimeZoneLabel()),
+    [],
+  );
+
   const onSortClick = useCallback(
     (e: MouseEvent<HTMLTableCellElement>) => {
       const columnKey = e.currentTarget.dataset.sortKey as
@@ -148,7 +154,7 @@ export const ValidatorsTableContent: FC = () => {
                 data-sort-key={sortKey}
                 align="left"
                 onClick={sortKey ? onSortClick : undefined}
-                key={title}
+                key={sortKey ?? title}
               >
                 <TableHeaderCellContent>
                   <Text size="xxs" strong>

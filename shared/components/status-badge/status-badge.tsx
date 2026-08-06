@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Check, Text } from '@lidofinance/lido-ui';
 
-import { BadgeContainer, CompetedText } from './styles';
+import { BadgeContainer, CompleteWrapper } from './styles';
 
 type StatusBadgeProps = {
   status: 'ongoing' | 'completed';
@@ -21,9 +21,12 @@ export const StatusBadge: FC<StatusBadgeProps> = ({
           In progress
         </Text>
       ) : (
-        <CompetedText size="xs" strong>
-          <Check /> Completed
-        </CompetedText>
+        <CompleteWrapper>
+          <Check />
+          <Text size="xs" strong>
+            Completed
+          </Text>
+        </CompleteWrapper>
       )}
     </BadgeContainer>
   );
