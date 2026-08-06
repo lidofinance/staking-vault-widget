@@ -18,7 +18,7 @@ export const SettingsNavigation: FC<SettingsNavigationProps> = ({
   mode,
   changeTab,
 }) => {
-  const { activeVault } = useVault();
+  const { activeVault, isLoading } = useVault();
   const { isVaultDisconnected = false, isPendingDisconnect = false } =
     activeVault ?? {};
 
@@ -27,7 +27,7 @@ export const SettingsNavigation: FC<SettingsNavigationProps> = ({
     [changeTab],
   );
 
-  if (isVaultDisconnected || isPendingDisconnect) {
+  if (isVaultDisconnected || isPendingDisconnect || isLoading) {
     return null;
   }
 
