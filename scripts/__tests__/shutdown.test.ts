@@ -61,8 +61,6 @@ type TestServer = {
   close: (callback: CloseCallback) => void;
 };
 
-// type SignalHandler = () => void;
-
 describe('registerSecretsRotationRestart', () => {
   let dir: string;
   let file: string;
