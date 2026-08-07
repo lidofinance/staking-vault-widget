@@ -1,4 +1,3 @@
-import { Loader } from '@lidofinance/lido-ui';
 import { isAddressEqual } from 'viem';
 
 import { useVault } from 'modules/vaults';
@@ -12,8 +11,11 @@ export const OwnershipAction = () => {
   const { isLoading, isPending, activeVault } = useVault();
   const { pendingOwner, hasPendingOwner } = activeVault ?? {};
   const { address } = useDappStatus();
-  const { acceptOwnership } = useConfirmOwnership();
-  const showLoading = isLoading || isPending;
+  const {
+    acceptOwnership,
+    mutation: { isPending: isTxPending },
+  } = useConfirmOwnership();
+  const showLoading = isLoading || isPending || isTxPending;
   const currentAccountIsOwner =
     !!pendingOwner && !!address && isAddressEqual(pendingOwner, address);
 
@@ -30,8 +32,9 @@ export const OwnershipAction = () => {
       size="sm"
       onClick={acceptOwnership}
       disabled={!currentAccountIsOwner}
+      loading={showLoading}
     >
-      {showLoading ? <Loader size="small" /> : text}
+      {text}
     </ButtonStyled>
   );
 };

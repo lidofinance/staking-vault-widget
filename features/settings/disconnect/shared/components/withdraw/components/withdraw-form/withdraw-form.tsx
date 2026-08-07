@@ -29,7 +29,11 @@ const WithdrawFormContent = ({
 }: WithdrawFormContentProps) => {
   const { isDappActive } = useDappStatus();
   const { availableBalance, isAvailableBalanceLoading } = useWithdrawData();
-  const { withdrawBalance, retryEvent } = useWithdrawBalance();
+  const {
+    withdrawBalance,
+    retryEvent,
+    mutation: { isPending },
+  } = useWithdrawBalance();
 
   const resolver = useMemo(
     () => disconnectWithdrawFormResolver(vaultAddress),
@@ -68,6 +72,7 @@ const WithdrawFormContent = ({
       <RecipientField vaultOwner={vaultOwner} />
       <SubmitButtonHookForm
         disabled={isAvailableBalanceLoading || availableBalance === 0n}
+        loading={isPending}
         size="sm"
         style={{ width: 'fit-content' }}
         data-testid="disconnectWithdrawSubmit"

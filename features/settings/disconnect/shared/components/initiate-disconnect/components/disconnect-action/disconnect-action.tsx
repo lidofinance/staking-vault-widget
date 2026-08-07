@@ -6,7 +6,10 @@ import { useCheckAvailability, useVoluntaryDisconnect } from '../../hooks';
 export const DisconnectAction = () => {
   const { isError, isLoading, isNeedSupplyForFees, hasMintedStETH } =
     useCheckAvailability();
-  const { disconnect } = useVoluntaryDisconnect();
+  const {
+    disconnect,
+    mutation: { isPending },
+  } = useVoluntaryDisconnect();
   const { isDappActive } = useDappStatus();
   const canProceed = !isNeedSupplyForFees && !hasMintedStETH;
 
@@ -17,7 +20,7 @@ export const DisconnectAction = () => {
   return (
     <PermissionedSubmitButton
       onClick={disconnect}
-      loading={isLoading}
+      loading={isLoading || isPending}
       dashboardRole="volunataryDisconnecter"
       disabled={!canProceed}
       variant={isDappActive ? 'outlined' : 'filled'}
