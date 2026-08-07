@@ -2,6 +2,7 @@ import { isAddressEqual } from 'viem';
 
 import { useVault } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { useConfirmOwnership } from '../../hooks';
 
@@ -28,13 +29,18 @@ export const OwnershipAction = () => {
     : 'Please connect the wallet with a correct address';
 
   return (
-    <ButtonStyled
+    <ConnectWalletButton
       size="sm"
-      onClick={acceptOwnership}
-      disabled={!currentAccountIsOwner}
-      loading={showLoading}
+      style={{ width: 'fit-content', minWidth: '200px' }}
     >
-      {text}
-    </ButtonStyled>
+      <ButtonStyled
+        size="sm"
+        onClick={acceptOwnership}
+        disabled={!currentAccountIsOwner}
+        loading={showLoading}
+      >
+        {text}
+      </ButtonStyled>
+    </ConnectWalletButton>
   );
 };

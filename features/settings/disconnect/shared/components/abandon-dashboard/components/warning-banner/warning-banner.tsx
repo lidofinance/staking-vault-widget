@@ -3,14 +3,12 @@ import { Text } from '@lidofinance/lido-ui';
 import { ReactComponent as WarningRing } from 'assets/icons/warning-ring.svg';
 import { BannerWithoutTitle } from 'shared/components';
 import { useVault } from 'modules/vaults';
-import { useDappStatus } from 'modules/web3';
 
 export const WarningBanner = () => {
   const { isLoading, activeVault } = useVault();
-  const { isDappActive } = useDappStatus();
   const { isVaultDisconnected = false } = activeVault ?? {};
 
-  if (isLoading || !isDappActive || !activeVault || !isVaultDisconnected) {
+  if (isLoading || !activeVault || !isVaultDisconnected) {
     return null;
   }
 

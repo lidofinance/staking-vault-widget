@@ -2,22 +2,14 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { ReactComponent as WarningRing } from 'assets/icons/warning-ring.svg';
 import { BannerWithoutTitle } from 'shared/components';
-import { useDappStatus } from 'modules/web3';
 
 import { useCheckAvailability } from '../../hooks';
 
 export const WarningBanner = () => {
   const { isLoading, isError, isNeedSupplyForFees, hasMintedStETH } =
     useCheckAvailability();
-  const { isDappActive } = useDappStatus();
 
-  if (
-    isLoading ||
-    isError ||
-    isNeedSupplyForFees ||
-    hasMintedStETH ||
-    !isDappActive
-  ) {
+  if (isLoading || isError || isNeedSupplyForFees || hasMintedStETH) {
     return null;
   }
 
