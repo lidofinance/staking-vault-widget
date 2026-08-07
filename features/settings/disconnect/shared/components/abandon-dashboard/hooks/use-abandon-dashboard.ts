@@ -9,7 +9,7 @@ import {
   withSuccess,
 } from 'modules/web3';
 
-const { loading, completeActionText } =
+const { loading, mainActionCompleteDescriptionText, completeActionText } =
   vaultTexts.actions.disconnectVault.abandonDashboard;
 
 export const useAbandonDashboard = () => {
@@ -38,6 +38,7 @@ export const useAbandonDashboard = () => {
           transactions: prepareTransactions,
           mainActionLoadingText: loading,
           mainActionCompleteText: completeActionText(address),
+          mainActionCompleteDescriptionText,
         }),
       );
 
