@@ -16,7 +16,8 @@ export const NodeOperator = () => {
   const { activeVault } = useVault();
 
   const { feeRate } = values ?? {};
-  const { nodeOperator, isVaultDisconnected } = activeVault ?? {};
+  const { nodeOperator, isVaultDisconnected, isPendingConnect } =
+    activeVault ?? {};
   const nodeOperatorAddress = nodeOperator ?? zeroAddress;
 
   return (
@@ -34,6 +35,7 @@ export const NodeOperator = () => {
       <OperatorFeeRate
         feeRate={feeRate}
         isVaultDisconnected={isVaultDisconnected}
+        isPendingConnect={isPendingConnect}
       />
     </NodeOperatorContainer>
   );

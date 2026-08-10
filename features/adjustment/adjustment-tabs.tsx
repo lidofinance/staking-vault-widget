@@ -2,7 +2,7 @@ import { zeroAddress } from 'viem';
 
 import { useVault } from 'modules/vaults';
 import { appPaths } from 'consts/routing';
-import { Switch, DisconnectedVault } from 'shared/components';
+import { Switch, VaultConnectionBanner } from 'shared/components';
 
 import { Mint } from './mint';
 import { Repay } from './repay';
@@ -28,7 +28,7 @@ export const AdjustmentTabs = ({ isMintTab }: AdjustmentTabsProps) => {
 
   return (
     <PageWrapper>
-      <DisconnectedVault />
+      <VaultConnectionBanner />
       <Switch checked={!isMintTab} routes={mintRoutes} />
       {isMintTab ? <Mint /> : <Repay />}
     </PageWrapper>

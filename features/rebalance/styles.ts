@@ -9,3 +9,7 @@ export const PageWrapper = styled.div`
   margin: ${({ theme }) => theme.spaceMap.xl}px auto 0;
   padding: 0;
 `;
+
+export const BannerContainer = styled.div`
+  max-width: 600px;
+`;

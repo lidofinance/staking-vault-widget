@@ -1,6 +1,6 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { ONE_ETHER } from 'consts/tx';
-import { toStethValue } from 'utils';
+import { toStethValue, truncateAddress } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
 
@@ -24,6 +24,39 @@ export const vaultTexts = {
     connectVault: {
       connect: 'Awaiting for Vault connection',
       completed: 'Vault connected',
+    },
+    disconnectVault: {
+      voluntaryDisconnect: {
+        loading: 'Initiating vault disconnection from VaultHub',
+        completed: 'Vault disconnection from VaultHub has been initiated',
+      },
+      applyReport: {
+        loading: 'Applying report',
+        completed:
+          'Report applied and the vault has been disconnected from VaultHub',
+      },
+      abandonDashboard: {
+        loading: 'Abandoning Dashboard and transferring ownership',
+        completeActionText: (address: string) =>
+          `Ownership suggestion passed to ${truncateAddress({ address })}`,
+        mainActionCompleteDescriptionText:
+          'Dashboard is abandoned and ownership suggestion passed to the address',
+      },
+      acceptOwnership: {
+        loading: (address: string) =>
+          `Accepting ownership for ${truncateAddress({ address })}`,
+        completeActionText: (address: string) =>
+          `Vault ownership passed to ${truncateAddress({ address })}`,
+      },
+      withdraw: {
+        loading: 'Withdrawing available stVault balance',
+        completed: 'Available stVault balance withdrawn',
+        submit: (amount?: bigint | null) =>
+          `Withdraw ${balance(amount)}ETH` as const,
+        recipientLabel: 'Withdraw to address',
+        useOwnerAddress: `Use Vault Owner's address`,
+        useAnotherAddress: 'Use another address',
+      },
     },
     createVault: {
       loading: 'Creating vault',
@@ -226,6 +259,9 @@ export const vaultTexts = {
         },
       },
     },
+    disconnect: {
+      settingsTitle: 'stVault Disconnection from VaultHub',
+    },
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -328,6 +364,16 @@ export const vaultTexts = {
         },
       },
       clearChanges: 'Clear changes',
+      disconnect: {
+        subTitle: 'Disconnect stVault from VaultHub',
+        subDescription:
+          '1 ETH connection deposit can be withdrawn after disconnection the stVault from the VaultHub protocol.',
+        navigation: {
+          connected: 'Learn more and disconnect',
+          disconnectInitiated: 'Continue disconnection',
+          view: 'View',
+        },
+      },
     },
     validators: {
       title: 'stVaults Validators overview',
@@ -337,7 +383,10 @@ export const vaultTexts = {
           pubKey: 'Public key',
           status: 'Status',
           actualBalance: 'Actual balance',
-          activatedExited: 'Activated / exited',
+          activatedExited: (timeZoneLabel: string) =>
+            timeZoneLabel
+              ? `Activated / exited (${timeZoneLabel})`
+              : 'Activated / exited',
           menu: '',
         },
         noValidatorsFound: 'No validators found',
@@ -503,12 +552,12 @@ export const vaultTexts = {
   // but can be used in other places as well where vault status is displayed
   metrics: {
     pendingDisconnect: {
-      title: 'Pending disconnect from Lido Core',
+      title: 'Pending disconnection from VaultHub',
       description: {
         reportIsAvailable:
-          'Lido Core disconnection has been initiated. To complete the process, apply the latest Oracle report. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
         reportIsNotAvailable:
-          'Lido Core disconnection has been initiated. Oracle report submission is currently unavailable. Please wait for the next reporting window. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
       },
       actions: {
         applyReport: 'Apply the latest Oracle report',
@@ -802,6 +851,24 @@ export const vaultTexts = {
       },
     },
     banners: {
+      vaultConnection: {
+        pendingConnect: {
+          title: 'stVault is waiting connection to VaultHub',
+          description:
+            'This stVault is requested to connect to Lido VaultHub to enable stETH minting and accounting, with pre-selected stETH minting terms and Lido fees.',
+          actionText: 'Connect stVault to Lido VaultHub',
+        },
+        disconnected: {
+          title: 'Vault is disconnected from VaultHub.',
+          description:
+            'This vault is disconnected from VaultHub, and some operations are not supported in this UI, including supplying ETH and minting or repaying stETH.',
+        },
+        pendingDisconnect: {
+          title: 'Pending disconnection from VaultHub',
+          description:
+            'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
+        },
+      },
       outdatedMetrics: {
         title: (date: string) =>
           `Validator Balance Spike Detected — Metrics as of ${date}`,
@@ -960,6 +1027,7 @@ export const vaultTexts = {
         loadingVault: 'Error loading stVault',
         vaultAddress: 'Invalid stVault address',
         notDashboard: 'stVault is not owned by Dashboard contract',
+        notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
       },

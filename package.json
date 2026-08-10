@@ -19,7 +19,7 @@
     "types": "tsc --noEmit",
     "postinstall": "husky install",
     "test": "yarn test:e2e",
-    "test:unit": "jest",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -69,6 +69,7 @@
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4",
     "@commitlint/prompt": "^17.4.4",
+    "@jest/globals": "^29.5.0",
     "@lidofinance/eslint-config": "^0.34.0",
     "@next/bundle-analyzer": "^15.2.4",
     "@next/eslint-plugin-next": "^13.4.13",

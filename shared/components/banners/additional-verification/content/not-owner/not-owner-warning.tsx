@@ -17,7 +17,7 @@ type NotOwnerWarningProps = {
 const { notOwner } = vaultTexts.actions.additionalVerification.banners;
 
 export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
-  const isMobile = useBreakpoint('sm');
+  const isMobile = useBreakpoint('md');
   const addressSize = isMobile ? 10 : 22;
   const token = state.action === 'repay' ? 'stETH' : 'ETH';
 

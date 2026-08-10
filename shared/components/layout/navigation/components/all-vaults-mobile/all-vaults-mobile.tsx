@@ -4,13 +4,22 @@ import { BackAllVaults } from '../back-all-vaults';
 import { Report } from './components';
 
 import { Container } from './styles';
+import type { ParsedUrlQuery } from 'querystring';
 
 const homePaths = ['/', '/vaults'];
 
-export const AllVaultsMobile = () => {
-  const { pathname } = useRouter();
+const checkQueryMode = (query: ParsedUrlQuery) => {
+  if (query && 'mode' in query) {
+    return query.mode === 'disconnect';
+  }
 
-  if (homePaths.includes(pathname)) {
+  return false;
+};
+
+export const AllVaultsMobile = () => {
+  const { pathname, query } = useRouter();
+
+  if (homePaths.includes(pathname) || checkQueryMode(query)) {
     return null;
   }
 

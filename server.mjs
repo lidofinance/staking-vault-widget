@@ -1,6 +1,11 @@
 import { createServer } from 'http';
 import { parse } from 'url';
 import next from 'next';
+import {
+  registerSecretsRotationRestart,
+  registerShutdownSignals,
+} from './scripts/shutdown.mjs';
+
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
 const port = Number(process.env.PORT) || 3000;
@@ -51,4 +56,8 @@ app.prepare().then(() => {
   server.headersTimeout = 10_000;
   server.requestTimeout = 30_000;
   server.maxHeadersCount = 50;
+
+  // OpenBao secret-rotation
+  registerShutdownSignals(server);
+  registerSecretsRotationRestart(server);
 });
