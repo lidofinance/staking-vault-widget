@@ -76,16 +76,20 @@ export type VaultBaseInfo = {
   group: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'group'>;
   nodeOperator: Address;
   vaultOwner: Address;
+  pendingOwner: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
-  isVaultDisconnected: boolean; // disconnected by user
+  isVaultDisconnected: boolean;
+  isVaultFullDisconnected: boolean;
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;
   isPendingConnect: boolean;
   isReportAvailable: boolean;
+  isDeployedVault: boolean;
+  hasPendingOwner: boolean;
 } & VaultConnection;
 
 export type Tier = {

@@ -41,7 +41,7 @@ export type FetchVaultsContext = {
   vaultModule: LidoSDKVaultModule;
 };
 
-type VaultEntryRaw = {
+export type VaultEntryRaw = {
   address: Address;
 } & Partial<{
   ens: string | null;
@@ -105,6 +105,7 @@ export type VaultEntry = {
   blockNumber: number;
   isReportFresh: boolean;
   isQuarantineActive: boolean;
+  isDisconnected: boolean;
   quarantinePendingTotalValueIncrease: bigint;
   quarantineStartTimestamp: number;
   quarantineEndTimestamp: number;

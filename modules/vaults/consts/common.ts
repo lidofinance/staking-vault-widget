@@ -1,4 +1,4 @@
-import { parseEther } from 'viem';
+import { parseEther, maxInt104 } from 'viem';
 
 export const VAULTS_PER_PAGE = 12;
 
@@ -10,6 +10,12 @@ export const LAZY_ORACLE_ROOT_HASH_SLOT =
   '0xe5459f2b48ec5df2407caac4ec464a5cb0f7f31a1f22f649728a9579b25c1d00';
 
 export const VAULT_REPORT_REFETCH_INTERVAL_MS = 60_000 * 30; // 30 minutes
+
+// `NodeOperatorFee.MAX_SANE_SETTLED_GROWTH` = `type(int104).max`. The Dashboard
+// raises `settledGrowth` to this value to stop the node operator fee accrual,
+// which happens on `voluntaryDisconnect()` and `transferVaultOwnership()`.
+// The contract constant is `internal`, so there is no getter to read it from.
+export const MAX_SANE_SETTLED_GROWTH = maxInt104;
 
 // TOOD: remove in favor on bigint only calc
 export const VAULT_TOTAL_BASIS_POINTS = 10_000;

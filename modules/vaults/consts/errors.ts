@@ -44,6 +44,13 @@ export class VaultOwnerNotDashboardError extends DisplayableError {
   }
 }
 
+export class VaultNotCreatedByFactoryError extends DisplayableError {
+  constructor() {
+    super(errorTexts.notCreatedByFactory, false);
+    this.name = 'VaultNotCreatedByFactory';
+  }
+}
+
 export class ReportMissingError extends DisplayableError {
   constructor() {
     super(errorTexts.reportMissing, false);
