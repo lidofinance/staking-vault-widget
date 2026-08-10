@@ -9,7 +9,7 @@ import { AvailabilityHeading } from './availability-heading';
 
 export const CheckAvailability = () => {
   return (
-    <AvailabilityContainer>
+    <AvailabilityContainer data-testid="availability">
       <AvailabilityHeading />
       <PreparationList>
         <RepayMinted />

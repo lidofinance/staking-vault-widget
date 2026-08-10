@@ -24,7 +24,11 @@ export const BackToSettings = () => {
   }, [vaultAddress]);
 
   return (
-    <Container onClick={trackAllVaultsPageEvent} href={linkToMainSettings}>
+    <Container
+      onClick={trackAllVaultsPageEvent}
+      href={linkToMainSettings}
+      data-testid="back-to-settings"
+    >
       <ArrowLeft />
       <Text size="xs" color="secondary" as="span">
         Back to settings

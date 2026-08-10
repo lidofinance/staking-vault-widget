@@ -36,9 +36,9 @@ export const DescriptionAndMetrics = () => {
           )}
         </InlineLoader>
         <InlineLoader isLoading={isAvailableBalanceLoading}>
-          <MetricItem>
+          <MetricItem data-testid="withdrawable-balance">
             <Text size="xxs">Withdrawable stVault Balance</Text>
-            <Text size="xxs" strong>
+            <Text size="xxs" strong data-testid="value">
               <FormatToken amount={availableBalance} symbol="ETH" />
             </Text>
           </MetricItem>

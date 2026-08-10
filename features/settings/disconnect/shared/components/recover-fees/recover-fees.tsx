@@ -15,7 +15,11 @@ export const RecoverFees = () => {
   const stepProps = useDisconnectStep(DISCONNECT_STEP.RECOVER_FEES);
 
   return (
-    <Step {...stepProps} title="Recover undisbursed Node Operator fees">
+    <Step
+      {...stepProps}
+      title="Recover undisbursed Node Operator fees"
+      dataTestId="disconnect-step-6"
+    >
       <RecoverFeesContainer>
         <Text size="xs">
           Undisbursed Node Operator fees are stored in the abandoned Dashboard

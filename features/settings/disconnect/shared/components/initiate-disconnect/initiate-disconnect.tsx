@@ -16,8 +16,12 @@ export const InitiateDisconnect = () => {
   const stepProps = useDisconnectStep(DISCONNECT_STEP.INITIATE_DISCONNECT);
 
   return (
-    <Step {...stepProps} title="Initiate voluntary disconnect">
-      <Container>
+    <Step
+      {...stepProps}
+      title="Initiate voluntary disconnect"
+      dataTestId="disconnect-step-1"
+    >
+      <Container data-testid="initiate-disconnect">
         <CheckAvailability />
         <AfterDisconnect />
         <WarningBanner />

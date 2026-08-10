@@ -22,7 +22,7 @@ export const AvailabilityHeading = () => {
 
   return (
     <div>
-      <Text size="xs" strong>
+      <Text size="xs" strong data-testid="heading">
         stVault is ready to disconnect
       </Text>
       <InlineLoader
@@ -30,7 +30,9 @@ export const AvailabilityHeading = () => {
         height={20}
         width={200}
       >
-        <Text size="xxs">{subText}</Text>
+        <Text size="xxs" data-testid="subtext">
+          {subText}
+        </Text>
       </InlineLoader>
     </div>
   );

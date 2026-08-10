@@ -62,6 +62,7 @@ export const Step: FC<PropsWithChildren<StepperStepProps>> = ({
       <StepMarker
         $isSuccess={isSuccess}
         data-testid={dataTestId ? `${dataTestId}-marker` : undefined}
+        data-status={status}
       >
         {status === 'pending' ? (
           <StepNumber

@@ -11,7 +11,7 @@ import { DisconnectPage, Content } from './styles';
 
 export const DisconnectVault = () => {
   return (
-    <DisconnectPage>
+    <DisconnectPage data-testid="disconnect-page">
       <BackToSettings />
       <ContentWrapper>
         <Content>

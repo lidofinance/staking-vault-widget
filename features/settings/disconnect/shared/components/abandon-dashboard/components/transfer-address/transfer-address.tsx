@@ -23,11 +23,15 @@ export const TransferAddress = () => {
   }
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="transfer-address">
       <Text size="xs" strong>
         Transfer to the Vault Owner&apos;s address
       </Text>
-      <AddressBadge address={address} symbols={symbols} />
+      <AddressBadge
+        address={address}
+        symbols={symbols}
+        dataTestId="transfer-address-value"
+      />
     </Wrapper>
   );
 };

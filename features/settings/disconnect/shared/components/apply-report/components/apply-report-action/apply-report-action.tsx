@@ -37,6 +37,7 @@ export const ApplyReportAction = () => {
         onClick={applyReport}
         disabled={isDisabled}
         loading={isPending}
+        data-testid="action-btn"
       >
         {text}
       </ButtonStyled>

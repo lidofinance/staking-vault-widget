@@ -38,6 +38,7 @@ export const OwnershipAction = () => {
         onClick={acceptOwnership}
         disabled={!currentAccountIsOwner}
         loading={showLoading}
+        data-testid="action-btn"
       >
         {text}
       </ButtonStyled>

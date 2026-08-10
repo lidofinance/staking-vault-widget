@@ -11,8 +11,12 @@ export const AcceptOwnership = () => {
   const stepProps = useDisconnectStep(DISCONNECT_STEP.ACCEPT_OWNERSHIP);
 
   return (
-    <Step {...stepProps} title="Accept ownership by a new owner">
-      <AcceptContainer>
+    <Step
+      {...stepProps}
+      title="Accept ownership by a new owner"
+      dataTestId="disconnect-step-4"
+    >
+      <AcceptContainer data-testid="accept-ownership">
         <OwnershipDescription />
         <OwnershipAction />
       </AcceptContainer>

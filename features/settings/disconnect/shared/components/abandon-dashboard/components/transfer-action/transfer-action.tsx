@@ -18,6 +18,7 @@ export const TransferAction = () => {
       dashboardRole="defaultAdmin"
       size="xs"
       style={{ fontSize: '14px', lineHeight: '24px', width: 'fit-content' }}
+      data-testid="action-btn"
     >
       Transfer ownership
     </PermissionedSubmitButton>

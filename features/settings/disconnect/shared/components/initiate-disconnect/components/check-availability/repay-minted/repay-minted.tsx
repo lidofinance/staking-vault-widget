@@ -22,7 +22,7 @@ export const RepayMinted = () => {
   }, [isLoading, isError, hasMintedStETH]);
 
   return (
-    <PreparationItem status={status}>
+    <PreparationItem status={status} dataTestId="requirement-liability">
       {canShowContent && hasMintedStETH && (
         <RepayLiability liability={vaultLiabilityStETH} />
       )}

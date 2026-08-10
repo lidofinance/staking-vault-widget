@@ -16,10 +16,14 @@ export const OwnershipDescription = () => {
   }
 
   return (
-    <OwnershipAddressContainer>
+    <OwnershipAddressContainer data-testid="ownership-description">
       <Text size="xs">Please accept ownership by the address</Text>
       <InlineLoader isLoading={isLoading || isPending} height={36}>
-        <AddressBadge address={pendingOwner} symbols={symbols} />
+        <AddressBadge
+          address={pendingOwner}
+          symbols={symbols}
+          dataTestId="pending-owner-address"
+        />
       </InlineLoader>
     </OwnershipAddressContainer>
   );

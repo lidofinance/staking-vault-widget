@@ -14,8 +14,9 @@ export const ApplyReport = () => {
     <Step
       {...stepProps}
       title="Apply the next Oracle report and disconnect from VaultHub"
+      dataTestId="disconnect-step-2"
     >
-      <ApplyReportContainer>
+      <ApplyReportContainer data-testid="apply-report">
         <Description />
         <ApplyReportAction />
       </ApplyReportContainer>
