@@ -1,4 +1,4 @@
-import { parseEther } from 'viem';
+import { parseEther, maxInt104 } from 'viem';
 
 export const VAULTS_PER_PAGE = 12;
 
@@ -15,7 +15,7 @@ export const VAULT_REPORT_REFETCH_INTERVAL_MS = 60_000 * 30; // 30 minutes
 // raises `settledGrowth` to this value to stop the node operator fee accrual,
 // which happens on `voluntaryDisconnect()` and `transferVaultOwnership()`.
 // The contract constant is `internal`, so there is no getter to read it from.
-export const MAX_SANE_SETTLED_GROWTH = 10141204801825835211973625643007n;
+export const MAX_SANE_SETTLED_GROWTH = maxInt104;
 
 // TOOD: remove in favor on bigint only calc
 export const VAULT_TOTAL_BASIS_POINTS = 10_000;
