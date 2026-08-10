@@ -112,6 +112,7 @@ export const useDisconnectSteps = () => {
         isVaultConnected,
         isPendingDisconnect,
         isVaultDisconnected,
+        isVaultFullDisconnected,
         dashboard,
         blockNumber,
         hub,
@@ -136,6 +137,13 @@ export const useDisconnectSteps = () => {
         isVaultDisconnected && isAddressEqual(vaultOwner, hubAddress);
       const isOwnedByConnectedAddress =
         isVaultDisconnected && isAddressEqual(vaultOwner, connectedAddress);
+      // ownership has left both the Dashboard and the hub, so the transfer is
+      // done no matter who is looking at the page. `dashboard.address` falls
+      // back to the vault owner once the hub connection is gone, hence the
+      // bytecode check behind `isVaultFullDisconnected` and not an address
+      // comparison: it is what tells a plain owner apart from a Dashboard one
+      const isOwnershipTransferred =
+        isVaultDisconnected && isVaultFullDisconnected && !isOwnedByHub;
 
       const stepChecks: Record<DisconnectStep, boolean> = {
         // the vault is still connected: request the voluntary disconnect
@@ -157,9 +165,11 @@ export const useDisconnectSteps = () => {
           !isAddressEqual(pendingOwner, dashboardAddress),
         // ownership is accepted, the vault is owned directly: withdraw the ETH.
         // the step stays reachable with an empty balance as well, an empty
-        // balance is what marks the whole flow as completed
+        // balance is what marks the whole flow as completed.
+        // `isOwnershipTransferred` keeps the step (and the overall status)
+        // resolvable for wallets that are not the new owner, or not connected
         [DISCONNECT_STEP.WITHDRAW]:
-          isVaultDisconnected && isOwnedByConnectedAddress,
+          isOwnedByConnectedAddress || isOwnershipTransferred,
         // informational step, it follows the withdraw step
         [DISCONNECT_STEP.RECOVER_FEES]: false,
       };

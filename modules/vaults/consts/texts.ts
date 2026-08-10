@@ -27,7 +27,7 @@ export const vaultTexts = {
     },
     disconnectVault: {
       voluntaryDisconnect: {
-        loading: 'Disconnecting vault from Vault Hub',
+        loading: 'Initiating vault disconnection from VaultHub',
         completed: 'Vault disconnection from VaultHub has been initiated',
       },
       applyReport: {
@@ -36,7 +36,7 @@ export const vaultTexts = {
           'Report applied and the vault has been disconnected from VaultHub',
       },
       abandonDashboard: {
-        loading: 'Abandoning dashboard from vault',
+        loading: 'Abandoning Dashboard and transferring ownership',
         completeActionText: (address: string) =>
           `Ownership suggestion passed to ${truncateAddress({ address })}`,
         mainActionCompleteDescriptionText:

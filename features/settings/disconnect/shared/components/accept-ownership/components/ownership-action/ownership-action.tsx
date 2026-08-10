@@ -1,8 +1,8 @@
-import { Loader } from '@lidofinance/lido-ui';
 import { isAddressEqual } from 'viem';
 
 import { useVault } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
+import { ConnectWalletButton } from 'shared/wallet';
 
 import { useConfirmOwnership } from '../../hooks';
 
@@ -12,8 +12,11 @@ export const OwnershipAction = () => {
   const { isLoading, isPending, activeVault } = useVault();
   const { pendingOwner, hasPendingOwner } = activeVault ?? {};
   const { address } = useDappStatus();
-  const { acceptOwnership } = useConfirmOwnership();
-  const showLoading = isLoading || isPending;
+  const {
+    acceptOwnership,
+    mutation: { isPending: isTxPending },
+  } = useConfirmOwnership();
+  const showLoading = isLoading || isPending || isTxPending;
   const currentAccountIsOwner =
     !!pendingOwner && !!address && isAddressEqual(pendingOwner, address);
 
@@ -26,13 +29,19 @@ export const OwnershipAction = () => {
     : 'Please connect the wallet with a correct address';
 
   return (
-    <ButtonStyled
+    <ConnectWalletButton
       size="sm"
-      onClick={acceptOwnership}
-      disabled={!currentAccountIsOwner}
-      data-testid="action-btn"
+      style={{ width: 'fit-content', minWidth: '200px' }}
     >
-      {showLoading ? <Loader size="small" /> : text}
-    </ButtonStyled>
+      <ButtonStyled
+        size="sm"
+        onClick={acceptOwnership}
+        disabled={!currentAccountIsOwner}
+        loading={showLoading}
+        data-testid="action-btn"
+      >
+        {text}
+      </ButtonStyled>
+    </ConnectWalletButton>
   );
 };

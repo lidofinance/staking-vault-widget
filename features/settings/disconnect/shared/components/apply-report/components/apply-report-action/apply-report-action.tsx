@@ -8,7 +8,10 @@ import { ButtonStyled } from './styles';
 export const ApplyReportAction = () => {
   const { isLoading, activeVault } = useVault();
   const { hasAdmin } = useVaultConfirmingRoles();
-  const { applyReport } = useApplyReport();
+  const {
+    applyReport,
+    mutation: { isPending },
+  } = useApplyReport();
   const {
     isReportFresh = false,
     isVaultDisconnected = false,
@@ -33,6 +36,7 @@ export const ApplyReportAction = () => {
         size="xs"
         onClick={applyReport}
         disabled={isDisabled}
+        loading={isPending}
         data-testid="action-btn"
       >
         {text}

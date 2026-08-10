@@ -81,12 +81,12 @@ export const Settings = () => {
 
   return (
     <Layout navigationMode="vault" title={title} containerSize="content">
+      <Head>
+        <title>{getPageTitle(titleMap[mode])}</title>
+      </Head>
       <PageWrapper>
         {mode !== 'disconnect' && (
           <>
-            <Head>
-              <title>{getPageTitle(titleMap[mode])}</title>
-            </Head>
             <VaultConnectionBanner />
             <SettingsNavigation mode={mode} changeTab={changeTab} />
           </>

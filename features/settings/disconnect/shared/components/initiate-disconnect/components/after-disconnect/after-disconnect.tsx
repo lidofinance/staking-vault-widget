@@ -2,7 +2,6 @@ import { Text } from '@lidofinance/lido-ui';
 
 import { OldToNew, TooltipHint, InlineLoader } from 'shared/components';
 import { FormatToken } from 'shared/formatters';
-import { useDappStatus } from 'modules/web3';
 
 import { useCheckAvailability } from '../../hooks';
 
@@ -24,9 +23,8 @@ export const AfterDisconnect = () => {
     availableBalanceWei,
     balance,
   } = useCheckAvailability();
-  const { isDappActive } = useDappStatus();
 
-  if (isError || hasMintedStETH || isNeedSupplyForFees || !isDappActive) {
+  if (isError || hasMintedStETH || isNeedSupplyForFees) {
     return null;
   }
 

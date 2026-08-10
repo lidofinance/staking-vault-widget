@@ -4,12 +4,16 @@ import { useAbandonDashboard } from '../../hooks';
 
 export const TransferAction = () => {
   const { activeVault } = useVault();
-  const { abandon } = useAbandonDashboard();
+  const {
+    abandon,
+    mutation: { isPending },
+  } = useAbandonDashboard();
   const { isVaultDisconnected = false } = activeVault ?? {};
 
   return (
     <PermissionedSubmitButton
       disabled={!isVaultDisconnected}
+      loading={isPending}
       onClick={abandon}
       dashboardRole="defaultAdmin"
       size="xs"
