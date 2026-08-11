@@ -1,27 +1,15 @@
 import { Text } from '@lidofinance/lido-ui';
-import { usePublicClient } from 'wagmi';
 
-import { useVault } from 'modules/vaults';
+import { REPORT_PERIOD, useVault } from 'modules/vaults';
 import { formatCustomDate } from 'utils';
 
 import { DescriptionLoader } from '../description-loader';
 
-const getChainPeriod = (chainId: number) => {
-  if (chainId === 1) {
-    return 43200n; // 12h in seconds
-  }
-  return 86400n; // 24h in seconds
-};
-
 const getTime = (timestamp: bigint) => formatCustomDate(Number(timestamp));
 
-const getText = (
-  isReportFresh: boolean,
-  timestamp: bigint,
-  chainId: number,
-) => {
+const getText = (isReportFresh: boolean, timestamp: bigint) => {
   if (isReportFresh) {
-    const nextReportTimestamp = timestamp + getChainPeriod(chainId);
+    const nextReportTimestamp = timestamp + REPORT_PERIOD;
     return `Now, you need to wait for next Oracle report to proceed with disconnection. The next Oracle report is expected on ${getTime(nextReportTimestamp)}.`;
   }
 
@@ -30,15 +18,13 @@ const getText = (
 
 export const Description = () => {
   const { isLoading, activeVault } = useVault();
-  const client = usePublicClient();
-  const chainId = client.chain.id;
   const { isReportFresh = false, hubReport } = activeVault ?? {};
   const timestamp = hubReport?.timestamp ?? 0n;
 
   return (
     <DescriptionLoader isLoading={isLoading}>
       <Text size="xs" data-testid="description">
-        {getText(isReportFresh, timestamp, chainId)}
+        {getText(isReportFresh, timestamp)}
       </Text>
     </DescriptionLoader>
   );

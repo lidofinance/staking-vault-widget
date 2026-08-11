@@ -39,3 +39,6 @@ export enum PDG_POLICY {
   ALLOW_PROVE = '1',
   ALLOW_DEPOSIT_AND_PROVE = '2',
 }
+
+// LazyOracle snapshot period
+export const REPORT_PERIOD = 86400n;
