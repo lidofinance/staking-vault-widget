@@ -1,4 +1,4 @@
-import { createSecureHeaders, createHeadersObject } from 'next-secure-headers';
+import { createSecureHeaders } from 'next-secure-headers';
 import { buildCspDirectives, STATIC_SECURITY_HEADERS } from './directives.js';
 import { updateGeneratedHeaders } from './update-generated-headers.js';
 
