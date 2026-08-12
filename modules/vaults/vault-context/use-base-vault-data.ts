@@ -83,6 +83,14 @@ export const useBaseVaultData = (
         vaultEntity.getVaultContract(),
       ]);
 
+      const isDeployedVault = await vaultFactory.read.deployedVaults(
+        [vault.address],
+        DEFAULT_CALL_OPTIONS,
+      );
+      if (!isDeployedVault) {
+        throw new VaultNotCreatedByFactoryError();
+      }
+
       const [
         vaultOwner,
         nodeOperator,
@@ -94,7 +102,6 @@ export const useBaseVaultData = (
         isReportFresh,
         latestVaultReport,
         latestHubReport,
-        isDeployedVault,
       ] = await Promise.all([
         vault.read.owner(DEFAULT_CALL_OPTIONS),
         vault.read.nodeOperator(DEFAULT_CALL_OPTIONS),
@@ -106,7 +113,6 @@ export const useBaseVaultData = (
         hub.read.isReportFresh([vaultAddress], DEFAULT_CALL_OPTIONS),
         hub.read.latestReport([vaultAddress], DEFAULT_CALL_OPTIONS),
         lazyOracle.read.latestReportData(DEFAULT_CALL_OPTIONS),
-        vaultFactory.read.deployedVaults([vault.address], DEFAULT_CALL_OPTIONS),
       ]);
 
       const [
@@ -137,10 +143,6 @@ export const useBaseVaultData = (
         blockNumber,
         dashboardAddress: supposedDashboardAddress,
       });
-
-      if (!isDeployedVault) {
-        throw new VaultNotCreatedByFactoryError();
-      }
 
       // TODO: reword to support multiple factories
       if (!isDashboard && isVaultConnected) {
@@ -227,7 +229,6 @@ export const useBaseVaultData = (
         isPendingDisconnect,
         isPendingConnect,
         isReportAvailable,
-        isDeployedVault,
         hasPendingOwner,
         predepositGuarantee,
         blockNumber,
