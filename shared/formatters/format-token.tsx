@@ -1,6 +1,6 @@
 import { Tooltip } from '@lidofinance/lido-ui';
 
-import { DATA_UNAVAILABLE } from 'consts/text';
+import { EMPTY_DATA } from 'consts/text';
 import { Component } from 'types';
 import { FormatBalanceArgs, useFormattedBalance } from 'utils';
 
@@ -21,7 +21,7 @@ export const FormatToken: FormatTokenComponent = ({
   maxTotalLength = 15,
   showAmountTip = true,
   trimEllipsis,
-  fallback = DATA_UNAVAILABLE,
+  fallback = EMPTY_DATA,
   adaptiveDecimals,
   ...rest
 }) => {

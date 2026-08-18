@@ -96,7 +96,6 @@ type VaultTableRowProps = {
 
 const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
   // A disconnected vault has no live metrics: withholding the values makes
-  // FormatToken/PercentCell fall back to DATA_UNAVAILABLE in every cell but the address
   const data: VaultEntry = vault.isDisconnected
     ? { address: vault.address }
     : vault;
