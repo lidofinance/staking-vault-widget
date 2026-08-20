@@ -6,6 +6,8 @@ import {
 } from 'react';
 import invariant from 'tiny-invariant';
 
+import { useVault } from 'modules/vaults';
+
 import { useVaultValidatorsData } from '../shared';
 
 type ValidatorsTableContextValue = ReturnType<typeof useVaultValidatorsData>;
@@ -28,6 +30,11 @@ export const ValidatorsTableProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const value = useVaultValidatorsData();
+  const { activeVault } = useVault();
+
+  if (activeVault?.isVaultDisconnected) {
+    return null;
+  }
 
   return (
     <ValidatorsTableContext.Provider value={value}>
