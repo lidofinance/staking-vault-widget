@@ -17,6 +17,7 @@ import {
   type Vault7DApr,
   VAULT_TOTAL_BASIS_POINTS_BN,
   getStEthContract,
+  VaultDisconnectedError,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -31,6 +32,8 @@ import {
   calculateOverviewV2,
 } from 'utils';
 import { bigIntClampZero, bigIntMax, bigIntMin } from 'utils/bigint-math';
+
+import { baseRetry } from '../consts';
 
 type VaultDataArgs = {
   vault: VaultBaseInfo;
@@ -544,11 +547,16 @@ export const useVaultOverviewData = () => {
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,
+    retry: baseRetry,
     queryFn: async () => {
       invariant(
         activeVault,
         '[useVaultOverviewData] activeVault is not defined',
       );
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
         getVaultData(

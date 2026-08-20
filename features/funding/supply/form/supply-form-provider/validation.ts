@@ -1,5 +1,6 @@
 import z from 'zod';
 import invariant from 'tiny-invariant';
+import { zeroAddress } from 'viem';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
@@ -18,18 +19,22 @@ import type {
   SupplyFormValidatedValues,
 } from '../types';
 
-type SupplyFormSchemaOptions = SupplyFormDataValidationContext & {
-  mintSteth: boolean;
-  isETH: boolean;
-};
+export const supplyFormSchema = (
+  context: SupplyFormDataValidationContext,
+  { isETH }: { isETH: boolean },
+) => {
+  const ethBalance = context?.ethBalance ?? 0n;
+  const wethBalance = context?.wethBalance ?? 0n;
+  const validateRecipientArgs = context?.validateRecipientArgs ?? {
+    vaultAddress: zeroAddress,
+    dashboardAddress: zeroAddress,
+  };
+  const additionalVerification = context?.additionalVerification ?? {
+    notOwner: false,
+    multipleOwners: false,
+    unguaranteedDeposits: false,
+  };
 
-export const supplyFormSchema = ({
-  isETH,
-  ethBalance,
-  wethBalance,
-  validateRecipientArgs,
-  additionalVerification,
-}: SupplyFormSchemaOptions) => {
   const mintSchema = z.discriminatedUnion('mintSteth', [
     z.object({
       mintSteth: z.literal(true),
@@ -55,17 +60,28 @@ export const supplyFormSchema = ({
   );
 };
 
+// tracks context promises that already timed out once, so repeated
+// validation calls don't re-wait 4s each time for a promise that is
+// known to never settle (e.g. vault disconnected, dashboard unreadable)
+const timedOutContexts =
+  new WeakSet<SupplyFormDataAwaitableValidationContext>();
+
 export const SupplyFormResolver: Resolver<
   SupplyFormFieldValues,
   SupplyFormDataAwaitableValidationContext,
   SupplyFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[SupplyFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 4000);
-  const schema = supplyFormSchema({
-    ...contextValue,
+
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 4000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
+
+  const schema = supplyFormSchema(contextValue, {
     isETH: values.token === 'ETH',
-    mintSteth: values.mintSteth,
   });
   return zodResolver<
     SupplyFormFieldValues,

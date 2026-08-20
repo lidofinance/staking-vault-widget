@@ -7,6 +7,7 @@ import { isBigint } from 'utils';
 import { useVault } from '../vault-context';
 import { readWithReport } from '../report';
 import { getStEthContract } from '../contracts';
+import { baseRetry, VaultDisconnectedError } from '../consts';
 
 export type MaxMintableResult = {
   maxMintableStETH: bigint;
@@ -26,6 +27,7 @@ export const useMaxMintable = (amount?: bigint | null) => {
       { supply: amount },
     ],
     enabled: enabled,
+    retry: baseRetry,
     queryFn: async () => {
       invariant(
         activeVault,
@@ -33,6 +35,11 @@ export const useMaxMintable = (amount?: bigint | null) => {
       );
 
       invariant(isBigint(amount), '[useMaxMintable] Amount must be a bigint');
+
+      // minting capacity is meaningless without an active VaultHub connection
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [maxMintableShares] = await readWithReport({
         publicClient,

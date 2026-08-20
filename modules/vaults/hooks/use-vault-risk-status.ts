@@ -5,7 +5,9 @@ import { isAddressEqual, zeroAddress } from 'viem';
 import { useVault } from '../vault-context';
 import { useDappStatus } from '../../web3';
 import {
+  baseRetry,
   PDG_POLICY,
+  VaultDisconnectedError,
   VAULTS_OWNER_ROLES_MAP,
   VAULTS_ROOT_ROLES_MAP,
 } from '../consts';
@@ -21,10 +23,15 @@ export const useVaultRiskStatus = () => {
       { address },
     ] as const,
     enabled: !!(activeVault && address),
+    retry: baseRetry,
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
     queryFn: async () => {
       invariant(activeVault, '[useVaultRiskStatus] activeVault is not defined');
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const { dashboard, group, operatorGrid, nodeOperator } = activeVault;
       const { operator, shareLimit, tierIds } = group;

@@ -19,8 +19,6 @@ export class DisplayableError extends Error {
   }
 }
 
-//
-
 export class SendTxGetStatusError extends DisplayableError {
   constructor(error?: unknown) {
     super(vaultTexts.common.errors.tx.getStatus, false, error as Error);
@@ -28,8 +26,8 @@ export class SendTxGetStatusError extends DisplayableError {
     this.errorTitle = vaultTexts.common.errors.tx.getStatusTitle;
   }
 }
-// Vault Fetch
 
+// Vault Fetch
 export class VaultAddressError extends DisplayableError {
   constructor() {
     super(errorTexts.vaultAddress, false);
@@ -55,5 +53,12 @@ export class ReportMissingError extends DisplayableError {
   constructor() {
     super(errorTexts.reportMissing, false);
     this.name = 'ReportMissing';
+  }
+}
+
+export class VaultDisconnectedError extends DisplayableError {
+  constructor() {
+    super(errorTexts.vaultDisconnected, false);
+    this.name = 'VaultDisconnected';
   }
 }

@@ -1030,6 +1030,7 @@ export const vaultTexts = {
         notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
+        vaultDisconnected: 'stVault is disconnected.',
       },
     },
     form: {

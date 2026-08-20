@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useDappStatus, useEthereumBalance } from 'modules/web3';
 import { useVault, useVaultOverviewData } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
 import { FormController } from 'shared/hook-form/form-controller';
 import { useDisableForm } from 'shared/hook-form';
 import {
@@ -66,7 +67,10 @@ export const FormWrapper: FC<{ children: ReactNode }> = ({ children }) => {
     RebalanceFormValidatedValues
   >({
     defaultValues: async () => {
-      await overviewDataPromise.awaiter;
+      await awaitWithTimeout(overviewDataPromise.awaiter, 10000).catch(
+        () => undefined,
+      );
+
       return {
         rebalanceAmount: null,
         isSupplyEth: false,
