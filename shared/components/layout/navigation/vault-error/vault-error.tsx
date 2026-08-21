@@ -5,6 +5,7 @@ import {
   VaultOwnerNotDashboardError,
   useVault,
   VaultNotCreatedByFactoryError,
+  DashboardNotBelongToVault,
 } from 'modules/vaults';
 import { vaultTexts } from 'modules/vaults/consts';
 
@@ -12,6 +13,7 @@ import {
   BaseErrorModal,
   DashboardNotVerified,
   VaultNotVerified,
+  NotBelongToVault,
 } from './components';
 
 const texts = vaultTexts.common;
@@ -39,6 +41,10 @@ export const VaultError = () => {
 
   if (error instanceof VaultOwnerNotDashboardError) {
     return <DashboardNotVerified />;
+  }
+
+  if (error instanceof DashboardNotBelongToVault) {
+    return <NotBelongToVault />;
   }
 
   if (error instanceof DisplayableError) {

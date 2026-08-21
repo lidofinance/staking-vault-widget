@@ -3,18 +3,20 @@ import { useBreakpoint, Address, Text } from '@lidofinance/lido-ui';
 import { isAddressEqual, type Address as AddressType } from 'viem';
 
 import { useDappStatus } from 'modules/web3';
-import { vaultTexts } from 'modules/vaults/consts/texts';
 
 import { OwnersListContainer, AddressesList, ListItem } from './styles';
 
 type OwnersListProps = {
   ownersList: AddressType[];
+  title: string;
+  testIdPrefix: string;
 };
 
-const { ownersListTitle } =
-  vaultTexts.actions.additionalVerification.banners.multipleOwners;
-
-export const OwnersList: FC<OwnersListProps> = ({ ownersList }) => {
+export const OwnersList: FC<OwnersListProps> = ({
+  ownersList,
+  title,
+  testIdPrefix,
+}) => {
   const { address } = useDappStatus();
   const isMobile = useBreakpoint('md');
   const listWithoutConnectedAddress = useMemo(() => {
@@ -26,12 +28,12 @@ export const OwnersList: FC<OwnersListProps> = ({ ownersList }) => {
 
   return (
     <OwnersListContainer>
-      <Text size="xxs">{ownersListTitle}</Text>
+      <Text size="xxs">{title}</Text>
       <AddressesList>
         {listWithoutConnectedAddress.map((address) => (
           <ListItem
             key={address}
-            data-testid="additionalVerification-multipleOwners-ownerAddress"
+            data-testid={`additionalVerification-${testIdPrefix}-ownerAddress`}
           >
             <Address
               style={{ fontWeight: 'bold' }}

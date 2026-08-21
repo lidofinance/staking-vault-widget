@@ -4,6 +4,7 @@ export const VERIFICATION_CONFIRM_FIELD_NAMES = {
   notOwner: 'notOwner',
   multipleOwners: 'multipleOwners',
   unguaranteedDeposits: 'unguaranteedDeposits',
+  withdrawalPermission: 'withdrawalPermission',
 } as const;
 
 export type VerificationConfirmFieldName =
@@ -28,6 +29,7 @@ export type VerificationBannerState = {
   isMultipleOwnersErrorVisible: boolean;
   isUnguaranteedDepositsWarningVisible: boolean;
   isUnguaranteedDepositsErrorVisible: boolean;
+  isWithdrawalPermissionWarningVisible: boolean;
   isTierDefault?: boolean;
   isNodeOperatorVerified?: boolean;
   isErrorBannerVisible: boolean;
@@ -36,4 +38,5 @@ export type VerificationBannerState = {
   defaultAdminList?: Address[];
   firstAdmin?: Address;
   nodeOperator?: Address;
+  otherWithdrawersList?: Address[];
 };

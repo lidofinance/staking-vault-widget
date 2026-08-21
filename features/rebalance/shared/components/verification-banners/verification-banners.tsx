@@ -17,7 +17,7 @@ type RebalanceVerificationBannersProps = {
 export const RebalanceVerificationBanners: FC<
   RebalanceVerificationBannersProps
 > = ({ variant }) => {
-  const { isForceRebalance } = useRebalanceState();
+  const { isForceRebalance, isSupplyEth } = useRebalanceState();
   const { isDisabledByNoDebtCases, hasNoPermission } =
     useRebalanceAvailability();
 
@@ -28,6 +28,9 @@ export const RebalanceVerificationBanners: FC<
   return variant === 'error' ? (
     <VerificationErrorBanners action="supply" />
   ) : (
-    <VerificationWarningBanners action="supply" />
+    <VerificationWarningBanners
+      action="supply"
+      hideWithdrawalPermissionWarning={!isSupplyEth}
+    />
   );
 };
