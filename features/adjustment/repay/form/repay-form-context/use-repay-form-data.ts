@@ -21,6 +21,7 @@ export const useRepayFormData = () => {
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
+    isWithdrawalPermissionWarningVisible,
   } = useVerificationBannerDefender('repay');
 
   const isMaxRepayableLoading =
@@ -56,6 +57,7 @@ export const useRepayFormData = () => {
           notOwner: isNotOwnerWarningVisible,
           multipleOwners: isMultipleOwnersWarningVisible,
           unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+          withdrawalPermission: isWithdrawalPermissionWarningVisible,
         },
       };
     }, [
@@ -65,6 +67,7 @@ export const useRepayFormData = () => {
       isNotOwnerWarningVisible,
       isMultipleOwnersWarningVisible,
       isUnguaranteedDepositsWarningVisible,
+      isWithdrawalPermissionWarningVisible,
     ]);
 
   const validationContext = useAwaiter(validationContextValue).awaiter;
