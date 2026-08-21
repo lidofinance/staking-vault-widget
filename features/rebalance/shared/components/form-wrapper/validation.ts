@@ -28,6 +28,7 @@ export const rebalanceFormSchema = (
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    withdrawalPermission: false,
   };
 
   const mainSchema = z

@@ -5,6 +5,7 @@ import {
   MultipleOwnersWarning,
   NotOwnerWarning,
   UnguaranteedDepositsWarning,
+  WithdrawalPermissionWarning,
 } from './content';
 import type { AdditionalVerificationAction } from './types';
 
@@ -22,6 +23,7 @@ export const VerificationWarningBanners: FC<VerificationBannersProps> = ({
       <NotOwnerWarning state={state} />
       <MultipleOwnersWarning state={state} />
       <UnguaranteedDepositsWarning state={state} />
+      <WithdrawalPermissionWarning state={state} />
     </>
   );
 };
