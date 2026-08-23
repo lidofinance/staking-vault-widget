@@ -233,7 +233,8 @@ export const useBaseVaultData = (
         isReportFresh,
         isReportMissing,
         isVaultDisconnected: !isVaultConnected && !isPendingConnect,
-        isVaultFullDisconnected: !isDashboard && !isVaultConnected,
+        isVaultFullDisconnected:
+          !isDashboard && !isVaultConnected && !isPendingOwnerDashboard,
         isVaultConnected,
         isPendingDisconnect,
         isPendingConnect,
