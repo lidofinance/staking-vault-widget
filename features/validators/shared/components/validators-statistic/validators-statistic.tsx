@@ -27,12 +27,18 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
 
   return (
     <StatisticContainer data-testid={dataTestId}>
-      <Title>
-        <Text size="xxs" color="secondary">
-          {title}
-        </Text>
-        {!!hint && <TooltipHint hint={hint} />}
-      </Title>
+      <InlineLoader
+        isLoading={isLoading || !isBigint(amount)}
+        height={18}
+        width={100}
+      >
+        <Title>
+          <Text size="xxs" color="secondary">
+            {title}
+          </Text>
+          {!!hint && <TooltipHint hint={hint} />}
+        </Title>
+      </InlineLoader>
       <InlineLoader isLoading={!isBigint(amount)} height={28} width={56}>
         <Text size="lg" strong data-testid="eth-balance">
           <FormatToken

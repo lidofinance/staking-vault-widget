@@ -25,6 +25,7 @@ const getBackgroundColor = ({
     pending_initialized: colors.backgroundSecondary,
     pending_queued: colors.backgroundSecondary,
     exited_unslashed: colors.backgroundSecondary,
+    in_queue: colors.backgroundSecondary,
   };
 
   return statusList[$status];

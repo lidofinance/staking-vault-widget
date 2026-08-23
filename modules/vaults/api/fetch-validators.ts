@@ -21,7 +21,9 @@ type ValidatorsDTO = {
   pubkey: Hex;
   index: number;
   balance: string;
+  balanceInQueue: string;
   status: ValidatorStatus;
+  isPdg: boolean;
   activatedAt: string | null;
   exitedAt: string | null;
 };
@@ -30,7 +32,9 @@ export type ValidatorsEntry = {
   pubkey: Hex;
   index: number;
   balance: bigint;
+  balanceInQueue: bigint;
   status: ValidatorStatus;
+  isPdg: boolean;
   activatedAt: Date | undefined;
   exitedAt: Date | undefined;
 };
@@ -45,6 +49,7 @@ export enum VALIDATOR_STATUSES {
   pending_initialized = 'pending_initialized',
   pending_queued = 'pending_queued',
   exited_unslashed = 'exited_unslashed',
+  in_queue = 'in_queue',
 }
 
 export type ValidatorStatus = keyof typeof VALIDATOR_STATUSES;
@@ -64,6 +69,8 @@ export type ValidatorsApiMeta = {
   blockNumber: number;
   timestamp: number;
   byStatus: Partial<Record<ValidatorStatus, number>>;
+  offBookBalance: string;
+  offBookCount: number;
 };
 
 export type ValidatorsApiPagination = {
@@ -109,13 +116,16 @@ const validatorsByStatusSchema: z.ZodType<ValidatorsApiMeta['byStatus']> =
     pending_initialized: z.number().optional(),
     pending_queued: z.number().optional(),
     exited_unslashed: z.number().optional(),
+    in_queue: z.number().optional(),
   });
 
 const validatorsDTOSchema: z.ZodType<ValidatorsDTO> = z.object({
   pubkey: hexSchema,
   index: z.number(),
   balance: digitsOnlyStringSchema,
+  balanceInQueue: digitsOnlyStringSchema,
   status: validatorStatusSchema,
+  isPdg: z.boolean(),
   activatedAt: apiDateTimeStringSchema.nullable(),
   exitedAt: apiDateTimeStringSchema.nullable(),
 });
@@ -141,6 +151,8 @@ const validatorsApiMetaSchema: z.ZodType<ValidatorsApiMeta> = z.object({
   blockNumber: z.number(),
   timestamp: z.number(),
   byStatus: validatorsByStatusSchema,
+  offBookBalance: digitsOnlyStringSchema,
+  offBookCount: z.number(),
 });
 
 const validatorsApiResponseSchema: z.ZodType<ValidatorsApiResponse> = z.object({
@@ -149,8 +161,12 @@ const validatorsApiResponseSchema: z.ZodType<ValidatorsApiResponse> = z.object({
   meta: validatorsApiMetaSchema,
 });
 
-export type FetchValidatorsMeta = Omit<ValidatorsApiMeta, 'totalBalance'> & {
+export type FetchValidatorsMeta = Omit<
+  ValidatorsApiMeta,
+  'totalBalance' | 'offBookBalance'
+> & {
   totalBalance: bigint;
+  offBookBalance: bigint;
 };
 
 export type FetchValidatorsResult = {
@@ -186,8 +202,8 @@ const fetchValidatorsApi = async (
       `[fetchValidatorsApi] Failed to fetch validators from API: ${response.status} ${response.statusText}`,
     );
   }
-  const result = await response.json();
-  return validatorsApiResponseSchema.parse(result);
+
+  return validatorsApiResponseSchema.parse(await response.json());
 };
 
 const optDate = (
@@ -206,12 +222,16 @@ const normalizeResponse = (
       blockNumber: response.meta.blockNumber,
       timestamp: response.meta.timestamp,
       byStatus: response.meta.byStatus,
+      offBookBalance: parseGwei(response.meta.offBookBalance),
+      offBookCount: response.meta.offBookCount,
     },
     table: response.data.map((validator) => ({
       pubkey: validator.pubkey,
       index: validator.index,
       balance: parseGwei(validator.balance),
+      balanceInQueue: parseGwei(validator.balanceInQueue),
       status: validator.status,
+      isPdg: validator.isPdg,
       activatedAt: optDate(validator.activatedAt),
       exitedAt: optDate(validator.exitedAt),
     })),

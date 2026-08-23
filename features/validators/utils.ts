@@ -33,6 +33,7 @@ export const getValidatorStatusTextColor = ({
     pending_initialized: colors.textSecondary,
     pending_queued: colors.textSecondary,
     exited_unslashed: colors.textSecondary,
+    in_queue: colors.textSecondary,
   };
 
   return $status ? statusList[$status] : colors.text;
