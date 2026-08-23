@@ -541,6 +541,12 @@ export const vaultTexts = {
           confirm:
             'I confirm that I understand the implications and risks and want to proceed.',
         },
+        withdrawalPermission: {
+          title: 'Withdrawal permission granted to other accounts',
+          description:
+            'The Withdraw role, which allows withdrawing ETH from this stVault, is assigned to one or more addresses besides the Vault Owner and your connected wallet.',
+          ownersListTitle: 'Accounts with withdrawal permission:',
+        },
       },
       settings: {
         notPassedIdentification:
@@ -1027,6 +1033,8 @@ export const vaultTexts = {
         loadingVault: 'Error loading stVault',
         vaultAddress: 'Invalid stVault address',
         notDashboard: 'stVault is not owned by Dashboard contract',
+        dashboardNotBelongToVault:
+          'Dashboard contract not belong to this stVault',
         notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',

@@ -42,6 +42,13 @@ export class VaultOwnerNotDashboardError extends DisplayableError {
   }
 }
 
+export class DashboardNotBelongToVault extends DisplayableError {
+  constructor() {
+    super(errorTexts.dashboardNotBelongToVault, false);
+    this.name = 'DashboardNotBelongToVault';
+  }
+}
+
 export class VaultNotCreatedByFactoryError extends DisplayableError {
   constructor() {
     super(errorTexts.notCreatedByFactory, false);

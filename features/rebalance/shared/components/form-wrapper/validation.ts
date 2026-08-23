@@ -18,16 +18,22 @@ import type {
 
 export const rebalanceFormSchema = (
   context: RebalanceFormValidationContext,
+  isSupplyEth: boolean,
 ) => {
   const overviewData = context?.overviewData;
   const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
   const vaultLiability = overviewData?.vaultLiabilityStETH ?? 0n;
   const isForceRebalance = overviewData?.isForceRebalance ?? false;
   const ethBalance = context?.ethBalance ?? 0n;
-  const additionalVerification = context?.additionalVerification ?? {
+  const additionalVerification = {
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    ...context?.additionalVerification,
+    // withdrawal permission is only risky when this rebalance actually supplies ETH
+    withdrawalPermission:
+      (context?.additionalVerification?.withdrawalPermission ?? false) &&
+      isSupplyEth,
   };
 
   const mainSchema = z
@@ -109,7 +115,7 @@ export const RebalanceFormResolver: Resolver<
         return undefined;
       });
 
-  const schema = rebalanceFormSchema(contextValue);
+  const schema = rebalanceFormSchema(contextValue, values.isSupplyEth);
   return zodResolver<
     RebalanceFormFieldValues,
     RebalanceFormAwaitableValidationContext,
