@@ -10,6 +10,7 @@ import {
   checkIsDashboard,
   VaultOwnerNotDashboardError,
   VaultNotCreatedByFactoryError,
+  DashboardNotBelongToVault,
 } from 'modules/vaults';
 import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
@@ -149,23 +150,26 @@ export const useBaseVaultData = (
         throw new VaultOwnerNotDashboardError();
       }
 
-      const [operatorGrid, predepositGuarantee, dashboard] = await Promise.all([
+      const [operatorGrid, predepositGuarantee] = await Promise.all([
         vaultModule.contracts.getContractOperatorGrid(),
         vaultModule.contracts.getContractPredepositGuarantee(),
-        vaultEntity.getDashboardContract(),
       ]);
+
+      let dashboard = await vaultEntity.getDashboardContract();
 
       const hasPendingOwner = pendingOwner !== zeroAddress;
 
+      // TODO: move to SDK
       // dashboard address is missed when call apply report after voluntary disconnection
       // but we can it get using pending owner when VaultHub transfers vaults's ownership to dashboard
+      let isPendingOwnerDashboard = false;
       if (
         !isVaultConnected &&
         !isDashboard &&
         isAddressEqual(vaultOwner, hub.address) &&
         hasPendingOwner
       ) {
-        const isPendingOwnerDashboard = await checkIsDashboard({
+        isPendingOwnerDashboard = await checkIsDashboard({
           publicClient,
           vaultModule,
           blockNumber,
@@ -173,7 +177,9 @@ export const useBaseVaultData = (
         });
 
         if (isPendingOwnerDashboard) {
-          dashboard.address = pendingOwner;
+          // @ts-expect-error remove after SDK will be updated
+          vaultEntity.dashboardAddress = pendingOwner;
+          dashboard = await vaultEntity.getDashboardContract();
         }
       }
 
@@ -200,6 +206,14 @@ export const useBaseVaultData = (
         isPendingConnectCandidate &&
         (await dashboard.read.settledGrowth(DEFAULT_CALL_OPTIONS)) <
           MAX_SANE_SETTLED_GROWTH;
+
+      if (isDashboard || isPendingOwnerDashboard) {
+        const stakingVaultAddress = await dashboard.read.stakingVault();
+
+        if (!isAddressEqual(stakingVaultAddress, vaultAddress)) {
+          throw new DashboardNotBelongToVault();
+        }
+      }
 
       return {
         address: vaultAddress,

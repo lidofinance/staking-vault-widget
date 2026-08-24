@@ -15,6 +15,7 @@ export const useSupplyFormValidationContext = () => {
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
+    isWithdrawalPermissionWarningVisible,
   } = useVerificationBannerDefender('supply');
 
   const validationContext = useMemo(() => {
@@ -35,6 +36,7 @@ export const useSupplyFormValidationContext = () => {
         notOwner: isNotOwnerWarningVisible,
         multipleOwners: isMultipleOwnersWarningVisible,
         unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+        withdrawalPermission: isWithdrawalPermissionWarningVisible,
       },
     } as SupplyFormDataValidationContext;
   }, [
@@ -45,6 +47,7 @@ export const useSupplyFormValidationContext = () => {
     isNotOwnerWarningVisible,
     isMultipleOwnersWarningVisible,
     isUnguaranteedDepositsWarningVisible,
+    isWithdrawalPermissionWarningVisible,
   ]);
 
   const isError = !!(ethBalanceQuery.error || wethBalanceQuery.error);

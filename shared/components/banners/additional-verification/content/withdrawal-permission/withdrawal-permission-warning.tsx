@@ -4,25 +4,25 @@ import { Text } from '@lidofinance/lido-ui';
 import { vaultTexts } from 'modules/vaults/consts/texts';
 
 import { NoticeContainer } from '../../../../notice-container';
-import { ConfirmAndProceed, Explanation, OwnersList } from '../../components';
+import { ConfirmAndProceed, OwnersList } from '../../components';
 import {
   type VerificationBannerState,
   VERIFICATION_CONFIRM_FIELD_NAMES,
 } from '../../types';
 
-type MultipleOwnersWarningProps = {
+type WithdrawalPermissionWarningProps = {
   state: VerificationBannerState;
 };
 
 const { title, description, ownersListTitle } =
-  vaultTexts.actions.additionalVerification.banners.multipleOwners;
+  vaultTexts.actions.additionalVerification.banners.withdrawalPermission;
 
-export const MultipleOwnersWarning: FC<MultipleOwnersWarningProps> = ({
-  state,
-}) => {
+export const WithdrawalPermissionWarning: FC<
+  WithdrawalPermissionWarningProps
+> = ({ state }) => {
   if (
-    !state.isMultipleOwnersWarningVisible ||
-    !state.defaultAdminList?.length
+    !state.isWithdrawalPermissionWarningVisible ||
+    !state.otherWithdrawersList?.length
   ) {
     return null;
   }
@@ -31,17 +31,16 @@ export const MultipleOwnersWarning: FC<MultipleOwnersWarningProps> = ({
     <NoticeContainer
       title={title}
       type="warning"
-      dataTestId="additionalVerification-multipleOwners-warning-banner"
+      dataTestId="additionalVerification-withdrawalPermission-warning-banner"
     >
       <Text size="xxs">{description}</Text>
-      <Explanation />
       <OwnersList
-        ownersList={state.defaultAdminList}
+        ownersList={state.otherWithdrawersList}
         title={ownersListTitle}
-        testIdPrefix="multipleOwners"
+        testIdPrefix="withdrawalPermission"
       />
       <ConfirmAndProceed
-        fieldName={VERIFICATION_CONFIRM_FIELD_NAMES.multipleOwners}
+        fieldName={VERIFICATION_CONFIRM_FIELD_NAMES.withdrawalPermission}
       />
     </NoticeContainer>
   );
