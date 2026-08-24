@@ -8,7 +8,6 @@ import {
   useVault,
   useVaultConfirmingRoles,
   useVaultPermission,
-  baseRetry,
   type FetchValidatorsResult,
   VaultDisconnectedError,
 } from 'modules/vaults';
@@ -86,7 +85,6 @@ export const useVaultValidatorsData = () => {
     refetchOnMount: true,
     staleTime: 300000, // 5 min,
     placeholderData: keepPreviousData,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(
         activeVault,

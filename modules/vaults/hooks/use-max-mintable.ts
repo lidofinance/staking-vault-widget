@@ -7,7 +7,7 @@ import { isBigint } from 'utils';
 import { useVault } from '../vault-context';
 import { readWithReport } from '../report';
 import { getStEthContract } from '../contracts';
-import { baseRetry, VaultDisconnectedError } from '../consts';
+import { VaultDisconnectedError } from '../consts';
 
 export type MaxMintableResult = {
   maxMintableStETH: bigint;
@@ -27,7 +27,6 @@ export const useMaxMintable = (amount?: bigint | null) => {
       { supply: amount },
     ],
     enabled: enabled,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(
         activeVault,

@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
 import {
-  baseRetry,
   readWithReport,
   useReadDashboard,
   useValidateRecipientArgs,
@@ -24,7 +23,6 @@ export const useClaimData = () => {
   const claimableFeeQuery = useQuery({
     queryKey: [...queryKeys.state, 'accruedFee'],
     enabled: !!activeVault,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
 

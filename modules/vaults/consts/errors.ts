@@ -1,3 +1,5 @@
+import { NonRetriableQueryError } from 'consts/non-retriable-query-error';
+
 import { vaultTexts } from './texts';
 
 const errorTexts = vaultTexts.common.errors.vault;
@@ -63,9 +65,9 @@ export class ReportMissingError extends DisplayableError {
   }
 }
 
-export class VaultDisconnectedError extends DisplayableError {
+export class VaultDisconnectedError extends NonRetriableQueryError {
   constructor() {
-    super(errorTexts.vaultDisconnected, false);
+    super(errorTexts.vaultDisconnected);
     this.name = 'VaultDisconnected';
   }
 }

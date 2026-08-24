@@ -10,7 +10,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
-import { baseRetry, VaultDisconnectedError } from '../consts';
+import { VaultDisconnectedError } from '../consts';
 
 import type { DashboardAbiType } from '@lidofinance/lido-ethereum-sdk/stvault';
 
@@ -53,7 +53,6 @@ export const useReadDashboard = <
     ] as const,
     enabled: !!activeVault && enabled,
     select,
-    retry: baseRetry,
     queryFn: async ({ queryKey }) => {
       const { args, functionName } = queryKey[5];
       invariant(

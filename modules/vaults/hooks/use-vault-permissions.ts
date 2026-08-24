@@ -7,7 +7,6 @@ import { useLidoSDK } from 'modules/web3';
 import { useVault } from 'modules/vaults';
 
 import {
-  baseRetry,
   VAULTS_ALL_ROLES,
   VAULTS_ALL_ROLES_MAP,
   VAULTS_NO_ROLES_MAP,
@@ -67,7 +66,6 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const query = useQuery({
     queryKey: [...queryKeys.config('roles'), 'hasRole', { roles, address }],
     enabled: !!activeVault && !!address && roles.length > 0,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
       invariant(address, 'User address is not defined');

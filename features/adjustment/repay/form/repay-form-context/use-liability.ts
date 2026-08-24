@@ -2,7 +2,6 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
 import {
-  baseRetry,
   getStEthContract,
   readWithReport,
   useVault,
@@ -17,7 +16,6 @@ export const useLiability = () => {
   return useQuery({
     queryKey: [...queryKeys.state, 'vault-liability'],
     enabled: !!activeVault,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(activeVault, '[useLiability] Active vault is not available');
 

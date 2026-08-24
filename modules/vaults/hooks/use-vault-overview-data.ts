@@ -33,8 +33,6 @@ import {
 } from 'utils';
 import { bigIntClampZero, bigIntMax, bigIntMin } from 'utils/bigint-math';
 
-import { baseRetry } from '../consts';
-
 type VaultDataArgs = {
   vault: VaultBaseInfo;
 };
@@ -547,7 +545,6 @@ export const useVaultOverviewData = () => {
     enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 0,
-    retry: baseRetry,
     queryFn: async () => {
       invariant(
         activeVault,
