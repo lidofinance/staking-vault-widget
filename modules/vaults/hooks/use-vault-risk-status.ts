@@ -21,7 +21,7 @@ export const useVaultRiskStatus = () => {
       'vault-risk-status',
       { address },
     ] as const,
-    enabled: !!(activeVault && address),
+    enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
     queryFn: async () => {
