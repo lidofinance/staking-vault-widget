@@ -33,6 +33,7 @@ export const supplyFormSchema = (
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    withdrawalPermission: false,
   };
 
   const mintSchema = z.discriminatedUnion('mintSteth', [

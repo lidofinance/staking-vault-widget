@@ -24,6 +24,7 @@ export const repayFormSchema = (
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    withdrawalPermission: false,
   };
 
   return z.intersection(
