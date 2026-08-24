@@ -17,6 +17,7 @@ import {
   type Vault7DApr,
   VAULT_TOTAL_BASIS_POINTS_BN,
   getStEthContract,
+  VaultDisconnectedError,
 } from 'modules/vaults';
 
 import { Multicall3AbiUtils } from 'abi/multicall-abi';
@@ -549,6 +550,10 @@ export const useVaultOverviewData = () => {
         activeVault,
         '[useVaultOverviewData] activeVault is not defined',
       );
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [vaultData, vaultMetrics, vault7dApr] = await Promise.all([
         getVaultData(

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { type FC, useMemo } from 'react';
 import { zeroAddress } from 'viem';
 import { useVault } from 'modules/vaults';
 
@@ -16,25 +16,33 @@ export type FundingTabsProps = {
 
 export const FundingTabs: FC<FundingTabsProps> = ({ mode }) => {
   const isFundTab = mode === 'supply';
-  const { vaultAddress } = useVault();
+  const { activeVault, vaultAddress } = useVault();
 
-  const fundingRoutes = [
-    {
-      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('supply'),
-      name: 'Supply',
-    },
-    {
-      path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('withdraw'),
-      name: 'Withdraw',
-    },
-  ];
+  const fundingRoutes = useMemo(
+    () => [
+      {
+        path: appPaths.vaults.vault(vaultAddress ?? zeroAddress).eth('supply'),
+        name: 'Supply',
+      },
+      {
+        path: appPaths.vaults
+          .vault(vaultAddress ?? zeroAddress)
+          .eth('withdraw'),
+        name: 'Withdraw',
+      },
+    ],
+    [vaultAddress],
+  );
 
   return (
     <PageWrapper>
       <VaultConnectionBanner />
-      <Switch checked={!isFundTab} routes={fundingRoutes} />
-
-      {isFundTab ? <Supply /> : <Withdraw />}
+      {!activeVault?.isVaultDisconnected && (
+        <>
+          <Switch checked={!isFundTab} routes={fundingRoutes} />
+          {isFundTab ? <Supply /> : <Withdraw />}
+        </>
+      )}
     </PageWrapper>
   );
 };

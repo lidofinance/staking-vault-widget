@@ -16,6 +16,7 @@ import { VaultProvider } from 'modules/vaults';
 import { bigIntHashKey } from 'utils/bn-int-hash-key';
 import { AddressValidationFile } from 'utils/address-validation';
 import { STRATEGY_LAZY } from 'consts/react-query-strategies';
+import { NonRetriableQueryError } from 'consts/non-retriable-query-error';
 import { TransactionModal } from 'shared/components/transaction-modal';
 
 import { AddressValidationProvider } from './address-validation-provider';
@@ -52,7 +53,8 @@ const initQueryClient = () =>
       queries: {
         ...STRATEGY_LAZY,
         queryKeyHashFn: bigIntHashKey,
-        retry: 3,
+        retry: (failureCount, error) =>
+          failureCount < 3 && !(error instanceof NonRetriableQueryError),
       },
     },
   });

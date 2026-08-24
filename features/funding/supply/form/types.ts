@@ -7,12 +7,14 @@ import type {
   VerificationConfirmFieldValues,
 } from 'shared/components/banners/additional-verification/types';
 
-export type SupplyFormDataValidationContext = {
-  ethBalance: bigint;
-  wethBalance: bigint;
-  validateRecipientArgs: ValidateRecipientArgs;
-  additionalVerification: VerificationConfirmationFlags;
-};
+export type SupplyFormDataValidationContext =
+  | {
+      ethBalance: bigint;
+      wethBalance: bigint;
+      validateRecipientArgs: ValidateRecipientArgs;
+      additionalVerification: VerificationConfirmationFlags;
+    }
+  | undefined;
 
 export type SupplyFormDataAwaitableValidationContext =
   Promise<SupplyFormDataValidationContext>;
