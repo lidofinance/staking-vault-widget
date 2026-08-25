@@ -150,14 +150,16 @@ export const useBaseVaultData = (
         throw new VaultOwnerNotDashboardError();
       }
 
-      const [operatorGrid, predepositGuarantee, dashboard] = await Promise.all([
+      const [operatorGrid, predepositGuarantee] = await Promise.all([
         vaultModule.contracts.getContractOperatorGrid(),
         vaultModule.contracts.getContractPredepositGuarantee(),
-        vaultEntity.getDashboardContract(),
       ]);
+
+      let dashboard = await vaultEntity.getDashboardContract();
 
       const hasPendingOwner = pendingOwner !== zeroAddress;
 
+      // TODO: move to SDK
       // dashboard address is missed when call apply report after voluntary disconnection
       // but we can it get using pending owner when VaultHub transfers vaults's ownership to dashboard
       let isPendingOwnerDashboard = false;
@@ -175,7 +177,9 @@ export const useBaseVaultData = (
         });
 
         if (isPendingOwnerDashboard) {
-          dashboard.address = pendingOwner;
+          // @ts-expect-error remove after SDK will be updated
+          vaultEntity.dashboardAddress = pendingOwner;
+          dashboard = await vaultEntity.getDashboardContract();
         }
       }
 
@@ -205,6 +209,7 @@ export const useBaseVaultData = (
 
       if (isDashboard || isPendingOwnerDashboard) {
         const stakingVaultAddress = await dashboard.read.stakingVault();
+
         if (!isAddressEqual(stakingVaultAddress, vaultAddress)) {
           throw new DashboardNotBelongToVault();
         }
@@ -233,7 +238,8 @@ export const useBaseVaultData = (
         isReportFresh,
         isReportMissing,
         isVaultDisconnected: !isVaultConnected && !isPendingConnect,
-        isVaultFullDisconnected: !isDashboard && !isVaultConnected,
+        isVaultFullDisconnected:
+          !isDashboard && !isVaultConnected && !isPendingOwnerDashboard,
         isVaultConnected,
         isPendingDisconnect,
         isPendingConnect,

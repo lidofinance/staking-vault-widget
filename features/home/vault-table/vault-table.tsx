@@ -95,6 +95,11 @@ type VaultTableRowProps = {
 };
 
 const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
+  // A disconnected vault has no live metrics: withholding the values makes
+  const data: VaultEntry = vault.isDisconnected
+    ? { address: vault.address }
+    : vault;
+
   return (
     <>
       <TableCell
@@ -113,19 +118,19 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
         align="right"
         data-testid={dataTestId ? `${dataTestId}-totalValueCell` : undefined}
       >
-        <FormatToken amount={vault.totalValue} />
+        <FormatToken amount={data.totalValue} />
       </TableCell>
       <TableCell
         align="right"
         data-testid={dataTestId ? `${dataTestId}-liabilityCell` : undefined}
       >
-        <FormatToken amount={vault?.liabilityStETH} />
+        <FormatToken amount={data.liabilityStETH} />
       </TableCell>
       <TableCell
         align="right"
         data-testid={dataTestId ? `${dataTestId}-netStakingAprCell` : undefined}
       >
-        <PercentCell value={vault.netStakingAprSma} />
+        <PercentCell value={data.netStakingAprSma} />
       </TableCell>
       <TableCell
         align="right"
@@ -133,16 +138,16 @@ const VaultTableRowContent = ({ vault, dataTestId }: VaultTableRowProps) => {
           dataTestId ? `${dataTestId}-carrySpreadAprCell` : undefined
         }
       >
-        <PercentCell value={vault.carrySpreadAprSma} />
+        <PercentCell value={data.carrySpreadAprSma} />
       </TableCell>
       <TableCell
         align="right"
         data-testid={dataTestId ? `${dataTestId}-healthFactorCell` : undefined}
       >
         <PercentCell
-          value={vault.healthFactor}
+          value={data.healthFactor}
           strong
-          color={getHealthFactorColor(vault.healthFactor)}
+          color={getHealthFactorColor(data.healthFactor)}
         />
       </TableCell>
     </>
