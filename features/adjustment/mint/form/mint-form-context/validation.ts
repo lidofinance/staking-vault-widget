@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
+import { zeroAddress } from 'viem';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
@@ -17,14 +18,17 @@ import type {
   MintFormValidationContextAwaitable,
 } from '../types';
 
-type SchemaOptions = MintFormValidationContext & { isSteth: boolean };
+export const mintFormSchema = (
+  context: MintFormValidationContext,
+  { isSteth }: { isSteth: boolean },
+) => {
+  const mintableStETH = context?.mintableStETH ?? 0n;
+  const mintableWstETH = context?.mintableWstETH ?? 0n;
+  const validateRecipientArgs = context?.validateRecipientArgs ?? {
+    vaultAddress: zeroAddress,
+    dashboardAddress: zeroAddress,
+  };
 
-export const mintFormSchema = ({
-  mintableStETH,
-  mintableWstETH,
-  validateRecipientArgs,
-  isSteth,
-}: SchemaOptions) => {
   const maxAmount = isSteth ? mintableStETH : mintableWstETH;
 
   return z.object({
@@ -34,16 +38,26 @@ export const mintFormSchema = ({
   });
 };
 
+// tracks context promises that already timed out once, so repeated
+// validation calls don't re-wait 4s each time for a promise that is
+// known to never settle (e.g. vault disconnected, dashboard unreadable)
+const timedOutContexts = new WeakSet<MintFormValidationContextAwaitable>();
+
 export const mintFormResolver: Resolver<
   MintFormFieldValues,
   MintFormValidationContextAwaitable,
   MintFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[MintFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 4000);
 
-  const schema = mintFormSchema({
-    ...contextValue,
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 4000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
+
+  const schema = mintFormSchema(contextValue, {
     isSteth: values.token === 'stETH',
   });
 

@@ -96,13 +96,25 @@ export const rebalanceFormSchema = (
   );
 };
 
+// tracks context promises that already timed out once, so repeated
+// validation calls (e.g. mode: 'onChange') don't re-wait 10s each time
+// for a promise that is known to never settle (e.g. vault disconnected)
+const timedOutContexts = new WeakSet<RebalanceFormAwaitableValidationContext>();
+
 export const RebalanceFormResolver: Resolver<
   RebalanceFormFieldValues,
   RebalanceFormAwaitableValidationContext,
   RebalanceFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[RebalanceFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 10000);
+
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 10000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
+
   const schema = rebalanceFormSchema(contextValue, values.isSupplyEth);
   return zodResolver<
     RebalanceFormFieldValues,

@@ -865,9 +865,9 @@ export const vaultTexts = {
           actionText: 'Connect stVault to Lido VaultHub',
         },
         disconnected: {
-          title: 'Vault is disconnected from VaultHub.',
+          title: 'stVault is disconnected from VaultHub.',
           description:
-            'This vault is disconnected from VaultHub, and some operations are not supported in this UI, including supplying ETH and minting or repaying stETH.',
+            'Since this stVault is disconnected from VaultHub, most operations are not supported in this UI.',
         },
         pendingDisconnect: {
           title: 'Pending disconnection from VaultHub',
@@ -1038,6 +1038,7 @@ export const vaultTexts = {
         notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
+        vaultDisconnected: 'stVault is disconnected.',
       },
     },
     form: {

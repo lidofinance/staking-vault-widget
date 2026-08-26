@@ -14,10 +14,12 @@ export type WithdrawFormFieldValues = {
   recipient: WithdrawFormValidatedValues['recipient'] | string;
 };
 
-export type WithdrawFormValidationContext = {
-  withdrawableEther: bigint;
-  validateRecipientArgs: ValidateRecipientArgs;
-};
+export type WithdrawFormValidationContext =
+  | {
+      withdrawableEther: bigint;
+      validateRecipientArgs: ValidateRecipientArgs;
+    }
+  | undefined;
 
 export type WithdrawFormValidationContextAwaitable =
   Promise<WithdrawFormValidationContext>;

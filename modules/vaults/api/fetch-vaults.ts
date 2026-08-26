@@ -61,6 +61,7 @@ export type VaultEntryRaw = {
   blockNumber: number;
   isReportFresh: boolean;
   isQuarantineActive: boolean;
+  isDisconnected: boolean;
   quarantinePendingTotalValueIncrease: string;
   quarantineStartTimestamp: number;
   quarantineEndTimestamp: number;
@@ -367,6 +368,8 @@ const normalizeResponse = (
       blockNumber: vault.blockNumber,
       isReportFresh: vault.isReportFresh,
       isQuarantineActive: vault.isQuarantineActive,
+      // absent on the RPC fallback path, so it degrades to `false`
+      isDisconnected: Boolean(vault.isDisconnected),
       quarantinePendingTotalValueIncrease: optBigint(
         vault.quarantinePendingTotalValueIncrease,
       ),

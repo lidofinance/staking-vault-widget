@@ -14,16 +14,20 @@ import type {
   RepayFormValidationContextAwaitable,
 } from '../types';
 
-type RepayFormSchemaOptions = RepayFormValidationContext & {
-  isSteth: boolean;
-};
-export const repayFormSchema = ({
-  isSteth,
-  maxRepayableStETH,
-  maxRepayableWstETH,
-  additionalVerification,
-}: RepayFormSchemaOptions) =>
-  z.intersection(
+export const repayFormSchema = (
+  context: RepayFormValidationContext,
+  { isSteth }: { isSteth: boolean },
+) => {
+  const maxRepayableStETH = context?.maxRepayableStETH ?? 0n;
+  const maxRepayableWstETH = context?.maxRepayableWstETH ?? 0n;
+  const additionalVerification = context?.additionalVerification ?? {
+    notOwner: false,
+    multipleOwners: false,
+    unguaranteedDeposits: false,
+    withdrawalPermission: false,
+  };
+
+  return z.intersection(
     z.object({
       amount: maxAmountSchema(isSteth ? maxRepayableStETH : maxRepayableWstETH),
 
@@ -31,6 +35,12 @@ export const repayFormSchema = ({
     }),
     verificationConfirmSchema(additionalVerification),
   );
+};
+
+// tracks context promises that already timed out once, so repeated
+// validation calls don't re-wait 4s each time for a promise that is
+// known to never settle (e.g. vault disconnected, dashboard unreadable)
+const timedOutContexts = new WeakSet<RepayFormValidationContextAwaitable>();
 
 export const repayFormResolver: Resolver<
   RepayFormFieldValues,
@@ -38,9 +48,15 @@ export const repayFormResolver: Resolver<
   RepayFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[repayFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 4000);
-  const schema = repayFormSchema({
-    ...contextValue,
+
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 4000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
+
+  const schema = repayFormSchema(contextValue, {
     isSteth: values.token === 'stETH',
   });
 
