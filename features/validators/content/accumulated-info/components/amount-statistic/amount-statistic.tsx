@@ -18,6 +18,7 @@ export const AmountStatistic = () => {
           title="In a queue"
           amount={meta?.offBookBalance}
           data-testid="in-queue-balance"
+          hideOnZero
         />
       </StatisticWrapper>
 

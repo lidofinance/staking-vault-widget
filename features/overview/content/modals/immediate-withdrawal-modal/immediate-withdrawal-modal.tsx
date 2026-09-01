@@ -12,19 +12,14 @@ import { ReactComponent as NewLine } from 'assets/icons/new-line.svg';
 import {
   useWithdrawChart,
   ModalSection,
+  NestedSections,
   OverviewModal,
   SectionDivider,
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 import { SlashingInfo } from 'features/overview/shared';
 
-import {
-  ChartContainer,
-  ChartHeading,
-  ExtendedInfo,
-  List,
-  ListItem,
-} from './styles';
+import { ChartContainer, ChartHeading, List, ListItem } from './styles';
 import { PendingUnlock } from './pending-unlock';
 import { MinimalReserveLock } from './minimal-reserve-lock';
 
@@ -107,7 +102,7 @@ export const ImmediateWithdrawalModal = () => {
         amountSymbol="ETH"
         dataTestId={`${dataTestIdPrefix}-totalValueSection`}
       >
-        <ExtendedInfo>
+        <NestedSections>
           <ModalSection
             title="Locked as Collateral"
             titleLeftDecorator={<NewLine />}
@@ -152,7 +147,7 @@ export const ImmediateWithdrawalModal = () => {
             amountSymbol="ETH"
             dataTestId={`${dataTestIdPrefix}-totalValueSection-withdrawablePartSubsection`}
           />
-        </ExtendedInfo>
+        </NestedSections>
       </ModalSection>
       <SectionDivider />
       <ModalSection

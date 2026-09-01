@@ -10,6 +10,8 @@ import { StatusesContainer } from './styles';
 
 export const AggregateStatuses = () => {
   const { meta } = useValidators();
+  // `meta.byStatus` counts `in_queue` as one bucket, without the `isPdg` split,
+  // so this stays a single "In queue" chip rather than Deposited / Pre-deposited
   const dataForRender = useMemo(() => {
     const entries = Object.entries(meta?.byStatus ?? {}) as [
       ValidatorStatus,

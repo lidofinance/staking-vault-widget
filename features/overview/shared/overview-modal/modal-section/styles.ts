@@ -41,7 +41,7 @@ export const ContentWrapper = styled.div`
   width: 100%;
 `;
 
-export const DescriptionWrapper = styled.div`
+export const DescriptionWrapper = styled.div<{ $compact?: boolean }>`
   width: fit-content;
-  margin-top: 12px;
+  margin-top: ${({ $compact }) => ($compact ? 2 : 12)}px;
 `;

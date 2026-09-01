@@ -15,3 +15,10 @@ export const OverviewSection = styled.section`
 export const SectionDivider = styled(Divider)`
   border-top-width: 2px;
 `;
+
+export const NestedSections = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+  margin-top: ${({ theme }) => theme.spaceMap.md}px;
+`;

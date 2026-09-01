@@ -19,7 +19,9 @@ export type FetchValidatorsParams = {
 
 type ValidatorsDTO = {
   pubkey: Hex;
-  index: number;
+  // null for `in_queue` rows: the deposit is still in the beacon chain queue,
+  // so the validator has no index on the consensus layer yet
+  index: number | null;
   balance: string;
   balanceInQueue: string;
   status: ValidatorStatus;
@@ -30,7 +32,7 @@ type ValidatorsDTO = {
 
 export type ValidatorsEntry = {
   pubkey: Hex;
-  index: number;
+  index: number | null;
   balance: bigint;
   balanceInQueue: bigint;
   status: ValidatorStatus;
@@ -71,6 +73,7 @@ export type ValidatorsApiMeta = {
   byStatus: Partial<Record<ValidatorStatus, number>>;
   offBookBalance: string;
   offBookCount: number;
+  pdgBalance: string;
 };
 
 export type ValidatorsApiPagination = {
@@ -121,7 +124,7 @@ const validatorsByStatusSchema: z.ZodType<ValidatorsApiMeta['byStatus']> =
 
 const validatorsDTOSchema: z.ZodType<ValidatorsDTO> = z.object({
   pubkey: hexSchema,
-  index: z.number(),
+  index: z.number().nullable(),
   balance: digitsOnlyStringSchema,
   balanceInQueue: digitsOnlyStringSchema,
   status: validatorStatusSchema,
@@ -153,6 +156,7 @@ const validatorsApiMetaSchema: z.ZodType<ValidatorsApiMeta> = z.object({
   byStatus: validatorsByStatusSchema,
   offBookBalance: digitsOnlyStringSchema,
   offBookCount: z.number(),
+  pdgBalance: digitsOnlyStringSchema,
 });
 
 const validatorsApiResponseSchema: z.ZodType<ValidatorsApiResponse> = z.object({
@@ -163,10 +167,11 @@ const validatorsApiResponseSchema: z.ZodType<ValidatorsApiResponse> = z.object({
 
 export type FetchValidatorsMeta = Omit<
   ValidatorsApiMeta,
-  'totalBalance' | 'offBookBalance'
+  'totalBalance' | 'offBookBalance' | 'pdgBalance'
 > & {
   totalBalance: bigint;
   offBookBalance: bigint;
+  pdgBalance: bigint;
 };
 
 export type FetchValidatorsResult = {
@@ -224,6 +229,7 @@ const normalizeResponse = (
       byStatus: response.meta.byStatus,
       offBookBalance: parseGwei(response.meta.offBookBalance),
       offBookCount: response.meta.offBookCount,
+      pdgBalance: parseGwei(response.meta.pdgBalance),
     },
     table: response.data.map((validator) => ({
       pubkey: validator.pubkey,
