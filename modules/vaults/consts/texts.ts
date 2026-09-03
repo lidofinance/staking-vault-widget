@@ -749,7 +749,16 @@ export const vaultTexts = {
           'are validator deposits not yet included in Total Value. This includes deposits made via the PDG Shortcut flow (unguaranteed deposits), and initial deposits made directly to a validator outside of the stVault.',
         consolidationHighlight: 'Consolidations',
         consolidationDescription:
-          'are not shown — here they are not visible to the oracle while in progress, and will appear in Total Val ue once the transferred balance arrives on the target validator.',
+          'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
+      },
+      // TODO: update texts after design will be ready
+      quarantinedHint: {
+        quarantinedHighlight: 'Quarantined',
+        quarantinedDescription:
+          'are validator deposits not yet included in Total Value. This includes deposits made via the PDG Shortcut flow (unguaranteed deposits), and initial deposits made directly to a validator outside of the stVault.',
+        consolidationHighlight: 'Consolidations',
+        consolidationDescription:
+          'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
       },
       pendingDepositsDelay: 'These values may take ~15 minutes to update.',
       totalValue: {
@@ -767,6 +776,10 @@ export const vaultTexts = {
           title: 'Off-Book deposits',
           description:
             'Off-book deposits are not included in Total Value. The values shown here may take ~10 minutes to update.',
+        },
+        quarantined: {
+          title: 'Quarantined',
+          description: 'Quarantined amount are not included in Total Value.',
         },
       },
       notStakedBalance: {

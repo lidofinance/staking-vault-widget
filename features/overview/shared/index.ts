@@ -7,3 +7,4 @@ export * from './repay-obligations';
 export * from './contract-address';
 export * from './report-updated-at';
 export * from './off-book-hint';
+export * from './quarantined-hint';

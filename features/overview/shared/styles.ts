@@ -22,3 +22,10 @@ export const NestedSections = styled.div`
   gap: ${({ theme }) => theme.spaceMap.md}px;
   margin-top: ${({ theme }) => theme.spaceMap.md}px;
 `;
+
+export const HintText = styled.span<{ $strong?: boolean }>`
+  color: #fff;
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  line-height: 20px;
+  font-weight: ${({ $strong }) => ($strong ? 700 : 'normal')};
+`;

@@ -5,7 +5,7 @@ import { calculateMaxDecimalDigits, formatDollar } from 'utils';
 import { FormatToken } from 'shared/formatters';
 
 import { InlineLoader } from 'shared/components';
-import { useVaultValidatorsMeta } from 'modules/vaults';
+import { useGrossTotalSupplied } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 import { TextWrapper } from '../../styles';
@@ -16,18 +16,17 @@ export const TotalValueUsd = () => {
   const { isLoading: isLoadingUsd, usdAmount } = useEthUsd(
     values?.totalValueETH,
   );
-  const { meta, isLoading: isLoadingValidators } = useVaultValidatorsMeta();
+  const {
+    grossTotalSupplied,
+    hasExcess,
+    isLoading: isLoadingGross,
+  } = useGrossTotalSupplied();
 
-  // Off-book deposits sit in the beacon chain queue and the oracle does not
-  // count them in Total Value yet, so TV alone understates what the vault holds.
-  // While any are pending we surface the sum instead of the dollar amount.
-  const offBookBalance = meta?.offBookBalance ?? 0n;
-
-  if (offBookBalance > 0n) {
-    const grossTotalSupplied = (values?.totalValueETH ?? 0n) + offBookBalance;
-
+  // While part of what the vault holds is missing from Total Value, that figure alone understates
+  // it, so surface the gross amount here instead of the dollar value.
+  if (hasExcess) {
     return (
-      <InlineLoader isLoading={isLoadingVault || isLoadingValidators}>
+      <InlineLoader isLoading={isLoadingGross}>
         <TextWrapper>
           <Text
             data-testid="grossTotalSuppliedLabel"

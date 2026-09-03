@@ -9,7 +9,9 @@ import {
   ReportUpdatedAt,
   SectionDivider,
   OffBookHint,
+  QuarantinedHint,
 } from 'features/overview/shared';
+import { useGrossTotalSupplied } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';
 
 const { modals, totalValueETH } = vaultTexts.metrics;
@@ -20,10 +22,11 @@ const dataTestIdPrefix = 'totalValueETH-modal';
 export const TotalValueModal = () => {
   const { values } = useVaultOverview();
   const { meta } = useVaultValidatorsMeta();
+  const { grossTotalSupplied, offBookBalance, quarantined, hasExcess } =
+    useGrossTotalSupplied();
 
-  const totalValueETHAmount = values?.totalValueETH ?? 0n;
-  const offBookBalance = meta?.offBookBalance ?? 0n;
   const hasOffBookDeposits = offBookBalance > 0n;
+  const hasQuarantined = quarantined > 0n;
 
   return (
     <OverviewModal
@@ -37,11 +40,11 @@ export const TotalValueModal = () => {
       }
     >
       <SectionDivider />
-      {hasOffBookDeposits && (
+      {hasExcess && (
         <>
           <ModalSection
             title={totalValue.grossTotalSupplied.title}
-            amountValue={totalValueETHAmount + offBookBalance}
+            amountValue={grossTotalSupplied}
             amountType="token"
             amountSymbol="ETH"
             description={totalValue.grossTotalSupplied.description}
@@ -98,6 +101,21 @@ export const TotalValueModal = () => {
             description={totalValue.offBookDeposits.description}
             compactDescription
             dataTestId={`${dataTestIdPrefix}-offBookDepositsSection`}
+          />
+        </>
+      )}
+      {hasQuarantined && (
+        <>
+          <SectionDivider />
+          <ModalSection
+            title={totalValue.quarantined.title}
+            titleRightDecorator={<Hint text={<QuarantinedHint />} />}
+            amountValue={quarantined}
+            amountType="token"
+            amountSymbol="ETH"
+            description={totalValue.quarantined.description}
+            compactDescription
+            dataTestId={`${dataTestIdPrefix}-quarantinedSection`}
           />
         </>
       )}
