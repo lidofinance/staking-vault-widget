@@ -751,14 +751,13 @@ export const vaultTexts = {
         consolidationDescription:
           'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
       },
-      // TODO: update texts after design will be ready
       quarantinedHint: {
-        quarantinedHighlight: 'Quarantined',
-        quarantinedDescription:
-          'are validator deposits not yet included in Total Value. This includes deposits made via the PDG Shortcut flow (unguaranteed deposits), and initial deposits made directly to a validator outside of the stVault.',
-        consolidationHighlight: 'Consolidations',
-        consolidationDescription:
-          'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
+        heading: 'What is quarantine?',
+        body: 'Part of the capital is temporarily held back because the Oracle cannot confirm its increase on-chain, for example after a validator consolidation or a deposit made outside the normal flow. While under quarantine, this amount does not count toward Total Value, stETH Minting Capacity, or Health Factor. A ',
+        cooldownHighlight: '72-hour cooldown period',
+        bodyTail:
+          ' is required before the capital can be released from quarantine.',
+        learnMoreLink: '', // TODO: add learnMoreLink after doc will be ready
       },
       pendingDepositsDelay: 'These values may take ~15 minutes to update.',
       totalValue: {
@@ -766,7 +765,7 @@ export const vaultTexts = {
         grossTotalSupplied: {
           title: 'Gross Total Supplied',
           description:
-            'Gross Total Supplied is the total amount of ETH supplied to the stVault. It includes ETH reflected in Total Value, as well as Off-Book Deposits \u2014 validator deposits that are not yet counted toward Total Value.',
+            'Gross Total Supplied is the total amount of ETH supplied to the stVault. It includes ETH reflected in Total Value, Off-Book Deposits — validator deposits not yet counted toward Total Value, and Quarantined Amounts — unverified on-chain capital growth.',
         },
         totalValue: { title: 'Total Value' },
         notStakedBalance: { title: 'Not staked balance' },
@@ -779,7 +778,8 @@ export const vaultTexts = {
         },
         quarantined: {
           title: 'Quarantined',
-          description: 'Quarantined amount are not included in Total Value.',
+          description:
+            'Unverified on-chain capital growth — quarantined and not included in Total Value.',
         },
       },
       notStakedBalance: {

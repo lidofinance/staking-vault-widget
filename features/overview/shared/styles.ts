@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Divider } from '@lidofinance/lido-ui';
+import { Divider, Link } from '@lidofinance/lido-ui';
 
 import { devicesHeaderMedia } from 'styles/global';
 
@@ -28,4 +28,10 @@ export const HintText = styled.span<{ $strong?: boolean }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
   font-weight: ${({ $strong }) => ($strong ? 700 : 'normal')};
+`;
+
+export const HintLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  line-height: 20px;
 `;

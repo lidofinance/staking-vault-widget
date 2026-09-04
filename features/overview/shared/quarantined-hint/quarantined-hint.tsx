@@ -1,23 +1,24 @@
 import { vaultTexts } from 'modules/vaults';
 
-import { HintText } from '../styles';
+import { HintLink, HintText } from '../styles';
 
-const {
-  quarantinedHighlight,
-  quarantinedDescription,
-  consolidationHighlight,
-  consolidationDescription,
-} = vaultTexts.metrics.modals.quarantinedHint;
+const { heading, body, cooldownHighlight, bodyTail, learnMoreLink } =
+  vaultTexts.metrics.modals.quarantinedHint;
 
 export const QuarantinedHint = () => {
   return (
     <div>
-      <HintText $strong>{quarantinedHighlight}</HintText>{' '}
-      <HintText>{quarantinedDescription}</HintText>
+      <HintText $strong>{heading}</HintText>
       <br />
-      <br />
-      <HintText $strong>{consolidationHighlight}</HintText>{' '}
-      <HintText>{consolidationDescription}</HintText>
+      <HintText>{body}</HintText>
+      <HintText $strong>{cooldownHighlight}</HintText>
+      <HintText>{bodyTail}</HintText>
+      {!!learnMoreLink && (
+        <>
+          <br />
+          <HintLink href={learnMoreLink}>Learn more</HintLink>
+        </>
+      )}
     </div>
   );
 };
