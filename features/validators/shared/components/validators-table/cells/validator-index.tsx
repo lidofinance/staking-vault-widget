@@ -7,7 +7,7 @@ import { ValidatorState } from '../components';
 import { TdStyled } from './styles';
 
 type ValidatorIndexProps = {
-  index: number;
+  index: number | null;
 };
 
 export const ValidatorIndex: FC<ValidatorIndexProps> = ({ index }) => {

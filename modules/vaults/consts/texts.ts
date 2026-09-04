@@ -676,7 +676,7 @@ export const vaultTexts = {
     },
     balance: {
       title: 'Not staked stVault Balance',
-      hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
+      hint: 'Not Staked stVault Balance is the amount of ETH held on the stVault contract balance and not deposited to any validator, therefore not earning staking rewards.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     totalLocked: {
@@ -742,6 +742,51 @@ export const vaultTexts = {
           description:
             'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
         },
+      },
+      offBookDepositsHint: {
+        offBookHighlight: 'Off-Book Deposits',
+        offBookDescription:
+          'are validator deposits not yet included in Total Value. This includes deposits made via the PDG Shortcut flow (unguaranteed deposits), and initial deposits made directly to a validator outside of the stVault.',
+        consolidationHighlight: 'Consolidations',
+        consolidationDescription:
+          'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
+      },
+      quarantinedHint: {
+        heading: 'What is quarantine?',
+        body: 'Part of the capital is temporarily held back because the Oracle cannot confirm its increase on-chain, for example after a validator consolidation or a deposit made outside the normal flow. While under quarantine, this amount does not count toward Total Value, stETH Minting Capacity, or Health Factor. A ',
+        cooldownHighlight: '72-hour cooldown period',
+        bodyTail:
+          ' is required before the capital can be released from quarantine.',
+        learnMoreLink: '', // TODO: add learnMoreLink after doc will be ready
+      },
+      pendingDepositsDelay: 'These values may take ~15 minutes to update.',
+      totalValue: {
+        excludingOffBook: 'Excluding Off-Book deposits.',
+        grossTotalSupplied: {
+          title: 'Gross Total Supplied',
+          description:
+            'Gross Total Supplied is the total amount of ETH supplied to the stVault. It includes ETH reflected in Total Value, Off-Book Deposits — validator deposits not yet counted toward Total Value, and Quarantined Amounts — unverified on-chain capital growth.',
+        },
+        totalValue: { title: 'Total Value' },
+        notStakedBalance: { title: 'Not staked balance' },
+        stakedOnValidators: { title: 'Staked on validators' },
+        pdgDeposits: { title: 'Top-ups and initial PDG deposits' },
+        offBookDeposits: {
+          title: 'Off-Book deposits',
+          description:
+            'Off-book deposits are not included in Total Value. The values shown here may take ~10 minutes to update.',
+        },
+        quarantined: {
+          title: 'Quarantined',
+          description:
+            'Unverified on-chain capital growth — quarantined and not included in Total Value.',
+        },
+      },
+      notStakedBalance: {
+        stakedOnValidators: { title: 'Staked on validators' },
+        pendingDeposits: { title: 'Pending deposits' },
+        pdgDeposits: { title: 'Top-ups and initial PDG deposits' },
+        offBookDeposits: { title: 'Off-Book deposits' },
       },
       withdrawal: {
         totalValue: {

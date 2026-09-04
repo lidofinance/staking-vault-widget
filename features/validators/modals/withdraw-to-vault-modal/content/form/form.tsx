@@ -75,7 +75,9 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   >({
     defaultValues: {
       amount: isPartial ? null : 0n,
-      index,
+      // `in_queue` validators have no index; the `z.number()` schema then keeps
+      // the form invalid, which is the right outcome — they cannot be withdrawn
+      index: index ?? undefined,
       pubkey,
       validatorWithdrawalFee,
       balance,
@@ -102,7 +104,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   useEffect(() => {
     reset({
       amount: isPartial ? null : 0n,
-      index,
+      index: index ?? undefined,
       pubkey,
       validatorWithdrawalFee,
       balance,

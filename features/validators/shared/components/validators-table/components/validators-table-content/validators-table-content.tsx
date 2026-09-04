@@ -75,7 +75,7 @@ const ValidatorTableRowContent = ({
     <>
       <ValidatorIndex index={validator.index} />
       <ValidatorPubkey pubkey={validator.pubkey} />
-      <StatusCell status={validator.status} />
+      <StatusCell validator={validator} />
       <BalanceCell amount={validator.balance} />
       <ActivateExitDate
         activateDate={validator.activatedAt}
