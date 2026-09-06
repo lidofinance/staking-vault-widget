@@ -98,7 +98,9 @@ export const useActionSubmitState = (): ActionSubmitState => {
     when({ activeVault, overviewData, hasSupply }),
   )?.tooltip;
 
-  const isUnavailable = isErrorBannerVisible || Boolean(tooltip);
+  const isUnavailable =
+    (isErrorBannerVisible && hasSupply && !isForceRebalance) ||
+    Boolean(tooltip);
 
   const isDisabled =
     isSubmitting || disabled || (isWarningBannerVisible && !isValid);

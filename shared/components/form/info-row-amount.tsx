@@ -1,7 +1,7 @@
 import { ComponentProps } from 'react';
 
 import { FormatToken } from 'shared/formatters';
-import { DATA_UNAVAILABLE } from 'consts/text';
+import { EMPTY_DATA } from 'consts/text';
 
 import { DataTableRowStyled } from './styles';
 
@@ -15,8 +15,7 @@ type InfoRowAmountProps = {
 export const InfoRowAmount = ({
   amount,
   token,
-  disabled = false,
-  noDataLabel = disabled ? '-' : DATA_UNAVAILABLE,
+  noDataLabel = EMPTY_DATA,
   ...props
 }: InfoRowAmountProps) => {
   return (

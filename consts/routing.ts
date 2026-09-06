@@ -15,8 +15,9 @@ export const appPaths = {
         steth: (mode: '[mode]' | 'mint' | 'repay') =>
           `/vaults/${address}/steth/${mode}` as const,
         disburse: `/vaults/${address}/disburse`,
-        settings: (mode: '[mode]' | 'main' | 'permissions' | 'tier') =>
-          `/vaults/${address}/settings/${mode}`,
+        settings: (
+          mode: '[mode]' | 'main' | 'permissions' | 'tier' | 'disconnect',
+        ) => `/vaults/${address}/settings/${mode}`,
         validators: `/vaults/${address}/validators`,
         rebalance: `/vaults/${address}/rebalance`,
       } as const;

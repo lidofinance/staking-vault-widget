@@ -11,12 +11,15 @@ export const HeathFactor = () => {
   const { healthFactorNumber = 0, healthFactor } = data ?? {};
 
   return (
-    <ListItem>
-      <Text size="xxs" as="span">
+    <ListItem data-testid="health-factor">
+      <Text size="xxs" as="span" data-testid="label">
         {vaultTexts.actions.rebalance.healthState.healthFactor}
       </Text>
       <InlineLoader isLoading={isPending} width={45} height={20}>
-        <HealthFactorIndicator $indicator={healthFactorNumber}>
+        <HealthFactorIndicator
+          $indicator={healthFactorNumber}
+          data-testid="value"
+        >
           {healthFactor}
         </HealthFactorIndicator>
       </InlineLoader>

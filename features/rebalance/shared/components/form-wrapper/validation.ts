@@ -18,16 +18,22 @@ import type {
 
 export const rebalanceFormSchema = (
   context: RebalanceFormValidationContext,
+  isSupplyEth: boolean,
 ) => {
   const overviewData = context?.overviewData;
   const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
   const vaultLiability = overviewData?.vaultLiabilityStETH ?? 0n;
   const isForceRebalance = overviewData?.isForceRebalance ?? false;
   const ethBalance = context?.ethBalance ?? 0n;
-  const additionalVerification = context?.additionalVerification ?? {
+  const additionalVerification = {
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    ...context?.additionalVerification,
+    // withdrawal permission is only risky when this rebalance actually supplies ETH
+    withdrawalPermission:
+      (context?.additionalVerification?.withdrawalPermission ?? false) &&
+      isSupplyEth,
   };
 
   const mainSchema = z
@@ -90,14 +96,26 @@ export const rebalanceFormSchema = (
   );
 };
 
+// tracks context promises that already timed out once, so repeated
+// validation calls (e.g. mode: 'onChange') don't re-wait 10s each time
+// for a promise that is known to never settle (e.g. vault disconnected)
+const timedOutContexts = new WeakSet<RebalanceFormAwaitableValidationContext>();
+
 export const RebalanceFormResolver: Resolver<
   RebalanceFormFieldValues,
   RebalanceFormAwaitableValidationContext,
   RebalanceFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[RebalanceFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 10000);
-  const schema = rebalanceFormSchema(contextValue);
+
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 10000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
+
+  const schema = rebalanceFormSchema(contextValue, values.isSupplyEth);
   return zodResolver<
     RebalanceFormFieldValues,
     RebalanceFormAwaitableValidationContext,

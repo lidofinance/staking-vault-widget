@@ -29,3 +29,12 @@ export { TooltipHint } from './tooltip-hint';
 export { NoticeContainer, BannerWithoutTitle } from './notice-container';
 export * from './banners';
 export { OldToNew } from './old-to-new';
+export {
+  Stepper,
+  Step,
+  type StepStatus,
+  type StepperProps,
+  type StepperStepProps,
+} from './stepper';
+export { StatusBadge } from './status-badge';
+export { PendingConnectGuard } from './pending-connect-guard';

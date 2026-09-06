@@ -15,7 +15,7 @@ export const SupplyToggle = () => {
       size="xs"
       textStrong={false}
       disabled={disabled}
-      data-testid="supplyEthToggle"
+      data-testid="supply-toggle"
       showText
     />
   );

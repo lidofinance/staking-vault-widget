@@ -14,7 +14,7 @@ export const Description = () => {
   }
 
   return (
-    <Text size="xxs" color="secondary">
+    <Text size="xxs" color="secondary" data-testid="supply-description">
       {vaultTexts.actions.rebalance.supply.description}
     </Text>
   );

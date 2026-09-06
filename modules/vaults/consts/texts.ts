@@ -1,6 +1,6 @@
 import { formatBalance } from 'utils/formats/format-balance';
 import { ONE_ETHER } from 'consts/tx';
-import { toStethValue } from 'utils';
+import { toStethValue, truncateAddress } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
 
@@ -24,6 +24,39 @@ export const vaultTexts = {
     connectVault: {
       connect: 'Awaiting for Vault connection',
       completed: 'Vault connected',
+    },
+    disconnectVault: {
+      voluntaryDisconnect: {
+        loading: 'Initiating vault disconnection from VaultHub',
+        completed: 'Vault disconnection from VaultHub has been initiated',
+      },
+      applyReport: {
+        loading: 'Applying report',
+        completed:
+          'Report applied and the vault has been disconnected from VaultHub',
+      },
+      abandonDashboard: {
+        loading: 'Abandoning Dashboard and transferring ownership',
+        completeActionText: (address: string) =>
+          `Ownership suggestion passed to ${truncateAddress({ address })}`,
+        mainActionCompleteDescriptionText:
+          'Dashboard is abandoned and ownership suggestion passed to the address',
+      },
+      acceptOwnership: {
+        loading: (address: string) =>
+          `Accepting ownership for ${truncateAddress({ address })}`,
+        completeActionText: (address: string) =>
+          `Vault ownership passed to ${truncateAddress({ address })}`,
+      },
+      withdraw: {
+        loading: 'Withdrawing available stVault balance',
+        completed: 'Available stVault balance withdrawn',
+        submit: (amount?: bigint | null) =>
+          `Withdraw ${balance(amount)}ETH` as const,
+        recipientLabel: 'Withdraw to address',
+        useOwnerAddress: `Use Vault Owner's address`,
+        useAnotherAddress: 'Use another address',
+      },
     },
     createVault: {
       loading: 'Creating vault',
@@ -226,6 +259,9 @@ export const vaultTexts = {
         },
       },
     },
+    disconnect: {
+      settingsTitle: 'stVault Disconnection from VaultHub',
+    },
     settings: {
       title: 'Main settings',
       rolesGrantLoading: (roleCount: number) => {
@@ -328,6 +364,16 @@ export const vaultTexts = {
         },
       },
       clearChanges: 'Clear changes',
+      disconnect: {
+        subTitle: 'Disconnect stVault from VaultHub',
+        subDescription:
+          '1 ETH connection deposit can be withdrawn after disconnection the stVault from the VaultHub protocol.',
+        navigation: {
+          connected: 'Learn more and disconnect',
+          disconnectInitiated: 'Continue disconnection',
+          view: 'View',
+        },
+      },
     },
     validators: {
       title: 'stVaults Validators overview',
@@ -337,7 +383,10 @@ export const vaultTexts = {
           pubKey: 'Public key',
           status: 'Status',
           actualBalance: 'Actual balance',
-          activatedExited: 'Activated / exited',
+          activatedExited: (timeZoneLabel: string) =>
+            timeZoneLabel
+              ? `Activated / exited (${timeZoneLabel})`
+              : 'Activated / exited',
           menu: '',
         },
         noValidatorsFound: 'No validators found',
@@ -422,14 +471,14 @@ export const vaultTexts = {
       description: {
         rebalance: {
           title: 'Rebalance',
-          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liability. To change the collateralization balance, you can also',
+          text: 'Rebalancing sends ETH from the stVault balance to Lido Core, receives stETH at a 1:1 ratio, and repays the received stETH to the stVault. This reduces both Total Value and stETH Liability. To adjust the collateralization balance, you can also',
           supplyLinkText: 'supply ETH',
           withdrawLinkText: 'withdraw ETH from validators',
           repayLinkText: 'repay stETH',
         },
         forceRebalance: {
           title: 'Forced rebalance',
-          text: 'Rebalancing is sending ETH from the stVault balance to Lido Core, receiving stETH with a ratio of 1:1, and repaying received stETH back to stVault meaning reduce both Total Value and stETH Liabiltiy.',
+          text: 'Rebalancing sends ETH from the stVault balance to Lido Core, receives stETH at a 1:1 ratio, and repays the received stETH to the stVault. This reduces both Total Value and stETH Liability.',
           thresholdText:
             "The stVault's Forced Rebalance Threshold has been exceeded, activating the permissionless rebalancing mechanism.",
           restoreText:
@@ -492,6 +541,12 @@ export const vaultTexts = {
           confirm:
             'I confirm that I understand the implications and risks and want to proceed.',
         },
+        withdrawalPermission: {
+          title: 'Withdrawal permission granted to other accounts',
+          description:
+            'The Withdraw role, which allows withdrawing ETH from this stVault, is assigned to one or more addresses besides the Vault Owner and your connected wallet.',
+          ownersListTitle: 'Accounts with withdrawal permission:',
+        },
       },
       settings: {
         notPassedIdentification:
@@ -503,12 +558,12 @@ export const vaultTexts = {
   // but can be used in other places as well where vault status is displayed
   metrics: {
     pendingDisconnect: {
-      title: 'Pending disconnect from Lido Core',
+      title: 'Pending disconnection from VaultHub',
       description: {
         reportIsAvailable:
-          'Lido Core disconnection has been initiated. To complete the process, apply the latest Oracle report. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
         reportIsNotAvailable:
-          'Lido Core disconnection has been initiated. Oracle report submission is currently unavailable. Please wait for the next reporting window. Once applied, the connection deposit will be unlocked and can be withdrawn from the stVault balance.',
+          'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
       },
       actions: {
         applyReport: 'Apply the latest Oracle report',
@@ -802,6 +857,24 @@ export const vaultTexts = {
       },
     },
     banners: {
+      vaultConnection: {
+        pendingConnect: {
+          title: 'stVault is waiting connection to VaultHub',
+          description:
+            'This stVault is requested to connect to Lido VaultHub to enable stETH minting and accounting, with pre-selected stETH minting terms and Lido fees.',
+          actionText: 'Connect stVault to Lido VaultHub',
+        },
+        disconnected: {
+          title: 'stVault is disconnected from VaultHub.',
+          description:
+            'Since this stVault is disconnected from VaultHub, most operations are not supported in this UI.',
+        },
+        pendingDisconnect: {
+          title: 'Pending disconnection from VaultHub',
+          description:
+            'Disconnection from VaultHub has been initiated. The stVault is now in read-only mode, and only actions required to complete the disconnection are available in this UI. The process must be completed.',
+        },
+      },
       outdatedMetrics: {
         title: (date: string) =>
           `Validator Balance Spike Detected — Metrics as of ${date}`,
@@ -818,83 +891,104 @@ export const vaultTexts = {
   roles: {
     defaultAdmin: {
       title: 'Vault Manager',
+      buttonText: 'Vault Manager',
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters.\nVault Manager role can be considered as Vault Owner for the User.\nMultiple addresses supported.',
     },
     nodeOperatorManager: {
       title: 'Node Operator Manager',
+      buttonText: 'Node Operator Manager',
       hint: 'One of two admin roles for the stVault. Allows to manage permissions and change key Vault parameters from the Node Operator perspective.\nMultiple addresses supported',
     },
     supplier: {
       title: 'Supply (fund) ETH to the stVault',
+      buttonText: 'Supply (fund) ETH to the stVault',
       hint: 'Allows Supplying ETH',
     },
     withdrawer: {
       title: 'Withdraw ETH from the stVault Balance',
+      buttonText: 'Withdraw ETH from the stVault Balance',
       hint: 'Allows Withdrawing unlocked ETH from stVault',
     },
     depositsPauser: {
       title: 'Pause Deposits to Validators',
+      buttonText: 'Pause Deposits to Validators',
       hint: 'Allows requesting the Node Operator to pause deposits to Validators to keep available ETH on the Vault balance.',
     },
     depositsResumer: {
       title: 'Resume Deposits to Validators',
+      buttonText: 'Resume Deposits to Validators',
       hint: 'Allows informing the Node Operator that deposits to Validators can be resumed.',
     },
     validatorWithdrawalTrigger: {
       title: 'Force Withdrawals of ETH from Validator',
+      buttonText: 'Force Withdrawals of ETH from Validator',
       hint: 'Allows forced withdrawing ETH from validator and returning it to Vault balance.',
     },
     validatorExitRequester: {
       title: 'Request Node Operator to Exit Validator',
+      buttonText: 'Request Node Operator to Exit Validator',
       hint: 'Allows creating a request for Node Operator to exit a validator and return all ETH from this validator to the Vault balance.',
     },
     rebalancer: {
       title: 'Re-balance unhealthy Vault',
+      buttonText: 'Rebalance Vault',
       // TODO: link support
       hint: 'Allows rebalancing stVault if Health rate < 100%',
     },
     minter: {
       title: 'Mint stETH',
+      buttonText: 'Mint stETH',
       hint: 'Allows Minting stETH (considering ReserveRatio)',
     },
     repayer: {
       title: 'Repay (burn) previously minted stETH to decrease stETH Liability',
+      buttonText:
+        'Repay (burn) previously minted stETH to decrease stETH Liability',
       hint: 'Allows Repaying stETH',
     },
     volunataryDisconnecter: {
       title: 'Voluntary disconnect Vault from Lido Vault Hub',
+      buttonText: 'Voluntary disconnect Vault from Lido Vault Hub',
       hint: 'Allows voluntary disconnecting stVault from the Lido Vault Hub.',
     },
     vaultConfiguration: {
       title: 'Request to change the stVault tier',
+      buttonText: 'Request to change the stVault tier',
       hint: 'Allows requesting Node Operator to change the stVaults tier',
     },
     assetCollector: {
       title: 'Assets Collector',
+      buttonText: 'Assets Collector',
       hint: 'ERC20 Assets Collector', // TODO: add description
     },
     nodeOperatorFeeClaimer: {
       title: 'Claim Node Operator’s Accumulated Fees',
+      buttonText: 'Claim Node Operator’s Accumulated Fees',
       hint: 'Allows claiming accumulated Node Operator’s fee.\nClaimer provides an address to receive fees.',
     },
     feeExemptRole: {
       title: `Node operator's sub-role for fee exemptions`,
+      buttonText: `Node operator's sub-role for fee exemptions`,
       hint: `Any ETH appearing on validators outside of stVaults mechanisms (e.g. side deposits or consolidations) is treated as rewards, and the Node Operator Fee applies. To classify ETH as a deposit instead, the Node Operator can adjust the validator balance accordingly.`,
     },
     unguaranteedDepositRole: {
       title: `Node operator's sub-role for unguaranteed deposit`,
+      buttonText: `Node operator's sub-role for unguaranteed deposit`,
       hint: `If PDG Policy is set to ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will perform unguaranteed deposits to validators.`,
     },
     proveUnknownValidatorsRole: {
       title: `Node operator's sub-role for proving unknown validators`,
+      buttonText: `Node operator's sub-role for proving unknown validators`,
       hint: `If PDG Policy is set to ALLOW_PROVE or ALLOW_DEPOSIT_AND_PROVE, the Node Operator can assign address that will prove unknown validators to PDG.`,
     },
     guarantor: {
       title: 'Guarantor',
+      buttonText: 'Guarantor',
       hint: 'Manages the Node Operator’s guarantor bond: top up, withdraw, and claim refunds.',
     },
     depositor: {
       title: 'Depositor',
+      buttonText: 'Depositor',
       hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },
@@ -939,8 +1033,12 @@ export const vaultTexts = {
         loadingVault: 'Error loading stVault',
         vaultAddress: 'Invalid stVault address',
         notDashboard: 'stVault is not owned by Dashboard contract',
+        dashboardNotBelongToVault:
+          'Dashboard contract not belong to this stVault',
+        notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
+        vaultDisconnected: 'stVault is disconnected.',
       },
     },
     form: {

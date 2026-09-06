@@ -21,7 +21,11 @@ export const MultipleOwnersError: FC<MultipleOwnersErrorProps> = ({
   }
 
   return (
-    <NoticeContainer title={title} type="error">
+    <NoticeContainer
+      title={title}
+      type="error"
+      dataTestId="additionalVerification-multipleOwners-error-banner"
+    >
       {state.isNodeOperatorVerified === false && (
         <UnidentifiedNodeOperator
           variant="multipleOwners"

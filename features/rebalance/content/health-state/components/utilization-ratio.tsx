@@ -10,12 +10,15 @@ export const UtilizationRatio = () => {
   const { utilizationRatio, utilizationRatioNumber } = data ?? {};
 
   return (
-    <ListItem>
-      <Text size="xxs">
+    <ListItem data-testid="utilization-ratio">
+      <Text size="xxs" data-testid="label">
         {vaultTexts.actions.rebalance.healthState.utilizationRatio}
       </Text>
       <InlineLoader isLoading={isPending} width={45} height={20}>
-        <UtilizationRatioIndicator $ratio={utilizationRatioNumber}>
+        <UtilizationRatioIndicator
+          $ratio={utilizationRatioNumber}
+          data-testid="value"
+        >
           {utilizationRatio}
         </UtilizationRatioIndicator>
       </InlineLoader>

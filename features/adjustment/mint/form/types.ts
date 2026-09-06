@@ -2,11 +2,13 @@ import type { z } from 'zod';
 import type { mintFormSchema } from './mint-form-context/validation';
 import type { ValidateRecipientArgs } from 'utils/zod-validation';
 
-export type MintFormValidationContext = {
-  mintableStETH: bigint;
-  mintableWstETH: bigint;
-  validateRecipientArgs: ValidateRecipientArgs;
-};
+export type MintFormValidationContext =
+  | {
+      mintableStETH: bigint;
+      mintableWstETH: bigint;
+      validateRecipientArgs: ValidateRecipientArgs;
+    }
+  | undefined;
 
 export type MintFormValidationContextAwaitable =
   Promise<MintFormValidationContext>;

@@ -18,8 +18,14 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   HTMLButtonElement,
   MultiplePermissionedSubmitProps
 >((props, ref) => {
-  const { children, dashboardRoles, disabled, isPermissionless, ...rest } =
-    props;
+  const {
+    children,
+    dashboardRoles,
+    disabled,
+    onClick,
+    isPermissionless,
+    ...rest
+  } = props;
   const { isAccountActive } = useDappStatus();
   const { data, isLoading } = useVaultPermissions(dashboardRoles);
 
@@ -37,11 +43,17 @@ export const MultiplePermissionedSubmitButton = forwardRef<
   );
 
   const missingRoles =
-    data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
+    data?.missingRoles.map((role) => vaultTexts.roles[role].buttonText) ?? [];
 
   return (
-    <ConnectWalletButton>
-      <SubmitButton type="submit" disabled={shouldDisable} ref={ref} {...rest}>
+    <ConnectWalletButton {...rest}>
+      <SubmitButton
+        type="submit"
+        disabled={shouldDisable}
+        ref={ref}
+        onClick={onClick}
+        {...rest}
+      >
         {shouldShowPermissionError
           ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}

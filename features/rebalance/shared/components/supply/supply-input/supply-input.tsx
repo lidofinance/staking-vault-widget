@@ -28,7 +28,7 @@ export const SupplyInput = () => {
   }
 
   return (
-    <InputContainer>
+    <InputContainer data-testid="supply-input">
       <InfoRowAmount
         title={vaultTexts.actions.rebalance.supply.available}
         amount={data}

@@ -1,3 +1,5 @@
+import { NonRetriableQueryError } from 'consts/non-retriable-query-error';
+
 import { vaultTexts } from './texts';
 
 const errorTexts = vaultTexts.common.errors.vault;
@@ -19,8 +21,6 @@ export class DisplayableError extends Error {
   }
 }
 
-//
-
 export class SendTxGetStatusError extends DisplayableError {
   constructor(error?: unknown) {
     super(vaultTexts.common.errors.tx.getStatus, false, error as Error);
@@ -28,8 +28,8 @@ export class SendTxGetStatusError extends DisplayableError {
     this.errorTitle = vaultTexts.common.errors.tx.getStatusTitle;
   }
 }
-// Vault Fetch
 
+// Vault Fetch
 export class VaultAddressError extends DisplayableError {
   constructor() {
     super(errorTexts.vaultAddress, false);
@@ -44,9 +44,30 @@ export class VaultOwnerNotDashboardError extends DisplayableError {
   }
 }
 
+export class DashboardNotBelongToVault extends DisplayableError {
+  constructor() {
+    super(errorTexts.dashboardNotBelongToVault, false);
+    this.name = 'DashboardNotBelongToVault';
+  }
+}
+
+export class VaultNotCreatedByFactoryError extends DisplayableError {
+  constructor() {
+    super(errorTexts.notCreatedByFactory, false);
+    this.name = 'VaultNotCreatedByFactory';
+  }
+}
+
 export class ReportMissingError extends DisplayableError {
   constructor() {
     super(errorTexts.reportMissing, false);
     this.name = 'ReportMissing';
+  }
+}
+
+export class VaultDisconnectedError extends NonRetriableQueryError {
+  constructor() {
+    super(errorTexts.vaultDisconnected);
+    this.name = 'VaultDisconnected';
   }
 }

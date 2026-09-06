@@ -11,6 +11,7 @@ import { useLidoSDK } from 'modules/web3';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
+import { VaultDisconnectedError } from '../consts';
 
 import type { DashboardAbiType } from '@lidofinance/lido-ethereum-sdk/stvault';
 
@@ -59,6 +60,12 @@ export const useReadDashboard = <
         activeVault,
         '[useReadWithVaultReport] activeVault is not defined',
       );
+
+      // a fully disconnected vault's dashboard address no longer points to
+      // a valid Dashboard contract, so any read against it would revert
+      if (activeVault.isVaultFullDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const prepare = activeVault.dashboard.prepare as Record<
         TFunctionName,

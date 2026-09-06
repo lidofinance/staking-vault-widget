@@ -4,10 +4,17 @@ import {
   DisplayableError,
   VaultOwnerNotDashboardError,
   useVault,
+  VaultNotCreatedByFactoryError,
+  DashboardNotBelongToVault,
 } from 'modules/vaults';
 import { vaultTexts } from 'modules/vaults/consts';
 
-import { BaseErrorModal, DashboardNotVerified } from './components';
+import {
+  BaseErrorModal,
+  DashboardNotVerified,
+  VaultNotVerified,
+  NotBelongToVault,
+} from './components';
 
 const texts = vaultTexts.common;
 
@@ -28,8 +35,16 @@ export const VaultError = () => {
   let isRetryable = true;
   let errorMessage: string = texts.errors.vault.loadingVault;
 
+  if (error instanceof VaultNotCreatedByFactoryError) {
+    return <VaultNotVerified />;
+  }
+
   if (error instanceof VaultOwnerNotDashboardError) {
     return <DashboardNotVerified />;
+  }
+
+  if (error instanceof DashboardNotBelongToVault) {
+    return <NotBelongToVault />;
   }
 
   if (error instanceof DisplayableError) {

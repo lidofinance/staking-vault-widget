@@ -14,8 +14,8 @@ export const TotalValue = () => {
   const { totalValueETH: totalValue } = data ?? {};
 
   return (
-    <Container>
-      <Text size="xxs" as="span">
+    <Container data-testid="total-value">
+      <Text size="xxs" as="span" data-testid="label">
         {vaultTexts.actions.rebalance.metrics.totalValue}
       </Text>
       <ValueContainer>
@@ -39,6 +39,7 @@ export const TotalValue = () => {
               />
             }
             isChanged={!!projected && projected?.totalValue !== totalValue}
+            dataTestId="value"
           />
         </InlineLoader>
       </ValueContainer>

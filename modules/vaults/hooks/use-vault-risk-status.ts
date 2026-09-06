@@ -6,6 +6,7 @@ import { useVault } from '../vault-context';
 import { useDappStatus } from '../../web3';
 import {
   PDG_POLICY,
+  VaultDisconnectedError,
   VAULTS_OWNER_ROLES_MAP,
   VAULTS_ROOT_ROLES_MAP,
 } from '../consts';
@@ -21,11 +22,15 @@ export const useVaultRiskStatus = () => {
       'vault-risk-status',
       { address },
     ] as const,
-    enabled: !!(activeVault && address),
+    enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
     queryFn: async () => {
       invariant(activeVault, '[useVaultRiskStatus] activeVault is not defined');
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const { dashboard, group, operatorGrid, nodeOperator } = activeVault;
       const { operator, shareLimit, tierIds } = group;
@@ -40,6 +45,7 @@ export const useVaultRiskStatus = () => {
         suppliers,
         repayers,
         rebalancer,
+        withdrawers,
         pdgPolicy,
         tier,
         ...tiersList
@@ -48,6 +54,7 @@ export const useVaultRiskStatus = () => {
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.rebalancer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.withdrawer]),
         dashboard.read.pdgPolicy(),
         operatorGrid.read.vaultTierInfo([activeVault.address]),
         ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
@@ -89,6 +96,7 @@ export const useVaultRiskStatus = () => {
         isRepayer,
         isRebalancer,
         defaultAdminList: [...defaultAdminList],
+        withdrawersList: [...withdrawers],
         nodeOperator,
         firstAdmin,
       };
@@ -107,6 +115,7 @@ export const useVaultRiskStatus = () => {
     isRepayer: data?.isRepayer,
     isRebalancer: data?.isRebalancer,
     defaultAdminList: data?.defaultAdminList,
+    withdrawersList: data?.withdrawersList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,
   };

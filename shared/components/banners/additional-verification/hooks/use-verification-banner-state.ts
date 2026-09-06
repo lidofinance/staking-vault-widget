@@ -1,3 +1,5 @@
+import { isAddressEqual } from 'viem';
+
 import { useDappStatus } from 'modules/web3';
 import { useVaultRiskStatus } from 'modules/vaults';
 
@@ -14,7 +16,7 @@ export const useVerificationBannerDefender = (
   // DEV only feature - will throw if on in production environment
   const SECURITY_OVERRIDE_DEV_ENV = !config.dangerouslyDisableVaultSecurity;
 
-  const { isDappActive } = useDappStatus();
+  const { isDappActive, address } = useDappStatus();
   const {
     isVaultOwner,
     isMultipleOwners,
@@ -24,6 +26,7 @@ export const useVerificationBannerDefender = (
     isTierDefault,
     isNodeOperatorVerified,
     defaultAdminList,
+    withdrawersList,
     nodeOperator,
     isUnguaranteedDepositsAllowed,
     isSuccess,
@@ -90,6 +93,19 @@ export const useVerificationBannerDefender = (
       isNodeOperatorVerified === false,
   );
 
+  const otherWithdrawersList = (withdrawersList ?? []).filter(
+    (withdrawer) =>
+      (!address || !isAddressEqual(withdrawer, address)) &&
+      !defaultAdminList?.some((admin) => isAddressEqual(admin, withdrawer)),
+  );
+
+  const isWithdrawalPermissionWarningVisible = Boolean(
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
+      hasActionPermissionOrOwnership &&
+      otherWithdrawersList.length > 0,
+  );
+
   return {
     action,
     isReady: isSuccess,
@@ -99,12 +115,14 @@ export const useVerificationBannerDefender = (
     isMultipleOwnersErrorVisible,
     isUnguaranteedDepositsWarningVisible,
     isUnguaranteedDepositsErrorVisible,
+    isWithdrawalPermissionWarningVisible,
     isTierDefault,
     isNodeOperatorVerified,
     confirmationRequired: {
       notOwner: isNotOwnerWarningVisible,
       multipleOwners: isMultipleOwnersWarningVisible,
       unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+      withdrawalPermission: isWithdrawalPermissionWarningVisible,
     },
     isErrorBannerVisible:
       isNotOwnerErrorVisible ||
@@ -113,9 +131,11 @@ export const useVerificationBannerDefender = (
     isWarningBannerVisible:
       isNotOwnerWarningVisible ||
       isMultipleOwnersWarningVisible ||
-      isUnguaranteedDepositsWarningVisible,
+      isUnguaranteedDepositsWarningVisible ||
+      isWithdrawalPermissionWarningVisible,
     defaultAdminList,
     firstAdmin,
     nodeOperator,
+    otherWithdrawersList,
   };
 };

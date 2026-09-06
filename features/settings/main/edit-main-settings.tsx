@@ -1,12 +1,14 @@
 import { Text } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { useVault, vaultTexts } from 'modules/vaults';
+import { PendingConnectGuard } from 'shared/components';
 
 import {
   Addresses,
   Pdg,
   VotingList,
   MainSettingsAction,
+  DisconnectVault,
 } from 'features/settings/main/content';
 import {
   SectionContainer,
@@ -19,21 +21,37 @@ import {
 
 const texts = vaultTexts.actions.settings;
 export const EditMainSettings = () => {
+  const { activeVault } = useVault();
+  const { isVaultDisconnected = false, isPendingDisconnect = false } =
+    activeVault ?? {};
+  const showMainSettings = !(isVaultDisconnected || isPendingDisconnect);
+
   return (
-    <MainSettingsDataProvider>
-      <MainSettingsProvider>
+    <>
+      {showMainSettings && (
+        <MainSettingsDataProvider>
+          <MainSettingsProvider>
+            <ContentWrapper>
+              <SectionContainer>
+                <Text size="lg" strong data-testid="mainSettingsTitle">
+                  {texts.title}
+                </Text>
+                <Pdg />
+                <Addresses />
+                <VotingList />
+                <MainSettingsAction />
+              </SectionContainer>
+            </ContentWrapper>
+          </MainSettingsProvider>
+        </MainSettingsDataProvider>
+      )}
+      <PendingConnectGuard>
         <ContentWrapper>
           <SectionContainer>
-            <Text size="lg" strong data-testid="mainSettingsTitle">
-              {texts.title}
-            </Text>
-            <Pdg />
-            <Addresses />
-            <VotingList />
-            <MainSettingsAction />
+            <DisconnectVault />
           </SectionContainer>
         </ContentWrapper>
-      </MainSettingsProvider>
-    </MainSettingsDataProvider>
+      </PendingConnectGuard>
+    </>
   );
 };

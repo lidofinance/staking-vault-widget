@@ -21,7 +21,11 @@ export const UnguaranteedDepositsError: FC<UnguaranteedDepositsErrorProps> = ({
   }
 
   return (
-    <NoticeContainer title="Unguaranteed deposits allowed" type="error">
+    <NoticeContainer
+      title="Unguaranteed deposits allowed"
+      type="error"
+      dataTestId="additionalVerification-unguaranteedDeposits-error-banner"
+    >
       <Text size="xxs">
         Operator {state.nodeOperator.toLowerCase()} has not passed the{' '}
         <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>, and
