@@ -125,6 +125,7 @@ export default withBundleAnalyzer({
 
     config.resolve.fallback = {
       porto: false,
+      accounts: false,
       '@gemini-wallet/core': false,
       '@base-org/account': false,
 
