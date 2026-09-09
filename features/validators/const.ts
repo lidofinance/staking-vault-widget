@@ -1,5 +1,5 @@
 import { ONE_ETHER } from 'consts/tx';
-import { VALIDATOR_STATUSES, type ValidatorStatus } from 'modules/vaults';
+import type { ValidatorStatus } from 'modules/vaults';
 
 export enum VALIDATOR_MODALS {
   withdrawalToVault = 'withdrawalToVault',
@@ -24,9 +24,24 @@ export type ValidatorViewStatus =
   | 'deposited'
   | 'pre_deposited';
 
+// Written out by hand on purpose: this module and `fetch-validators.ts` import
+// each other, so spreading the `VALIDATOR_STATUSES` enum here read an
+// uninitialized binding and silently produced a map with only the keys written
+// below it. Keep the keys explicit — do not "simplify" this back to a spread.
+// The `Record<ValidatorViewStatus, string>` annotation still fails compilation
+// if the API enum gains a status.
 export const VALIDATORS_VIEW_STATUSES: Record<ValidatorViewStatus, string> = {
-  ...VALIDATOR_STATUSES,
-  // fallback wherever `isPdg` is unknown: aggregated counters and the filter
+  active_ongoing: 'active_ongoing',
+  active_exiting: 'active_exiting',
+  active_slashed: 'active_slashed',
+  exited_slashed: 'exited_slashed',
+  exited_unslashed: 'exited_unslashed',
+  withdrawal_possible: 'withdrawal_possible',
+  withdrawal_done: 'withdrawal_done',
+  pending_initialized: 'pending_initialized',
+  pending_queued: 'pending_queued',
+  // `in_queue` is the fallback wherever `isPdg` is unknown: aggregated counters
+  // and the filter
   in_queue: 'in queue',
   deposited: 'deposited',
   pre_deposited: 'pre-deposited',
