@@ -377,9 +377,7 @@ export const vaultTexts = {
       permissions: {
         vaultOwnerTitle: 'Vault Owner Permissions',
         vaultOwnerDescription:
-          'Delegate specific stVault permissions to other addresses without transferring ownership. ' +
-          'Each address can only perform actions allowed by its assigned permissions. Adding permissions ' +
-          'such as FUND_ROLE or MINT_ROLE does not create a new accounting level.',
+          'Delegate specific stVault permissions to other addresses without transferring ownership. Each address can only perform actions allowed by its assigned permissions. Adding permissions such as FUND_ROLE or MINT_ROLE does not create a new accounting level.',
         custodyBadge: 'Custody',
         custodyLegend:
           'means that the address gains control over assets in the stVault.',
@@ -554,9 +552,7 @@ export const vaultTexts = {
         custodyPermission: {
           title: 'Another address can access assets you add to this vault',
           description:
-            'This vault grants WITHDRAW_ROLE or MINT_ROLE to an address other than yours. Any ETH or ' +
-            'stETH you supply, repay, or add during rebalancing can also be withdrawn or minted against ' +
-            'by that address.',
+            'This vault grants WITHDRAW_ROLE or MINT_ROLE to an address other than yours. Any ETH or stETH you supply, repay, or add during rebalancing can also be withdrawn or minted against by that address.',
         },
       },
       settings: {
