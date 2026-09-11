@@ -17,22 +17,27 @@ import {
 type ModalSectionProps = {
   title?: string;
   titleLeftDecorator?: ReactNode;
+  titleRightDecorator?: ReactNode;
   subTitle?: string;
   amountType?: 'percent' | 'token';
   amountValue?: string | bigint;
   amountSymbol?: 'stETH' | 'ETH';
   description?: string;
+  // renders the description tight under the row, for the inline '~10 minutes' footnotes
+  compactDescription?: boolean;
   dataTestId?: string;
 };
 
 export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
   title,
   titleLeftDecorator = null,
+  titleRightDecorator = null,
   subTitle,
   amountType,
   amountValue,
   amountSymbol,
   description,
+  compactDescription = false,
   children,
   dataTestId,
 }) => {
@@ -45,7 +50,10 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
         {!!title && (
           <TitleWrapper>
             <Title>
-              <HeaderText as="h3">{title}</HeaderText>
+              <HeaderText as="h3">
+                {title}
+                {titleRightDecorator}
+              </HeaderText>
               <Text size="xs">
                 {!amountType && '-'}
                 {amountType === 'percent' && <>{amountValue}</>}
@@ -66,7 +74,7 @@ export const ModalSection: FC<PropsWithChildren<ModalSectionProps>> = ({
           </TitleWrapper>
         )}
         {!!description && (
-          <DescriptionWrapper>
+          <DescriptionWrapper $compact={compactDescription}>
             <Text color="secondary" size="xxs">
               {description}
             </Text>

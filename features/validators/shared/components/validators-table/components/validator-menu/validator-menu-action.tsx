@@ -26,11 +26,14 @@ export const ValidatorMenuAction: FC<ValidatorMenuActionProps> = ({
   const onCloseMenu = useCallback(() => {
     const { pubkey, balance, index } = validator;
 
+    if (index === null) return;
+
     openModal({ currentModal: modal, balance, pubKey: pubkey, index });
     onPopupClose();
   }, [modal, onPopupClose, openModal, validator]);
 
-  if (!hasPermission) {
+  // `in_queue` validators have no index yet, so there is nothing to act on
+  if (!hasPermission || validator.index === null) {
     return null;
   }
 
