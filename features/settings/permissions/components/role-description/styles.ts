@@ -33,8 +33,15 @@ export const WarningIcon = styled(Question)`
   }
 `;
 
-export const ContractRole = styled.p`
+export const ContractRoleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  flex-wrap: wrap;
   margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
+`;
+
+export const ContractRole = styled.p`
   font-feature-settings:
     'liga' off,
     'clig' off;
