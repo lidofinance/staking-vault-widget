@@ -76,6 +76,15 @@ export const NO_MANAGER_PERMISSION_LIST: VAULTS_NO_ROLES[] = [
   'proveUnknownValidatorsRole',
 ] as const;
 
+export const CUSTODY_ROLES_LIST: VAULT_OWNER_ROLES[] = [
+  'withdrawer',
+  'minter',
+  'rebalancer',
+] as const;
+
+export const isCustodyRole = (role: string): boolean =>
+  (CUSTODY_ROLES_LIST as readonly string[]).includes(role);
+
 export const ROLES_TO_CONTRACT_CONSTANT: {
   [K in VAULT_OWNER_ROLES | VAULTS_NO_ROLES]: string;
 } = {

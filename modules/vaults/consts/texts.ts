@@ -374,6 +374,14 @@ export const vaultTexts = {
           view: 'View',
         },
       },
+      permissions: {
+        vaultOwnerTitle: 'Vault Owner Permissions',
+        vaultOwnerDescription:
+          'Delegate specific stVault permissions to other addresses without transferring ownership. Each address can only perform actions allowed by its assigned permissions. Adding permissions such as FUND_ROLE or MINT_ROLE does not create a new accounting level.',
+        custodyBadge: 'Custody',
+        custodyLegend:
+          'means that the address gains control over assets in the stVault.',
+      },
     },
     validators: {
       title: 'stVaults Validators overview',
@@ -541,11 +549,10 @@ export const vaultTexts = {
           confirm:
             'I confirm that I understand the implications and risks and want to proceed.',
         },
-        withdrawalPermission: {
-          title: 'Withdrawal permission granted to other accounts',
+        custodyPermission: {
+          title: 'Another address can access assets you add to this vault',
           description:
-            'The Withdraw role, which allows withdrawing ETH from this stVault, is assigned to one or more addresses besides the Vault Owner and your connected wallet.',
-          ownersListTitle: 'Accounts with withdrawal permission:',
+            'This vault grants WITHDRAW_ROLE or MINT_ROLE to an address other than yours. Any ETH or stETH you supply, repay, or add during rebalancing can also be withdrawn or minted against by that address.',
         },
       },
       settings: {

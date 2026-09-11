@@ -5,18 +5,19 @@ import {
   MultipleOwnersWarning,
   NotOwnerWarning,
   UnguaranteedDepositsWarning,
-  WithdrawalPermissionWarning,
+  CustodyPermissionWarning,
 } from './content';
 import type { AdditionalVerificationAction } from './types';
 
 type VerificationBannersProps = {
   action: AdditionalVerificationAction;
-  hideWithdrawalPermissionWarning?: boolean;
+  /** rebalance: the `Supply ETH` toggle is off */
+  hideCustodyPermissionWarning?: boolean;
 };
 
 export const VerificationWarningBanners: FC<VerificationBannersProps> = ({
   action,
-  hideWithdrawalPermissionWarning,
+  hideCustodyPermissionWarning,
 }) => {
   const state = useVerificationBannerDefender(action);
 
@@ -25,8 +26,8 @@ export const VerificationWarningBanners: FC<VerificationBannersProps> = ({
       <NotOwnerWarning state={state} />
       <MultipleOwnersWarning state={state} />
       <UnguaranteedDepositsWarning state={state} />
-      {!hideWithdrawalPermissionWarning && (
-        <WithdrawalPermissionWarning state={state} />
+      {!hideCustodyPermissionWarning && (
+        <CustodyPermissionWarning state={state} />
       )}
     </>
   );

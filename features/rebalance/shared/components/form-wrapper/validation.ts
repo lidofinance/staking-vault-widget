@@ -30,9 +30,8 @@ export const rebalanceFormSchema = (
     multipleOwners: false,
     unguaranteedDeposits: false,
     ...context?.additionalVerification,
-    // withdrawal permission is only risky when this rebalance actually supplies ETH
-    withdrawalPermission:
-      (context?.additionalVerification?.withdrawalPermission ?? false) &&
+    custodyPermission:
+      (context?.additionalVerification?.custodyPermission ?? false) &&
       isSupplyEth,
   };
 

@@ -30,7 +30,7 @@ export const RebalanceVerificationBanners: FC<
   ) : (
     <VerificationWarningBanners
       action="supply"
-      hideWithdrawalPermissionWarning={!isSupplyEth}
+      hideCustodyPermissionWarning={!isSupplyEth}
     />
   );
 };
