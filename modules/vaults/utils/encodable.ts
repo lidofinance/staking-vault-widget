@@ -1,4 +1,11 @@
-import { encodeFunctionData, type Abi, type Address, type Hex } from 'viem';
+import {
+  encodeFunctionData,
+  type Abi,
+  type Address,
+  type ContractFunctionArgs,
+  type ContractFunctionName,
+  type Hex,
+} from 'viem';
 
 // copy from view internals
 const getFunctionParameters = (values: unknown[]) => {
@@ -12,49 +19,47 @@ const getFunctionParameters = (values: unknown[]) => {
 type ContractType = {
   address: Address;
   abi: Abi;
-  read?: {
-    [functionName: string]: (...args: any[]) => Promise<any>;
-  };
-  simulate?: {
-    [functionName: string]: (...args: any[]) => Promise<any>;
-  };
+  read?: object;
+  simulate?: object;
 };
 
-type EncodableContract<
-  TContract extends ContractType,
-  TSimulate extends
-    TContract['simulate'] = TContract['simulate'] extends undefined
-    ? never
-    : TContract['simulate'],
-  TRead extends TContract['read'] = TContract['read'] extends undefined
-    ? never
-    : TContract['read'],
-  TMethods extends TSimulate & TRead = TSimulate & TRead,
-  TFunctionName extends keyof TMethods = keyof TMethods,
-> = TContract & {
+// read + simulate cover all four mutabilities
+type Mutability = 'pure' | 'view' | 'nonpayable' | 'payable';
+
+// Function arguments tuple for K, coerced to a tuple (ContractFunctionArgs
+// widens to `unknown` while TContract['abi'] is still the generic `Abi`).
+type FnArgs<
+  TAbi extends Abi,
+  K extends ContractFunctionName<TAbi, Mutability>,
+> =
+  ContractFunctionArgs<TAbi, Mutability, K> extends infer TArgs extends
+    readonly unknown[]
+    ? TArgs
+    : readonly unknown[];
+
+// no inputs -> [options?]; has inputs -> [args, options?]
+type CallParameters<TArgs extends readonly unknown[]> =
+  TArgs extends readonly []
+    ? [options?: { value?: bigint }]
+    : [args: TArgs, options?: { value?: bigint }];
+
+// Derived directly from the ABI (via viem's ContractFunctionName /
+// ContractFunctionArgs) rather than from the contract's read/simulate function
+// types, to keep type instantiation shallow.
+type EncodableContract<TContract extends ContractType> = TContract & {
   prepare: {
-    [K in TFunctionName]: (
-      ...args: Parameters<
-        TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
-      >
+    [K in ContractFunctionName<TContract['abi'], Mutability>]: (
+      ...args: CallParameters<FnArgs<TContract['abi'], K>>
     ) => {
       address: TContract['address'];
       abi: TContract['abi'];
       functionName: K;
-      args: Parameters<
-        TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
-      >[0] extends readonly unknown[]
-        ? Parameters<
-            TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
-          >[0]
-        : undefined;
+      args: FnArgs<TContract['abi'], K>;
     };
   };
   encode: {
-    [K in TFunctionName]: (
-      ...args: Parameters<
-        TMethods[K] extends (...args: any[]) => any ? TMethods[K] : never
-      >
+    [K in ContractFunctionName<TContract['abi'], Mutability>]: (
+      ...args: CallParameters<FnArgs<TContract['abi'], K>>
     ) => {
       to: TContract['address'];
       data: Hex;

@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { Address } from 'viem';
+import type { Address } from 'viem';
 
 import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
@@ -61,14 +61,15 @@ export const usePermissionsFormData = () => {
       invariant(activeVault, 'Active vault is not defined');
 
       // TODO: can be changed to `VaultViewer.geRoleMembers`
-      const result = await publicClient.multicall({
-        allowFailure: false,
-        contracts: EDITABLE_ROLES_LIST.map((role) =>
-          activeVault.dashboard.prepare.getRoleMembers([
-            VAULTS_ALL_ROLES_MAP[role],
-          ]),
-        ),
-      });
+      const result: readonly (readonly Address[])[] =
+        await publicClient.multicall({
+          allowFailure: false,
+          contracts: EDITABLE_ROLES_LIST.map((role) =>
+            activeVault.dashboard.prepare.getRoleMembers([
+              VAULTS_ALL_ROLES_MAP[role],
+            ]),
+          ),
+        });
 
       const pdgContract = activeVault.predepositGuarantee;
       const [noGuarantor, noDepositor] = await Promise.all([
@@ -77,7 +78,7 @@ export const usePermissionsFormData = () => {
       ]);
 
       return {
-        rolesList: result.map((item, index) => ({
+        rolesList: result.map((item, index: number) => ({
           permissionName: EDITABLE_ROLES_LIST[index],
           addressList: [...item],
         })),

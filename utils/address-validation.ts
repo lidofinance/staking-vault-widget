@@ -1,8 +1,8 @@
-import { Address } from 'viem';
+import { type Address, isAddressEqual } from 'viem';
 
 // TODO: move to utilsApi?
 export interface AddressValidationFile {
-  addresses: string[];
+  addresses: Address[];
   isBroken?: boolean;
 }
 
@@ -12,14 +12,10 @@ export const validateAddressLocally = (
   validationFile: AddressValidationFile,
 ): { isValid: boolean } => {
   if (!address) return { isValid: true };
-
-  const normalizedAddress = address.toLowerCase();
-
-  const isNotValid = validationFile.addresses.some(
-    (addr) => addr.toLowerCase() === normalizedAddress,
-  );
+  const { addresses } = validationFile;
+  const isValid = addresses.some((addr) => isAddressEqual(addr, address));
 
   return {
-    isValid: !isNotValid,
+    isValid,
   };
 };
