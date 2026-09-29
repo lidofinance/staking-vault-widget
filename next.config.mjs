@@ -44,6 +44,13 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 export default withBundleAnalyzer({
   basePath,
   generateBuildId,
+
+  // Disable the built-in Next.js Image Optimization endpoint to prevent
+  // requests from reaching the image optimizer. This app does not use `next/image`.
+  images: {
+    loader: 'custom',
+  },
+
   // IPFS next.js configuration reference:
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,
@@ -72,9 +79,14 @@ export default withBundleAnalyzer({
   },
   webpack(config) {
     config.module.rules.push(
-      // Teach webpack to import svg and md files
+      // Teach webpack to import svg and md files.
+      // The `issuer` restricts SVG-as-React-component transformation to imports
+      // from JS/TS code only. SVGs referenced from CSS (e.g. url(...) inside
+      // @lidofinance/lido-app-ui styles) fall through to Next.js built-in
+      // asset handling instead of being broken by svgr.
       {
         test: /\.svg$/,
+        issuer: /\.[jt]sx?$/,
         use: ['@svgr/webpack', 'url-loader'],
       },
       {
