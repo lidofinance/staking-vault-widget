@@ -383,6 +383,7 @@ export const vaultTexts = {
           pubKey: 'Public key',
           status: 'Status',
           actualBalance: 'Actual balance',
+          inQueue: 'In a queue',
           activatedExited: (timeZoneLabel: string) =>
             timeZoneLabel
               ? `Activated / exited (${timeZoneLabel})`

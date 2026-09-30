@@ -15,9 +15,15 @@ export const AmountStatistic = () => {
           data-testid="deposited-balance"
         />
         <ValidatorsStatistic
-          title="In a queue"
+          title="Top-ups and initial PDG deposits"
+          amount={meta?.pdgBalance}
+          data-testid="top-up-balance"
+          hideOnZero
+        />
+        <ValidatorsStatistic
+          title="Off-Book deposits"
           amount={meta?.offBookBalance}
-          data-testid="in-queue-balance"
+          data-testid="off-book-balance"
           hideOnZero
         />
       </StatisticWrapper>
