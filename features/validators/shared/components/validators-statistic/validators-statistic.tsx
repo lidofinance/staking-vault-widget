@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
 import { useEthUsd } from 'shared/hooks/use-eth-usd';
@@ -6,11 +6,11 @@ import { FormatToken, FormatPrice } from 'shared/formatters';
 import { InlineLoader, TooltipHint } from 'shared/components';
 import { isBigint } from 'utils';
 
-import { StatisticContainer, Title } from './styles';
+import { StatisticContainer, Title, TitleText } from './styles';
 
 type ValidatorsStatisticProps = {
   title: string;
-  hint?: string;
+  hint?: ReactNode;
   amount: bigint | undefined;
   hideOnZero?: boolean;
   'data-testid'?: string;
@@ -39,10 +39,10 @@ export const ValidatorsStatistic: FC<ValidatorsStatisticProps> = ({
         width={100}
       >
         <Title>
-          <Text size="xxs" color="secondary">
+          <TitleText size="xxs" color="secondary">
             {title}
-          </Text>
-          {!!hint && <TooltipHint hint={hint} />}
+          </TitleText>
+          {!!hint && <TooltipHint size={20} hint={hint} />}
         </Title>
       </InlineLoader>
       <InlineLoader isLoading={!isBigint(amount)} height={28} width={56}>

@@ -1,4 +1,8 @@
-import { ValidatorsStatistic, LastUpdated } from 'features/validators/shared';
+import {
+  ValidatorsStatistic,
+  LastUpdated,
+  OffBookDepositsHint,
+} from 'features/validators/shared';
 import { useValidators } from 'features/validators/contexts';
 
 import { Container, StatisticWrapper } from './styles';
@@ -22,6 +26,7 @@ export const AmountStatistic = () => {
         />
         <ValidatorsStatistic
           title="Off-Book deposits"
+          hint={<OffBookDepositsHint />}
           amount={meta?.offBookBalance}
           data-testid="off-book-balance"
           hideOnZero
