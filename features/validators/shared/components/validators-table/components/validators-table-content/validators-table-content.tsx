@@ -54,6 +54,9 @@ const getTableHeaders = (timeZoneLabel: string): TableHeader[] => [
     sortKey: ValidatorsOrderByEnum.BALANCE,
   },
   {
+    title: header.inQueue,
+  },
+  {
     title: header.activatedExited(timeZoneLabel),
     sortKey: ValidatorsOrderByEnum.ACTIVATED_AT,
   },
@@ -75,8 +78,12 @@ const ValidatorTableRowContent = ({
     <>
       <ValidatorIndex index={validator.index} />
       <ValidatorPubkey pubkey={validator.pubkey} />
-      <StatusCell status={validator.status} />
+      <StatusCell validator={validator} />
       <BalanceCell amount={validator.balance} />
+      <BalanceCell
+        amount={validator.balanceInQueue}
+        testId="balance-in-queue"
+      />
       <ActivateExitDate
         activateDate={validator.activatedAt}
         exitDate={validator.exitedAt}
