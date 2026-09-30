@@ -15,7 +15,7 @@ export const BalanceCell: FC<BalanceCellProps> = ({
   testId = 'balance',
 }) => {
   return (
-    <TdStyled data-testid={testId}>
+    <TdStyled align="right" data-testid={testId}>
       <Text size="xxs">
         <FormatToken
           amount={amount}
