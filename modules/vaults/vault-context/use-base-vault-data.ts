@@ -1,13 +1,16 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { type Address, zeroAddress, isAddressEqual } from 'viem';
-import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
+import { type Address, zeroAddress } from 'viem';
+import { SDKError } from '@lidofinance/lido-ethereum-sdk/common';
+import {
+  LidoSDKVaultEntity,
+  VAULT_ERROR_REASON,
+} from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { useLidoSDK } from 'modules/web3';
 
 import {
   fetchReport,
-  checkIsDashboard,
   VaultOwnerNotDashboardError,
   VaultNotCreatedByFactoryError,
   DashboardNotBelongToVault,
@@ -22,7 +25,7 @@ import {
   VAULT_REPORT_REFETCH_INTERVAL_MS,
 } from '../consts';
 
-import type { VaultBaseInfo } from '../types';
+import type { Dashboard, VaultBaseInfo } from '../types';
 
 const waitForRpcBlock = async (
   publicClient: any,
@@ -38,6 +41,31 @@ const waitForRpcBlock = async (
       return latestRpcBlock;
     }
     await new Promise((resolve) => setTimeout(resolve, BLOCK_POLLING_INTERVAL));
+  }
+};
+
+const resolveDashboard = async (
+  vaultEntity: LidoSDKVaultEntity,
+  options: { blockNumber: bigint },
+): Promise<Dashboard> => {
+  try {
+    return await vaultEntity.getDashboardContract(options);
+  } catch (error) {
+    if (
+      error instanceof SDKError &&
+      error.reason === VAULT_ERROR_REASON.OWNER_NOT_DASHBOARD
+    ) {
+      throw new VaultOwnerNotDashboardError();
+    }
+
+    if (
+      error instanceof SDKError &&
+      error.reason === VAULT_ERROR_REASON.DASHBOARD_NOT_BELONG_TO_VAULT
+    ) {
+      throw new DashboardNotBelongToVault();
+    }
+
+    throw error;
   }
 };
 
@@ -67,7 +95,6 @@ export const useBaseVaultData = (
       const vaultEntity = new LidoSDKVaultEntity({
         bus: vaultModule,
         vaultAddress,
-        skipDashboardCheck: true,
       });
 
       const blockNumber = await awaitWithTimeout(
@@ -135,53 +162,23 @@ export const useBaseVaultData = (
 
       // we might not have a report even when fresh is not true
       const isReportMissing = !report && !isReportFresh;
+      const hasPendingOwner = pendingOwner !== zeroAddress;
 
-      const supposedDashboardAddress =
-        connection.owner !== zeroAddress ? connection.owner : vaultOwner;
-      const isDashboard = await checkIsDashboard({
-        publicClient,
-        vaultModule,
+      // Dashboard resolution is owned by the SDK: it handles the pending-owner
+      // hand-off after a voluntary disconnect and throws typed errors for the
+      // owner-not-dashboard / dashboard-not-belong failures (mapped above).
+      const dashboard = await resolveDashboard(
+        vaultEntity,
+        DEFAULT_CALL_OPTIONS,
+      );
+      const isDashboard = await vaultEntity.isDashboard(dashboard.address, {
         blockNumber,
-        dashboardAddress: supposedDashboardAddress,
       });
-
-      // TODO: reword to support multiple factories
-      if (!isDashboard && isVaultConnected) {
-        throw new VaultOwnerNotDashboardError();
-      }
 
       const [operatorGrid, predepositGuarantee] = await Promise.all([
         vaultModule.contracts.getContractOperatorGrid(),
         vaultModule.contracts.getContractPredepositGuarantee(),
       ]);
-
-      let dashboard = await vaultEntity.getDashboardContract();
-
-      const hasPendingOwner = pendingOwner !== zeroAddress;
-
-      // TODO: move to SDK
-      // dashboard address is missed when call apply report after voluntary disconnection
-      // but we can it get using pending owner when VaultHub transfers vaults's ownership to dashboard
-      let isPendingOwnerDashboard = false;
-      if (
-        !isVaultConnected &&
-        !isDashboard &&
-        isAddressEqual(vaultOwner, hub.address) &&
-        hasPendingOwner
-      ) {
-        isPendingOwnerDashboard = await checkIsDashboard({
-          publicClient,
-          vaultModule,
-          blockNumber,
-          dashboardAddress: pendingOwner,
-        });
-
-        if (isPendingOwnerDashboard) {
-          // @ts-expect-error remove after SDK will be updated
-          vaultEntity.dashboardAddress = pendingOwner;
-          dashboard = await vaultEntity.getDashboardContract();
-        }
-      }
 
       const group = await operatorGrid.read.group(
         [nodeOperator],
@@ -207,14 +204,6 @@ export const useBaseVaultData = (
         (await dashboard.read.settledGrowth(DEFAULT_CALL_OPTIONS)) <
           MAX_SANE_SETTLED_GROWTH;
 
-      if (isDashboard || isPendingOwnerDashboard) {
-        const stakingVaultAddress = await dashboard.read.stakingVault();
-
-        if (!isAddressEqual(stakingVaultAddress, vaultAddress)) {
-          throw new DashboardNotBelongToVault();
-        }
-      }
-
       return {
         address: vaultAddress,
         vaultEntity,
@@ -238,8 +227,7 @@ export const useBaseVaultData = (
         isReportFresh,
         isReportMissing,
         isVaultDisconnected: !isVaultConnected && !isPendingConnect,
-        isVaultFullDisconnected:
-          !isDashboard && !isVaultConnected && !isPendingOwnerDashboard,
+        isVaultFullDisconnected: !isDashboard && !isVaultConnected,
         isVaultConnected,
         isPendingDisconnect,
         isPendingConnect,
