@@ -14,7 +14,7 @@ export const AmountStatistic = () => {
     <Container>
       <StatisticWrapper>
         <ValidatorsStatistic
-          title="Deposited on validators"
+          title="Total actual balance"
           amount={meta?.totalBalance}
           data-testid="deposited-balance"
         />
