@@ -774,8 +774,6 @@ export const vaultTexts = {
         pdgDeposits: { title: 'Top-ups and initial PDG deposits' },
         offBookDeposits: {
           title: 'Off-Book deposits',
-          description:
-            'Off-book deposits are not included in Total Value. The values shown here may take ~10 minutes to update.',
         },
         quarantined: {
           title: 'Quarantined',

@@ -98,7 +98,6 @@ export const TotalValueModal = () => {
             amountValue={offBookBalance}
             amountType="token"
             amountSymbol="ETH"
-            description={totalValue.offBookDeposits.description}
             compactDescription
             dataTestId={`${dataTestIdPrefix}-offBookDepositsSection`}
           />
