@@ -51,13 +51,6 @@ export const ChartHeading = styled.div`
   gap: ${({ theme }) => theme.spaceMap.xs}px;
 `;
 
-export const ExtendedInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
-  margin-top: ${({ theme }) => theme.spaceMap.md}px;
-`;
-
 export const TextContainer = styled.div`
   margin-top: ${({ theme }) => theme.spaceMap.xs}px;
   & p {
