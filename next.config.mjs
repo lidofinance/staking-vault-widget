@@ -30,12 +30,20 @@ export const CACHE_CONTROL_HEADER = 'x-cache-control';
 export const CACHE_CONTROL_PAGES = [
   '/manifest.json',
   '/favicon:size*',
+  '/apple-touch-icon.png',
+  '/lido-preview.jpg',
+  '/fonts/fira-code.woff2',
   '/vaults/:vaultAddress*',
   '/',
   '/settings',
 ];
 export const CACHE_CONTROL_VALUE =
   'public, max-age=15, s-max-age=30, stale-if-error=604800, stale-while-revalidate=172800';
+// window-env.js is regenerated on every deploy (scripts/build-dynamics.mjs),
+// so it must stay short-lived and never be served stale after a release
+export const CACHE_CONTROL_RUNTIME_ENV_PATH = '/runtime/window-env.js';
+export const CACHE_CONTROL_RUNTIME_ENV_VALUE =
+  'public, max-age=0, s-maxage=30, must-revalidate';
 
 const withBundleAnalyzer = NextBundleAnalyzer({
   enabled: process.env.ANALYZE_BUNDLE ?? false,
@@ -142,7 +150,10 @@ export default withBundleAnalyzer({
       {
         // Apply these headers to all routes in your application.
         source: '/(.*)',
-        headers: buildSecurityHeaders({ isIPFSMode, isDevelopment: developmentMode }),
+        headers: buildSecurityHeaders({
+          isIPFSMode,
+          isDevelopment: developmentMode,
+        }),
       },
       {
         // required for gnosis save apps
@@ -156,6 +167,15 @@ export default withBundleAnalyzer({
         source: page,
         headers: [{ key: CACHE_CONTROL_HEADER, value: CACHE_CONTROL_VALUE }],
       })),
+      {
+        source: CACHE_CONTROL_RUNTIME_ENV_PATH,
+        headers: [
+          {
+            key: CACHE_CONTROL_HEADER,
+            value: CACHE_CONTROL_RUNTIME_ENV_VALUE,
+          },
+        ],
+      },
     ];
   },
 
