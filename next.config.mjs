@@ -1,6 +1,5 @@
-import NextBundleAnalyzer from '@next/bundle-analyzer';
-
 import buildDynamics from './scripts/build-dynamics.mjs';
+import buildInfo from './build-info.json' with { type: 'json' };
 import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs';
 import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
@@ -15,7 +14,11 @@ if (
   process.env.RUN_STARTUP_CHECKS === 'true' &&
   typeof window === 'undefined'
 ) {
-  void startupCheckRPCs();
+  // next.config is plain ESM loaded before the build, so it cannot import the
+  // TS config — keep this in sync with USER_AGENT in config/groups/app.ts
+  void startupCheckRPCs({
+    userAgent: `staking-vault-widget/${buildInfo.version}`,
+  });
   void startupCheckValidationFile();
 }
 
@@ -45,9 +48,11 @@ export const CACHE_CONTROL_RUNTIME_ENV_PATH = '/runtime/window-env.js';
 export const CACHE_CONTROL_RUNTIME_ENV_VALUE =
   'public, max-age=0, s-maxage=30, must-revalidate';
 
-const withBundleAnalyzer = NextBundleAnalyzer({
-  enabled: process.env.ANALYZE_BUNDLE ?? false,
-});
+// Required lazily: @next/bundle-analyzer is a devDependency and the production
+// image ships prod deps only, but next.config.mjs is also loaded at runtime.
+const withBundleAnalyzer = process.env.ANALYZE_BUNDLE
+  ? require('@next/bundle-analyzer')({ enabled: true })
+  : (nextConfig) => nextConfig;
 
 export default withBundleAnalyzer({
   basePath,
