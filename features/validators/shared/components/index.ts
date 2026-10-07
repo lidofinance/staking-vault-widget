@@ -10,3 +10,4 @@ export { ContentContainer } from './content-container';
 export { ValidatorInfo } from './validator-info';
 export { WarningInfo } from './warning-info';
 export { ModalFormButton } from './modal-form-button';
+export { OffBookDepositsHint } from './off-book-deposits-hint';

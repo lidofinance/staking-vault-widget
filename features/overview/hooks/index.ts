@@ -4,3 +4,4 @@ export * from './use-withdraw-chart';
 export * from './use-identicon-size';
 export * from './use-connect-vault';
 export * from './use-tier-request';
+export * from './use-gross-total-supplied';
