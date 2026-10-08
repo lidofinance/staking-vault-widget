@@ -16,7 +16,7 @@ const getRPCUrls = (chainId) => {
   return rpcUrls?.filter((url) => url);
 };
 
-const checkRPC = async (url, chainId) => {
+const checkRPC = async (url, chainId, userAgent) => {
   let domain;
   try {
     domain = new URL(url).hostname;
@@ -30,6 +30,7 @@ const checkRPC = async (url, chainId) => {
       transport: http(url, {
         retryCount: MAX_RETRY_COUNT,
         timeout: RPC_TIMEOUT_MS,
+        fetchOptions: { headers: { 'User-Agent': userAgent } },
       }),
     });
 
@@ -51,7 +52,7 @@ const checkRPC = async (url, chainId) => {
 
 export const getRPCChecks = () => globalStartupRPCChecks.promise;
 
-export const startupCheckRPCs = async () => {
+export const startupCheckRPCs = async ({ userAgent }) => {
   console.info('[startupCheckRPCs] Starting RPC checks...');
 
   if (globalStartupRPCChecks.promise) {
@@ -79,7 +80,7 @@ export const startupCheckRPCs = async () => {
         }
 
         const chainCheckResults = await Promise.all(
-          rpcUrls.map((url) => checkRPC(url, chainId)),
+          rpcUrls.map((url) => checkRPC(url, chainId, userAgent)),
         );
         results.push(...chainCheckResults);
 
