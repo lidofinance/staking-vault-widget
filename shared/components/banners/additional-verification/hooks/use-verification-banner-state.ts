@@ -1,10 +1,11 @@
-import { isAddressEqual } from 'viem';
+import { isAddressEqual, type Address } from 'viem';
 
 import { useDappStatus } from 'modules/web3';
 import { useVaultRiskStatus } from 'modules/vaults';
 
 import type {
   AdditionalVerificationAction,
+  CustodyRoleMembers,
   VerificationBannerState,
 } from '../types';
 
@@ -27,6 +28,7 @@ export const useVerificationBannerDefender = (
     isNodeOperatorVerified,
     defaultAdminList,
     withdrawersList,
+    mintersList,
     nodeOperator,
     isUnguaranteedDepositsAllowed,
     isSuccess,
@@ -93,17 +95,23 @@ export const useVerificationBannerDefender = (
       isNodeOperatorVerified === false,
   );
 
-  const otherWithdrawersList = (withdrawersList ?? []).filter(
-    (withdrawer) =>
-      (!address || !isAddressEqual(withdrawer, address)) &&
-      !defaultAdminList?.some((admin) => isAddressEqual(admin, withdrawer)),
-  );
+  // only the connected address is filtered out: another DEFAULT_ADMIN holding a
+  // custody role is exactly the risk this banner is meant to surface
+  const excludeSelf = (list?: Address[]) =>
+    (list ?? []).filter(
+      (account) => !address || !isAddressEqual(account, address),
+    );
 
-  const isWithdrawalPermissionWarningVisible = Boolean(
+  const custodyRoleMembers: CustodyRoleMembers[] = [
+    { role: 'withdrawer' as const, addresses: excludeSelf(withdrawersList) },
+    { role: 'minter' as const, addresses: excludeSelf(mintersList) },
+  ].filter(({ addresses }) => addresses.length > 0);
+
+  const isCustodyPermissionWarningVisible = Boolean(
     SECURITY_OVERRIDE_DEV_ENV &&
       isDappActive &&
       hasActionPermissionOrOwnership &&
-      otherWithdrawersList.length > 0,
+      custodyRoleMembers.length > 0,
   );
 
   return {
@@ -115,14 +123,14 @@ export const useVerificationBannerDefender = (
     isMultipleOwnersErrorVisible,
     isUnguaranteedDepositsWarningVisible,
     isUnguaranteedDepositsErrorVisible,
-    isWithdrawalPermissionWarningVisible,
+    isCustodyPermissionWarningVisible,
     isTierDefault,
     isNodeOperatorVerified,
     confirmationRequired: {
       notOwner: isNotOwnerWarningVisible,
       multipleOwners: isMultipleOwnersWarningVisible,
       unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
-      withdrawalPermission: isWithdrawalPermissionWarningVisible,
+      custodyPermission: isCustodyPermissionWarningVisible,
     },
     isErrorBannerVisible:
       isNotOwnerErrorVisible ||
@@ -132,10 +140,10 @@ export const useVerificationBannerDefender = (
       isNotOwnerWarningVisible ||
       isMultipleOwnersWarningVisible ||
       isUnguaranteedDepositsWarningVisible ||
-      isWithdrawalPermissionWarningVisible,
+      isCustodyPermissionWarningVisible,
     defaultAdminList,
     firstAdmin,
     nodeOperator,
-    otherWithdrawersList,
+    custodyRoleMembers,
   };
 };
