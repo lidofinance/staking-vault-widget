@@ -1,6 +1,6 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
-import { type Address, zeroAddress, isAddressEqual } from 'viem';
+import { type Address, zeroAddress, isAddressEqual, getAddress } from 'viem';
 import { LidoSDKVaultEntity } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import { useLidoSDK } from 'modules/web3';
@@ -46,7 +46,7 @@ export const useBaseVaultData = (
   latestTxBlock: bigint | undefined,
 ) => {
   const { publicClient, vaultModule } = useLidoSDK();
-  const base = vaultQueryKeys(vaultAddress).stateBase;
+  const base = vaultQueryKeys(vaultAddress, publicClient.chain.id).stateBase;
   return useQuery<VaultBaseInfo>({
     queryKey: [...base, 'base-vault-data', { latestTxBlock }] as const,
     enabled: !!vaultAddress,
@@ -216,7 +216,7 @@ export const useBaseVaultData = (
       }
 
       return {
-        address: vaultAddress,
+        address: getAddress(vaultAddress),
         vaultEntity,
         vault,
         vaultOwner,

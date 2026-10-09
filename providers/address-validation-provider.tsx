@@ -178,7 +178,7 @@ export const AddressValidationProvider = ({
 
           return validateAddressLocally(addressToValidate, validationFile);
         },
-        staleTime: 1 * 60 * 1000, // 1 minute
+        staleTime: 60 * 1000, // 1 minute
       });
 
       return result;
