@@ -13,9 +13,9 @@ export const validateAddressLocally = (
 ): { isValid: boolean } => {
   if (!address) return { isValid: true };
   const { addresses } = validationFile;
-  const isValid = addresses.some((addr) => isAddressEqual(addr, address));
+  const isNotValid = addresses.some((addr) => isAddressEqual(addr, address));
 
   return {
-    isValid,
+    isValid: !isNotValid,
   };
 };

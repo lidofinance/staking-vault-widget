@@ -6,7 +6,10 @@ export const appPaths = {
     all: '/vaults',
     create: '/vaults/create',
     vault: (vaultAddress: Address | '[vaultAddress]') => {
-      const address = vaultAddress.toLowerCase();
+      const address =
+        vaultAddress === '[vaultAddress]'
+          ? vaultAddress
+          : vaultAddress.toLowerCase();
 
       return {
         overview: `/vaults/${address}`,

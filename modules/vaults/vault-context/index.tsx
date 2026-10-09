@@ -8,7 +8,7 @@ import {
   useEffect,
 } from 'react';
 import { useRouter } from 'next/router';
-import { type Address, isAddress } from 'viem';
+import { type Address, getAddress, isAddress } from 'viem';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useLidoSDK } from 'modules/web3';
@@ -41,7 +41,7 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   const { vaultAddress = '' } = router.query as { vaultAddress?: string };
   const vaultAddressLowerCase = vaultAddress.toLowerCase();
   const sanitizedVaultAddress = isAddress(vaultAddressLowerCase)
-    ? vaultAddressLowerCase
+    ? getAddress(vaultAddressLowerCase)
     : undefined;
   const query = useBaseVaultData(sanitizedVaultAddress, latestTxBlock);
 
@@ -54,14 +54,14 @@ export const VaultProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [query.error, vaultAddress]);
 
   useEffect(() => {
-    if (sanitizedVaultAddress && vaultAddress !== sanitizedVaultAddress) {
+    if (sanitizedVaultAddress && vaultAddress !== vaultAddressLowerCase) {
       void router.replace(
-        router.asPath.replace(vaultAddress, sanitizedVaultAddress),
+        router.asPath.replace(vaultAddress, vaultAddressLowerCase),
         undefined,
         { shallow: true },
       );
     }
-  }, [router, vaultAddress, sanitizedVaultAddress]);
+  }, [router, vaultAddress, vaultAddressLowerCase, sanitizedVaultAddress]);
 
   const contextValue = useMemo<VaultContextType>(() => {
     const queryKeys = vaultQueryKeys(

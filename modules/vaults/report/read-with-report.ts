@@ -1,6 +1,7 @@
 import {
   ContractFunctionExecutionError,
   ContractFunctionRevertedError,
+  getAddress,
   type Address,
   type ContractFunctionParameters,
   type MulticallReturnType,
@@ -149,8 +150,10 @@ export const readWithReport = async <
           reportResult.error.cause.data?.errorName === 'InvalidProof')
       ) {
         void QUERY_CLIENT_UNSAFE_REF?.invalidateQueries({
-          queryKey: vaultQueryKeys(report.vault, publicClient.chain.id)
-            .stateBase,
+          queryKey: vaultQueryKeys(
+            getAddress(report.vault),
+            publicClient.chain.id,
+          ).stateBase,
         });
       } else {
         console.warn(
