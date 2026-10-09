@@ -18,7 +18,6 @@ import type {
 
 export const rebalanceFormSchema = (
   context: RebalanceFormValidationContext,
-  isSupplyEth: boolean,
 ) => {
   const overviewData = context?.overviewData;
   const availableBalanceWei = overviewData?.availableBalanceWei ?? 0n;
@@ -29,10 +28,8 @@ export const rebalanceFormSchema = (
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    custodyPermission: false,
     ...context?.additionalVerification,
-    custodyPermission:
-      (context?.additionalVerification?.custodyPermission ?? false) &&
-      isSupplyEth,
   };
 
   const mainSchema = z
@@ -114,7 +111,7 @@ export const RebalanceFormResolver: Resolver<
         return undefined;
       });
 
-  const schema = rebalanceFormSchema(contextValue, values.isSupplyEth);
+  const schema = rebalanceFormSchema(contextValue);
   return zodResolver<
     RebalanceFormFieldValues,
     RebalanceFormAwaitableValidationContext,

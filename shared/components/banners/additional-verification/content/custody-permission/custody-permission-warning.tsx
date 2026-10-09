@@ -20,8 +20,11 @@ const { title, description } =
 export const CustodyPermissionWarning: FC<CustodyPermissionWarningProps> = ({
   state,
 }) => {
+  const { isCustodyPermissionWarningVisible, isErrorBannerVisible } = state;
+
   if (
-    !state.isCustodyPermissionWarningVisible ||
+    !isCustodyPermissionWarningVisible ||
+    isErrorBannerVisible ||
     !state.custodyRoleMembers?.length
   ) {
     return null;
