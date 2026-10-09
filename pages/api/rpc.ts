@@ -1,9 +1,13 @@
 import { wrapRequest as wrapNextRequest } from '@lidofinance/next-api-wrapper';
-import { trackedFetchRpcFactory } from '@lidofinance/api-rpc';
+import {
+  trackedFetchRpcFactory,
+  type TrackedFetchRPC,
+} from '@lidofinance/api-rpc';
 import { rpcFactory } from '@lidofinance/next-pages';
 
 // Aliased: `config` is reserved below for Next's route config export.
 import { config as appConfig, secretConfig } from 'config';
+import { USER_AGENT } from 'config/groups/app';
 import { API_ROUTES } from 'consts/api';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
@@ -38,15 +42,33 @@ const allowedRPCMethods = [
   'net_version',
 ];
 
+const withUserAgent =
+  (fetchRpc: TrackedFetchRPC): TrackedFetchRPC =>
+  (url, init, context) =>
+    fetchRpc(
+      url,
+      {
+        ...init,
+        // plain object: fetchRpc spreads init.headers, which drops Headers entries
+        headers: {
+          ...Object.fromEntries(new Headers(init.headers)),
+          'User-Agent': USER_AGENT,
+        },
+      },
+      context,
+    );
+
 // FIX(dev mode): prevent duplicate metric registration inside rpcFactory by wrapping it in a globalThis singleton
 const g = globalThis as any;
 const rpc =
   g.__rpcSingleton__ ??
   rpcFactory({
-    fetchRPC: trackedFetchRpcFactory({
-      registry: Metrics.registry,
-      prefix: METRICS_PREFIX,
-    }),
+    fetchRPC: withUserAgent(
+      trackedFetchRpcFactory({
+        registry: Metrics.registry,
+        prefix: METRICS_PREFIX,
+      }),
+    ),
     metrics: {
       prefix: METRICS_PREFIX,
       registry: Metrics.registry,

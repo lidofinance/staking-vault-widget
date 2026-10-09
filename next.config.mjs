@@ -1,6 +1,5 @@
-import NextBundleAnalyzer from '@next/bundle-analyzer';
-
 import buildDynamics from './scripts/build-dynamics.mjs';
+import buildInfo from './build-info.json' with { type: 'json' };
 import { logEnvironmentVariables } from './scripts/log-environment-variables.mjs';
 import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
@@ -15,7 +14,11 @@ if (
   process.env.RUN_STARTUP_CHECKS === 'true' &&
   typeof window === 'undefined'
 ) {
-  void startupCheckRPCs();
+  // next.config is plain ESM loaded before the build, so it cannot import the
+  // TS config — keep this in sync with USER_AGENT in config/groups/app.ts
+  void startupCheckRPCs({
+    userAgent: `staking-vault-widget/${buildInfo.version}`,
+  });
   void startupCheckValidationFile();
 }
 
@@ -30,20 +33,37 @@ export const CACHE_CONTROL_HEADER = 'x-cache-control';
 export const CACHE_CONTROL_PAGES = [
   '/manifest.json',
   '/favicon:size*',
+  '/apple-touch-icon.png',
+  '/lido-preview.jpg',
+  '/fonts/fira-code.woff2',
   '/vaults/:vaultAddress*',
   '/',
   '/settings',
 ];
 export const CACHE_CONTROL_VALUE =
   'public, max-age=15, s-max-age=30, stale-if-error=604800, stale-while-revalidate=172800';
+// window-env.js is regenerated on every deploy (scripts/build-dynamics.mjs),
+// so it must stay short-lived and never be served stale after a release
+export const CACHE_CONTROL_RUNTIME_ENV_PATH = '/runtime/window-env.js';
+export const CACHE_CONTROL_RUNTIME_ENV_VALUE =
+  'public, max-age=0, s-maxage=30, must-revalidate';
 
-const withBundleAnalyzer = NextBundleAnalyzer({
-  enabled: process.env.ANALYZE_BUNDLE ?? false,
-});
+// Required lazily: @next/bundle-analyzer is a devDependency and the production
+// image ships prod deps only, but next.config.mjs is also loaded at runtime.
+const withBundleAnalyzer = process.env.ANALYZE_BUNDLE
+  ? require('@next/bundle-analyzer')({ enabled: true })
+  : (nextConfig) => nextConfig;
 
 export default withBundleAnalyzer({
   basePath,
   generateBuildId,
+
+  // Disable the built-in Next.js Image Optimization endpoint to prevent
+  // requests from reaching the image optimizer. This app does not use `next/image`.
+  images: {
+    loader: 'custom',
+  },
+
   // IPFS next.js configuration reference:
   // https://github.com/Velenir/nextjs-ipfs-example
   trailingSlash: !!isIPFSMode,
@@ -140,7 +160,10 @@ export default withBundleAnalyzer({
       {
         // Apply these headers to all routes in your application.
         source: '/(.*)',
-        headers: buildSecurityHeaders({ isIPFSMode, isDevelopment: developmentMode }),
+        headers: buildSecurityHeaders({
+          isIPFSMode,
+          isDevelopment: developmentMode,
+        }),
       },
       {
         // required for gnosis save apps
@@ -154,6 +177,15 @@ export default withBundleAnalyzer({
         source: page,
         headers: [{ key: CACHE_CONTROL_HEADER, value: CACHE_CONTROL_VALUE }],
       })),
+      {
+        source: CACHE_CONTROL_RUNTIME_ENV_PATH,
+        headers: [
+          {
+            key: CACHE_CONTROL_HEADER,
+            value: CACHE_CONTROL_RUNTIME_ENV_VALUE,
+          },
+        ],
+      },
     ];
   },
 
