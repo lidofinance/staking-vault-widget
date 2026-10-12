@@ -45,6 +45,7 @@ export const useVaultRiskStatus = () => {
         repayers,
         rebalancer,
         withdrawers,
+        minters,
         pdgPolicy,
         tier,
         ...tiersList
@@ -54,6 +55,7 @@ export const useVaultRiskStatus = () => {
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.rebalancer]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.withdrawer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.minter]),
         dashboard.read.pdgPolicy(),
         operatorGrid.read.vaultTierInfo([activeVault.address]),
         ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
@@ -96,6 +98,7 @@ export const useVaultRiskStatus = () => {
         isRebalancer,
         defaultAdminList: [...defaultAdminList],
         withdrawersList: [...withdrawers],
+        mintersList: [...minters],
         nodeOperator,
         firstAdmin,
       };
@@ -115,6 +118,7 @@ export const useVaultRiskStatus = () => {
     isRebalancer: data?.isRebalancer,
     defaultAdminList: data?.defaultAdminList,
     withdrawersList: data?.withdrawersList,
+    mintersList: data?.mintersList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,
   };

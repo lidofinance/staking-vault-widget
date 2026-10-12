@@ -4,10 +4,13 @@ import { Tooltip, Text } from '@lidofinance/lido-ui';
 import { ROLES_TO_CONTRACT_CONSTANT } from 'modules/vaults';
 import { getTestId } from 'utils';
 
+import { CustodyBadge } from '../custody-badge';
+
 import {
   WarningIcon,
   RoleDescriptionWrapper,
   ContractRole,
+  ContractRoleRow,
   NonBreakableText,
 } from './styles';
 
@@ -15,6 +18,7 @@ export type RoleDescriptionProps = {
   description: string;
   tooltip: string;
   contractRole?: (typeof ROLES_TO_CONTRACT_CONSTANT)[keyof typeof ROLES_TO_CONTRACT_CONSTANT];
+  isCustody?: boolean;
   dataTestId?: string;
 };
 
@@ -34,7 +38,7 @@ const splitDescription = (description: string) => {
 };
 
 export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
-  const { description, tooltip, dataTestId, contractRole } = props;
+  const { description, tooltip, dataTestId, contractRole, isCustody } = props;
   const { descriptionText, lastWord } = useMemo(
     () => splitDescription(description),
     [description],
@@ -44,7 +48,12 @@ export const RoleDescription: FC<RoleDescriptionProps> = (props) => {
     <RoleDescriptionWrapper
       data-testid={getTestId(dataTestId, 'roleDescriptionWrapper')}
     >
-      {contractRole && <ContractRole>{contractRole}</ContractRole>}
+      {contractRole && (
+        <ContractRoleRow>
+          <ContractRole>{contractRole}</ContractRole>
+          {isCustody && <CustodyBadge />}
+        </ContractRoleRow>
+      )}
       <Text
         size="xxs"
         as="span"
