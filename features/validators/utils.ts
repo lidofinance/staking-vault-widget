@@ -27,7 +27,7 @@ export const getValidatorViewStatus = ({
   status,
   isPdg,
 }: Pick<ValidatorsEntry, 'status' | 'isPdg'>): ValidatorViewStatus =>
-  status === 'in_queue' ? (isPdg ? 'pre_deposited' : 'deposited') : status;
+  status === 'in_queue' ? (isPdg ? 'pre_deposited' : 'in_queue') : status;
 
 export const getValidatorStatusTextColor = ({
   $status,
@@ -49,7 +49,6 @@ export const getValidatorStatusTextColor = ({
     pending_queued: colors.textSecondary,
     exited_unslashed: colors.textSecondary,
     in_queue: colors.textSecondary,
-    deposited: colors.textSecondary,
     pre_deposited: colors.textSecondary,
   };
 

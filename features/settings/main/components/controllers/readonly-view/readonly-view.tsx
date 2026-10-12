@@ -13,7 +13,7 @@ export type ReadonlyViewProps = {
 export const ReadonlyView: FC<ReadonlyViewProps> = ({ vaultKey, value }) => {
   const renderData = useMemo(() => {
     let displayValue = value as string | number | bigint | undefined;
-    if (typeof displayValue !== 'undefined') {
+    if (typeof displayValue !== 'undefined' && displayValue !== 'custom') {
       // TODO: make it pretty
       if (vaultKey === 'confirmExpiry') {
         displayValue = `${BigInt(displayValue) / (60n * 60n)} hours`;
