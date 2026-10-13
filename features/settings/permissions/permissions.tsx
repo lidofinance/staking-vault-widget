@@ -1,22 +1,44 @@
 import {
   VAULT_MANAGER_PERMISSIONS_LIST,
   NO_MANAGER_PERMISSION_LIST,
+  vaultTexts,
 } from 'modules/vaults';
 
 import {
   SectionContainer,
   ContentWrapper,
 } from 'features/settings/shared/components';
-import { PermissionsAction } from 'features/settings/permissions/components';
+import {
+  CustodyBadge,
+  PermissionsAction,
+} from 'features/settings/permissions/components';
 import {
   VaultPermissions,
   PDGPermissions,
 } from 'features/settings/permissions/content';
+import {
+  CustodyLegend,
+  PermissionGroupDescription,
+} from 'features/settings/permissions/content/styles';
 import { PermissionsFormProvider } from './permissions-form-provider';
+
+const { vaultOwnerTitle, vaultOwnerDescription, custodyLegend } =
+  vaultTexts.actions.settings.permissions;
+
+const VaultOwnerPermissionsDescription = () => (
+  <PermissionGroupDescription data-testid="vaultOwnerPermissions-description">
+    <span>{vaultOwnerDescription}</span>
+    <CustodyLegend>
+      <CustodyBadge />
+      <span>{custodyLegend}</span>
+    </CustodyLegend>
+  </PermissionGroupDescription>
+);
 
 const PERMISSIONS_SECTIONS = [
   {
-    permissionsTitle: 'Vault Manager Permissions',
+    permissionsTitle: vaultOwnerTitle,
+    description: <VaultOwnerPermissionsDescription />,
     canEditRole: 'defaultAdmin',
     roles: VAULT_MANAGER_PERMISSIONS_LIST,
     dataTestId: 'vaultOwnerPermissions',

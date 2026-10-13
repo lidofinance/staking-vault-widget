@@ -16,25 +16,25 @@ export const verificationConfirmDefaultValues: VerificationConfirmFieldValues =
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
-    withdrawalPermission: false,
+    custodyPermission: false,
   };
 
 export const getVerificationValidationContext = ({
   isNotOwnerWarningVisible,
   isMultipleOwnersWarningVisible,
   isUnguaranteedDepositsWarningVisible,
-  isWithdrawalPermissionWarningVisible,
+  isCustodyPermissionWarningVisible,
 }: Pick<
   VerificationBannerState,
   | 'isNotOwnerWarningVisible'
   | 'isMultipleOwnersWarningVisible'
   | 'isUnguaranteedDepositsWarningVisible'
-  | 'isWithdrawalPermissionWarningVisible'
+  | 'isCustodyPermissionWarningVisible'
 >): VerificationConfirmationFlags => ({
   notOwner: isNotOwnerWarningVisible,
   multipleOwners: isMultipleOwnersWarningVisible,
   unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
-  withdrawalPermission: isWithdrawalPermissionWarningVisible,
+  custodyPermission: isCustodyPermissionWarningVisible,
 });
 
 const addConfirmationIssue = (
@@ -56,7 +56,7 @@ export const verificationConfirmSchema = (
       notOwner: z.boolean(),
       multipleOwners: z.boolean(),
       unguaranteedDeposits: z.boolean(),
-      withdrawalPermission: z.boolean(),
+      custodyPermission: z.boolean(),
     })
     .superRefine((values, ctx) => {
       if (
@@ -90,13 +90,13 @@ export const verificationConfirmSchema = (
 
       if (
         confirmationRequired[
-          VERIFICATION_CONFIRM_FIELD_NAMES.withdrawalPermission
+          VERIFICATION_CONFIRM_FIELD_NAMES.custodyPermission
         ] &&
-        values.withdrawalPermission !== true
+        values.custodyPermission !== true
       ) {
         addConfirmationIssue(
           ctx,
-          VERIFICATION_CONFIRM_FIELD_NAMES.withdrawalPermission,
+          VERIFICATION_CONFIRM_FIELD_NAMES.custodyPermission,
         );
       }
     });

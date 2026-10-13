@@ -38,3 +38,18 @@ export const PermissionGroupTitle = styled.div`
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
 `;
+
+export const PermissionGroupDescription = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  font-size: 12px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+
+export const CustodyLegend = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+`;
