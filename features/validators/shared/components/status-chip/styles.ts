@@ -26,7 +26,6 @@ const getBackgroundColor = ({
     pending_queued: colors.backgroundSecondary,
     exited_unslashed: colors.backgroundSecondary,
     in_queue: colors.background,
-    deposited: colors.background,
     pre_deposited: colors.background,
   };
 

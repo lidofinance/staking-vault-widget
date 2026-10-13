@@ -19,10 +19,7 @@ export const MIN_ACTIVATION_BALANCE = ONE_ETHER * 32n;
 // The API has a single `in_queue` status covering two cases — a PDG pre-deposit
 // and an off-book deposit — told apart by the `isPdg` flag. The UI shows them as
 // separate statuses, so the view layer has two keys the API never sends.
-export type ValidatorViewStatus =
-  | ValidatorStatus
-  | 'deposited'
-  | 'pre_deposited';
+export type ValidatorViewStatus = ValidatorStatus | 'pre_deposited';
 
 // Written out by hand on purpose: this module and `fetch-validators.ts` import
 // each other, so spreading the `VALIDATOR_STATUSES` enum here read an
@@ -42,7 +39,6 @@ export const VALIDATORS_VIEW_STATUSES: Record<ValidatorViewStatus, string> = {
   pending_queued: 'pending_queued',
   // `in_queue` is the fallback wherever `isPdg` is unknown: aggregated counters
   // and the filter
-  in_queue: 'in queue',
-  deposited: 'deposited',
+  in_queue: 'in_queue',
   pre_deposited: 'pre-deposited',
 };
