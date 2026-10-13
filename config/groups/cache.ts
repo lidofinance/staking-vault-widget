@@ -8,3 +8,7 @@ export const CACHE_DEFAULT_HEADERS =
 export const CACHE_VALIDATION_HEADERS =
   'public, max-age=30, stale-if-error=1200, stale-while-revalidate=30';
 export const CACHE_DEFAULT_ERROR_HEADERS = 'no-store, must-revalidate';
+
+// Prometheus scrapes /api/metrics directly every 15s; a cached body would just
+// replay the previous sample, and there is nothing to revalidate against
+export const CACHE_METRICS_HEADERS = 'no-store, must-revalidate';

@@ -1,12 +1,12 @@
-import { wrapRequest as wrapNextRequest } from '@lidofinance/next-api-wrapper';
+import {
+  wrapRequest as wrapNextRequest,
+  cacheControl,
+} from '@lidofinance/next-api-wrapper';
 import { metricsFactory } from '@lidofinance/next-pages';
 
 import { API_ROUTES } from 'consts/api';
-import {
-  responseTimeMetric,
-  errorAndCacheDefaultWrappers,
-  rateLimit,
-} from 'utilsApi';
+import { config as appConfig } from 'config';
+import { responseTimeMetric, defaultErrorHandler, rateLimit } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
 
 // GET-only Prometheus exposition — scrapers never send a body, so skip
@@ -24,5 +24,6 @@ const metrics = metricsFactory({
 export default wrapNextRequest([
   rateLimit,
   responseTimeMetric(Metrics.request.apiTimings, API_ROUTES.METRICS),
-  ...errorAndCacheDefaultWrappers,
+  cacheControl({ headers: appConfig.CACHE_METRICS_HEADERS }),
+  defaultErrorHandler,
 ])(metrics);
