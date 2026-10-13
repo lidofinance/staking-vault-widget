@@ -43,7 +43,7 @@ export const RoleAddressesList: FC<RoleAddressesListProps> = ({
                 <Address
                   style={{ fontWeight: 'bold' }}
                   symbols={symbols}
-                  address={address.toLowerCase()}
+                  address={address}
                 />
               </ListItem>
             ))}
