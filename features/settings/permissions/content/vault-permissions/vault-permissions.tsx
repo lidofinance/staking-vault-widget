@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import { useFormState } from 'react-hook-form';
 
 import {
   useVaultPermission,
   ROLES_TO_CONTRACT_CONSTANT,
+  isCustodyRole,
   VAULT_OWNER_ROLES,
   VAULT_ROOT_ROLES,
   VAULTS_NO_ROLES,
@@ -23,6 +25,7 @@ import { PermissionFormField } from 'features/settings/permissions/types';
 
 type PermissionSectionEntry = {
   permissionsTitle: string;
+  description?: ReactNode;
   roles: (VAULTS_NO_ROLES | VAULT_OWNER_ROLES)[];
   canEditRole: VAULT_ROOT_ROLES;
   dataTestId?: string;
@@ -31,6 +34,7 @@ type PermissionSectionEntry = {
 export const VaultPermissions = ({
   canEditRole,
   permissionsTitle,
+  description,
   roles,
   dataTestId,
 }: PermissionSectionEntry) => {
@@ -48,6 +52,7 @@ export const VaultPermissions = ({
       >
         {permissionsTitle}
       </PermissionGroupTitle>
+      {description}
       <PermissionBlock
         data-testid={dataTestId ? `${dataTestId}-block` : undefined}
       >
@@ -67,6 +72,7 @@ export const VaultPermissions = ({
                 description={title}
                 tooltip={hint}
                 contractRole={ROLES_TO_CONTRACT_CONSTANT[role]}
+                isCustody={isCustodyRole(role)}
                 dataTestId={`${dataTestId}-${role}`}
               />
               <AddressBlock

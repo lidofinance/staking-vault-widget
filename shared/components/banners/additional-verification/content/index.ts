@@ -5,3 +5,4 @@ export {
   UnguaranteedDepositsError,
   UnguaranteedDepositsWarningWithErrors,
 } from './unguaranteed-deposits';
+export { CustodyPermissionWarning } from './custody-permission';

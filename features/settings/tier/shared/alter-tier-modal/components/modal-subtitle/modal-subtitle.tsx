@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 
 import type { VaultTierData } from 'features/settings/tier/hooks';
-import { AlterTierChanges } from 'features/settings/tier/shared';
+import { AlterTierChanges } from 'features/settings/tier/shared/index';
 
 import { Container } from './styles';
 

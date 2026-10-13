@@ -10,11 +10,15 @@ import { InputGroupStyled } from './styles';
 type TokenAmountInputGroupProps = {
   amountFieldName: string;
   showRightDecorator?: boolean;
+  rightDecorator?: ComponentProps<
+    typeof TokenAmountInputHookForm
+  >['rightDecorator'];
   maxAmount?: bigint;
   tokenLabel?: string;
   tokenFieldName?: string;
   errorFieldName?: string;
   tokenOptions?: ComponentProps<typeof TokenSelectHookForm>['options'];
+  warning?: ComponentProps<typeof TokenAmountInputHookForm>['warning'];
 } & ComponentProps<typeof InputGroupStyled>;
 
 export const TokenAmountInputGroup = ({
@@ -27,7 +31,9 @@ export const TokenAmountInputGroup = ({
   label,
   showRightDecorator,
   leftDecorator,
+  rightDecorator,
   disabled,
+  warning,
   ...props
 }: TokenAmountInputGroupProps) => {
   const { inFocus, onBlur, onFocus } = useInFocus();
@@ -50,12 +56,14 @@ export const TokenAmountInputGroup = ({
           fieldName={tokenFieldName}
           options={tokenOptions!}
           disabled={disabled}
+          warning={!!warning}
         />
       )}
       <TokenAmountInputHookForm
         token={amountLabel}
         label={label}
         leftDecorator={leftDecorator}
+        rightDecorator={rightDecorator}
         showRightDecorator={showRightDecorator}
         showErrorMessage={false}
         fieldName={amountFieldName}
@@ -63,6 +71,7 @@ export const TokenAmountInputGroup = ({
         onFocus={onFocus}
         onBlur={onBlur}
         disabled={disabled}
+        warning={warning}
       />
     </InputGroupStyled>
   );

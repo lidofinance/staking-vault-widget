@@ -7,6 +7,7 @@ export const InputGroupStyled = styled(InputGroup)<{
   success?: InputGroupProps['success'];
 }>`
   z-index: 2;
+  width: 100%;
   span:nth-of-type(2) {
     white-space: ${({ success }) => !!success && 'unset'};
   }

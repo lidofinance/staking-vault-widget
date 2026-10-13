@@ -38,16 +38,18 @@ export const TopupModal: FC<TopupModalProps> = ({
       open={VALIDATOR_MODALS.topUpValidator === currentModal}
       onClose={onCloseModal}
       windowSize="md"
-      title={title}
+      title={<span data-testid="title">{title}</span>}
       data-testid="validators-topup-modal"
     >
       <ContentContainer>
-        <Text size="xs">{description}</Text>
+        <Text size="xs" data-testid="description">
+          {description}
+        </Text>
         <ValidatorInfo pubKey={pubKey} index={index} balance={balance}>
-          <Text size="xxs" color="secondary">
+          <Text size="xxs" color="secondary" data-testid="vault-balance-label">
             Available stVault Balance
           </Text>
-          <Text size="xxs" strong data-testid="vault-balance">
+          <Text size="xxs" strong data-testid="vault-balance-value">
             <FormatToken amount={availableBalance} symbol="ETH" />
           </Text>
         </ValidatorInfo>

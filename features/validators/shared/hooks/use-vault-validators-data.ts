@@ -9,6 +9,7 @@ import {
   useVaultConfirmingRoles,
   useVaultPermission,
   type FetchValidatorsResult,
+  VaultDisconnectedError,
 } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
 import { useDisableForm } from 'shared/hook-form';
@@ -79,13 +80,8 @@ export const useVaultValidatorsData = () => {
   } = useValidatorListParams();
 
   const query = useQuery({
-    queryKey: [
-      ...queryKeys.base,
-      'vault-validators',
-      activeVault?.address,
-      params,
-    ] as const,
-    enabled: isReady,
+    queryKey: [...queryKeys.base, 'vault-validators', params] as const,
+    enabled: isReady && !!activeVault,
     refetchOnMount: true,
     staleTime: 300000, // 5 min,
     placeholderData: keepPreviousData,
@@ -94,6 +90,10 @@ export const useVaultValidatorsData = () => {
         activeVault,
         '[useVaultValidatorsData] activeVault is not defined',
       );
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [
         pdgPolicy,

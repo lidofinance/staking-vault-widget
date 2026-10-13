@@ -6,6 +6,8 @@ import {
 } from '@lidofinance/lido-ui';
 
 import { vaultTexts } from 'modules/vaults';
+import { useHealthChart } from 'shared/hooks';
+
 import {
   VAULT_HEALTH_PERCENT_GREEN,
   VAULT_HEALTH_PERCENT_RED,
@@ -17,7 +19,6 @@ import {
   ModalSection,
   OverviewModal,
   SectionDivider,
-  useHealthChart,
   type FormulaItem,
 } from 'features/overview/inner';
 import { useVaultOverview } from 'features/overview/vault-overview';

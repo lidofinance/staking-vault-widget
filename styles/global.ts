@@ -48,6 +48,9 @@ const GlobalStyle = createGlobalStyle`
     --chart-health-danger: #D74758;
     --chart-health-warning: #EB9925;
     --chart-health-success: var(--lido-color-success);
+
+    // allow animate sizes like from height 0 to auto
+    interpolate-size: allow-keywords;
   }
 
   * {

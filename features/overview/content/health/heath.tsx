@@ -20,7 +20,7 @@ const sectionPayloadList: SectionData[] = [
     indicator: 'healthFactorNumber',
   },
   {
-    indicator: 'vaultLiability',
+    indicator: 'vaultLiabilityStETH',
   },
 ];
 

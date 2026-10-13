@@ -43,7 +43,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
       const { success } = await editPermissions(values);
       const [, { data: newData }] = await Promise.all([
-        invalidateVaultConfig('roles'),
+        invalidateVaultConfig(),
         refetch({
           cancelRefetch: true,
           throwOnError: false,

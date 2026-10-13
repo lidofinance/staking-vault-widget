@@ -33,7 +33,7 @@ export const IdentificationProcess = () => {
   }
 
   return (
-    <BannerWithoutTitle>
+    <BannerWithoutTitle dataTestId="settings-identificationProcess-banner">
       <Text size="xxs" color="warning">
         Operator <span style={{ fontWeight: 'bold' }}>{nodeOperator}</span> has
         not passed the{' '}

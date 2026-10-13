@@ -17,7 +17,7 @@ type NotOwnerWarningProps = {
 const { notOwner } = vaultTexts.actions.additionalVerification.banners;
 
 export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
-  const isMobile = useBreakpoint('sm');
+  const isMobile = useBreakpoint('md');
   const addressSize = isMobile ? 10 : 22;
   const token = state.action === 'repay' ? 'stETH' : 'ETH';
 
@@ -26,7 +26,11 @@ export const NotOwnerWarning: FC<NotOwnerWarningProps> = ({ state }) => {
   }
 
   return (
-    <NoticeContainer title={notOwner.title} type="warning">
+    <NoticeContainer
+      title={notOwner.title}
+      type="warning"
+      dataTestId="additionalVerification-notOwner-warning-banner"
+    >
       <Text size="xxs">
         The permission to {state.action} {token} in this stVault was delegated
         to your address by the Vault Owner.

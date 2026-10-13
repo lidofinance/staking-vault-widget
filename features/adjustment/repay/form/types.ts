@@ -14,11 +14,13 @@ export type RepayFormFieldValues = VerificationConfirmFieldValues & {
   token: RepayFormValidatedValues['token'];
 };
 
-export type RepayFormValidationContext = {
-  maxRepayableStETH: bigint;
-  maxRepayableWstETH: bigint;
-  additionalVerification: VerificationConfirmationFlags;
-};
+export type RepayFormValidationContext =
+  | {
+      maxRepayableStETH: bigint;
+      maxRepayableWstETH: bigint;
+      additionalVerification: VerificationConfirmationFlags;
+    }
+  | undefined;
 
 export type RepayFormValidationContextAwaitable =
   Promise<RepayFormValidationContext>;

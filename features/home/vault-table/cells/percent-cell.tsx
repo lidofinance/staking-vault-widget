@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { formatToPercentWithDivider } from 'utils';
 
 import { Percent } from './styles';
-import { DATA_UNAVAILABLE } from 'consts/text';
+import { EMPTY_DATA } from 'consts/text';
 
 type PercentCellProps = {
   value?: number;
@@ -12,7 +12,7 @@ type PercentCellProps = {
 
 export const PercentCell: FC<PercentCellProps> = ({ value, color, strong }) => {
   if (typeof value !== 'number') {
-    return DATA_UNAVAILABLE;
+    return EMPTY_DATA;
   }
 
   return (

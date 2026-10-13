@@ -18,7 +18,10 @@ export const UnguaranteedDepositsWarningWithErrors: FC<
   }
 
   return (
-    <NoticeContainer title="Unguaranteed deposits allowed">
+    <NoticeContainer
+      title="Unguaranteed deposits allowed"
+      dataTestId="additionalVerification-unguaranteedDeposits-warningWithErrors-banner"
+    >
       <WarningBannerText />
     </NoticeContainer>
   );

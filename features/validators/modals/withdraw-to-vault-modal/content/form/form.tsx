@@ -52,11 +52,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   pubkey,
   availableToPartialWithdraw,
 }) => {
-  const {
-    invalidateVaultConfig,
-    invalidateVaultState,
-    refetch: refetchVault,
-  } = useVault();
+  const { invalidateVault } = useVault();
   const {
     hasWithdrawalPermission,
     getValidatorByPubkey,
@@ -79,7 +75,9 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   >({
     defaultValues: {
       amount: isPartial ? null : 0n,
-      index,
+      // `in_queue` validators have no index; the `z.number()` schema then keeps
+      // the form invalid, which is the right outcome — they cannot be withdrawn
+      index: index ?? undefined,
       pubkey,
       validatorWithdrawalFee,
       balance,
@@ -106,7 +104,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   useEffect(() => {
     reset({
       amount: isPartial ? null : 0n,
-      index,
+      index: index ?? undefined,
       pubkey,
       validatorWithdrawalFee,
       balance,
@@ -116,20 +114,11 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
   const onSubmit = useCallback(
     async (formData: WithdrawalFormValidatedValues) => {
       const success = await withdrawToVault(formData);
-      await Promise.all([
-        invalidateVaultConfig(),
-        invalidateVaultState(),
-        refetchVault(),
-      ]);
+      await invalidateVault();
 
       return success;
     },
-    [
-      invalidateVaultConfig,
-      invalidateVaultState,
-      refetchVault,
-      withdrawToVault,
-    ],
+    [invalidateVault, withdrawToVault],
   );
 
   return (
@@ -139,7 +128,7 @@ export const WithdrawToVaultModalForm: FC<FormProps> = ({
       retryEvent={retryEvent}
       afterSubmitResetOptions={false}
     >
-      <FormContainer>
+      <FormContainer data-testid="withdrawal-form">
         {!formState.disabled && (
           <WarningInfo data-testid="warning">
             {isPartial ? partialWarning : fullWarning(balance)}

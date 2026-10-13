@@ -4,13 +4,12 @@ import {
   ChartLineThresholdType,
 } from '@lidofinance/lido-ui';
 
-import { vaultTexts } from 'modules/vaults';
+import { vaultTexts, useVaultOverviewData } from 'modules/vaults';
 
 import {
   ModalSection,
   OverviewModal,
   useStEthChart,
-  useVaultOverviewData,
   SectionDivider,
 } from 'features/overview/inner';
 import { SlashingInfo } from 'features/overview/shared';
@@ -25,7 +24,7 @@ export const StethLiabilityModal = () => {
 
   const {
     utilizationRatio,
-    totalMintingCapacity,
+    totalMintingCapacityStETH: totalMintingCapacity,
     mintableStETH,
     reserveRatio,
     rebalanceThreshold,
@@ -36,7 +35,7 @@ export const StethLiabilityModal = () => {
   } = values || {};
 
   return (
-    <OverviewModal name="vaultLiability" symbol="stETH">
+    <OverviewModal name="vaultLiabilityStETH" symbol="stETH">
       <ChartLine
         loading={isLoading}
         border={ChartLineBorderType.rounded}

@@ -11,13 +11,13 @@ type ApplyChangesProps = {
 
 export const ApplyChanges: FC<ApplyChangesProps> = ({ closeModal }) => {
   const { syncTier } = useSyncTier();
-  const { refetch } = useVault();
+  const { invalidateVaultConfig } = useVault();
 
   const onClick = useCallback(async () => {
     closeModal();
     await syncTier();
-    await refetch();
-  }, [syncTier, refetch, closeModal]);
+    await invalidateVaultConfig();
+  }, [syncTier, invalidateVaultConfig, closeModal]);
 
   return (
     <Button

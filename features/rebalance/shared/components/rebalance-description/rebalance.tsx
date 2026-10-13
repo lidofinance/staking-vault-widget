@@ -1,0 +1,36 @@
+import { useMemo } from 'react';
+import { Text } from '@lidofinance/lido-ui';
+import Link from 'next/link';
+
+import { useVault, vaultTexts } from 'modules/vaults';
+import { appPaths } from 'consts/routing';
+
+import { Container } from './styles';
+
+export const Rebalance = () => {
+  const { vaultAddress } = useVault();
+
+  const [supplyLink, repayLink] = useMemo(() => {
+    if (!vaultAddress) return ['#', '#'];
+
+    return [
+      appPaths.vaults.vault(vaultAddress).eth('supply'),
+      appPaths.vaults.vault(vaultAddress).steth('repay'),
+    ];
+  }, [vaultAddress]);
+
+  const { title, text, supplyLinkText, repayLinkText } =
+    vaultTexts.actions.rebalance.description.rebalance;
+
+  return (
+    <Container data-testid="description">
+      <Text size="sm" strong data-testid="title">
+        {title}
+      </Text>
+      <Text size="xxs" color="secondary" data-testid="text">
+        {text} <Link href={supplyLink}>{supplyLinkText}</Link> or{' '}
+        <Link href={repayLink}>{repayLinkText}</Link>.
+      </Text>
+    </Container>
+  );
+};

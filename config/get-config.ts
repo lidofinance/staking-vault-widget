@@ -29,3 +29,12 @@ export const getConfig = (): ConfigType => {
 };
 
 export const config = getConfig();
+
+if (
+  config.developmentMode !== true &&
+  config.dangerouslyDisableVaultSecurity === true
+) {
+  throw new Error(
+    'Vault security cannot be disabled in production mode. Please remove `DANGEROUSLY_DISABLE_VAULT_SECURITY=true` in production.',
+  );
+}

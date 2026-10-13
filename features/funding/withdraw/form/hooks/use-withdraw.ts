@@ -46,7 +46,7 @@ export const useWithdraw = () => {
 
       const { success } = await withSuccess(
         sendTX({
-          transactions: async () => [...prepareReportCalls(), ...calls],
+          transactions: async () => [...(await prepareReportCalls()), ...calls],
           forceAtomic: true,
           mainActionLoadingText: vaultTexts.actions.withdraw.loading,
           mainActionCompleteText: vaultTexts.actions.withdraw.completed(token),

@@ -13,6 +13,7 @@ export type NoticeContainerProps = {
   description?: ReactNode;
   note?: string;
   type?: NoticeContainerType;
+  dataTestId?: string;
 };
 
 const iconsMap: Record<NoticeContainerType, ReactNode> = {
@@ -24,10 +25,17 @@ const iconsMap: Record<NoticeContainerType, ReactNode> = {
 export const NoticeContainer: FC<PropsWithChildren<NoticeContainerProps>> = (
   props,
 ) => {
-  const { title, description, note, type = 'warning', children } = props;
+  const {
+    title,
+    description,
+    note,
+    type = 'warning',
+    children,
+    dataTestId,
+  } = props;
 
   return (
-    <Wrapper type={type}>
+    <Wrapper type={type} data-testid={dataTestId}>
       <TitleContainer>
         <Title as="h2" color="text">
           {iconsMap[type]} {title}

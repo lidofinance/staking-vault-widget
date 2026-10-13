@@ -46,6 +46,7 @@ export const SubmitButton = () => {
       type="submit"
       loading={isSubmitting}
       disabled={isDisabled}
+      data-testid="supplyForm-submitButton"
     >
       {submitText}
     </MultiplePermissionedSubmitButton>

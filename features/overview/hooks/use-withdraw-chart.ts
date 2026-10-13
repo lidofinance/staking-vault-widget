@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import { LineData } from '@lidofinance/lido-ui';
 
-import { formatBalance } from 'utils';
+import { formatBalance, normalizeChartBN } from 'utils';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
-import { normalizeChartBN } from './utils';
 
 export const useWithdrawChart = () => {
   const { values } = useVaultOverview();
@@ -12,7 +11,7 @@ export const useWithdrawChart = () => {
   return useMemo(() => {
     if (!values) return {};
 
-    const totalValue = values.totalValue;
+    const totalValue = values.totalValueETH;
     const withdrawableEther = values.vaultData.withdrawableEther;
 
     const totalValueAmount = formatBalance(totalValue).trimmed;

@@ -1,6 +1,6 @@
 import { encodeFunctionData } from 'viem';
+import { DashboardAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import { Tier, VAULTS_CONNECT_DEPOSIT } from 'modules/vaults';
 import { isBigint } from 'utils/is-bigint';
 
@@ -15,7 +15,7 @@ export const dataToTx = (
   ) {
     return {
       data: encodeFunctionData({
-        abi: dashboardAbi,
+        abi: DashboardAbi,
         functionName: 'connectAndAcceptTier',
         args: [proposedTier.id, proposedVaultLimitShares],
       }),
@@ -25,7 +25,7 @@ export const dataToTx = (
 
   return {
     data: encodeFunctionData({
-      abi: dashboardAbi,
+      abi: DashboardAbi,
       functionName: 'connectToVaultHub',
     }),
     value: VAULTS_CONNECT_DEPOSIT,

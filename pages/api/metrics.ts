@@ -9,6 +9,14 @@ import {
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
 
+// GET-only Prometheus exposition — scrapers never send a body, so skip
+// bodyParser entirely to avoid allocating up to 1MB per request.
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const metrics = metricsFactory({
   registry: Metrics.registry,
 });

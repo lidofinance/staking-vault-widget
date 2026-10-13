@@ -16,10 +16,10 @@ export const Connect: FC<ButtonProps> = (props) => {
 
   return (
     <Button
+      {...rest}
       disabled={!isWalletConnectionAllowed}
       onClick={handleClick}
       data-testid="connectBtn"
-      {...rest}
     >
       Connect wallet
     </Button>

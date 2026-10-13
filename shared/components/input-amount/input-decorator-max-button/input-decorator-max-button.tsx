@@ -4,21 +4,22 @@ import { MaxButton } from './styled';
 type InputDecoratorMaxButtonProps = {
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-};
+} & React.ComponentProps<typeof MaxButton>;
 
 export const InputDecoratorMaxButton = ({
   disabled,
-  onClick,
+  children,
+  ...rest
 }: InputDecoratorMaxButtonProps) => {
   return (
     <MaxButton
       size="xxs"
       variant="translucent"
-      onClick={onClick}
-      disabled={disabled}
       data-testid="maxBtn"
+      disabled={disabled}
+      {...rest}
     >
-      MAX
+      {children ?? 'MAX'}
     </MaxButton>
   );
 };

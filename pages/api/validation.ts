@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import {
   wrapRequest as wrapNextRequest,
   cacheControl,
 } from '@lidofinance/next-api-wrapper';
 import { isAddress } from 'viem';
 
-import { config, secretConfig } from 'config';
+import { config as appConfig, secretConfig } from 'config';
 import { API_ROUTES } from 'consts/api';
 import {
   defaultErrorHandler,
@@ -18,6 +18,15 @@ import {
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
 import { createCachedProxy } from 'utilsApi/cached-proxy';
+
+// GET-only route — disable body parsing so a non-GET (or GET with body)
+// can't consume up to bodyParser.sizeLimit of memory before
+// httpMethodGuard rejects it.
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 // Validate address to prevent SSRF attacks
 const validateEthereumAddress = (address: unknown): string | null => {
@@ -43,8 +52,7 @@ if (!secretConfig.validationAPI) {
       if (!validatedAddress) {
         throw new Error('Invalid address'); // This will be caught by the handler
       }
-      secretConfig.defaultChain;
-      const isMainnet = config.defaultChain === CHAINS.Mainnet;
+      const isMainnet = appConfig.defaultChain === CHAINS.Mainnet;
       const path = isMainnet
         ? `/v2/check/${validatedAddress}`
         : `/v1/check/${validatedAddress}`;
@@ -77,6 +85,6 @@ export default wrapNextRequest([
   cors({ origin: ['*'], methods: [HttpMethod.GET] }),
   rateLimit,
   responseTimeMetric(Metrics.request.apiTimings, API_ROUTES.VALIDATION),
-  cacheControl({ headers: config.CACHE_VALIDATION_HEADERS }),
+  cacheControl({ headers: appConfig.CACHE_VALIDATION_HEADERS }),
   defaultErrorHandler,
 ])(handler);

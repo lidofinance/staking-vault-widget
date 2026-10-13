@@ -7,5 +7,9 @@ export const ChainBanner = () => {
 
   if (!errorMessage) return null;
 
-  return <WarningMessage>{errorMessage}</WarningMessage>;
+  return (
+    <WarningMessage data-testid="unsupported-chain-banner">
+      {errorMessage}
+    </WarningMessage>
+  );
 };

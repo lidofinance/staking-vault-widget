@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
+import { zeroAddress } from 'viem';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
@@ -17,10 +18,13 @@ import type {
   WithdrawFormValidationContextAwaitable,
 } from '../types';
 
-export const WithdrawFormSchema = ({
-  validateRecipientArgs,
-  withdrawableEther,
-}: WithdrawFormValidationContext) => {
+export const WithdrawFormSchema = (context: WithdrawFormValidationContext) => {
+  const withdrawableEther = context?.withdrawableEther ?? 0n;
+  const validateRecipientArgs = context?.validateRecipientArgs ?? {
+    vaultAddress: zeroAddress,
+    dashboardAddress: zeroAddress,
+  };
+
   return z.object({
     amount: maxAmountSchema(withdrawableEther),
     token: supplyTokenSchema,
@@ -28,13 +32,24 @@ export const WithdrawFormSchema = ({
   });
 };
 
+// tracks context promises that already timed out once, so repeated
+// validation calls don't re-wait 4s each time for a promise that is
+// known to never settle (e.g. vault disconnected, dashboard unreadable)
+const timedOutContexts = new WeakSet<WithdrawFormValidationContextAwaitable>();
+
 export const withdrawFormResolver: Resolver<
   WithdrawFormFieldValues,
   WithdrawFormValidationContextAwaitable,
   WithdrawFormValidatedValues
 > = async (values, context, options) => {
   invariant(context, '[WithdrawFormResolver] context is undefined');
-  const contextValue = await awaitWithTimeout(context, 4000);
+
+  const contextValue = timedOutContexts.has(context)
+    ? undefined
+    : await awaitWithTimeout(context, 4000).catch(() => {
+        timedOutContexts.add(context);
+        return undefined;
+      });
 
   const schema = WithdrawFormSchema(contextValue);
 

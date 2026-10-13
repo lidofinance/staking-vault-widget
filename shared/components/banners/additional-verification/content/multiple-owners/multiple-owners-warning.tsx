@@ -14,7 +14,7 @@ type MultipleOwnersWarningProps = {
   state: VerificationBannerState;
 };
 
-const { title, description } =
+const { title, description, ownersListTitle } =
   vaultTexts.actions.additionalVerification.banners.multipleOwners;
 
 export const MultipleOwnersWarning: FC<MultipleOwnersWarningProps> = ({
@@ -28,10 +28,18 @@ export const MultipleOwnersWarning: FC<MultipleOwnersWarningProps> = ({
   }
 
   return (
-    <NoticeContainer title={title} type="warning">
+    <NoticeContainer
+      title={title}
+      type="warning"
+      dataTestId="additionalVerification-multipleOwners-warning-banner"
+    >
       <Text size="xxs">{description}</Text>
       <Explanation />
-      <OwnersList ownersList={state.defaultAdminList} />
+      <OwnersList
+        ownersList={state.defaultAdminList}
+        title={ownersListTitle}
+        testIdPrefix="multipleOwners"
+      />
       <ConfirmAndProceed
         fieldName={VERIFICATION_CONFIRM_FIELD_NAMES.multipleOwners}
       />

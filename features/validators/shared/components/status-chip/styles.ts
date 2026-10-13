@@ -2,20 +2,20 @@ import styled from 'styled-components';
 import { Theme } from '@lidofinance/lido-ui';
 
 import { getColorTransparency } from 'styles';
-import type { ValidatorStatus } from 'modules/vaults';
 
+import type { ValidatorViewStatus } from 'features/validators/const';
 import { getValidatorStatusTextColor } from 'features/validators/utils';
 
 const getBackgroundColor = ({
   $status,
   theme,
 }: {
-  $status: ValidatorStatus;
+  $status: ValidatorViewStatus;
   theme: Theme;
 }) => {
   const { colors } = theme;
 
-  const statusList: Record<ValidatorStatus, string> = {
+  const statusList: Record<ValidatorViewStatus, string> = {
     active_ongoing: getColorTransparency(colors.success, '20%'),
     active_exiting: getColorTransparency(colors.warning, '20%'),
     active_slashed: getColorTransparency(colors.error, '20%'),
@@ -25,6 +25,9 @@ const getBackgroundColor = ({
     pending_initialized: colors.backgroundSecondary,
     pending_queued: colors.backgroundSecondary,
     exited_unslashed: colors.backgroundSecondary,
+    in_queue: colors.background,
+    deposited: colors.background,
+    pre_deposited: colors.background,
   };
 
   return statusList[$status];
@@ -34,7 +37,7 @@ const getBorder = ({
   $status,
   theme,
 }: {
-  $status: ValidatorStatus;
+  $status: ValidatorViewStatus;
   theme: Theme;
 }) => {
   const statusesWithBorder = ['withdrawal_done'];
@@ -44,7 +47,7 @@ const getBorder = ({
     : 'none';
 };
 
-export const StatusContainer = styled.div<{ $status: ValidatorStatus }>`
+export const StatusContainer = styled.div<{ $status: ValidatorViewStatus }>`
   display: flex;
   align-items: center;
   width: fit-content;
@@ -55,7 +58,7 @@ export const StatusContainer = styled.div<{ $status: ValidatorStatus }>`
   background-color: ${getBackgroundColor};
 `;
 
-export const StatusText = styled.span<{ $status: ValidatorStatus }>`
+export const StatusText = styled.span<{ $status: ValidatorViewStatus }>`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
   font-weight: normal;

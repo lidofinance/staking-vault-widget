@@ -10,7 +10,7 @@ import { modals } from 'features/overview/consts';
 import type { OverviewModalItem } from 'features/overview/types';
 
 const modalEventMap = {
-  totalValue: MATOMO_CLICK_EVENTS_TYPES.clickOverviewTotalValuePopup,
+  totalValueETH: MATOMO_CLICK_EVENTS_TYPES.clickOverviewTotalValuePopup,
   healthFactorNumber: MATOMO_CLICK_EVENTS_TYPES.clickOverviewHealthFactorPopup,
   netApr: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNetStakingAPRPopup,
   balance: MATOMO_CLICK_EVENTS_TYPES.clickOverviewUnstakedBalancePopup,
@@ -18,7 +18,8 @@ const modalEventMap = {
     MATOMO_CLICK_EVENTS_TYPES.clickOverviewWithdrawableETHPopup,
   undisbursedNodeOperatorFee: MATOMO_CLICK_EVENTS_TYPES.clickOverviewNOFeePopup,
   unsettledLidoFees: MATOMO_CLICK_EVENTS_TYPES.clickOverviewLidoFeesPopup,
-  vaultLiability: MATOMO_CLICK_EVENTS_TYPES.clickOverviewStETHLiabilityPopup,
+  vaultLiabilityStETH:
+    MATOMO_CLICK_EVENTS_TYPES.clickOverviewStETHLiabilityPopup,
 } as const;
 
 export const useOverviewModal = () => {

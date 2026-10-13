@@ -7,7 +7,7 @@ import type {
   WalletClient,
 } from 'viem';
 import type { EncodableContract } from '@lidofinance/lido-ethereum-sdk/common';
-import {
+import type {
   LidoSDKVaultContracts,
   LidoSDKVaultEntity,
 } from '@lidofinance/lido-ethereum-sdk';
@@ -72,7 +72,6 @@ export type VaultHub = Awaited<
 export type VaultBaseInfo = {
   vaultEntity: LidoSDKVaultEntity;
   blockNumber: bigint;
-  blockNumberString: string;
   address: Address;
   vault: Vault;
   hub: VaultHub;
@@ -83,16 +82,19 @@ export type VaultBaseInfo = {
   group: ContractFunctionReturnType<OperatorGrid['abi'], 'view', 'group'>;
   nodeOperator: Address;
   vaultOwner: Address;
+  pendingOwner: Address;
   withdrawalCredentials: Hex;
   isReportFresh: boolean;
   isReportMissing: boolean;
   hubReport: HubReportData;
   report: VaultReportType | null;
-  isVaultDisconnected: boolean; // disconnected by user
+  isVaultDisconnected: boolean;
+  isVaultFullDisconnected: boolean;
   isVaultConnected: boolean;
   isPendingDisconnect: boolean;
   isPendingConnect: boolean;
   isReportAvailable: boolean;
+  hasPendingOwner: boolean;
 } & VaultConnection;
 
 export type Tier = {

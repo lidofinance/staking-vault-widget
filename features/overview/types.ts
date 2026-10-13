@@ -1,7 +1,8 @@
-import type { VAULTS_ALL_ROLES } from 'modules/vaults';
-import type { modals } from './consts';
-import type { VaultOverviewData } from './hooks';
 import type { Address } from 'viem';
+
+import type { VAULTS_ALL_ROLES, VaultOverviewData } from 'modules/vaults';
+
+import type { modals } from './consts';
 
 export type OverviewModalItem = (typeof modals)[number];
 export type VaultOverviewModalKey = Extract<

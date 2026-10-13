@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { getColorTransparency } from 'styles';
 
-export const BannerContainer = styled.div`
+export const BannerContainer = styled.div<{ $padding?: string }>`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px;
+  padding: ${({ $padding }) => ($padding ? $padding : '12px')};
   border-radius: ${({ theme }) => theme.borderRadiusesMap.lg}px;
   background-color: ${({ theme }) =>
     getColorTransparency(theme.colors.warning, '10%')};

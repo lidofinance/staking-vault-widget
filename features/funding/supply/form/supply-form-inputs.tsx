@@ -1,11 +1,15 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
   AddressInputHookForm,
   CheckboxHookForm,
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
-import { VAULT_FUNDING_TOKENS, vaultTexts } from 'modules/vaults';
+import {
+  useEthBalanceWarning,
+  VAULT_FUNDING_TOKENS,
+  vaultTexts,
+} from 'modules/vaults';
 
 import { useSupplyForm } from './supply-form-provider/supply-form-provider';
 import type { SupplyFormValidatedValues } from './types';
@@ -13,10 +17,19 @@ import type { SupplyFormValidatedValues } from './types';
 export const SupplyFormInputs = () => {
   const { balanceQuery, isStethMintableQuery } = useSupplyForm();
   const {
-    watch,
     formState: { disabled },
   } = useFormContext<SupplyFormValidatedValues>();
-  const mintSteth = watch('mintSteth');
+
+  const [mintSteth, amount, token] = useWatch<
+    SupplyFormValidatedValues,
+    ['mintSteth', 'amount', 'token']
+  >({
+    name: ['mintSteth', 'amount', 'token'],
+  });
+
+  const ethBalanceWarning = useEthBalanceWarning(
+    token === 'ETH' ? amount : undefined,
+  );
 
   const isStethMintable = isStethMintableQuery.data === true;
   const maxValue = balanceQuery.data;
@@ -29,6 +42,7 @@ export const SupplyFormInputs = () => {
         tokenOptions={VAULT_FUNDING_TOKENS}
         maxAmount={maxValue}
         disabled={disabled}
+        warning={ethBalanceWarning}
       />
       <CheckboxHookForm
         fieldName="mintSteth"

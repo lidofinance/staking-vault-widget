@@ -22,7 +22,10 @@ export const UnguaranteedDepositsWarning: FC<
   }
 
   return (
-    <NoticeContainer title="Unguaranteed deposits allowed">
+    <NoticeContainer
+      title="Unguaranteed deposits allowed"
+      dataTestId="additionalVerification-unguaranteedDeposits-warning-banner"
+    >
       <WarningBannerText />
       <ConfirmAndProceed
         fieldName={VERIFICATION_CONFIRM_FIELD_NAMES.unguaranteedDeposits}

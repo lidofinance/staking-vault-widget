@@ -53,7 +53,7 @@ export const useWithdrawalToVault = () => {
       const mainActionCompleteText = mainCompleteText(index, withdrawalAmount);
 
       const prepareTransactions = async () => {
-        const calls: TransactionEntry[] = [...prepareReportCalls()];
+        const calls: TransactionEntry[] = await prepareReportCalls();
 
         calls.push({
           ...activeVault.dashboard.encode.triggerValidatorWithdrawals([

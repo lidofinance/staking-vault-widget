@@ -1,6 +1,12 @@
 export default {
+  extensionsToTreatAsEsm: ['.ts'],
   transform: {
-    '^.+\\.(t|j)sx?$': 'ts-jest',
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
   },
   moduleDirectories: ['node_modules', '<rootDir>'],
   modulePathIgnorePatterns: ['./test'],

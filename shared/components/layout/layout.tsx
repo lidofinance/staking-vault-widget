@@ -11,6 +11,7 @@ import { Navigation, AllVaultsMobile } from './navigation';
 import { CookieLess } from './cookie-less';
 import { Footer } from './footer';
 import { ChainBanner } from './chain-banner';
+import { TestEnvBanner } from './test-env-banner';
 import {
   LayoutTitle,
   LayoutSubTitle,
@@ -35,23 +36,28 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
   const errorMessage = useErrorMessage();
 
   return (
-    <LayoutStyles isError={!!errorMessage}>
-      <Header />
-      <ChainBanner />
-      <Navigation mode={navigationMode} />
-      <Main size={containerSize}>
-        {config.ipfsMode && (
-          <IPFSInfoBoxOnlyMobileAndPortableWrapper>
-            <IPFSInfoBox />
-          </IPFSInfoBoxOnlyMobileAndPortableWrapper>
-        )}
-        <AllVaultsMobile />
-        <LayoutTitle>{title}</LayoutTitle>
-        <LayoutSubTitle>{subtitle}</LayoutSubTitle>
-        {children}
-      </Main>
-      <CookieLess />
-      <Footer />
-    </LayoutStyles>
+    <>
+      {/* Outside LayoutStyles: it's a grid with named template areas,
+          an extra child inside would break the area layout */}
+      <TestEnvBanner />
+      <LayoutStyles isError={!!errorMessage}>
+        <Header />
+        <ChainBanner />
+        <Navigation mode={navigationMode} />
+        <Main size={containerSize}>
+          {config.ipfsMode && (
+            <IPFSInfoBoxOnlyMobileAndPortableWrapper>
+              <IPFSInfoBox />
+            </IPFSInfoBoxOnlyMobileAndPortableWrapper>
+          )}
+          <AllVaultsMobile />
+          <LayoutTitle>{title}</LayoutTitle>
+          <LayoutSubTitle>{subtitle}</LayoutSubTitle>
+          {children}
+        </Main>
+        <CookieLess />
+        <Footer />
+      </LayoutStyles>
+    </>
   );
 };

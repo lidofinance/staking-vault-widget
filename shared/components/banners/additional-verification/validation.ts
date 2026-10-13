@@ -16,21 +16,25 @@ export const verificationConfirmDefaultValues: VerificationConfirmFieldValues =
     notOwner: false,
     multipleOwners: false,
     unguaranteedDeposits: false,
+    custodyPermission: false,
   };
 
 export const getVerificationValidationContext = ({
   isNotOwnerWarningVisible,
   isMultipleOwnersWarningVisible,
   isUnguaranteedDepositsWarningVisible,
+  isCustodyPermissionWarningVisible,
 }: Pick<
   VerificationBannerState,
   | 'isNotOwnerWarningVisible'
   | 'isMultipleOwnersWarningVisible'
   | 'isUnguaranteedDepositsWarningVisible'
+  | 'isCustodyPermissionWarningVisible'
 >): VerificationConfirmationFlags => ({
   notOwner: isNotOwnerWarningVisible,
   multipleOwners: isMultipleOwnersWarningVisible,
   unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+  custodyPermission: isCustodyPermissionWarningVisible,
 });
 
 const addConfirmationIssue = (
@@ -52,6 +56,7 @@ export const verificationConfirmSchema = (
       notOwner: z.boolean(),
       multipleOwners: z.boolean(),
       unguaranteedDeposits: z.boolean(),
+      custodyPermission: z.boolean(),
     })
     .superRefine((values, ctx) => {
       if (
@@ -80,6 +85,18 @@ export const verificationConfirmSchema = (
         addConfirmationIssue(
           ctx,
           VERIFICATION_CONFIRM_FIELD_NAMES.unguaranteedDeposits,
+        );
+      }
+
+      if (
+        confirmationRequired[
+          VERIFICATION_CONFIRM_FIELD_NAMES.custodyPermission
+        ] &&
+        values.custodyPermission !== true
+      ) {
+        addConfirmationIssue(
+          ctx,
+          VERIFICATION_CONFIRM_FIELD_NAMES.custodyPermission,
         );
       }
     });

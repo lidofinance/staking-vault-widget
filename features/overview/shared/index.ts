@@ -1,7 +1,10 @@
 export * from './overview-item';
-export { SectionDivider, OverviewSection } from './styles';
+export { SectionDivider, OverviewSection, NestedSections } from './styles';
 export * from './overview-modal';
 export * from './formula';
 export * from './slashing-info';
 export * from './repay-obligations';
 export * from './contract-address';
+export * from './report-updated-at';
+export * from './off-book-hint';
+export * from './quarantined-hint';

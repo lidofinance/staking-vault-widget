@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react';
 
-import { CHAINS } from '@lidofinance/lido-ethereum-sdk';
+import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 import { useLocalStorage } from 'shared/hooks/use-local-storage';
 
 import { getUserConfigDefault } from './utils';

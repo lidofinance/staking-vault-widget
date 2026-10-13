@@ -22,7 +22,7 @@ export const PdgTrust = () => {
   }
 
   return (
-    <BannerWithoutTitle>
+    <BannerWithoutTitle dataTestId="settings-pdgTrust-banner">
       <Text size="xxs" color="warning">
         By allowing this Node Operator to perform{' '}
         <Link href={PDG_LINK}>unguaranteed deposits</Link>, you confirm that

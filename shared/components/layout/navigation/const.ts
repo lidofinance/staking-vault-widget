@@ -18,6 +18,8 @@ export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
   '/vaults/[vaultAddress]/disburse': MATOMO_CLICK_EVENTS_TYPES.clickNaviNOFee,
   '/vaults/[vaultAddress]/settings/[mode]':
     MATOMO_CLICK_EVENTS_TYPES.clickNaviSettings,
+  '/vaults/[vaultAddress]/rebalance':
+    MATOMO_CLICK_EVENTS_TYPES.clickNaviRebalance,
 };
 
 export const vaultRoutes = (
@@ -59,6 +61,13 @@ export const vaultRoutes = (
       title: 'Node Operator fee',
       path: appPaths.vaults.vault(vaultAddress).disburse,
       icon: 'withdraw',
+      exact: true,
+      inMobileMenu: true,
+    },
+    {
+      title: 'Rebalance',
+      path: appPaths.vaults.vault(vaultAddress).rebalance,
+      icon: 'rebalance',
       exact: true,
       inMobileMenu: true,
     },

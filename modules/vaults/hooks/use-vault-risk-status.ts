@@ -6,6 +6,7 @@ import { useVault } from '../vault-context';
 import { useDappStatus } from '../../web3';
 import {
   PDG_POLICY,
+  VaultDisconnectedError,
   VAULTS_OWNER_ROLES_MAP,
   VAULTS_ROOT_ROLES_MAP,
 } from '../consts';
@@ -16,12 +17,20 @@ export const useVaultRiskStatus = () => {
   const { address } = useDappStatus();
 
   const { data, ...rest } = useQuery({
-    queryKey: [...queryKeys.base, 'vault-risk-status', address] as const,
-    enabled: !!(activeVault && address),
+    queryKey: [
+      ...queryKeys.config(),
+      'vault-risk-status',
+      { address },
+    ] as const,
+    enabled: !!activeVault,
     refetchOnMount: true,
     staleTime: 1000 * 60, // 1min
     queryFn: async () => {
       invariant(activeVault, '[useVaultRiskStatus] activeVault is not defined');
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const { dashboard, group, operatorGrid, nodeOperator } = activeVault;
       const { operator, shareLimit, tierIds } = group;
@@ -35,6 +44,9 @@ export const useVaultRiskStatus = () => {
         defaultAdminList,
         suppliers,
         repayers,
+        rebalancer,
+        withdrawers,
+        minters,
         pdgPolicy,
         tier,
         ...tiersList
@@ -42,6 +54,9 @@ export const useVaultRiskStatus = () => {
         dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.supplier]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.rebalancer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.withdrawer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.minter]),
         dashboard.read.pdgPolicy(),
         operatorGrid.read.vaultTierInfo([activeVault.address]),
         ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
@@ -68,6 +83,7 @@ export const useVaultRiskStatus = () => {
       const isVaultOwner = !!address && defaultAdminList.includes(address);
       const isSupplier = !!address && suppliers.includes(address);
       const isRepayer = !!address && repayers.includes(address);
+      const isRebalancer = !!address && rebalancer.includes(address);
       const isUnguaranteedDepositsAllowed =
         String(pdgPolicy) === PDG_POLICY.ALLOW_DEPOSIT_AND_PROVE;
 
@@ -80,7 +96,10 @@ export const useVaultRiskStatus = () => {
         isVaultOwner,
         isSupplier,
         isRepayer,
+        isRebalancer,
         defaultAdminList: [...defaultAdminList],
+        withdrawersList: [...withdrawers],
+        mintersList: [...minters],
         nodeOperator,
         firstAdmin,
       };
@@ -97,7 +116,10 @@ export const useVaultRiskStatus = () => {
     isVaultOwner: data?.isVaultOwner,
     isSupplier: data?.isSupplier,
     isRepayer: data?.isRepayer,
+    isRebalancer: data?.isRebalancer,
     defaultAdminList: data?.defaultAdminList,
+    withdrawersList: data?.withdrawersList,
+    mintersList: data?.mintersList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,
   };

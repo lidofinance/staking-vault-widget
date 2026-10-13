@@ -16,6 +16,7 @@ export const VaultAddresses = () => {
     operatorGrid,
     predepositGuarantee,
     isVaultDisconnected,
+    isPendingConnect,
   } = activeVault ?? {};
 
   const contractInfoList = useMemo(() => {
@@ -54,7 +55,7 @@ export const VaultAddresses = () => {
     predepositGuarantee,
   ]);
 
-  if (isVaultDisconnected) {
+  if (isVaultDisconnected || isPendingConnect) {
     return null;
   }
 

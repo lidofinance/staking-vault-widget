@@ -1,3 +1,5 @@
+import { config } from 'config';
+
 export const formatExpiry = (expiryTimestamp: bigint) =>
   formatSecondsToHours(
     (Number(expiryTimestamp) * 1000 - new Date().getTime()) / 1000,
@@ -31,7 +33,7 @@ export const formatSecondsToHours = (
   return `${hours}h ${minutes}m`;
 };
 
-const customDateFormatter = new Intl.DateTimeFormat('en-US', {
+const customDateFormatter = new Intl.DateTimeFormat(config.LOCALE, {
   month: 'short',
   day: 'numeric',
   hour: 'numeric',
@@ -61,4 +63,14 @@ export const formatDate = (date: Date): string => {
 
 export const formatDateToISO = (date: Date): string => {
   return isoDateFormatter.format(date).replace(',', '');
+};
+
+export const getLocalTimeZoneLabel = (date: Date = new Date()): string => {
+  const label = customDateFormatter
+    .formatToParts(date)
+    .find((part) => part.type === 'timeZoneName')?.value;
+
+  if (!label) return '';
+
+  return label === 'GMT' || label === 'UTC' ? 'GMT+0' : label;
 };

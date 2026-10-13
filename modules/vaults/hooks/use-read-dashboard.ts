@@ -7,39 +7,30 @@ import type {
   ContractFunctionParameters,
 } from 'viem';
 
-import { dashboardAbi } from 'abi/dashboard-abi';
 import { useLidoSDK } from 'modules/web3';
-import { isBigint } from 'utils';
 
 import { readWithReport } from '../report';
 import { useVault } from '../vault-context';
+import { VaultDisconnectedError } from '../consts';
 
-const stringifyArgs = (args: unknown): string => {
-  return JSON.stringify(args ?? [], (_, value) =>
-    isBigint(value) ? value.toString() : value,
-  );
-};
+import type { DashboardAbiType } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 export const useReadDashboard = <
   TMutability extends 'pure' | 'view' | 'nonpayable' | 'payable',
   TFunctionName extends ContractFunctionName<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability
-  > = ContractFunctionName<typeof dashboardAbi, TMutability>,
+  > = ContractFunctionName<DashboardAbiType, TMutability>,
   TArgs extends ContractFunctionArgs<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability,
     TFunctionName
-  > = ContractFunctionArgs<typeof dashboardAbi, TMutability, TFunctionName>,
+  > = ContractFunctionArgs<DashboardAbiType, TMutability, TFunctionName>,
   TResult extends ContractFunctionReturnType<
-    typeof dashboardAbi,
+    DashboardAbiType,
     TMutability,
     TFunctionName
-  > = ContractFunctionReturnType<
-    typeof dashboardAbi,
-    TMutability,
-    TFunctionName
-  >,
+  > = ContractFunctionReturnType<DashboardAbiType, TMutability, TFunctionName>,
   TSelectData = TResult,
 >({
   functionName,
@@ -59,16 +50,22 @@ export const useReadDashboard = <
     queryKey: [
       ...queryKeys.state,
       'read-with-report',
-      functionName,
-      { args: stringifyArgs(args) },
+      { args, functionName },
     ] as const,
     enabled: !!activeVault && enabled,
     select,
-    queryFn: async () => {
+    queryFn: async ({ queryKey }) => {
+      const { args, functionName } = queryKey[5];
       invariant(
         activeVault,
         '[useReadWithVaultReport] activeVault is not defined',
       );
+
+      // a fully disconnected vault's dashboard address no longer points to
+      // a valid Dashboard contract, so any read against it would revert
+      if (activeVault.isVaultFullDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const prepare = activeVault.dashboard.prepare as Record<
         TFunctionName,

@@ -1,35 +1,51 @@
+import { isAddressEqual, type Address } from 'viem';
+
 import { useDappStatus } from 'modules/web3';
 import { useVaultRiskStatus } from 'modules/vaults';
 
 import type {
   AdditionalVerificationAction,
+  CustodyRoleMembers,
   VerificationBannerState,
 } from '../types';
+
+import { config } from 'config';
 
 export const useVerificationBannerDefender = (
   action: AdditionalVerificationAction,
 ): VerificationBannerState => {
-  const { isDappActive } = useDappStatus();
+  // DEV only feature - will throw if on in production environment
+  const SECURITY_OVERRIDE_DEV_ENV = !config.dangerouslyDisableVaultSecurity;
+
+  const { isDappActive, address } = useDappStatus();
   const {
     isVaultOwner,
     isMultipleOwners,
     firstAdmin,
-    isSupplier,
-    isRepayer,
+    isSupplier = false,
+    isRepayer = false,
     isTierDefault,
     isNodeOperatorVerified,
     defaultAdminList,
+    withdrawersList,
+    mintersList,
     nodeOperator,
     isUnguaranteedDepositsAllowed,
     isSuccess,
   } = useVaultRiskStatus();
 
-  const hasActionPermission = action === 'supply' ? isSupplier : isRepayer;
+  const permissionMap: Record<AdditionalVerificationAction, boolean> = {
+    repay: isRepayer,
+    supply: isSupplier,
+  };
+
+  const hasActionPermission = permissionMap[action];
   const hasActionPermissionOrOwnership =
     hasActionPermission || isVaultOwner === true;
 
   const isNotOwnerWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isVaultOwner === false &&
       hasActionPermission &&
       isTierDefault === false &&
@@ -37,40 +53,65 @@ export const useVerificationBannerDefender = (
   );
 
   const isNotOwnerErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isVaultOwner === false &&
       hasActionPermission &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
   const isMultipleOwnersWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isMultipleOwners === true &&
-      isTierDefault === false &&
       isVaultOwner === true &&
+      isTierDefault === false &&
       isNodeOperatorVerified === true,
   );
 
   const isMultipleOwnersErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       isMultipleOwners === true &&
+      hasActionPermissionOrOwnership === true &&
       isVaultOwner === true &&
       (isTierDefault === true || isNodeOperatorVerified === false),
   );
 
   const isUnguaranteedDepositsWarningVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       hasActionPermissionOrOwnership &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === true,
   );
 
   const isUnguaranteedDepositsErrorVisible = Boolean(
-    isDappActive &&
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
       hasActionPermissionOrOwnership &&
       nodeOperator &&
       isUnguaranteedDepositsAllowed === true &&
       isNodeOperatorVerified === false,
+  );
+
+  // only the connected address is filtered out: another DEFAULT_ADMIN holding a
+  // custody role is exactly the risk this banner is meant to surface
+  const excludeSelf = (list?: Address[]) =>
+    (list ?? []).filter(
+      (account) => !address || !isAddressEqual(account, address),
+    );
+
+  const custodyRoleMembers: CustodyRoleMembers[] = [
+    { role: 'withdrawer' as const, addresses: excludeSelf(withdrawersList) },
+    { role: 'minter' as const, addresses: excludeSelf(mintersList) },
+  ].filter(({ addresses }) => addresses.length > 0);
+
+  const isCustodyPermissionWarningVisible = Boolean(
+    SECURITY_OVERRIDE_DEV_ENV &&
+      isDappActive &&
+      hasActionPermissionOrOwnership &&
+      custodyRoleMembers.length > 0,
   );
 
   return {
@@ -82,12 +123,14 @@ export const useVerificationBannerDefender = (
     isMultipleOwnersErrorVisible,
     isUnguaranteedDepositsWarningVisible,
     isUnguaranteedDepositsErrorVisible,
+    isCustodyPermissionWarningVisible,
     isTierDefault,
     isNodeOperatorVerified,
     confirmationRequired: {
       notOwner: isNotOwnerWarningVisible,
       multipleOwners: isMultipleOwnersWarningVisible,
       unguaranteedDeposits: isUnguaranteedDepositsWarningVisible,
+      custodyPermission: isCustodyPermissionWarningVisible,
     },
     isErrorBannerVisible:
       isNotOwnerErrorVisible ||
@@ -96,9 +139,11 @@ export const useVerificationBannerDefender = (
     isWarningBannerVisible:
       isNotOwnerWarningVisible ||
       isMultipleOwnersWarningVisible ||
-      isUnguaranteedDepositsWarningVisible,
+      isUnguaranteedDepositsWarningVisible ||
+      isCustodyPermissionWarningVisible,
     defaultAdminList,
     firstAdmin,
     nodeOperator,
+    custodyRoleMembers,
   };
 };

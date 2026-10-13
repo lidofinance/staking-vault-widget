@@ -1,1 +1,0 @@
-export { Impact } from './impact';

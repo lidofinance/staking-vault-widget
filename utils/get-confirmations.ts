@@ -1,7 +1,7 @@
 import { Abi, decodeFunctionData, Address, Hex, getContract } from 'viem';
 
 import { type RegisteredPublicClient } from 'modules/web3';
-import { confirmationAbi } from 'abi/confirmation-abi';
+import { DashboardAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 // Define argument types for each function
 export type FunctionArgsMap = {
@@ -44,7 +44,7 @@ export const getConfirmationsInfo = async <
 }> => {
   const contract = getContract({
     address,
-    abi: confirmationAbi,
+    abi: DashboardAbi,
     client: { public: publicClient },
   });
 
@@ -128,15 +128,18 @@ export const getConfirmationsInfo = async <
 
   // TODO: fix type with EncodableContract
   // get how many are active
-  const confirmationsCount = (await publicClient.multicall({
+  const confirmationsCount = await publicClient.multicall({
     allowFailure: false,
-    contracts: confirmations.map((confirmation) => ({
-      address: contract.address,
-      abi: contract.abi,
-      functionName: 'confirmation',
-      args: [confirmation.data, confirmation.roleOrAddress],
-    })),
-  })) as bigint[];
+    contracts: confirmations.map(
+      (confirmation) =>
+        ({
+          address: contract.address,
+          abi: contract.abi,
+          functionName: 'confirmation',
+          args: [confirmation.data, confirmation.roleOrAddress],
+        }) as const,
+    ),
+  });
 
   // filter out inactive confirmations
   confirmations = confirmations.filter(

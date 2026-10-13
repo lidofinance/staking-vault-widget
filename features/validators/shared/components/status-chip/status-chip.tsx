@@ -1,13 +1,15 @@
 import type { FC } from 'react';
 import { Text } from '@lidofinance/lido-ui';
 
-import type { ValidatorStatus } from 'modules/vaults';
 import { isNumber } from 'utils';
+
+import type { ValidatorViewStatus } from 'features/validators/const';
+import { getTextForStatus } from 'features/validators/utils';
 
 import { StatusContainer, StatusText } from './styles';
 
 type StatusChipProps = {
-  status: ValidatorStatus;
+  status: ValidatorViewStatus;
   value?: number;
   'data-testid'?: string;
 };
@@ -24,7 +26,7 @@ export const StatusChip: FC<StatusChipProps> = ({
           {value}
         </Text>
       )}
-      <StatusText $status={status}>{status}</StatusText>
+      <StatusText $status={status}>{getTextForStatus(status)}</StatusText>
     </StatusContainer>
   );
 };

@@ -4,8 +4,8 @@ import { InlineLoaderStyled } from './styles';
 
 type InlineLoaderProps = {
   isLoading: boolean | undefined;
-  width?: number;
-  height?: number;
+  width?: number | `${number}px` | `${number}%`;
+  height?: number | `${number}px` | `${number}%`;
   placeholder?: ReactNode;
   loader?: ReactNode;
   showBy?: boolean;

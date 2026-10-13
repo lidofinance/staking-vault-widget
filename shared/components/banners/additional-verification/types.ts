@@ -4,6 +4,7 @@ export const VERIFICATION_CONFIRM_FIELD_NAMES = {
   notOwner: 'notOwner',
   multipleOwners: 'multipleOwners',
   unguaranteedDeposits: 'unguaranteedDeposits',
+  custodyPermission: 'custodyPermission',
 } as const;
 
 export type VerificationConfirmFieldName =
@@ -19,6 +20,13 @@ export type VerificationConfirmationFlags = Record<
 
 export type VerificationConfirmFieldValues = VerificationConfirmationFlags;
 
+export type CustodyRole = 'withdrawer' | 'minter';
+
+export type CustodyRoleMembers = {
+  role: CustodyRole;
+  addresses: Address[];
+};
+
 export type VerificationBannerState = {
   action: AdditionalVerificationAction;
   isReady: boolean;
@@ -28,6 +36,7 @@ export type VerificationBannerState = {
   isMultipleOwnersErrorVisible: boolean;
   isUnguaranteedDepositsWarningVisible: boolean;
   isUnguaranteedDepositsErrorVisible: boolean;
+  isCustodyPermissionWarningVisible: boolean;
   isTierDefault?: boolean;
   isNodeOperatorVerified?: boolean;
   isErrorBannerVisible: boolean;
@@ -36,4 +45,5 @@ export type VerificationBannerState = {
   defaultAdminList?: Address[];
   firstAdmin?: Address;
   nodeOperator?: Address;
+  custodyRoleMembers?: CustodyRoleMembers[];
 };

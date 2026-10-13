@@ -57,7 +57,7 @@ export const useConfirmTierVoting = () => {
 
     setApproving(true);
     const { id } = tier;
-    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const transactions: TransactionEntry[] = [...(await prepareReportCalls())];
     const loadingActionText = vaultTexts.actions.settings.approveSelectedTier(
       id,
       mintingLimitStETH,
@@ -139,7 +139,7 @@ export const useConfirmTierVoting = () => {
     );
 
     setApproving(true);
-    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const transactions: TransactionEntry[] = [...(await prepareReportCalls())];
     const loadingActionText =
       vaultTexts.actions.settings.approveChangeTierMintingLimit;
     const mainActionCompleteText =
@@ -210,7 +210,7 @@ export const useConfirmTierVoting = () => {
     );
 
     setApproving(true);
-    const transactions: TransactionEntry[] = [...prepareReportCalls()];
+    const transactions: TransactionEntry[] = [...(await prepareReportCalls())];
     const mainActionCompleteText = vaultTexts.actions.settings.completeSyncTier(
       tier.tierName,
     );

@@ -31,6 +31,7 @@ export const SubmitButton = () => {
       disabled={isDisabled}
       variant={variant}
       color={color}
+      data-testid="repayForm-submitButton"
     >
       {submitText}
     </PermissionedSubmitButton>

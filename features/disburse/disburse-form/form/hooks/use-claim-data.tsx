@@ -5,6 +5,7 @@ import {
   useReadDashboard,
   useValidateRecipientArgs,
   useVault,
+  VaultDisconnectedError,
 } from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -24,6 +25,12 @@ export const useClaimData = () => {
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
+
+      // a fully disconnected vault's dashboard address no longer points to
+      // a valid Dashboard contract, so accruedFee would revert
+      if (activeVault.isVaultFullDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [noFee, withdrawableValue] = await readWithReport({
         report: activeVault.report,

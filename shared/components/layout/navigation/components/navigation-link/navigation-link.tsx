@@ -7,6 +7,7 @@ import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { ReactComponent as MintRepay } from 'assets/icons/mint.svg';
+import { ReactComponent as RebalanceIcon } from 'assets/icons/rebalance.svg';
 
 import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
@@ -27,6 +28,7 @@ const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
   validators: <Validators />,
   mosaic: <MosaicIcon />,
   gear: <GearIcon />,
+  rebalance: <RebalanceIcon />,
 };
 
 export const NavigationLink: FC<NavigationLinkProps> = ({

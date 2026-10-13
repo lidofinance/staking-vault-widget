@@ -1,8 +1,13 @@
 import { wrapRequest as wrapNextRequest } from '@lidofinance/next-api-wrapper';
-import { trackedFetchRpcFactory } from '@lidofinance/api-rpc';
+import {
+  trackedFetchRpcFactory,
+  type TrackedFetchRPC,
+} from '@lidofinance/api-rpc';
 import { rpcFactory } from '@lidofinance/next-pages';
 
-import { config, secretConfig } from 'config';
+// Aliased: `config` is reserved below for Next's route config export.
+import { config as appConfig, secretConfig } from 'config';
+import { USER_AGENT } from 'config/groups/app';
 import { API_ROUTES } from 'consts/api';
 import { METRICS_PREFIX } from 'consts/metrics';
 import {
@@ -37,21 +42,39 @@ const allowedRPCMethods = [
   'net_version',
 ];
 
+const withUserAgent =
+  (fetchRpc: TrackedFetchRPC): TrackedFetchRPC =>
+  (url, init, context) =>
+    fetchRpc(
+      url,
+      {
+        ...init,
+        // plain object: fetchRpc spreads init.headers, which drops Headers entries
+        headers: {
+          ...Object.fromEntries(new Headers(init.headers)),
+          'User-Agent': USER_AGENT,
+        },
+      },
+      context,
+    );
+
 // FIX(dev mode): prevent duplicate metric registration inside rpcFactory by wrapping it in a globalThis singleton
 const g = globalThis as any;
 const rpc =
   g.__rpcSingleton__ ??
   rpcFactory({
-    fetchRPC: trackedFetchRpcFactory({
-      registry: Metrics.registry,
-      prefix: METRICS_PREFIX,
-    }),
+    fetchRPC: withUserAgent(
+      trackedFetchRpcFactory({
+        registry: Metrics.registry,
+        prefix: METRICS_PREFIX,
+      }),
+    ),
     metrics: {
       prefix: METRICS_PREFIX,
       registry: Metrics.registry,
     },
-    defaultChain: `${config.defaultChain}`,
-    providers: [1, ...config.supportedChains].reduce(
+    defaultChain: `${appConfig.defaultChain}`,
+    providers: [1, ...appConfig.supportedChains].reduce(
       (acc, chain) => {
         acc[chain] = secretConfig[`rpcUrls_${chain}`];
         return acc;
@@ -61,7 +84,7 @@ const rpc =
 
     validation: {
       allowedRPCMethods,
-      maxBatchCount: config.PROVIDER_MAX_BATCH,
+      maxBatchCount: appConfig.PROVIDER_MAX_BATCH,
       blockEmptyAddressGetLogs: true,
       maxGetLogsRange: 20_000, // only 20k blocks size historical queries
       maxResponseSize: 1_000_000, // 1mb max response
@@ -69,6 +92,19 @@ const rpc =
   });
 
 if (!g.__rpcSingleton__) g.__rpcSingleton__ = rpc;
+
+// Cap the request body below Next's 1MB default, sized off the largest batches
+// this app actually sends. Vault reads go through multicall with the lazy-oracle
+// report call riding along, and the transport packs up to PROVIDER_MAX_BATCH
+// multicalls per POST:
+//   aggregate3(updateVaultData + ~1kb of reads)   ~12kb per eth_call
+//   x PROVIDER_MAX_BATCH (20)                    ~238kb per POST
+// 512kb keeps ~2.2x headroom — re-measure before lowering.
+export const config = {
+  api: {
+    bodyParser: { sizeLimit: '512kb' },
+  },
+};
 
 export default wrapNextRequest([
   httpMethodGuard([HttpMethod.POST]),

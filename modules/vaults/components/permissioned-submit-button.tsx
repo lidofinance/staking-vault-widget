@@ -11,29 +11,49 @@ import { SubmitButton } from './styles';
 
 type MultiplePermissionedSubmitProps = {
   dashboardRoles: readonly VAULTS_ALL_ROLES[];
+  isPermissionless?: boolean;
 } & ComponentProps<typeof Button>;
 
 export const MultiplePermissionedSubmitButton = forwardRef<
   HTMLButtonElement,
   MultiplePermissionedSubmitProps
 >((props, ref) => {
-  const { children, dashboardRoles, disabled, ...rest } = props;
+  const {
+    children,
+    dashboardRoles,
+    disabled,
+    onClick,
+    isPermissionless,
+    ...rest
+  } = props;
   const { isAccountActive } = useDappStatus();
   const { data, isLoading } = useVaultPermissions(dashboardRoles);
 
   const shouldDisable =
-    disabled || !isAccountActive || isLoading || !data?.hasPermissions;
+    disabled ||
+    !isAccountActive ||
+    (!isPermissionless && (isLoading || !data?.hasPermissions));
 
   const shouldShowPermissionError = Boolean(
-    !isLoading && data && !data.hasPermissions && isAccountActive,
+    !isPermissionless &&
+      !isLoading &&
+      data &&
+      !data.hasPermissions &&
+      isAccountActive,
   );
 
   const missingRoles =
-    data?.missingRoles.map((role) => vaultTexts.roles[role].title) ?? [];
+    data?.missingRoles.map((role) => vaultTexts.roles[role].buttonText) ?? [];
 
   return (
-    <ConnectWalletButton>
-      <SubmitButton type="submit" disabled={shouldDisable} ref={ref} {...rest}>
+    <ConnectWalletButton {...rest}>
+      <SubmitButton
+        type="submit"
+        disabled={shouldDisable}
+        ref={ref}
+        onClick={onClick}
+        {...rest}
+      >
         {shouldShowPermissionError
           ? vaultTexts.common.errors.noRoles(missingRoles)
           : children}
@@ -44,7 +64,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
 
 type PermissionedSubmitProps = {
   dashboardRole: VAULTS_ALL_ROLES;
-} & ComponentProps<typeof Button>;
+} & Omit<MultiplePermissionedSubmitProps, 'dashboardRoles'>;
 
 export const PermissionedSubmitButton = forwardRef<
   HTMLButtonElement,

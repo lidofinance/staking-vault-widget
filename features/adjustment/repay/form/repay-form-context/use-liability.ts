@@ -1,7 +1,12 @@
 import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 
-import { getStEthContract, readWithReport, useVault } from 'modules/vaults';
+import {
+  getStEthContract,
+  readWithReport,
+  useVault,
+  VaultDisconnectedError,
+} from 'modules/vaults';
 import { useLidoSDK } from 'modules/web3';
 
 export const useLiability = () => {
@@ -13,6 +18,10 @@ export const useLiability = () => {
     enabled: !!activeVault,
     queryFn: async () => {
       invariant(activeVault, '[useLiability] Active vault is not available');
+
+      if (activeVault.isVaultDisconnected) {
+        throw new VaultDisconnectedError();
+      }
 
       const [liabilityShares] = await readWithReport({
         publicClient,

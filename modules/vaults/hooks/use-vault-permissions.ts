@@ -1,16 +1,18 @@
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import invariant from 'tiny-invariant';
 import { useAccount } from 'wagmi';
+
+import { useLidoSDK } from 'modules/web3';
 import { useVault } from 'modules/vaults';
+
 import {
   VAULTS_ALL_ROLES,
   VAULTS_ALL_ROLES_MAP,
   VAULTS_NO_ROLES_MAP,
   VAULTS_OWNER_ROLES_MAP,
+  VaultDisconnectedError,
 } from '../consts';
-
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useLidoSDK } from 'modules/web3';
-import invariant from 'tiny-invariant';
 
 // adds defaultAdmin and nodeOperatorManager roles to the list of roles
 // if any roles are admined by them
@@ -67,6 +69,13 @@ export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
     queryFn: async () => {
       invariant(activeVault, 'Active vault is not defined');
       invariant(address, 'User address is not defined');
+
+      // a fully disconnected vault's dashboard address no longer points to
+      // a valid Dashboard contract, so hasRole would revert
+      if (activeVault.isVaultFullDisconnected) {
+        throw new VaultDisconnectedError();
+      }
+
       const { saturatedRoles, rolesOffset } = saturateRoles(roles);
 
       const result = await publicClient.multicall({

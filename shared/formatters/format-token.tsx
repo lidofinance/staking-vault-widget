@@ -1,6 +1,6 @@
 import { Tooltip } from '@lidofinance/lido-ui';
 
-import { DATA_UNAVAILABLE } from 'consts/text';
+import { EMPTY_DATA } from 'consts/text';
 import { Component } from 'types';
 import { FormatBalanceArgs, useFormattedBalance } from 'utils';
 
@@ -10,6 +10,7 @@ export type FormatTokenProps = FormatBalanceArgs & {
   approx?: boolean;
   showAmountTip?: boolean;
   fallback?: string;
+  zeroDecimalsIfZeroAmount?: boolean;
 };
 export type FormatTokenComponent = Component<'span', FormatTokenProps>;
 
@@ -21,8 +22,9 @@ export const FormatToken: FormatTokenComponent = ({
   maxTotalLength = 15,
   showAmountTip = true,
   trimEllipsis,
-  fallback = DATA_UNAVAILABLE,
+  fallback = EMPTY_DATA,
   adaptiveDecimals,
+  zeroDecimalsIfZeroAmount = false,
   ...rest
 }) => {
   const { actual, isTrimmed, trimmed } = useFormattedBalance(
@@ -40,12 +42,19 @@ export const FormatToken: FormatTokenComponent = ({
 
   if (isTrimmed) {
     const [integer, decimal] = trimmed.split('.');
+    // decimal can be undefined if the trimmed value is an integer, in that case we will show 0 as decimal part
     const index = decimal
-      .split('')
-      .slice(0, maxDecimalDigits + 1)
-      .findLastIndex((v) => v !== '0');
+      ? decimal
+          .split('')
+          .slice(0, maxDecimalDigits + 1)
+          .findLastIndex((v) => v !== '0')
+      : -1;
     valueToShow =
       `${integer}.` + (index === -1 ? '0' : decimal.slice(0, index + 1));
+  }
+
+  if (zeroDecimalsIfZeroAmount && amount === 0n) {
+    valueToShow = '0';
   }
 
   const showTooltip = showAmountTip && isTrimmed;
