@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { devicesHeaderMedia } from 'styles/global';
 
 export const Nav = styled.nav<{ $hide: boolean }>`
-  --nav-size: 260px;
+  --nav-size: 220px;
   grid-area: nav;
   z-index: 6;
   display: flex;

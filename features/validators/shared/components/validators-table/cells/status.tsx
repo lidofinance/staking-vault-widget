@@ -1,19 +1,24 @@
 import type { FC } from 'react';
 
-import type { ValidatorStatus } from 'modules/vaults';
+import type { ValidatorsEntry } from 'modules/vaults';
 
 import { StatusChip } from 'features/validators/shared/components';
+import { getValidatorViewStatus } from 'features/validators/utils';
 
 import { TdStyled } from './styles';
 
 type StatusCellProps = {
-  status: ValidatorStatus | undefined;
+  validator: Pick<ValidatorsEntry, 'status' | 'isPdg'>;
 };
 
-export const StatusCell: FC<StatusCellProps> = ({ status }) => {
+export const StatusCell: FC<StatusCellProps> = ({ validator }) => {
   return (
     <TdStyled data-testid="status">
-      {status ? <StatusChip status={status} /> : '-'}
+      {validator.status ? (
+        <StatusChip status={getValidatorViewStatus(validator)} />
+      ) : (
+        '-'
+      )}
     </TdStyled>
   );
 };

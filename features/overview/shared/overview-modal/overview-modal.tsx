@@ -18,6 +18,8 @@ type OverviewModalProps = {
   name: OverviewModalItem;
   symbol?: 'ETH' | 'stETH';
   amountRightDecorator?: ReactNode;
+  // overrides the copy resolved from the metric texts
+  description?: string;
 };
 
 export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
@@ -25,6 +27,7 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
   name,
   symbol = '',
   amountRightDecorator = null,
+  description: descriptionOverride,
 }) => {
   const { closeModal, currentModal } = useOverviewModal();
 
@@ -48,9 +51,12 @@ export const OverviewModal: FC<PropsWithChildren<OverviewModalProps>> = ({
     return payload;
   }, [payload, name, symbol]);
 
-  const descriptionTextList: string[] = (description || hint || '').split(
-    '\n\n',
-  );
+  const descriptionTextList: string[] = (
+    descriptionOverride ||
+    description ||
+    hint ||
+    ''
+  ).split('\n\n');
 
   return (
     <Modal

@@ -2,7 +2,12 @@ import { expect, test } from '@playwright/test';
 import type { APIResponse } from '@playwright/test';
 import { getAllPagesRoutes } from './utils/collect-next-pages.js';
 
-import { CACHE_CONTROL_PAGES } from 'next.config.mjs';
+import {
+  CACHE_CONTROL_PAGES,
+  CACHE_CONTROL_RUNTIME_ENV_PATH,
+  CACHE_CONTROL_RUNTIME_ENV_VALUE,
+  CACHE_CONTROL_VALUE,
+} from 'next.config.mjs';
 import { CONFIG } from './config.js';
 
 // case for only wildcard in config
@@ -11,6 +16,12 @@ CACHE_CONTROL_PAGES[CACHE_CONTROL_PAGES.indexOf('/favicon:size*')] =
 
 // SSG routes that previously received no CSP headers due to HOC + getStaticProps interaction
 const SSG_ROUTES = ['/', '/vaults', '/vaults/create'];
+
+const STATIC_ASSETS = [
+  '/apple-touch-icon.png',
+  '/lido-preview.jpg',
+  '/fonts/fira-code.woff2',
+];
 
 const CSP_HEADER_NAMES = [
   'content-security-policy',
@@ -41,6 +52,24 @@ test.describe('Page Headers', () => {
     const pageRoutes = getAllPagesRoutes();
     pageRoutes.forEach((foundPage) =>
       expect(CACHE_CONTROL_PAGES.includes(foundPage)).toBe(true),
+    );
+  });
+});
+
+test.describe('Static assets Cache-Control', () => {
+  for (const asset of STATIC_ASSETS) {
+    test(`${asset} — has long-lived cache-control`, async ({ request }) => {
+      const response = await request.get(asset);
+      expect(response.headers()['cache-control']).toBe(CACHE_CONTROL_VALUE);
+    });
+  }
+
+  test(`${CACHE_CONTROL_RUNTIME_ENV_PATH} — has short-lived cache-control`, async ({
+    request,
+  }) => {
+    const response = await request.get(CACHE_CONTROL_RUNTIME_ENV_PATH);
+    expect(response.headers()['cache-control']).toBe(
+      CACHE_CONTROL_RUNTIME_ENV_VALUE,
     );
   });
 });

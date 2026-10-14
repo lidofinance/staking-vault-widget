@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
-import { isAddressEqual, zeroAddress } from 'viem';
+import { type Address, isAddressEqual, zeroAddress } from 'viem';
 
 import { useVault } from '../vault-context';
 import { useDappStatus } from '../../web3';
@@ -10,6 +10,7 @@ import {
   VAULTS_OWNER_ROLES_MAP,
   VAULTS_ROOT_ROLES_MAP,
 } from '../consts';
+import type { Tier } from '../types';
 
 export const useVaultRiskStatus = () => {
   const { activeVault, queryKeys } = useVault();
@@ -45,6 +46,7 @@ export const useVaultRiskStatus = () => {
         repayers,
         rebalancer,
         withdrawers,
+        minters,
         pdgPolicy,
         tier,
         ...tiersList
@@ -54,17 +56,18 @@ export const useVaultRiskStatus = () => {
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.repayer]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.rebalancer]),
         dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.withdrawer]),
+        dashboard.read.getRoleMembers([VAULTS_OWNER_ROLES_MAP.minter]),
         dashboard.read.pdgPolicy(),
         operatorGrid.read.vaultTierInfo([activeVault.address]),
         ...tierIds.map((tierId) => operatorGrid.read.tier([tierId])),
       ]);
 
-      const isTierLimitAvailable = tiersList.some(
+      const isTierLimitAvailable = (tiersList as Tier[]).some(
         (tier) => tier.shareLimit > 0n,
       );
 
       const [_, tierId] = tier;
-      const firstAdmin = defaultAdminList.at(0);
+      const firstAdmin = defaultAdminList.at(0) as Address;
 
       /*
        * Node operator (NO) verified if:
@@ -96,6 +99,7 @@ export const useVaultRiskStatus = () => {
         isRebalancer,
         defaultAdminList: [...defaultAdminList],
         withdrawersList: [...withdrawers],
+        mintersList: [...minters],
         nodeOperator,
         firstAdmin,
       };
@@ -115,6 +119,7 @@ export const useVaultRiskStatus = () => {
     isRebalancer: data?.isRebalancer,
     defaultAdminList: data?.defaultAdminList,
     withdrawersList: data?.withdrawersList,
+    mintersList: data?.mintersList,
     nodeOperator: data?.nodeOperator,
     firstAdmin: data?.firstAdmin,
   };

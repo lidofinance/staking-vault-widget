@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { zeroAddress } from 'viem';
+import { zeroAddress, getAddress } from 'viem';
 import {
   Identicon,
   TextColors,
@@ -93,8 +93,8 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
 
     if (!parsing.success) return null;
 
-    const address = parsing.data;
-    const mainText = showEnsName && ensName ? ensName : address.toLowerCase();
+    const address = getAddress(parsing.data);
+    const mainText = showEnsName && ensName ? ensName : address;
 
     const mainContent = (
       <PillContainer

@@ -7,13 +7,21 @@ import { TdStyled } from './styles';
 
 type BalanceCellProps = {
   amount: bigint;
+  testId?: string;
 };
 
-export const BalanceCell: FC<BalanceCellProps> = ({ amount }) => {
+export const BalanceCell: FC<BalanceCellProps> = ({
+  amount,
+  testId = 'balance',
+}) => {
   return (
-    <TdStyled data-testid="balance">
+    <TdStyled align="right" data-testid={testId}>
       <Text size="xxs">
-        <FormatToken amount={amount} maxDecimalDigits={2} />
+        <FormatToken
+          amount={amount}
+          maxDecimalDigits={4}
+          zeroDecimalsIfZeroAmount
+        />
       </Text>
     </TdStyled>
   );

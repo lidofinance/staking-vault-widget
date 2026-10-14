@@ -48,7 +48,7 @@ export const LayoutStyles = styled(Container)<{ isError: boolean }>`
   position: relative;
   display: grid;
   grid-template-rows: min-content 1fr;
-  grid-template-columns: 260px 1fr 160px;
+  grid-template-columns: 220px 1fr 160px;
   grid-template-areas: ${({ isError }) =>
     templateAreas[isError ? 'withError' : 'default']};
   grid-column-gap: 0;

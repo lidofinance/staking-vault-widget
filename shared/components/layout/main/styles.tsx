@@ -8,6 +8,7 @@ export const MainStyle = styled(Container)<ContainerProps>`
   position: relative;
   padding-top: 0;
   padding-bottom: ${({ theme }) => theme.spaceMap.sm}px;
+  max-width: 100%;
 
   @media ${devicesHeaderMedia.mobile} {
     padding: 0;

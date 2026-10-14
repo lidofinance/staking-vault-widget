@@ -27,7 +27,7 @@ export const UnguaranteedDepositsError: FC<UnguaranteedDepositsErrorProps> = ({
       dataTestId="additionalVerification-unguaranteedDeposits-error-banner"
     >
       <Text size="xxs">
-        Operator {state.nodeOperator.toLowerCase()} has not passed the{' '}
+        Operator {state.nodeOperator} has not passed the{' '}
         <Link href={NO_IDENTIFICATION_LINK}>identification process</Link>, and
         current <Link href={PDG_LINK}>Predeposit Guarantee Policy</Link> allows{' '}
         <NextLink href={mainSettingsLink}>unguaranteed deposits</NextLink>. Due

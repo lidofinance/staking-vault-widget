@@ -374,6 +374,14 @@ export const vaultTexts = {
           view: 'View',
         },
       },
+      permissions: {
+        vaultOwnerTitle: 'Vault Owner Permissions',
+        vaultOwnerDescription:
+          'Delegate specific stVault permissions to other addresses without transferring ownership. Each address can only perform actions allowed by its assigned permissions. Adding permissions such as FUND_ROLE or MINT_ROLE does not create a new accounting level.',
+        custodyBadge: 'Custody',
+        custodyLegend:
+          'means that the address gains control over assets in the stVault.',
+      },
     },
     validators: {
       title: 'stVaults Validators overview',
@@ -383,6 +391,7 @@ export const vaultTexts = {
           pubKey: 'Public key',
           status: 'Status',
           actualBalance: 'Actual balance',
+          inQueue: 'In a queue',
           activatedExited: (timeZoneLabel: string) =>
             timeZoneLabel
               ? `Activated / exited (${timeZoneLabel})`
@@ -541,11 +550,10 @@ export const vaultTexts = {
           confirm:
             'I confirm that I understand the implications and risks and want to proceed.',
         },
-        withdrawalPermission: {
-          title: 'Withdrawal permission granted to other accounts',
+        custodyPermission: {
+          title: 'Another address can access assets you add to this vault',
           description:
-            'The Withdraw role, which allows withdrawing ETH from this stVault, is assigned to one or more addresses besides the Vault Owner and your connected wallet.',
-          ownersListTitle: 'Accounts with withdrawal permission:',
+            'This vault grants WITHDRAW_ROLE or MINT_ROLE to an address other than yours. Any ETH or stETH you supply, repay, or add during rebalancing can also be withdrawn or minted against by that address.',
         },
       },
       settings: {
@@ -676,7 +684,7 @@ export const vaultTexts = {
     },
     balance: {
       title: 'Not staked stVault Balance',
-      hint: 'The amount of ETH held on the vault balance and not deposited on validators therefore not used for earning rewards.',
+      hint: 'Not Staked stVault Balance is the amount of ETH held on the stVault contract balance and not deposited to any validator, therefore not earning staking rewards.',
       learnMoreLink: '', // TODO: add learnMoreLink to the each property after doc will be ready
     },
     totalLocked: {
@@ -742,6 +750,49 @@ export const vaultTexts = {
           description:
             'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
         },
+      },
+      offBookDepositsHint: {
+        offBookHighlight: 'Off-Book Deposits',
+        offBookDescription:
+          'are validator deposits not yet included in Total Value. This includes deposits made via the PDG Shortcut flow (unguaranteed deposits), and initial deposits made directly to a validator outside of the stVault.',
+        consolidationHighlight: 'Consolidations',
+        consolidationDescription:
+          'are not shown here — they are not visible to the oracle while in progress, and will appear in Total Value once the transferred balance arrives on the target validator.',
+      },
+      quarantinedHint: {
+        heading: 'What is quarantine?',
+        body: 'Part of the capital is temporarily held back because the Oracle cannot confirm its increase on-chain, for example after a validator consolidation or a deposit made outside the normal flow. While under quarantine, this amount does not count toward Total Value, stETH Minting Capacity, or Health Factor. A ',
+        cooldownHighlight: '72-hour cooldown period',
+        bodyTail:
+          ' is required before the capital can be released from quarantine.',
+        learnMoreLink: '', // TODO: add learnMoreLink after doc will be ready
+      },
+      pendingDepositsDelay: 'These values may take ~15 minutes to update.',
+      totalValue: {
+        excludingOffBook: 'Excluding Off-Book deposits.',
+        grossTotalSupplied: {
+          title: 'Gross Total Supplied',
+          description:
+            'Gross Total Supplied is the total amount of ETH supplied to the stVault. It includes ETH reflected in Total Value, Off-Book Deposits — validator deposits not yet counted toward Total Value, and Quarantined Amounts — unverified on-chain capital growth.',
+        },
+        totalValue: { title: 'Total Value' },
+        notStakedBalance: { title: 'Not staked balance' },
+        stakedOnValidators: { title: 'Staked on validators' },
+        pdgDeposits: { title: 'Top-ups and initial PDG deposits' },
+        offBookDeposits: {
+          title: 'Off-Book deposits',
+        },
+        quarantined: {
+          title: 'Quarantined',
+          description:
+            'Unverified on-chain capital growth — quarantined and not included in Total Value.',
+        },
+      },
+      notStakedBalance: {
+        stakedOnValidators: { title: 'Staked on validators' },
+        pendingDeposits: { title: 'Pending deposits' },
+        pdgDeposits: { title: 'Top-ups and initial PDG deposits' },
+        offBookDeposits: { title: 'Off-Book deposits' },
       },
       withdrawal: {
         totalValue: {
