@@ -16,6 +16,7 @@ jest.unstable_mockModule('../fetch-api-wrapper', () => ({
 }));
 
 const { createCachedProxy } = await import('../cached-proxy');
+const { FetcherError } = await import('utils/fetcherError');
 
 const makeRes = () => ({ status: jest.fn(), json: jest.fn(), end: jest.fn() });
 const makeReq = (headers: Record<string, string> = {}) =>
@@ -78,5 +79,39 @@ describe('createCachedProxy forwardHeaders', () => {
       accept: 'application/json',
       'content-type': 'application/json',
     });
+  });
+});
+
+describe('createCachedProxy errors', () => {
+  const makeErrRes = () => ({
+    status: jest.fn(),
+    json: jest.fn(),
+    end: jest.fn(),
+    setHeader: jest.fn(),
+  });
+
+  beforeEach(() => {
+    standardFetcher.mockReset();
+  });
+
+  test('forwards a 429 with no-store and does not cache it', async () => {
+    standardFetcher.mockRejectedValueOnce(new FetcherError('slow down', 429));
+    standardFetcher.mockResolvedValueOnce({ isValid: true });
+    const proxy = createCachedProxy({
+      proxyUrl: 'https://upstream/check',
+      cacheTTL: 60000,
+    });
+    const res = makeErrRes();
+    await proxy(makeReq(), res as any);
+
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.json).toHaveBeenCalledWith({ error: 'slow down' });
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      expect.stringContaining('no-store'),
+    );
+
+    await proxy(makeReq(), makeErrRes() as any);
+    expect(standardFetcher).toHaveBeenCalledTimes(2);
   });
 });
