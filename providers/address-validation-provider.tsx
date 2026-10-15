@@ -109,6 +109,7 @@ export const useAddressValidation = () => {
  * ALL POSSIBLE OUTCOMES:
  * 1. No address / ipfsMode → return true
  * 2. API enabled + success → return API.isValid
+ *    (any 429 = client over a rate limit: isValid false, no fallback)
  * 3. API enabled + error + file exists → return file.isValid
  * 4. API enabled + error + NO file → return true (DEFAULT)
  * 5. API disabled + file exists → return file.isValid
@@ -178,7 +179,7 @@ export const AddressValidationProvider = ({
 
           return validateAddressLocally(addressToValidate, validationFile);
         },
-        staleTime: 1 * 60 * 1000, // 1 minute
+        staleTime: 60 * 1000, // 1 minute
       });
 
       return result;

@@ -34,8 +34,7 @@ export const FilterByStatus: FC = () => {
       data-testid="filter-status"
     >
       <Option value="all">all</Option>
-      {/* the value stays the API status: the backend knows nothing about the
-          `deposited` / `pre_deposited` view statuses */}
+      {/* the value stays the API status: the backend knows nothing about the `pre_deposited` view statuses */}
       {statuses.map((status) => (
         <OptionStyled key={status} value={status} $status={status}>
           {getTextForStatus(status)}
