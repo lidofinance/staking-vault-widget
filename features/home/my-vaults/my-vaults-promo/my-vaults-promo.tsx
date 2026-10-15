@@ -3,13 +3,12 @@ import { useRouter } from 'next/router';
 import { useConnect } from 'reef-knot/core-react';
 
 import { ReactComponent as StVaultIllustration } from 'assets/stvault.svg';
-import { ReactComponent as ArrowIcon } from 'assets/icons/arrow-down.svg';
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { NO_IDENTIFICATION_LINK } from 'shared/components';
 
-import { LEARN_MORE_LINK, START_BUILDING_LINK } from './const';
+import { PromoCard } from './promo-card';
 import {
   Wrapper,
   HeroWrapper,
@@ -22,42 +21,10 @@ import {
   Description,
   HeroButtons,
   HeroButton,
-  PromoCardWrapper,
-  PromoCardHeader,
-  PromoCardTitle,
-  PromoCardAction,
+  ArrowIcon,
+  LearnMoreLink,
 } from './styles';
-
-type PromoCardProps = {
-  title: string;
-  description: string;
-  actionLabel: string;
-  href: string;
-  dataTestId: string;
-};
-
-const PromoCard: FC<PromoCardProps> = ({
-  title,
-  description,
-  actionLabel,
-  href,
-  dataTestId,
-}) => (
-  <PromoCardWrapper>
-    <PromoCardHeader>
-      <PromoCardTitle>{title}</PromoCardTitle>
-      <PromoCardAction
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-testid={dataTestId}
-      >
-        {actionLabel}
-      </PromoCardAction>
-    </PromoCardHeader>
-    <Description>{description}</Description>
-  </PromoCardWrapper>
-);
+import { LEARN_MORE_LINK, START_BUILDING_LINK } from './const';
 
 export const MyVaultsPromo: FC = () => {
   const router = useRouter();
@@ -75,16 +42,18 @@ export const MyVaultsPromo: FC = () => {
   return (
     <Wrapper>
       <HeroWrapper>
-        <LearnMoreBanner
-          href={LEARN_MORE_LINK}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-testid="myVaults-promoLearnMore"
-        >
-          Learn more about stVaults
-          <ArrowIconWrapper>
-            <ArrowIcon />
-          </ArrowIconWrapper>
+        <LearnMoreBanner>
+          <LearnMoreLink
+            href={LEARN_MORE_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="myVaults-promoLearnMore"
+          >
+            Learn more about stVaults
+            <ArrowIconWrapper>
+              <ArrowIcon />
+            </ArrowIconWrapper>
+          </LearnMoreLink>
         </LearnMoreBanner>
         <HeroCard>
           <HeroHeader>
@@ -101,14 +70,14 @@ export const MyVaultsPromo: FC = () => {
           </HeroHeader>
           <HeroButtons>
             <HeroButton
-              size="lg"
+              size="md"
               onClick={handleConnect}
               data-testid="myVaults-promoSeeVaults"
             >
               See my stVaults
             </HeroButton>
             <HeroButton
-              size="lg"
+              size="md"
               color="secondary"
               onClick={handleCreate}
               data-testid="myVaults-promoCreateVault"

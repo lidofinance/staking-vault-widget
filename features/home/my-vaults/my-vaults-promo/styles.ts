@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components';
-import { Button } from '@lidofinance/lido-ui';
+import { Button, Link, ArrowBack } from '@lidofinance/lido-ui';
 
 import { devicesHeaderMedia } from 'styles/global';
-
-const CARD_RADIUS = 32;
 
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  max-width: 650px;
+  margin: 0 auto;
   gap: ${({ theme }) => theme.spaceMap.xl}px;
 
   @media ${devicesHeaderMedia.mobile} {
@@ -20,22 +20,22 @@ export const HeroWrapper = styled.div`
   flex-direction: column;
 `;
 
-export const LearnMoreBanner = styled.a`
+export const LearnMoreBanner = styled.div`
+  margin-bottom: -32px;
+  padding: 12px ${({ theme }) => theme.spaceMap.xxl}px 44px;
+  border-radius: 32px 32px 0 0;
+  background: radial-gradient(
+    711.17% 355.33% at 142.36% -215.44%,
+    #9995ff 0%,
+    #2238ff 100%
+  );
+`;
+
+export const LearnMoreLink = styled(Link)`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.sm + 4}px;
-  margin-bottom: -${CARD_RADIUS}px;
-  padding: 12px ${({ theme }) => theme.spaceMap.xxl}px 44px;
-  border-radius: ${CARD_RADIUS}px ${CARD_RADIUS}px 0 0;
-  background: radial-gradient(
-    circle at 100% 0%,
-    #9995ff 0%,
-    #7b7eff 25%,
-    #5d67ff 50%,
-    #404fff 75%,
-    #2238ff 100%
-  );
+  gap: 12px;
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   font-weight: 700;
   line-height: 24px;
@@ -54,15 +54,16 @@ export const ArrowIconWrapper = styled.span`
   justify-content: center;
   width: 24px;
   height: 24px;
+`;
 
-  & > svg {
-    transform: rotate(-90deg);
-  }
+export const ArrowIcon = styled(ArrowBack)`
+  rotate: 180deg;
+  color: #fff;
 `;
 
 const card = css`
   position: relative;
-  border-radius: ${CARD_RADIUS}px;
+  border-radius: 32px;
   padding: ${({ theme }) => theme.spaceMap.xxl}px;
   background-color: ${({ theme }) => theme.colors.foreground};
 `;
@@ -101,6 +102,7 @@ export const HeroTitle = styled.h1`
 export const Description = styled.p`
   font-size: ${({ theme }) => theme.fontSizesMap.xs}px;
   line-height: 24px;
+  font-weight: 400;
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
@@ -135,7 +137,7 @@ export const PromoCardTitle = styled.h3`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const PromoCardAction = styled.a`
+export const PromoCardAction = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;

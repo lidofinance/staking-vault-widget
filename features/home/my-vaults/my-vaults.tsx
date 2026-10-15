@@ -48,7 +48,6 @@ export const MyVaults = () => {
 
   if (isWalletConnected) return content;
 
-  // Promo is shown on desktop only, mobile keeps the title with the connect placeholder
   return (
     <>
       <MyVaultsPromo />
