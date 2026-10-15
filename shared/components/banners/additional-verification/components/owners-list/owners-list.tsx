@@ -38,7 +38,7 @@ export const OwnersList: FC<OwnersListProps> = ({
             <Address
               style={{ fontWeight: 'bold' }}
               symbols={symbols}
-              address={address.toLowerCase()}
+              address={address}
             />
           </ListItem>
         ))}
