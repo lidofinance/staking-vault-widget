@@ -13,7 +13,7 @@ export const CreateVaultPage: FC = () => {
     <Layout
       navigationMode="create-vault"
       containerSize="content"
-      title="Creating new vault"
+      title="Creating new stVault"
     >
       <Head>
         <title>{getPageTitle('Create Vault')}</title>

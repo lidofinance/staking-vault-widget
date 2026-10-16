@@ -1,40 +1,19 @@
-import { type FC, useMemo } from 'react';
-import { External } from '@lidofinance/lido-ui';
-
-import { FEEDBACK_SURVEY_URL } from 'consts/external-links';
+import type { FC } from 'react';
 
 import { NavigationContainer } from './components';
-import {
-  RootNavigation,
-  VaultNavigation,
-  CreateVaultNavigation,
-} from './modes';
-
-import { FeedbackLink } from './styles';
+import { RootNavigation, VaultNavigation } from './modes';
 
 type NavigationProps = {
   mode?: 'root' | 'create-vault' | 'vault';
 };
 
 export const Navigation: FC<NavigationProps> = ({ mode = 'root' }) => {
-  const NavigationContent = useMemo(() => {
-    switch (mode) {
-      case 'root':
-        return RootNavigation;
-      case 'vault':
-        return VaultNavigation;
-      default:
-      case 'create-vault':
-        return CreateVaultNavigation;
-    }
-  }, [mode]);
+  // create-vault page shares the root navigation by design
+  const NavigationContent = mode === 'vault' ? VaultNavigation : RootNavigation;
 
   return (
     <NavigationContainer>
-      {NavigationContent && <NavigationContent />}
-      <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
-        Leave feedback <External />
-      </FeedbackLink>
+      <NavigationContent />
     </NavigationContainer>
   );
 };

@@ -7,12 +7,12 @@ import {
   VAULTS_ROOT_ROLES_MAP,
 } from 'modules/vaults';
 
-import type { CreateVaultSchema } from '../types';
+import type { CreateVaultTxSchema } from '../types';
 import type { TransactionResponse } from 'modules/web3';
-import { createVaultSchema } from './validation';
+import { createVaultTxSchema } from './validation';
 
-export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
-  const values = createVaultSchema.parse(unparsedValues);
+export const schemaToTx = (unparsedValues: CreateVaultTxSchema) => {
+  const values = createVaultTxSchema.parse(unparsedValues);
   const { confirmExpiry, feeRate, nodeOperatorManager, nodeOperator } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
   const nodeOperatorFeeRateFormatted = BigInt(

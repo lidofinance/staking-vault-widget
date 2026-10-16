@@ -1,13 +1,17 @@
-import type { ReactNode } from 'react';
 import type {
   VAULTS_NO_ROLES_MAP,
   VAULTS_OWNER_ROLES_MAP,
 } from 'modules/vaults';
 
-import type { createVaultSchema } from './create-vault-form/validation';
+import type {
+  createVaultSchema,
+  createVaultTxSchema,
+} from './create-vault-form/validation';
 import type { z } from 'zod';
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
+
+export type CreateVaultTxSchema = z.infer<typeof createVaultTxSchema>;
 
 export type CreateVaultFormValues = {
   nodeOperator: string;
@@ -25,7 +29,6 @@ export type InputDataType =
   | 'time'
   | 'default'
   | 'number'
-  | 'confirm'
   | 'addressArray';
 
 export type VaultMainSettingsType = Omit<CreateVaultSchema, 'roles'>;
@@ -33,16 +36,15 @@ export type VaultMainSettingsType = Omit<CreateVaultSchema, 'roles'>;
 export type MainSettingsKeys = keyof VaultMainSettingsType;
 
 export type MainSettingsEntryType = {
-  name: MainSettingsKeys | 'connectionDeposit';
+  name: MainSettingsKeys;
   dataType: InputDataType;
   title?: string;
-  label?: string;
-  notes?: string;
-  hint?: string;
+  // short title without role name, used on verify and result screens
+  confirmTitle?: string;
+  description?: string;
+  placeholder?: string;
   type?: string;
   dataTestId?: string;
-  disabled?: boolean;
-  rightDecorator?: ReactNode;
 };
 
 export type PermissionKeys =

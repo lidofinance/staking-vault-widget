@@ -14,6 +14,7 @@ export const FormSubtitle = styled.span`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
   font-weight: 700;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const FormTitle = styled(H2)`
@@ -53,4 +54,11 @@ export const SectionContainer = styled.section<{
   & > a {
     text-align: center;
   }
+`;
+
+export const SectionFields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.lg}px;
+  width: 100%;
 `;
