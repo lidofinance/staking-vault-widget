@@ -2,12 +2,12 @@ import styled from 'styled-components';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-export const NavList = styled.ul`
+export const NavList = styled.ul<{ $gap?: number }>`
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.md}px;
+  gap: ${({ theme, $gap }) => $gap ?? theme.spaceMap.md}px;
   list-style-type: none;
 
   @media ${devicesHeaderMedia.mobile} {
