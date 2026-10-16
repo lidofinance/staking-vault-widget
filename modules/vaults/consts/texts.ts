@@ -61,54 +61,55 @@ export const vaultTexts = {
     createVault: {
       loading: 'Creating vault',
       completed: 'Vault created',
-      steps: ['Main settings', 'Verify new vault’s settings'],
+      steps: ['Addresses', 'Settings', 'Verify new stVault settings'],
+      submit: 'Create stVault and supply 1 ETH',
+      insufficientBalance:
+        'To create a new Vault, you need to supply 1 ETH. Your current balance is insufficient. Please add funds to your wallet and try again.',
       fields: {
         nodeOperator: {
-          title: 'Node Operator',
+          title: 'Node Operator [NODE_OPERATOR_ROLE]',
+          confirmTitle: 'Node Operator',
           placeholder: '0x...',
-          notes:
-            'Node Operator address cannot be changed after the vault is created',
-          hint: 'The address of the Node Operator that provides validation service for the stVault.\nNode Operator handles depositing ETH from the stVault balance to validators and exiting validators if necessary.\nIt can’t be changed after the stVault is created.',
+          description:
+            'The Node Operator address defined at the `StakingVault` contract level. The Node Operator provides validation services for the stVault, including depositing ETH from the stVault Balance to validators and initiating validator exits when needed. This address is immutable and cannot be changed after the stVault is created.',
         },
         feeRate: {
-          title: 'Node Operator Fee',
+          title: 'Node Operator fee (%)',
+          confirmTitle: 'Node Operator fee',
           placeholder: '%',
-          hint: 'The share of Gross staking rewards that the Node Operator charges for provided validation service.\nMandatory parameter, [0% .. 100.00%].',
+          description:
+            'The share of Gross Staking Rewards charged by the Node Operator for providing validation services. This value can be updated through the Multi-role Confirmation mechanism. Range: 0.00%–100.00%.',
         },
         confirmationLifetime: {
-          title: 'Confirmation Lifetime, hours',
+          title: 'Confirmation Lifetime (hours)',
+          confirmTitle: 'Confirmation Lifetime',
           placeholder: 'hours',
-          hint: 'The main parameter of the “Multi-role confirmation” mechanism. This mechanism is used for editing some of the stVault parameters via finding consensus between two representatives of the stVault: the Vault Owner and the Node Operator Manager.\nMandatory parameter, hours [24h .. 720h (30 days)].\nIn this mechanism, the first representative initiates changing the parameter, and another representative confirms the change within the period of time equal to the Confirmation Lifetime value.\nUsed for:\n - Node Operator Fee\n - Confirmation Lifetime',
+          description:
+            'Defines the time window for the Multi-role Confirmation mechanism, used to update selected stVault parameters with approval from both the Vault Owner and the Node Operator Manager. One party initiates the change, and the other must confirm it within the configured time window. Used for the Node Operator Fee and Confirmation Lifetime parameters. Range: 24–720 hours (1–30 days).',
         },
         vaultOwner: {
-          title: 'Vault Owner',
+          title: 'Vault Owner [DEFAULT_ADMIN_ROLE]',
+          confirmTitle: 'Vault Owner',
           placeholder: '0x...',
-          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Vault Owner (Staker) perspective.\nMultiple addresses supported.',
+          description:
+            'One of the two admin roles for the stVault, defined at the `Dashboard` contract level. This role allows managing permissions and configuring key vault parameters from the Vault Owner (Staker) perspective. Multiple addresses are supported.',
         },
         nodeOperatorManager: {
-          title: 'Node Operator Manager',
+          title: 'Node Operator Manager [NODE_OPERATOR_MANAGER_ROLE]',
+          confirmTitle: 'Node Operator Manager',
           placeholder: '0x...',
-          hint: 'One of the two admin roles for the stVault. Allows to manage permissions and change key vault parameters from the Node Operator perspective.',
+          description:
+            "One of the two admin roles for the stVault, defined at the `Dashboard` contract level. This role allows managing permissions and configuring key vault parameters from the Node Operator's perspective. Multiple addresses are supported after the stVault is created.",
         },
-        lidoCoreConnectionDeposit: {
-          title: 'Lido Core connection deposit',
-          placeholder: '1 ETH',
-          hint: 'Vault creation requires a supply of 1 ETH.',
+        connectionDeposit: {
+          title: 'Connection Deposit',
+          description:
+            'The ETH deposit required to connect the stVault to VaultHub. It becomes part of the stVault Total Value and can be deposited to validators. The deposit becomes withdrawable after the stVault is disconnected from VaultHub, which can be done later through this interface if needed.',
         },
         acceptTerms: {
-          placeholder: 'I confirm that I’ve read and agree with:',
-          list: [
-            {
-              text: 'the',
-              linkText: 'fee structure',
-              url: 'https://research.lido.fi/t/default-risk-assessment-framework-and-fees-parameters-for-lido-v3-stvaults/10504#p-22550-fees-7',
-            },
-            {
-              text: 'mechanisms applied according to',
-              linkText: 'Risk Assessment Framework',
-              url: 'https://research.lido.fi/t/default-risk-assessment-framework-and-fees-parameters-for-lido-v3-stvaults/10504',
-            },
-          ],
+          text: 'I confirm that I have read and agree to the fee structure and understand the mechanisms defined by the',
+          linkText: 'Risk Assessment Framework',
+          url: 'https://research.lido.fi/t/default-risk-assessment-framework-and-fees-parameters-for-lido-v3-stvaults/10504',
         },
       },
     },
