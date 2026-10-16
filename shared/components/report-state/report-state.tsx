@@ -30,7 +30,7 @@ export const ReportState: FC<ReportStateProps> = ({ tooltipPlacement }) => {
 
   return (
     <Container data-testid="reportSection">
-      <InlineLoader isLoading={isLoading} height={20} width={140}>
+      <InlineLoader isLoading={isLoading} height={18} width={140}>
         <Text
           color={isReportFresh ? 'success' : 'secondary'}
           size="xxs"

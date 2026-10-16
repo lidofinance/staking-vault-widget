@@ -8,6 +8,8 @@ import { ReactComponent as GearIcon } from 'assets/icons/gear.svg';
 import { ReactComponent as MosaicIcon } from 'assets/icons/mosaic.svg';
 import { ReactComponent as MintRepay } from 'assets/icons/mint.svg';
 import { ReactComponent as RebalanceIcon } from 'assets/icons/rebalance.svg';
+import { ReactComponent as FolderIcon } from 'assets/icons/folder.svg';
+import { ReactComponent as GlobeIcon } from 'assets/icons/globe.svg';
 
 import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
 import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
@@ -29,6 +31,8 @@ const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
   mosaic: <MosaicIcon />,
   gear: <GearIcon />,
   rebalance: <RebalanceIcon />,
+  folder: <FolderIcon />,
+  globe: <GlobeIcon />,
 };
 
 export const NavigationLink: FC<NavigationLinkProps> = ({

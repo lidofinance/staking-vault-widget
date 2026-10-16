@@ -85,3 +85,8 @@ export const HiddenNav = styled.ul`
     }
   }
 `;
+
+export const HiddenNavDivider = styled.li`
+  height: 1px;
+  background-color: var(--lido-color-border);
+`;

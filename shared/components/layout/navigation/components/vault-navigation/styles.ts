@@ -7,13 +7,8 @@ export const NavList = styled.ul`
   flex-direction: column;
   align-items: start;
   justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.lg}px;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
   list-style-type: none;
-
-  svg {
-    margin-right: 8px;
-  }
 
   @media ${devicesHeaderMedia.mobile} {
     flex-direction: row;
@@ -22,9 +17,5 @@ export const NavList = styled.ul`
     width: 100%;
     margin-top: 0;
     gap: 8px;
-
-    svg {
-      margin-right: 0;
-    }
   }
 `;

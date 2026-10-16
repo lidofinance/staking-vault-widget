@@ -12,6 +12,7 @@ export const Nav = styled.nav<{ $hide: boolean }>`
   overflow-x: hidden;
   overscroll-behavior: contain;
   width: var(--nav-size);
+  padding-top: 40px;
   transition: width var(--nav-transition-duration)
     var(--nav-transition-timing-function);
 

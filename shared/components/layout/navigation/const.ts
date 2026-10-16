@@ -1,9 +1,11 @@
 import type { Address } from 'viem';
 
+import { config } from 'config';
+import { FEEDBACK_SURVEY_URL } from 'consts/external-links';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { appPaths } from 'consts/routing';
 
-import type { VaultRoutesConfig, NavigationRoutes } from './types';
+import type { VaultRoutesConfig, NavigationRoutes, DocsLink } from './types';
 
 export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
   '/': MATOMO_CLICK_EVENTS_TYPES.clickNaviMyVaults,
@@ -24,9 +26,9 @@ export const routsClickEventsMap: Record<string, MATOMO_CLICK_EVENTS_TYPES> = {
 
 export const vaultRoutes = (
   vaultAddress: Address | '[vaultAddress]',
-  config?: VaultRoutesConfig,
+  routesConfig?: VaultRoutesConfig,
 ): NavigationRoutes[] => {
-  const { mode } = config ?? {};
+  const { mode } = routesConfig ?? {};
 
   return [
     {
@@ -37,7 +39,7 @@ export const vaultRoutes = (
       inMobileMenu: false,
     },
     {
-      title: 'Supply/Withdraw',
+      title: 'Supply/Withdraw ETH',
       path: appPaths.vaults.vault(vaultAddress).eth(mode ?? 'supply'),
       icon: 'stake',
       exact: true,
@@ -84,3 +86,32 @@ export const vaultRoutes = (
 export const vaultPathnames = vaultRoutes('[vaultAddress]', {
   mode: '[mode]',
 }).map((routes) => ({ ...routes }));
+
+export const homeRoutes: NavigationRoutes[] = [
+  {
+    title: 'My stVaults',
+    path: appPaths.myVaults,
+    icon: 'folder',
+    exact: true,
+  },
+  {
+    title: 'All stVaults',
+    path: appPaths.vaults.all,
+    icon: 'globe',
+    exact: true,
+  },
+];
+
+export const docsLinks: DocsLink[] = [
+  { title: 'About stVaults', href: `${config.rootOrigin}/stvaults` },
+  {
+    title: 'Showcase',
+    href: `${config.rootOrigin}/stvaults-products-overview`,
+  },
+  {
+    title: 'How it works',
+    href: `${config.rootOrigin}/how-lido-works/stvaults-basics`,
+  },
+  { title: 'DocCenter', href: `${config.docsOrigin}/run-on-lido/stvaults/` },
+  { title: 'Leave feedback', href: FEEDBACK_SURVEY_URL },
+];

@@ -32,9 +32,12 @@ export const Navigation: FC<NavigationProps> = ({ mode = 'root' }) => {
   return (
     <NavigationContainer>
       {NavigationContent && <NavigationContent />}
-      <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
-        Leave feedback <External />
-      </FeedbackLink>
+      {/* in other modes feedback link is rendered inside DocsLinks */}
+      {mode === 'create-vault' && (
+        <FeedbackLink target="_blank" href={FEEDBACK_SURVEY_URL}>
+          Leave feedback <External />
+        </FeedbackLink>
+      )}
     </NavigationContainer>
   );
 };

@@ -8,11 +8,18 @@ export type NavigationRoutes = {
     | 'mint'
     | 'mosaic'
     | 'stake'
-    | 'rebalance';
+    | 'rebalance'
+    | 'folder'
+    | 'globe';
   exact: boolean;
   inMobileMenu?: boolean;
 };
 
 export type VaultRoutesConfig = {
   mode?: '[mode]';
+};
+
+export type DocsLink = {
+  title: string;
+  href: string;
 };
