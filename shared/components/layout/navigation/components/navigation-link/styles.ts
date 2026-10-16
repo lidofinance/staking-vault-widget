@@ -44,19 +44,18 @@ export const NavLink = styled.span<{ active: boolean }>`
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    color: var(--lido-color-secondary);
+    color: ${({ active }) =>
+      active ? `var(--lido-color-text)` : `var(--lido-color-secondary)`};
     font-size: ${({ theme }) => theme.fontSizesMap.xxxs}px;
-    line-height: 1.7em;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    opacity: ${(props) => (props.active ? 1 : 0.8)};
+    line-height: 18px;
+    font-weight: 500;
+    opacity: 1;
     white-space: break-spaces;
     text-wrap: balance;
     line-break: anywhere;
 
     &:hover {
-      color: var(--lido-color-secondary);
+      color: var(--lido-color-text);
     }
 
     svg {
@@ -65,5 +64,22 @@ export const NavLink = styled.span<{ active: boolean }>`
       color: ${({ active }) =>
         active ? `var(--lido-color-primary)` : `var(--lido-color-secondary)`};
     }
+  }
+`;
+
+// icons swapped by viewport in CSS to avoid a flash on hydration
+export const DesktopIcon = styled.span`
+  display: contents;
+
+  @media ${devicesHeaderMedia.mobile} {
+    display: none;
+  }
+`;
+
+export const MobileIcon = styled.span`
+  display: none;
+
+  @media ${devicesHeaderMedia.mobile} {
+    display: contents;
   }
 `;

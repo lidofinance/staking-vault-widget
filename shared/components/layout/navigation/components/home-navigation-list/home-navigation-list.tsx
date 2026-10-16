@@ -13,8 +13,14 @@ type HomeNavigationListProps = {
 export const HomeNavigationList: FC<HomeNavigationListProps> = ({ gap }) => {
   return (
     <NavList $gap={gap}>
-      {homeRoutes.map(({ title, path, icon }) => (
-        <NavigationLink icon={icon} title={title} path={path} key={path} />
+      {homeRoutes.map(({ title, path, icon, mobileIcon }) => (
+        <NavigationLink
+          key={path}
+          icon={icon}
+          mobileIcon={mobileIcon}
+          title={title}
+          path={path}
+        />
       ))}
     </NavList>
   );

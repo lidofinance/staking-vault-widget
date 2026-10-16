@@ -18,6 +18,7 @@ import {
   HiddenNav,
   HiddenNavContainer,
   HiddenNavDivider,
+  HiddenNavList,
   MenuItem,
   WrapperButton,
 } from './styles';
@@ -55,11 +56,11 @@ export const MenuMobile: FC = () => {
       </WrapperButton>
       <HiddenNavContainer $showMenu={isOpen}>
         <HiddenNav>
-          <NavigationList routes={routesForMenu} />
+          <HiddenNavList>
+            <NavigationList routes={routesForMenu} />
+          </HiddenNavList>
           <HiddenNavDivider role="separator" />
-          <li>
-            <DocsLinks />
-          </li>
+          <DocsLinks />
         </HiddenNav>
       </HiddenNavContainer>
     </MenuItem>

@@ -12,18 +12,19 @@ import { ReactComponent as FolderIcon } from 'assets/icons/folder.svg';
 import { ReactComponent as GlobeIcon } from 'assets/icons/globe.svg';
 
 import { routsClickEventsMap } from 'shared/components/layout/navigation/const';
-import type { NavigationRoutes } from 'shared/components/layout/navigation/types';
+import type { NavigationIcon } from 'shared/components/layout/navigation/types';
 
-import { ListItem, NavLink } from './styles';
+import { DesktopIcon, ListItem, MobileIcon, NavLink } from './styles';
 
 export type NavigationLinkProps = {
-  icon: NavigationRoutes['icon'];
+  icon: NavigationIcon;
+  mobileIcon?: NavigationIcon;
   title: string;
   path: string;
   pathname?: string;
 };
 
-const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
+const iconsMap: Record<NavigationIcon, ReactNode> = {
   stake: <Stake />,
   mint: <MintRepay />,
   withdraw: <Withdraw />,
@@ -38,6 +39,7 @@ const iconsMap: Record<NavigationRoutes['icon'], ReactNode> = {
 export const NavigationLink: FC<NavigationLinkProps> = ({
   title,
   icon,
+  mobileIcon,
   path,
   pathname: pathnameInfo,
 }) => {
@@ -54,7 +56,14 @@ export const NavigationLink: FC<NavigationLinkProps> = ({
     <ListItem onClick={trackClickEvent} key={path}>
       <Link href={path}>
         <NavLink active={isActivePath}>
-          {pathIcon}
+          {mobileIcon ? (
+            <>
+              <DesktopIcon>{pathIcon}</DesktopIcon>
+              <MobileIcon>{iconsMap[mobileIcon]}</MobileIcon>
+            </>
+          ) : (
+            pathIcon
+          )}
           <span>{title}</span>
         </NavLink>
       </Link>

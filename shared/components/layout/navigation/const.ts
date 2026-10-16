@@ -92,12 +92,14 @@ export const homeRoutes: NavigationRoutes[] = [
     title: 'My stVaults',
     path: appPaths.myVaults,
     icon: 'folder',
+    mobileIcon: 'mosaic',
     exact: true,
   },
   {
     title: 'All stVaults',
     path: appPaths.vaults.all,
     icon: 'globe',
+    mobileIcon: 'stake',
     exact: true,
   },
 ];
