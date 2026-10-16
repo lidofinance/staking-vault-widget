@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-export const Section = styled.div`
+export const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 20px;

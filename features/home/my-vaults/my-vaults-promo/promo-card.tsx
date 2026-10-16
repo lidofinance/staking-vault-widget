@@ -8,7 +8,7 @@ import {
   PromoCardWrapper,
 } from './styles';
 
-type PromoCardProps = {
+export type PromoCardProps = {
   title: string;
   description: string;
   actionLabel: string;

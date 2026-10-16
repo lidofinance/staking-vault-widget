@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useConnect } from 'reef-knot/core-react';
 
@@ -6,7 +6,6 @@ import { ReactComponent as StVaultIllustration } from 'assets/stvault.svg';
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
-import { NO_IDENTIFICATION_LINK } from 'shared/components';
 
 import { PromoCard } from './promo-card';
 import {
@@ -24,20 +23,20 @@ import {
   ArrowIcon,
   LearnMoreLink,
 } from './styles';
-import { LEARN_MORE_LINK, START_BUILDING_LINK } from './const';
+import { LEARN_MORE_LINK, PROMO_CARDS } from './const';
 
 export const MyVaultsPromo: FC = () => {
   const router = useRouter();
   const { connect } = useConnect();
 
-  const handleConnect = () => {
+  const handleConnect = useCallback(() => {
     void connect();
-  };
+  }, [connect]);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickCreateNewVault);
     void router.push(appPaths.vaults.create);
-  };
+  }, [router]);
 
   return (
     <Wrapper>
@@ -87,20 +86,9 @@ export const MyVaultsPromo: FC = () => {
           </HeroButtons>
         </HeroCard>
       </HeroWrapper>
-      <PromoCard
-        title="Create a product powered by stVaults"
-        description="Explore reference product architectures and follow the step-by-step implementation guide for your staking use case."
-        actionLabel="Start building"
-        href={START_BUILDING_LINK}
-        dataTestId="myVaults-promoStartBuilding"
-      />
-      <PromoCard
-        title="Validate with stVaults"
-        description="Become an Identified Node Operator to unlock better Reserve Ratios, higher stETH minting limits, and make your staking services more attractive to product builders."
-        actionLabel="Get identified"
-        href={NO_IDENTIFICATION_LINK}
-        dataTestId="myVaults-promoGetIdentified"
-      />
+      {PROMO_CARDS.map((card) => (
+        <PromoCard key={card.dataTestId} {...card} />
+      ))}
     </Wrapper>
   );
 };
