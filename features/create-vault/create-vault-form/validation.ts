@@ -115,3 +115,9 @@ export const createVaultSchema = z.object({
     },
   ),
 });
+
+// fields required to build the transaction, so tx cost can be estimated before terms are accepted
+export const createVaultTxSchema = createVaultSchema.omit({
+  acceptTerms: true,
+  step: true,
+});

@@ -3,10 +3,15 @@ import type {
   VAULTS_OWNER_ROLES_MAP,
 } from 'modules/vaults';
 
-import type { createVaultSchema } from './create-vault-form/validation';
+import type {
+  createVaultSchema,
+  createVaultTxSchema,
+} from './create-vault-form/validation';
 import type { z } from 'zod';
 
 export type CreateVaultSchema = z.infer<typeof createVaultSchema>;
+
+export type CreateVaultTxSchema = z.infer<typeof createVaultTxSchema>;
 
 export type CreateVaultFormValues = {
   nodeOperator: string;
