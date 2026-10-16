@@ -32,7 +32,7 @@ export const AddVault = () => {
         onClick={handleConnect}
         data-testid="myVaults-connectWalletButton"
       >
-        Connect wallet to create a vault
+        Connect wallet to create your vault
       </ConnectWalletButton>
     );
 

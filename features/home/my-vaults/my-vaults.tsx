@@ -1,9 +1,13 @@
 import { VaultTable } from 'features/home/vault-table';
+import { useDappStatus } from 'modules/web3';
 
 import { AddVault } from './add-vault';
+import { MyVaultsPromo } from './my-vaults-promo';
 import { useMyVaultsList } from './use-my-vaults-list';
+import { MobileOnly } from './styles';
 
 export const MyVaults = () => {
+  const { isWalletConnected } = useDappStatus();
   const {
     vaults,
     isLoading,
@@ -19,7 +23,7 @@ export const MyVaults = () => {
     isError,
   } = useMyVaultsList();
 
-  return (
+  const content = (
     <>
       <VaultTable
         title="My Vaults"
@@ -39,6 +43,15 @@ export const MyVaults = () => {
         dataTestId="myVaultsTable"
       />
       <AddVault />
+    </>
+  );
+
+  if (isWalletConnected) return content;
+
+  return (
+    <>
+      <MyVaultsPromo />
+      <MobileOnly>{content}</MobileOnly>
     </>
   );
 };

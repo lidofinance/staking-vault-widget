@@ -1,18 +1,25 @@
 import type { FC } from 'react';
 
 import {
-  AllVaultsDesktop,
-  VaultNavigationList,
   CurrentVault,
+  DocsLinks,
+  HomeNavigationList,
+  NavSection,
+  VaultNavigationList,
 } from '../components';
 import { VaultError } from '../vault-error';
 
 export const VaultNavigation: FC = () => {
   return (
     <>
-      <AllVaultsDesktop />
       <CurrentVault />
       <VaultNavigationList />
+      <NavSection>
+        <HomeNavigationList />
+      </NavSection>
+      <NavSection>
+        <DocsLinks />
+      </NavSection>
       <VaultError />
     </>
   );

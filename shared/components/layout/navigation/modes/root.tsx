@@ -1,32 +1,16 @@
-import { appPaths } from 'consts/routing';
+import { DocsLinks, HomeNavigationList, NavSection } from '../components';
 
-import { NavigationLink } from '../components';
-import { NavigationRoutes } from '../types';
-import { NavList } from '../components/vault-navigation/styles';
-
-const homeRoutes: NavigationRoutes[] = [
-  {
-    title: 'My vaults',
-    path: appPaths.myVaults,
-    icon: 'mosaic',
-    exact: true,
-  },
-  {
-    title: 'All Vaults',
-    path: appPaths.vaults.all,
-    icon: 'stake',
-    exact: true,
-  },
-];
+// root layout is looser than the vault one: see Figma node 5946:21389
+const HOME_LIST_GAP = 12;
+const DOCS_SECTION_OFFSET = 32;
 
 export const RootNavigation = () => {
   return (
-    <NavList>
-      {homeRoutes.map(({ title, path, icon }) => {
-        return (
-          <NavigationLink icon={icon} title={title} path={path} key={path} />
-        );
-      })}
-    </NavList>
+    <>
+      <HomeNavigationList gap={HOME_LIST_GAP} />
+      <NavSection contentOffset={DOCS_SECTION_OFFSET}>
+        <DocsLinks />
+      </NavSection>
+    </>
   );
 };

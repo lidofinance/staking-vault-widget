@@ -2,18 +2,13 @@ import styled from 'styled-components';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-export const NavList = styled.ul`
+export const NavList = styled.ul<{ $gap?: number }>`
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: center;
-  gap: ${({ theme }) => theme.spaceMap.lg}px;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
+  gap: ${({ theme, $gap }) => $gap ?? theme.spaceMap.md}px;
   list-style-type: none;
-
-  svg {
-    margin-right: 8px;
-  }
 
   @media ${devicesHeaderMedia.mobile} {
     flex-direction: row;
@@ -22,9 +17,5 @@ export const NavList = styled.ul`
     width: 100%;
     margin-top: 0;
     gap: 8px;
-
-    svg {
-      margin-right: 0;
-    }
   }
 `;

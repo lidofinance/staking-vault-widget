@@ -2,12 +2,10 @@ import styled from 'styled-components';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-export const FeedbackLink = styled.a`
+export const LoaderItem = styled.li`
   display: flex;
   align-items: center;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
-  padding-top: ${({ theme }) => theme.spaceMap.xxl}px;
-  border-top: 1px solid var(--lido-color-border);
+  height: fit-content;
 
   @media ${devicesHeaderMedia.mobile} {
     display: none;

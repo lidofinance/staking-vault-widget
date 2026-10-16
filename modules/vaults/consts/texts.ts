@@ -1043,6 +1043,21 @@ export const vaultTexts = {
       hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },
+  // promo cards on the My stVaults landing
+  promo: {
+    startBuilding: {
+      title: 'Create a product powered by stVaults',
+      description:
+        'Explore reference product architectures and follow the step-by-step implementation guide for your staking use case.',
+      actionLabel: 'Start building',
+    },
+    getIdentified: {
+      title: 'Validate with stVaults',
+      description:
+        'Become an Identified Node Operator to unlock better Reserve Ratios, higher stETH minting limits, and make your staking services more attractive to product builders.',
+      actionLabel: 'Get identified',
+    },
+  },
   // common texts like errors, warnings, etc.
   common: {
     warnings: {
