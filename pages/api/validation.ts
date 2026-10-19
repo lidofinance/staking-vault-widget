@@ -18,6 +18,7 @@ import {
 } from 'utilsApi';
 import Metrics from 'utilsApi/metrics';
 import { createCachedProxy } from 'utilsApi/cached-proxy';
+import { getClientRequestHeaders } from 'utilsApi/client-request-headers';
 
 // GET-only route — disable body parsing so a non-GET (or GET with body)
 // can't consume up to bodyParser.sizeLimit of memory before
@@ -63,6 +64,7 @@ if (!secretConfig.validationAPI) {
     ignoreParams: true, // Address is in path, not query
     timeout: 10_000,
     metricsHost: secretConfig.validationAPI,
+    forwardHeaders: getClientRequestHeaders,
   });
 
   handler = (req: NextApiRequest, res: NextApiResponse) => {
