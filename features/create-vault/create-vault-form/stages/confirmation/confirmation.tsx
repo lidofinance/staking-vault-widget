@@ -5,7 +5,6 @@ import { AcceptTerms } from './accept-terms';
 import { ConfirmationAction } from './confirmation-action';
 import { ConfirmationEntry } from './confirmation-entry';
 import { ConnectionDepositRow } from './connection-deposit-row';
-import { CreateVaultCost } from './create-vault-cost';
 import { PreSupplyWarning } from './pre-supply-warning';
 import { useSupplyBalance } from './use-supply-balance';
 
@@ -35,7 +34,6 @@ export const Confirmation = ({ isShown }: ConfirmationProps) => {
           );
         })}
         <ConnectionDepositRow isInsufficient={showWarning} />
-        <CreateVaultCost />
       </List>
       <AcceptTerms />
       {showWarning && <PreSupplyWarning />}
