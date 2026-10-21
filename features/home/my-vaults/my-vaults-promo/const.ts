@@ -1,18 +1,13 @@
-import { config } from 'config';
+import { STVAULTS_DOCS_LINK } from 'consts/external-links';
 import { vaultTexts } from 'modules/vaults/consts';
 import { NO_IDENTIFICATION_LINK } from 'shared/components';
-
-const { rootOrigin, docsOrigin } = config;
-
-export const LEARN_MORE_LINK = `${rootOrigin}/stvaults`;
-export const START_BUILDING_LINK = `${docsOrigin}/run-on-lido/stvaults/`;
 
 const texts = vaultTexts.promo;
 
 export const PROMO_CARDS = [
   {
     ...texts.startBuilding,
-    href: START_BUILDING_LINK,
+    href: STVAULTS_DOCS_LINK,
     dataTestId: 'myVaults-promoStartBuilding',
   },
   {

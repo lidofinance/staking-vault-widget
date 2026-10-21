@@ -36,7 +36,7 @@ export const MenuAll = () => {
   }, [vaultAddress, isMatched]);
 
   if (isLoading) {
-    return <NavigationListLoader count={vaultPathnames.length} />;
+    return <NavigationListLoader count={availableRoutes.length} />;
   }
 
   return <NavigationList routes={availableRoutes} />;

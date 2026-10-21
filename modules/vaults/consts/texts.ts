@@ -1044,8 +1044,16 @@ export const vaultTexts = {
       hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },
-  // promo cards on the My stVaults landing
+  // hero and promo cards on the My stVaults landing
   promo: {
+    hero: {
+      learnMore: 'Learn more about stVaults',
+      title: 'stVaults',
+      description:
+        'stVaults (Staking Vaults) bring the benefits of stETH to fully custom staking setups. They can be utilized as a liquid staking solution to stake with a dedicated Node Operator, or as a basis for creating private or public staking products.',
+      seeVaults: 'See my stVaults',
+      createVault: 'Create new stVault',
+    },
     startBuilding: {
       title: 'Create a product powered by stVaults',
       description:

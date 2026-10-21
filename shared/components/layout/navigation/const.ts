@@ -1,7 +1,11 @@
 import type { Address } from 'viem';
 
 import { config } from 'config';
-import { FEEDBACK_SURVEY_URL } from 'consts/external-links';
+import {
+  FEEDBACK_SURVEY_URL,
+  STVAULTS_ABOUT_LINK,
+  STVAULTS_DOCS_LINK,
+} from 'consts/external-links';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { appPaths } from 'consts/routing';
 
@@ -105,7 +109,7 @@ export const homeRoutes: NavigationRoutes[] = [
 ];
 
 export const docsLinks: DocsLink[] = [
-  { title: 'About stVaults', href: `${config.rootOrigin}/stvaults` },
+  { title: 'About stVaults', href: STVAULTS_ABOUT_LINK },
   {
     title: 'Showcase',
     href: `${config.rootOrigin}/stvaults-products-overview`,
@@ -114,6 +118,6 @@ export const docsLinks: DocsLink[] = [
     title: 'How it works',
     href: `${config.rootOrigin}/how-lido-works/stvaults-basics`,
   },
-  { title: 'DocCenter', href: `${config.docsOrigin}/run-on-lido/stvaults/` },
+  { title: 'DocCenter', href: STVAULTS_DOCS_LINK },
   { title: 'Leave feedback', href: FEEDBACK_SURVEY_URL },
 ];

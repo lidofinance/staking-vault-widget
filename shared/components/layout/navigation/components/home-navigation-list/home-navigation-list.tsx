@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { homeRoutes } from 'shared/components/layout/navigation/const';
 
 import { NavigationLink } from '../navigation-link';
-import { NavList } from '../vault-navigation/styles';
+import { NavList } from 'shared/components/layout/navigation/styles';
 
 type HomeNavigationListProps = {
   // desktop gap between items, px
