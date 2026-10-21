@@ -1,27 +1,13 @@
-import { useRouter } from 'next/router';
-import { useConnect } from 'reef-knot/core-react';
 import { Plus } from '@lidofinance/lido-ui';
 
-import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { appPaths } from 'consts/routing';
-import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { useDappStatus } from 'modules/web3';
 
+import { useCreateVaultActions } from '../use-create-vault-actions';
 import { ConnectWalletButton, AddVaultButton } from './styles';
 
 export const AddVault = () => {
-  const router = useRouter();
   const { isWalletConnected } = useDappStatus();
-  const { connect } = useConnect();
-
-  const handleConnect = () => {
-    void connect();
-  };
-
-  const handleNavigate = () => {
-    trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickCreateNewVault);
-    void router.push(appPaths.vaults.create);
-  };
+  const { handleConnect, handleCreate } = useCreateVaultActions();
 
   if (!isWalletConnected)
     return (
@@ -42,7 +28,7 @@ export const AddVault = () => {
       color="secondary"
       size="lg"
       icon={<Plus />}
-      onClick={handleNavigate}
+      onClick={handleCreate}
       data-testid="myVaults-createVaultButton"
     >
       Create new Vault

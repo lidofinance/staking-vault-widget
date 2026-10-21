@@ -1,13 +1,19 @@
+import { useAccount } from 'wagmi';
+
 import { VaultTable } from 'features/home/vault-table';
-import { useDappStatus } from 'modules/web3';
 
 import { AddVault } from './add-vault';
 import { MyVaultsPromo } from './my-vaults-promo';
 import { useMyVaultsList } from './use-my-vaults-list';
+import { useWalletRestoring } from './use-wallet-restoring';
 import { MobileOnly } from './styles';
 
 export const MyVaults = () => {
-  const { isWalletConnected } = useDappStatus();
+  // status instead of isConnected: the latter is false while reconnecting,
+  // which would flash the promo for users with a remembered wallet
+  const { status } = useAccount();
+  // and before the reconnect starts it's still 'disconnected'
+  const isWalletRestoring = useWalletRestoring();
   const {
     vaults,
     isLoading,
@@ -46,11 +52,11 @@ export const MyVaults = () => {
     </>
   );
 
-  if (isWalletConnected) return content;
+  if (status !== 'disconnected') return content;
 
   return (
     <>
-      <MyVaultsPromo />
+      {!isWalletRestoring && <MyVaultsPromo />}
       <MobileOnly>{content}</MobileOnly>
     </>
   );
