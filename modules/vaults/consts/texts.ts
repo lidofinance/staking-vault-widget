@@ -1091,6 +1091,8 @@ export const vaultTexts = {
         notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
+        reportAlreadyApplied:
+          'Oracle report has already been applied to your stVault.',
         vaultDisconnected: 'stVault is disconnected.',
       },
     },

@@ -4,12 +4,10 @@ import { FormatToken } from 'shared/formatters';
 
 import { QUARANTINE_GUIDE_LINK } from 'features/overview/consts';
 import { LearnMore } from '../deposits-restricted/components/learn-more';
+import type { QuarantineBannerState } from './utils';
 
 type QuarantineDescriptionProps = {
-  pendingTotalValueIncrease: bigint;
-  totalValueRemainder: bigint;
-  expectedReportTimestamp: bigint;
-  isReleasable: boolean;
+  state: QuarantineBannerState;
 };
 
 const dateTimeFormat = new Intl.DateTimeFormat('en-CA', {
@@ -23,44 +21,43 @@ const formatUnixDate = (ts: bigint) => {
   return dateTimeFormat.format(Number(ts) * 1000);
 };
 
-export const QuarantineDescription: FC<QuarantineDescriptionProps> = ({
-  pendingTotalValueIncrease,
-  totalValueRemainder,
-  expectedReportTimestamp,
-  isReleasable,
-}) => {
-  const total = (
-    <FormatToken
-      amount={pendingTotalValueIncrease + totalValueRemainder}
-      maxDecimalDigits={4}
-      symbol="ETH"
-    />
-  );
-  const pending = (
-    <FormatToken
-      amount={pendingTotalValueIncrease}
-      maxDecimalDigits={4}
-      symbol="ETH"
-    />
-  );
+const Eth: FC<{ amount: bigint }> = ({ amount }) => (
+  <FormatToken amount={amount} maxDecimalDigits={4} symbol="ETH" />
+);
 
-  if (isReleasable) {
+export const QuarantineDescription: FC<QuarantineDescriptionProps> = ({
+  state,
+}) => {
+  if (state.type === 'releasable') {
     return (
       <>
-        <b>{total} is</b> currently under quarantine.{' '}
-        <b>At least {pending} can now be released from quarantine</b>. Apply a
-        fresh Oracle report to the stVault to release the eligible amount.{' '}
-        <LearnMore link={QUARANTINE_GUIDE_LINK} />
+        <b>
+          <Eth amount={state.total} /> is
+        </b>{' '}
+        currently under quarantine.{' '}
+        <b>
+          At least <Eth amount={state.releasable} /> can now be released from
+          quarantine
+        </b>
+        . Apply a fresh Oracle report to the stVault to release the eligible
+        amount. <LearnMore link={QUARANTINE_GUIDE_LINK} />
       </>
     );
   }
 
+  const { expectedReportTimestamp } = state;
+
   return (
     <>
-      <b>{total}</b> is currently under quarantine due to a recent sudden jump
-      in Total Value. At least {pending} can be released after the{' '}
       <b>
-        Oracle report expected on {formatUnixDate(expectedReportTimestamp)}{' '}
+        <Eth amount={state.total} />
+      </b>{' '}
+      is currently under quarantine due to a recent sudden jump in Total Value.
+      At least <Eth amount={state.pending} /> can be released after the{' '}
+      <b>
+        {expectedReportTimestamp
+          ? `Oracle report expected on ${formatUnixDate(expectedReportTimestamp)}`
+          : 'next Oracle report'}{' '}
         arrives and is applied to the stVault
       </b>
       . <LearnMore link={QUARANTINE_GUIDE_LINK} />

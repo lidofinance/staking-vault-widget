@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useVault } from 'modules/vaults';
 
-// on-chain quarantine state without applying the pending report;
+// on-chain quarantine state and total value without applying the pending report;
 // overview values are simulated with the report, so the expired
 // quarantine is already released there
 export const useOnchainQuarantine = () => {
@@ -17,13 +17,14 @@ export const useOnchainQuarantine = () => {
       activeVault.isReportAvailable,
     queryFn: async () => {
       invariant(activeVault, '[useOnchainQuarantine] activeVault is undefined');
+      const { lazyOracle, hub, address, blockNumber } = activeVault;
 
-      return activeVault.lazyOracle.read.vaultQuarantine(
-        [activeVault.address],
-        {
-          blockNumber: activeVault.blockNumber,
-        },
-      );
+      const [quarantine, totalValue] = await Promise.all([
+        lazyOracle.read.vaultQuarantine([address], { blockNumber }),
+        hub.read.totalValue([address], { blockNumber }),
+      ]);
+
+      return { quarantine, totalValue };
     },
   });
 };

@@ -1,7 +1,12 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import invariant from 'tiny-invariant';
 
-import { useReportCalls, useVault, vaultTexts } from 'modules/vaults';
+import {
+  ReportAlreadyAppliedError,
+  useReportCalls,
+  useVault,
+  vaultTexts,
+} from 'modules/vaults';
 import { useSendTransaction, withSuccess } from 'modules/web3';
 
 const { loading, completed } = vaultTexts.actions.report;
@@ -9,35 +14,40 @@ const { loading, completed } = vaultTexts.actions.report;
 export const useApplyQuarantineReport = () => {
   const prepareReportCalls = useReportCalls();
   const { activeVault, invalidateVaultState } = useVault();
-  const { sendTX, ...rest } = useSendTransaction();
+  const { sendTX, retryEvent, ...rest } = useSendTransaction();
 
-  return {
-    applyReport: useCallback(async () => {
-      invariant(
-        activeVault,
-        '[useApplyQuarantineReport] activeVault is undefined',
-      );
+  const applyReport = useCallback(async () => {
+    invariant(
+      activeVault,
+      '[useApplyQuarantineReport] activeVault is undefined',
+    );
 
+    const prepareTransactions = async () => {
+      const calls = await prepareReportCalls();
       // report can be applied by someone else after the UI was loaded,
       // in this case there is nothing to send, just refresh the vault state
-      const isReportFresh = await activeVault.hub.read.isReportFresh([
-        activeVault.address,
-      ]);
-      if (isReportFresh) {
-        await invalidateVaultState();
-        return true;
+      if (calls.length === 0) {
+        void invalidateVaultState();
+        throw new ReportAlreadyAppliedError();
       }
+      return calls;
+    };
 
-      const { success } = await withSuccess(
-        sendTX({
-          transactions: prepareReportCalls,
-          mainActionLoadingText: loading,
-          mainActionCompleteText: completed,
-        }),
-      );
+    const { success } = await withSuccess(
+      sendTX({
+        transactions: prepareTransactions,
+        mainActionLoadingText: loading,
+        mainActionCompleteText: completed,
+      }),
+    );
 
-      return success;
-    }, [activeVault, invalidateVaultState, prepareReportCalls, sendTX]),
-    ...rest,
-  };
+    return success;
+  }, [activeVault, invalidateVaultState, prepareReportCalls, sendTX]);
+
+  useEffect(
+    () => retryEvent.subscribe(() => void applyReport()),
+    [retryEvent, applyReport],
+  );
+
+  return { applyReport, ...rest };
 };
