@@ -17,10 +17,11 @@ export const CapitalQuarantined = () => {
   const { isDappActive } = useDappStatus();
   const { values } = useVaultOverview();
   const { data: onchain, isLoading: isOnchainLoading } = useOnchainQuarantine();
-  const { data: frameDuration } = useReportFrameDuration();
+  const { data: frameDuration, isLoading: isFrameDurationLoading } =
+    useReportFrameDuration();
   const { applyReport, mutation } = useApplyQuarantineReport();
 
-  if (!activeVault || isOnchainLoading) {
+  if (!activeVault || isOnchainLoading || isFrameDurationLoading) {
     return null;
   }
 

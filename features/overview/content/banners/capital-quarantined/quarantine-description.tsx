@@ -17,8 +17,22 @@ const dateTimeFormat = new Intl.DateTimeFormat('en-CA', {
   day: '2-digit',
 });
 
+const dateTimeWithTimeFormat = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'UTC',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
 const formatUnixDate = (ts: bigint) => {
   return dateTimeFormat.format(Number(ts) * 1000);
+};
+
+const formatUnixDateTime = (ts: bigint) => {
+  return `${dateTimeWithTimeFormat.format(Number(ts) * 1000).replace(',', '')} UTC`;
 };
 
 const Eth: FC<{ amount: bigint }> = ({ amount }) => (
@@ -45,7 +59,7 @@ export const QuarantineDescription: FC<QuarantineDescriptionProps> = ({
     );
   }
 
-  const { expectedReportTimestamp } = state;
+  const { expectedReportTimestamp, endTimestamp } = state;
 
   return (
     <>
@@ -57,7 +71,9 @@ export const QuarantineDescription: FC<QuarantineDescriptionProps> = ({
       <b>
         {expectedReportTimestamp
           ? `Oracle report expected on ${formatUnixDate(expectedReportTimestamp)}`
-          : 'next Oracle report'}{' '}
+          : // release needs a report with timestamp >= endTimestamp,
+            // so without the schedule bind the text to the quarantine end
+            `first Oracle report after ${formatUnixDateTime(endTimestamp)}`}{' '}
         arrives and is applied to the stVault
       </b>
       . <LearnMore link={QUARANTINE_GUIDE_LINK} />

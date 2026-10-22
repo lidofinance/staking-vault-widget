@@ -11,6 +11,7 @@ export type QuarantineBannerState =
       type: 'default';
       total: bigint;
       pending: bigint;
+      endTimestamp: bigint;
       expectedReportTimestamp?: bigint;
     };
 
@@ -112,6 +113,7 @@ export const getQuarantineBannerState = ({
     type: 'default',
     total: simulated.pendingTotalValueIncrease + simulated.totalValueRemainder,
     pending: simulated.pendingTotalValueIncrease,
+    endTimestamp: simulated.endTimestamp,
     expectedReportTimestamp: frameDuration
       ? getExpectedReportTimestamp({
           hubReportTimestamp,
