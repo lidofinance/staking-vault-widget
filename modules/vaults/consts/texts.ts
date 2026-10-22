@@ -765,7 +765,9 @@ export const vaultTexts = {
         cooldownHighlight: '72-hour cooldown period',
         bodyTail:
           ' is required before the capital can be released from quarantine.',
-        learnMoreLink: '', // TODO: add learnMoreLink after doc will be ready
+        // keep in sync with QUARANTINE_GUIDE_LINK in features/overview/consts.ts
+        learnMoreLink:
+          'https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/how-quarantine-works',
       },
       pendingDepositsDelay: 'These values may take ~15 minutes to update.',
       totalValue: {
