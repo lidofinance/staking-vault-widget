@@ -1043,6 +1043,29 @@ export const vaultTexts = {
       hint: 'Pre-deposit and deposit validators to the Beacon Chain.',
     },
   },
+  // hero and promo cards on the My stVaults landing
+  promo: {
+    hero: {
+      learnMore: 'Learn more about stVaults',
+      title: 'stVaults',
+      description:
+        'stVaults (Staking Vaults) bring the benefits of stETH to fully custom staking setups. They can be utilized as a liquid staking solution to stake with a dedicated Node Operator, or as a basis for creating private or public staking products.',
+      seeVaults: 'See my stVaults',
+      createVault: 'Create new stVault',
+    },
+    startBuilding: {
+      title: 'Create a product powered by stVaults',
+      description:
+        'Explore reference product architectures and follow the step-by-step implementation guide for your staking use case.',
+      actionLabel: 'Start building',
+    },
+    getIdentified: {
+      title: 'Validate with stVaults',
+      description:
+        'Become an Identified Node Operator to unlock better Reserve Ratios, higher stETH minting limits, and make your staking services more attractive to product builders.',
+      actionLabel: 'Get identified',
+    },
+  },
   // common texts like errors, warnings, etc.
   common: {
     warnings: {
