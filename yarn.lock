@@ -2318,10 +2318,10 @@
     "@lidofinance/lido-shared-ui" "^1.1.3"
     classnames "2.5.1"
 
-"@lidofinance/lido-ethereum-sdk@4.8.0":
-  version "4.8.0"
-  resolved "https://registry.npmjs.org/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.8.0.tgz#190ff16c004b08d9618fb96c1507729140bde66c"
-  integrity sha512-KjU0opfkc4D92tUXB8H6bsnBuC5/JEEGydJ418CNf5/ib2H6YzTTzG+MQF3gFNYN1ho21Qa4tyEXY1ipWHfcag==
+"@lidofinance/lido-ethereum-sdk@4.9.0":
+  version "4.9.0"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.9.0.tgz#53c47ad167ae31c65edda7cc320e7c4483b04d8d"
+  integrity sha512-eFws5OWEA7dIE6ge4sElmeHhW0XeNuiOz3JTLMl0jg3XJLSr6YasR06Dng1I16MlPvZbIun7+3IScvlnq2X2Ng==
   dependencies:
     "@openzeppelin/merkle-tree" "^1.0.8"
     blockstore-core "^5.0.4"
@@ -5238,9 +5238,9 @@ base64-js@^1.3.1:
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
 baseline-browser-mapping@^2.11.20:
-  version "2.11.28"
-  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.28.tgz#784efec0fa3965c28a0bbb755f40604ace1c9db0"
-  integrity sha512-br0LOmjJqr6Rt4AEkadbcNf67Zpo7EPwKsWbjnRrJIa1QYFHQBqM4C7F2WTbV8ahTEcg1Eo+Y0aWjjORInYFyA==
+  version "2.11.26"
+  resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.26.tgz#01bf6774efb3fbb9de20afc6b923ab85c7d230a6"
+  integrity sha512-GLQdD3y6UF8iVuMJl5fHgE4jdn/ua7n+toKfLgNlg3BqQtOZjpy68T8Tup8/wGWZCDlm7KMg7tPb4MPn7oN0TQ==
 
 big.js@6.2.2:
   version "6.2.2"
