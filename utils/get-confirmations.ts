@@ -37,6 +37,8 @@ export const getConfirmationsInfo = async <
   address: Address,
   publicClient: RegisteredPublicClient,
   abi: Abi,
+  // read at specific block, latest by default
+  blockNumber?: bigint,
 ): Promise<{
   confirmations: Confirmation<FN>[];
   confirmationsCount: bigint[];
@@ -49,8 +51,8 @@ export const getConfirmationsInfo = async <
   });
 
   const [confirmExpiry, currentBlock] = await Promise.all([
-    contract.read.getConfirmExpiry(),
-    publicClient.getBlockNumber(),
+    contract.read.getConfirmExpiry({ blockNumber }),
+    blockNumber ?? publicClient.getBlockNumber(),
   ]);
 
   const confirmExpireInBlocks = confirmExpiry / AVG_BLOCK_TIME_SEC;
@@ -130,6 +132,7 @@ export const getConfirmationsInfo = async <
   // get how many are active
   const confirmationsCount = await publicClient.multicall({
     allowFailure: false,
+    blockNumber,
     contracts: confirmations.map(
       (confirmation) =>
         ({

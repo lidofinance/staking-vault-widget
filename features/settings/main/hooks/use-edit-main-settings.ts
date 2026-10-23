@@ -4,12 +4,14 @@ import type { Hash } from 'viem';
 
 import {
   TransactionEntry,
+  useAA,
+  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
 import {
+  DisplayableError,
   useVault,
-  VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
   GoToVault,
@@ -18,6 +20,7 @@ import {
 } from 'modules/vaults';
 
 import { useMainSettingsData } from '../contexts';
+import { feePercentToBasisPoints } from '../utils';
 
 import type { MainSettingsFormValidatedValues } from '../types';
 
@@ -36,6 +39,8 @@ export const useEditMainSettings = () => {
   const { activeVault } = useVault();
   const prepareReportCalls = useReportCalls();
   const { data: vaultSettings } = useMainSettingsData();
+  const { getLatestTxBlock } = useLidoSDK();
+  const { isAA } = useAA();
 
   const { sendTX, ...rest } = useSendTransaction();
 
@@ -115,14 +120,13 @@ export const useEditMainSettings = () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const feeValue = Number(feeRate !== 'custom' ? feeRate : feeRateCustom);
 
+        const newFee = feePercentToBasisPoints(feeValue);
+
         const isFeeValueChanged =
-          feeValue !== Number(vaultSettings?.nodeOperatorFeeRateCurrent);
+          newFee !==
+          feePercentToBasisPoints(vaultSettings.nodeOperatorFeeRateCurrent);
 
         if (isFeeValueChanged) {
-          const newFee = Math.floor(
-            (feeValue * VAULT_TOTAL_BASIS_POINTS) / 100,
-          );
-
           transactions.push({
             ...activeVault.dashboard.encode.setFeeRate([BigInt(newFee)]),
             loadingActionText: vaultTexts.actions.settings.confirmNoFee(
@@ -163,17 +167,26 @@ export const useEditMainSettings = () => {
           });
         }
 
+        // settings read before the latest tx would resend already applied txs
+        const isStale = vaultSettings.blockNumber < (getLatestTxBlock() ?? 0n);
+
         const result = await withSuccess(
           sendTX({
-            transactions:
-              isFeeValueChanged || isDepositAllowedChanged
+            transactions: isStale
+              ? () =>
+                  Promise.reject(
+                    new DisplayableError(
+                      'Vault settings are outdated. Please wait for them to refresh and try again.',
+                    ),
+                  )
+              : isFeeValueChanged || isDepositAllowedChanged
                 ? async () => [...(await prepareReportCalls()), ...transactions]
                 : transactions,
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
-            // because of complex state changes, we don't want to allow retry
-            allowRetry: false,
+            // AA batch may be executed non-atomically and its partial result is not tracked
+            allowRetry: !isAA,
           }),
         );
 
@@ -186,6 +199,8 @@ export const useEditMainSettings = () => {
         vaultSettings,
         activeVault,
         hasBothConfirmingRoles,
+        getLatestTxBlock,
+        isAA,
         sendTX,
         prepareReportCalls,
       ],

@@ -123,6 +123,7 @@ export const formatSettingsValues = (
     feeRecipient,
     isDepositAllowed: vaultInfo.isDepositAllowed,
     pdgPolicy: vaultInfo.pdgPolicy,
+    blockNumber: vaultInfo.blockNumber,
     confirmExpiryCurrent,
     confirmExpiry,
     nodeOperatorFeeRateCurrent,
@@ -192,4 +193,120 @@ export const formatValueView = (
   }
 
   return value;
+};
+
+const getPendingRoles = (
+  freshMembers: Address[],
+  submitted: RoleFieldSchema[],
+): RoleFieldSchema[] | undefined => {
+  let hasPending = false;
+
+  const isRemoveSubmitted = (address: Address) =>
+    submitted.some(
+      (field) =>
+        field.state === 'remove' && isAddressEqual(field.value, address),
+    );
+
+  const current = freshMembers.map((address) => {
+    const isPendingRemove = isRemoveSubmitted(address);
+    hasPending ||= isPendingRemove;
+    return {
+      value: address,
+      state: isPendingRemove ? ('remove' as const) : ('display' as const),
+      isGranted: true,
+    };
+  });
+
+  const pendingGrants = submitted.filter(
+    (field) =>
+      field.state === 'grant' &&
+      !freshMembers.some((address) => isAddressEqual(address, field.value)),
+  );
+  hasPending ||= pendingGrants.length > 0;
+
+  return hasPending ? [...current, ...pendingGrants] : undefined;
+};
+
+// toFixed drops float noise (e.g. 0.57 * 100 = 56.99999999999999), floor drops precision beyond basis points
+export const feePercentToBasisPoints = (percent: number | string) =>
+  Math.floor(
+    Number(((Number(percent) * VAULT_TOTAL_BASIS_POINTS) / 100).toFixed(6)),
+  );
+
+const isProposalApplied = (
+  value: number,
+  current: string,
+  options: VotingOptionType[],
+  normalize: (value: number | string) => number = Number,
+) =>
+  value === normalize(current) ||
+  options.some(
+    (option) =>
+      option.type === 'My proposal' && normalize(option.value) === value,
+  );
+
+// Returns submitted values that are not applied on-chain yet (e.g. after partial success of legacy batch)
+// so the form can be restored on top of fresh data and retry continues from the remaining txs
+export const getPendingFormValues = (
+  fresh: MainSettingsFormData,
+  submitted: MainSettingsFormValidatedValues,
+): Partial<MainSettingFormsValues> => {
+  const pending: Partial<MainSettingFormsValues> = {};
+
+  const defaultAdmins = getPendingRoles(
+    fresh.defaultAdmins,
+    submitted.defaultAdmins,
+  );
+  if (defaultAdmins) pending.defaultAdmins = defaultAdmins;
+
+  const nodeOperatorManagers = getPendingRoles(
+    fresh.nodeOperatorManagers,
+    submitted.nodeOperatorManagers,
+  );
+  if (nodeOperatorManagers) pending.nodeOperatorManagers = nodeOperatorManagers;
+
+  if (!isAddressEqual(submitted.feeRecipient, fresh.feeRecipient)) {
+    pending.feeRecipient = submitted.feeRecipient;
+  }
+  if (submitted.pdgPolicy !== fresh.pdgPolicy) {
+    pending.pdgPolicy = submitted.pdgPolicy;
+  }
+  if (submitted.isDepositAllowed !== fresh.isDepositAllowed) {
+    pending.isDepositAllowed = submitted.isDepositAllowed;
+  }
+
+  // keep in sync with value calculation in useEditMainSettings
+  const { feeRate, feeRateCustom } = submitted;
+  const feeValue = feePercentToBasisPoints(
+    feeRate !== 'custom' ? feeRate : feeRateCustom ?? '',
+  );
+  if (
+    !isProposalApplied(
+      feeValue,
+      fresh.nodeOperatorFeeRateCurrent,
+      fresh.feeRate,
+      feePercentToBasisPoints,
+    )
+  ) {
+    pending.feeRate = feeRate;
+    pending.feeRateCustom = feeRateCustom;
+  }
+
+  const { confirmExpiry, confirmExpiryCustom } = submitted;
+  const expiryValue =
+    confirmExpiry === 'custom' && confirmExpiryCustom
+      ? Number(confirmExpiryCustom) * 3600
+      : Number(confirmExpiry);
+  if (
+    !isProposalApplied(
+      expiryValue,
+      fresh.confirmExpiryCurrent,
+      fresh.confirmExpiry,
+    )
+  ) {
+    pending.confirmExpiry = confirmExpiry;
+    pending.confirmExpiryCustom = confirmExpiryCustom;
+  }
+
+  return pending;
 };

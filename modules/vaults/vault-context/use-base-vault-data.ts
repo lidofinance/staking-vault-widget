@@ -12,8 +12,8 @@ import {
   VaultNotCreatedByFactoryError,
   DashboardNotBelongToVault,
 } from 'modules/vaults';
-import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
 
 import {
   DisplayableError,
@@ -23,23 +23,6 @@ import {
 } from '../consts';
 
 import type { VaultBaseInfo } from '../types';
-
-const waitForRpcBlock = async (
-  publicClient: any,
-  targetBlock: bigint,
-): Promise<bigint> => {
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const latestRpcBlock = await publicClient.getBlockNumber({
-      cacheTime: 0,
-    });
-
-    if (latestRpcBlock >= targetBlock) {
-      return latestRpcBlock;
-    }
-    await new Promise((resolve) => setTimeout(resolve, BLOCK_POLLING_INTERVAL));
-  }
-};
 
 export const useBaseVaultData = (
   vaultAddress: Address | undefined,

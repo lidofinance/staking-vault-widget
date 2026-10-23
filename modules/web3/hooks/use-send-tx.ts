@@ -66,15 +66,13 @@ const receiptsToLastBlock = (
     | WalletCallReceipt<bigint, 'success' | 'reverted'>
   )[],
 ): bigint => {
-  const lastTxBlock = receipts
+  return receipts
     .map((receipt) =>
       typeof receipt.blockNumber === 'bigint'
         ? receipt.blockNumber
         : hexToBigInt(receipt.blockNumber),
     )
-    .sort((a, b) => (a < b ? 1 : -1))
-    .at(-1);
-  return lastTxBlock ?? 0n;
+    .reduce((max, block) => (block > max ? block : max), 0n);
 };
 
 export const useSendTransaction = () => {
@@ -290,6 +288,10 @@ export const useSendTransaction = () => {
 
         return transactionResult;
       } catch (error) {
+        // partial success of legacy batch, so dependent data is fetched with applied txs
+        if (receipts.length > 0) {
+          setLatestTxBlock(receiptsToLastBlock(receipts));
+        }
         const displayError =
           error instanceof DisplayableError ? error : undefined;
         dispatchModal({
