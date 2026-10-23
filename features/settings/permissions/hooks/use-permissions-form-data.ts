@@ -17,12 +17,21 @@ export type RolesAndDelegates = {
   rolesList: PermissionAccounts[];
   noGuarantor: Address;
   noDepositor: Address;
+  noBalanceLocked: bigint;
 };
 
-const collectRolesToFormValues = ({
+export type PermissionsFormData = {
+  formValues: EditPermissionsSchema;
+  // NO balance locked in PDG for predeposits, blocks guarantor change
+  noBalanceLocked: bigint;
+};
+
+const collectPermissionsFormData = ({
   rolesList,
-  ...rest
-}: RolesAndDelegates): EditPermissionsSchema => {
+  noGuarantor,
+  noDepositor,
+  noBalanceLocked,
+}: RolesAndDelegates): PermissionsFormData => {
   const rolesSchema = rolesList.reduce(
     (acc, role) => {
       const { addressList, permissionName } = role;
@@ -40,8 +49,12 @@ const collectRolesToFormValues = ({
   );
 
   return {
-    rolesSchema,
-    ...rest,
+    formValues: {
+      rolesSchema,
+      noGuarantor,
+      noDepositor,
+    },
+    noBalanceLocked,
   };
 };
 
@@ -56,8 +69,8 @@ export const usePermissionsFormData = () => {
       { roles: EDITABLE_ROLES_LIST },
     ],
     enabled: !!activeVault,
-    select: collectRolesToFormValues,
-    queryFn: async () => {
+    select: collectPermissionsFormData,
+    queryFn: async (): Promise<RolesAndDelegates> => {
       invariant(activeVault, 'Active vault is not defined');
 
       // TODO: can be changed to `VaultViewer.geRoleMembers`
@@ -72,9 +85,10 @@ export const usePermissionsFormData = () => {
         });
 
       const pdgContract = activeVault.predepositGuarantee;
-      const [noGuarantor, noDepositor] = await Promise.all([
+      const [noGuarantor, noDepositor, noBalance] = await Promise.all([
         pdgContract.read.nodeOperatorGuarantor([activeVault.nodeOperator]),
         pdgContract.read.nodeOperatorDepositor([activeVault.nodeOperator]),
+        pdgContract.read.nodeOperatorBalance([activeVault.nodeOperator]),
       ]);
 
       return {
@@ -84,6 +98,7 @@ export const usePermissionsFormData = () => {
         })),
         noGuarantor,
         noDepositor,
+        noBalanceLocked: noBalance.locked,
       };
     },
   });

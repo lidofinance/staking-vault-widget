@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { AddressInputHookForm } from 'shared/hook-form/controls';
 
@@ -15,12 +15,17 @@ export const Wrapper = styled.div`
   }
 `;
 
+// highlight only a new valid address, otherwise keep Input's own
+// border states (default / hover / error)
 export const PDGAddressInput = styled(AddressInputHookForm)<{
   $isNewAddress: boolean;
 }>`
-  & > span,
-  &:hover > span {
-    border-color: ${({ theme: { colors }, $isNewAddress }) =>
-      $isNewAddress ? colors.success : colors.border};
-  }
+  ${({ theme: { colors }, $isNewAddress }) =>
+    $isNewAddress &&
+    css`
+      & > span,
+      &:hover > span {
+        border-color: ${colors.success};
+      }
+    `}
 `;
