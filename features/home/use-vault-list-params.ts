@@ -10,11 +10,18 @@ const DEFAULT_PARAMS: FetchVaultsParams = {
   perPage: VAULTS_PER_PAGE,
 };
 
+// only positive integers: `?page=-1` or `?page=1.5` would yield a negative or
+// fractional offset, which breaks `BigInt` and slices from the end of the list
+const parsePage = (value: string | string[] | undefined): number => {
+  const page = Number(value);
+  return Number.isInteger(page) && page >= 1 ? page : DEFAULT_PARAMS.page;
+};
+
 const queryToParams = (
   query: Record<string, string | string[] | undefined>,
 ): FetchVaultsParams => {
   return {
-    page: Number(query.page) || DEFAULT_PARAMS.page,
+    page: parsePage(query.page),
     sortBy:
       (query.sortBy as FetchVaultsParams['sortBy']) || DEFAULT_PARAMS.sortBy,
     sortDir:
