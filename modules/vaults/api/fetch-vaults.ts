@@ -245,6 +245,8 @@ const LIMIT_BY_ADDRESS = 200n;
 const fetchVaultsDataByAddressRPC = async (
   ctx: FetchVaultsContext,
   address: Address,
+  offset: bigint,
+  limit: bigint,
 ): Promise<{ vaults: VaultEntryRaw[]; total: number }> => {
   const { vaultModule } = ctx;
   const vaultViewer = await vaultModule.contracts.getContractVaultViewer();
@@ -260,8 +262,13 @@ const fetchVaultsDataByAddressRPC = async (
     vaultAddresses.push(...vaults);
   }
 
+  const pageAddresses = vaultAddresses.slice(
+    Number(offset),
+    Number(offset + limit),
+  );
+
   const vaults = await Promise.all(
-    vaultAddresses.map((vaultAddress) =>
+    pageAddresses.map((vaultAddress) =>
       fetchVaultRPC(ctx, vaultAddress).catch((e) => {
         console.warn(
           `[fetchConnectedVaultsRPC] Failed to fetch vault data for ${vaultAddress}:`,
@@ -274,7 +281,7 @@ const fetchVaultsDataByAddressRPC = async (
     ),
   );
 
-  return { vaults, total: vaults.length };
+  return { vaults, total: vaultAddresses.length };
 };
 
 const fetchConnectedVaultsRPC = async (
@@ -285,7 +292,7 @@ const fetchConnectedVaultsRPC = async (
   const limit = BigInt(params.perPage);
 
   const { vaults, total } = await (params.address
-    ? fetchVaultsDataByAddressRPC(ctx, params.address)
+    ? fetchVaultsDataByAddressRPC(ctx, params.address, offset, limit)
     : fetchVaultsDataBatchRPC(ctx, offset, limit));
 
   return {
