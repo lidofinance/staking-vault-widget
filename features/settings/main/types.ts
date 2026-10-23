@@ -32,6 +32,8 @@ export type VaultMainSettingsData = {
   confirmExpiryConfirmations: Confirmation[];
   isDepositAllowed: boolean;
   pdgPolicy: string;
+  // block the data was read at
+  blockNumber: bigint;
 };
 
 export type MainSettingsFormData = {
@@ -47,6 +49,8 @@ export type MainSettingsFormData = {
 
   isDepositAllowed: boolean;
   pdgPolicy: string;
+  // block the data was read at
+  blockNumber: bigint;
 };
 
 export type MainSettingsDataContextValue = UseQueryResult<MainSettingsFormData>;

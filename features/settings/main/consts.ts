@@ -53,13 +53,13 @@ const votingFeeSchema = z.coerce
 const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
   .int(INVALID_INT_NUMBER_DATA_OBJECT_MESSAGE)
-  .transform((val) => Number(val) * 3600)
+  // value stays in hours, bounds are checked in seconds
   .refine(
-    (seconds) => seconds >= MIN_CONFIRM_EXPIRY_SECONDS,
+    (hours) => hours * 3600 >= MIN_CONFIRM_EXPIRY_SECONDS,
     INVALID_NUMBER_EXPIRY_MIN_MESSAGE,
   )
   .refine(
-    (seconds) => seconds <= MAX_CONFIRM_EXPIRY_SECONDS,
+    (hours) => hours * 3600 <= MAX_CONFIRM_EXPIRY_SECONDS,
     INVALID_NUMBER_EXPIRY_MAX_MESSAGE,
   );
 

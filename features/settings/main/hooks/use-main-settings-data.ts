@@ -4,9 +4,15 @@ import { usePublicClient } from 'wagmi';
 import { zeroAddress } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 
-import { useDappStatus } from 'modules/web3';
-import { useVault, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
+import {
+  useVault,
+  VAULTS_ROOT_ROLES_MAP,
+  VAULT_REPORT_REFETCH_INTERVAL_MS,
+} from 'modules/vaults';
 import { getConfirmationsInfo } from 'utils/get-confirmations';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
 
 import { formatSettingsValues } from '../utils';
 import type { MainSettingsFormData, VaultMainSettingsData } from '../types';
@@ -15,6 +21,7 @@ export const useVaultSettingsData = () => {
   const publicClient = usePublicClient();
   const { address } = useDappStatus();
   const { activeVault, queryKeys } = useVault();
+  const { getLatestTxBlock } = useLidoSDK();
 
   const select = useCallback(
     (data: VaultMainSettingsData) => {
@@ -32,6 +39,14 @@ export const useVaultSettingsData = () => {
 
       const dashboard = activeVault.dashboard;
 
+      // wait for RPC to reach the latest tx block and read at it,
+      // so data after partial success of legacy batch includes applied txs
+      const blockNumber = await awaitWithTimeout(
+        waitForRpcBlock(publicClient, getLatestTxBlock() ?? 0n),
+        VAULT_REPORT_REFETCH_INTERVAL_MS,
+      );
+      const callOptions = { blockNumber };
+
       const [
         defaultAdmins,
         nodeOperatorManagers,
@@ -40,20 +55,28 @@ export const useVaultSettingsData = () => {
         pdgPolicy,
         { beaconChainDepositsPauseIntent },
       ] = await Promise.all([
-        dashboard.read.getRoleMembers([VAULTS_ROOT_ROLES_MAP.defaultAdmin]),
-        dashboard.read.getRoleMembers([
-          VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
-        ]),
-        dashboard.read.feeRate(),
-        dashboard.read.feeRecipient(),
-        dashboard.read.pdgPolicy(),
-        activeVault.hub.read.vaultConnection([activeVault.address]),
+        dashboard.read.getRoleMembers(
+          [VAULTS_ROOT_ROLES_MAP.defaultAdmin],
+          callOptions,
+        ),
+        dashboard.read.getRoleMembers(
+          [VAULTS_ROOT_ROLES_MAP.nodeOperatorManager],
+          callOptions,
+        ),
+        dashboard.read.feeRate(callOptions),
+        dashboard.read.feeRecipient(callOptions),
+        dashboard.read.pdgPolicy(callOptions),
+        activeVault.hub.read.vaultConnection(
+          [activeVault.address],
+          callOptions,
+        ),
       ]);
 
       const { confirmations, confirmExpiry } = await getConfirmationsInfo(
         dashboard.address,
         publicClient,
         dashboard.abi,
+        blockNumber,
       );
 
       // filter out votes that are already accepted
@@ -79,6 +102,7 @@ export const useVaultSettingsData = () => {
         confirmExpiryConfirmations,
         isDepositAllowed: !beaconChainDepositsPauseIntent,
         pdgPolicy: String(pdgPolicy),
+        blockNumber,
       };
     },
   });

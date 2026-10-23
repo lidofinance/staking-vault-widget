@@ -2,7 +2,7 @@ import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { useDappStatus } from 'modules/web3';
+import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { FormController, useDisableForm } from 'shared/hook-form';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
@@ -11,7 +11,7 @@ import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { useEditMainSettings } from '../hooks';
 import { useMainSettingsFormData } from './main-settings-data-provider';
 import { mainSettingsFormResolver } from '../consts';
-import { prepareDefaultValues } from '../utils';
+import { getPendingFormValues, prepareDefaultValues } from '../utils';
 
 import type {
   MainSettingFormsValues,
@@ -26,6 +26,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
+  const { getLatestTxBlock } = useLidoSDK();
   const { editMainSettings, retryEvent } = useEditMainSettings();
   const { data, refetch } = useMainSettingsFormData();
   const disabled = useDisableForm();
@@ -44,7 +45,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     context: promisedSettingsData,
     mode: 'all',
   });
-  const reset = formObject.reset;
+  const { reset, setValue } = formObject;
 
   const onSubmit = useCallback(
     async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
@@ -61,20 +62,36 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       ]);
 
       // we reset form anyway because partial success is possible and will invalidate form state
-      if (vaultInfo.data) {
+      // restore pending changes only from data read after the latest tx, otherwise applied txs would be resent
+      if (
+        vaultInfo.isSuccess &&
+        vaultInfo.data.blockNumber >= (getLatestTxBlock() ?? 0n)
+      ) {
         const newDefaultValues = prepareDefaultValues(vaultInfo.data);
         reset(newDefaultValues);
+        // restore changes that are not applied yet, so retry continues from the remaining txs
+        const pending = getPendingFormValues(vaultInfo.data, data);
+        (
+          Object.entries(pending) as [
+            keyof MainSettingFormsValues,
+            MainSettingFormsValues[keyof MainSettingFormsValues],
+          ][]
+        ).forEach(([key, value]) =>
+          setValue(key, value, { shouldDirty: true, shouldValidate: true }),
+        );
       } else reset();
 
       return result.success;
     },
     [
       editMainSettings,
+      getLatestTxBlock,
       invalidateVaultConfig,
       invalidateVaultState,
       refetch,
       refetchVault,
       reset,
+      setValue,
     ],
   );
 

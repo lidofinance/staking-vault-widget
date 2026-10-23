@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   FieldValues,
   FormProvider,
@@ -40,13 +40,32 @@ export const FormController = <
       ? afterSubmitResetOptions
       : true;
 
+  // Guards against retry fired while previous submit is still in progress
+  // (e.g. modal shows error, but form is still refetching and resetting)
+  const isSubmittingRef = useRef(false);
+  // Guards against retry fired while form is disabled (e.g. vault data is reloading after tx)
+  const isDisabledRef = useRef(false);
+  isDisabledRef.current = Boolean(formObject.formState.disabled);
+
   // Bind submit action
   const doSubmit = useMemo(() => {
-    return handleSubmit(async (args) => {
+    const submit = handleSubmit(async (args) => {
       const success = await onSubmit(args);
       if (success && shouldReset)
         resetDefault(undefined, afterSubmitResetOptions || undefined);
     });
+    return async (event?: React.BaseSyntheticEvent) => {
+      if (isSubmittingRef.current || isDisabledRef.current) {
+        event?.preventDefault();
+        return;
+      }
+      isSubmittingRef.current = true;
+      try {
+        await submit(event);
+      } finally {
+        isSubmittingRef.current = false;
+      }
+    };
   }, [
     afterSubmitResetOptions,
     handleSubmit,
