@@ -23,7 +23,7 @@ export const useAllowTransaction = () => {
     }
 
     const { noDepositor: currentNODepositor, noGuarantor: currentNOGuarantor } =
-      permissionsData;
+      permissionsData.formValues;
 
     if (
       !noDepositor ||
