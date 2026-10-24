@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
+import { vaultTexts } from 'modules/vaults';
 import { Connect } from 'shared/wallet';
 
 import { CREATE_VAULT_FORM_STEPS } from 'features/create-vault/consts';
@@ -26,7 +27,7 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
   } = useFormContext<CreateVaultSchema>();
 
   const handleSetPrevStep = () => {
-    setValue('step', CREATE_VAULT_FORM_STEPS.main);
+    setValue('step', CREATE_VAULT_FORM_STEPS.settings);
   };
 
   const isSubmitDisabled = isDisabled || disabled || isSubmitting || !isValid;
@@ -50,7 +51,7 @@ export const ConfirmationAction: FC<ConfirmationActionProps> = ({
           fullwidth
           data-testid={`createVault-confirmation-createVaultButton`}
         >
-          Create vault and supply 1 ETH
+          {vaultTexts.actions.createVault.submit}
         </ActionButton>
       ) : (
         <Connect />
