@@ -2318,10 +2318,10 @@
     "@lidofinance/lido-shared-ui" "^1.1.3"
     classnames "2.5.1"
 
-"@lidofinance/lido-ethereum-sdk@4.9.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.9.0.tgz#53c47ad167ae31c65edda7cc320e7c4483b04d8d"
-  integrity sha512-eFws5OWEA7dIE6ge4sElmeHhW0XeNuiOz3JTLMl0jg3XJLSr6YasR06Dng1I16MlPvZbIun7+3IScvlnq2X2Ng==
+"@lidofinance/lido-ethereum-sdk@4.11.0-alpha.1":
+  version "4.11.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@lidofinance/lido-ethereum-sdk/-/lido-ethereum-sdk-4.11.0-alpha.1.tgz#8144673885929b71a951d7da0279e35d56338f45"
+  integrity sha512-QDhCl15pX/yArgVdBjaCiY6JL0PFsVv5F89pu0Er1q2pJ/5/ixbJqs1/OPygsrAfctn1XRDdrHZKuvClUq+RVw==
   dependencies:
     "@openzeppelin/merkle-tree" "^1.0.8"
     blockstore-core "^5.0.4"
