@@ -37,14 +37,11 @@ export const CarrySpread = () => {
           <Hint
             text={
               <>
-                Carry Spread shows how the Health Factor changes over time —
-                whether the vault’s position is getting stronger or weaker. A
-                positive spread raises the Health Factor, while a negative
-                spread lowers it.
-                <br />
-                It reflects the estimated annual return from staking in the
-                stVault, after subtracting fees and stETH liability growth from
-                rebasing — averaged over the past 7 days.
+                Shows whether staking rewards, net of fees, outpace stETH
+                Liability growth from the rebase. Positive means the value left
+                to you after covering the Liability grows; negative means it
+                shrinks. Annualized relative to Total Value, averaged over the
+                past 7 days.
               </>
             }
           />

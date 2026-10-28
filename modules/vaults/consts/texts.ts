@@ -738,17 +738,17 @@ export const vaultTexts = {
         bottomLine: {
           title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability grow driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
+            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability growth driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
         },
         netStakingRewards: {
           title: 'Net daily staking rewards',
           description:
-            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+            'The amount of staking rewards remaining after deductions of Node Operator Fee and Lido fees.',
         },
         stethRebase: {
           title: 'stETH Daily Rebase',
           description:
-            'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
+            'The change of stETH amount happening because stETH is a rebasing token. Amount for rebase is based on the stETH APR.',
         },
       },
       offBookDepositsHint: {
