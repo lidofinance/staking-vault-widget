@@ -6,6 +6,7 @@ import {
   registerShutdownSignals,
 } from './scripts/shutdown.mjs';
 import { markReady } from './scripts/readiness.mjs';
+import { sanitizeError } from './scripts/utils/sanitize-error.mjs';
 import { buildCspDirectives } from './config/security-headers/directives.js';
 import {
   cspInputsFromEnv,
@@ -41,8 +42,7 @@ const overrideSetHeader = (res) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-app.prepare().then(() => {
+const startServer = () => {
   // CSP from runtime env; no CSP in development (HMR)
   const cspHeader = dev
     ? undefined
@@ -74,4 +74,13 @@ app.prepare().then(() => {
   // OpenBao secret-rotation
   registerShutdownSignals(server);
   registerSecretsRotationRestart(server);
-});
+};
+
+app
+  .prepare()
+  .then(startServer)
+  // Next's global unhandledRejection handler swallows startup errors
+  .catch((error) => {
+    console.error('[server] startup failed', sanitizeError(error));
+    process.exit(1);
+  });
