@@ -63,8 +63,9 @@ COPY --from=build --chown=node:node /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY --from=build /app/build-info.json ./build-info.json
 # Runtime entrypoints: `yarn start` needs package.json, and next.config.mjs is
-# re-evaluated by the custom server, pulling in scripts/, config/security-headers
-# and env-dynamics; next-logger.config.cjs is preloaded by `yarn start`.
+# re-evaluated by the custom server, pulling in scripts/ and env-dynamics;
+# server.mjs builds CSP from config/security-headers; next-logger.config.cjs is
+# preloaded by `yarn start`.
 COPY --from=build /app/package.json /app/server.mjs /app/next.config.mjs /app/env-dynamics.mjs /app/next-logger.config.cjs ./
 COPY --from=build /app/scripts/*.mjs ./scripts/
 COPY --from=build /app/scripts/startup-checks ./scripts/startup-checks
