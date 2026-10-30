@@ -5,7 +5,7 @@ import { generateBuildId } from './scripts/generate-build-id.mjs';
 import { populateRpcUrls } from './scripts/populate-rpc-urls.mjs';
 import { startupCheckRPCs } from './scripts/startup-checks/rpc.mjs';
 import { startupCheckValidationFile } from './scripts/startup-checks/validation-file.mjs';
-import { buildSecurityHeaders } from './config/security-headers/build-security-headers.js';
+import { STATIC_SECURITY_HEADERS } from './config/security-headers/directives.js';
 
 logEnvironmentVariables();
 buildDynamics();
@@ -159,11 +159,9 @@ export default withBundleAnalyzer({
     return [
       {
         // Apply these headers to all routes in your application.
+        // CSP is set in server.mjs: headers() are baked at build time
         source: '/(.*)',
-        headers: buildSecurityHeaders({
-          isIPFSMode,
-          isDevelopment: developmentMode,
-        }),
+        headers: STATIC_SECURITY_HEADERS,
       },
       {
         // required for gnosis save apps
