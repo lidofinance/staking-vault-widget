@@ -3,6 +3,7 @@ import { ONE_ETHER } from 'consts/tx';
 import { toStethValue, truncateAddress } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
+import type { VAULTS_ALL_ROLES } from './roles';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -1081,6 +1082,17 @@ export const vaultTexts = {
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
+      noPermission: (actions: string[]) =>
+        `You do not have permission${actions.length > 1 ? 's' : ''} to ${actions.join(' and ')}.` as const,
+      noPermissionActions: {
+        supplier: 'supply ETH',
+        minter: 'mint stETH',
+        withdrawer: 'withdraw ETH',
+        repayer: 'repay stETH',
+        rebalancer: 'rebalance',
+        volunataryDisconnecter: 'disconnect the stVault',
+        vaultConfiguration: 'request a tier change',
+      } as Partial<Record<VAULTS_ALL_ROLES, string>>,
 
       vault: {
         loadingVault: 'Error loading stVault',
