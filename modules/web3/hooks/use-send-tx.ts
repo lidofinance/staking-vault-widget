@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import {
+  BaseError,
   hexToBigInt,
+  MethodNotFoundRpcError,
+  MethodNotSupportedRpcError,
+  UnsupportedProviderMethodError,
   type Address,
   type Hex,
   type TransactionReceipt,
@@ -77,6 +81,19 @@ const receiptsToLastBlock = (
   return lastTxBlock ?? 0n;
 };
 
+// Only unambiguous "method is not supported" errors allow falling back to eth_sendTransaction.
+// Generic errors (e.g. transport timeout -> UnknownRpcError) must not trigger fallback:
+// the original wallet_sendCalls request may still be pending in the wallet,
+// and a second request could lead to a duplicate submission.
+const isSendCallsUnsupportedError = (error: unknown): boolean =>
+  error instanceof BaseError &&
+  !!error.walk(
+    (e) =>
+      e instanceof MethodNotFoundRpcError ||
+      e instanceof MethodNotSupportedRpcError ||
+      e instanceof UnsupportedProviderMethodError,
+  );
+
 export const useSendTransaction = () => {
   const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
   const { address } = useDappStatus();
@@ -141,6 +158,8 @@ export const useSendTransaction = () => {
           '[useSendTransaction] No transactions provided',
         );
 
+        let sendCallsId: string | undefined;
+
         if (useSendCalls) {
           const calls = transactions.map((tx) => ({
             to: tx.to,
@@ -160,11 +179,25 @@ export const useSendTransaction = () => {
             },
           });
 
-          const { id } = await walletClient.sendCalls({
-            calls,
-            forceAtomic,
-            experimental_fallback: true,
-          });
+          try {
+            ({ id: sendCallsId } = await walletClient.sendCalls({
+              calls,
+              forceAtomic,
+            }));
+          } catch (error) {
+            const canFallback =
+              isSendCallsUnsupportedError(error) &&
+              !(forceAtomic && calls.length > 1);
+            if (!canFallback) throw error;
+            console.warn(
+              '[useSendTransaction] wallet_sendCalls is not supported, falling back to legacy flow',
+              error,
+            );
+          }
+        }
+
+        if (sendCallsId) {
+          const id = sendCallsId;
 
           dispatchModal({
             type: 'stage',
@@ -207,7 +240,7 @@ export const useSendTransaction = () => {
           }
 
           const transactionResult = {
-            isAA,
+            isAA: true as const,
             callStatus,
             receipts,
             lastTxBlock: receiptsToLastBlock(receipts),
@@ -231,6 +264,8 @@ export const useSendTransaction = () => {
           dispatchModal({
             type: 'stage',
             stage: 'signing',
+            // legacy flow is never a batch (also resets it after sendCalls fallback)
+            isBatch: false,
             details: {
               actionLoadingText: tx.loadingActionText ?? mainActionLoadingText,
               baseDescriptionText: tx.baseDescriptionText,
@@ -273,7 +308,7 @@ export const useSendTransaction = () => {
         }
 
         const transactionResult = {
-          isAA: useSendCalls,
+          isAA: false as const,
           receipts,
           lastTxBlock: receiptsToLastBlock(receipts),
         };
