@@ -6,6 +6,7 @@ import {
   ChartProportionBorderSize,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
 import { Hint, InlineLoader } from 'shared/components';
 import { useHealthChart } from 'shared/hooks';
 
@@ -35,15 +36,7 @@ export const CarrySpread = () => {
             Carry Spread
           </Text>
           <Hint
-            text={
-              <>
-                Shows whether staking rewards, net of fees, outpace stETH
-                Liability growth from the rebase. Positive means the value left
-                to you after covering the Liability grows; negative means it
-                shrinks. Annualized relative to Total Value, averaged over the
-                past 7 days.
-              </>
-            }
+            text={vaultTexts.metrics.modals.health.carrySpread.description}
           />
           <CarrySpreadPercent
             strong

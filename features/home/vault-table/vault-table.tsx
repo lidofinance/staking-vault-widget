@@ -9,7 +9,11 @@ import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { AddressBadge } from 'shared/components';
 import { getHealthFactorColor } from 'utils';
-import type { FetchVaultsParams, VaultEntry } from 'modules/vaults';
+import {
+  vaultTexts,
+  type FetchVaultsParams,
+  type VaultEntry,
+} from 'modules/vaults';
 
 import { ReindexState } from 'features/home/reindex-state';
 import { PercentCell, HeaderCell } from './cells';
@@ -70,7 +74,7 @@ const tableHeaders = [
   {
     title: 'Carry Spread',
     sortKey: 'carrySpreadAprSma',
-    hint: 'Carry Spread shows whether the Health Factor is improving or weakening over time. A positive spread raises it, and a negative spread lowers it.\nIt is the estimated annual staking return in stVault, minus fees and stETH liability growth from rebasing, averaged over the last 7 days.',
+    hint: vaultTexts.metrics.modals.health.carrySpread.description,
   },
   {
     title: 'Health factor',
