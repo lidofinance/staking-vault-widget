@@ -47,6 +47,7 @@ export type TransactionModalAction =
   | {
       type: 'stage';
       stage: Exclude<TransactionModalStage, 'none'>;
+      isBatch?: boolean;
       allowRetry?: boolean;
       details?: Partial<TransactionModalDetails>;
     };
