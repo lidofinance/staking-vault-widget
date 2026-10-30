@@ -734,22 +734,22 @@ export const vaultTexts = {
         carrySpread: {
           title: 'Carry Spread',
           description:
-            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase. Averaged over the past 7 days.',
+            'Shows whether staking rewards, net of fees, outpace stETH Liability growth from the rebase. Positive means the value left to you after covering the Liability grows; negative means it shrinks. Annualized relative to Total Value, averaged over the past 7 days.',
         },
         bottomLine: {
           title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability grow driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
+            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability growth driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
         },
         netStakingRewards: {
           title: 'Net daily staking rewards',
           description:
-            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+            'The amount of staking rewards remaining after deductions of Node Operator Fee and Lido fees.',
         },
         stethRebase: {
           title: 'stETH Daily Rebase',
           description:
-            'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
+            'The change of stETH amount happening because stETH is a rebasing token. Amount for rebase is based on the stETH APR.',
         },
       },
       offBookDepositsHint: {
@@ -813,7 +813,7 @@ export const vaultTexts = {
         netStakingRewards: {
           title: 'Net daily staking rewards',
           description:
-            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+            'The amount of staking rewards remaining after deductions of Node Operator Fee and Lido fees.',
         },
         grossStakingRewards: {
           title: 'Gross daily staking rewards',
