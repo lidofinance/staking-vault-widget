@@ -9,11 +9,8 @@ import { appPaths } from 'consts/routing';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { AddressBadge } from 'shared/components';
 import { getHealthFactorColor } from 'utils';
-import {
-  vaultTexts,
-  type FetchVaultsParams,
-  type VaultEntry,
-} from 'modules/vaults';
+import { vaultTexts } from 'modules/vaults/consts/texts';
+import type { FetchVaultsParams, VaultEntry } from 'modules/vaults';
 
 import { ReindexState } from 'features/home/reindex-state';
 import { PercentCell, HeaderCell } from './cells';
