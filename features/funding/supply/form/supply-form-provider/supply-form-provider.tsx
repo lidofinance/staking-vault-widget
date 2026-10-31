@@ -10,6 +10,7 @@ import invariant from 'tiny-invariant';
 import { useForm } from 'react-hook-form';
 
 import { useDappStatus } from 'modules/web3';
+import { useVaultPermission } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormControllerStyled } from 'shared/components/form';
 import { useDisableForm } from 'shared/hook-form';
@@ -52,6 +53,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   const { supply, retryEvent } = useSupply();
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('supply');
+  const { hasPermission: canMint } = useVaultPermission('minter');
 
   const formObject = useForm<
     SupplyFormFieldValues,
@@ -79,15 +81,15 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   const isStethMintable = supplyFormData.isStethMintableQuery.data === true;
 
   useEffect(() => {
-    // reset mintSteth  when stETH is not mintable
-    if (mintSteth && !isStethMintable) {
+    // reset mintSteth when stETH is not mintable or the mint role is missing
+    // (e.g. revoked while the checkbox was toggled on)
+    if (mintSteth && (!isStethMintable || !canMint)) {
       resetField('mintSteth');
     }
-    // reset mintAddress when mintSteth=false
     if (!mintSteth) {
       resetField('mintAddress');
     }
-  }, [isStethMintable, mintSteth, resetField]);
+  }, [canMint, isStethMintable, mintSteth, resetField]);
 
   const onSubmit = useCallback(
     async (values: SupplyFormValidatedValues) => {
