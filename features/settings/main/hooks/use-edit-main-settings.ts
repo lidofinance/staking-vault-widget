@@ -19,9 +19,9 @@ import {
 } from 'modules/vaults';
 
 import { useMainSettingsData } from '../contexts';
-import { wouldRoleBeEmptyAfterChanges } from '../utils';
+import { findRootRoleLeftEmpty } from '../utils';
 
-import type { MainSettingsFormValidatedValues } from '../types';
+import type { ManagersKeys, MainSettingsFormValidatedValues } from '../types';
 
 type RoleValueType = MainSettingsFormValidatedValues['defaultAdmins'][number];
 
@@ -32,6 +32,12 @@ const toMethodArg = (role: Hash) => (value: RoleValueType) => ({
   role,
   account: value.value,
 });
+
+const ROOT_ROLE_TITLES: Record<ManagersKeys, string> = {
+  defaultAdmins: vaultTexts.actions.settings.fields.vaultManager.title,
+  nodeOperatorManagers:
+    vaultTexts.actions.settings.fields.nodeOperatorManager.title,
+};
 
 const createLastRoleMemberError = (roleTitle: string) => {
   const error = new DisplayableError(
@@ -177,31 +183,13 @@ export const useEditMainSettings = () => {
         const result = await withSuccess(
           sendTX({
             transactions: async () => {
-              const rootRoleChecks = [
-                {
-                  fields: formValues.defaultAdmins,
-                  role: VAULTS_ROOT_ROLES_MAP.defaultAdmin,
-                  title: vaultTexts.actions.settings.fields.vaultManager.title,
-                },
-                {
-                  fields: formValues.nodeOperatorManagers,
-                  role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
-                  title:
-                    vaultTexts.actions.settings.fields.nodeOperatorManager
-                      .title,
-                },
-              ].filter(({ fields }) => fields.some(onlyState('remove')));
-
-              await Promise.all(
-                rootRoleChecks.map(async ({ fields, role, title }) => {
-                  const roleMembers =
-                    await activeVault.dashboard.read.getRoleMembers([role]);
-
-                  if (wouldRoleBeEmptyAfterChanges(roleMembers, fields)) {
-                    throw createLastRoleMemberError(title);
-                  }
-                }),
+              const emptiedRole = await findRootRoleLeftEmpty(
+                formValues,
+                (role) => activeVault.dashboard.read.getRoleMembers([role]),
               );
+              if (emptiedRole) {
+                throw createLastRoleMemberError(ROOT_ROLE_TITLES[emptiedRole]);
+              }
 
               return [
                 ...(isFeeValueChanged || isDepositAllowedChanged

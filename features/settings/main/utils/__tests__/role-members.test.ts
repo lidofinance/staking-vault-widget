@@ -1,7 +1,12 @@
-import { describe, expect, it } from '@jest/globals';
-import type { Address } from 'viem';
+import { describe, expect, it, jest } from '@jest/globals';
+import type { Address, Hash } from 'viem';
 
-import { wouldRoleBeEmptyAfterChanges } from '../role-members';
+import { VAULTS_ROOT_ROLES_MAP } from 'modules/vaults/consts/roles';
+
+import {
+  findRootRoleLeftEmpty,
+  wouldRoleBeEmptyAfterChanges,
+} from '../role-members';
 import type { RoleFieldSchema } from '../../types';
 
 const A = '0x0000000000000000000000000000000000000001' as const;
@@ -76,5 +81,95 @@ describe('wouldRoleBeEmptyAfterChanges', () => {
         [field(A, 'remove'), field(B, 'remove'), field(C, 'display')],
       ),
     ).toBe(false);
+  });
+});
+
+describe('findRootRoleLeftEmpty', () => {
+  const ADMIN_ROLE = VAULTS_ROOT_ROLES_MAP.defaultAdmin;
+  const NO_MANAGER_ROLE = VAULTS_ROOT_ROLES_MAP.nodeOperatorManager;
+
+  const reader = (membersByRole: Record<Hash, readonly Address[]>) =>
+    jest.fn(async (role: Hash) => membersByRole[role] ?? []);
+
+  it('reads nothing when the form removes no one', async () => {
+    const readRoleMembers = reader({});
+
+    await expect(
+      findRootRoleLeftEmpty(
+        {
+          defaultAdmins: [field(A, 'display'), field(B, 'grant')],
+          nodeOperatorManagers: [field(C, 'display')],
+        },
+        readRoleMembers,
+      ),
+    ).resolves.toBeNull();
+    expect(readRoleMembers).not.toHaveBeenCalled();
+  });
+
+  it('reads only the role the form removes from', async () => {
+    const readRoleMembers = reader({ [NO_MANAGER_ROLE]: [B, C] });
+
+    await expect(
+      findRootRoleLeftEmpty(
+        {
+          defaultAdmins: [field(A, 'display')],
+          nodeOperatorManagers: [field(B, 'remove'), field(C, 'display')],
+        },
+        readRoleMembers,
+      ),
+    ).resolves.toBeNull();
+    expect(readRoleMembers.mock.calls).toEqual([[NO_MANAGER_ROLE]]);
+  });
+
+  it('reports the vault manager role when its last member is removed', async () => {
+    const readRoleMembers = reader({
+      [ADMIN_ROLE]: [A],
+      [NO_MANAGER_ROLE]: [B],
+    });
+
+    await expect(
+      findRootRoleLeftEmpty(
+        {
+          defaultAdmins: [field(A, 'remove')],
+          nodeOperatorManagers: [field(B, 'display')],
+        },
+        readRoleMembers,
+      ),
+    ).resolves.toBe('defaultAdmins');
+  });
+
+  it('reports the node operator manager role against fresh members', async () => {
+    // the form still shows A, but another session already revoked it
+    const readRoleMembers = reader({
+      [ADMIN_ROLE]: [C],
+      [NO_MANAGER_ROLE]: [B],
+    });
+
+    await expect(
+      findRootRoleLeftEmpty(
+        {
+          defaultAdmins: [field(C, 'display')],
+          nodeOperatorManagers: [field(A, 'display'), field(B, 'remove')],
+        },
+        readRoleMembers,
+      ),
+    ).resolves.toBe('nodeOperatorManagers');
+  });
+
+  it('propagates a failed members read', async () => {
+    const error = new Error('RPC unavailable');
+    const readRoleMembers = jest.fn(async (_role: Hash): Promise<Address[]> => {
+      throw error;
+    });
+
+    await expect(
+      findRootRoleLeftEmpty(
+        {
+          defaultAdmins: [field(A, 'remove'), field(B, 'display')],
+          nodeOperatorManagers: [],
+        },
+        readRoleMembers,
+      ),
+    ).rejects.toBe(error);
   });
 });
