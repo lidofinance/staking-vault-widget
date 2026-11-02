@@ -9,6 +9,7 @@ import {
 } from 'modules/web3';
 import {
   useVault,
+  DisplayableError,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
@@ -18,6 +19,7 @@ import {
 } from 'modules/vaults';
 
 import { useMainSettingsData } from '../contexts';
+import { wouldRoleBeEmptyAfterChanges } from '../utils';
 
 import type { MainSettingsFormValidatedValues } from '../types';
 
@@ -30,6 +32,15 @@ const toMethodArg = (role: Hash) => (value: RoleValueType) => ({
   role,
   account: value.value,
 });
+
+const createLastRoleMemberError = (roleTitle: string) => {
+  const error = new DisplayableError(
+    vaultTexts.actions.settings.lastRoleMemberDescription(roleTitle),
+    false,
+  );
+  error.errorTitle = vaultTexts.actions.settings.lastRoleMemberTitle;
+  return error;
+};
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
@@ -165,10 +176,40 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions:
-              isFeeValueChanged || isDepositAllowedChanged
-                ? async () => [...(await prepareReportCalls()), ...transactions]
-                : transactions,
+            transactions: async () => {
+              const rootRoleChecks = [
+                {
+                  fields: formValues.defaultAdmins,
+                  role: VAULTS_ROOT_ROLES_MAP.defaultAdmin,
+                  title: vaultTexts.actions.settings.fields.vaultManager.title,
+                },
+                {
+                  fields: formValues.nodeOperatorManagers,
+                  role: VAULTS_ROOT_ROLES_MAP.nodeOperatorManager,
+                  title:
+                    vaultTexts.actions.settings.fields.nodeOperatorManager
+                      .title,
+                },
+              ].filter(({ fields }) => fields.some(onlyState('remove')));
+
+              await Promise.all(
+                rootRoleChecks.map(async ({ fields, role, title }) => {
+                  const roleMembers =
+                    await activeVault.dashboard.read.getRoleMembers([role]);
+
+                  if (wouldRoleBeEmptyAfterChanges(roleMembers, fields)) {
+                    throw createLastRoleMemberError(title);
+                  }
+                }),
+              );
+
+              return [
+                ...(isFeeValueChanged || isDepositAllowedChanged
+                  ? await prepareReportCalls()
+                  : []),
+                ...transactions,
+              ];
+            },
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
