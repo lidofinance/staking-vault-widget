@@ -77,7 +77,7 @@ const receiptsToLastBlock = (
         : hexToBigInt(receipt.blockNumber),
     )
     .sort((a, b) => (a < b ? 1 : -1))
-    .at(-1);
+    .at(0);
   return lastTxBlock ?? 0n;
 };
 
@@ -159,6 +159,8 @@ export const useSendTransaction = () => {
         );
 
         let sendCallsId: string | undefined;
+        // legacy flow is reachable only for non-AA or explicit fallback after sendCalls is unsupported
+        let isSendCallsFallback = false;
 
         if (useSendCalls) {
           const calls = transactions.map((tx) => ({
@@ -193,17 +195,25 @@ export const useSendTransaction = () => {
               '[useSendTransaction] wallet_sendCalls is not supported, falling back to legacy flow',
               error,
             );
+            isSendCallsFallback = true;
           }
         }
 
-        if (sendCallsId) {
-          const id = sendCallsId;
-
+        if (useSendCalls && !isSendCallsFallback) {
+          // wallet accepted the request but returned no id: batch status is unknown,
+          // so we must not resend it via legacy flow
+          if (!sendCallsId) {
+            throw new SendTxGetStatusError(
+              new Error(
+                '[useSendTransaction] wallet_sendCalls returned empty id',
+              ),
+            );
+          }
           dispatchModal({
             type: 'stage',
             stage: 'awaiting',
             details: {
-              transactionId: id,
+              transactionId: sendCallsId,
             },
           });
 
@@ -212,7 +222,7 @@ export const useSendTransaction = () => {
           let callStatus: WaitForCallsStatusReturnType;
           try {
             callStatus = await walletClient.waitForCallsStatus({
-              id,
+              id: sendCallsId,
               timeout: AA_TX_POLLING_TIMEOUT,
             });
           } catch (error) {
