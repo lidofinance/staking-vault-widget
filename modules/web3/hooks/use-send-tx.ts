@@ -343,8 +343,7 @@ export const useSendTransaction = () => {
   >({
     mutationKey: ['sendTransaction', isAA, retryFire],
     mutationFn,
-    // never queue txs while offline: paused mutation would later run
-    // with clients of whatever chain/account is active at resume time
+    // fail fast instead of queueing txs while offline
     networkMode: 'always',
   });
 
