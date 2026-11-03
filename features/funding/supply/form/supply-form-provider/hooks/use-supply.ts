@@ -4,6 +4,8 @@ import { usePublicClient } from 'wagmi';
 
 import {
   TransactionEntry,
+  type TransactionsContext,
+  toResumeKey,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -35,32 +37,37 @@ export const useSupply = () => {
         invariant(activeVault, '[useSupply] activeVault is undefined');
         const wethContract = getWethContract(publicClient);
 
-        let prepareTransactions: () => Promise<TransactionEntry[]> = () =>
-          Promise.reject(undefined);
+        const prepareTransactions = async ({
+          completedSteps,
+        }: TransactionsContext) => {
+          const calls: TransactionEntry[] = [];
 
-        const calls: TransactionEntry[] = [];
+          if (token === 'wETH') {
+            calls.push({
+              ...wethContract.encode.withdraw([amount]),
+              loadingActionText: 'Unwrapping wETH',
+              stepKey: 'unwrap',
+            });
+          }
 
-        if (token === 'wETH') {
           calls.push({
-            ...wethContract.encode.withdraw([amount]),
-            loadingActionText: 'Unwrapping wETH',
+            ...activeVault.dashboard.encode.fund({ value: amount }),
+            loadingActionText: vaultTexts.actions.supply.loading,
+            stepKey: 'fund',
           });
-        }
 
-        calls.push({
-          ...activeVault.dashboard.encode.fund({ value: amount }),
-          loadingActionText: vaultTexts.actions.supply.loading,
-        });
-
-        // minting stETH requires async data for report and minting balance
-        if (mintSteth) {
-          prepareTransactions = async () => {
+          // minting stETH requires async data for report and minting balance
+          if (mintSteth) {
             calls.push(...(await prepareReportCalls()));
+
+            // on resume after a confirmed fund the amount is already in the vault,
+            // counting it again would overestimate the capacity
+            const fundingAmount = completedSteps.has('fund') ? 0n : amount;
 
             const [maxMintableShares] = await readWithReport({
               contracts: [
                 activeVault.dashboard.prepare.remainingMintingCapacityShares([
-                  amount,
+                  fundingAmount,
                 ]),
               ],
               publicClient,
@@ -75,15 +82,25 @@ export const useSupply = () => {
                 maxMintableShares,
               ]),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
+              stepKey: 'mint',
             });
+          }
 
-            return calls;
-          };
-        }
+          return calls;
+        };
 
         const { success } = await withSuccess(
           sendTX({
-            transactions: mintSteth ? prepareTransactions : calls,
+            transactions: prepareTransactions,
+            // confirmed unwrap and fund are skipped on retry, so they are not sent twice
+            resumeKey: toResumeKey({
+              vault: activeVault.address,
+              amount,
+              mintSteth,
+              token,
+              mintAddress,
+            }),
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: vaultTexts.actions.supply.loading,
             mainActionCompleteText: vaultTexts.actions.supply.completed(token),
             renderSuccessContent: GoToVault,

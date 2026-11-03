@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   hexToBigInt,
   type Address,
@@ -10,7 +10,11 @@ import {
 import invariant from 'tiny-invariant';
 import { useMutation } from '@tanstack/react-query';
 
-import { DisplayableError, SendTxGetStatusError } from 'modules/vaults';
+import {
+  DisplayableError,
+  SendTxGetStatusError,
+  vaultTexts,
+} from 'modules/vaults';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import {
   AA_TX_POLLING_TIMEOUT,
@@ -31,16 +35,31 @@ export type TransactionEntry = {
   loadingActionText?: string;
   baseDescriptionText?: string;
   awaitingDescriptionText?: string;
+  // identifies a non-idempotent step, so it is skipped on resume once confirmed (see resumeKey)
+  stepKey?: string;
+};
+
+export type TransactionsContext = {
+  // steps confirmed by the previous attempt with the same resumeKey, they are not sent again
+  completedSteps: ReadonlySet<string>;
 };
 
 export type SendTransactionArguments = {
-  transactions: TransactionEntry[] | (() => Promise<TransactionEntry[]>);
+  transactions:
+    | TransactionEntry[]
+    | ((context: TransactionsContext) => Promise<TransactionEntry[]>);
   mainActionLoadingText: string;
   mainActionCompleteText: string;
   mainActionCompleteDescriptionText?: string;
   forceAtomic?: boolean;
   forceLegacy?: boolean;
   allowRetry?: boolean;
+  // retry after some txs were executed is allowed only when the caller rebuilds
+  // transactions from fresh on-chain state, so applied steps are not sent again
+  allowRetryAfterPartialSuccess?: boolean;
+  // fingerprint of the submitted values: the next send with the same key skips
+  // steps (by stepKey) confirmed in the previous attempt, so retry continues from the failed tx
+  resumeKey?: string;
 } & Pick<TransactionModalState['details'], 'renderSuccessContent'>;
 
 // TODO: wrapper around error with readable message
@@ -82,6 +101,10 @@ export const useSendTransaction = () => {
   const { retryEvent, retryFire } = useFormControllerRetry();
   const { validateAddress } = useAddressValidation();
   const { isAA } = useAA();
+  // confirmed steps of the last failed attempt, kept for the resume with the same key
+  const progressRef = useRef<
+    { key: string; completedSteps: Set<string> } | undefined
+  >(undefined);
 
   const mutationFn = useCallback(
     async ({
@@ -92,10 +115,31 @@ export const useSendTransaction = () => {
       forceAtomic,
       forceLegacy,
       allowRetry = true,
+      allowRetryAfterPartialSuccess = false,
+      resumeKey,
       renderSuccessContent,
     }: SendTransactionArguments): Promise<TransactionResponse> => {
+      // progress of another account or other values must not be reused
+      const progressKey =
+        resumeKey === undefined ? undefined : `${address}:${resumeKey}`;
+      if (progressRef.current?.key !== progressKey) {
+        progressRef.current =
+          progressKey === undefined
+            ? undefined
+            : { key: progressKey, completedSteps: new Set() };
+      }
+      const progress = progressRef.current;
+      const completedSteps = progress?.completedSteps ?? new Set<string>();
+
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !forceLegacy && isAA;
+      // hash or call id of a sent tx whose result is unknown,
+      // retry would build and sign a new tx while this one may be executed
+      let unconfirmedTxId: string | undefined;
+      // executed calls of a non-atomic AA batch that failed partially
+      let partialCallReceipts: NonNullable<
+        WaitForCallsStatusReturnType['receipts']
+      > = [];
 
       try {
         const validationResult = await validateAddress(address);
@@ -131,8 +175,14 @@ export const useSendTransaction = () => {
             stage: 'collecting',
           });
 
-          transactions = await transactions();
+          transactions = await transactions({
+            completedSteps: new Set(completedSteps),
+          });
         }
+
+        transactions = transactions.filter(
+          (tx) => !tx.stepKey || !completedSteps.has(tx.stepKey),
+        );
 
         invariant(
           transactions.length > 0,
@@ -163,6 +213,7 @@ export const useSendTransaction = () => {
             forceAtomic,
             experimental_fallback: true,
           });
+          unconfirmedTxId = id;
 
           dispatchModal({
             type: 'stage',
@@ -186,6 +237,17 @@ export const useSendTransaction = () => {
 
           // TODO: async check if user want to retry with legacy flow
           if (callStatus.status === 'failure') {
+            partialCallReceipts =
+              callStatus.receipts?.filter(
+                (receipt) => receipt.status === 'success',
+              ) ?? [];
+            // 600 is a partial revert: some calls are executed, but without receipts we can't tell which
+            if (
+              partialCallReceipts.length > 0 ||
+              callStatus.statusCode !== 600
+            ) {
+              unconfirmedTxId = undefined;
+            }
             throw new Error('Batch failed');
           }
 
@@ -203,6 +265,7 @@ export const useSendTransaction = () => {
 
             receipts = [receipt];
           }
+          unconfirmedTxId = undefined;
 
           const transactionResult = {
             isAA,
@@ -220,6 +283,7 @@ export const useSendTransaction = () => {
           });
 
           setLatestTxBlock(transactionResult.lastTxBlock);
+          progressRef.current = undefined;
 
           return transactionResult;
         }
@@ -248,6 +312,7 @@ export const useSendTransaction = () => {
             value: tx.value,
             gas,
           });
+          unconfirmedTxId = txHash;
 
           dispatchModal({
             type: 'stage',
@@ -264,10 +329,13 @@ export const useSendTransaction = () => {
           });
 
           receipts.push(txReceipt);
+          // reverted receipt is a definite result too
+          unconfirmedTxId = undefined;
 
           if (txReceipt.status !== 'success') {
             throw new Error('Transaction failed');
           }
+          if (tx.stepKey) progress?.completedSteps.add(tx.stepKey);
         }
 
         const transactionResult = {
@@ -285,22 +353,53 @@ export const useSendTransaction = () => {
         });
 
         setLatestTxBlock(transactionResult.lastTxBlock);
+        progressRef.current = undefined;
 
         return transactionResult;
       } catch (error) {
-        // partial success of legacy batch, so dependent data is fetched with applied txs
-        if (receipts.length > 0) {
-          setLatestTxBlock(receiptsToLastBlock(receipts));
+        // partial success of a batch, so dependent data is fetched with applied txs
+        const minedReceipts = [...receipts, ...partialCallReceipts];
+        if (minedReceipts.length > 0) {
+          setLatestTxBlock(receiptsToLastBlock(minedReceipts));
         }
+
+        const isUnconfirmed = unconfirmedTxId !== undefined;
+        const isPartialSuccess =
+          receipts.some((receipt) => receipt.status === 'success') ||
+          partialCallReceipts.length > 0;
+
         const displayError =
-          error instanceof DisplayableError ? error : undefined;
+          error instanceof DisplayableError
+            ? error
+            : isUnconfirmed
+              ? new SendTxGetStatusError(error)
+              : undefined;
+
+        // retry signs new txs, so it must not replay a tx that may be executed
+        // or steps that are already applied
+        // executed calls of a partially failed AA batch can't be mapped to steps,
+        // so a resume would send them again
+        const isUntrackedPartialSuccess =
+          isPartialSuccess && useSendCalls && progress !== undefined;
+        const canRetry =
+          (displayError?.isRetryable ?? true) &&
+          !isUnconfirmed &&
+          !isUntrackedPartialSuccess &&
+          (!isPartialSuccess || allowRetryAfterPartialSuccess);
+
         dispatchModal({
           type: 'stage',
           stage: 'error',
-          allowRetry: displayError?.isRetryable,
+          allowRetry: canRetry,
           details: {
-            errorText: displayError?.message,
+            errorText:
+              displayError?.message ??
+              (isPartialSuccess
+                ? vaultTexts.common.errors.tx.partialSuccess
+                : undefined),
             errorTitle: displayError?.errorTitle,
+            // keep link only to the tx with unknown status, drop stale ids of previous txs
+            transactionId: unconfirmedTxId,
           },
         });
         console.error(`[useSendTransaction] TX Error`, error);

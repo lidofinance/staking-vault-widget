@@ -58,6 +58,8 @@ export const useSubmitTopup = () => {
           sendTX({
             transactions: prepareTransactions,
             forceAtomic: true,
+            // only report can be applied before the main tx, it is rebuilt from live state
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText,
             mainActionCompleteText,
             renderSuccessContent: GoToVault,

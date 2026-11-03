@@ -4,6 +4,7 @@ import { getAddress } from 'viem';
 
 import {
   type TransactionEntry,
+  toResumeKey,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -74,6 +75,7 @@ export const useEditPermissions = () => {
             loadingActionText: vaultTexts.actions.settings.rolesGrantLoading(
               toGrant.length,
             ),
+            stepKey: 'grantRoles',
           });
         }
         if (toRevoke.length > 0) {
@@ -82,6 +84,7 @@ export const useEditPermissions = () => {
             loadingActionText: vaultTexts.actions.settings.rolesRevokeLoading(
               toRevoke.length,
             ),
+            stepKey: 'revokeRoles',
           });
         }
 
@@ -91,6 +94,7 @@ export const useEditPermissions = () => {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorGuarantor([noGuarantor]),
             loadingActionText: vaultTexts.actions.settings.noGuarantorLoading,
+            stepKey: 'setNodeOperatorGuarantor',
           });
         }
 
@@ -100,12 +104,16 @@ export const useEditPermissions = () => {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorDepositor([noDepositor]),
             loadingActionText: vaultTexts.actions.settings.noDepositorLoading,
+            stepKey: 'setNodeOperatorDepositor',
           });
         }
 
         return withSuccess(
           sendTX({
             transactions,
+            // confirmed steps are skipped on retry, so it continues from the failed tx
+            resumeKey: toResumeKey({ vault: activeVault.address, values }),
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: 'Editing vault permissions',
             mainActionCompleteText: 'Vault permissions edited',
             renderSuccessContent: GoToVault,

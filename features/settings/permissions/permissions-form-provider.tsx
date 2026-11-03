@@ -50,7 +50,8 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         }),
       ]);
 
-      reset(newData || undefined);
+      // keep submitted values on failure, so retry resumes from the failed tx
+      if (success) reset(newData || undefined);
 
       return success;
     },
