@@ -1077,6 +1077,8 @@ export const vaultTexts = {
         getStatus:
           'Could not locate transaction status but your transcation could still be sent. Please check your wallet for details.',
         getStatusTitle: 'Transaction Status Unavailable',
+        partialSuccess:
+          'Some of the transactions were completed. Please check the updated state before submitting again.',
       },
 
       duplicate: 'Value already exists',

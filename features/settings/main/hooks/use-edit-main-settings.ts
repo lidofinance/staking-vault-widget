@@ -187,6 +187,8 @@ export const useEditMainSettings = () => {
             renderSuccessContent: GoToVault,
             // AA batch may be executed non-atomically and its partial result is not tracked
             allowRetry: !isAA,
+            // form is restored with pending values only, so retry sends the remaining txs
+            allowRetryAfterPartialSuccess: true,
           }),
         );
 

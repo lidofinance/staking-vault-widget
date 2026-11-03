@@ -68,6 +68,8 @@ export const useRebalance = () => {
               return calls;
             },
             mainActionLoadingText: modalTitle,
+            // only report (and approve) can be applied before the main tx, both are rebuilt from live state
+            allowRetryAfterPartialSuccess: true,
             mainActionCompleteText: modalTitle,
             renderSuccessContent: GoToVault,
           }),

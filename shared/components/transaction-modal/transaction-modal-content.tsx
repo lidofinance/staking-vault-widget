@@ -123,7 +123,10 @@ const getMainContent = (
 const showEtherscanLink = (state: TransactionModalState) => {
   if (
     state.details.transactionId &&
-    (state.stage === 'awaiting' || state.stage === 'success')
+    (state.stage === 'awaiting' ||
+      state.stage === 'success' ||
+      // on error only the tx with unknown status is kept
+      state.stage === 'error')
   ) {
     if (state.isBatch) {
       return <TxLinkAA callId={state.details.transactionId} />;
