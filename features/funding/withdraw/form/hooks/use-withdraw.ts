@@ -31,6 +31,10 @@ export const useWithdraw = () => {
       invariant(activeVault, '[useWithdraw] activeVault is undefined');
 
       const calls: TransactionEntry[] = [];
+      // Set when the wETH flow ends with a transfer to a third-party recipient.
+      // On non-batched wallets the steps are mined one by one, so a whole-form
+      // retry after a failed transfer would repeat the completed withdraw.
+      let hasTransferStep = false;
 
       if (token === 'wETH') {
         // WETH.deposit credits msg.sender, i.e. the connected wallet, not the
@@ -51,6 +55,7 @@ export const useWithdraw = () => {
         );
 
         if (!isAddressEqual(recipient, address)) {
+          hasTransferStep = true;
           calls.push({
             ...wethContract.encode.transfer([recipient, amount]),
             loadingActionText: vaultTexts.actions.weth.loadingTransfer,
@@ -67,6 +72,7 @@ export const useWithdraw = () => {
         sendTX({
           transactions: async () => [...(await prepareReportCalls()), ...calls],
           forceAtomic: true,
+          allowRetry: !hasTransferStep,
           mainActionLoadingText: vaultTexts.actions.withdraw.loading,
           mainActionCompleteText: vaultTexts.actions.withdraw.completed(token),
           renderSuccessContent: GoToVault,
