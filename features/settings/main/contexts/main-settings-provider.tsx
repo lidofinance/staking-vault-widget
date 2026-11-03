@@ -79,7 +79,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         ).forEach(([key, value]) =>
           setValue(key, value, { shouldDirty: true, shouldValidate: true }),
         );
-      } else reset();
+      } else if (result.success) {
+        reset();
+      } // on failure without fresh data the submitted values are kept: pre-submit defaults
+      // diffed against fresh data on retry would revert the applied changes
 
       return result.success;
     },
