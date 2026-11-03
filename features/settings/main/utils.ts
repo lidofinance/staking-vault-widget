@@ -245,11 +245,14 @@ const isProposalApplied = (
       option.type === 'My proposal' && normalize(option.value) === value,
   );
 
-// Returns submitted values that are not applied on-chain yet (e.g. after partial success of legacy batch)
-// so the form can be restored on top of fresh data and retry continues from the remaining txs
+// Returns submitted edits that are not applied on-chain yet (e.g. after partial success of legacy batch)
+// so the form can be restored on top of fresh data and retry continues from the remaining txs.
+// Only fields the user edited (differ from `previous`, the data the txs were built against) can be pending,
+// so a change made by another admin meanwhile is not reverted.
 export const getPendingFormValues = (
   fresh: MainSettingsFormData,
   submitted: MainSettingsFormValidatedValues,
+  previous: MainSettingsFormData,
 ): Partial<MainSettingFormsValues> => {
   const pending: Partial<MainSettingFormsValues> = {};
 
@@ -265,22 +268,34 @@ export const getPendingFormValues = (
   );
   if (nodeOperatorManagers) pending.nodeOperatorManagers = nodeOperatorManagers;
 
-  if (!isAddressEqual(submitted.feeRecipient, fresh.feeRecipient)) {
+  // edit checks below are kept in sync with the tx builder in useEditMainSettings
+  if (
+    !isAddressEqual(submitted.feeRecipient, previous.feeRecipient) &&
+    !isAddressEqual(submitted.feeRecipient, fresh.feeRecipient)
+  ) {
     pending.feeRecipient = submitted.feeRecipient;
   }
-  if (submitted.pdgPolicy !== fresh.pdgPolicy) {
+  if (
+    submitted.pdgPolicy !== previous.pdgPolicy &&
+    submitted.pdgPolicy !== fresh.pdgPolicy
+  ) {
     pending.pdgPolicy = submitted.pdgPolicy;
   }
-  if (submitted.isDepositAllowed !== fresh.isDepositAllowed) {
+  if (
+    submitted.isDepositAllowed !== previous.isDepositAllowed &&
+    submitted.isDepositAllowed !== fresh.isDepositAllowed
+  ) {
     pending.isDepositAllowed = submitted.isDepositAllowed;
   }
 
-  // keep in sync with value calculation in useEditMainSettings
   const { feeRate, feeRateCustom } = submitted;
   const feeValue = feePercentToBasisPoints(
     feeRate !== 'custom' ? feeRate : feeRateCustom ?? '',
   );
+  const isFeeEdited =
+    feeValue !== feePercentToBasisPoints(previous.nodeOperatorFeeRateCurrent);
   if (
+    isFeeEdited &&
     !isProposalApplied(
       feeValue,
       fresh.nodeOperatorFeeRateCurrent,
@@ -297,7 +312,9 @@ export const getPendingFormValues = (
     confirmExpiry === 'custom' && confirmExpiryCustom
       ? Number(confirmExpiryCustom) * 3600
       : Number(confirmExpiry);
+  const isExpiryEdited = expiryValue !== Number(previous.confirmExpiryCurrent);
   if (
+    isExpiryEdited &&
     !isProposalApplied(
       expiryValue,
       fresh.confirmExpiryCurrent,

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useDappStatus, useLidoSDK } from 'modules/web3';
 import { FormController, useDisableForm } from 'shared/hook-form';
+import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
@@ -28,10 +29,11 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   } = useVault();
   const { getLatestTxBlock } = useLidoSDK();
   const { editMainSettings, retryEvent } = useEditMainSettings();
-  const { data, refetch } = useMainSettingsFormData();
+  const { data: settingsData, refetch } = useMainSettingsFormData();
+  const { dispatchModal } = useTransactionModal();
   const disabled = useDisableForm();
 
-  const promisedSettingsData = useAwaiter(data).awaiter;
+  const promisedSettingsData = useAwaiter(settingsData).awaiter;
 
   const formObject = useForm<
     MainSettingFormsValues,
@@ -52,6 +54,8 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       trackMatomoEvent(
         MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitMainSettingsTab,
       );
+      // data the txs are built against, to tell user edits from changes made by others
+      const previous = settingsData;
       const { result, isStateChanged } = await editMainSettings(data);
 
       const [_, __, vaultInfo] = await Promise.all([
@@ -70,7 +74,9 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         const newDefaultValues = prepareDefaultValues(vaultInfo.data);
         reset(newDefaultValues);
         // restore changes that are not applied yet, so retry continues from the remaining txs
-        const pending = getPendingFormValues(vaultInfo.data, data);
+        const pending = previous
+          ? getPendingFormValues(vaultInfo.data, data, previous)
+          : {};
         (
           Object.entries(pending) as [
             keyof MainSettingFormsValues,
@@ -81,12 +87,16 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         );
       } else if (result.success) {
         reset();
-      } // on failure without fresh data the submitted values are kept: pre-submit defaults
-      // diffed against fresh data on retry would revert the applied changes
+      } else {
+        // without fresh data pending edits can't be told from changes made by others,
+        // and retry could revert applied changes, so it is disabled for this attempt
+        dispatchModal({ type: 'stage', stage: 'error', allowRetry: false });
+      }
 
       return result.success;
     },
     [
+      dispatchModal,
       editMainSettings,
       getLatestTxBlock,
       invalidateVaultConfig,
@@ -95,6 +105,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       refetchVault,
       reset,
       setValue,
+      settingsData,
     ],
   );
 

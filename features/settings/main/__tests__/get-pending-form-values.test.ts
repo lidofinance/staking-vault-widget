@@ -52,7 +52,7 @@ const submitted: Submitted = {
 
 describe('getPendingFormValues', () => {
   test('nothing applied: every edit stays pending', () => {
-    const pending = getPendingFormValues(fresh(), submitted);
+    const pending = getPendingFormValues(fresh(), submitted, fresh());
 
     expect(pending.feeRecipient).toBe(Y);
     expect(pending.pdgPolicy).toBe('1');
@@ -67,6 +67,7 @@ describe('getPendingFormValues', () => {
     const pending = getPendingFormValues(
       fresh({ defaultAdmins: [B, A], feeRecipient: Y }),
       submitted,
+      fresh(),
     );
 
     expect(pending).not.toHaveProperty('feeRecipient');
@@ -81,6 +82,7 @@ describe('getPendingFormValues', () => {
     const pending = getPendingFormValues(
       fresh({ defaultAdmins: [A], feeRecipient: Y, pdgPolicy: '1' }),
       submitted,
+      fresh(),
     );
 
     expect(pending).toEqual({});
@@ -90,6 +92,7 @@ describe('getPendingFormValues', () => {
     const pending = getPendingFormValues(
       fresh({ feeRate: [{ value: '2', type: 'My proposal', tags: [] }] }),
       { ...submitted, feeRate: '2' },
+      fresh(),
     );
 
     expect(pending).not.toHaveProperty('feeRate');
@@ -99,8 +102,37 @@ describe('getPendingFormValues', () => {
     const pending = getPendingFormValues(
       fresh({ nodeOperatorFeeRateCurrent: '0.57' }),
       { ...submitted, feeRate: 'custom', feeRateCustom: '0.57' },
+      fresh(),
     );
 
     expect(pending).not.toHaveProperty('feeRate');
+  });
+
+  test('changes made by another admin meanwhile are not reverted', () => {
+    // user did not touch deposits, fee and expiry; another admin paused deposits
+    // and changed fee and expiry while the batch was partially applied
+    const pending = getPendingFormValues(
+      fresh({
+        isDepositAllowed: false,
+        nodeOperatorFeeRateCurrent: '5',
+        confirmExpiryCurrent: '172800',
+      }),
+      submitted,
+      fresh(),
+    );
+
+    expect(pending).not.toHaveProperty('isDepositAllowed');
+    expect(pending).not.toHaveProperty('feeRate');
+    expect(pending).not.toHaveProperty('confirmExpiry');
+  });
+
+  test('edited deposits flag stays pending until applied', () => {
+    const pending = getPendingFormValues(
+      fresh(),
+      { ...submitted, isDepositAllowed: false },
+      fresh(),
+    );
+
+    expect(pending.isDepositAllowed).toBe(false);
   });
 });
