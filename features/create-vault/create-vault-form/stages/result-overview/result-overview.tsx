@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { Button } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
-import { getContractAddress } from 'config';
-import { useDappStatus } from 'modules/web3';
 import { TxLinkEtherscan } from 'shared/components';
-import { parseVaultTx } from 'features/create-vault/create-vault-form/utils';
+import { parseCreateVaultTx } from 'features/create-vault/create-vault-form/utils';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 
 import {
@@ -29,16 +27,12 @@ type ResultOverviewProps = {
 };
 
 export const ResultOverview = ({ transactionResult }: ResultOverviewProps) => {
-  const { chainId } = useDappStatus();
   const { txHash, vaultAddress } = useMemo(() => {
     if (transactionResult) {
-      return parseVaultTx(
-        transactionResult,
-        getContractAddress(chainId, 'vaultFactory'),
-      );
+      return parseCreateVaultTx(transactionResult);
     }
     return { vaultAddress: null, txHash: null };
-  }, [transactionResult, chainId]);
+  }, [transactionResult]);
 
   if (!vaultAddress || !txHash) {
     return null;

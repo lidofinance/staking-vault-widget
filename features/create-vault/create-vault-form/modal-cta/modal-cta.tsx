@@ -5,17 +5,12 @@ import { Button } from '@lidofinance/lido-ui';
 
 import { ModalRenderSuccessContent } from 'shared/components/transaction-modal';
 import { appPaths } from 'consts/routing';
-import { getContractAddress } from 'config';
-import { useDappStatus } from 'modules/web3';
-import { parseVaultTx } from '../utils';
+import { parseCreateVaultTx } from '../utils';
 
 export const ModalCTA: ModalRenderSuccessContent = ({ result, closeModal }) => {
   const isRouting = useRef<boolean>(false);
   const router = useRouter();
-  const { chainId } = useDappStatus();
-  const { vaultAddress } = useMemo(() => {
-    return parseVaultTx(result, getContractAddress(chainId, 'vaultFactory'));
-  }, [result, chainId]);
+  const { vaultAddress } = useMemo(() => parseCreateVaultTx(result), [result]);
 
   if (!vaultAddress) return <></>;
 

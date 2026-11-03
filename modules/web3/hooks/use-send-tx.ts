@@ -23,6 +23,7 @@ import { TransactionModalState } from 'shared/components/transaction-modal/types
 import { useAddressValidation } from 'providers/address-validation-provider';
 
 import { useAA } from './use-aa';
+import type { SupportedChainIds } from '../types';
 
 export type TransactionEntry = {
   to: Address;
@@ -47,6 +48,8 @@ export type SendTransactionArguments = {
 type TransactionError = Error;
 
 export type TransactionResponse = {
+  /** Chain the transaction was submitted on (captured at send time). */
+  chainId: SupportedChainIds;
   lastTxBlock: bigint;
   receipts: TransactionReceipt[];
 } & (
@@ -79,7 +82,7 @@ const receiptsToLastBlock = (
 
 export const useSendTransaction = () => {
   const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
-  const { address } = useDappStatus();
+  const { address, chainId } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();
   const { validateAddress } = useAddressValidation();
@@ -98,6 +101,9 @@ export const useSendTransaction = () => {
     }: SendTransactionArguments): Promise<TransactionResponse> => {
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !forceLegacy && isAA;
+      // pin the chain at submission so the result stays interpretable
+      // even if the user switches networks afterwards
+      const submittedChainId = chainId;
 
       try {
         const validationResult = await validateAddress(address);
@@ -207,6 +213,7 @@ export const useSendTransaction = () => {
           }
 
           const transactionResult = {
+            chainId: submittedChainId,
             isAA,
             callStatus,
             receipts,
@@ -273,6 +280,7 @@ export const useSendTransaction = () => {
         }
 
         const transactionResult = {
+          chainId: submittedChainId,
           isAA: useSendCalls,
           receipts,
           lastTxBlock: receiptsToLastBlock(receipts),
@@ -307,6 +315,7 @@ export const useSendTransaction = () => {
     },
     [
       address,
+      chainId,
       dispatchModal,
       isAA,
       publicClient,

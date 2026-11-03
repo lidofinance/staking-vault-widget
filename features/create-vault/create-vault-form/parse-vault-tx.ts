@@ -10,6 +10,10 @@ import { VaultFactoryAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 
 import type { TransactionResponse } from 'modules/web3';
 
+export type VaultFactoryResolver = (
+  chainId: TransactionResponse['chainId'],
+) => Address | undefined;
+
 type ParsedVaultTx = {
   vaultAddress: Address | null;
   txHash: Hash | null;
@@ -24,12 +28,17 @@ type ParsedVaultTx = {
  * user's own calls, so they are the log source there. Logs are additionally
  * filtered by the factory emitter, and an address is returned only when exactly
  * one `VaultCreated` event is found — anything ambiguous yields `null`.
+ *
+ * The factory is resolved for the chain the tx was submitted on
+ * (`result.chainId`), not the currently connected one, so the result survives
+ * a network switch after submission.
  */
 export const parseVaultTx = (
   result: TransactionResponse,
-  factoryAddress: Address | undefined,
+  resolveFactory: VaultFactoryResolver,
 ): ParsedVaultTx => {
   const { receipts } = result;
+  const factoryAddress = resolveFactory(result.chainId);
   const scopedReceipts = result.isAA ? result.callStatus.receipts : undefined;
 
   const lastReceipt = receipts?.at(-1);

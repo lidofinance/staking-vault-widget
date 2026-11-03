@@ -7,8 +7,12 @@ import {
   VAULTS_ROOT_ROLES_MAP,
 } from 'modules/vaults';
 
+import { getContractAddress } from 'config';
+import type { TransactionResponse } from 'modules/web3';
+
 import type { CreateVaultSchema } from '../types';
 import { createVaultSchema } from './validation';
+import { parseVaultTx } from './parse-vault-tx';
 
 export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
@@ -41,4 +45,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   };
 };
 
-export { parseVaultTx } from './parse-vault-tx';
+export const parseCreateVaultTx = (result: TransactionResponse) =>
+  parseVaultTx(result, (chainId) =>
+    getContractAddress(chainId, 'vaultFactory'),
+  );
