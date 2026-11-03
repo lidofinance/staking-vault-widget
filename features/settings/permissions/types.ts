@@ -12,6 +12,11 @@ export type PermissionAccounts = {
 
 export type EditPermissionsSchema = z.infer<typeof editPermissionsSchema>;
 
+export type PermissionsFormData = EditPermissionsSchema & {
+  // block the data was read at
+  blockNumber: bigint;
+};
+
 export type GrantRole = {
   account: Address;
   role: Hex;

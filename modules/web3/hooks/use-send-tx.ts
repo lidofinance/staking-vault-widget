@@ -27,6 +27,13 @@ import { TransactionModalState } from 'shared/components/transaction-modal/types
 import { useAddressValidation } from 'providers/address-validation-provider';
 
 import { useAA } from './use-aa';
+import {
+  getFailedBatchOutcome,
+  getRetryDecision,
+  resolveResumeProgress,
+  skipCompletedSteps,
+  type ResumeProgress,
+} from './send-tx-retry';
 
 export type TransactionEntry = {
   to: Address;
@@ -102,9 +109,7 @@ export const useSendTransaction = () => {
   const { validateAddress } = useAddressValidation();
   const { isAA } = useAA();
   // confirmed steps of the last failed attempt, kept for the resume with the same key
-  const progressRef = useRef<
-    { key: string; completedSteps: Set<string> } | undefined
-  >(undefined);
+  const progressRef = useRef<ResumeProgress | undefined>(undefined);
 
   const mutationFn = useCallback(
     async ({
@@ -122,12 +127,10 @@ export const useSendTransaction = () => {
       // progress of another account or other values must not be reused
       const progressKey =
         resumeKey === undefined ? undefined : `${address}:${resumeKey}`;
-      if (progressRef.current?.key !== progressKey) {
-        progressRef.current =
-          progressKey === undefined
-            ? undefined
-            : { key: progressKey, completedSteps: new Set() };
-      }
+      progressRef.current = resolveResumeProgress(
+        progressRef.current,
+        progressKey,
+      );
       const progress = progressRef.current;
       const completedSteps = progress?.completedSteps ?? new Set<string>();
 
@@ -180,9 +183,7 @@ export const useSendTransaction = () => {
           });
         }
 
-        transactions = transactions.filter(
-          (tx) => !tx.stepKey || !completedSteps.has(tx.stepKey),
-        );
+        transactions = skipCompletedSteps(transactions, completedSteps);
 
         invariant(
           transactions.length > 0,
@@ -237,17 +238,10 @@ export const useSendTransaction = () => {
 
           // TODO: async check if user want to retry with legacy flow
           if (callStatus.status === 'failure') {
-            partialCallReceipts =
-              callStatus.receipts?.filter(
-                (receipt) => receipt.status === 'success',
-              ) ?? [];
-            // 600 is a partial revert: some calls are executed, but without receipts we can't tell which
-            if (
-              partialCallReceipts.length > 0 ||
-              callStatus.statusCode !== 600
-            ) {
-              unconfirmedTxId = undefined;
-            }
+            const { executedReceipts, isUnknown } =
+              getFailedBatchOutcome(callStatus);
+            partialCallReceipts = executedReceipts;
+            if (!isUnknown) unconfirmedTxId = undefined;
             throw new Error('Batch failed');
           }
 
@@ -364,9 +358,6 @@ export const useSendTransaction = () => {
         }
 
         const isUnconfirmed = unconfirmedTxId !== undefined;
-        const isPartialSuccess =
-          receipts.some((receipt) => receipt.status === 'success') ||
-          partialCallReceipts.length > 0;
 
         const displayError =
           error instanceof DisplayableError
@@ -375,17 +366,15 @@ export const useSendTransaction = () => {
               ? new SendTxGetStatusError(error)
               : undefined;
 
-        // retry signs new txs, so it must not replay a tx that may be executed
-        // or steps that are already applied
-        // executed calls of a partially failed AA batch can't be mapped to steps,
-        // so a resume would send them again
-        const isUntrackedPartialSuccess =
-          isPartialSuccess && useSendCalls && progress !== undefined;
-        const canRetry =
-          (displayError?.isRetryable ?? true) &&
-          !isUnconfirmed &&
-          !isUntrackedPartialSuccess &&
-          (!isPartialSuccess || allowRetryAfterPartialSuccess);
+        const { canRetry, isPartialSuccess } = getRetryDecision({
+          isRetryableError: displayError?.isRetryable,
+          isUnconfirmed,
+          receipts,
+          executedCallsCount: partialCallReceipts.length,
+          isAA: useSendCalls,
+          isTracked: progress !== undefined,
+          allowRetryAfterPartialSuccess,
+        });
 
         dispatchModal({
           type: 'stage',

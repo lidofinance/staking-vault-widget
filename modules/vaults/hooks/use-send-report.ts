@@ -4,6 +4,7 @@ import { useReportCalls, useVault } from 'modules/vaults';
 import { ReportAlreadyAppliedError } from 'modules/vaults/consts/errors';
 import { vaultTexts } from 'modules/vaults/consts/texts';
 import { useSendTransaction, withSuccess } from 'modules/web3';
+import { runExclusive } from 'utils/run-exclusive';
 
 type UseSendReportOptions = {
   loadingText?: string;
@@ -26,41 +27,40 @@ export const useSendReport = ({
   // while the previous one is still in progress
   const isSubmittingRef = useRef(false);
 
-  const applyReport = useCallback(async () => {
-    if (isSubmittingRef.current) return false;
-    isSubmittingRef.current = true;
+  const applyReport = useCallback(
+    () =>
+      runExclusive(
+        isSubmittingRef,
+        async () => {
+          const { success } = await withSuccess(
+            sendTX({
+              transactions: async () => {
+                const calls = await prepareReportCalls();
+                // report can be applied by someone else after the UI was loaded,
+                // in this case there is nothing to send, just refresh the vault state
+                if (calls.length === 0) {
+                  void invalidateVaultState();
+                  throw new ReportAlreadyAppliedError();
+                }
+                return calls;
+              },
+              mainActionLoadingText: loadingText,
+              mainActionCompleteText: completedText,
+            }),
+          );
 
-    try {
-      const prepareTransactions = async () => {
-        const calls = await prepareReportCalls();
-        // report can be applied by someone else after the UI was loaded,
-        // in this case there is nothing to send, just refresh the vault state
-        if (calls.length === 0) {
-          void invalidateVaultState();
-          throw new ReportAlreadyAppliedError();
-        }
-        return calls;
-      };
-
-      const { success } = await withSuccess(
-        sendTX({
-          transactions: prepareTransactions,
-          mainActionLoadingText: loadingText,
-          mainActionCompleteText: completedText,
-        }),
-      );
-
-      return success;
-    } finally {
-      isSubmittingRef.current = false;
-    }
-  }, [
-    completedText,
-    invalidateVaultState,
-    loadingText,
-    prepareReportCalls,
-    sendTX,
-  ]);
+          return success;
+        },
+        false,
+      ),
+    [
+      completedText,
+      invalidateVaultState,
+      loadingText,
+      prepareReportCalls,
+      sendTX,
+    ],
+  );
 
   useEffect(
     () => retryEvent.subscribe(() => void applyReport()),

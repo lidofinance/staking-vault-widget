@@ -5,6 +5,8 @@ import {
   UseFormReset,
   UseFormReturn,
 } from 'react-hook-form';
+
+import { runExclusive } from 'utils/run-exclusive';
 import { useWagmiConnectionChangedCallback } from 'shared/hooks/use-wagmi-connection-changed-callback';
 import { useDappStatus } from 'modules/web3';
 import type { EventSubsciption } from 'utils/event-subsciption';
@@ -59,12 +61,7 @@ export const FormController = <
         event?.preventDefault();
         return;
       }
-      isSubmittingRef.current = true;
-      try {
-        await submit(event);
-      } finally {
-        isSubmittingRef.current = false;
-      }
+      await runExclusive(isSubmittingRef, () => submit(event), undefined);
     };
   }, [
     afterSubmitResetOptions,
