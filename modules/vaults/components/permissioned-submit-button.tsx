@@ -9,6 +9,20 @@ import { VAULTS_ALL_ROLES, vaultTexts } from '../consts';
 
 import { SubmitButton } from './styles';
 
+const getPermissionErrorText = (missingRoles: VAULTS_ALL_ROLES[]) => {
+  const { noPermission, noPermissionActions, noRoles } =
+    vaultTexts.common.errors;
+  const actions = missingRoles.flatMap(
+    (role) => noPermissionActions[role] ?? [],
+  );
+
+  if (actions.length === missingRoles.length) {
+    return noPermission(actions);
+  }
+
+  return noRoles(missingRoles.map((role) => vaultTexts.roles[role].buttonText));
+};
+
 type MultiplePermissionedSubmitProps = {
   dashboardRoles: readonly VAULTS_ALL_ROLES[];
   isPermissionless?: boolean;
@@ -42,9 +56,6 @@ export const MultiplePermissionedSubmitButton = forwardRef<
       isAccountActive,
   );
 
-  const missingRoles =
-    data?.missingRoles.map((role) => vaultTexts.roles[role].buttonText) ?? [];
-
   return (
     <ConnectWalletButton {...rest}>
       <SubmitButton
@@ -55,7 +66,7 @@ export const MultiplePermissionedSubmitButton = forwardRef<
         {...rest}
       >
         {shouldShowPermissionError
-          ? vaultTexts.common.errors.noRoles(missingRoles)
+          ? getPermissionErrorText(data?.missingRoles ?? [])
           : children}
       </SubmitButton>
     </ConnectWalletButton>

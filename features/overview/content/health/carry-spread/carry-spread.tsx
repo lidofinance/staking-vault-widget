@@ -6,6 +6,7 @@ import {
   ChartProportionBorderSize,
 } from '@lidofinance/lido-ui';
 
+import { vaultTexts } from 'modules/vaults';
 import { Hint, InlineLoader } from 'shared/components';
 import { useHealthChart } from 'shared/hooks';
 
@@ -35,18 +36,7 @@ export const CarrySpread = () => {
             Carry Spread
           </Text>
           <Hint
-            text={
-              <>
-                Carry Spread shows how the Health Factor changes over time —
-                whether the vault’s position is getting stronger or weaker. A
-                positive spread raises the Health Factor, while a negative
-                spread lowers it.
-                <br />
-                It reflects the estimated annual return from staking in the
-                stVault, after subtracting fees and stETH liability growth from
-                rebasing — averaged over the past 7 days.
-              </>
-            }
+            text={vaultTexts.metrics.modals.health.carrySpread.description}
           />
           <CarrySpreadPercent
             strong

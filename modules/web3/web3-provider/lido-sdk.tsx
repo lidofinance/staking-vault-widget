@@ -17,7 +17,11 @@ import {
 } from 'wagmi';
 
 import { LidoSDKStake } from '@lidofinance/lido-ethereum-sdk/stake';
-import { CHAINS, LidoSDKCore } from '@lidofinance/lido-ethereum-sdk/core';
+import {
+  CHAINS,
+  LidoSDKCore,
+  type LidoSDKCoreProps,
+} from '@lidofinance/lido-ethereum-sdk/core';
 import {
   LidoSDKstETH,
   LidoSDKwstETH,
@@ -35,6 +39,19 @@ import { config, getContractAddress } from 'config';
 import { useTokenTransferSubscription } from '../hooks';
 import { useDappChain } from './dapp-chain';
 import type { RegisteredPublicClient, RegisteredWalletClient } from '../types';
+
+const createStVaultContractAddressManifest = (
+  chainId: CHAINS,
+): NonNullable<LidoSDKCoreProps['contractAddressManifest']> => {
+  return {
+    vaultHub: getContractAddress(chainId, 'vaultHub'),
+    vaultFactory: getContractAddress(chainId, 'vaultFactory'),
+    lazyOracle: getContractAddress(chainId, 'lazyOracle'),
+    predepositGuarantee: getContractAddress(chainId, 'predepositGuarantee'),
+    operatorGrid: getContractAddress(chainId, 'operatorGrid'),
+    vaultViewer: getContractAddress(chainId, 'vaultViewer'),
+  };
+};
 
 type LidoSDKContextValue = {
   chainId: CHAINS;
@@ -115,6 +132,7 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       publicClient,
       walletClient,
       customLidoLocatorAddress,
+      contractAddressManifest: createStVaultContractAddressManifest(chainId),
     });
 
     const stake = new LidoSDKStake({ core });

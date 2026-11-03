@@ -6,6 +6,13 @@ import {
   registerShutdownSignals,
 } from './scripts/shutdown.mjs';
 import { markReady } from './scripts/readiness.mjs';
+import { sanitizeError } from './scripts/utils/sanitize-error.mjs';
+import { buildCspDirectives } from './config/security-headers/directives.js';
+import {
+  cspInputsFromEnv,
+  createCspHeader,
+  setCspHeaderOnHtml,
+} from './config/security-headers/csp-header.js';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = 'localhost';
@@ -35,14 +42,19 @@ const overrideSetHeader = (res) => {
   };
 };
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-app.prepare().then(() => {
+const startServer = () => {
+  // CSP from runtime env; no CSP in development (HMR)
+  const cspHeader = dev
+    ? undefined
+    : createCspHeader(buildCspDirectives(cspInputsFromEnv()));
+
   const server = createServer(async (req, res) => {
     // Be sure to pass `true` as the second argument to `url.parse`.
     // This tells it to parse the query portion of the URL.
     const parsedUrl = parse(req.url, true);
 
     overrideSetHeader(res);
+    if (cspHeader) setCspHeaderOnHtml(res, cspHeader);
 
     await handle(req, res, parsedUrl);
   })
@@ -62,4 +74,13 @@ app.prepare().then(() => {
   // OpenBao secret-rotation
   registerShutdownSignals(server);
   registerSecretsRotationRestart(server);
-});
+};
+
+app
+  .prepare()
+  .then(startServer)
+  // Next's global unhandledRejection handler swallows startup errors
+  .catch((error) => {
+    console.error('[server] startup failed', sanitizeError(error));
+    process.exit(1);
+  });
