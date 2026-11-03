@@ -1,41 +1,71 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import {
-  GoToVault,
-  useReportCalls,
-  useVault,
-  vaultTexts,
-} from 'modules/vaults';
-import {
-  TransactionEntry,
-  useSendTransaction,
-  withSuccess,
-} from 'modules/web3';
+import { useReportCalls, useVault } from 'modules/vaults';
+import { ReportAlreadyAppliedError } from 'modules/vaults/consts/errors';
+import { vaultTexts } from 'modules/vaults/consts/texts';
+import { useSendTransaction, withSuccess } from 'modules/web3';
 
-export const useSendReport = () => {
-  const { sendTX, ...rest } = useSendTransaction();
-  const { invalidateVaultState } = useVault();
+type UseSendReportOptions = {
+  loadingText?: string;
+  completedText?: string;
+};
+
+const { loading: defaultLoadingText, completed: defaultCompletedText } =
+  vaultTexts.actions.report;
+
+// Single entry point for applying a fresh oracle report from the UI
+export const useSendReport = ({
+  loadingText = defaultLoadingText,
+  completedText = defaultCompletedText,
+}: UseSendReportOptions = {}) => {
   const prepareReportCalls = useReportCalls();
+  const { invalidateVaultState } = useVault();
+  const { sendTX, retryEvent, ...rest } = useSendTransaction();
 
-  return {
-    applyReport: useCallback(async () => {
-      const mainActionLoadingText = vaultTexts.actions.report.loading;
-      const mainActionCompleteText = vaultTexts.actions.report.completed;
+  // Guards against a double click/Retry firing a second report request
+  // while the previous one is still in progress
+  const isSubmittingRef = useRef(false);
 
-      const transactions: TransactionEntry[] = await prepareReportCalls();
+  const applyReport = useCallback(async () => {
+    if (isSubmittingRef.current) return false;
+    isSubmittingRef.current = true;
+
+    try {
+      const prepareTransactions = async () => {
+        const calls = await prepareReportCalls();
+        // report can be applied by someone else after the UI was loaded,
+        // in this case there is nothing to send, just refresh the vault state
+        if (calls.length === 0) {
+          void invalidateVaultState();
+          throw new ReportAlreadyAppliedError();
+        }
+        return calls;
+      };
+
       const { success } = await withSuccess(
         sendTX({
-          transactions,
-          forceAtomic: true,
-          mainActionLoadingText,
-          mainActionCompleteText,
-          renderSuccessContent: GoToVault,
+          transactions: prepareTransactions,
+          mainActionLoadingText: loadingText,
+          mainActionCompleteText: completedText,
         }),
       );
 
-      await invalidateVaultState();
       return success;
-    }, [prepareReportCalls, sendTX, invalidateVaultState]),
-    ...rest,
-  };
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  }, [
+    completedText,
+    invalidateVaultState,
+    loadingText,
+    prepareReportCalls,
+    sendTX,
+  ]);
+
+  useEffect(
+    () => retryEvent.subscribe(() => void applyReport()),
+    [retryEvent, applyReport],
+  );
+
+  return { applyReport, ...rest };
 };
