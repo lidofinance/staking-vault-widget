@@ -47,6 +47,11 @@ const reducer = (
         ...state,
         isOpen: action.type === 'open',
       };
+    case 'disable-retry':
+      return {
+        ...state,
+        onRetry: undefined,
+      };
     case 'stage':
       return {
         ...state,

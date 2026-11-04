@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
 
 import {
+  OperationAbortedError,
   TransactionEntry,
   type TransactionsContext,
   toResumeKey,
@@ -89,7 +90,7 @@ export const useSupply = () => {
           return calls;
         };
 
-        const { success } = await withSuccess(
+        const { success, error } = await withSuccess(
           sendTX({
             transactions: prepareTransactions,
             // confirmed unwrap and fund are skipped on retry, so they are not sent twice
@@ -107,7 +108,8 @@ export const useSupply = () => {
           }),
         );
 
-        return success;
+        // stopped by the user after confirmed steps: the form is reset, a new submit starts over
+        return { success, isAborted: error instanceof OperationAbortedError };
       },
       [activeVault, prepareReportCalls, publicClient, sendTX],
     ),

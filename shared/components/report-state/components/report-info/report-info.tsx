@@ -4,6 +4,7 @@ import { Link, Button } from '@lidofinance/lido-ui';
 import {
   type HubReportData,
   CID_TO_GATEWAY,
+  GoToVault,
   useSendReport,
 } from 'modules/vaults';
 import { ConnectWalletButton } from 'shared/wallet';
@@ -19,7 +20,8 @@ type ReportInfoProps = {
 };
 
 export const ReportInfo: FC<ReportInfoProps> = ({ isFresh, report }) => {
-  const { applyReport } = useSendReport();
+  // the side nav is shown on every vault page, so success offers a way back to the overview
+  const { applyReport } = useSendReport({ renderSuccessContent: GoToVault });
 
   if (!report) return null;
 

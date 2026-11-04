@@ -29,6 +29,16 @@ export class SendTxGetStatusError extends DisplayableError {
   }
 }
 
+// data read before the latest own tx would resend already applied txs
+export class OutdatedDataError extends DisplayableError {
+  constructor(subject: string) {
+    super(
+      `${subject} are outdated. Please wait for them to refresh and try again.`,
+    );
+    this.name = 'OutdatedDataError';
+  }
+}
+
 // Vault Fetch
 export class VaultAddressError extends DisplayableError {
   constructor() {

@@ -10,6 +10,16 @@ export enum ErrorMessage {
   INVALID_SIGNATURE = 'Invalid Permit signature. Perhaps it has expired or already been used. Try submitting a withdrawal request again.',
 }
 
+// codes of a request the user declined in the wallet
+export const USER_REJECTED_ERROR_CODES: readonly (number | string)[] = [
+  'ACTION_REJECTED',
+  4001,
+  200001,
+];
+// a safe-app reports a user cancel as -32000 with this message
+export const SAFE_USER_REJECTED_CODE = -32000;
+export const SAFE_USER_REJECTED_MESSAGE = 'User rejected transaction';
+
 export const getErrorMessage = (error: unknown): ErrorMessage | string => {
   try {
     console.error('TX_ERROR:', { error, error_string: JSON.stringify(error) });
@@ -23,10 +33,11 @@ export const getErrorMessage = (error: unknown): ErrorMessage | string => {
   if (parsedMessage) return parsedMessage;
 
   const code = extractCodeFromError(error);
+  if (USER_REJECTED_ERROR_CODES.includes(code)) return ErrorMessage.DENIED_SIG;
   switch (code) {
-    case -32000: {
+    case SAFE_USER_REJECTED_CODE: {
       // Handling user-canceled transaction from a safe-app
-      if ((error as any)?.message === 'User rejected transaction') {
+      if ((error as any)?.message === SAFE_USER_REJECTED_MESSAGE) {
         return ErrorMessage.DENIED_SIG;
       }
     }
@@ -37,10 +48,6 @@ export const getErrorMessage = (error: unknown): ErrorMessage | string => {
       return ErrorMessage.NOT_ENOUGH_ETHER;
     case 'INVALID_SIGNATURE':
       return ErrorMessage.INVALID_SIGNATURE;
-    case 'ACTION_REJECTED':
-    case 4001:
-    case 200001:
-      return ErrorMessage.DENIED_SIG;
     case 'LIMIT_REACHED':
       return ErrorMessage.LIMIT_REACHED;
     case 'INVALID_REFERRAL':

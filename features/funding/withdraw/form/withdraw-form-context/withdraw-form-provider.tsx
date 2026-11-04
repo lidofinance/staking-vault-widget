@@ -64,15 +64,18 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     context: validationContext,
     resolver: withdrawFormResolver,
   });
+  const { reset } = formObject;
 
   const onSubmit = useCallback(
     async (values: WithdrawFormValidatedValues) => {
-      const success = await withdraw(values);
+      const { success, isAborted } = await withdraw(values);
       // partial state change is possible here
       await invalidateWithdrawFormData();
+      // the same values would send the confirmed steps again, so the user starts from an empty form
+      if (isAborted) reset();
       return success;
     },
-    [invalidateWithdrawFormData, withdraw],
+    [invalidateWithdrawFormData, reset, withdraw],
   );
 
   const withdrawDataContextValue = useMemo(

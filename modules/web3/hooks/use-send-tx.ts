@@ -26,6 +26,7 @@ import { useFormControllerRetry } from 'shared/hook-form/form-controller/use-for
 import { TransactionModalState } from 'shared/components/transaction-modal/types';
 import { useAddressValidation } from 'providers/address-validation-provider';
 
+import { isUserRejectedError } from '../utils/is-user-rejected-error';
 import { useAA } from './use-aa';
 import {
   getFailedBatchOutcome,
@@ -34,6 +35,15 @@ import {
   skipCompletedSteps,
   type ResumeProgress,
 } from './send-tx-retry';
+
+// the user stopped an operation after some of its steps were confirmed;
+// it is not resumed, so callers reset the form and the next submit starts over
+export class OperationAbortedError extends Error {
+  constructor(cause: unknown) {
+    super('Operation aborted by the user after partial success', { cause });
+    this.name = 'OperationAbortedError';
+  }
+}
 
 export type TransactionEntry = {
   to: Address;
@@ -245,27 +255,39 @@ export const useSendTransaction = () => {
             throw new Error('Batch failed');
           }
 
-          let receipts: TransactionReceipt[] = [];
-
-          if (callStatus.receipts && callStatus.receipts.length > 0) {
-            const latestReceipt =
-              callStatus.receipts[callStatus.receipts.length - 1];
-
-            const receipt = await publicClient.waitForTransactionReceipt({
-              hash: latestReceipt.transactionHash,
-              confirmations: TX_BLOCK_CONFIRMATIONS,
-              timeout: AA_TX_POLLING_TIMEOUT,
-            });
-
-            receipts = [receipt];
-          }
+          // the wallet reports the batch as executed, so its result is known from here on
           unconfirmedTxId = undefined;
+          const callReceipts = callStatus.receipts ?? [];
+          const confirmedReceipts: TransactionReceipt[] = [];
+
+          if (callReceipts.length > 0) {
+            const latestReceipt = callReceipts[callReceipts.length - 1];
+            try {
+              confirmedReceipts.push(
+                await publicClient.waitForTransactionReceipt({
+                  hash: latestReceipt.transactionHash,
+                  confirmations: TX_BLOCK_CONFIRMATIONS,
+                  timeout: AA_TX_POLLING_TIMEOUT,
+                }),
+              );
+            } catch (error) {
+              // waiting for confirmations failed, but the batch is executed:
+              // it is still a success, and the tx block is taken from the wallet receipts
+              console.warn(
+                '[useSendTransaction] AA receipt confirmations are not awaited',
+                error,
+              );
+            }
+          }
 
           const transactionResult = {
             isAA,
             callStatus,
-            receipts,
-            lastTxBlock: receiptsToLastBlock(receipts),
+            receipts: confirmedReceipts,
+            lastTxBlock: receiptsToLastBlock([
+              ...callReceipts,
+              ...confirmedReceipts,
+            ]),
           };
 
           dispatchModal({
@@ -366,7 +388,8 @@ export const useSendTransaction = () => {
               ? new SendTxGetStatusError(error)
               : undefined;
 
-        const { canRetry, isPartialSuccess } = getRetryDecision({
+        const isUserRejected = isUserRejectedError(error);
+        const { canRetry, isPartialSuccess, isAborted } = getRetryDecision({
           isRetryableError: displayError?.isRetryable,
           isUnconfirmed,
           receipts,
@@ -374,7 +397,11 @@ export const useSendTransaction = () => {
           isAA: useSendCalls,
           isTracked: progress !== undefined,
           allowRetryAfterPartialSuccess,
+          isUserRejected,
+          hasCompletedSteps: (progress?.completedSteps.size ?? 0) > 0,
         });
+        // a user stop ends the operation: the next submit starts over instead of skipping steps
+        if (isUserRejected) progressRef.current = undefined;
 
         dispatchModal({
           type: 'stage',
@@ -383,7 +410,7 @@ export const useSendTransaction = () => {
           details: {
             errorText:
               displayError?.message ??
-              (isPartialSuccess
+              (isPartialSuccess || isAborted
                 ? vaultTexts.common.errors.tx.partialSuccess
                 : undefined),
             errorTitle: displayError?.errorTitle,
@@ -392,7 +419,7 @@ export const useSendTransaction = () => {
           },
         });
         console.error(`[useSendTransaction] TX Error`, error);
-        throw error;
+        throw isAborted ? new OperationAbortedError(error) : error;
       }
     },
     [

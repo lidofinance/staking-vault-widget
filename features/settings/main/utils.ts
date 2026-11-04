@@ -1,6 +1,11 @@
 import { type Address, isAddressEqual } from 'viem';
 
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import {
+  getPendingRoleEdits,
+  isPendingAddressEdit,
+  isPendingEdit,
+} from 'features/settings/shared/utils';
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
@@ -199,32 +204,25 @@ const getPendingRoles = (
   freshMembers: Address[],
   submitted: RoleFieldSchema[],
 ): RoleFieldSchema[] | undefined => {
-  let hasPending = false;
-
-  const isRemoveSubmitted = (address: Address) =>
-    submitted.some(
-      (field) =>
-        field.state === 'remove' && isAddressEqual(field.value, address),
-    );
-
-  const current = freshMembers.map((address) => {
-    const isPendingRemove = isRemoveSubmitted(address);
-    hasPending ||= isPendingRemove;
-    return {
-      value: address,
-      state: isPendingRemove ? ('remove' as const) : ('display' as const),
-      isGranted: true,
-    };
-  });
-
-  const pendingGrants = submitted.filter(
-    (field) =>
-      field.state === 'grant' &&
-      !freshMembers.some((address) => isAddressEqual(address, field.value)),
+  const { members, pendingGrants, hasPending } = getPendingRoleEdits(
+    freshMembers,
+    submitted,
+    ({ value, state }) => ({
+      address: value,
+      kind:
+        state === 'grant' ? 'grant' : state === 'remove' ? 'revoke' : 'none',
+    }),
   );
-  hasPending ||= pendingGrants.length > 0;
+  if (!hasPending) return undefined;
 
-  return hasPending ? [...current, ...pendingGrants] : undefined;
+  return [
+    ...members.map(({ address, isPendingRevoke }) => ({
+      value: address,
+      state: isPendingRevoke ? ('remove' as const) : ('display' as const),
+      isGranted: true,
+    })),
+    ...pendingGrants,
+  ];
 };
 
 // toFixed drops float noise (e.g. 0.57 * 100 = 56.99999999999999), floor drops precision beyond basis points
@@ -270,20 +268,23 @@ export const getPendingFormValues = (
 
   // edit checks below are kept in sync with the tx builder in useEditMainSettings
   if (
-    !isAddressEqual(submitted.feeRecipient, previous.feeRecipient) &&
-    !isAddressEqual(submitted.feeRecipient, fresh.feeRecipient)
+    isPendingAddressEdit(
+      submitted.feeRecipient,
+      previous.feeRecipient,
+      fresh.feeRecipient,
+    )
   ) {
     pending.feeRecipient = submitted.feeRecipient;
   }
-  if (
-    submitted.pdgPolicy !== previous.pdgPolicy &&
-    submitted.pdgPolicy !== fresh.pdgPolicy
-  ) {
+  if (isPendingEdit(submitted.pdgPolicy, previous.pdgPolicy, fresh.pdgPolicy)) {
     pending.pdgPolicy = submitted.pdgPolicy;
   }
   if (
-    submitted.isDepositAllowed !== previous.isDepositAllowed &&
-    submitted.isDepositAllowed !== fresh.isDepositAllowed
+    isPendingEdit(
+      submitted.isDepositAllowed,
+      previous.isDepositAllowed,
+      fresh.isDepositAllowed,
+    )
   ) {
     pending.isDepositAllowed = submitted.isDepositAllowed;
   }

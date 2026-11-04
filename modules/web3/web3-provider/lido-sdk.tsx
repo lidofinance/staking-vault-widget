@@ -89,6 +89,9 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
   );
   const latestTxBlockRef = useRef<bigint | undefined>(undefined);
   const setLatestTxBlock = useCallback((blockNumber: bigint) => {
+    // only moves forward: a result without block info (0n) or an older tx
+    // must not lower the block that data has to be read at
+    if (blockNumber <= (latestTxBlockRef.current ?? 0n)) return;
     latestTxBlockRef.current = blockNumber;
     setLatestTxBlockState(blockNumber);
   }, []);

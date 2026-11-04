@@ -3,12 +3,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { isBehindTxBlock, useDappStatus, useLidoSDK } from 'modules/web3';
 import { useVault } from 'modules/vaults';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController, useDisableForm } from 'shared/hook-form';
+import { useTransactionModal } from 'shared/components/transaction-modal';
 
 import { editPermissionsSchema } from './consts';
 import { useEditPermissions, usePermissionsFormData } from './hooks';
@@ -24,6 +25,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { isDappActive } = useDappStatus();
   const { data: rolesList, refetch } = usePermissionsFormData();
   const { getLatestTxBlock } = useLidoSDK();
+  const { dispatchModal } = useTransactionModal();
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent } = useEditPermissions();
   const disabled = useDisableForm();
@@ -59,12 +61,20 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       // (a confirmed grant must not stay a removable 'grant' row or vanish on "Clear changes")
       const isFresh =
         refetched.isSuccess &&
-        refetched.data.blockNumber >= (getLatestTxBlock() ?? 0n);
+        !isBehindTxBlock(refetched.data.blockNumber, getLatestTxBlock());
 
       if (!isFresh) {
-        reset(
-          refetched.data ? toPermissionsFormValues(refetched.data) : undefined,
-        );
+        if (success) {
+          reset(
+            refetched.data
+              ? toPermissionsFormValues(refetched.data)
+              : undefined,
+          );
+        } else {
+          // without fresh data pending edits can't be told from applied ones, so the form keeps
+          // the user's edits for a new submit once data refreshes, and retry is disabled for this attempt
+          dispatchModal({ type: 'disable-retry' });
+        }
         return success;
       }
 
@@ -82,6 +92,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       return success;
     },
     [
+      dispatchModal,
       editPermissions,
       getLatestTxBlock,
       invalidateVaultConfig,

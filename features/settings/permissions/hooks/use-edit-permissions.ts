@@ -4,12 +4,13 @@ import { getAddress } from 'viem';
 
 import {
   type TransactionEntry,
+  isBehindTxBlock,
   useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
 import {
-  DisplayableError,
+  OutdatedDataError,
   useVault,
   vaultTexts,
   GoToVault,
@@ -107,18 +108,15 @@ export const useEditPermissions = () => {
         }
 
         // data read before the latest tx would resend already applied txs
-        const isStale =
-          permissionsData.blockNumber < (getLatestTxBlock() ?? 0n);
+        const isStale = isBehindTxBlock(
+          permissionsData.blockNumber,
+          getLatestTxBlock(),
+        );
 
         return withSuccess(
           sendTX({
             transactions: isStale
-              ? () =>
-                  Promise.reject(
-                    new DisplayableError(
-                      'Vault permissions are outdated. Please wait for them to refresh and try again.',
-                    ),
-                  )
+              ? () => Promise.reject(new OutdatedDataError('Vault permissions'))
               : transactions,
             // form is restored with pending edits only, so retry sends the remaining txs
             allowRetryAfterPartialSuccess: true,

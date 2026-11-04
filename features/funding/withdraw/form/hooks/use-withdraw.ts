@@ -9,6 +9,7 @@ import {
   useReportCalls,
 } from 'modules/vaults';
 import {
+  OperationAbortedError,
   useSendTransaction,
   withSuccess,
   TransactionEntry,
@@ -47,7 +48,7 @@ export const useWithdraw = () => {
         });
       }
 
-      const { success } = await withSuccess(
+      const { success, error } = await withSuccess(
         sendTX({
           transactions: async () => [...(await prepareReportCalls()), ...calls],
           forceAtomic: true,
@@ -65,7 +66,8 @@ export const useWithdraw = () => {
         }),
       );
 
-      return success;
+      // stopped by the user after confirmed steps: the form is reset, a new submit starts over
+      return { success, isAborted: error instanceof OperationAbortedError };
     },
     [activeVault, publicClient, prepareReportCalls, sendTX],
   );

@@ -71,7 +71,7 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
     resolver: SupplyFormResolver,
   });
 
-  const { watch, resetField } = formObject;
+  const { watch, reset, resetField } = formObject;
   const [mintSteth, amount, token] = watch(['mintSteth', 'amount', 'token']);
 
   const supplyFormData = useSupplyFormData(token, mintSteth, amount);
@@ -91,13 +91,15 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
 
   const onSubmit = useCallback(
     async (values: SupplyFormValidatedValues) => {
-      const result = await supply(values);
+      const { success, isAborted } = await supply(values);
       // revalidate form data because some TXs may have changed the state
       await invalidateSupplyFormData();
+      // the same values would send the confirmed steps again, so the user starts from an empty form
+      if (isAborted) reset();
 
-      return result;
+      return success;
     },
-    [invalidateSupplyFormData, supply],
+    [invalidateSupplyFormData, reset, supply],
   );
 
   return (

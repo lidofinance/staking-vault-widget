@@ -4,7 +4,7 @@ import { usePublicClient } from 'wagmi';
 import { zeroAddress } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 
-import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { useDappStatus, useLidoSDK, useRefetchOnTxBlock } from 'modules/web3';
 import {
   useVault,
   VAULTS_ROOT_ROLES_MAP,
@@ -30,7 +30,7 @@ export const useVaultSettingsData = () => {
     [address],
   );
 
-  return useQuery<VaultMainSettingsData, Error, MainSettingsFormData>({
+  const query = useQuery<VaultMainSettingsData, Error, MainSettingsFormData>({
     queryKey: [...queryKeys.config(), 'vault-main-settings'],
     enabled: !!activeVault,
     select,
@@ -106,4 +106,8 @@ export const useVaultSettingsData = () => {
       };
     },
   });
+
+  useRefetchOnTxBlock(query);
+
+  return query;
 };

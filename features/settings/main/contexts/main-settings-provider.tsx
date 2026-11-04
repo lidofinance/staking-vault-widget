@@ -2,7 +2,7 @@ import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { useDappStatus, useLidoSDK } from 'modules/web3';
+import { isBehindTxBlock, useDappStatus, useLidoSDK } from 'modules/web3';
 import { FormController, useDisableForm } from 'shared/hook-form';
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useVault } from 'modules/vaults';
@@ -69,7 +69,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       // restore pending changes only from data read after the latest tx, otherwise applied txs would be resent
       if (
         vaultInfo.isSuccess &&
-        vaultInfo.data.blockNumber >= (getLatestTxBlock() ?? 0n)
+        !isBehindTxBlock(vaultInfo.data.blockNumber, getLatestTxBlock())
       ) {
         const newDefaultValues = prepareDefaultValues(vaultInfo.data);
         reset(newDefaultValues);
@@ -90,7 +90,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       } else {
         // without fresh data pending edits can't be told from changes made by others,
         // and retry could revert applied changes, so it is disabled for this attempt
-        dispatchModal({ type: 'stage', stage: 'error', allowRetry: false });
+        dispatchModal({ type: 'disable-retry' });
       }
 
       return result.success;

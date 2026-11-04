@@ -20,6 +20,8 @@ const decide = (input: Partial<RetryDecisionInput>) =>
     isAA: false,
     isTracked: false,
     allowRetryAfterPartialSuccess: false,
+    isUserRejected: false,
+    hasCompletedSteps: false,
     ...input,
   });
 
@@ -167,5 +169,66 @@ describe('getRetryDecision', () => {
         allowRetryAfterPartialSuccess: true,
       }).canRetry,
     ).toBe(true);
+  });
+
+  test('user stop after confirmed steps aborts the operation and prevents retry', () => {
+    const decision = decide({
+      isUserRejected: true,
+      isTracked: true,
+      hasCompletedSteps: true,
+      receipts: [success],
+      allowRetryAfterPartialSuccess: true,
+    });
+    expect(decision.isAborted).toBe(true);
+    expect(decision.canRetry).toBe(false);
+  });
+
+  test('user stop on a retry counts steps confirmed in previous attempts', () => {
+    const decision = decide({
+      isUserRejected: true,
+      isTracked: true,
+      hasCompletedSteps: true,
+      allowRetryAfterPartialSuccess: true,
+    });
+    expect(decision.isAborted).toBe(true);
+    expect(decision.canRetry).toBe(false);
+  });
+
+  test('user stop before any confirmed step can be retried', () => {
+    const decision = decide({ isUserRejected: true, isTracked: true });
+    expect(decision.isAborted).toBe(false);
+    expect(decision.canRetry).toBe(true);
+  });
+
+  test('confirmed report without a step key does not abort, it is rebuilt from live state', () => {
+    const decision = decide({
+      isUserRejected: true,
+      isTracked: true,
+      receipts: [success],
+      allowRetryAfterPartialSuccess: true,
+    });
+    expect(decision.isAborted).toBe(false);
+    expect(decision.canRetry).toBe(true);
+  });
+
+  test('untracked flows rebuilt from live state keep retry after a user stop', () => {
+    const decision = decide({
+      isUserRejected: true,
+      receipts: [success],
+      allowRetryAfterPartialSuccess: true,
+    });
+    expect(decision.isAborted).toBe(false);
+    expect(decision.canRetry).toBe(true);
+  });
+
+  test('other failures after confirmed steps keep the resume', () => {
+    const decision = decide({
+      isTracked: true,
+      hasCompletedSteps: true,
+      receipts: [success, reverted],
+      allowRetryAfterPartialSuccess: true,
+    });
+    expect(decision.isAborted).toBe(false);
+    expect(decision.canRetry).toBe(true);
   });
 });

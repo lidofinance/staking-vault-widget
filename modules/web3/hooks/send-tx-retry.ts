@@ -51,6 +51,10 @@ export type RetryDecisionInput = {
   // resume by steps is used (resumeKey is set)
   isTracked: boolean;
   allowRetryAfterPartialSuccess: boolean;
+  // the user declined a request in the wallet
+  isUserRejected: boolean;
+  // tracked steps confirmed in this or previous attempts of the same operation
+  hasCompletedSteps: boolean;
 };
 
 export const getRetryDecision = ({
@@ -61,6 +65,8 @@ export const getRetryDecision = ({
   isAA,
   isTracked,
   allowRetryAfterPartialSuccess,
+  isUserRejected,
+  hasCompletedSteps,
 }: RetryDecisionInput) => {
   const isPartialSuccess =
     receipts.some((receipt) => receipt.status === 'success') ||
@@ -69,13 +75,18 @@ export const getRetryDecision = ({
   // so a resume would send them again
   const isUntrackedPartialSuccess = isPartialSuccess && isAA && isTracked;
 
+  // the user stopped an operation with confirmed steps: it is not resumed,
+  // the next submit starts over, and a retry with the same values would send the confirmed steps again
+  const isAborted = isUserRejected && isTracked && hasCompletedSteps;
+
   // retry signs new txs, so it must not replay a tx that may be executed
   // or steps that are already applied
   const canRetry =
     (isRetryableError ?? true) &&
     !isUnconfirmed &&
     !isUntrackedPartialSuccess &&
+    !isAborted &&
     (!isPartialSuccess || allowRetryAfterPartialSuccess);
 
-  return { canRetry, isPartialSuccess };
+  return { canRetry, isPartialSuccess, isAborted };
 };

@@ -45,6 +45,10 @@ export type TransactionModalAction =
       type: 'open' | 'close';
     }
   | {
+      // takes Retry away from the current stage without reopening a closed modal
+      type: 'disable-retry';
+    }
+  | {
       type: 'stage';
       stage: Exclude<TransactionModalStage, 'none'>;
       allowRetry?: boolean;

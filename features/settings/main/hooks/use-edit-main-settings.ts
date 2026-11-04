@@ -5,12 +5,13 @@ import type { Hash } from 'viem';
 import {
   TransactionEntry,
   useAA,
+  isBehindTxBlock,
   useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
 import {
-  DisplayableError,
+  OutdatedDataError,
   useVault,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
@@ -168,17 +169,15 @@ export const useEditMainSettings = () => {
         }
 
         // settings read before the latest tx would resend already applied txs
-        const isStale = vaultSettings.blockNumber < (getLatestTxBlock() ?? 0n);
+        const isStale = isBehindTxBlock(
+          vaultSettings.blockNumber,
+          getLatestTxBlock(),
+        );
 
         const result = await withSuccess(
           sendTX({
             transactions: isStale
-              ? () =>
-                  Promise.reject(
-                    new DisplayableError(
-                      'Vault settings are outdated. Please wait for them to refresh and try again.',
-                    ),
-                  )
+              ? () => Promise.reject(new OutdatedDataError('Vault settings'))
               : isFeeValueChanged || isDepositAllowedChanged
                 ? async () => [...(await prepareReportCalls()), ...transactions]
                 : transactions,

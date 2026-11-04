@@ -7,7 +7,7 @@ import {
   VAULTS_ALL_ROLES_MAP,
   VAULT_REPORT_REFETCH_INTERVAL_MS,
 } from 'modules/vaults';
-import { useLidoSDK } from 'modules/web3';
+import { useLidoSDK, useRefetchOnTxBlock } from 'modules/web3';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
 
@@ -57,7 +57,7 @@ export const usePermissionsFormData = () => {
   const { publicClient, getLatestTxBlock } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       ...queryKeys.config('roles'),
       'getRoleMembers',
@@ -108,4 +108,8 @@ export const usePermissionsFormData = () => {
       };
     },
   });
+
+  useRefetchOnTxBlock(query);
+
+  return query;
 };

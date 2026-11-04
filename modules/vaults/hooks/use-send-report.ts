@@ -4,11 +4,13 @@ import { useReportCalls, useVault } from 'modules/vaults';
 import { ReportAlreadyAppliedError } from 'modules/vaults/consts/errors';
 import { vaultTexts } from 'modules/vaults/consts/texts';
 import { useSendTransaction, withSuccess } from 'modules/web3';
+import type { ModalRenderSuccessContent } from 'shared/components/transaction-modal';
 import { runExclusive } from 'utils/run-exclusive';
 
 type UseSendReportOptions = {
   loadingText?: string;
   completedText?: string;
+  renderSuccessContent?: ModalRenderSuccessContent;
 };
 
 const { loading: defaultLoadingText, completed: defaultCompletedText } =
@@ -18,6 +20,7 @@ const { loading: defaultLoadingText, completed: defaultCompletedText } =
 export const useSendReport = ({
   loadingText = defaultLoadingText,
   completedText = defaultCompletedText,
+  renderSuccessContent,
 }: UseSendReportOptions = {}) => {
   const prepareReportCalls = useReportCalls();
   const { invalidateVaultState } = useVault();
@@ -46,6 +49,7 @@ export const useSendReport = ({
               },
               mainActionLoadingText: loadingText,
               mainActionCompleteText: completedText,
+              renderSuccessContent,
             }),
           );
 
@@ -58,6 +62,7 @@ export const useSendReport = ({
       invalidateVaultState,
       loadingText,
       prepareReportCalls,
+      renderSuccessContent,
       sendTX,
     ],
   );
