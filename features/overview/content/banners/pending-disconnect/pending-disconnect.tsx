@@ -5,7 +5,7 @@ import { useVault, useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 import { NoticeContainer } from 'shared/components';
 import { appPaths } from 'consts/routing';
 
-import { ApplyButton } from './styles';
+import { ApplyButton } from '../styles';
 
 const texts = vaultTexts.metrics.pendingDisconnect;
 

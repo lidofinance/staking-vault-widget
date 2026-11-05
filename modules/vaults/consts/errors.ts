@@ -71,3 +71,10 @@ export class VaultDisconnectedError extends NonRetriableQueryError {
     this.name = 'VaultDisconnected';
   }
 }
+
+export class ReportAlreadyAppliedError extends DisplayableError {
+  constructor() {
+    super(errorTexts.reportAlreadyApplied, false);
+    this.name = 'ReportAlreadyApplied';
+  }
+}
