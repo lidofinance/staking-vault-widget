@@ -62,6 +62,16 @@ export const vaultTexts = {
     createVault: {
       loading: 'Creating vault',
       completed: 'Vault created',
+      result: {
+        title: 'New vault has been created',
+        goToVault: 'Go to vault',
+        goToMyVaults: 'Go to My stVaults',
+        // the created vault can't be told from the tx, so no address is shown
+        unconfirmed: (hasTxLink: boolean) =>
+          `We couldn't confirm the vault address from the transaction. It will appear in My stVaults once indexed${
+            hasTxLink ? ', or check the transaction in the explorer' : ''
+          }.`,
+      },
       steps: ['Main settings', 'Verify new vault’s settings'],
       fields: {
         nodeOperator: {

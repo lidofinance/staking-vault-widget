@@ -47,6 +47,8 @@ export type TransactionModalAction =
   | {
       // takes Retry away from the current stage without reopening a closed modal
       type: 'disable-retry';
+      // retry callback of the sender requesting it; ignored if the modal now belongs to another sender
+      onRetry: NonNullable<TransactionModalState['onRetry']>;
     }
   | {
       type: 'stage';

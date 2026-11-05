@@ -1,1 +1,1 @@
-export { ModalCTA } from './modal-cta';
+export { ModalCTA, renderModalCTA } from './modal-cta';

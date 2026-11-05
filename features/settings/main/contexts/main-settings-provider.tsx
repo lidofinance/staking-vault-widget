@@ -28,7 +28,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     refetch: refetchVault,
   } = useVault();
   const { getLatestTxBlock } = useLidoSDK();
-  const { editMainSettings, retryEvent } = useEditMainSettings();
+  const { editMainSettings, retryEvent, retryFire } = useEditMainSettings();
   const { data: settingsData, refetch } = useMainSettingsFormData();
   const { dispatchModal } = useTransactionModal();
   const disabled = useDisableForm();
@@ -90,7 +90,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       } else {
         // without fresh data pending edits can't be told from changes made by others,
         // and retry could revert applied changes, so it is disabled for this attempt
-        dispatchModal({ type: 'disable-retry' });
+        dispatchModal({ type: 'disable-retry', onRetry: retryFire });
       }
 
       return result.success;
@@ -104,6 +104,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       refetch,
       refetchVault,
       reset,
+      retryFire,
       setValue,
       settingsData,
     ],

@@ -56,7 +56,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
     },
   );
 
-  const { createVault, retryEvent, mutation } = useCreateVault();
+  const { createVault, retryEvent, mutation, submitted } = useCreateVault();
 
   const onSubmit = useCallback(
     async (data: CreateVaultSchema): Promise<boolean> => {
@@ -82,7 +82,11 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
     >
       <FormBlock>
         {mutation.isSuccess ? (
-          <ResultOverview transactionResult={mutation.data} />
+          <ResultOverview
+            transactionResult={mutation.data}
+            expected={submitted?.expected ?? null}
+            submittedValues={submitted?.values ?? null}
+          />
         ) : (
           <>
             <FormSubtitle data-testid="createVault-formSubtitle">

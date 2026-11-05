@@ -27,7 +27,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const { getLatestTxBlock } = useLidoSDK();
   const { dispatchModal } = useTransactionModal();
   const asyncPermissions = useAwaiter(rolesList);
-  const { editPermissions, retryEvent } = useEditPermissions();
+  const { editPermissions, retryEvent, retryFire } = useEditPermissions();
   const disabled = useDisableForm();
 
   const formObject = useForm<EditPermissionsSchema>({
@@ -73,7 +73,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         } else {
           // without fresh data pending edits can't be told from applied ones, so the form keeps
           // the user's edits for a new submit once data refreshes, and retry is disabled for this attempt
-          dispatchModal({ type: 'disable-retry' });
+          dispatchModal({ type: 'disable-retry', onRetry: retryFire });
         }
         return success;
       }
@@ -98,6 +98,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       invalidateVaultConfig,
       refetch,
       reset,
+      retryFire,
       rolesList,
       trigger,
     ],
