@@ -52,6 +52,7 @@ const reducer = (
         ...state,
         isOpen: true,
         stage: action.stage,
+        isBatch: action.isBatch ?? state.isBatch,
         // allowRetry false can override previous onRetry setting
         onRetry: action.allowRetry === false ? undefined : state.onRetry,
         details: {
