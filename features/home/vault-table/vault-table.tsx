@@ -30,7 +30,6 @@ import {
 
 export type VaultTableProps = {
   title: string;
-  emptyDisplay?: 'default' | 'hideTable';
   page?: number;
   setPage?: (page: number) => void;
   sortBy?: FetchVaultsParams['sortBy'];
@@ -235,7 +234,6 @@ export const VaultTable: FC<VaultTableProps> = ({
   title,
   vaultsCount,
   refetch,
-  emptyDisplay = 'default',
   isError = false,
   isLoading = false,
   page,
@@ -249,12 +247,6 @@ export const VaultTable: FC<VaultTableProps> = ({
 }) => {
   const router = useRouter();
   const isEmpty = (vaults?.length ?? 0) === 0;
-  const showTable = !(
-    emptyDisplay === 'hideTable' &&
-    !isLoading &&
-    !isError &&
-    isEmpty
-  );
 
   const showPagination = !!(pagesCount && pagesCount > 1 && setPage);
 
@@ -299,54 +291,48 @@ export const VaultTable: FC<VaultTableProps> = ({
       </TableTitleContainer>
       <ScrollableContainer>
         <TableStyled>
-          {showTable && (
-            <>
-              <Thead>
-                <TableRow>
-                  {tableHeaders.map(({ title, hint, sortKey }) => (
-                    <TableHeaderCell
-                      data-sort-key={sortKey}
-                      align="left"
-                      onClick={sortKey && setSort ? onSortClick : undefined}
-                      sortDir={
-                        sortKey === sortBy ? toUIsortDir(sortDir) : undefined
-                      }
-                      key={title}
-                    >
-                      <HeaderCell hint={hint} title={title} />
-                    </TableHeaderCell>
-                  ))}
+          <Thead>
+            <TableRow>
+              {tableHeaders.map(({ title, hint, sortKey }) => (
+                <TableHeaderCell
+                  data-sort-key={sortKey}
+                  align="left"
+                  onClick={sortKey && setSort ? onSortClick : undefined}
+                  sortDir={
+                    sortKey === sortBy ? toUIsortDir(sortDir) : undefined
+                  }
+                  key={title}
+                >
+                  <HeaderCell hint={hint} title={title} />
+                </TableHeaderCell>
+              ))}
+            </TableRow>
+          </Thead>
+          <TableBody>
+            {vaults?.map((vault) => {
+              return (
+                <TableRow
+                  onClick={onRowClick}
+                  data-address={vault.address}
+                  key={vault.address}
+                  data-testid={
+                    dataTestId ? `${dataTestId}-vault-${vault.address}` : null
+                  }
+                >
+                  <VaultTableRowContent
+                    vault={vault}
+                    dataTestId={`${dataTestId}-vault-${vault.address}`}
+                  />
                 </TableRow>
-              </Thead>
-              <TableBody>
-                {vaults?.map((vault) => {
-                  return (
-                    <TableRow
-                      onClick={onRowClick}
-                      data-address={vault.address}
-                      key={vault.address}
-                      data-testid={
-                        dataTestId
-                          ? `${dataTestId}-vault-${vault.address}`
-                          : null
-                      }
-                    >
-                      <VaultTableRowContent
-                        vault={vault}
-                        dataTestId={`${dataTestId}-vault-${vault.address}`}
-                      />
-                    </TableRow>
-                  );
-                })}
-                <QueryStatus
-                  isLoading={isLoading}
-                  isEmpty={isEmpty}
-                  isError={isError}
-                  refetch={refetch}
-                />
-              </TableBody>
-            </>
-          )}
+              );
+            })}
+            <QueryStatus
+              isLoading={isLoading}
+              isEmpty={isEmpty}
+              isError={isError}
+              refetch={refetch}
+            />
+          </TableBody>
         </TableStyled>
       </ScrollableContainer>
       {showPagination && setPage && typeof page == 'number' && (

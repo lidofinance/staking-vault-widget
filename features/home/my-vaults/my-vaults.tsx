@@ -33,7 +33,6 @@ export const MyVaults = () => {
     <>
       <VaultTable
         title="My Vaults"
-        emptyDisplay="hideTable"
         vaults={vaults}
         vaultsCount={totalVaultsCount}
         isError={isError}
