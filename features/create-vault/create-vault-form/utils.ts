@@ -47,6 +47,8 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
     value: VAULTS_CONNECT_DEPOSIT,
     // the parsed admin the factory emits in DashboardCreated, to find the created vault
     defaultAdmin: defaultAdmin.value,
+    // every submitted owner gets the default admin role (the first via the factory argument)
+    owners: values.vaultOwner.map((owner) => owner.value),
   };
 };
 
@@ -60,7 +62,22 @@ type VaultTxReceipt = {
 export type VaultTxExpected = {
   factory: Address;
   defaultAdmin: Address;
+  // all default admins of the new vault, see getFallbackVaultList
+  owners: Address[];
 };
+
+// Where to send the user when the created vault can't be confirmed. My stVaults lists
+// vaults the connected address is a default admin of, but the creator may set other
+// addresses as the only owners; then the vault is found only in All stVaults.
+export const getFallbackVaultList = (
+  owners: readonly Address[] | undefined,
+  connected: Address | undefined,
+): 'my' | 'all' =>
+  owners &&
+  connected &&
+  owners.some((owner) => isAddressEqual(owner, connected))
+    ? 'my'
+    : 'all';
 
 // why the created vault can't be told from the tx: for diagnostics only, the user sees one notice
 export type VaultTxUnresolvedReason =

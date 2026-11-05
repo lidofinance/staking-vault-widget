@@ -68,7 +68,7 @@ export const useSendReport = ({
   );
 
   useEffect(
-    () => retryEvent.subscribe(() => void applyReport()),
+    () => retryEvent.subscribe(() => applyReport()),
     [retryEvent, applyReport],
   );
 

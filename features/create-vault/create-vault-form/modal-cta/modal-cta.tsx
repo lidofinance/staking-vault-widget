@@ -9,7 +9,7 @@ import { WarningMessage } from 'shared/components/warning-message';
 import { appPaths } from 'consts/routing';
 import { vaultTexts } from 'modules/vaults';
 import type { VaultTxExpected } from '../utils';
-import { useParsedVaultTx } from '../use-parsed-vault-tx';
+import { useFallbackVaultList, useParsedVaultTx } from '../use-parsed-vault-tx';
 
 const Content = styled.div`
   display: flex;
@@ -27,14 +27,15 @@ export const ModalCTA = ({ result, closeModal, expected }: ModalCTAProps) => {
   const isRouting = useRef<boolean>(false);
   const router = useRouter();
   const parsed = useParsedVaultTx(result, expected);
+  const fallback = useFallbackVaultList(expected);
 
   if (!parsed) return <></>;
 
   const { vaultAddress } = parsed;
-  // without a confirmed address the user is sent to their vault list, never to a guessed vault
+  // without a confirmed address the user is sent to a vault list, never to a guessed vault
   const path = vaultAddress
     ? appPaths.vaults.vault(vaultAddress).overview
-    : appPaths.myVaults;
+    : fallback.path;
 
   const handleNavigate = async () => {
     if (isRouting.current) return;
@@ -59,10 +60,10 @@ export const ModalCTA = ({ result, closeModal, expected }: ModalCTAProps) => {
   return (
     <Content>
       <WarningMessage data-testid="createVault-modal-unconfirmedVault">
-        {texts.unconfirmed(!!parsed.txHash)}
+        {texts.unconfirmed(!!parsed.txHash, fallback.list)}
       </WarningMessage>
       <Button onClick={handleNavigate} fullwidth>
-        {texts.goToMyVaults}
+        {texts.goToVaultList(fallback.list)}
       </Button>
     </Content>
   );

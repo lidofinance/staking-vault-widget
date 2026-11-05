@@ -14,7 +14,7 @@ jest.unstable_mockModule(
   () => ({ createVaultSchema: {} }),
 );
 
-const { parseVaultTx } = await import('../utils');
+const { parseVaultTx, getFallbackVaultList } = await import('../utils');
 type Response = Parameters<typeof parseVaultTx>[0];
 
 const address = (byte: string): Address => getAddress(`0x${byte.repeat(20)}`);
@@ -33,6 +33,7 @@ const WALLET_HASH = hash('22');
 const expected = {
   factory: FACTORY.toLowerCase() as Address,
   defaultAdmin: ADMIN,
+  owners: [ADMIN],
 };
 
 type TestLog = { address: Address; data: Hex; topics: Hex[] };
@@ -212,5 +213,30 @@ describe('parseVaultTx', () => {
         expected,
       ),
     ).toEqual({ vaultAddress: null, txHash: WALLET_HASH, reason: 'ambiguous' });
+  });
+});
+
+describe('getFallbackVaultList', () => {
+  test('the connected owner finds the vault in My stVaults', () => {
+    expect(getFallbackVaultList([ADMIN], ADMIN)).toBe('my');
+  });
+
+  test('any submitted owner counts, in any address case', () => {
+    expect(
+      getFallbackVaultList(
+        [OTHER_ADMIN, ADMIN],
+        ADMIN.toLowerCase() as Address,
+      ),
+    ).toBe('my');
+  });
+
+  test('a signer that set other owners is sent to All stVaults', () => {
+    // My stVaults lists vaults of the connected address only
+    expect(getFallbackVaultList([OTHER_ADMIN], ADMIN)).toBe('all');
+  });
+
+  test('unknown owners or no connection fall back to All stVaults', () => {
+    expect(getFallbackVaultList(undefined, ADMIN)).toBe('all');
+    expect(getFallbackVaultList([ADMIN], undefined)).toBe('all');
   });
 });

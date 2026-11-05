@@ -135,29 +135,37 @@ const showEtherscanLink = (state: TransactionModalState) => {
   }
 };
 
-// One Retry per error: a second click on the same error (e.g. a double click, or a click
-// while the retry is still validating before it opens a new modal session) is ignored,
-// so it can't turn into another attempt. A new session (the retry itself) shows Retry again.
+// Retry is locked while the attempt it started runs: a second click (e.g. a double click,
+// or a click while the retry is still validating) is ignored, so it can't become another
+// attempt. If the attempt ended without a new modal session (validation or a pre-send step
+// stopped it), Retry is offered again; a new session shows its own Retry.
 const RetryButton = ({ state }: { state: TransactionModalState }) => {
-  const retriedSessionRef = useRef<number>();
-  const [retriedSession, setRetriedSession] = useState<number>();
+  const retryingSessionRef = useRef<number>();
+  const [retryingSession, setRetryingSession] = useState<number>();
+  const currentSessionRef = useRef(state.sessionId);
+  currentSessionRef.current = state.sessionId;
 
-  if (!state.onRetry || state.stage !== 'error') return null;
-  if (retriedSession === state.sessionId) return null;
+  const { onRetry } = state;
+  if (!onRetry || state.stage !== 'error') return null;
+  if (retryingSession === state.sessionId) return null;
 
-  return (
-    <ButtonLink
-      onClick={() => {
-        // the ref locks synchronously, before the re-render hides the button
-        if (retriedSessionRef.current === state.sessionId) return;
-        retriedSessionRef.current = state.sessionId;
-        setRetriedSession(state.sessionId);
-        state.onRetry?.();
-      }}
-    >
-      Retry
-    </ButtonLink>
-  );
+  const retry = async () => {
+    const clickedSession = state.sessionId;
+    // the ref locks synchronously, before the re-render hides the button
+    if (retryingSessionRef.current === clickedSession) return;
+    retryingSessionRef.current = clickedSession;
+    setRetryingSession(clickedSession);
+    try {
+      await onRetry();
+    } finally {
+      if (currentSessionRef.current === clickedSession) {
+        retryingSessionRef.current = undefined;
+        setRetryingSession(undefined);
+      }
+    }
+  };
+
+  return <ButtonLink onClick={() => void retry()}>Retry</ButtonLink>;
 };
 
 export const TransactionModalContent = () => {

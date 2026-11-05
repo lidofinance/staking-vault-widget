@@ -41,10 +41,11 @@ export const useCreateVault = () => {
         );
         trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault);
 
-        const { data, value, defaultAdmin } = schemaToTx(values);
+        const { data, value, defaultAdmin, owners } = schemaToTx(values);
         const expected: VaultTxExpected = {
           factory: vaultFactoryAddress,
           defaultAdmin,
+          owners,
         };
         setSubmitted({ expected, values });
 

@@ -1,6 +1,10 @@
 import { describe, test, expect } from '@jest/globals';
 
-import { canRunQueuedRetry, type QueuedRetry } from '../queued-retry';
+import {
+  canRunQueuedRetry,
+  shouldCloseAfterRetry,
+  type QueuedRetry,
+} from '../queued-retry';
 
 const formRetry = () => {};
 const reportRetry = () => {};
@@ -43,5 +47,25 @@ describe('canRunQueuedRetry', () => {
   test('modal closed or not in error', () => {
     expect(canRunQueuedRetry(modal({ isOpen: false }), queued)).toBe(false);
     expect(canRunQueuedRetry(modal({ stage: 'success' }), queued)).toBe(false);
+  });
+});
+
+describe('shouldCloseAfterRetry', () => {
+  test('closes the modal over form errors when validation rejected the retry', () => {
+    expect(shouldCloseAfterRetry('invalid', 3, 3)).toBe(true);
+  });
+
+  test('keeps the modal when the retry reached the sender', () => {
+    // a submitted retry shows its own session, or its error, in the modal
+    expect(shouldCloseAfterRetry('submitted', 3, 3)).toBe(false);
+    expect(shouldCloseAfterRetry('submitted', 3, 4)).toBe(false);
+  });
+
+  test("doesn't close a modal that now shows another operation", () => {
+    expect(shouldCloseAfterRetry('invalid', 3, 4)).toBe(false);
+  });
+
+  test('a skipped submit leaves the modal as is', () => {
+    expect(shouldCloseAfterRetry('skipped', 3, 3)).toBe(false);
   });
 });

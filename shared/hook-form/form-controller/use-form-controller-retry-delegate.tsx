@@ -4,9 +4,8 @@ import { useCallback, useMemo } from 'react';
 export const useFormControllerRetry = () => {
   const retryEvent = useMemo(() => new EventSubsciption(), []);
 
-  const retryFire = useCallback(() => {
-    retryEvent.fire();
-  }, [retryEvent]);
+  // resolves when the retry attempt ends (see TransactionModalState.onRetry)
+  const retryFire = useCallback(() => retryEvent.fire(), [retryEvent]);
 
   return {
     retryFire,

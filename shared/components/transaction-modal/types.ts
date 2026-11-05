@@ -35,7 +35,8 @@ export type TransactionModalState = {
   sessionId: number;
   isOpen: boolean;
   isBatch: boolean;
-  onRetry?: () => void;
+  // resolves when the retry attempt it starts has ended (or right away if it was queued)
+  onRetry?: () => void | Promise<unknown>;
   stage: TransactionModalStage;
   details: TransactionModalDetails;
 };

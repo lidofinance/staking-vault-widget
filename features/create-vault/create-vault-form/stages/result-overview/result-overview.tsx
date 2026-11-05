@@ -7,7 +7,10 @@ import { appPaths } from 'consts/routing';
 import { TxLinkEtherscan } from 'shared/components';
 import { WarningMessage } from 'shared/components/warning-message';
 import type { VaultTxExpected } from 'features/create-vault/create-vault-form/utils';
-import { useParsedVaultTx } from 'features/create-vault/create-vault-form/use-parsed-vault-tx';
+import {
+  useFallbackVaultList,
+  useParsedVaultTx,
+} from 'features/create-vault/create-vault-form/use-parsed-vault-tx';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 import type {
   CreateVaultSchema,
@@ -59,6 +62,7 @@ export const ResultOverview = ({
   submittedValues,
 }: ResultOverviewProps) => {
   const parsed = useParsedVaultTx(transactionResult, expected);
+  const fallback = useFallbackVaultList(expected);
 
   // logged here only: the page follows every successful submit, the modal may be closed
   useEffect(() => {
@@ -85,9 +89,9 @@ export const ResultOverview = ({
           </ListItemCompact>
         </List>
       ) : (
-        // the tx succeeded, so the vault exists; no address is guessed, the user is sent to their list
+        // the tx succeeded, so the vault exists; no address is guessed, the user is sent to a vault list
         <WarningMessage data-testid="createVault-result-unconfirmedVault">
-          {texts.unconfirmed(!!txHash)}
+          {texts.unconfirmed(!!txHash, fallback.list)}
         </WarningMessage>
       )}
 
@@ -114,8 +118,8 @@ export const ResultOverview = ({
           <Button fullwidth>{texts.goToVault}</Button>
         </Link>
       ) : (
-        <Link href={appPaths.myVaults}>
-          <Button fullwidth>{texts.goToMyVaults}</Button>
+        <Link href={fallback.path}>
+          <Button fullwidth>{texts.goToVaultList(fallback.list)}</Button>
         </Link>
       )}
       {txHash && <TxLinkEtherscan txHash={txHash} />}
