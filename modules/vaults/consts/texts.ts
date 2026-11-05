@@ -186,6 +186,7 @@ export const vaultTexts = {
     weth: {
       loadingUnwrap: 'Unwrapping wETH',
       loadingWrap: 'Wrapping ETH to wETH',
+      loadingTransfer: 'Sending wETH to the recipient',
     },
     tier: {
       fields: {
