@@ -13,7 +13,7 @@ import { ButtonLink } from '../button-link';
 
 import type { Hash } from 'viem';
 import type { TransactionModalAction, TransactionModalState } from './types';
-import type { Dispatch } from 'react';
+import { useRef, useState, type Dispatch } from 'react';
 
 const getIconComponent = (state: TransactionModalState) => {
   switch (state.stage) {
@@ -135,18 +135,29 @@ const showEtherscanLink = (state: TransactionModalState) => {
   }
 };
 
-const showRetryButton = (state: TransactionModalState) => {
-  if (state.onRetry && state.stage === 'error') {
-    return (
-      <ButtonLink
-        onClick={() => {
-          state.onRetry?.();
-        }}
-      >
-        Retry
-      </ButtonLink>
-    );
-  }
+// One Retry per error: a second click on the same error (e.g. a double click, or a click
+// while the retry is still validating before it opens a new modal session) is ignored,
+// so it can't turn into another attempt. A new session (the retry itself) shows Retry again.
+const RetryButton = ({ state }: { state: TransactionModalState }) => {
+  const retriedSessionRef = useRef<number>();
+  const [retriedSession, setRetriedSession] = useState<number>();
+
+  if (!state.onRetry || state.stage !== 'error') return null;
+  if (retriedSession === state.sessionId) return null;
+
+  return (
+    <ButtonLink
+      onClick={() => {
+        // the ref locks synchronously, before the re-render hides the button
+        if (retriedSessionRef.current === state.sessionId) return;
+        retriedSessionRef.current = state.sessionId;
+        setRetriedSession(state.sessionId);
+        state.onRetry?.();
+      }}
+    >
+      Retry
+    </ButtonLink>
+  );
 };
 
 export const TransactionModalContent = () => {
@@ -168,7 +179,7 @@ export const TransactionModalContent = () => {
       <Content>
         {getMainContent(state, dispatchModal)}
         <div data-testid="footerHint">{showEtherscanLink(state)}</div>
-        {showRetryButton(state)}
+        <RetryButton state={state} />
       </Content>
     </Modal>
   );

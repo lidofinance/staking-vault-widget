@@ -12,6 +12,8 @@ import { useDappStatus } from 'modules/web3';
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import type { EventSubsciption } from 'utils/event-subsciption';
 
+import { canRunQueuedRetry, type QueuedRetry } from './queued-retry';
+
 type FormControllerProps<
   TFieldValues extends FieldValues = FieldValues,
   TContext = any,
@@ -52,13 +54,12 @@ export const FormController = <
   const isDisabled = Boolean(formObject.formState.disabled);
   const isDisabledRef = useRef(false);
   isDisabledRef.current = isDisabled;
-  // Retry clicked while the form was busy, it runs once the form is ready.
-  // Holds the modal's onRetry at click time: the modal is shared by all senders,
-  // and each sender's retry callback is stable, so it tells this form's error from another's
-  const [queuedRetry, setQueuedRetry] = useState<() => void>();
-  const { isOpen, stage, onRetry } = useTransactionModal();
-  const onRetryRef = useRef(onRetry);
-  onRetryRef.current = onRetry;
+  // Retry clicked while the form was busy, it runs once the form is ready (see QueuedRetry)
+  const [queuedRetry, setQueuedRetry] = useState<QueuedRetry>();
+  const { isOpen, stage, onRetry, sessionId } = useTransactionModal();
+  // the modal at click time, read synchronously in the retry handler
+  const modalRef = useRef({ onRetry, sessionId });
+  modalRef.current = { onRetry, sessionId };
 
   // Bind submit action
   const doSubmit = useMemo(() => {
@@ -95,25 +96,26 @@ export const FormController = <
     return retryEvent.subscribe(() => {
       // a retry while busy is queued instead of dropped, otherwise the Retry click does nothing
       if (isSubmittingRef.current || isDisabledRef.current) {
-        // wrapped, so the state setter stores the callback instead of calling it
-        const clicked = onRetryRef.current;
-        setQueuedRetry(() => clicked);
+        const { onRetry: clicked, sessionId: clickedSession } =
+          modalRef.current;
+        setQueuedRetry(
+          clicked ? { onRetry: clicked, sessionId: clickedSession } : undefined,
+        );
         return;
       }
       void doSubmit();
     });
   }, [retryEvent, doSubmit]);
 
-  // Run the queued retry once the form is ready, unless the modal no longer offers it:
-  // retry may be disabled after the refetch (e.g. data is not fresh), the modal was closed,
-  // or it now shows the error of another sender (e.g. the side nav report action)
-  const canRunQueuedRetry =
-    isOpen && stage === 'error' && !!onRetry && onRetry === queuedRetry;
+  // Run the queued retry once the form is ready, unless the modal no longer offers it
+  const canRunQueued =
+    !!queuedRetry &&
+    canRunQueuedRetry({ isOpen, stage, onRetry, sessionId }, queuedRetry);
   useEffect(() => {
     if (!queuedRetry || isSubmitting || isDisabled) return;
     setQueuedRetry(undefined);
-    if (canRunQueuedRetry) void doSubmit();
-  }, [queuedRetry, isSubmitting, isDisabled, canRunQueuedRetry, doSubmit]);
+    if (canRunQueued) void doSubmit();
+  }, [queuedRetry, isSubmitting, isDisabled, canRunQueued, doSubmit]);
 
   // Reset form amount after disconnect wallet
   useEffect(() => {
