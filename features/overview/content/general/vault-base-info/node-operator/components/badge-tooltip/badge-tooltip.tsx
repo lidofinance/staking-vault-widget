@@ -9,7 +9,7 @@ type BadgeTooltipProps = {
   description: string;
 };
 
-const docsLink = `${config.docsOrigin}/run-on-lido/stvaults/operational-and-management-guides/node-operators-identification`;
+const docsLink = `${config.docsOrigin}/run-on-lido/stvaults/node-operators/basic-stvaults/node-operator-identification-guide`;
 
 export const BadgeTooltip: FC<BadgeTooltipProps> = ({ description }) => {
   return (

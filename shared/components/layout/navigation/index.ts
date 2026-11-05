@@ -1,2 +1,2 @@
 export { Navigation } from './navigation';
-export { AllVaultsMobile, AllVaultsDesktop } from './components';
+export { AllVaultsMobile } from './components';
