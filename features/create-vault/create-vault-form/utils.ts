@@ -1,4 +1,4 @@
-import { encodeFunctionData, parseEventLogs } from 'viem';
+import { encodeFunctionData } from 'viem';
 
 import { VaultFactoryAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
 import {
@@ -7,9 +7,12 @@ import {
   VAULTS_ROOT_ROLES_MAP,
 } from 'modules/vaults';
 
-import type { CreateVaultSchema } from '../types';
+import { getContractAddress } from 'config';
 import type { TransactionResponse } from 'modules/web3';
+
+import type { CreateVaultSchema } from '../types';
 import { createVaultSchema } from './validation';
+import { parseVaultTx } from './parse-vault-tx';
 
 export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
@@ -42,21 +45,7 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   };
 };
 
-export const parseVaultTx = ({ receipts }: TransactionResponse) => {
-  if (!receipts || receipts.length === 0)
-    return { vaultAddress: null, txHash: null };
-
-  const receipt = receipts[receipts.length - 1];
-  const txHash = receipt.transactionHash;
-
-  const logs = parseEventLogs({
-    abi: VaultFactoryAbi,
-    logs: receipt.logs,
-    strict: true,
-    eventName: 'VaultCreated',
-  });
-
-  if (logs.length === 0) return { vaultAddress: null, txHash };
-
-  return { vaultAddress: logs[0].args.vault, txHash };
-};
+export const parseCreateVaultTx = (result: TransactionResponse) =>
+  parseVaultTx(result, (chainId) =>
+    getContractAddress(chainId, 'vaultFactory'),
+  );

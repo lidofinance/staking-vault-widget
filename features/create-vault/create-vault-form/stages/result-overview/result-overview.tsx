@@ -5,7 +5,7 @@ import { Button } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
 import { TxLinkEtherscan } from 'shared/components';
-import { parseVaultTx } from 'features/create-vault/create-vault-form/utils';
+import { parseCreateVaultTx } from 'features/create-vault/create-vault-form/utils';
 import { MAIN_SETTINGS } from 'features/create-vault/consts';
 
 import {
@@ -29,7 +29,7 @@ type ResultOverviewProps = {
 export const ResultOverview = ({ transactionResult }: ResultOverviewProps) => {
   const { txHash, vaultAddress } = useMemo(() => {
     if (transactionResult) {
-      return parseVaultTx(transactionResult);
+      return parseCreateVaultTx(transactionResult);
     }
     return { vaultAddress: null, txHash: null };
   }, [transactionResult]);
