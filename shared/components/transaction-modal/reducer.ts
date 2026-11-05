@@ -1,5 +1,17 @@
 import type { TransactionModalAction, TransactionModalState } from './types';
 
+export const initialTransactionModalState: TransactionModalState = {
+  sessionId: 0,
+  isBatch: false,
+  isOpen: false,
+  stage: 'none',
+  onRetry: undefined,
+  details: {
+    actionLoadingText: '',
+    actionCompleteText: '',
+  },
+};
+
 export const transactionModalReducer = (
   state: TransactionModalState,
   action: TransactionModalAction,
@@ -7,10 +19,11 @@ export const transactionModalReducer = (
   const { type, ...payload } = action;
   switch (type) {
     case 'init':
+      // a new session starts clean: result, error and tx link of the previous one are dropped
       return {
         ...payload,
         details: {
-          ...state.details,
+          ...initialTransactionModalState.details,
           ...(action.details ?? {}),
         },
       } as TransactionModalState;
@@ -26,6 +39,9 @@ export const transactionModalReducer = (
         ? { ...state, onRetry: undefined }
         : state;
     case 'stage':
+      // a late stage of an older operation (e.g. its receipt wait failed after the user
+      // closed its modal and started another one) must not touch the current session
+      if (action.sessionId !== state.sessionId) return state;
       return {
         ...state,
         isOpen: true,

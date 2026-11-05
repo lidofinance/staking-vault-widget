@@ -111,6 +111,9 @@ const receiptsToLastBlock = (
     .reduce((max, block) => (block > max ? block : max), 0n);
 };
 
+// unique across all senders: the modal is shared by them
+let lastModalSessionId = 0;
+
 export const useSendTransaction = () => {
   const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
   const { address } = useDappStatus();
@@ -142,6 +145,8 @@ export const useSendTransaction = () => {
         progressKey,
       );
       const progress = progressRef.current;
+      // each call is its own modal session, so late results of an older call are ignored
+      const sessionId = ++lastModalSessionId;
       const completedSteps = progress?.completedSteps ?? new Set<string>();
 
       const receipts: TransactionReceipt[] = [];
@@ -155,19 +160,10 @@ export const useSendTransaction = () => {
       > = [];
 
       try {
-        const validationResult = await validateAddress(address);
-        // if address is not valid, don't send the transaction
-        if (!validationResult) {
-          throw new Error('Validation failed');
-        }
-
-        invariant(
-          publicClient && walletClient,
-          '[useSendTransaction] Public or wallet clients are not initialized',
-        );
-
+        // the session starts before any check, so even an early failure is shown in it
         dispatchModal({
           type: 'init',
+          sessionId,
           isBatch: useSendCalls,
           isOpen: false,
           stage: 'none',
@@ -181,10 +177,22 @@ export const useSendTransaction = () => {
           },
         });
 
+        const validationResult = await validateAddress(address);
+        // if address is not valid, don't send the transaction
+        if (!validationResult) {
+          throw new Error('Validation failed');
+        }
+
+        invariant(
+          publicClient && walletClient,
+          '[useSendTransaction] Public or wallet clients are not initialized',
+        );
+
         // Optionally callback can be provided if some tx prep is async
         if (typeof transactions === 'function') {
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'collecting',
           });
 
@@ -210,6 +218,7 @@ export const useSendTransaction = () => {
           // For AA we display single modal with general action text
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'signing',
             details: {
               actionCompleteText: mainActionCompleteText,
@@ -228,6 +237,7 @@ export const useSendTransaction = () => {
 
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'awaiting',
             details: {
               transactionId: id,
@@ -292,6 +302,7 @@ export const useSendTransaction = () => {
 
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'success',
             details: {
               transactionResult,
@@ -308,6 +319,7 @@ export const useSendTransaction = () => {
           // display each transaction text modal
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'signing',
             details: {
               actionLoadingText: tx.loadingActionText ?? mainActionLoadingText,
@@ -332,6 +344,7 @@ export const useSendTransaction = () => {
 
           dispatchModal({
             type: 'stage',
+            sessionId,
             stage: 'awaiting',
             details: {
               transactionId: txHash,
@@ -362,6 +375,7 @@ export const useSendTransaction = () => {
 
         dispatchModal({
           type: 'stage',
+          sessionId,
           stage: 'success',
           details: {
             transactionResult,
@@ -405,6 +419,7 @@ export const useSendTransaction = () => {
 
         dispatchModal({
           type: 'stage',
+          sessionId,
           stage: 'error',
           allowRetry: canRetry,
           details: {

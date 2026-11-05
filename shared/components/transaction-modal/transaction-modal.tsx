@@ -6,11 +6,11 @@ import {
   useReducer,
 } from 'react';
 
-import type {
-  TransactionModalContextValue,
-  TransactionModalState,
-} from './types';
-import { transactionModalReducer } from './reducer';
+import type { TransactionModalContextValue } from './types';
+import {
+  initialTransactionModalState,
+  transactionModalReducer,
+} from './reducer';
 import { TransactionModalContent } from './transaction-modal-content';
 
 const TransactionModalContext =
@@ -27,19 +27,11 @@ export const useTransactionModal = () => {
   return context;
 };
 
-const initialState: TransactionModalState = {
-  isBatch: false,
-  isOpen: false,
-  stage: 'none',
-  onRetry: undefined,
-  details: {
-    actionLoadingText: '',
-    actionCompleteText: '',
-  },
-};
-
 export const TransactionModal = ({ children }: PropsWithChildren) => {
-  const [state, dispatch] = useReducer(transactionModalReducer, initialState);
+  const [state, dispatch] = useReducer(
+    transactionModalReducer,
+    initialTransactionModalState,
+  );
   const value = useMemo(() => {
     return {
       ...state,

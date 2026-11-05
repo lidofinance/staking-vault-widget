@@ -29,6 +29,10 @@ type TransactionModalDetails = {
 };
 
 export type TransactionModalState = {
+  // the send operation the modal currently belongs to (0 before the first one);
+  // set by 'init', and 'stage' of any other operation is ignored, so a late result
+  // of an older operation can't overwrite a newer one or reuse its Retry
+  sessionId: number;
   isOpen: boolean;
   isBatch: boolean;
   onRetry?: () => void;
@@ -52,6 +56,8 @@ export type TransactionModalAction =
     }
   | {
       type: 'stage';
+      // the operation that dispatches it, see TransactionModalState.sessionId
+      sessionId: number;
       stage: Exclude<TransactionModalStage, 'none'>;
       allowRetry?: boolean;
       details?: Partial<TransactionModalDetails>;
