@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   FieldValues,
   FormProvider,
@@ -123,8 +123,14 @@ export const FormController = <
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDappActive]);
 
-  // Reset the form when chain id or wallet address changed
-  useWagmiConnectionChangedCallback(resetDefault);
+  // Reset the form when chain id or wallet address changed.
+  // A queued retry belongs to the previous connection: the modal's retry callback is stable
+  // across accounts, so the queue is dropped here, otherwise it would send from the new account
+  const onConnectionChanged = useCallback(() => {
+    setQueuedRetry(undefined);
+    resetDefault();
+  }, [resetDefault]);
+  useWagmiConnectionChangedCallback(onConnectionChanged);
 
   return (
     <FormProvider {...formObject}>

@@ -7,6 +7,7 @@ import { FormController, useDisableForm } from 'shared/hook-form';
 import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { useConnectionGuard } from 'shared/hooks/use-connection-guard';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useEditMainSettings } from '../hooks';
@@ -32,6 +33,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: settingsData, refetch } = useMainSettingsFormData();
   const { dispatchModal } = useTransactionModal();
   const disabled = useDisableForm();
+  const startConnectionGuard = useConnectionGuard();
 
   const promisedSettingsData = useAwaiter(settingsData).awaiter;
 
@@ -56,6 +58,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       );
       // data the txs are built against, to tell user edits from changes made by others
       const previous = settingsData;
+      const isSameConnection = startConnectionGuard();
       const { result, isStateChanged } = await editMainSettings(data);
 
       const [_, __, vaultInfo] = await Promise.all([
@@ -64,6 +67,10 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         refetch({ cancelRefetch: true, throwOnError: false }),
         refetchVault({ cancelRefetch: true, throwOnError: false }),
       ]);
+
+      // the wallet switched meanwhile: the form is already reset for the new connection,
+      // so edits of the previous one must not be restored into it
+      if (!isSameConnection()) return result.success;
 
       // we reset form anyway because partial success is possible and will invalidate form state
       // restore pending changes only from data read after the latest tx, otherwise applied txs would be resent
@@ -107,6 +114,7 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
       retryFire,
       setValue,
       settingsData,
+      startConnectionGuard,
     ],
   );
 

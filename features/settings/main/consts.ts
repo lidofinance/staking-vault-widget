@@ -21,11 +21,13 @@ import type {
 } from './types';
 import { addressSchema } from 'utils/zod-validation';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { isSameFee, isWholeBasisPoints } from './fee';
 
 export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';
 const INVALID_NUMBER_MIN_MESSAGE = `Must be ${MIN_FEE_VALUE} or above`;
 const INVALID_NUMBER_MAX_MESSAGE = `Cannot exceed ${MAX_FEE_VALUE}%`;
+const INVALID_FEE_PRECISION_MESSAGE = 'At most 2 decimal places (0.01%)';
 const INVALID_NUMBER_EXPIRY_MIN_MESSAGE = `Must be ${MIN_CONFIRM_EXPIRY} or above`;
 const INVALID_NUMBER_EXPIRY_MAX_MESSAGE = `Must be ${MAX_CONFIRM_EXPIRY} or less`;
 const INVALID_NUMBER_DATA_OBJECT_MESSAGE = { message: 'Only number is valid' };
@@ -48,7 +50,8 @@ const permissionSchema = z.object({
 const votingFeeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
   .min(MIN_FEE_VALUE, INVALID_NUMBER_MIN_MESSAGE)
-  .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE);
+  .max(MAX_FEE_VALUE, INVALID_NUMBER_MAX_MESSAGE)
+  .refine(isWholeBasisPoints, INVALID_FEE_PRECISION_MESSAGE);
 
 const votingLifetimeSchema = z.coerce
   .number(INVALID_NUMBER_DATA_OBJECT_MESSAGE)
@@ -202,9 +205,10 @@ const checkForDuplicateValues = (
     .filter((item) => item.type !== 'custom')
     .map((item) => Number(item.value));
 
-  const isNodeOperatorFeeRateDuplicate = uniqueNodeOperatorFeeRate
-    .map((rate) => String(rate))
-    .includes(values.feeRateCustom ?? '');
+  // compared in basis points, so 1.00 duplicates 1
+  const isNodeOperatorFeeRateDuplicate = uniqueNodeOperatorFeeRate.some(
+    (rate) => isSameFee(rate, values.feeRateCustom),
+  );
 
   const isConfirmExpiryDuplicate = uniqueConfirmExpiry.includes(
     Number(values.confirmExpiryCustom ?? '') * 3600,

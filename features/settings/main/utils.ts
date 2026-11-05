@@ -9,6 +9,9 @@ import {
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
+import { feePercentToBasisPoints } from './fee';
+
+export { feePercentToBasisPoints };
 import type {
   RoleFieldSchema,
   MainSettingsFormValidatedValues,
@@ -224,12 +227,6 @@ const getPendingRoles = (
     ...pendingGrants,
   ];
 };
-
-// toFixed drops float noise (e.g. 0.57 * 100 = 56.99999999999999), floor drops precision beyond basis points
-export const feePercentToBasisPoints = (percent: number | string) =>
-  Math.floor(
-    Number(((Number(percent) * VAULT_TOTAL_BASIS_POINTS) / 100).toFixed(6)),
-  );
 
 const isProposalApplied = (
   value: number,

@@ -8,6 +8,7 @@ import { useVault } from 'modules/vaults';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { useConnectionGuard } from 'shared/hooks/use-connection-guard';
 import { FormController, useDisableForm } from 'shared/hook-form';
 import { useTransactionModal } from 'shared/components/transaction-modal';
 
@@ -29,6 +30,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
   const asyncPermissions = useAwaiter(rolesList);
   const { editPermissions, retryEvent, retryFire } = useEditPermissions();
   const disabled = useDisableForm();
+  const startConnectionGuard = useConnectionGuard();
 
   const formObject = useForm<EditPermissionsSchema>({
     defaultValues: async () =>
@@ -48,6 +50,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 
       // state the submitted edits were made against
       const previous = rolesList && toPermissionsFormValues(rolesList);
+      const isSameConnection = startConnectionGuard();
       const { success } = await editPermissions(values);
       const [, refetched] = await Promise.all([
         invalidateVaultConfig(),
@@ -56,6 +59,10 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
           throwOnError: false,
         }),
       ]);
+
+      // the wallet switched meanwhile: the form is already reset for the new connection,
+      // so edits of the previous one must not be restored into it
+      if (!isSameConnection()) return success;
 
       // the form is always reset to fresh data, so confirmed changes are shown as current state
       // (a confirmed grant must not stay a removable 'grant' row or vanish on "Clear changes")
@@ -100,6 +107,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
       reset,
       retryFire,
       rolesList,
+      startConnectionGuard,
       trigger,
     ],
   );
