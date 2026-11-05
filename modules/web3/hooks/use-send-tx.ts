@@ -43,6 +43,12 @@ export type SendTransactionArguments = {
   allowRetry?: boolean;
 } & Pick<TransactionModalState['details'], 'renderSuccessContent'>;
 
+// sending context captured at submit time, immutable for the mutation lifetime
+type SendTransactionVariables = SendTransactionArguments & {
+  expectedChainId: number;
+  expectedAccount: Address | undefined;
+};
+
 // TODO: wrapper around error with readable message
 type TransactionError = Error;
 
@@ -79,7 +85,7 @@ const receiptsToLastBlock = (
 
 export const useSendTransaction = () => {
   const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
-  const { address } = useDappStatus();
+  const { address, chainId } = useDappStatus();
   const { dispatchModal } = useTransactionModal();
   const { retryEvent, retryFire } = useFormControllerRetry();
   const { validateAddress } = useAddressValidation();
@@ -95,21 +101,34 @@ export const useSendTransaction = () => {
       forceLegacy,
       allowRetry = true,
       renderSuccessContent,
-    }: SendTransactionArguments): Promise<TransactionResponse> => {
+      expectedChainId,
+      expectedAccount,
+    }: SendTransactionVariables): Promise<TransactionResponse> => {
       const receipts: TransactionReceipt[] = [];
       const useSendCalls = !forceLegacy && isAA;
 
       try {
+        invariant(
+          publicClient && walletClient,
+          '[useSendTransaction] Public or wallet clients are not initialized',
+        );
+        // guard against clients/account changed between submit and execution
+        if (
+          walletClient.chain.id !== expectedChainId ||
+          publicClient.chain.id !== expectedChainId ||
+          address !== expectedAccount
+        ) {
+          throw new DisplayableError(
+            'Network or account changed. The transaction was not sent. Review the form and submit again.',
+            false,
+          );
+        }
+
         const validationResult = await validateAddress(address);
         // if address is not valid, don't send the transaction
         if (!validationResult) {
           throw new Error('Validation failed');
         }
-
-        invariant(
-          publicClient && walletClient,
-          '[useSendTransaction] Public or wallet clients are not initialized',
-        );
 
         dispatchModal({
           type: 'init',
@@ -320,15 +339,28 @@ export const useSendTransaction = () => {
   const mutation = useMutation<
     TransactionResponse,
     TransactionError,
-    SendTransactionArguments
+    SendTransactionVariables
   >({
     mutationKey: ['sendTransaction', isAA, retryFire],
     mutationFn,
+    // fail fast instead of queueing txs while offline
+    networkMode: 'always',
   });
+
+  const { mutateAsync } = mutation;
+  const sendTX = useCallback(
+    (args: SendTransactionArguments) =>
+      mutateAsync({
+        ...args,
+        expectedChainId: chainId,
+        expectedAccount: address,
+      }),
+    [mutateAsync, chainId, address],
+  );
 
   return {
     mutation,
-    sendTX: mutation.mutateAsync,
+    sendTX,
     retryEvent,
     retryFire,
   };
