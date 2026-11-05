@@ -8,9 +8,9 @@ export const CurrentVaultWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 44px;
   width: fit-content;
-  margin: ${({ theme }) => theme.spaceMap.md}px 0 0;
+  margin: 0 0 ${({ theme }) => theme.spaceMap.lg}px;
+  height: 52px;
   background-color: ${({ theme }) => theme.colors.background};
   overflow: clip;
 
