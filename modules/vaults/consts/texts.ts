@@ -3,6 +3,7 @@ import { ONE_ETHER } from 'consts/tx';
 import { toStethValue, truncateAddress } from 'utils';
 
 import type { TierConfirmationFnNames } from '../types';
+import type { VAULTS_ALL_ROLES } from './roles';
 
 type LidoToken = 'stETH' | 'wstETH';
 
@@ -734,22 +735,22 @@ export const vaultTexts = {
         carrySpread: {
           title: 'Carry Spread',
           description:
-            'Estimated yearly returns from staking in the vault, after deductions of fees and stETH Liability growth due to stETH rebase. Averaged over the past 7 days.',
+            'Shows whether staking rewards, net of fees, outpace stETH Liability growth from the rebase. Positive means the value left to you after covering the Liability grows; negative means it shrinks. Annualized relative to Total Value, averaged over the past 7 days.',
         },
         bottomLine: {
           title: 'stVault Daily Bottom Line',
           description:
-            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability grow driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
+            'The final amount of rewards earned by the vault owner within the stVault, considering the stETH Liability growth driven by stETH rebasing. Calculated as the difference between Net Staking Rewards and stETH Liability growth.',
         },
         netStakingRewards: {
           title: 'Net daily staking rewards',
           description:
-            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+            'The amount of staking rewards remaining after deductions of Node Operator Fee and Lido fees.',
         },
         stethRebase: {
           title: 'stETH Daily Rebase',
           description:
-            'The change of stETH amount happening due to stETH is a rebasing token. Amount for rebase is based o the stETH APR.',
+            'The change of stETH amount happening because stETH is a rebasing token. Amount for rebase is based on the stETH APR.',
         },
       },
       offBookDepositsHint: {
@@ -766,7 +767,9 @@ export const vaultTexts = {
         cooldownHighlight: '72-hour cooldown period',
         bodyTail:
           ' is required before the capital can be released from quarantine.',
-        learnMoreLink: '', // TODO: add learnMoreLink after doc will be ready
+        // keep in sync with QUARANTINE_GUIDE_LINK in features/overview/consts.ts
+        learnMoreLink:
+          'https://docs.lido.fi/run-on-lido/stvaults/concepts-and-reference/how-quarantine-works',
       },
       pendingDepositsDelay: 'These values may take ~15 minutes to update.',
       totalValue: {
@@ -811,7 +814,7 @@ export const vaultTexts = {
         netStakingRewards: {
           title: 'Net daily staking rewards',
           description:
-            'The amount of staking rewards remain after deductions of Node Operator Fee and Lido fees.',
+            'The amount of staking rewards remaining after deductions of Node Operator Fee and Lido fees.',
         },
         grossStakingRewards: {
           title: 'Gross daily staking rewards',
@@ -1103,6 +1106,17 @@ export const vaultTexts = {
       duplicate: 'Value already exists',
       noRoles: (roleNames: string[]) =>
         `You don't have ${roleNames.join(',')} role${roleNames.length > 1 ? 's' : ''}` as const,
+      noPermission: (actions: string[]) =>
+        `You do not have permission${actions.length > 1 ? 's' : ''} to ${actions.join(' and ')}.` as const,
+      noPermissionActions: {
+        supplier: 'supply ETH',
+        minter: 'mint stETH',
+        withdrawer: 'withdraw ETH',
+        repayer: 'repay stETH',
+        rebalancer: 'rebalance',
+        volunataryDisconnecter: 'disconnect the stVault',
+        vaultConfiguration: 'request a tier change',
+      } as Partial<Record<VAULTS_ALL_ROLES, string>>,
 
       vault: {
         loadingVault: 'Error loading stVault',
@@ -1113,6 +1127,8 @@ export const vaultTexts = {
         notCreatedByFactory: 'stVault is not created by Factory',
         reportMissing:
           'Report for your stVault is not available. Try again later.',
+        reportAlreadyApplied:
+          'Oracle report has already been applied to your stVault.',
         vaultDisconnected: 'stVault is disconnected.',
       },
     },
