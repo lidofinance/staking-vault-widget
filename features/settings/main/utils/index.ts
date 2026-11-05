@@ -3,7 +3,7 @@ import { type Address, isAddressEqual } from 'viem';
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
-import { multipleDataFields } from './consts';
+import { multipleDataFields } from '../consts';
 import type {
   RoleFieldSchema,
   MainSettingsFormValidatedValues,
@@ -11,7 +11,7 @@ import type {
   MainSettingsFormData,
   VotingOptionType,
   MainSettingFormsValues,
-} from './types';
+} from '../types';
 
 const formatType = (
   member: Address,
@@ -193,3 +193,5 @@ export const formatValueView = (
 
   return value;
 };
+
+export * from './role-members';

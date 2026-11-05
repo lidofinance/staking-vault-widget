@@ -273,6 +273,9 @@ export const vaultTexts = {
         const suffix = roleCount > 1 ? 's' : '';
         return `Revoking ${roleCount} role${suffix}` as const;
       },
+      lastRoleMemberTitle: 'Cannot remove the last role member',
+      lastRoleMemberDescription: (roleTitle: string) =>
+        `This change would leave the ${roleTitle} role without members. Keep at least one address or add a replacement. Vault data is being refreshed.`,
       noGuarantorLoading: `Granting PDG Guarantor to the new address` as const,
       noDepositorLoading: `Granting PDG Depositor to the new address` as const,
       confirmNoFee: (action: ConfirmAction, feePercent: number) =>
