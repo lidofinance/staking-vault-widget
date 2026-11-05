@@ -19,7 +19,8 @@ import {
 import { createVaultSchema } from './validation';
 import { useCreateVault } from './use-create-vault';
 
-import { MainSettings } from './stages/main-settings';
+import { Addresses } from './stages/addresses';
+import { Settings } from './stages/settings';
 import { Confirmation } from './stages/confirmation';
 import { ResultOverview } from './stages/result-overview';
 
@@ -43,7 +44,7 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
         confirmExpiry: '36',
         acceptTerms: false,
         roles: {},
-        step: CREATE_VAULT_FORM_STEPS.main,
+        step: CREATE_VAULT_FORM_STEPS.addresses,
       },
       disabled: !isDappActive,
       mode: 'all',
@@ -89,10 +90,10 @@ export const CreateVaultForm: FC<PropsWithChildren> = () => {
               Step {step} of {CREATE_VAULT_STEPS}
             </FormSubtitle>
             <FormTitle data-testid="createVault-formTitle">
-              {' '}
               {SECTION_NAMES_BY_STEP[step]}
             </FormTitle>
-            <MainSettings isShown={step === CREATE_VAULT_FORM_STEPS.main} />
+            <Addresses isShown={step === CREATE_VAULT_FORM_STEPS.addresses} />
+            <Settings isShown={step === CREATE_VAULT_FORM_STEPS.settings} />
             <Confirmation isShown={step === CREATE_VAULT_FORM_STEPS.confirm} />
           </>
         )}

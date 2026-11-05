@@ -1,7 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import invariant from 'tiny-invariant';
-import { useEstimateGas } from 'wagmi';
-import { useFormContext, useFormState } from 'react-hook-form';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 
@@ -16,7 +14,7 @@ import { getContractAddress } from 'config';
 import { vaultTexts } from 'modules/vaults';
 
 import { ModalCTA } from './modal-cta';
-import { CreateVaultSchema } from '../types';
+import type { CreateVaultSchema } from '../types';
 import { schemaToTx } from './utils';
 
 export const useCreateVault = () => {
@@ -61,26 +59,4 @@ export const useCreateVault = () => {
     ),
     ...rest,
   };
-};
-
-export const useEstimateGasCreateVault = () => {
-  const { chainId, address } = useDappStatus();
-  const vaultFactoryAddress = getContractAddress(chainId, 'vaultFactory');
-  const { getValues } = useFormContext<CreateVaultSchema>();
-  const { isValid } = useFormState();
-
-  const txData = useMemo(
-    () => (isValid ? schemaToTx(getValues()) : null),
-    [getValues, isValid],
-  );
-
-  return useEstimateGas({
-    to: vaultFactoryAddress,
-    data: txData?.data,
-    account: address,
-    value: txData?.value,
-    query: {
-      enabled: !!txData,
-    },
-  });
 };

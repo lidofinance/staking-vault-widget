@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { ButtonIcon } from '@lidofinance/lido-ui';
-import { CheckboxHookForm } from 'shared/hook-form/controls';
 
 /// CreateVaultInput
 
@@ -8,7 +7,13 @@ export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-self: stretch;
-  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  gap: 12px;
+`;
+
+export const InputHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 export const InputTitle = styled.p`
@@ -16,22 +21,13 @@ export const InputTitle = styled.p`
   font-weight: 700;
   line-height: 24px;
   color: ${({ theme }) => theme.colors.text};
-  gap: 4px;
-  display: inline-flex;
-  & > svg {
-    align-self: center;
-  }
 `;
 
-export const InputNotes = styled.p`
+export const InputDescription = styled.p`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   font-weight: 400;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.textSecondary};
-
-  & > b {
-    color: ${({ theme }) => theme.colors.text};
-  }
 `;
 
 export const AddressList = styled.div`
@@ -61,22 +57,4 @@ export const AddressInputGroup = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
-`;
-
-// ConfirmInput
-export const ConfirmWrapper = styled.div`
-  display: flex;
-  gap: 12px;
-`;
-
-export const InfoList = styled.ul`
-  display: flex;
-  flex-direction: column;
-  padding-left: ${({ theme }) => theme.spaceMap.md}px;
-  user-select: none;
-  color: ${({ theme }) => theme.colors.textSecondary};
-`;
-
-export const StyledCheckboxHookForm = styled(CheckboxHookForm)`
-  align-items: flex-start;
 `;

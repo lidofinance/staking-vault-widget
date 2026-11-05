@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { Button } from '@lidofinance/lido-ui';
 
 import { appPaths } from 'consts/routing';
-import { TxLinkEtherscan } from 'shared/components';
+import { vaultTexts } from 'modules/vaults';
+import { Hint, TxLinkEtherscan } from 'shared/components';
 import { parseVaultTx } from 'features/create-vault/create-vault-form/utils';
-import { MAIN_SETTINGS } from 'features/create-vault/consts';
+import { CONFIRM_ENTRIES } from 'features/create-vault/consts';
 
 import {
   SectionContainer,
@@ -21,6 +22,9 @@ import {
 } from './styles';
 
 import type { TransactionResponse } from 'modules/web3';
+
+const connectionDepositTexts =
+  vaultTexts.actions.createVault.fields.connectionDeposit;
 
 type ResultOverviewProps = {
   transactionResult?: TransactionResponse;
@@ -49,11 +53,14 @@ export const ResultOverview = ({ transactionResult }: ResultOverviewProps) => {
 
       <List>
         <ConfirmInfoTitle>{'Main settings'}</ConfirmInfoTitle>
-        {MAIN_SETTINGS.map((item) => {
-          return <ConfirmationEntry {...item} key={item.name} />;
+        {CONFIRM_ENTRIES.map((item) => {
+          return <ConfirmationEntry {...item} key={item.name} showHint />;
         })}
         <ListItemCompact>
-          <ConfirmationLabel>Initial supply to stVault</ConfirmationLabel>
+          <ConfirmationLabel>
+            {connectionDepositTexts.title}
+            <Hint text={connectionDepositTexts.description} />
+          </ConfirmationLabel>
           <TextBold>1 ETH</TextBold>
         </ListItemCompact>
       </List>
