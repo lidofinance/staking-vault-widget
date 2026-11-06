@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
 } from 'react';
 import invariant from 'tiny-invariant';
 import { useForm } from 'react-hook-form';
@@ -18,9 +19,11 @@ import {
   useDisableFormByVerification,
 } from 'shared/components/banners/additional-verification';
 
-import { SupplyFormResolver } from './validation';
+import { createSupplyFormResolver } from './validation';
+import { getSupplyResumeState } from './supply-resume';
 import {
   useSupply,
+  useSupplyCompletedSteps,
   useSupplyFormValidationContext,
   useSupplyFormData,
 } from './hooks';
@@ -49,7 +52,17 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
 }) => {
   const { isDappActive } = useDappStatus();
   const { validationContext } = useSupplyFormValidationContext();
-  const { supply, retryEvent } = useSupply();
+  const { supply, retryEvent, getCompletedSteps } = useSupply();
+  // resume after a confirmed unwrap/fund: the form validates and quotes what a resubmit sends
+  const getSupplyCompletedSteps = useSupplyCompletedSteps(getCompletedSteps);
+  const supplyResolver = useMemo(
+    () =>
+      createSupplyFormResolver(
+        (values) =>
+          getSupplyResumeState(getSupplyCompletedSteps(values)).balanceCheck,
+      ),
+    [getSupplyCompletedSteps],
+  );
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('supply');
 
@@ -68,13 +81,28 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'onTouched',
     disabled: !isDappActive || disabled || isDisabledByVerification,
     context: useAwaiter(validationContext).awaiter,
-    resolver: SupplyFormResolver,
+    resolver: supplyResolver,
   });
 
   const { watch, reset, resetField } = formObject;
-  const [mintSteth, amount, token] = watch(['mintSteth', 'amount', 'token']);
-
-  const supplyFormData = useSupplyFormData(token, mintSteth, amount);
+  const [mintSteth, amount, token, mintAddress] = watch([
+    'mintSteth',
+    'amount',
+    'token',
+    'mintAddress',
+  ]);
+  const completedSteps = getSupplyCompletedSteps({
+    amount,
+    mintSteth,
+    token,
+    mintAddress,
+  });
+  const supplyFormData = useSupplyFormData(
+    token,
+    mintSteth,
+    amount,
+    completedSteps,
+  );
   const invalidateSupplyFormData = supplyFormData.invalidateSupplyFormData;
   const isStethMintable = supplyFormData.isStethMintableQuery.data === true;
 

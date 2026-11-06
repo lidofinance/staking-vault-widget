@@ -1,10 +1,12 @@
 import { describe, test, expect } from '@jest/globals';
 
 import {
+  getCompletedStepsFor,
   getFailedBatchOutcome,
   getRetryDecision,
   resolveResumeProgress,
   skipCompletedSteps,
+  toProgressKey,
   type RetryDecisionInput,
 } from '../send-tx-retry';
 
@@ -230,5 +232,28 @@ describe('getRetryDecision', () => {
     });
     expect(decision.isAborted).toBe(false);
     expect(decision.canRetry).toBe(true);
+  });
+});
+
+describe('completed steps for a resume key', () => {
+  const progress = { key: '0xA:values', completedSteps: new Set(['fund']) };
+
+  test('same account and values see the confirmed steps', () => {
+    expect(
+      getCompletedStepsFor(progress, toProgressKey('0xA', 'values')),
+    ).toEqual(new Set(['fund']));
+  });
+
+  test('another account, other values or no key see none', () => {
+    expect(
+      getCompletedStepsFor(progress, toProgressKey('0xB', 'values')).size,
+    ).toBe(0);
+    expect(
+      getCompletedStepsFor(progress, toProgressKey('0xA', 'other')).size,
+    ).toBe(0);
+    expect(
+      getCompletedStepsFor(progress, toProgressKey('0xA', undefined)).size,
+    ).toBe(0);
+    expect(getCompletedStepsFor(undefined, '0xA:values').size).toBe(0);
   });
 });

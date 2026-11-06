@@ -13,6 +13,8 @@ import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
 
 import type { SupplyFormFieldValues } from 'features/funding/supply/form/types';
 
+import { getMintFunding, getSupplyResumeState } from '../supply-resume';
+
 // RPC normally reaches a just mined block within seconds; after the timeout
 // balances are read anyway and the balance polling catches up
 // (the wait runs in the background, so it only bounds when the balances are refetched)
@@ -22,6 +24,8 @@ export const useSupplyFormData = (
   token: SupplyFormFieldValues['token'],
   mintSteth: SupplyFormFieldValues['mintSteth'],
   amount: SupplyFormFieldValues['amount'],
+  // steps confirmed for the current values by a failed attempt, a resubmit skips them
+  completedSteps: ReadonlySet<string>,
 ) => {
   const { invalidateVaultState } = useVault();
   const { publicClient, getLatestTxBlock } = useLidoSDK();
@@ -38,7 +42,15 @@ export const useSupplyFormData = (
     applyReport: true,
   });
 
-  const maxMintableStethQuery = useMaxMintable(mintSteth ? amount : undefined);
+  // quoted as the resubmit mints: a confirmed fund is not added again
+  const maxMintableStethQuery = useMaxMintable(
+    !mintSteth
+      ? undefined
+      : amount === null
+        ? amount
+        : getMintFunding(amount, completedSteps),
+  );
+  const { isFunded } = getSupplyResumeState(completedSteps);
 
   const invalidateSupplyFormData = useCallback(() => {
     const options: RefetchOptions = {
@@ -77,8 +89,11 @@ export const useSupplyFormData = (
       balanceQuery,
       maxMintableStethQuery,
       isStethMintableQuery,
+      // the amount is already in the vault, a resubmit only mints
+      isFunded,
     }),
     [
+      isFunded,
       balanceQuery,
       invalidateSupplyFormData,
       isStethMintableQuery,

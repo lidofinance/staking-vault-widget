@@ -6,7 +6,7 @@ import {
   OperationAbortedError,
   TransactionEntry,
   type TransactionsContext,
-  toResumeKey,
+  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -19,12 +19,25 @@ import {
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { SupplyFormValidatedValues } from 'features/funding/supply/form/types';
+import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
+
+import {
+  getMintFunding,
+  getSupplyResumeKey,
+  getSupplyResumeState,
+} from '../supply-resume';
+
+// RPC normally reaches a just mined block within seconds; after the timeout
+// the capacity is read anyway (it may then miss the fund and be lower, never higher)
+const FUNDED_RPC_BLOCK_TIMEOUT_MS = 30_000;
 
 export const useSupply = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVault();
 
   const prepareReportCalls = useReportCalls();
+  const { getLatestTxBlock } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
 
   return {
@@ -61,9 +74,15 @@ export const useSupply = () => {
           if (mintSteth) {
             calls.push(...(await prepareReportCalls()));
 
-            // on resume after a confirmed fund the amount is already in the vault,
-            // counting it again would overestimate the capacity
-            const fundingAmount = completedSteps.has('fund') ? 0n : amount;
+            const fundingAmount = getMintFunding(amount, completedSteps);
+            // the capacity is read without the fund then, so it has to be read at a block
+            // that includes it: a lagging node would return a lower capacity
+            if (getSupplyResumeState(completedSteps).isFunded) {
+              await awaitWithTimeout(
+                waitForRpcBlock(publicClient, getLatestTxBlock() ?? 0n),
+                FUNDED_RPC_BLOCK_TIMEOUT_MS,
+              ).catch(() => undefined);
+            }
 
             const [maxMintableShares] = await readWithReport({
               contracts: [
@@ -93,9 +112,11 @@ export const useSupply = () => {
         const { success, error } = await withSuccess(
           sendTX({
             transactions: prepareTransactions,
+            // all or nothing in AA, as withdraw and mint: executed calls of a partially
+            // failed batch can't be mapped to steps, so a resubmit would fund again
+            forceAtomic: true,
             // confirmed unwrap and fund are skipped on retry, so they are not sent twice
-            resumeKey: toResumeKey({
-              vault: activeVault.address,
+            resumeKey: getSupplyResumeKey(activeVault.address, {
               amount,
               mintSteth,
               token,
@@ -111,7 +132,7 @@ export const useSupply = () => {
         // stopped by the user after confirmed steps: the form is reset, a new submit starts over
         return { success, isAborted: error instanceof OperationAbortedError };
       },
-      [activeVault, prepareReportCalls, publicClient, sendTX],
+      [activeVault, getLatestTxBlock, prepareReportCalls, publicClient, sendTX],
     ),
     ...rest,
   };

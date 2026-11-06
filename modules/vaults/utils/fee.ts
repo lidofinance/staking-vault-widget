@@ -1,7 +1,8 @@
-import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import { VAULT_TOTAL_BASIS_POINTS } from '../consts/common';
 
-// The fee is set on chain in basis points, so a percent is only meaningful up to 0.01%.
-// Validation, the submit counter and the tx builder share these, so they agree on "changed".
+// The node operator fee is set on chain in basis points, so a percent is only meaningful
+// up to 0.01%. Every form converting a fee (vault creation, settings: validation, the submit
+// counter and the tx builder) uses these, so they agree on the value and on "changed".
 
 const toBasisPointsExact = (percent: number | string) =>
   // toFixed drops float noise (e.g. 0.57 * 100 = 56.99999999999999)

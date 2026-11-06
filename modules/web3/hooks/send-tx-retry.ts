@@ -5,6 +5,22 @@ export type ResumeProgress = {
   completedSteps: Set<string>;
 };
 
+// progress belongs to an account and the submitted values: another account or other values start over
+export const toProgressKey = (
+  address: string | undefined,
+  resumeKey: string | undefined,
+): string | undefined =>
+  resumeKey === undefined ? undefined : `${address}:${resumeKey}`;
+
+// steps confirmed for exactly this key, e.g. to show the form what a resubmit will skip
+export const getCompletedStepsFor = (
+  progress: ResumeProgress | undefined,
+  key: string | undefined,
+): ReadonlySet<string> =>
+  key !== undefined && progress?.key === key
+    ? progress.completedSteps
+    : new Set<string>();
+
 // progress is reused only for the same key (account + submitted values), otherwise it starts over
 export const resolveResumeProgress = (
   current: ResumeProgress | undefined,

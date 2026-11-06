@@ -176,7 +176,12 @@ export const vaultTexts = {
           amountSteth?: bigint | null,
         ) =>
           `Supply ${balance(amount)}${token} & Mint ${balance(amountSteth)}stETH` as const,
+        // resume after a confirmed fund: only the mint is sent
+        mintOnly: (amountSteth?: bigint | null) =>
+          `Mint ${balance(amountSteth)}stETH` as const,
       },
+      alreadySupplied: (token: ExternalToken, amount?: bigint | null) =>
+        `${balance(amount)}${token} is already supplied to the vault. Only minting will be sent.`,
       loading: 'Supplying ETH into the vault',
       completed: (token: string) => `${token} supplied`,
     },
@@ -186,6 +191,11 @@ export const vaultTexts = {
       completed: (token: string) => `${token} withdrawn`,
       submit: (token: ExternalToken, amount?: bigint | null) =>
         `Withdraw ${balance(amount)}${token}` as const,
+      // resume after a confirmed withdraw: only the wrap is sent
+      wrapOnly: (amount?: bigint | null) =>
+        `Wrap ${balance(amount)}ETH to wETH` as const,
+      alreadyWithdrawn: (amount?: bigint | null) =>
+        `${balance(amount)}ETH is already withdrawn from the vault. Only wrapping into wETH will be sent.`,
     },
     disburse: {
       title: 'Disburse Node Operator fee',

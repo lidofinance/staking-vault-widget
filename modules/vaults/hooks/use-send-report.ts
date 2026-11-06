@@ -7,6 +7,8 @@ import { useSendTransaction, withSuccess } from 'modules/web3';
 import type { ModalRenderSuccessContent } from 'shared/components/transaction-modal';
 import { runExclusive } from 'utils/run-exclusive';
 
+import { sendReportAndRefresh } from './send-report-and-refresh';
+
 type UseSendReportOptions = {
   loadingText?: string;
   completedText?: string;
@@ -34,27 +36,27 @@ export const useSendReport = ({
     () =>
       runExclusive(
         isSubmittingRef,
-        async () => {
-          const { success } = await withSuccess(
-            sendTX({
-              transactions: async () => {
-                const calls = await prepareReportCalls();
-                // report can be applied by someone else after the UI was loaded,
-                // in this case there is nothing to send, just refresh the vault state
-                if (calls.length === 0) {
-                  void invalidateVaultState();
-                  throw new ReportAlreadyAppliedError();
-                }
-                return calls;
-              },
-              mainActionLoadingText: loadingText,
-              mainActionCompleteText: completedText,
-              renderSuccessContent,
-            }),
-          );
-
-          return success;
-        },
+        () =>
+          sendReportAndRefresh(
+            () =>
+              withSuccess(
+                sendTX({
+                  transactions: async () => {
+                    const calls = await prepareReportCalls();
+                    // report can be applied by someone else after the UI was loaded,
+                    // in this case there is nothing to send, the vault state is refreshed below
+                    if (calls.length === 0) {
+                      throw new ReportAlreadyAppliedError();
+                    }
+                    return calls;
+                  },
+                  mainActionLoadingText: loadingText,
+                  mainActionCompleteText: completedText,
+                  renderSuccessContent,
+                }),
+              ),
+            invalidateVaultState,
+          ),
         false,
       ),
     [

@@ -21,7 +21,7 @@ import type {
 } from './types';
 import { addressSchema } from 'utils/zod-validation';
 import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { isSameFee, isWholeBasisPoints } from './fee';
+import { isSameFee, isWholeBasisPoints } from 'modules/vaults/utils/fee';
 
 export const DUPLICATED_ADDRESS_MESSAGE = 'Address already exists';
 export const INVALID_ADDRESS_MESSAGE = 'Invalid ethereum address';

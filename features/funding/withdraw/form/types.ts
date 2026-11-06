@@ -26,4 +26,6 @@ export type WithdrawFormValidationContextAwaitable =
 
 export type WithdrawFormData = {
   withdrawableEtherQuery: ReturnType<typeof useWithdrawable>;
+  // resume after a confirmed withdraw (the wrap failed): a resubmit only wraps
+  isWithdrawn: boolean;
 };

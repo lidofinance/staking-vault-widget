@@ -4,6 +4,7 @@ import { Suppliable } from './suppliable';
 import { SupplyFormInputs } from './supply-form-inputs';
 import { SubmitButton } from './submit-button';
 import { TxInfo } from './tx-info';
+import { SupplyResumeWarning } from './supply-resume-warning';
 
 import {
   VerificationErrorBanners,
@@ -17,6 +18,7 @@ export const SupplyForm = () => {
       <Suppliable />
       <SupplyFormInputs />
       <VerificationWarningBanners action="supply" />
+      <SupplyResumeWarning />
       <SubmitButton />
       <TxInfo />
     </SupplyFormProvider>

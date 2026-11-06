@@ -14,10 +14,10 @@ import {
   withSuccess,
   TransactionEntry,
   useLidoSDK,
-  toResumeKey,
 } from 'modules/web3';
 
 import type { WithdrawFormValidatedValues } from '../types';
+import { getWithdrawResumeKey } from '../withdraw-form-context/withdraw-resume';
 
 export const useWithdraw = () => {
   const { activeVault } = useVault();
@@ -53,8 +53,7 @@ export const useWithdraw = () => {
           transactions: async () => [...(await prepareReportCalls()), ...calls],
           forceAtomic: true,
           // confirmed withdraw is skipped on retry, so only the wrap is sent again
-          resumeKey: toResumeKey({
-            vault: activeVault.address,
+          resumeKey: getWithdrawResumeKey(activeVault.address, {
             amount,
             recipient,
             token,

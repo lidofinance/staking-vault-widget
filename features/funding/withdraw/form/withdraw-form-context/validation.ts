@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { Resolver } from 'react-hook-form';
 
 import {
+  amountSchema,
   maxAmountSchema,
   supplyTokenSchema,
   validateRecipientSchema,
@@ -18,7 +19,12 @@ import type {
   WithdrawFormValidationContextAwaitable,
 } from '../types';
 
-export const WithdrawFormSchema = (context: WithdrawFormValidationContext) => {
+export const WithdrawFormSchema = (
+  context: WithdrawFormValidationContext,
+  // resume after a confirmed withdraw (the wrap failed): the amount has already left the
+  // withdrawable balance and is not withdrawn again, so that balance must not reject it
+  { skipsWithdrawableCheck = false }: { skipsWithdrawableCheck?: boolean } = {},
+) => {
   const withdrawableEther = context?.withdrawableEther ?? 0n;
   const validateRecipientArgs = context?.validateRecipientArgs ?? {
     vaultAddress: zeroAddress,
@@ -26,7 +32,9 @@ export const WithdrawFormSchema = (context: WithdrawFormValidationContext) => {
   };
 
   return z.object({
-    amount: maxAmountSchema(withdrawableEther),
+    amount: skipsWithdrawableCheck
+      ? amountSchema
+      : maxAmountSchema(withdrawableEther),
     token: supplyTokenSchema,
     recipient: validateRecipientSchema(validateRecipientArgs),
   });
@@ -37,25 +45,32 @@ export const WithdrawFormSchema = (context: WithdrawFormValidationContext) => {
 // known to never settle (e.g. vault disconnected, dashboard unreadable)
 const timedOutContexts = new WeakSet<WithdrawFormValidationContextAwaitable>();
 
-export const withdrawFormResolver: Resolver<
-  WithdrawFormFieldValues,
-  WithdrawFormValidationContextAwaitable,
-  WithdrawFormValidatedValues
-> = async (values, context, options) => {
-  invariant(context, '[WithdrawFormResolver] context is undefined');
-
-  const contextValue = timedOutContexts.has(context)
-    ? undefined
-    : await awaitWithTimeout(context, 4000).catch(() => {
-        timedOutContexts.add(context);
-        return undefined;
-      });
-
-  const schema = WithdrawFormSchema(contextValue);
-
-  return zodResolver<
+export const createWithdrawFormResolver =
+  (
+    skipsWithdrawableCheck: (values: WithdrawFormFieldValues) => boolean = () =>
+      false,
+  ): Resolver<
     WithdrawFormFieldValues,
-    unknown,
+    WithdrawFormValidationContextAwaitable,
     WithdrawFormValidatedValues
-  >(schema)(values, contextValue, options);
-};
+  > =>
+  async (values, context, options) => {
+    invariant(context, '[WithdrawFormResolver] context is undefined');
+
+    const contextValue = timedOutContexts.has(context)
+      ? undefined
+      : await awaitWithTimeout(context, 4000).catch(() => {
+          timedOutContexts.add(context);
+          return undefined;
+        });
+
+    const schema = WithdrawFormSchema(contextValue, {
+      skipsWithdrawableCheck: skipsWithdrawableCheck(values),
+    });
+
+    return zodResolver<
+      WithdrawFormFieldValues,
+      unknown,
+      WithdrawFormValidatedValues
+    >(schema)(values, contextValue, options);
+  };

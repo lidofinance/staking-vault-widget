@@ -6,7 +6,7 @@ import { ConnectWalletButton } from 'shared/wallet';
 import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
-import { isSameFee } from 'features/settings/main/fee';
+import { isSameFee } from 'modules/vaults/utils/fee';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 import { useDepositorRolesPermissions } from 'features/settings/main/hooks';
 import type { MainSettingsFormValidatedValues } from 'features/settings/main/types';

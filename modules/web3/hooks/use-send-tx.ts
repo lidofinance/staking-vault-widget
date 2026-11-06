@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   hexToBigInt,
   type Address,
@@ -29,9 +29,11 @@ import { useAddressValidation } from 'providers/address-validation-provider';
 import { isUserRejectedError } from '../utils/is-user-rejected-error';
 import { useAA } from './use-aa';
 import {
+  getCompletedStepsFor,
   getFailedBatchOutcome,
   getRetryDecision,
   resolveResumeProgress,
+  toProgressKey,
   skipCompletedSteps,
   type ResumeProgress,
 } from './send-tx-retry';
@@ -123,6 +125,28 @@ export const useSendTransaction = () => {
   const { isAA } = useAA();
   // confirmed steps of the last failed attempt, kept for the resume with the same key
   const progressRef = useRef<ResumeProgress | undefined>(undefined);
+  // the form behind this sender is gone (e.g. the user navigated away while a tx was pending):
+  // its retry event has no subscriber, so the modal must not offer a Retry that does nothing
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      // only clears the modal's Retry if it is still this sender's
+      dispatchModal({ type: 'disable-retry', onRetry: retryFire });
+    };
+  }, [dispatchModal, retryFire]);
+  // copy of the progress after each attempt, so the UI re-renders with what a resubmit will skip
+  const [progressSnapshot, setProgressSnapshot] = useState<ResumeProgress>();
+  const publishProgress = useCallback(() => {
+    const progress = progressRef.current;
+    setProgressSnapshot(
+      progress && {
+        key: progress.key,
+        completedSteps: new Set(progress.completedSteps),
+      },
+    );
+  }, []);
 
   const mutationFn = useCallback(
     async ({
@@ -138,8 +162,7 @@ export const useSendTransaction = () => {
       renderSuccessContent,
     }: SendTransactionArguments): Promise<TransactionResponse> => {
       // progress of another account or other values must not be reused
-      const progressKey =
-        resumeKey === undefined ? undefined : `${address}:${resumeKey}`;
+      const progressKey = toProgressKey(address, resumeKey);
       progressRef.current = resolveResumeProgress(
         progressRef.current,
         progressKey,
@@ -421,7 +444,8 @@ export const useSendTransaction = () => {
           type: 'stage',
           sessionId,
           stage: 'error',
-          allowRetry: canRetry,
+          // an error arriving after the form unmounted is shown without Retry
+          allowRetry: canRetry && isMountedRef.current,
           details: {
             errorText:
               displayError?.message ??
@@ -435,6 +459,8 @@ export const useSendTransaction = () => {
         });
         console.error(`[useSendTransaction] TX Error`, error);
         throw isAborted ? new OperationAbortedError(error) : error;
+      } finally {
+        publishProgress();
       }
     },
     [
@@ -442,6 +468,7 @@ export const useSendTransaction = () => {
       dispatchModal,
       isAA,
       publicClient,
+      publishProgress,
       retryFire,
       setLatestTxBlock,
       validateAddress,
@@ -458,11 +485,19 @@ export const useSendTransaction = () => {
     mutationFn,
   });
 
+  // steps a send with this resumeKey (for the connected account) will skip
+  const getCompletedSteps = useCallback(
+    (resumeKey: string | undefined) =>
+      getCompletedStepsFor(progressSnapshot, toProgressKey(address, resumeKey)),
+    [address, progressSnapshot],
+  );
+
   return {
     mutation,
     sendTX: mutation.mutateAsync,
     retryEvent,
     retryFire,
+    getCompletedSteps,
   };
 };
 

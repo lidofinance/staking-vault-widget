@@ -1,17 +1,13 @@
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 
-// keep the test on pure logic, without app config and contracts
-jest.unstable_mockModule('modules/vaults', () => ({
-  VAULT_TOTAL_BASIS_POINTS: 10_000,
-}));
-
-const { feePercentToBasisPoints, isWholeBasisPoints, isSameFee } = await import(
-  '../fee'
-);
+import { feePercentToBasisPoints, isSameFee, isWholeBasisPoints } from '../fee';
 
 describe('fee in basis points', () => {
   test('converts without float noise', () => {
+    // a plain Math.floor(fee * 10000 / 100) gives 56 and 112 here
     expect(feePercentToBasisPoints('0.57')).toBe(57);
+    expect(feePercentToBasisPoints(0.57)).toBe(57);
+    expect(feePercentToBasisPoints(1.13)).toBe(113);
     expect(feePercentToBasisPoints(1)).toBe(100);
   });
 

@@ -15,8 +15,7 @@ import {
   VaultNotCreatedByFactoryError,
   DashboardNotBelongToVault,
 } from 'modules/vaults';
-import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
+import { getBlockToReadAt } from 'utils/wait-for-rpc-block';
 
 import {
   DisplayableError,
@@ -80,9 +79,9 @@ export const useBaseVaultData = (
         vaultAddress,
       });
 
-      const blockNumber = await awaitWithTimeout(
-        waitForRpcBlock(publicClient, latestTxBlock ?? 0n),
-        VAULT_REPORT_REFETCH_INTERVAL_MS,
+      const blockNumber = await getBlockToReadAt(
+        publicClient,
+        latestTxBlock ?? 0n,
       );
 
       const DEFAULT_CALL_OPTIONS = { blockNumber };

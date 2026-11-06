@@ -165,7 +165,19 @@ const RetryButton = ({ state }: { state: TransactionModalState }) => {
     }
   };
 
-  return <ButtonLink onClick={() => void retry()}>Retry</ButtonLink>;
+  return (
+    <ButtonLink
+      onClick={() => {
+        // the attempt reports its own errors in the modal; this only keeps a failure
+        // outside it (e.g. a refetch after the tx) from being an unhandled rejection
+        retry().catch((error) =>
+          console.error('[TransactionModal] retry failed', error),
+        );
+      }}
+    >
+      Retry
+    </ButtonLink>
+  );
 };
 
 export const TransactionModalContent = () => {

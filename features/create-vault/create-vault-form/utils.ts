@@ -7,11 +7,8 @@ import {
 import type { Address, Hash, Hex, Log } from 'viem';
 
 import { VaultFactoryAbi } from '@lidofinance/lido-ethereum-sdk/stvault';
-import {
-  VAULT_TOTAL_BASIS_POINTS,
-  VAULTS_CONNECT_DEPOSIT,
-  VAULTS_ROOT_ROLES_MAP,
-} from 'modules/vaults';
+import { feePercentToBasisPoints } from 'modules/vaults/utils/fee';
+import { VAULTS_CONNECT_DEPOSIT, VAULTS_ROOT_ROLES_MAP } from 'modules/vaults';
 
 import type { CreateVaultSchema } from '../types';
 import type { TransactionResponse } from 'modules/web3';
@@ -21,9 +18,8 @@ export const schemaToTx = (unparsedValues: CreateVaultSchema) => {
   const values = createVaultSchema.parse(unparsedValues);
   const { confirmExpiry, feeRate, nodeOperatorManager, nodeOperator } = values;
   const confirmExpiryFormatted = BigInt(confirmExpiry * 60 * 60);
-  const nodeOperatorFeeRateFormatted = BigInt(
-    Math.floor((feeRate * VAULT_TOTAL_BASIS_POINTS) / 100),
-  );
+  // toFixed before floor: 0.57% must become 57 bp, not 56 (0.57 * 100 = 56.99999999999999)
+  const nodeOperatorFeeRateFormatted = BigInt(feePercentToBasisPoints(feeRate));
 
   // first manager goes to factory as direct argument
   const [defaultAdmin, ...restAdmins] = values.vaultOwner;

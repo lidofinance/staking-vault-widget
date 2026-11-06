@@ -2,14 +2,9 @@ import invariant from 'tiny-invariant';
 import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 
-import {
-  useVault,
-  VAULTS_ALL_ROLES_MAP,
-  VAULT_REPORT_REFETCH_INTERVAL_MS,
-} from 'modules/vaults';
+import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
 import { useLidoSDK, useRefetchOnTxBlock } from 'modules/web3';
-import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
+import { getBlockToReadAt } from 'utils/wait-for-rpc-block';
 
 import { EDITABLE_ROLES_LIST } from '../consts';
 
@@ -70,9 +65,9 @@ export const usePermissionsFormData = () => {
 
       // wait for RPC to reach the latest tx block and read at it,
       // so data after partial success of legacy batch includes applied txs
-      const blockNumber = await awaitWithTimeout(
-        waitForRpcBlock(publicClient, getLatestTxBlock() ?? 0n),
-        VAULT_REPORT_REFETCH_INTERVAL_MS,
+      const blockNumber = await getBlockToReadAt(
+        publicClient,
+        getLatestTxBlock() ?? 0n,
       );
 
       // TODO: can be changed to `VaultViewer.geRoleMembers`

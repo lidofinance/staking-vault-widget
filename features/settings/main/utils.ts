@@ -9,7 +9,7 @@ import {
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
-import { feePercentToBasisPoints } from './fee';
+import { feePercentToBasisPoints } from 'modules/vaults/utils/fee';
 
 export { feePercentToBasisPoints };
 import type {
