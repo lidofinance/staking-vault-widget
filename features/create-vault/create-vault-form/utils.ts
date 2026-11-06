@@ -91,18 +91,36 @@ export type ParsedVaultTx =
       reason: VaultTxUnresolvedReason;
     };
 
+// A wallet receipt is unvalidated data: one without a hash can't be told apart from
+// others and is skipped, missing logs count as none, so a malformed one can't crash render.
+const toScannableReceipt = (receipt: unknown): VaultTxReceipt | null => {
+  const { transactionHash, logs } = (receipt ?? {}) as Partial<VaultTxReceipt>;
+  if (typeof transactionHash !== 'string') return null;
+  return { transactionHash, logs: Array.isArray(logs) ? logs : [] };
+};
+
 export const parseVaultTx = (
   { receipts, isAA, callStatus }: TransactionResponse,
   { factory, defaultAdmin }: VaultTxExpected,
 ): ParsedVaultTx => {
-  // in AA, confirmations may fail after the wallet reported success:
-  // then the wallet receipts are the only source of the created vault
-  const sourceReceipts: readonly VaultTxReceipt[] =
-    receipts && receipts.length > 0
-      ? receipts
-      : isAA
-        ? callStatus.receipts ?? []
-        : [];
+  // In AA only the last wallet receipt is re-read with confirmations (and that may fail
+  // after the wallet reported success), while the factory event may be in any of the
+  // wallet's receipts: all of them are scanned, each tx once (by hash, case-insensitively:
+  // wallets may differ in casing). For a tx in both lists the confirmed receipt is kept:
+  // it is read from the RPC, while a wallet receipt is unvalidated and may lack logs.
+  const byHash = new Map<string, VaultTxReceipt>();
+  for (const receipt of isAA ? callStatus.receipts ?? [] : []) {
+    const scannable = toScannableReceipt(receipt);
+    const key = scannable && scannable.transactionHash.toLowerCase();
+    if (scannable && key && !byHash.has(key)) byHash.set(key, scannable);
+  }
+  for (const receipt of receipts ?? []) {
+    const key = receipt.transactionHash.toLowerCase();
+    // re-added, so the confirmed (latest) tx stays last
+    byHash.delete(key);
+    byHash.set(key, receipt);
+  }
+  const sourceReceipts = [...byHash.values()];
 
   if (sourceReceipts.length === 0)
     return { vaultAddress: null, txHash: null, reason: 'no-receipts' };
@@ -117,9 +135,12 @@ export const parseVaultTx = (
       // only topics and data are decoded; wallet logs lack the block/tx fields of a full Log
       logs: (receipt.logs as unknown as Log[]).filter(
         (log) =>
-          // wallet logs are not validated, and isAddressEqual throws on a malformed address
-          isAddress(log.address, { strict: false }) &&
-          isAddressEqual(log.address, factory),
+          // wallet logs are not validated: isAddressEqual throws on a malformed address,
+          // and decoding needs topics and data
+          isAddress(log?.address, { strict: false }) &&
+          isAddressEqual(log.address, factory) &&
+          Array.isArray(log.topics) &&
+          typeof log.data === 'string',
       ),
       strict: true,
       eventName: 'DashboardCreated',

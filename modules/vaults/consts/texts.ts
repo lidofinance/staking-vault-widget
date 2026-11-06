@@ -182,6 +182,10 @@ export const vaultTexts = {
       },
       alreadySupplied: (token: ExternalToken, amount?: bigint | null) =>
         `${balance(amount)}${token} is already supplied to the vault. Only minting will be sent.`,
+      alreadyUnwrapped: (amount?: bigint | null, withMint?: boolean) =>
+        `${balance(amount)}wETH is already unwrapped. Only supplying ETH${
+          withMint ? ' and minting' : ''
+        } will be sent.`,
       loading: 'Supplying ETH into the vault',
       completed: (token: string) => `${token} supplied`,
     },

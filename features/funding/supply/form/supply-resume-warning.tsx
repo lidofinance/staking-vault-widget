@@ -6,16 +6,25 @@ import { WarningMessage } from 'shared/components/warning-message';
 import { useSupplyForm } from './supply-form-provider';
 import type { SupplyFormFieldValues } from './types';
 
-// Resume after a confirmed fund (the mint failed): the same values send only the mint.
+// Resume after a confirmed step: after a fund (the mint failed) only the mint is sent,
+// after an unwrap (the fund failed) the fund from the unwrapped ETH and the mint.
 // Changing any value starts a new supply, and the notice disappears.
 export const SupplyResumeWarning = () => {
-  const { isFunded } = useSupplyForm();
+  const { isFunded, isUnwrapped } = useSupplyForm();
   const [amount, token, mintSteth] =
     useFormContext<SupplyFormFieldValues>().watch([
       'amount',
       'token',
       'mintSteth',
     ]);
+
+  if (isUnwrapped) {
+    return (
+      <WarningMessage data-testid="supplyForm-alreadyUnwrapped">
+        {vaultTexts.actions.supply.alreadyUnwrapped(amount, mintSteth)}
+      </WarningMessage>
+    );
+  }
 
   if (!mintSteth || !isFunded) return null;
 

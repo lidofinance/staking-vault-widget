@@ -29,7 +29,7 @@ export const useVaultSettingsData = () => {
     queryKey: [...queryKeys.config(), 'vault-main-settings'],
     enabled: !!activeVault,
     select,
-    queryFn: async (): Promise<VaultMainSettingsData> => {
+    queryFn: async ({ signal }): Promise<VaultMainSettingsData> => {
       invariant(activeVault, '[useConfirmationsInfo] owner is not defined');
 
       const dashboard = activeVault.dashboard;
@@ -39,6 +39,9 @@ export const useVaultSettingsData = () => {
       const blockNumber = await getBlockToReadAt(
         publicClient,
         getLatestTxBlock() ?? 0n,
+        {
+          signal,
+        },
       );
       const callOptions = { blockNumber };
 

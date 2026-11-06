@@ -60,7 +60,7 @@ export const usePermissionsFormData = () => {
     ],
     enabled: !!activeVault,
     select: collectRolesToFormValues,
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       invariant(activeVault, 'Active vault is not defined');
 
       // wait for RPC to reach the latest tx block and read at it,
@@ -68,6 +68,9 @@ export const usePermissionsFormData = () => {
       const blockNumber = await getBlockToReadAt(
         publicClient,
         getLatestTxBlock() ?? 0n,
+        {
+          signal,
+        },
       );
 
       // TODO: can be changed to `VaultViewer.geRoleMembers`

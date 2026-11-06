@@ -19,18 +19,13 @@ import {
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { SupplyFormValidatedValues } from 'features/funding/supply/form/types';
-import { awaitWithTimeout } from 'utils/await-with-timeout';
-import { waitForRpcBlock } from 'utils/wait-for-rpc-block';
+import { waitForRpcBlockWithin } from 'utils/wait-for-rpc-block';
 
 import {
   getMintFunding,
   getSupplyResumeKey,
   getSupplyResumeState,
 } from '../supply-resume';
-
-// RPC normally reaches a just mined block within seconds; after the timeout
-// the capacity is read anyway (it may then miss the fund and be lower, never higher)
-const FUNDED_RPC_BLOCK_TIMEOUT_MS = 30_000;
 
 export const useSupply = () => {
   const publicClient = usePublicClient();
@@ -39,6 +34,7 @@ export const useSupply = () => {
   const prepareReportCalls = useReportCalls();
   const { getLatestTxBlock } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
+  const { getCompletedSteps } = rest;
 
   return {
     supply: useCallback(
@@ -50,6 +46,18 @@ export const useSupply = () => {
       }: SupplyFormValidatedValues) => {
         invariant(activeVault, '[useSupply] activeVault is undefined');
         const wethContract = getWethContract(publicClient);
+        const resumeKey = getSupplyResumeKey(activeVault.address, {
+          amount,
+          mintSteth,
+          token,
+          mintAddress,
+        });
+        // a resume after a confirmed unwrap supplies the ETH it gave, not wETH
+        const suppliedToken =
+          getSupplyResumeState(getCompletedSteps(resumeKey)).balanceCheck ===
+          'eth'
+            ? 'ETH'
+            : token;
 
         const prepareTransactions = async ({
           completedSteps,
@@ -78,10 +86,12 @@ export const useSupply = () => {
             // the capacity is read without the fund then, so it has to be read at a block
             // that includes it: a lagging node would return a lower capacity
             if (getSupplyResumeState(completedSteps).isFunded) {
-              await awaitWithTimeout(
-                waitForRpcBlock(publicClient, getLatestTxBlock() ?? 0n),
-                FUNDED_RPC_BLOCK_TIMEOUT_MS,
-              ).catch(() => undefined);
+              // after the timeout the capacity is read anyway:
+              // it may then miss the fund and be lower, never higher
+              await waitForRpcBlockWithin(
+                publicClient,
+                getLatestTxBlock() ?? 0n,
+              );
             }
 
             const [maxMintableShares] = await readWithReport({
@@ -116,15 +126,11 @@ export const useSupply = () => {
             // failed batch can't be mapped to steps, so a resubmit would fund again
             forceAtomic: true,
             // confirmed unwrap and fund are skipped on retry, so they are not sent twice
-            resumeKey: getSupplyResumeKey(activeVault.address, {
-              amount,
-              mintSteth,
-              token,
-              mintAddress,
-            }),
+            resumeKey,
             allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: vaultTexts.actions.supply.loading,
-            mainActionCompleteText: vaultTexts.actions.supply.completed(token),
+            mainActionCompleteText:
+              vaultTexts.actions.supply.completed(suppliedToken),
             renderSuccessContent: GoToVault,
           }),
         );
@@ -132,7 +138,14 @@ export const useSupply = () => {
         // stopped by the user after confirmed steps: the form is reset, a new submit starts over
         return { success, isAborted: error instanceof OperationAbortedError };
       },
-      [activeVault, getLatestTxBlock, prepareReportCalls, publicClient, sendTX],
+      [
+        activeVault,
+        getCompletedSteps,
+        getLatestTxBlock,
+        prepareReportCalls,
+        publicClient,
+        sendTX,
+      ],
     ),
     ...rest,
   };

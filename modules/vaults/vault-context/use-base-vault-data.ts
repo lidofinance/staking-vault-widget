@@ -71,7 +71,7 @@ export const useBaseVaultData = (
         )
       );
     },
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
 
       const vaultEntity = new LidoSDKVaultEntity({
@@ -82,6 +82,9 @@ export const useBaseVaultData = (
       const blockNumber = await getBlockToReadAt(
         publicClient,
         latestTxBlock ?? 0n,
+        {
+          signal,
+        },
       );
 
       const DEFAULT_CALL_OPTIONS = { blockNumber };

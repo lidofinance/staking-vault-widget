@@ -4,6 +4,7 @@ import {
   getMintFunding,
   getSupplyResumeKey,
   getSupplyResumeState,
+  shouldTurnOffMint,
 } from '../supply-resume';
 
 const VAULT = '0x00000000000000000000000000000000000000aa';
@@ -84,5 +85,46 @@ describe('supply resume state', () => {
       balanceCheck: 'eth',
     });
     expect(getMintFunding(8n, steps)).toBe(8n);
+  });
+});
+
+describe('shouldTurnOffMint', () => {
+  test('turns the mint off when nothing can be minted', () => {
+    expect(
+      shouldTurnOffMint({
+        mintSteth: true,
+        isStethMintable: false,
+        isFunded: false,
+      }),
+    ).toBe(true);
+  });
+
+  test('keeps it on a resume after a confirmed fund, so a Retry does not fund again', () => {
+    // the mint failed because the capacity ran out: turning it off would change the
+    // resume key, forget the fund and make Retry send it a second time
+    expect(
+      shouldTurnOffMint({
+        mintSteth: true,
+        isStethMintable: false,
+        isFunded: true,
+      }),
+    ).toBe(false);
+  });
+
+  test('nothing to turn off', () => {
+    expect(
+      shouldTurnOffMint({
+        mintSteth: false,
+        isStethMintable: false,
+        isFunded: false,
+      }),
+    ).toBe(false);
+    expect(
+      shouldTurnOffMint({
+        mintSteth: true,
+        isStethMintable: true,
+        isFunded: false,
+      }),
+    ).toBe(false);
   });
 });

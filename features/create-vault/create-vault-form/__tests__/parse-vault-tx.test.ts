@@ -190,6 +190,109 @@ describe('parseVaultTx', () => {
     });
   });
 
+  test('AA: the event in an earlier wallet receipt is found, not only in the confirmed last one', () => {
+    // only the last wallet receipt is re-read with confirmations
+    const response = {
+      isAA: true,
+      lastTxBlock: 1n,
+      receipts: [{ transactionHash: CONFIRMED_HASH, logs: [unrelatedLog] }],
+      callStatus: {
+        receipts: [
+          walletReceipt(WALLET_HASH, createdLogs(VAULT, ADMIN)),
+          walletReceipt(CONFIRMED_HASH, [unrelatedLog]),
+        ],
+      },
+    } as unknown as Response;
+
+    expect(parseVaultTx(response, expected)).toEqual({
+      vaultAddress: VAULT,
+      txHash: WALLET_HASH,
+      reason: null,
+    });
+  });
+
+  test('AA: the same tx in wallet and confirmed receipts is counted once', () => {
+    const logs = createdLogs(VAULT, ADMIN);
+    const response = {
+      isAA: true,
+      lastTxBlock: 1n,
+      receipts: [{ transactionHash: WALLET_HASH, logs }],
+      callStatus: { receipts: [walletReceipt(WALLET_HASH, logs)] },
+    } as unknown as Response;
+
+    // not 'ambiguous'
+    expect(parseVaultTx(response, expected)).toEqual({
+      vaultAddress: VAULT,
+      txHash: WALLET_HASH,
+      reason: null,
+    });
+  });
+
+  test('AA: a wallet receipt without logs does not hide the confirmed one with the event', () => {
+    const response = {
+      isAA: true,
+      lastTxBlock: 1n,
+      receipts: [
+        { transactionHash: WALLET_HASH, logs: createdLogs(VAULT, ADMIN) },
+      ],
+      // some wallets return receipts without logs
+      callStatus: { receipts: [walletReceipt(WALLET_HASH, [])] },
+    } as unknown as Response;
+
+    expect(parseVaultTx(response, expected)).toEqual({
+      vaultAddress: VAULT,
+      txHash: WALLET_HASH,
+      reason: null,
+    });
+  });
+
+  test('AA: the same tx with differently cased hashes is counted once', () => {
+    const logs = createdLogs(VAULT, ADMIN);
+    const lowerHash = hash('ab');
+    const upperHash: Hash = `0x${'AB'.repeat(32)}`;
+    const response = {
+      isAA: true,
+      lastTxBlock: 1n,
+      receipts: [{ transactionHash: lowerHash, logs }],
+      callStatus: { receipts: [walletReceipt(upperHash, logs)] },
+    } as unknown as Response;
+
+    // not 'ambiguous'
+    expect(parseVaultTx(response, expected)).toEqual({
+      vaultAddress: VAULT,
+      txHash: lowerHash,
+      reason: null,
+    });
+  });
+
+  test("AA: malformed wallet receipts don't crash the result", () => {
+    const response = {
+      isAA: true,
+      lastTxBlock: 1n,
+      receipts: [
+        { transactionHash: CONFIRMED_HASH, logs: createdLogs(VAULT, ADMIN) },
+      ],
+      callStatus: {
+        receipts: [
+          // no hash, no logs, a log without topics: wallet data is not validated
+          { logs: createdLogs(OTHER_VAULT, ADMIN) },
+          { transactionHash: WALLET_HASH },
+          {
+            transactionHash: hash('33'),
+            logs: [{ address: FACTORY, data: '0x' }],
+          },
+          null,
+        ],
+      },
+    } as unknown as Response;
+
+    expect(parseVaultTx(response, expected)).toEqual({
+      vaultAddress: VAULT,
+      txHash: CONFIRMED_HASH,
+      reason: null,
+    });
+  });
+
   test('skips a malformed log address from the wallet instead of throwing', () => {
     const malformed = {
       ...unrelatedLog,

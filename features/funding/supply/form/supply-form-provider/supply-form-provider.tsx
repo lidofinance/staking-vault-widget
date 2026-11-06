@@ -20,7 +20,7 @@ import {
 } from 'shared/components/banners/additional-verification';
 
 import { createSupplyFormResolver } from './validation';
-import { getSupplyResumeState } from './supply-resume';
+import { getSupplyResumeState, shouldTurnOffMint } from './supply-resume';
 import {
   useSupply,
   useSupplyCompletedSteps,
@@ -105,23 +105,25 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
   );
   const invalidateSupplyFormData = supplyFormData.invalidateSupplyFormData;
   const isStethMintable = supplyFormData.isStethMintableQuery.data === true;
+  const { isFunded } = supplyFormData;
 
   useEffect(() => {
-    // reset mintSteth  when stETH is not mintable
-    if (mintSteth && !isStethMintable) {
+    // reset mintSteth  when stETH is not mintable (kept on a resume after a confirmed fund)
+    if (shouldTurnOffMint({ mintSteth, isStethMintable, isFunded })) {
       resetField('mintSteth');
     }
     // reset mintAddress when mintSteth=false
     if (!mintSteth) {
       resetField('mintAddress');
     }
-  }, [isStethMintable, mintSteth, resetField]);
+  }, [isFunded, isStethMintable, mintSteth, resetField]);
 
   const onSubmit = useCallback(
     async (values: SupplyFormValidatedValues) => {
       const { success, isAborted } = await supply(values);
-      // revalidate form data because some TXs may have changed the state
-      await invalidateSupplyFormData();
+      // revalidate form data because some TXs may have changed the state;
+      // after a failure the balances are awaited, so a Retry validates against them
+      await invalidateSupplyFormData({ awaitBalances: !success });
       // the same values would send the confirmed steps again, so the user starts from an empty form
       if (isAborted) reset();
 

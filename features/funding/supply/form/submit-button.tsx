@@ -22,7 +22,7 @@ export const SubmitButton = () => {
     ]);
 
   const { isSubmitting, disabled, isValid } = useFormState();
-  const { maxMintableStethQuery, isFunded } = useSupplyForm();
+  const { maxMintableStethQuery, isFunded, isUnwrapped } = useSupplyForm();
   const { isErrorBannerVisible, isWarningBannerVisible } =
     useVerificationBannerDefender('supply');
 
@@ -33,12 +33,14 @@ export const SubmitButton = () => {
   const color = isErrorBannerVisible ? 'secondary' : 'primary';
 
   const mintable = maxMintableStethQuery.data?.maxMintableStETH;
-  // the button names what will be sent: after a confirmed fund only the mint is left
+  // the button names what will be sent: after a confirmed fund only the mint is left,
+  // after a confirmed unwrap the supply is sent in ETH
+  const sentToken = isUnwrapped ? 'ETH' : token;
   const text = !mintSteth
-    ? supply(token, amount)
+    ? supply(sentToken, amount)
     : isFunded
       ? mintOnly(mintable)
-      : supplyMint(token, amount, mintable);
+      : supplyMint(sentToken, amount, mintable);
 
   const submitText = isErrorBannerVisible ? supplyUnavailable : text;
 
