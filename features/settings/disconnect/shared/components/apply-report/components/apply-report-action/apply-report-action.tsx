@@ -1,9 +1,14 @@
-import { useVault, useVaultConfirmingRoles } from 'modules/vaults';
+import {
+  useSendReport,
+  useVault,
+  useVaultConfirmingRoles,
+  vaultTexts,
+} from 'modules/vaults';
 import { InlineLoader } from 'shared/components';
 
-import { useApplyReport } from '../../hooks';
-
 import { ButtonStyled } from './styles';
+
+const { loading, completed } = vaultTexts.actions.disconnectVault.applyReport;
 
 export const ApplyReportAction = () => {
   const { isLoading, activeVault } = useVault();
@@ -11,7 +16,7 @@ export const ApplyReportAction = () => {
   const {
     applyReport,
     mutation: { isPending },
-  } = useApplyReport();
+  } = useSendReport({ loadingText: loading, completedText: completed });
   const {
     isReportFresh = false,
     isVaultDisconnected = false,

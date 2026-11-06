@@ -2,16 +2,18 @@ import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
-import { useDappStatus } from 'modules/web3';
+import { isBehindTxBlock, useDappStatus, useLidoSDK } from 'modules/web3';
 import { FormController, useDisableForm } from 'shared/hook-form';
+import { useTransactionModal } from 'shared/components/transaction-modal';
 import { useVault } from 'modules/vaults';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
+import { useConnectionGuard } from 'shared/hooks/use-connection-guard';
 import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 import { useEditMainSettings } from '../hooks';
 import { useMainSettingsFormData } from './main-settings-data-provider';
 import { mainSettingsFormResolver } from '../consts';
-import { prepareDefaultValues } from '../utils';
+import { getPendingFormValues, prepareDefaultValues } from '../utils';
 
 import type {
   MainSettingFormsValues,
@@ -26,11 +28,14 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     invalidateVaultState,
     refetch: refetchVault,
   } = useVault();
-  const { editMainSettings, retryEvent } = useEditMainSettings();
-  const { data, refetch } = useMainSettingsFormData();
+  const { getLatestTxBlock } = useLidoSDK();
+  const { editMainSettings, retryEvent, retryFire } = useEditMainSettings();
+  const { data: settingsData, refetch } = useMainSettingsFormData();
+  const { dispatchModal } = useTransactionModal();
   const disabled = useDisableForm();
+  const startConnectionGuard = useConnectionGuard();
 
-  const promisedSettingsData = useAwaiter(data).awaiter;
+  const promisedSettingsData = useAwaiter(settingsData).awaiter;
 
   const formObject = useForm<
     MainSettingFormsValues,
@@ -44,13 +49,16 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
     context: promisedSettingsData,
     mode: 'all',
   });
-  const reset = formObject.reset;
+  const { reset, setValue } = formObject;
 
   const onSubmit = useCallback(
     async (data: MainSettingsFormValidatedValues): Promise<boolean> => {
       trackMatomoEvent(
         MATOMO_CLICK_EVENTS_TYPES.clickSettingsSubmitMainSettingsTab,
       );
+      // data the txs are built against, to tell user edits from changes made by others
+      const previous = settingsData;
+      const isSameConnection = startConnectionGuard();
       const { result, isStateChanged } = await editMainSettings(data);
 
       const [_, __, vaultInfo] = await Promise.all([
@@ -60,21 +68,53 @@ export const MainSettingsProvider: FC<PropsWithChildren> = ({ children }) => {
         refetchVault({ cancelRefetch: true, throwOnError: false }),
       ]);
 
+      // the wallet switched meanwhile: the form is already reset for the new connection,
+      // so edits of the previous one must not be restored into it
+      if (!isSameConnection()) return result.success;
+
       // we reset form anyway because partial success is possible and will invalidate form state
-      if (vaultInfo.data) {
+      // restore pending changes only from data read after the latest tx, otherwise applied txs would be resent
+      if (
+        vaultInfo.isSuccess &&
+        !isBehindTxBlock(vaultInfo.data.blockNumber, getLatestTxBlock())
+      ) {
         const newDefaultValues = prepareDefaultValues(vaultInfo.data);
         reset(newDefaultValues);
-      } else reset();
+        // restore changes that are not applied yet, so retry continues from the remaining txs
+        const pending = previous
+          ? getPendingFormValues(vaultInfo.data, data, previous)
+          : {};
+        (
+          Object.entries(pending) as [
+            keyof MainSettingFormsValues,
+            MainSettingFormsValues[keyof MainSettingFormsValues],
+          ][]
+        ).forEach(([key, value]) =>
+          setValue(key, value, { shouldDirty: true, shouldValidate: true }),
+        );
+      } else if (result.success) {
+        reset();
+      } else {
+        // without fresh data pending edits can't be told from changes made by others,
+        // and retry could revert applied changes, so it is disabled for this attempt
+        dispatchModal({ type: 'disable-retry', onRetry: retryFire });
+      }
 
       return result.success;
     },
     [
+      dispatchModal,
       editMainSettings,
+      getLatestTxBlock,
       invalidateVaultConfig,
       invalidateVaultState,
       refetch,
       refetchVault,
       reset,
+      retryFire,
+      setValue,
+      settingsData,
+      startConnectionGuard,
     ],
   );
 

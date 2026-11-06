@@ -15,8 +15,7 @@ import {
   VaultNotCreatedByFactoryError,
   DashboardNotBelongToVault,
 } from 'modules/vaults';
-import { BLOCK_POLLING_INTERVAL } from 'config/groups/web3';
-import { awaitWithTimeout } from 'utils/await-with-timeout';
+import { getBlockToReadAt } from 'utils/wait-for-rpc-block';
 
 import {
   DisplayableError,
@@ -26,23 +25,6 @@ import {
 } from '../consts';
 
 import type { Dashboard, VaultBaseInfo } from '../types';
-
-const waitForRpcBlock = async (
-  publicClient: any,
-  targetBlock: bigint,
-): Promise<bigint> => {
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const latestRpcBlock = await publicClient.getBlockNumber({
-      cacheTime: 0,
-    });
-
-    if (latestRpcBlock >= targetBlock) {
-      return latestRpcBlock;
-    }
-    await new Promise((resolve) => setTimeout(resolve, BLOCK_POLLING_INTERVAL));
-  }
-};
 
 const resolveDashboard = async (
   vaultEntity: LidoSDKVaultEntity,
@@ -89,7 +71,7 @@ export const useBaseVaultData = (
         )
       );
     },
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       invariant(vaultAddress, '[useBaseVaultData] vaultAddress is not defined');
 
       const vaultEntity = new LidoSDKVaultEntity({
@@ -97,9 +79,12 @@ export const useBaseVaultData = (
         vaultAddress,
       });
 
-      const blockNumber = await awaitWithTimeout(
-        waitForRpcBlock(publicClient, latestTxBlock ?? 0n),
-        VAULT_REPORT_REFETCH_INTERVAL_MS,
+      const blockNumber = await getBlockToReadAt(
+        publicClient,
+        latestTxBlock ?? 0n,
+        {
+          signal,
+        },
       );
 
       const DEFAULT_CALL_OPTIONS = { blockNumber };

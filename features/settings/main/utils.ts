@@ -1,9 +1,17 @@
 import { type Address, isAddressEqual } from 'viem';
 
 import { VAULT_TOTAL_BASIS_POINTS } from 'modules/vaults';
+import {
+  getPendingRoleEdits,
+  isPendingAddressEdit,
+  isPendingEdit,
+} from 'features/settings/shared/utils';
 import { formatSecondsToHours, formatExpiry } from 'utils/formats';
 
 import { multipleDataFields } from './consts';
+import { feePercentToBasisPoints } from 'modules/vaults/utils/fee';
+
+export { feePercentToBasisPoints };
 import type {
   RoleFieldSchema,
   MainSettingsFormValidatedValues,
@@ -123,6 +131,7 @@ export const formatSettingsValues = (
     feeRecipient,
     isDepositAllowed: vaultInfo.isDepositAllowed,
     pdgPolicy: vaultInfo.pdgPolicy,
+    blockNumber: vaultInfo.blockNumber,
     confirmExpiryCurrent,
     confirmExpiry,
     nodeOperatorFeeRateCurrent,
@@ -192,4 +201,127 @@ export const formatValueView = (
   }
 
   return value;
+};
+
+const getPendingRoles = (
+  freshMembers: Address[],
+  submitted: RoleFieldSchema[],
+): RoleFieldSchema[] | undefined => {
+  const { members, pendingGrants, hasPending } = getPendingRoleEdits(
+    freshMembers,
+    submitted,
+    ({ value, state }) => ({
+      address: value,
+      kind:
+        state === 'grant' ? 'grant' : state === 'remove' ? 'revoke' : 'none',
+    }),
+  );
+  if (!hasPending) return undefined;
+
+  return [
+    ...members.map(({ address, isPendingRevoke }) => ({
+      value: address,
+      state: isPendingRevoke ? ('remove' as const) : ('display' as const),
+      isGranted: true,
+    })),
+    ...pendingGrants,
+  ];
+};
+
+const isProposalApplied = (
+  value: number,
+  current: string,
+  options: VotingOptionType[],
+  normalize: (value: number | string) => number = Number,
+) =>
+  value === normalize(current) ||
+  options.some(
+    (option) =>
+      option.type === 'My proposal' && normalize(option.value) === value,
+  );
+
+// Returns submitted edits that are not applied on-chain yet (e.g. after partial success of legacy batch)
+// so the form can be restored on top of fresh data and retry continues from the remaining txs.
+// Only fields the user edited (differ from `previous`, the data the txs were built against) can be pending,
+// so a change made by another admin meanwhile is not reverted.
+export const getPendingFormValues = (
+  fresh: MainSettingsFormData,
+  submitted: MainSettingsFormValidatedValues,
+  previous: MainSettingsFormData,
+): Partial<MainSettingFormsValues> => {
+  const pending: Partial<MainSettingFormsValues> = {};
+
+  const defaultAdmins = getPendingRoles(
+    fresh.defaultAdmins,
+    submitted.defaultAdmins,
+  );
+  if (defaultAdmins) pending.defaultAdmins = defaultAdmins;
+
+  const nodeOperatorManagers = getPendingRoles(
+    fresh.nodeOperatorManagers,
+    submitted.nodeOperatorManagers,
+  );
+  if (nodeOperatorManagers) pending.nodeOperatorManagers = nodeOperatorManagers;
+
+  // edit checks below are kept in sync with the tx builder in useEditMainSettings
+  if (
+    isPendingAddressEdit(
+      submitted.feeRecipient,
+      previous.feeRecipient,
+      fresh.feeRecipient,
+    )
+  ) {
+    pending.feeRecipient = submitted.feeRecipient;
+  }
+  if (isPendingEdit(submitted.pdgPolicy, previous.pdgPolicy, fresh.pdgPolicy)) {
+    pending.pdgPolicy = submitted.pdgPolicy;
+  }
+  if (
+    isPendingEdit(
+      submitted.isDepositAllowed,
+      previous.isDepositAllowed,
+      fresh.isDepositAllowed,
+    )
+  ) {
+    pending.isDepositAllowed = submitted.isDepositAllowed;
+  }
+
+  const { feeRate, feeRateCustom } = submitted;
+  const feeValue = feePercentToBasisPoints(
+    feeRate !== 'custom' ? feeRate : feeRateCustom ?? '',
+  );
+  const isFeeEdited =
+    feeValue !== feePercentToBasisPoints(previous.nodeOperatorFeeRateCurrent);
+  if (
+    isFeeEdited &&
+    !isProposalApplied(
+      feeValue,
+      fresh.nodeOperatorFeeRateCurrent,
+      fresh.feeRate,
+      feePercentToBasisPoints,
+    )
+  ) {
+    pending.feeRate = feeRate;
+    pending.feeRateCustom = feeRateCustom;
+  }
+
+  const { confirmExpiry, confirmExpiryCustom } = submitted;
+  const expiryValue =
+    confirmExpiry === 'custom' && confirmExpiryCustom
+      ? Number(confirmExpiryCustom) * 3600
+      : Number(confirmExpiry);
+  const isExpiryEdited = expiryValue !== Number(previous.confirmExpiryCurrent);
+  if (
+    isExpiryEdited &&
+    !isProposalApplied(
+      expiryValue,
+      fresh.confirmExpiryCurrent,
+      fresh.confirmExpiry,
+    )
+  ) {
+    pending.confirmExpiry = confirmExpiry;
+    pending.confirmExpiryCustom = confirmExpiryCustom;
+  }
+
+  return pending;
 };

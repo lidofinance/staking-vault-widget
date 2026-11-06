@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { useEstimateGas } from 'wagmi';
 import { useFormContext, useFormState } from 'react-hook-form';
@@ -15,13 +15,21 @@ import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { getContractAddress } from 'config';
 import { vaultTexts } from 'modules/vaults';
 
-import { ModalCTA } from './modal-cta';
+import { renderModalCTA } from './modal-cta';
 import { CreateVaultSchema } from '../types';
-import { schemaToTx } from './utils';
+import { schemaToTx, type VaultTxExpected } from './utils';
 
 export const useCreateVault = () => {
   const { chainId } = useDappStatus();
   const { sendTX, ...rest } = useSendTransaction();
+  // the latest submit, fixed at submit time: the form and chain may change after it
+  // (e.g. reset on a wallet or chain switch), the tx result may not
+  const [submitted, setSubmitted] = useState<{
+    // what the tx is known to create, to find the vault in its receipts
+    expected: VaultTxExpected;
+    // shown on the result page, also when the vault address can't be confirmed
+    values: CreateVaultSchema;
+  } | null>(null);
 
   return {
     createVault: useCallback(
@@ -33,7 +41,13 @@ export const useCreateVault = () => {
         );
         trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.initiatingCreatingVault);
 
-        const { data, value } = schemaToTx(values);
+        const { data, value, defaultAdmin, owners } = schemaToTx(values);
+        const expected: VaultTxExpected = {
+          factory: vaultFactoryAddress,
+          defaultAdmin,
+          owners,
+        };
+        setSubmitted({ expected, values });
 
         const tx: TransactionEntry = {
           to: vaultFactoryAddress,
@@ -47,7 +61,7 @@ export const useCreateVault = () => {
             transactions: [tx],
             mainActionCompleteText: vaultTexts.actions.createVault.completed,
             mainActionLoadingText: vaultTexts.actions.createVault.loading,
-            renderSuccessContent: ModalCTA,
+            renderSuccessContent: renderModalCTA(expected),
           }),
         );
 
@@ -59,6 +73,7 @@ export const useCreateVault = () => {
       },
       [chainId, sendTX],
     ),
+    submitted,
     ...rest,
   };
 };

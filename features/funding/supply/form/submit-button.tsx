@@ -10,7 +10,7 @@ import type { SupplyFormFieldValues } from './types';
 const SUPPLY_ROLES = ['supplier'] as const;
 const SUPPLY_MINT_ROLES = [...SUPPLY_ROLES, 'minter'] as const;
 
-const { supplyMint, supply, supplyUnavailable } =
+const { supplyMint, supply, supplyUnavailable, mintOnly } =
   vaultTexts.actions.supply.submit;
 
 export const SubmitButton = () => {
@@ -22,7 +22,7 @@ export const SubmitButton = () => {
     ]);
 
   const { isSubmitting, disabled, isValid } = useFormState();
-  const { maxMintableStethQuery } = useSupplyForm();
+  const { maxMintableStethQuery, isFunded, isUnwrapped } = useSupplyForm();
   const { isErrorBannerVisible, isWarningBannerVisible } =
     useVerificationBannerDefender('supply');
 
@@ -32,9 +32,15 @@ export const SubmitButton = () => {
   const variant = isErrorBannerVisible ? 'translucent' : 'filled';
   const color = isErrorBannerVisible ? 'secondary' : 'primary';
 
-  const text = mintSteth
-    ? supplyMint(token, amount, maxMintableStethQuery.data?.maxMintableStETH)
-    : supply(token, amount);
+  const mintable = maxMintableStethQuery.data?.maxMintableStETH;
+  // the button names what will be sent: after a confirmed fund only the mint is left,
+  // after a confirmed unwrap the supply is sent in ETH
+  const sentToken = isUnwrapped ? 'ETH' : token;
+  const text = !mintSteth
+    ? supply(sentToken, amount)
+    : isFunded
+      ? mintOnly(mintable)
+      : supplyMint(sentToken, amount, mintable);
 
   const submitText = isErrorBannerVisible ? supplyUnavailable : text;
 

@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
 } from 'react';
 import invariant from 'tiny-invariant';
 import { useForm } from 'react-hook-form';
@@ -18,9 +19,11 @@ import {
   useDisableFormByVerification,
 } from 'shared/components/banners/additional-verification';
 
-import { SupplyFormResolver } from './validation';
+import { createSupplyFormResolver } from './validation';
+import { getSupplyResumeState, shouldTurnOffMint } from './supply-resume';
 import {
   useSupply,
+  useSupplyCompletedSteps,
   useSupplyFormValidationContext,
   useSupplyFormData,
 } from './hooks';
@@ -49,7 +52,17 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
 }) => {
   const { isDappActive } = useDappStatus();
   const { validationContext } = useSupplyFormValidationContext();
-  const { supply, retryEvent } = useSupply();
+  const { supply, retryEvent, getCompletedSteps } = useSupply();
+  // resume after a confirmed unwrap/fund: the form validates and quotes what a resubmit sends
+  const getSupplyCompletedSteps = useSupplyCompletedSteps(getCompletedSteps);
+  const supplyResolver = useMemo(
+    () =>
+      createSupplyFormResolver(
+        (values) =>
+          getSupplyResumeState(getSupplyCompletedSteps(values)).balanceCheck,
+      ),
+    [getSupplyCompletedSteps],
+  );
   const disabled = useDisableForm();
   const isDisabledByVerification = useDisableFormByVerification('supply');
 
@@ -68,36 +81,55 @@ export const SupplyFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'onTouched',
     disabled: !isDappActive || disabled || isDisabledByVerification,
     context: useAwaiter(validationContext).awaiter,
-    resolver: SupplyFormResolver,
+    resolver: supplyResolver,
   });
 
-  const { watch, resetField } = formObject;
-  const [mintSteth, amount, token] = watch(['mintSteth', 'amount', 'token']);
-
-  const supplyFormData = useSupplyFormData(token, mintSteth, amount);
+  const { watch, reset, resetField } = formObject;
+  const [mintSteth, amount, token, mintAddress] = watch([
+    'mintSteth',
+    'amount',
+    'token',
+    'mintAddress',
+  ]);
+  const completedSteps = getSupplyCompletedSteps({
+    amount,
+    mintSteth,
+    token,
+    mintAddress,
+  });
+  const supplyFormData = useSupplyFormData(
+    token,
+    mintSteth,
+    amount,
+    completedSteps,
+  );
   const invalidateSupplyFormData = supplyFormData.invalidateSupplyFormData;
   const isStethMintable = supplyFormData.isStethMintableQuery.data === true;
+  const { isFunded } = supplyFormData;
 
   useEffect(() => {
-    // reset mintSteth  when stETH is not mintable
-    if (mintSteth && !isStethMintable) {
+    // reset mintSteth  when stETH is not mintable (kept on a resume after a confirmed fund)
+    if (shouldTurnOffMint({ mintSteth, isStethMintable, isFunded })) {
       resetField('mintSteth');
     }
     // reset mintAddress when mintSteth=false
     if (!mintSteth) {
       resetField('mintAddress');
     }
-  }, [isStethMintable, mintSteth, resetField]);
+  }, [isFunded, isStethMintable, mintSteth, resetField]);
 
   const onSubmit = useCallback(
     async (values: SupplyFormValidatedValues) => {
-      const result = await supply(values);
-      // revalidate form data because some TXs may have changed the state
-      await invalidateSupplyFormData();
+      const { success, isAborted } = await supply(values);
+      // revalidate form data because some TXs may have changed the state;
+      // after a failure the balances are awaited, so a Retry validates against them
+      await invalidateSupplyFormData({ awaitBalances: !success });
+      // the same values would send the confirmed steps again, so the user starts from an empty form
+      if (isAborted) reset();
 
-      return result;
+      return success;
     },
-    [invalidateSupplyFormData, supply],
+    [invalidateSupplyFormData, reset, supply],
   );
 
   return (

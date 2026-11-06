@@ -9,3 +9,5 @@ export * from './use-stETH-by-wstETH';
 export * from './use-is-metamask';
 export * from './use-aa';
 export * from './use-send-tx';
+export * from './is-behind-tx-block';
+export * from './use-refetch-on-tx-block';

@@ -3,7 +3,10 @@ import { useCallback } from 'react';
 import { usePublicClient } from 'wagmi';
 
 import {
+  OperationAbortedError,
   TransactionEntry,
+  type TransactionsContext,
+  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
@@ -16,13 +19,22 @@ import {
 
 import { readWithReport, useReportCalls } from 'modules/vaults/report';
 import type { SupplyFormValidatedValues } from 'features/funding/supply/form/types';
+import { waitForRpcBlockWithin } from 'utils/wait-for-rpc-block';
+
+import {
+  getMintFunding,
+  getSupplyResumeKey,
+  getSupplyResumeState,
+} from '../supply-resume';
 
 export const useSupply = () => {
   const publicClient = usePublicClient();
   const { activeVault } = useVault();
 
   const prepareReportCalls = useReportCalls();
+  const { getLatestTxBlock } = useLidoSDK();
   const { sendTX, ...rest } = useSendTransaction();
+  const { getCompletedSteps } = rest;
 
   return {
     supply: useCallback(
@@ -34,33 +46,58 @@ export const useSupply = () => {
       }: SupplyFormValidatedValues) => {
         invariant(activeVault, '[useSupply] activeVault is undefined');
         const wethContract = getWethContract(publicClient);
-
-        let prepareTransactions: () => Promise<TransactionEntry[]> = () =>
-          Promise.reject(undefined);
-
-        const calls: TransactionEntry[] = [];
-
-        if (token === 'wETH') {
-          calls.push({
-            ...wethContract.encode.withdraw([amount]),
-            loadingActionText: 'Unwrapping wETH',
-          });
-        }
-
-        calls.push({
-          ...activeVault.dashboard.encode.fund({ value: amount }),
-          loadingActionText: vaultTexts.actions.supply.loading,
+        const resumeKey = getSupplyResumeKey(activeVault.address, {
+          amount,
+          mintSteth,
+          token,
+          mintAddress,
         });
+        // a resume after a confirmed unwrap supplies the ETH it gave, not wETH
+        const suppliedToken =
+          getSupplyResumeState(getCompletedSteps(resumeKey)).balanceCheck ===
+          'eth'
+            ? 'ETH'
+            : token;
 
-        // minting stETH requires async data for report and minting balance
-        if (mintSteth) {
-          prepareTransactions = async () => {
+        const prepareTransactions = async ({
+          completedSteps,
+        }: TransactionsContext) => {
+          const calls: TransactionEntry[] = [];
+
+          if (token === 'wETH') {
+            calls.push({
+              ...wethContract.encode.withdraw([amount]),
+              loadingActionText: 'Unwrapping wETH',
+              stepKey: 'unwrap',
+            });
+          }
+
+          calls.push({
+            ...activeVault.dashboard.encode.fund({ value: amount }),
+            loadingActionText: vaultTexts.actions.supply.loading,
+            stepKey: 'fund',
+          });
+
+          // minting stETH requires async data for report and minting balance
+          if (mintSteth) {
             calls.push(...(await prepareReportCalls()));
+
+            const fundingAmount = getMintFunding(amount, completedSteps);
+            // the capacity is read without the fund then, so it has to be read at a block
+            // that includes it: a lagging node would return a lower capacity
+            if (getSupplyResumeState(completedSteps).isFunded) {
+              // after the timeout the capacity is read anyway:
+              // it may then miss the fund and be lower, never higher
+              await waitForRpcBlockWithin(
+                publicClient,
+                getLatestTxBlock() ?? 0n,
+              );
+            }
 
             const [maxMintableShares] = await readWithReport({
               contracts: [
                 activeVault.dashboard.prepare.remainingMintingCapacityShares([
-                  amount,
+                  fundingAmount,
                 ]),
               ],
               publicClient,
@@ -75,24 +112,40 @@ export const useSupply = () => {
                 maxMintableShares,
               ]),
               loadingActionText: vaultTexts.actions.mint.loading('stETH'),
+              stepKey: 'mint',
             });
+          }
 
-            return calls;
-          };
-        }
+          return calls;
+        };
 
-        const { success } = await withSuccess(
+        const { success, error } = await withSuccess(
           sendTX({
-            transactions: mintSteth ? prepareTransactions : calls,
+            transactions: prepareTransactions,
+            // all or nothing in AA, as withdraw and mint: executed calls of a partially
+            // failed batch can't be mapped to steps, so a resubmit would fund again
+            forceAtomic: true,
+            // confirmed unwrap and fund are skipped on retry, so they are not sent twice
+            resumeKey,
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: vaultTexts.actions.supply.loading,
-            mainActionCompleteText: vaultTexts.actions.supply.completed(token),
+            mainActionCompleteText:
+              vaultTexts.actions.supply.completed(suppliedToken),
             renderSuccessContent: GoToVault,
           }),
         );
 
-        return success;
+        // stopped by the user after confirmed steps: the form is reset, a new submit starts over
+        return { success, isAborted: error instanceof OperationAbortedError };
       },
-      [activeVault, prepareReportCalls, publicClient, sendTX],
+      [
+        activeVault,
+        getCompletedSteps,
+        getLatestTxBlock,
+        prepareReportCalls,
+        publicClient,
+        sendTX,
+      ],
     ),
     ...rest,
   };

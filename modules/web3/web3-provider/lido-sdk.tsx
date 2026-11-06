@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import invariant from 'tiny-invariant';
 import {
   useAccount,
@@ -62,6 +70,8 @@ type LidoSDKContextValue = {
   subscribeToTokenUpdates: ReturnType<typeof useTokenTransferSubscription>;
   setLatestTxBlock: (blockNumber: bigint) => void;
   latestTxBlock: bigint | undefined;
+  // sync access to latest tx block for query functions, which can run before rerender
+  getLatestTxBlock: () => bigint | undefined;
 };
 
 const LidoSDKContext = createContext<LidoSDKContextValue | null>(null);
@@ -74,9 +84,18 @@ export const useLidoSDK = () => {
 };
 
 export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
-  const [latestTxBlock, setLatestTxBlock] = useState<bigint | undefined>(
+  const [latestTxBlock, setLatestTxBlockState] = useState<bigint | undefined>(
     undefined,
   );
+  const latestTxBlockRef = useRef<bigint | undefined>(undefined);
+  const setLatestTxBlock = useCallback((blockNumber: bigint) => {
+    // only moves forward: a result without block info (0n) or an older tx
+    // must not lower the block that data has to be read at
+    if (blockNumber <= (latestTxBlockRef.current ?? 0n)) return;
+    latestTxBlockRef.current = blockNumber;
+    setLatestTxBlockState(blockNumber);
+  }, []);
+  const getLatestTxBlock = useCallback(() => latestTxBlockRef.current, []);
   const subscribe = useTokenTransferSubscription();
 
   // will only have
@@ -151,9 +170,16 @@ export const LidoSDKProvider = ({ children }: React.PropsWithChildren) => {
       ...sdkContextValue,
       latestTxBlock,
       setLatestTxBlock,
+      getLatestTxBlock,
       subscribeToTokenUpdates: subscribe,
     };
-  }, [sdkContextValue, latestTxBlock, subscribe]);
+  }, [
+    sdkContextValue,
+    latestTxBlock,
+    setLatestTxBlock,
+    getLatestTxBlock,
+    subscribe,
+  ]);
   return (
     <LidoSDKContext.Provider value={contextValue}>
       {children}

@@ -4,10 +4,13 @@ import { getAddress } from 'viem';
 
 import {
   type TransactionEntry,
+  isBehindTxBlock,
+  useLidoSDK,
   useSendTransaction,
   withSuccess,
 } from 'modules/web3';
 import {
+  OutdatedDataError,
   useVault,
   vaultTexts,
   GoToVault,
@@ -25,6 +28,7 @@ export const useEditPermissions = () => {
   const { activeVault } = useVault();
   const { sendTX, ...rest } = useSendTransaction();
   const { data: permissionsData } = usePermissionsFormData();
+  const { getLatestTxBlock } = useLidoSDK();
 
   return {
     editPermissions: useCallback(
@@ -103,16 +107,26 @@ export const useEditPermissions = () => {
           });
         }
 
+        // data read before the latest tx would resend already applied txs
+        const isStale = isBehindTxBlock(
+          permissionsData.blockNumber,
+          getLatestTxBlock(),
+        );
+
         return withSuccess(
           sendTX({
-            transactions,
+            transactions: isStale
+              ? () => Promise.reject(new OutdatedDataError('Vault permissions'))
+              : transactions,
+            // form is restored with pending edits only, so retry sends the remaining txs
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: 'Editing vault permissions',
             mainActionCompleteText: 'Vault permissions edited',
             renderSuccessContent: GoToVault,
           }),
         );
       },
-      [activeVault, sendTX, permissionsData],
+      [activeVault, sendTX, permissionsData, getLatestTxBlock],
     ),
     ...rest,
   };

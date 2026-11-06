@@ -1,15 +1,11 @@
-import { useVault } from 'modules/vaults';
+import { useSendReport, useVault } from 'modules/vaults';
 import { useDappStatus } from 'modules/web3';
 import { NoticeContainer } from 'shared/components';
 
 import { useVaultOverview } from 'features/overview/vault-overview';
 import { ApplyButton } from '../styles';
 import { QuarantineDescription } from './quarantine-description';
-import {
-  useApplyQuarantineReport,
-  useOnchainQuarantine,
-  useReportFrameDuration,
-} from './hooks';
+import { useOnchainQuarantine, useReportFrameDuration } from './hooks';
 import { getQuarantineBannerState } from './utils';
 
 export const CapitalQuarantined = () => {
@@ -19,7 +15,7 @@ export const CapitalQuarantined = () => {
   const { data: onchain, isLoading: isOnchainLoading } = useOnchainQuarantine();
   const { data: frameDuration, isLoading: isFrameDurationLoading } =
     useReportFrameDuration();
-  const { applyReport, mutation } = useApplyQuarantineReport();
+  const { applyReport, mutation } = useSendReport();
 
   if (!activeVault || isOnchainLoading || isFrameDurationLoading) {
     return null;

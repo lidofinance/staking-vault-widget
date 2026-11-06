@@ -10,11 +10,16 @@ import { useForm } from 'react-hook-form';
 import invariant from 'tiny-invariant';
 
 import { useDappStatus } from 'modules/web3';
+import { useVault } from 'modules/vaults';
 import { useDisableForm } from 'shared/hook-form';
 import { FormControllerStyled } from 'shared/components/form';
 import { useWithdraw } from 'features/funding/withdraw/form/hooks';
 
-import { withdrawFormResolver } from './validation';
+import { createWithdrawFormResolver } from './validation';
+import {
+  getWithdrawResumeKey,
+  skipsWithdrawableCheck,
+} from './withdraw-resume';
 
 import type {
   WithdrawFormData,
@@ -41,7 +46,22 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { isDappActive } = useDappStatus();
-  const { withdraw, retryEvent } = useWithdraw();
+  const { withdraw, retryEvent, getCompletedSteps } = useWithdraw();
+  const { activeVault } = useVault();
+  // resume after a confirmed withdraw: validated as the resubmit sends (only the wrap)
+  const withdrawResolver = useMemo(
+    () =>
+      createWithdrawFormResolver(
+        (values) =>
+          !!activeVault &&
+          skipsWithdrawableCheck(
+            getCompletedSteps(
+              getWithdrawResumeKey(activeVault.address, values),
+            ),
+          ),
+      ),
+    [activeVault, getCompletedSteps],
+  );
   const {
     validationContext,
     withdrawableEtherQuery,
@@ -62,22 +82,33 @@ export const WithdrawFormProvider: FC<{ children: ReactNode }> = ({
     mode: 'onTouched',
     disabled: !isDappActive || disabled,
     context: validationContext,
-    resolver: withdrawFormResolver,
+    resolver: withdrawResolver,
   });
+  const { reset, watch } = formObject;
+  const [amount, recipient, token] = watch(['amount', 'recipient', 'token']);
+  const isWithdrawn =
+    !!activeVault &&
+    skipsWithdrawableCheck(
+      getCompletedSteps(
+        getWithdrawResumeKey(activeVault.address, { amount, recipient, token }),
+      ),
+    );
 
   const onSubmit = useCallback(
     async (values: WithdrawFormValidatedValues) => {
-      const success = await withdraw(values);
+      const { success, isAborted } = await withdraw(values);
       // partial state change is possible here
       await invalidateWithdrawFormData();
+      // the same values would send the confirmed steps again, so the user starts from an empty form
+      if (isAborted) reset();
       return success;
     },
-    [invalidateWithdrawFormData, withdraw],
+    [invalidateWithdrawFormData, reset, withdraw],
   );
 
   const withdrawDataContextValue = useMemo(
-    () => ({ withdrawableEtherQuery }),
-    [withdrawableEtherQuery],
+    () => ({ withdrawableEtherQuery, isWithdrawn }),
+    [withdrawableEtherQuery, isWithdrawn],
   );
 
   return (

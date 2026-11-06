@@ -1,36 +1,75 @@
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 import { Button } from '@lidofinance/lido-ui';
 
 import { ModalRenderSuccessContent } from 'shared/components/transaction-modal';
+import { WarningMessage } from 'shared/components/warning-message';
 import { appPaths } from 'consts/routing';
-import { parseVaultTx } from '../utils';
+import { vaultTexts } from 'modules/vaults';
+import type { VaultTxExpected } from '../utils';
+import { useFallbackVaultList, useParsedVaultTx } from '../use-parsed-vault-tx';
 
-export const ModalCTA: ModalRenderSuccessContent = ({ result, closeModal }) => {
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.md}px;
+`;
+
+const texts = vaultTexts.actions.createVault.result;
+
+type ModalCTAProps = Parameters<ModalRenderSuccessContent>[0] & {
+  expected: VaultTxExpected;
+};
+
+export const ModalCTA = ({ result, closeModal, expected }: ModalCTAProps) => {
   const isRouting = useRef<boolean>(false);
   const router = useRouter();
-  const { vaultAddress } = useMemo(() => {
-    return parseVaultTx(result);
-  }, [result]);
+  const parsed = useParsedVaultTx(result, expected);
+  const fallback = useFallbackVaultList(expected);
 
-  if (!vaultAddress) return <></>;
+  if (!parsed) return <></>;
 
-  const handleNavigateToVault = async () => {
+  const { vaultAddress } = parsed;
+  // without a confirmed address the user is sent to a vault list, never to a guessed vault
+  const path = vaultAddress
+    ? appPaths.vaults.vault(vaultAddress).overview
+    : fallback.path;
+
+  const handleNavigate = async () => {
     if (isRouting.current) return;
 
     try {
       isRouting.current = true;
-      await router.push(appPaths.vaults.vault(vaultAddress).overview);
+      await router.push(path);
       closeModal();
     } finally {
       isRouting.current = false;
     }
   };
 
+  if (vaultAddress) {
+    return (
+      <Button onClick={handleNavigate} fullwidth>
+        {texts.goToVault}
+      </Button>
+    );
+  }
+
   return (
-    <Button onClick={handleNavigateToVault} fullwidth>
-      Go to vault
-    </Button>
+    <Content>
+      <WarningMessage data-testid="createVault-modal-unconfirmedVault">
+        {texts.unconfirmed(!!parsed.txHash, fallback.list)}
+      </WarningMessage>
+      <Button onClick={handleNavigate} fullwidth>
+        {texts.goToVaultList(fallback.list)}
+      </Button>
+    </Content>
   );
 };
+
+// binds the success content to the submitted tx, so only its vault is offered
+export const renderModalCTA =
+  (expected: VaultTxExpected): ModalRenderSuccessContent =>
+  (props) => <ModalCTA {...props} expected={expected} />;

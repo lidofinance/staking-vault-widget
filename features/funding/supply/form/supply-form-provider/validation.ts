@@ -6,10 +6,12 @@ import type { Resolver } from 'react-hook-form';
 
 import { awaitWithTimeout } from 'utils/await-with-timeout';
 import {
+  amountSchema,
   maxAmountSchema,
   validateRecipientSchema,
   supplyTokenSchema,
 } from 'utils/zod-validation';
+import type { SupplyBalanceCheck } from './supply-resume';
 import { verificationConfirmSchema } from 'shared/components/banners/additional-verification/validation';
 
 import type {
@@ -21,7 +23,15 @@ import type {
 
 export const supplyFormSchema = (
   context: SupplyFormDataValidationContext,
-  { isETH }: { isETH: boolean },
+  {
+    isETH,
+    balanceCheck = 'token',
+  }: {
+    isETH: boolean;
+    // resume after a confirmed unwrap or fund checks the balance the resubmit
+    // actually spends from, or none (see supply-resume)
+    balanceCheck?: SupplyBalanceCheck;
+  },
 ) => {
   const ethBalance = context?.ethBalance ?? 0n;
   const wethBalance = context?.wethBalance ?? 0n;
@@ -47,12 +57,13 @@ export const supplyFormSchema = (
     }),
   ]);
 
-  const maxAmount = isETH ? ethBalance : wethBalance;
+  const maxAmount = isETH || balanceCheck === 'eth' ? ethBalance : wethBalance;
 
   return z.intersection(
     z.intersection(
       z.object({
-        amount: maxAmountSchema(maxAmount),
+        amount:
+          balanceCheck === 'none' ? amountSchema : maxAmountSchema(maxAmount),
         token: supplyTokenSchema,
       }),
       mintSchema,
@@ -67,26 +78,33 @@ export const supplyFormSchema = (
 const timedOutContexts =
   new WeakSet<SupplyFormDataAwaitableValidationContext>();
 
-export const SupplyFormResolver: Resolver<
-  SupplyFormFieldValues,
-  SupplyFormDataAwaitableValidationContext,
-  SupplyFormValidatedValues
-> = async (values, context, options) => {
-  invariant(context, '[SupplyFormResolver] context is undefined');
-
-  const contextValue = timedOutContexts.has(context)
-    ? undefined
-    : await awaitWithTimeout(context, 4000).catch(() => {
-        timedOutContexts.add(context);
-        return undefined;
-      });
-
-  const schema = supplyFormSchema(contextValue, {
-    isETH: values.token === 'ETH',
-  });
-  return zodResolver<
+export const createSupplyFormResolver =
+  (
+    getBalanceCheck: (
+      values: SupplyFormFieldValues,
+    ) => SupplyBalanceCheck = () => 'token',
+  ): Resolver<
     SupplyFormFieldValues,
     SupplyFormDataAwaitableValidationContext,
     SupplyFormValidatedValues
-  >(schema as any)(values, context, options);
-};
+  > =>
+  async (values, context, options) => {
+    invariant(context, '[SupplyFormResolver] context is undefined');
+
+    const contextValue = timedOutContexts.has(context)
+      ? undefined
+      : await awaitWithTimeout(context, 4000).catch(() => {
+          timedOutContexts.add(context);
+          return undefined;
+        });
+
+    const schema = supplyFormSchema(contextValue, {
+      isETH: values.token === 'ETH',
+      balanceCheck: getBalanceCheck(values),
+    });
+    return zodResolver<
+      SupplyFormFieldValues,
+      SupplyFormDataAwaitableValidationContext,
+      SupplyFormValidatedValues
+    >(schema as any)(values, context, options);
+  };

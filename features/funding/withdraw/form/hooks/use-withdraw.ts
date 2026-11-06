@@ -9,6 +9,7 @@ import {
   useReportCalls,
 } from 'modules/vaults';
 import {
+  OperationAbortedError,
   useSendTransaction,
   withSuccess,
   TransactionEntry,
@@ -16,6 +17,7 @@ import {
 } from 'modules/web3';
 
 import type { WithdrawFormValidatedValues } from '../types';
+import { getWithdrawResumeKey } from '../withdraw-form-context/withdraw-resume';
 
 export const useWithdraw = () => {
   const { activeVault } = useVault();
@@ -34,6 +36,7 @@ export const useWithdraw = () => {
       calls.push({
         ...activeVault.dashboard.encode.withdraw([recipient, amount]),
         loadingActionText: vaultTexts.actions.withdraw.loading,
+        stepKey: 'withdraw',
       });
 
       // eth -> weth wrap call
@@ -41,20 +44,29 @@ export const useWithdraw = () => {
         calls.push({
           ...wethContract.encode.deposit({ value: amount }),
           loadingActionText: vaultTexts.actions.weth.loadingWrap,
+          stepKey: 'wrap',
         });
       }
 
-      const { success } = await withSuccess(
+      const { success, error } = await withSuccess(
         sendTX({
           transactions: async () => [...(await prepareReportCalls()), ...calls],
           forceAtomic: true,
+          // confirmed withdraw is skipped on retry, so only the wrap is sent again
+          resumeKey: getWithdrawResumeKey(activeVault.address, {
+            amount,
+            recipient,
+            token,
+          }),
+          allowRetryAfterPartialSuccess: true,
           mainActionLoadingText: vaultTexts.actions.withdraw.loading,
           mainActionCompleteText: vaultTexts.actions.withdraw.completed(token),
           renderSuccessContent: GoToVault,
         }),
       );
 
-      return success;
+      // stopped by the user after confirmed steps: the form is reset, a new submit starts over
+      return { success, isAborted: error instanceof OperationAbortedError };
     },
     [activeVault, publicClient, prepareReportCalls, sendTX],
   );

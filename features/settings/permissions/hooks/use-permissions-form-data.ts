@@ -3,7 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { Address } from 'viem';
 
 import { useVault, VAULTS_ALL_ROLES_MAP } from 'modules/vaults';
-import { useLidoSDK } from 'modules/web3';
+import { useLidoSDK, useRefetchOnTxBlock } from 'modules/web3';
+import { getBlockToReadAt } from 'utils/wait-for-rpc-block';
 
 import { EDITABLE_ROLES_LIST } from '../consts';
 
@@ -11,18 +12,20 @@ import type {
   EditPermissionsSchema,
   FieldSchema,
   PermissionAccounts,
+  PermissionsFormData,
 } from '../types';
 
 export type RolesAndDelegates = {
   rolesList: PermissionAccounts[];
   noGuarantor: Address;
   noDepositor: Address;
+  blockNumber: bigint;
 };
 
 const collectRolesToFormValues = ({
   rolesList,
   ...rest
-}: RolesAndDelegates): EditPermissionsSchema => {
+}: RolesAndDelegates): PermissionsFormData => {
   const rolesSchema = rolesList.reduce(
     (acc, role) => {
       const { addressList, permissionName } = role;
@@ -46,10 +49,10 @@ const collectRolesToFormValues = ({
 };
 
 export const usePermissionsFormData = () => {
-  const { publicClient } = useLidoSDK();
+  const { publicClient, getLatestTxBlock } = useLidoSDK();
   const { activeVault, queryKeys } = useVault();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [
       ...queryKeys.config('roles'),
       'getRoleMembers',
@@ -57,13 +60,24 @@ export const usePermissionsFormData = () => {
     ],
     enabled: !!activeVault,
     select: collectRolesToFormValues,
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       invariant(activeVault, 'Active vault is not defined');
+
+      // wait for RPC to reach the latest tx block and read at it,
+      // so data after partial success of legacy batch includes applied txs
+      const blockNumber = await getBlockToReadAt(
+        publicClient,
+        getLatestTxBlock() ?? 0n,
+        {
+          signal,
+        },
+      );
 
       // TODO: can be changed to `VaultViewer.geRoleMembers`
       const result: readonly (readonly Address[])[] =
         await publicClient.multicall({
           allowFailure: false,
+          blockNumber,
           contracts: EDITABLE_ROLES_LIST.map((role) =>
             activeVault.dashboard.prepare.getRoleMembers([
               VAULTS_ALL_ROLES_MAP[role],
@@ -73,8 +87,12 @@ export const usePermissionsFormData = () => {
 
       const pdgContract = activeVault.predepositGuarantee;
       const [noGuarantor, noDepositor] = await Promise.all([
-        pdgContract.read.nodeOperatorGuarantor([activeVault.nodeOperator]),
-        pdgContract.read.nodeOperatorDepositor([activeVault.nodeOperator]),
+        pdgContract.read.nodeOperatorGuarantor([activeVault.nodeOperator], {
+          blockNumber,
+        }),
+        pdgContract.read.nodeOperatorDepositor([activeVault.nodeOperator], {
+          blockNumber,
+        }),
       ]);
 
       return {
@@ -84,7 +102,12 @@ export const usePermissionsFormData = () => {
         })),
         noGuarantor,
         noDepositor,
+        blockNumber,
       };
     },
   });
+
+  useRefetchOnTxBlock(query);
+
+  return query;
 };

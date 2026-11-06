@@ -54,6 +54,8 @@ export const useMint = () => {
               mintCall,
             ],
             forceAtomic: true,
+            // only report (and approve) can be applied before the main tx, both are rebuilt from live state
+            allowRetryAfterPartialSuccess: true,
             mainActionLoadingText: loadingActionText,
             mainActionCompleteText,
             renderSuccessContent: GoToVault,

@@ -13,7 +13,7 @@ import { ButtonLink } from '../button-link';
 
 import type { Hash } from 'viem';
 import type { TransactionModalAction, TransactionModalState } from './types';
-import type { Dispatch } from 'react';
+import { useRef, useState, type Dispatch } from 'react';
 
 const getIconComponent = (state: TransactionModalState) => {
   switch (state.stage) {
@@ -123,7 +123,10 @@ const getMainContent = (
 const showEtherscanLink = (state: TransactionModalState) => {
   if (
     state.details.transactionId &&
-    (state.stage === 'awaiting' || state.stage === 'success')
+    (state.stage === 'awaiting' ||
+      state.stage === 'success' ||
+      // on error only the tx with unknown status is kept
+      state.stage === 'error')
   ) {
     if (state.isBatch) {
       return <TxLinkAA callId={state.details.transactionId} />;
@@ -132,18 +135,49 @@ const showEtherscanLink = (state: TransactionModalState) => {
   }
 };
 
-const showRetryButton = (state: TransactionModalState) => {
-  if (state.onRetry && state.stage === 'error') {
-    return (
-      <ButtonLink
-        onClick={() => {
-          state.onRetry?.();
-        }}
-      >
-        Retry
-      </ButtonLink>
-    );
-  }
+// Retry is locked while the attempt it started runs: a second click (e.g. a double click,
+// or a click while the retry is still validating) is ignored, so it can't become another
+// attempt. If the attempt ended without a new modal session (validation or a pre-send step
+// stopped it), Retry is offered again; a new session shows its own Retry.
+const RetryButton = ({ state }: { state: TransactionModalState }) => {
+  const retryingSessionRef = useRef<number>();
+  const [retryingSession, setRetryingSession] = useState<number>();
+  const currentSessionRef = useRef(state.sessionId);
+  currentSessionRef.current = state.sessionId;
+
+  const { onRetry } = state;
+  if (!onRetry || state.stage !== 'error') return null;
+  if (retryingSession === state.sessionId) return null;
+
+  const retry = async () => {
+    const clickedSession = state.sessionId;
+    // the ref locks synchronously, before the re-render hides the button
+    if (retryingSessionRef.current === clickedSession) return;
+    retryingSessionRef.current = clickedSession;
+    setRetryingSession(clickedSession);
+    try {
+      await onRetry();
+    } finally {
+      if (currentSessionRef.current === clickedSession) {
+        retryingSessionRef.current = undefined;
+        setRetryingSession(undefined);
+      }
+    }
+  };
+
+  return (
+    <ButtonLink
+      onClick={() => {
+        // the attempt reports its own errors in the modal; this only keeps a failure
+        // outside it (e.g. a refetch after the tx) from being an unhandled rejection
+        retry().catch((error) =>
+          console.error('[TransactionModal] retry failed', error),
+        );
+      }}
+    >
+      Retry
+    </ButtonLink>
+  );
 };
 
 export const TransactionModalContent = () => {
@@ -165,7 +199,7 @@ export const TransactionModalContent = () => {
       <Content>
         {getMainContent(state, dispatchModal)}
         <div data-testid="footerHint">{showEtherscanLink(state)}</div>
-        {showRetryButton(state)}
+        <RetryButton state={state} />
       </Content>
     </Modal>
   );

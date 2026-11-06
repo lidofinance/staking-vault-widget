@@ -6,6 +6,7 @@ import { ConnectWalletButton } from 'shared/wallet';
 import { useVaultConfirmingRoles, vaultTexts } from 'modules/vaults';
 
 import { shouldIncrementTxCounterByAddresses } from 'features/settings/main/utils';
+import { isSameFee } from 'modules/vaults/utils/fee';
 import { useMainSettingsData } from 'features/settings/main/contexts';
 import { useDepositorRolesPermissions } from 'features/settings/main/hooks';
 import type { MainSettingsFormValidatedValues } from 'features/settings/main/types';
@@ -62,10 +63,13 @@ export const MainSettingsAction: FC = () => {
     const nodeOperatorFeeRateFormValue =
       feeRate === 'custom' ? feeRateCustom : feeRate;
 
+    // compared in basis points, as the tx builder does: 1.00 vs 1 is no tx
     if (
       nodeOperatorFeeRateFormValue !== '' &&
-      nodeOperatorFeeRateFormValue !==
-        mainSettingsData?.nodeOperatorFeeRateCurrent
+      !isSameFee(
+        nodeOperatorFeeRateFormValue,
+        mainSettingsData?.nodeOperatorFeeRateCurrent,
+      )
     ) {
       counter++;
     }

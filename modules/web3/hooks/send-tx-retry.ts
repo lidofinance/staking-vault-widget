@@ -1,0 +1,108 @@
+// Pure retry/resume rules of useSendTransaction, kept apart from the hook to be unit tested
+
+export type ResumeProgress = {
+  key: string;
+  completedSteps: Set<string>;
+};
+
+// progress belongs to an account and the submitted values: another account or other values start over
+export const toProgressKey = (
+  address: string | undefined,
+  resumeKey: string | undefined,
+): string | undefined =>
+  resumeKey === undefined ? undefined : `${address}:${resumeKey}`;
+
+// steps confirmed for exactly this key, e.g. to show the form what a resubmit will skip
+export const getCompletedStepsFor = (
+  progress: ResumeProgress | undefined,
+  key: string | undefined,
+): ReadonlySet<string> =>
+  key !== undefined && progress?.key === key
+    ? progress.completedSteps
+    : new Set<string>();
+
+// progress is reused only for the same key (account + submitted values), otherwise it starts over
+export const resolveResumeProgress = (
+  current: ResumeProgress | undefined,
+  key: string | undefined,
+): ResumeProgress | undefined => {
+  if (key === undefined) return undefined;
+  if (current?.key === key) return current;
+  return { key, completedSteps: new Set() };
+};
+
+export const skipCompletedSteps = <T extends { stepKey?: string }>(
+  transactions: T[],
+  completedSteps: ReadonlySet<string>,
+): T[] =>
+  transactions.filter((tx) => !tx.stepKey || !completedSteps.has(tx.stepKey));
+
+type CallReceipt = { status: 'success' | 'reverted' };
+
+// failed AA batch: which calls were executed and whether the outcome is known at all
+export const getFailedBatchOutcome = <R extends CallReceipt>(callStatus: {
+  receipts?: R[];
+  statusCode: number;
+}) => {
+  const executedReceipts =
+    callStatus.receipts?.filter((receipt) => receipt.status === 'success') ??
+    [];
+  return {
+    executedReceipts,
+    // 600 is a partial revert: some calls are executed, but without receipts we can't tell which
+    isUnknown: executedReceipts.length === 0 && callStatus.statusCode === 600,
+  };
+};
+
+export type RetryDecisionInput = {
+  // isRetryable of DisplayableError, undefined for generic errors
+  isRetryableError: boolean | undefined;
+  // a tx (hash or call id) was sent, but its result is unknown
+  isUnconfirmed: boolean;
+  // receipts of legacy txs, including the reverted one
+  receipts: CallReceipt[];
+  // executed calls of a partially failed AA batch
+  executedCallsCount: number;
+  isAA: boolean;
+  // resume by steps is used (resumeKey is set)
+  isTracked: boolean;
+  allowRetryAfterPartialSuccess: boolean;
+  // the user declined a request in the wallet
+  isUserRejected: boolean;
+  // tracked steps confirmed in this or previous attempts of the same operation
+  hasCompletedSteps: boolean;
+};
+
+export const getRetryDecision = ({
+  isRetryableError,
+  isUnconfirmed,
+  receipts,
+  executedCallsCount,
+  isAA,
+  isTracked,
+  allowRetryAfterPartialSuccess,
+  isUserRejected,
+  hasCompletedSteps,
+}: RetryDecisionInput) => {
+  const isPartialSuccess =
+    receipts.some((receipt) => receipt.status === 'success') ||
+    executedCallsCount > 0;
+  // executed calls of a partially failed AA batch can't be mapped to steps,
+  // so a resume would send them again
+  const isUntrackedPartialSuccess = isPartialSuccess && isAA && isTracked;
+
+  // the user stopped an operation with confirmed steps: it is not resumed,
+  // the next submit starts over, and a retry with the same values would send the confirmed steps again
+  const isAborted = isUserRejected && isTracked && hasCompletedSteps;
+
+  // retry signs new txs, so it must not replay a tx that may be executed
+  // or steps that are already applied
+  const canRetry =
+    (isRetryableError ?? true) &&
+    !isUnconfirmed &&
+    !isUntrackedPartialSuccess &&
+    !isAborted &&
+    (!isPartialSuccess || allowRetryAfterPartialSuccess);
+
+  return { canRetry, isPartialSuccess, isAborted };
+};

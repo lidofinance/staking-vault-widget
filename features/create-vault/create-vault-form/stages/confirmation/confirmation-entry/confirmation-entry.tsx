@@ -14,8 +14,12 @@ import type {
   InputDataType,
   MainSettingsEntryType,
 } from 'features/create-vault/types';
+import type { ConfirmDataItemProps } from './types';
 
-export type ConfirmationDataProps = MainSettingsEntryType;
+export type ConfirmationDataProps = MainSettingsEntryType & {
+  // value to show instead of the live form one, e.g. the submitted value after the form is reset
+  value?: ConfirmDataItemProps['payload'];
+};
 
 const getComponentByType = (dataType: InputDataType) => {
   switch (dataType) {
@@ -40,9 +44,10 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   title,
   hint,
   dataTestId,
+  value: providedValue,
 }) => {
   const { getValues } = useFormContext();
-  const value = getValues(name);
+  const value = providedValue ?? getValues(name);
   const DataComponent = getComponentByType(dataType);
 
   // For some inputs we don't need confirmation e.g. terms checkbox

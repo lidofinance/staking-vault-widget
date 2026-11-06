@@ -6,11 +6,11 @@ import {
   useReducer,
 } from 'react';
 
-import type {
-  TransactionModalAction,
-  TransactionModalContextValue,
-  TransactionModalState,
-} from './types';
+import type { TransactionModalContextValue } from './types';
+import {
+  initialTransactionModalState,
+  transactionModalReducer,
+} from './reducer';
 import { TransactionModalContent } from './transaction-modal-content';
 
 const TransactionModalContext =
@@ -27,56 +27,11 @@ export const useTransactionModal = () => {
   return context;
 };
 
-const reducer = (
-  state: TransactionModalState,
-  action: TransactionModalAction,
-): TransactionModalState => {
-  const { type, ...payload } = action;
-  switch (type) {
-    case 'init':
-      return {
-        ...payload,
-        details: {
-          ...state.details,
-          ...(action.details ?? {}),
-        },
-      } as TransactionModalState;
-    case 'open':
-    case 'close':
-      return {
-        ...state,
-        isOpen: action.type === 'open',
-      };
-    case 'stage':
-      return {
-        ...state,
-        isOpen: true,
-        stage: action.stage,
-        // allowRetry false can override previous onRetry setting
-        onRetry: action.allowRetry === false ? undefined : state.onRetry,
-        details: {
-          ...state.details,
-          ...(action.details ?? {}),
-        },
-      };
-    default:
-      return state;
-  }
-};
-
-const initialState: TransactionModalState = {
-  isBatch: false,
-  isOpen: false,
-  stage: 'none',
-  onRetry: undefined,
-  details: {
-    actionLoadingText: '',
-    actionCompleteText: '',
-  },
-};
-
 export const TransactionModal = ({ children }: PropsWithChildren) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    transactionModalReducer,
+    initialTransactionModalState,
+  );
   const value = useMemo(() => {
     return {
       ...state,

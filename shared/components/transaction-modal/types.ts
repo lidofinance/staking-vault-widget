@@ -29,9 +29,14 @@ type TransactionModalDetails = {
 };
 
 export type TransactionModalState = {
+  // the send operation the modal currently belongs to (0 before the first one);
+  // set by 'init', and 'stage' of any other operation is ignored, so a late result
+  // of an older operation can't overwrite a newer one or reuse its Retry
+  sessionId: number;
   isOpen: boolean;
   isBatch: boolean;
-  onRetry?: () => void;
+  // resolves when the retry attempt it starts has ended (or right away if it was queued)
+  onRetry?: () => void | Promise<unknown>;
   stage: TransactionModalStage;
   details: TransactionModalDetails;
 };
@@ -45,7 +50,15 @@ export type TransactionModalAction =
       type: 'open' | 'close';
     }
   | {
+      // takes Retry away from the current stage without reopening a closed modal
+      type: 'disable-retry';
+      // retry callback of the sender requesting it; ignored if the modal now belongs to another sender
+      onRetry: NonNullable<TransactionModalState['onRetry']>;
+    }
+  | {
       type: 'stage';
+      // the operation that dispatches it, see TransactionModalState.sessionId
+      sessionId: number;
       stage: Exclude<TransactionModalStage, 'none'>;
       allowRetry?: boolean;
       details?: Partial<TransactionModalDetails>;
