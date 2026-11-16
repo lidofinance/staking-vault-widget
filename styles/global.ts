@@ -3,6 +3,7 @@ import { ThemeName } from '@lidofinance/lido-ui';
 
 import {
   NAV_LAPTOP_MAX_WIDTH,
+  NAV_LOW_MAX_HEIGHT,
   NAV_MOBILE_HEIGHT,
   NAV_MOBILE_MAX_WIDTH,
   NAV_TABLET_MAX_WIDTH,
@@ -12,6 +13,7 @@ export const devicesHeaderMedia = {
   laptop: `screen and (max-width: ${NAV_LAPTOP_MAX_WIDTH}px)`,
   tablet: `screen and (max-width: ${NAV_TABLET_MAX_WIDTH}px)`,
   mobile: `screen and (max-width: ${NAV_MOBILE_MAX_WIDTH}px)`,
+  lowHeight: `screen and (max-height: ${NAV_LOW_MAX_HEIGHT}px)`,
 };
 
 const GlobalStyle = createGlobalStyle`

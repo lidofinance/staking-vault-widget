@@ -16,7 +16,8 @@ const trustedHosts = secretConfig.cspTrustedHosts
 
 export const contentSecurityPolicy = buildCspDirectives({
   trustedHosts,
-  reportUri: secretConfig.cspReportUri,
+  // next-secure-headers rejects '' as an invalid URL
+  reportUri: secretConfig.cspReportUri || undefined,
   reportOnly: secretConfig.cspReportOnly,
   ipfsMode: config.ipfsMode,
   ipfsScriptHash: IPFS_BASE_SCRIPT_HASH,

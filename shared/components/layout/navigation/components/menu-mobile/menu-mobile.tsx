@@ -3,7 +3,10 @@ import { type FC, useMemo } from 'react';
 import { useVault } from 'modules/vaults';
 import { ReactComponent as BurgerIcon } from 'assets/icons/burger-icon.svg';
 
-import { NavigationList } from 'shared/components/layout/navigation/components';
+import {
+  DocsLinks,
+  NavigationList,
+} from 'shared/components/layout/navigation/components';
 import {
   vaultPathnames,
   vaultRoutes,
@@ -14,6 +17,8 @@ import {
   Container,
   HiddenNav,
   HiddenNavContainer,
+  HiddenNavDivider,
+  HiddenNavList,
   MenuItem,
   WrapperButton,
 } from './styles';
@@ -51,7 +56,11 @@ export const MenuMobile: FC = () => {
       </WrapperButton>
       <HiddenNavContainer $showMenu={isOpen}>
         <HiddenNav>
-          <NavigationList routes={routesForMenu} />
+          <HiddenNavList>
+            <NavigationList routes={routesForMenu} />
+          </HiddenNavList>
+          <HiddenNavDivider role="separator" />
+          <DocsLinks />
         </HiddenNav>
       </HiddenNavContainer>
     </MenuItem>

@@ -8,7 +8,7 @@ const WALLETCONNECT_HOSTS = [
 
 /**
  * Builds a ContentSecurityPolicyOption-compatible directives object.
- * Used by both next.config.mjs (via build-security-headers.js) and _document.tsx (via csp-headers.ts).
+ * Used by both server.mjs (CSP header) and _document.tsx (IPFS <meta> tag, via csp-headers.ts).
  *
  * @param {{
  *   trustedHosts?: string[],
