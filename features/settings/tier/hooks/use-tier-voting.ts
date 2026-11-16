@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { isAddressEqual } from 'viem';
 
 import {
@@ -17,7 +17,7 @@ export const useTierVoting = () => {
   const { hasPermission: hasVaultConfigurationPermission } =
     useVaultPermission('vaultConfiguration');
   const { hasAdmin } = useVaultConfirmingRoles();
-  const { address } = useAccount();
+  const { address } = useConnection();
 
   return useMemo(() => {
     if (!activeVault || !vaultTierInfo || !noTiersInfo || !address) {

@@ -1,17 +1,17 @@
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 
 import { VaultTable } from 'features/home/vault-table';
 
 import { AddVault } from './add-vault';
 import { MyVaultsPromo } from './my-vaults-promo';
 import { useMyVaultsList } from './use-my-vaults-list';
-import { useWalletRestoring } from './use-wallet-restoring';
+import { useWalletRestoring } from 'shared/hooks/use-wallet-restoring';
 import { MobileOnly } from './styles';
 
 export const MyVaults = () => {
   // status instead of isConnected: the latter is false while reconnecting,
   // which would flash the promo for users with a remembered wallet
-  const { status } = useAccount();
+  const { status } = useConnection();
   // and before the reconnect starts it's still 'disconnected'
   const isWalletRestoring = useWalletRestoring();
   const {

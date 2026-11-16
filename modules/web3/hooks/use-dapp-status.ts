@@ -1,4 +1,4 @@
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 
 import { useDappChain } from 'modules/web3/web3-provider/dapp-chain';
 
@@ -8,7 +8,7 @@ export const useDappStatus = () => {
     addresses,
     chainId: walletChainId,
     isConnected: isWalletConnected,
-  } = useAccount();
+  } = useConnection();
 
   // this can change between pages based on their dapp-chain contexts(or lack of)
   const dappChain = useDappChain();

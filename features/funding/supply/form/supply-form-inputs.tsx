@@ -1,3 +1,4 @@
+import { useConnection } from 'wagmi';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
@@ -6,6 +7,7 @@ import {
   TokenAmountInputGroup,
 } from 'shared/hook-form/controls';
 import { InlineLoader } from 'shared/components';
+import { useWalletRestoring } from 'shared/hooks/use-wallet-restoring';
 import {
   useEthBalanceWarning,
   useVaultPermission,
@@ -18,11 +20,21 @@ import type { SupplyFormValidatedValues } from './types';
 
 export const SupplyFormInputs = () => {
   const { balanceQuery, isStethMintableQuery } = useSupplyForm();
-  const { hasPermission: canSupply, isLoading: isSupplyRoleLoading } =
+  const { hasPermission: canSupply, isPending: isSupplyRolePending } =
     useVaultPermission('supplier');
-  const { hasPermission: canMint, isLoading: isMintRoleLoading } =
+  const { hasPermission: canMint, isPending: isMintRolePending } =
     useVaultPermission('minter');
-  const isRolesLoading = isSupplyRoleLoading || isMintRoleLoading;
+  const { status } = useConnection();
+  const isWalletRestoring = useWalletRestoring();
+  // the roles queries stay disabled until the vault base data and the wallet
+  // address are available, and isLoading is false for disabled queries, so
+  // isPending must be used to also cover that window — otherwise the
+  // checkbox flashes for supply-only users on every page load
+  const isRolesLoading =
+    (isSupplyRolePending || isMintRolePending) &&
+    // the roles can never resolve for a disconnected wallet, so fall back to
+    // the pre-connect UI instead of loading forever
+    (status !== 'disconnected' || isWalletRestoring);
   const {
     formState: { disabled },
   } = useFormContext<SupplyFormValidatedValues>();
@@ -56,7 +68,7 @@ export const SupplyFormInputs = () => {
         isLoading={isRolesLoading}
         showBy={!isMintOptionHidden}
         height={24}
-        width="100%"
+        width={170}
       >
         <>
           <CheckboxHookForm
