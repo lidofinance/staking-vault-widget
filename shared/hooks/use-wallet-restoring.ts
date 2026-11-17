@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAccount, useConfig } from 'wagmi';
+import { useConnection, useConfig } from 'wagmi';
 import { checkTermsAccepted } from 'reef-knot/core-react';
 
 // reef-knot auto connect runs eager connect and a 100ms delay before reconnect,
@@ -10,7 +10,7 @@ const RESTORE_TIMEOUT_MS = 1000;
 // before mount (no storage on SSR) and until reef-knot starts the reconnect
 export const useWalletRestoring = () => {
   const { storage } = useConfig();
-  const { status } = useAccount();
+  const { status } = useConnection();
   const [isRestoring, setIsRestoring] = useState(true);
 
   useEffect(() => {

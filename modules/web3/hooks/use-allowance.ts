@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { Address, WatchContractEventOnLogsFn } from 'viem';
-import { useAccount, useReadContract, useWatchContractEvent } from 'wagmi';
+import { useConnection, useReadContract, useWatchContractEvent } from 'wagmi';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { config } from 'config';
@@ -71,7 +71,7 @@ export const useAllowance = ({
   account: propsAccount,
   spender,
 }: UseAllowanceProps) => {
-  const { address } = useAccount();
+  const { address } = useConnection();
   const account = propsAccount || address;
   const { chainId, isSupportedChain } = useDappStatus();
   const queryClient = useQueryClient();
