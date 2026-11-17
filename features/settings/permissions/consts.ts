@@ -58,6 +58,11 @@ const baseValidation = zodResolver<
   EditPermissionsSchema
 >(editPermissionsSchema, { async: false }, { mode: 'sync', raw: false });
 
+// tracks context promises that already timed out once, so repeated
+// validation calls don't re-wait 5s each time for a promise that is
+// known to never settle (e.g. slow RPC)
+const timedOutContexts = new WeakSet<Promise<PermissionsFormData>>();
+
 export const editPermissionsResolver: Resolver<
   EditPermissionsSchema,
   Promise<PermissionsFormData>,
@@ -68,7 +73,12 @@ export const editPermissionsResolver: Resolver<
 
   invariant(awaitableContext, '[editPermissionsResolver] context is undefined');
 
-  const context = await awaitWithTimeout(awaitableContext, 5000);
+  const context = timedOutContexts.has(awaitableContext)
+    ? undefined
+    : await awaitWithTimeout(awaitableContext, 5000).catch(() => {
+        timedOutContexts.add(awaitableContext);
+        return undefined;
+      });
 
   if (!context) {
     return baseResult;

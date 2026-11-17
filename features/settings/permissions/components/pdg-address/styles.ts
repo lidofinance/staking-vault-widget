@@ -28,4 +28,10 @@ export const PDGAddressInput = styled(AddressInputHookForm)<{
         border-color: ${colors.success};
       }
     `}
+
+  // the lido-ui error popup (second span in the label) overlays the next
+  // form row and eats the first click; keep it visible but click-through
+  & > span + span {
+    pointer-events: none;
+  }
 `;
