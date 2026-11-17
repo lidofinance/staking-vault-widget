@@ -1,10 +1,10 @@
-import { useFieldArray, useFormState } from 'react-hook-form';
+import { useFieldArray, useFormContext, useFormState } from 'react-hook-form';
 import { Plus } from '@lidofinance/lido-ui';
 import type { FC } from 'react';
 import type { Address } from 'viem';
 
 import { ButtonClose } from 'shared/components';
-import { AddressInputHookForm } from 'shared/hook-form/controls';
+import { AddressField } from './address-field';
 import { AddressInputGroup, AddressList, AppendButton } from './styles';
 import type { CreateFormInputProps } from './types';
 
@@ -17,6 +17,7 @@ export const AddressArrayInput: FC<CreateFormInputProps> = ({
   placeholder,
 }) => {
   const { disabled } = useFormState();
+  const { trigger } = useFormContext();
   const { fields, append, remove } = useFieldArray<
     PlaceholderForm,
     'addresses'
@@ -28,13 +29,19 @@ export const AddressArrayInput: FC<CreateFormInputProps> = ({
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>
-            <AddressInputHookForm
-              key={field.id}
-              showRightDecorator={false}
+            <AddressField
               placeholder={placeholder}
               fieldName={`${name}.${index}.value` as const}
+              deps={name}
             />
-            {allowDelete && <ButtonClose onClick={() => remove(index)} />}
+            {allowDelete && (
+              <ButtonClose
+                onClick={() => {
+                  remove(index);
+                  void trigger(name);
+                }}
+              />
+            )}
           </AddressInputGroup>
         );
       })}

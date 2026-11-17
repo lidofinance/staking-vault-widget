@@ -1,12 +1,15 @@
 import type { FC } from 'react';
-import { Hint } from 'shared/components';
 
 import { GeneralInput } from './general-input';
 import { AddressInput } from './address-input';
-import { ConfirmInput } from './confirm-input';
 import { AddressArrayInput } from './address-array-input';
 
-import { InputContainer, InputNotes, InputTitle } from './styles';
+import {
+  InputContainer,
+  InputDescription,
+  InputHeader,
+  InputTitle,
+} from './styles';
 import type { MainSettingsEntryType } from 'features/create-vault/types';
 
 const getInput = (dataType: MainSettingsEntryType['dataType']) => {
@@ -15,15 +18,13 @@ const getInput = (dataType: MainSettingsEntryType['dataType']) => {
       return AddressArrayInput;
     case 'address':
       return AddressInput;
-    case 'confirm':
-      return ConfirmInput;
     default:
       return GeneralInput;
   }
 };
 
 export const CreateVaultInput: FC<MainSettingsEntryType> = (props) => {
-  const { dataType, title, notes, hint, dataTestId } = props;
+  const { dataType, title, description, dataTestId } = props;
 
   const Input = getInput(dataType);
 
@@ -32,23 +33,24 @@ export const CreateVaultInput: FC<MainSettingsEntryType> = (props) => {
       data-testid={dataTestId ? `${dataTestId}-inputContainer` : undefined}
     >
       {title && (
-        <InputTitle
-          data-testid={dataTestId ? `${dataTestId}-inputTitle` : undefined}
-        >
-          {title}
-          <Hint
-            text={hint}
-            data-testid={dataTestId ? `${dataTestId}-inputHint` : undefined}
-          />
-        </InputTitle>
+        <InputHeader>
+          <InputTitle
+            data-testid={dataTestId ? `${dataTestId}-inputTitle` : undefined}
+          >
+            {title}
+          </InputTitle>
+          {description && (
+            <InputDescription
+              data-testid={
+                dataTestId ? `${dataTestId}-inputDescription` : undefined
+              }
+            >
+              {description}
+            </InputDescription>
+          )}
+        </InputHeader>
       )}
       <Input {...props} />
-      {!!notes && (
-        <InputNotes>
-          <b>Note: </b>
-          {notes}
-        </InputNotes>
-      )}
     </InputContainer>
   );
 };

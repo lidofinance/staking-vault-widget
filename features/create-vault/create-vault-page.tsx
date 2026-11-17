@@ -10,7 +10,7 @@ import { PageWrapper } from './styles';
 
 export const CreateVaultPage: FC = () => {
   return (
-    <Layout containerSize="content" title="Creating new vault">
+    <Layout containerSize="content" title="Creating new stVault">
       <Head>
         <title>{getPageTitle('Create Vault')}</title>
       </Head>
