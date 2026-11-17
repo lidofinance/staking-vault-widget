@@ -10,6 +10,7 @@ import {
 import {
   useVault,
   vaultTexts,
+  DisplayableError,
   GoToVault,
   VAULTS_ALL_ROLES_MAP,
 } from 'modules/vaults';
@@ -66,6 +67,9 @@ export const useEditPermissions = () => {
           { toRevoke: [], toGrant: [] },
         );
 
+        const isGuarantorChanged =
+          getAddress(permissionsData.formValues.noGuarantor) !==
+          getAddress(noGuarantor);
         const transactions: TransactionEntry[] = [];
 
         if (toGrant.length > 0) {
@@ -85,9 +89,7 @@ export const useEditPermissions = () => {
           });
         }
 
-        if (
-          getAddress(permissionsData.noGuarantor) !== getAddress(noGuarantor)
-        ) {
+        if (isGuarantorChanged) {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorGuarantor([noGuarantor]),
             loadingActionText: vaultTexts.actions.settings.noGuarantorLoading,
@@ -95,7 +97,8 @@ export const useEditPermissions = () => {
         }
 
         if (
-          getAddress(permissionsData.noDepositor) !== getAddress(noDepositor)
+          getAddress(permissionsData.formValues.noDepositor) !==
+          getAddress(noDepositor)
         ) {
           transactions.push({
             ...pdgContract.encode.setNodeOperatorDepositor([noDepositor]),
@@ -105,7 +108,23 @@ export const useEditPermissions = () => {
 
         return withSuccess(
           sendTX({
-            transactions,
+            // re-check locked NO balance right before sending: a predeposit
+            // could have happened after the form was loaded
+            transactions: async () => {
+              if (isGuarantorChanged) {
+                const { locked } = await pdgContract.read.nodeOperatorBalance([
+                  activeVault.nodeOperator,
+                ]);
+                if (locked > 0n) {
+                  throw new DisplayableError(
+                    vaultTexts.roles.guarantor.lockedError(locked),
+                    false,
+                  );
+                }
+              }
+
+              return transactions;
+            },
             mainActionLoadingText: 'Editing vault permissions',
             mainActionCompleteText: 'Vault permissions edited',
             renderSuccessContent: GoToVault,

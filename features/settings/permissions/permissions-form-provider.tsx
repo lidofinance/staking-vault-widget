@@ -1,6 +1,5 @@
 import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { useDappStatus } from 'modules/web3';
@@ -10,7 +9,7 @@ import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 import { useAwaiter } from 'shared/hooks/use-awaiter';
 import { FormController, useDisableForm } from 'shared/hook-form';
 
-import { editPermissionsSchema } from './consts';
+import { editPermissionsResolver } from './consts';
 import { useEditPermissions, usePermissionsFormData } from './hooks';
 import { FormBackdrop } from './components';
 import type { EditPermissionsSchema } from './types';
@@ -21,14 +20,16 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
 }) => {
   const { invalidateVaultConfig } = useVault();
   const { isDappActive } = useDappStatus();
-  const { data: rolesList, refetch } = usePermissionsFormData();
-  const asyncPermissions = useAwaiter(rolesList);
+  const { data: permissionsData, refetch } = usePermissionsFormData();
+  const asyncPermissions = useAwaiter(permissionsData).awaiter;
   const { editPermissions, retryEvent } = useEditPermissions();
   const disabled = useDisableForm();
 
   const formObject = useForm<EditPermissionsSchema>({
-    defaultValues: async () => asyncPermissions.awaiter,
-    resolver: zodResolver(editPermissionsSchema),
+    defaultValues: async () =>
+      asyncPermissions.then(({ formValues }) => formValues),
+    context: asyncPermissions,
+    resolver: editPermissionsResolver,
     disabled: !isDappActive || disabled,
     mode: 'all',
   });
@@ -50,7 +51,7 @@ export const PermissionsFormProvider: FC<PropsWithChildren> = ({
         }),
       ]);
 
-      reset(newData || undefined);
+      reset(newData?.formValues);
 
       return success;
     },

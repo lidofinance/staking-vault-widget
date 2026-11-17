@@ -1039,6 +1039,8 @@ export const vaultTexts = {
       title: 'Guarantor',
       buttonText: 'Guarantor',
       hint: 'Manages the Node Operator’s guarantor bond: top up, withdraw, and claim refunds.',
+      lockedError: (locked: bigint) =>
+        `${formatBalance(locked).trimmed} ETH of the Node Operator balance is locked for predeposits. You can’t change the guarantor.` as const,
     },
     depositor: {
       title: 'Depositor',
