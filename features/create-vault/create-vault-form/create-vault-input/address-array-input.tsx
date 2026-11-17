@@ -4,7 +4,7 @@ import type { FC } from 'react';
 import type { Address } from 'viem';
 
 import { ButtonClose } from 'shared/components';
-import { AddressInputHookForm } from 'shared/hook-form/controls';
+import { AddressField } from './address-field';
 import { AddressInputGroup, AddressList, AppendButton } from './styles';
 import type { CreateFormInputProps } from './types';
 
@@ -29,9 +29,7 @@ export const AddressArrayInput: FC<CreateFormInputProps> = ({
       {fields.map((field, index) => {
         return (
           <AddressInputGroup key={field.id}>
-            <AddressInputHookForm
-              key={field.id}
-              showRightDecorator={false}
+            <AddressField
               placeholder={placeholder}
               fieldName={`${name}.${index}.value` as const}
               deps={name}

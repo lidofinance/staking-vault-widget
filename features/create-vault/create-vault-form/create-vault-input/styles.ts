@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ButtonIcon } from '@lidofinance/lido-ui';
+import { ButtonIcon, Link } from '@lidofinance/lido-ui';
 
 /// CreateVaultInput
 
@@ -57,4 +57,8 @@ export const AddressInputGroup = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+`;
+
+export const EtherscanLinkWrapper = styled(Link)`
+  display: contents;
 `;
