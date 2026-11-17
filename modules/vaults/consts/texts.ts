@@ -60,8 +60,8 @@ export const vaultTexts = {
       },
     },
     createVault: {
-      loading: 'Creating vault',
-      completed: 'Vault created',
+      loading: 'You are creating a new vault',
+      completed: 'New vault has been created',
       steps: ['Addresses', 'Settings', 'Verify new stVault settings'],
       submit: 'Create stVault and supply 1 ETH',
       insufficientBalance:
