@@ -152,14 +152,13 @@ describe('collectRequestAddressMetric', () => {
     ]);
   });
 
-  // Cardinality must not depend on attacker-chosen calldata: every variant
-  // below has to land in the same single `unknown` method series.
+  // Any selector outside the ABI is reported under a single `unknown` series.
   test.each([
     ['unknown 4-byte selector', '0xdeadbeef'],
     ['upper-case 0X prefix', '0X70a08231'],
     ['non-hex 10-char string', '0xzzzzzzzz'],
-    ['10-element array', Array.from({ length: 10 }, () => 'x'.repeat(1024))],
-    ['object', { length: 10 }],
+    ['non-string data (array)', Array.from({ length: 10 }, () => '0')],
+    ['non-string data (object)', { length: 10 }],
   ])(
     'collapses method labels for allow-listed contract with %s',
     async (_, data) => {

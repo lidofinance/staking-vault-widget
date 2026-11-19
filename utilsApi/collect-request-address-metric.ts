@@ -26,15 +26,12 @@ const shortError = (error: unknown) => {
 // Matches a 4-byte function selector at the start of calldata.
 const SELECTOR_PREFIX = /^0x[0-9a-fA-F]{8}/;
 
-// Increments the eth_call Counter per batch entry. Every label is drawn from a
-// finite, code-defined set so prom-client's in-memory label store (series are
-// never evicted) stays bounded regardless of incoming traffic shape:
+// Increments the eth_call Counter per batch entry. Labels are kept to a small,
+// code-defined set so the metric stays readable:
 // - `address` / `contractName` are kept only for contracts in the
 //   METRIC_CONTRACT_ADDRESSES allow-list;
 // - `methodEncoded` / `methodDecoded` are kept only when the selector resolves
-//   to a function in that contract's ABI. A raw 4-byte selector alone is
-//   attacker-chosen (2^32 values), so unresolved selectors collapse to
-//   `unknown` even for allow-listed contracts.
+//   to a function in that contract's ABI; anything else is `unknown`.
 //
 // Per-call try/catch isolates each entry: a malformed call cannot drop
 // metrics for siblings in the same batch.
@@ -67,8 +64,7 @@ export const collectRequestAddressMetric = async ({
 
       let methodEncoded: string = UNKNOWN_LABEL;
       let methodDecoded: string = UNKNOWN_LABEL;
-      // `data` is untrusted JSON: anything but a hex string (e.g. an array,
-      // whose .slice/.length mimic a string) must not reach a label value.
+      // Only a hex calldata string carries a selector we can resolve.
       if (
         contractName &&
         typeof data === 'string' &&
