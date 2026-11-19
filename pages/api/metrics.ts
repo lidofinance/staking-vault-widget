@@ -1,3 +1,4 @@
+import type { NextApiHandler } from 'next';
 import {
   wrapRequest as wrapNextRequest,
   cacheControl,
@@ -17,9 +18,16 @@ export const config = {
   },
 };
 
-const metrics = metricsFactory({
+const metricsHandler = metricsFactory({
   registry: Metrics.registry,
 });
+
+const metrics: NextApiHandler = async (req, res) => {
+  // Explicitly set the Prometheus exposition Content-Type to ensure
+  // compatibility with Prometheus 3.x, which requires a valid Content-Type header
+  res.setHeader('Content-Type', Metrics.registry.contentType);
+  return metricsHandler(req, res);
+};
 
 export default wrapNextRequest([
   rateLimit,
