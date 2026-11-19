@@ -9,13 +9,28 @@ import {
   afterEach,
 } from '@jest/globals';
 
+import { getAddress } from 'viem';
+
 import { CHAINS } from '@lidofinance/lido-ethereum-sdk/common';
 
-// Empty map → tests cover the unknown-contract path. Mock also avoids pulling
-// in `config/`, which transitively imports `env-dynamics.mjs`.
+// One allow-listed contract with a one-function ABI; everything else is
+// unknown. Mock also avoids pulling in `config/`, which transitively imports
+// `env-dynamics.mjs`.
+const KNOWN_TO = getAddress('0x00000000000000000000000000000000000000aa');
+const BALANCE_OF_SELECTOR = '0x70a08231'; // balanceOf(address)
+const KNOWN_ABI = [
+  {
+    type: 'function',
+    name: 'balanceOf',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+];
+
 jest.unstable_mockModule('../contract-addresses-metrics', () => ({
-  METRIC_CONTRACT_ADDRESSES: {},
-  getMetricContractAbi: () => null,
+  METRIC_CONTRACT_ADDRESSES: { [CHAINS.Mainnet]: { [KNOWN_TO]: 'lido' } },
+  getMetricContractAbi: (name: string) => (name === 'lido' ? KNOWN_ABI : null),
 }));
 
 const { collectRequestAddressMetric } = await import(
@@ -117,5 +132,66 @@ describe('collectRequestAddressMetric', () => {
     for (const args of warnSpy.mock.calls) {
       expect(args.map(String).join(' ').length).toBeLessThan(512);
     }
+  });
+
+  test('keeps raw labels for an allow-listed contract and ABI-known selector', async () => {
+    const { counter, recorded } = makeCounterMock();
+    await collectRequestAddressMetric({
+      calls: [makeEthCall(KNOWN_TO, `${BALANCE_OF_SELECTOR}${'0'.repeat(64)}`)],
+      chainId: CHAINS.Mainnet,
+      metrics: counter,
+    });
+    expect(recorded).toEqual([
+      {
+        address: KNOWN_TO,
+        contractName: 'lido',
+        methodEncoded: BALANCE_OF_SELECTOR,
+        methodDecoded: 'balanceOf',
+        __inc: '1',
+      },
+    ]);
+  });
+
+  // Cardinality must not depend on attacker-chosen calldata: every variant
+  // below has to land in the same single `unknown` method series.
+  test.each([
+    ['unknown 4-byte selector', '0xdeadbeef'],
+    ['upper-case 0X prefix', '0X70a08231'],
+    ['non-hex 10-char string', '0xzzzzzzzz'],
+    ['10-element array', Array.from({ length: 10 }, () => 'x'.repeat(1024))],
+    ['object', { length: 10 }],
+  ])(
+    'collapses method labels for allow-listed contract with %s',
+    async (_, data) => {
+      const { counter, recorded } = makeCounterMock();
+      await collectRequestAddressMetric({
+        calls: [makeEthCall(KNOWN_TO, data as any)],
+        chainId: CHAINS.Mainnet,
+        metrics: counter,
+      });
+      expect(recorded).toEqual([
+        {
+          address: KNOWN_TO,
+          contractName: 'lido',
+          methodEncoded: 'unknown',
+          methodDecoded: 'unknown',
+          __inc: '1',
+        },
+      ]);
+    },
+  );
+
+  test('collapses method labels for unknown contracts even with a known selector', async () => {
+    const { counter, recorded } = makeCounterMock();
+    await collectRequestAddressMetric({
+      calls: [makeEthCall(VALID_UNKNOWN_TO, BALANCE_OF_SELECTOR)],
+      chainId: CHAINS.Mainnet,
+      metrics: counter,
+    });
+    expect(recorded[0]).toMatchObject({
+      address: 'unknown',
+      methodEncoded: 'unknown',
+      methodDecoded: 'unknown',
+    });
   });
 });
