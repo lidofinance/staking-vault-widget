@@ -114,9 +114,17 @@ export const requestAddressMetric =
   async (req, res, next) => {
     const chainId = req.query.chainId as unknown as CHAINS;
 
-    if (req.body) {
+    const calls = req.body
+      ? Array.isArray(req.body)
+        ? req.body
+        : [req.body]
+      : [];
+
+    // Oversized batches are rejected by rpcFactory right after this wrapper,
+    // so counting them would only record traffic that never reaches the RPC.
+    if (calls.length > 0 && calls.length <= config.PROVIDER_MAX_BATCH) {
       void collectRequestAddressMetric({
-        calls: Array.isArray(req.body) ? req.body : [req.body],
+        calls,
         chainId,
         metrics,
       }).catch(console.error);

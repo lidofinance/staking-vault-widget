@@ -15,7 +15,9 @@ import type {
   MainSettingsEntryType,
 } from 'features/create-vault/types';
 
-export type ConfirmationDataProps = MainSettingsEntryType;
+export type ConfirmationDataProps = MainSettingsEntryType & {
+  showHint?: boolean;
+};
 
 const getComponentByType = (dataType: InputDataType) => {
   switch (dataType) {
@@ -38,14 +40,15 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
   name,
   dataType,
   title,
-  hint,
+  confirmTitle,
+  description,
   dataTestId,
+  showHint,
 }) => {
   const { getValues } = useFormContext();
   const value = getValues(name);
   const DataComponent = getComponentByType(dataType);
 
-  // For some inputs we don't need confirmation e.g. terms checkbox
   if (!DataComponent) return null;
 
   return (
@@ -56,11 +59,13 @@ export const ConfirmationEntry: FC<ConfirmationDataProps> = ({
       <ConfirmationLabel
         data-testid={dataTestId ? `${dataTestId}-label` : undefined}
       >
-        {title}{' '}
-        <Hint
-          text={hint}
-          data-testid={dataTestId ? `${dataTestId}-hint` : undefined}
-        />
+        {confirmTitle ?? title}
+        {showHint && (
+          <Hint
+            text={description}
+            data-testid={dataTestId ? `${dataTestId}-hint` : undefined}
+          />
+        )}
       </ConfirmationLabel>
       <DataComponent payload={value} dataTestId={dataTestId} />
     </ListItem>

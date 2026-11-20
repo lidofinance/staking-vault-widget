@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 
+import { CheckboxHookForm } from 'shared/hook-form/controls';
+
 export { SectionContainer } from 'features/create-vault/create-vault-form/styles';
 
 const textBase = css`
@@ -28,6 +30,26 @@ export const ConfirmInfoTitle = styled.h3`
   font-weight: 700;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spaceMap.sm}px;
+`;
+
+export const ConnectionDepositItem = styled.li`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaceMap.sm}px;
+  padding: ${({ theme }) => theme.spaceMap.sm}px 0px;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+export const ConnectionDepositHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const ConnectionDepositDescription = styled.p`
+  font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
+  line-height: 20px;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const List = styled.ul`
@@ -60,8 +82,19 @@ export const ConfirmationLabel = styled.span`
   grid-row: 1 / 2;
   display: inline-flex;
   align-items: center;
+  gap: ${({ theme }) => theme.spaceMap.xs}px;
 
   & > svg {
     align-self: center;
   }
+`;
+
+export const ConfirmWrapper = styled.div`
+  display: flex;
+  gap: 12px;
+  user-select: none;
+`;
+
+export const StyledCheckboxHookForm = styled(CheckboxHookForm)`
+  align-items: flex-start;
 `;
