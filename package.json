@@ -116,7 +116,7 @@
     "webpack-preprocessor-loader": "^1.3.0"
   },
   "resolutions": {
-    "postcss": "^8.4.31",
+    "postcss": "^8.5.23",
     "elliptic": "^6.6.1"
   },
   "lint-staged": {
