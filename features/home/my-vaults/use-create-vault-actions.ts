@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { useConnect } from 'reef-knot/core-react';
+import { useConnectionFlow } from 'reef-knot';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { appPaths } from 'consts/routing';
@@ -8,11 +8,11 @@ import { MATOMO_CLICK_EVENTS_TYPES } from 'consts/matomo-click-events';
 
 export const useCreateVaultActions = () => {
   const router = useRouter();
-  const { connect } = useConnect();
+  const { startConnection } = useConnectionFlow();
 
   const handleConnect = useCallback(() => {
-    void connect();
-  }, [connect]);
+    void startConnection();
+  }, [startConnection]);
 
   const handleCreate = useCallback(() => {
     trackMatomoEvent(MATOMO_CLICK_EVENTS_TYPES.clickCreateNewVault);

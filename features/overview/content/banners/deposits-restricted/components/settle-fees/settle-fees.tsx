@@ -1,5 +1,5 @@
 import { type FC, useCallback, useMemo } from 'react';
-import { useConnect } from 'reef-knot/core-react';
+import { useConnectionFlow } from 'reef-knot';
 
 import { FormatToken } from 'shared/formatters';
 import { ONE_ETHER } from 'consts/tx';
@@ -17,11 +17,11 @@ type SettleFeesProps = {
 export const SettleFees: FC<SettleFeesProps> = ({ lidoFees }) => {
   const { settleLidoFees } = useSettleLidoFees();
   const { isDappActive } = useDappStatus();
-  const { connect } = useConnect();
+  const { startConnection } = useConnectionFlow();
 
   const handleConnect = useCallback(() => {
-    void connect();
-  }, [connect]);
+    void startConnection();
+  }, [startConnection]);
 
   const content = useMemo(
     () =>

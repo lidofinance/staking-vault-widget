@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useConnection, useConfig } from 'wagmi';
-import { checkTermsAccepted } from 'reef-knot/core-react';
+import { checkTermsAccepted } from 'reef-knot';
 
 // reef-knot auto connect runs eager connect and a 100ms delay before reconnect,
 // so status stays 'disconnected' for a while; give up waiting after this

@@ -1,8 +1,8 @@
 import type {
   ReefKnotConfig,
   ReefKnotWalletsModalConfig,
-} from '@reef-knot/types';
-import type { WalletIdsEthereum } from 'reef-knot/wallets';
+  WalletIdsEthereum,
+} from 'reef-knot';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 

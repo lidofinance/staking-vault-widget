@@ -7,7 +7,7 @@ import {
   Copy,
   Address,
 } from '@lidofinance/lido-ui';
-import { useConnectorInfo, useDisconnect } from 'reef-knot/core-react';
+import { useConnectorInfo, useDisconnect } from 'reef-knot';
 
 import { trackMatomoEvent } from 'utils/track-matomo-event';
 import { config } from 'config';
