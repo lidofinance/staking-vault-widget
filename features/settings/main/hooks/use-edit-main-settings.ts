@@ -9,6 +9,7 @@ import {
 } from 'modules/web3';
 import {
   useVault,
+  DisplayableError,
   VAULT_TOTAL_BASIS_POINTS,
   VAULTS_ROOT_ROLES_MAP,
   vaultTexts,
@@ -18,8 +19,9 @@ import {
 } from 'modules/vaults';
 
 import { useMainSettingsData } from '../contexts';
+import { findRootRoleLeftEmpty } from '../utils';
 
-import type { MainSettingsFormValidatedValues } from '../types';
+import type { ManagersKeys, MainSettingsFormValidatedValues } from '../types';
 
 type RoleValueType = MainSettingsFormValidatedValues['defaultAdmins'][number];
 
@@ -30,6 +32,21 @@ const toMethodArg = (role: Hash) => (value: RoleValueType) => ({
   role,
   account: value.value,
 });
+
+const ROOT_ROLE_TITLES: Record<ManagersKeys, string> = {
+  defaultAdmins: vaultTexts.actions.settings.fields.vaultManager.title,
+  nodeOperatorManagers:
+    vaultTexts.actions.settings.fields.nodeOperatorManager.title,
+};
+
+const createLastRoleMemberError = (roleTitle: string) => {
+  const error = new DisplayableError(
+    vaultTexts.actions.settings.lastRoleMemberDescription(roleTitle),
+    false,
+  );
+  error.errorTitle = vaultTexts.actions.settings.lastRoleMemberTitle;
+  return error;
+};
 
 export const useEditMainSettings = () => {
   const { hasBothConfirmingRoles } = useVaultConfirmingRoles();
@@ -165,10 +182,22 @@ export const useEditMainSettings = () => {
 
         const result = await withSuccess(
           sendTX({
-            transactions:
-              isFeeValueChanged || isDepositAllowedChanged
-                ? async () => [...(await prepareReportCalls()), ...transactions]
-                : transactions,
+            transactions: async () => {
+              const emptiedRole = await findRootRoleLeftEmpty(
+                formValues,
+                (role) => activeVault.dashboard.read.getRoleMembers([role]),
+              );
+              if (emptiedRole) {
+                throw createLastRoleMemberError(ROOT_ROLE_TITLES[emptiedRole]);
+              }
+
+              return [
+                ...(isFeeValueChanged || isDepositAllowedChanged
+                  ? await prepareReportCalls()
+                  : []),
+                ...transactions,
+              ];
+            },
             mainActionLoadingText: 'Editing vault settings',
             mainActionCompleteText: 'Edited vault settings',
             renderSuccessContent: GoToVault,
