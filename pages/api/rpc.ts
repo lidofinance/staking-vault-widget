@@ -106,10 +106,14 @@ export const config = {
   },
 };
 
+// wrapNextRequest composes via reduce, so wrappers run in REVERSE array order:
+// the last entry is outermost. requestAddressMetric sits first so it only sees
+// requests that already passed the error handler, timing, rate limit and
+// method guard.
 export default wrapNextRequest([
+  requestAddressMetric(Metrics.request.ethCallToAddress),
   httpMethodGuard([HttpMethod.POST]),
   rateLimit,
   responseTimeMetric(Metrics.request.apiTimings, API_ROUTES.RPC),
-  requestAddressMetric(Metrics.request.ethCallToAddress),
   defaultErrorHandler,
 ])(rpc);
