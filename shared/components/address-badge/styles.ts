@@ -134,6 +134,7 @@ export const AddressText = styled(Address)<InjectedProps>`
     color: ${getTextColor};
     text-decoration: ${crossedText ? 'line-through' : 'none'};
     text-decoration-color: ${crossedText ? 'var(--lido-color-text)' : 'none'};
+    user-select: none;
     ${sizes[size]}
   `}
 `;

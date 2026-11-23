@@ -22,6 +22,7 @@ export const VaultAddress = styled(Address)`
   line-height: 38px;
   color: ${({ theme }) => theme.colors.text};
   cursor: pointer;
+  user-select: none;
 
   @media ${devicesHeaderMedia.mobile} {
     font-size: ${({ theme }) => theme.fontSizesMap.lg}px;
