@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import type { FC } from 'react';
 
 import { AddressBadge, AddressBadgeSelectable } from 'shared/components';
 
@@ -16,6 +16,12 @@ interface RoleAddressProps {
   onUpdate: (index: number, field: RoleFieldSchema) => void;
   dataTestId?: string;
 }
+
+const badgeBackgrounds = {
+  display: 'default',
+  grant: 'success',
+  remove: 'error',
+} as const;
 
 export const RoleAddress: FC<RoleAddressProps> = ({
   index,
@@ -44,11 +50,13 @@ export const RoleAddress: FC<RoleAddressProps> = ({
     });
   };
 
-  const bgColor = useMemo(() => {
-    if (toRemove) return 'error';
-    if (state === 'grant') return 'success';
-    return 'default';
-  }, [toRemove, state]);
+  const bgColor = badgeBackgrounds[state];
+  const badgeProps = {
+    address: field.value,
+    symbols: 21,
+    dataTestId,
+    showPopover: true,
+  };
 
   return (
     <AddressWrapper
@@ -56,24 +64,13 @@ export const RoleAddress: FC<RoleAddressProps> = ({
     >
       {canToggle && isEditable ? (
         <AddressBadgeSelectable
-          weight={400}
-          address={field.value}
+          {...badgeProps}
           checked={toRemove}
           defaultBg={bgColor}
           onCheckedChange={onToggle}
-          symbols={21}
-          dataTestId={dataTestId}
         />
       ) : (
-        <AddressBadge
-          weight={400}
-          address={field.value}
-          crossed={toRemove}
-          bgColor={bgColor}
-          symbols={21}
-          dataTestId={dataTestId}
-          showPopover
-        />
+        <AddressBadge {...badgeProps} crossed={toRemove} bgColor={bgColor} />
       )}
     </AddressWrapper>
   );
