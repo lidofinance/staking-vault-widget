@@ -114,6 +114,7 @@ export const AddressBadge = forwardRef<HTMLDivElement, AddressBadgeProps>(
           symbols={symbols}
           address={mainText}
           crossedText={crossed}
+          $allowSelectText={symbols >= 20}
           data-testid={dataTestId ? `${dataTestId}-addressText` : undefined}
         />
         {rightDecorator}
