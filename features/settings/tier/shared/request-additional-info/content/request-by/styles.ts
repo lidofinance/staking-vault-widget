@@ -11,4 +11,5 @@ export const AddressStyled = styled(Address)`
   font-size: ${({ theme }) => theme.fontSizesMap.xxs}px;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
+  user-select: none;
 `;

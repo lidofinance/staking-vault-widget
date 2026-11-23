@@ -20,4 +20,5 @@ export const NodeOperatorAddress = styled(Address)`
   font-weight: 700;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
+  user-select: none;
 `;

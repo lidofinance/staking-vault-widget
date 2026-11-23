@@ -1,7 +1,6 @@
 import type { FC } from 'react';
-import { Address } from '@lidofinance/lido-ui';
 
-import { TooltipStyled } from './styles';
+import { TooltipStyled, AddressStyled } from './styles';
 
 type AddressWithTooltipProps = {
   address: string;
@@ -12,7 +11,7 @@ export const AddressWithTooltip: FC<AddressWithTooltipProps> = ({
 }) => {
   return (
     <TooltipStyled title={address}>
-      <Address symbols={9} address={address} />
+      <AddressStyled symbols={9} address={address} />
     </TooltipStyled>
   );
 };

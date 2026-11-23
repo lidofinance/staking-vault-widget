@@ -29,4 +29,5 @@ export const AddressStyled = styled(Address)`
   font-size: ${({ theme }) => theme.fontSizesMap.sm}px;
   font-weight: 700;
   line-height: 24px;
+  user-select: none;
 `;
