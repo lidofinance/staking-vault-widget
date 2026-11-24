@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import invariant from 'tiny-invariant';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 
 import { useLidoSDK } from 'modules/web3';
 import { useVault } from 'modules/vaults';
@@ -61,7 +61,7 @@ const saturateRoles = (roles: readonly VAULTS_ALL_ROLES[]) => {
 export const useVaultPermissions = (roles: readonly VAULTS_ALL_ROLES[]) => {
   const { activeVault, queryKeys } = useVault();
   const { publicClient } = useLidoSDK();
-  const { address } = useAccount();
+  const { address } = useConnection();
 
   const query = useQuery({
     queryKey: [...queryKeys.config('roles'), 'hasRole', { roles, address }],

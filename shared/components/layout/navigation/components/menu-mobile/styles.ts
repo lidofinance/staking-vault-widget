@@ -19,12 +19,11 @@ export const Container = styled.div<{ $active: boolean }>`
     white-space: break-spaces;
     text-wrap: balance;
     line-break: anywhere;
+    color: ${({ $active }) =>
+      $active ? `var(--lido-color-text)` : `var(--lido-color-secondary)`};
     font-size: ${({ theme }) => theme.fontSizesMap.xxxs}px;
-    line-height: 1.7em;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    opacity: ${(props) => (props.$active ? 1 : 0.8)};
+    line-height: 18px;
+    font-weight: 500;
   }
 `;
 
@@ -62,7 +61,7 @@ export const HiddenNavContainer = styled.div<{ $showMenu: boolean }>`
   backdrop-filter: saturate(180%) blur(10px);
 `;
 
-export const HiddenNav = styled.ul`
+export const HiddenNav = styled.div`
   position: absolute;
   right: 2px;
   bottom: 2px;
@@ -72,6 +71,9 @@ export const HiddenNav = styled.ul`
   gap: 24px;
   width: auto;
   height: auto;
+  max-height: calc(100% - 4px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 16px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.colors.background};
@@ -83,5 +85,30 @@ export const HiddenNav = styled.ul`
     a > span {
       flex-direction: row;
     }
+  }
+
+  // vault and docs links don't fit in one column on low viewports
+  @media ${devicesHeaderMedia.lowHeight} {
+    flex-direction: row;
+  }
+`;
+
+export const HiddenNavList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+`;
+
+export const HiddenNavDivider = styled.div`
+  flex-shrink: 0;
+  height: 1px;
+  background-color: var(--lido-color-border);
+
+  @media ${devicesHeaderMedia.lowHeight} {
+    width: 1px;
+    height: auto;
   }
 `;

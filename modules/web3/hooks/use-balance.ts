@@ -6,7 +6,7 @@ import {
   useBalance,
   useReadContract,
   useWatchContractEvent,
-  useAccount,
+  useConnection,
 } from 'wagmi';
 
 import { useDappStatus, useLidoSDK } from 'modules/web3';
@@ -82,7 +82,7 @@ const onError = (error: unknown) =>
   );
 
 export const useTokenTransferSubscription = () => {
-  const { address } = useAccount();
+  const { address } = useConnection();
   const queryClient = useQueryClient();
   const [subscriptions, setSubscriptions] = useState<TokenSubscriptionState>(
     {},

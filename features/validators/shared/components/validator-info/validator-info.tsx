@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from 'react';
-import { Identicon, Divider, Text, Address } from '@lidofinance/lido-ui';
+import { Identicon, Divider, Text } from '@lidofinance/lido-ui';
 import type { Hex } from 'viem';
 
 import { FormatToken } from 'shared/formatters';
@@ -11,6 +11,7 @@ import {
   BaseInfo,
   InfoContainer,
   ParamContainer,
+  PubKeyStyled,
   PubKeyWrapper,
 } from './styles';
 
@@ -38,12 +39,7 @@ export const ValidatorInfo: FC<PropsWithChildren<ValidatorInfoProps>> = ({
           </Text>
           <PubKeyWrapper>
             <Text size="xs" strong data-testid="pubkey-value">
-              <Address
-                as="span"
-                address={pubKey}
-                symbols={4}
-                style={{ fontWeight: 700 }}
-              />
+              <PubKeyStyled forwardedAs="span" address={pubKey} symbols={4} />
             </Text>
             <Text size="xs" color="secondary" data-testid="beacon-link">
               <SatelliteBeaconchaLink indexOrPubkey={pubKey} />

@@ -25,4 +25,5 @@ export const AddressStyled = styled(Address)`
   font-weight: bold;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.text};
+  user-select: none;
 `;

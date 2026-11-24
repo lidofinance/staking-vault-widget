@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Address } from '@lidofinance/lido-ui';
 
 export const InfoContainer = styled.section`
   display: flex;
@@ -35,4 +36,9 @@ export const BalanceRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+`;
+
+export const PubKeyStyled = styled(Address)`
+  font-weight: 700;
+  user-select: none;
 `;

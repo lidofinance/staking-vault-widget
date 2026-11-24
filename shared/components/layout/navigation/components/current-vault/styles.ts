@@ -8,9 +8,9 @@ export const CurrentVaultWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 44px;
   width: fit-content;
-  margin: ${({ theme }) => theme.spaceMap.md}px 0 0;
+  margin: 0 0 ${({ theme }) => theme.spaceMap.lg}px;
+  height: 52px;
   background-color: ${({ theme }) => theme.colors.background};
   overflow: clip;
 
@@ -29,4 +29,5 @@ export const AddressStyled = styled(Address)`
   font-size: ${({ theme }) => theme.fontSizesMap.sm}px;
   font-weight: 700;
   line-height: 24px;
+  user-select: none;
 `;

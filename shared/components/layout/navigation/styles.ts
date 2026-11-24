@@ -2,14 +2,20 @@ import styled from 'styled-components';
 
 import { devicesHeaderMedia } from 'styles/global';
 
-export const FeedbackLink = styled.a`
+export const NavList = styled.ul<{ $gap?: number }>`
   display: flex;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.spaceMap.xxl}px;
-  padding-top: ${({ theme }) => theme.spaceMap.xxl}px;
-  border-top: 1px solid var(--lido-color-border);
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: ${({ theme, $gap }) => $gap ?? theme.spaceMap.md}px;
+  list-style-type: none;
 
   @media ${devicesHeaderMedia.mobile} {
-    display: none;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: start;
+    width: 100%;
+    margin-top: 0;
+    gap: 8px;
   }
 `;

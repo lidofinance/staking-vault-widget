@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import invariant from 'tiny-invariant';
 
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { config } from 'config';
 
 import { wagmiChainMap } from './web3-provider';
@@ -34,7 +34,7 @@ const getChainLabelById = (chainId: number) => {
 export const useDappChain = (): UseDappChainValue => {
   const context = useContext(DappChainContext);
   invariant(context, 'useDappChain was used outside of DappChainProvider');
-  const { chainId: walletChain } = useAccount();
+  const { chainId: walletChain } = useConnection();
 
   return useMemo(() => {
     const supportedChainLabels = context.supportedChainIds.reduce(
@@ -61,7 +61,7 @@ export const useDappChain = (): UseDappChainValue => {
 export const SupportL1Chains: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { chainId } = useAccount();
+  const { chainId } = useConnection();
 
   return (
     <DappChainContext.Provider

@@ -3,7 +3,7 @@ import {
   MenuMobile,
 } from 'shared/components/layout/navigation/components';
 
-import { NavList } from './styles';
+import { NavList } from 'shared/components/layout/navigation/styles';
 
 export const VaultNavigationList = () => {
   return (
