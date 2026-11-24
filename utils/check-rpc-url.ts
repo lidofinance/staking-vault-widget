@@ -39,6 +39,7 @@ export const checkRpcUrl = async (
 
   try {
     const client = createPublicClient({
+      ccipRead: false,
       // @ts-expect-error: typing, but enough for checing
       chain: {
         id: chainId,
