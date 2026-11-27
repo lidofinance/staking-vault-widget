@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import {
+  BaseError,
   hexToBigInt,
+  MethodNotFoundRpcError,
+  MethodNotSupportedRpcError,
+  UnsupportedProviderMethodError,
   type Address,
   type Hex,
   type TransactionReceipt,
@@ -73,9 +77,22 @@ const receiptsToLastBlock = (
         : hexToBigInt(receipt.blockNumber),
     )
     .sort((a, b) => (a < b ? 1 : -1))
-    .at(-1);
+    .at(0);
   return lastTxBlock ?? 0n;
 };
+
+// Only unambiguous "method is not supported" errors allow falling back to eth_sendTransaction.
+// Generic errors (e.g. transport timeout -> UnknownRpcError) must not trigger fallback:
+// the original wallet_sendCalls request may still be pending in the wallet,
+// and a second request could lead to a duplicate submission.
+const isSendCallsUnsupportedError = (error: unknown): boolean =>
+  error instanceof BaseError &&
+  !!error.walk(
+    (e) =>
+      e instanceof MethodNotFoundRpcError ||
+      e instanceof MethodNotSupportedRpcError ||
+      e instanceof UnsupportedProviderMethodError,
+  );
 
 export const useSendTransaction = () => {
   const { publicClient, walletClient, setLatestTxBlock } = useLidoSDK();
@@ -141,6 +158,10 @@ export const useSendTransaction = () => {
           '[useSendTransaction] No transactions provided',
         );
 
+        let sendCallsId: string | undefined;
+        // legacy flow is reachable only for non-AA or explicit fallback after sendCalls is unsupported
+        let isSendCallsFallback = false;
+
         if (useSendCalls) {
           const calls = transactions.map((tx) => ({
             to: tx.to,
@@ -160,17 +181,39 @@ export const useSendTransaction = () => {
             },
           });
 
-          const { id } = await walletClient.sendCalls({
-            calls,
-            forceAtomic,
-            experimental_fallback: true,
-          });
+          try {
+            ({ id: sendCallsId } = await walletClient.sendCalls({
+              calls,
+              forceAtomic,
+            }));
+          } catch (error) {
+            const canFallback =
+              isSendCallsUnsupportedError(error) &&
+              !(forceAtomic && calls.length > 1);
+            if (!canFallback) throw error;
+            console.warn(
+              '[useSendTransaction] wallet_sendCalls is not supported, falling back to legacy flow',
+              error,
+            );
+            isSendCallsFallback = true;
+          }
+        }
 
+        if (useSendCalls && !isSendCallsFallback) {
+          // wallet accepted the request but returned no id: batch status is unknown,
+          // so we must not resend it via legacy flow
+          if (!sendCallsId) {
+            throw new SendTxGetStatusError(
+              new Error(
+                '[useSendTransaction] wallet_sendCalls returned empty id',
+              ),
+            );
+          }
           dispatchModal({
             type: 'stage',
             stage: 'awaiting',
             details: {
-              transactionId: id,
+              transactionId: sendCallsId,
             },
           });
 
@@ -179,7 +222,7 @@ export const useSendTransaction = () => {
           let callStatus: WaitForCallsStatusReturnType;
           try {
             callStatus = await walletClient.waitForCallsStatus({
-              id,
+              id: sendCallsId,
               timeout: AA_TX_POLLING_TIMEOUT,
             });
           } catch (error) {
@@ -207,7 +250,7 @@ export const useSendTransaction = () => {
           }
 
           const transactionResult = {
-            isAA,
+            isAA: true as const,
             callStatus,
             receipts,
             lastTxBlock: receiptsToLastBlock(receipts),
@@ -231,6 +274,8 @@ export const useSendTransaction = () => {
           dispatchModal({
             type: 'stage',
             stage: 'signing',
+            // legacy flow is never a batch (also resets it after sendCalls fallback)
+            isBatch: false,
             details: {
               actionLoadingText: tx.loadingActionText ?? mainActionLoadingText,
               baseDescriptionText: tx.baseDescriptionText,
@@ -273,7 +318,7 @@ export const useSendTransaction = () => {
         }
 
         const transactionResult = {
-          isAA: useSendCalls,
+          isAA: false as const,
           receipts,
           lastTxBlock: receiptsToLastBlock(receipts),
         };
